@@ -1,0 +1,68 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace UKMCAB.Common;
+
+public static class Guard
+{
+    public static void IsNotNull(object? obj, string name) => IsTrue(obj != null, name + " cannot be null");
+    public static void IsFalse(bool condition, string message) => IsTrue(!condition, message);
+    public static void IsTrue(bool condition, string message)
+    {
+        if (!condition)
+        {
+            throw new Exception(message);
+        }
+    }
+
+    public static void IsTrue<T>(T value, Func<T, bool> constraint, string message)
+    {
+        if (!constraint(value))
+        {
+            throw new Exception(string.Format(message, value));
+        }
+    }
+
+    public static void IsTrue<T>(bool condition) where T : Exception, new()
+    {
+        if (!condition)
+        {
+            throw new T();
+        }
+    }
+
+    public static void IsFalse<T>(bool condition) where T : Exception, new()
+    {
+        if (!condition)
+        {
+            throw new T();
+        }
+    }
+
+    public static void IsTrue(bool condition, Func<Exception> exceptionFactory)
+    {
+        if (!condition)
+        {
+            throw exceptionFactory();
+        }
+    }
+
+    public static void IsFalse(bool condition, Func<Exception> exceptionFactory)
+    {
+        if (condition)
+        {
+            throw exceptionFactory();
+        }
+    }
+
+    public static void When(bool flag, Action action)
+    {
+        if (flag)
+        {
+            action();
+        }
+    }
+}
