@@ -3,7 +3,7 @@ param env string
 param location string = resourceGroup().location
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: 'stor00${project}00${env}'
+  name: 'stor${project}${env}'
   location: location
   sku: {
     name: 'Standard_LRS'
