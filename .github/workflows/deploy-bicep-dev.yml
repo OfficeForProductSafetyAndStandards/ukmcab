@@ -1,9 +1,10 @@
+name: Azure IaC deploy
+
 on: 
   push:
     paths:
       - 'bicep/**/*'
-      
-name: Azure ARM
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
