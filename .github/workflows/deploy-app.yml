@@ -1,12 +1,12 @@
 name: App service deploy
 
 on:
-  workflow_dispatch
-  #push:
-  #  branches:
-  #    - main
-  #  paths:
-  #    - 'src/**/*'
+  # workflow_dispatch
+  push:
+   branches:
+     - main
+   paths:
+     - 'src/**/*'
 
 env:
   AZURE_WEBAPP_NAME: appl-ukmcab-dev
