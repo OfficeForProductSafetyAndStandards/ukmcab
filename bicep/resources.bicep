@@ -13,8 +13,6 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
 
 var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
 
-
-
 resource redis 'Microsoft.Cache/redis@2021-06-01' = {
   name: 'redis-${project}-${env}'
   location: location
@@ -26,6 +24,8 @@ resource redis 'Microsoft.Cache/redis@2021-06-01' = {
     }
   }
 }
+
+var redisConnectionString = '${redis.name}.redis.cache.windows.net:6380,password=${redis.listKeys().primaryKey},ssl=True,abortConnect=False'
 
 
 
@@ -39,6 +39,7 @@ resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
       name: 'standard'
       family: 'A'
     }
+    accessPolicies: []
   }
 }
 
@@ -49,6 +50,19 @@ resource storageConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2022-0
     value: storageConnectionString
   }
 }
+
+resource redisConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'redisConnectionString'
+  properties: {
+    value: redisConnectionString
+  }
+}
+
+
+
+
+
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: 'asp-${project}-${env}'
@@ -79,6 +93,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
           name: 'DataConnectionString'
           value: '@Microsoft.KeyVault(SecretUri=${storageConnectionStringSecret.properties.secretUri})'
         }
+        {
+          name: 'RedisConnectionString'
+          value: '@Microsoft.KeyVault(SecretUri=${redisConnectionStringSecret.properties.secretUri})'
+        }
       ]
     }
   }
@@ -87,4 +105,35 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   }
 }
 
+
+
+
+
+
+
+resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
+  name: '${kv.name}/add'
+  properties: {
+      accessPolicies: [
+          {
+              tenantId: subscription().tenantId
+              objectId: appService.identity.principalId
+              permissions: {
+                certificates: [
+                  'all'
+                ]
+                keys:[
+                  'all'
+                ]
+                secrets:[
+                  'all'
+                ]
+                storage: [
+                  'all'
+                ]
+               }
+          }
+      ]
+  }
+}
 
