@@ -17,7 +17,6 @@ jobs:
     - name: deploy
       uses: azure/arm-deploy@v1
       with:
-        subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
         scope: 'subscription'
         template: '../../bicep/main.bicep'
         parameters: '../../bicep/dev.parameters.json'
