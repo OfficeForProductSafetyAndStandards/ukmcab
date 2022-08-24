@@ -1,11 +1,13 @@
 name: Build and deploy .NET Core app to Linux WebApp app-ukmcab-dev
+
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'src/**/*'
-      
+  workflow_dispatch
+  #push:
+  #  branches:
+  #    - main
+  #  paths:
+  #    - 'src/**/*'
+
 env:
   AZURE_WEBAPP_NAME: app-ukmcab-dev
   AZURE_WEBAPP_PACKAGE_PATH: UKMCAB.Web.UI/publish
