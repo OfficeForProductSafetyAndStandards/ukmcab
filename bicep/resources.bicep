@@ -39,6 +39,7 @@ resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
       name: 'standard'
       family: 'A'
     }
+    enableRbacAuthorization: true
     accessPolicies: []
   }
 }
