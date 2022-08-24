@@ -25,7 +25,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 }
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'app-${project}-${env}'
+  name: 'appl-${project}-${env}'
   location: location
   properties: {
     serverFarmId: appServicePlan.id
