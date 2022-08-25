@@ -31,7 +31,7 @@ var redisConnectionString = '${redis.name}.redis.cache.windows.net:6380,password
 
 
 resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
-  name: 'keyvault-${project}-${env}'
+  name: 'kv1-${project}-${env}'
   location: location
   properties: {
     tenantId: subscription().tenantId
@@ -39,7 +39,7 @@ resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
       name: 'standard'
       family: 'A'
     }
-    enableRbacAuthorization: true
+    enableRbacAuthorization: false // I don't have permission to assign roles in Azure RBAC, so will use 'Vault access policy'
     accessPolicies: []
   }
 }
@@ -91,11 +91,11 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         //   value: applicationInsights.properties.InstrumentationKey
         // }
         {
-          name: 'DataConnectionString'
+          name: 'DataConnectionString-10'
           value: '@Microsoft.KeyVault(SecretUri=${storageConnectionStringSecret.properties.secretUri})'
         }
         {
-          name: 'RedisConnectionString'
+          name: 'RedisConnectionString-10'
           value: '@Microsoft.KeyVault(SecretUri=${redisConnectionStringSecret.properties.secretUri})'
         }
       ]
