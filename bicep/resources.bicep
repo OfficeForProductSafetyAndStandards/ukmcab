@@ -10,8 +10,11 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   }
   kind: 'StorageV2'
 }
-
 var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
+
+
+
+
 
 resource redis 'Microsoft.Cache/redis@2021-06-01' = {
   name: 'redis-${project}-${env}'
@@ -24,11 +27,26 @@ resource redis 'Microsoft.Cache/redis@2021-06-01' = {
     }
   }
 }
-
 var redisConnectionString = '${redis.name}.redis.cache.windows.net:6380,password=${redis.listKeys().primaryKey},ssl=True,abortConnect=False'
 
 
 
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: 'ai-${project}-${env}'
+  location: location
+  kind: 'web'
+  properties: {
+    Application_Type: 'web'
+  }
+}
+
+
+
+
+
+/*
+  KEY VAULT
+*/
 
 resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
   name: 'kv-${project}-${env}'
@@ -60,10 +78,20 @@ resource redisConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-
   }
 }
 
+resource appInsightsInstrumentationKeySecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'appInsightsInstrumentationKey'
+  properties: {
+    value: appInsights.properties.InstrumentationKey
+  }
+}
 
 
 
 
+/*
+  APP SERVICE and APP SERVICE PLAN
+*/
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: 'asp-${project}-${env}'
@@ -86,10 +114,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|6.0'
       appSettings: [
-        // {
-        //   name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-        //   value: applicationInsights.properties.InstrumentationKey
-        // }
+        {
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: '@Microsoft.KeyVault(SecretUri=${appInsightsInstrumentationKeySecret.properties.secretUri})'
+        }
         {
           name: 'DataConnectionString'
           value: '@Microsoft.KeyVault(SecretUri=${storageConnectionStringSecret.properties.secretUri})'
@@ -110,8 +138,9 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
 
 
 
-
-
+/*
+  KEY VAULT ACCESS POLICY
+*/ 
 resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
   name: '${kv.name}/add'
   properties: {
