@@ -2,6 +2,8 @@ param project string
 param env string
 param location string = resourceGroup().location
 
+
+
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: 'stor${project}${env}'
   location: location
@@ -31,14 +33,39 @@ var redisConnectionString = '${redis.name}.redis.cache.windows.net:6380,password
 
 
 
+
+
+/*
+  APP INSIGHTS
+*/
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
+  name: 'la-${project}-${env}'
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 120
+    features: {
+      searchVersion: 1
+      legacy: 0
+      enableLogAccessUsingOnlyResourcePermissions: true
+    }
+  }
+}
+
 resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
   name: 'ai-${project}-${env}'
   location: location
-  kind: 'web'
+  kind: 'string'
   properties: {
     Application_Type: 'web'
+    WorkspaceResourceId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.OperationalInsights/workspaces/${logAnalyticsWorkspace.name}'
   }
 }
+
+
+
 
 
 
@@ -78,11 +105,11 @@ resource redisConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-
   }
 }
 
-resource appInsightsInstrumentationKeySecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+resource appInsightsConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
   parent: kv
-  name: 'appInsightsInstrumentationKey'
+  name: 'appInsightsConnectionString'
   properties: {
-    value: appInsights.properties.InstrumentationKey
+    value: appInsights.properties.ConnectionString
   }
 }
 
@@ -115,8 +142,8 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
       linuxFxVersion: 'DOTNETCORE|6.0'
       appSettings: [
         {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: '@Microsoft.KeyVault(SecretUri=${appInsightsInstrumentationKeySecret.properties.secretUri})'
+          name: 'AppInsightsConnectionString'
+          value: '@Microsoft.KeyVault(SecretUri=${appInsightsConnectionStringSecret.properties.secretUri})'
         }
         {
           name: 'DataConnectionString'
