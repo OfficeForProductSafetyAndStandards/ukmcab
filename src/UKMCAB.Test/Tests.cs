@@ -18,4 +18,11 @@ public class Tests
     {
         Assert.Fail();
     }
+
+
+    [Test]
+    public void Test3()
+    {
+        Assert.Fail();
+    }
 }
