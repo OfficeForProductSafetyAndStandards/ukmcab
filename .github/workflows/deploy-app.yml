@@ -43,7 +43,7 @@ jobs:
         run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
       
       - name: Test
-        run: dotnet test "${{ env.TEST_PROJECT_DIR }}" --no-build
+        run: dotnet test "${{ env.TEST_PROJECT_DIR }}"
       
       - name: Publish
         run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
