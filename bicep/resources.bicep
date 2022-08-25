@@ -31,7 +31,7 @@ var redisConnectionString = '${redis.name}.redis.cache.windows.net:6380,password
 
 
 resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
-  name: 'kv1-${project}-${env}'
+  name: 'kv-${project}-${env}'
   location: location
   properties: {
     tenantId: subscription().tenantId
@@ -78,7 +78,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
 }
 
 resource appService 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'appl-${project}-${env}'
+  name: 'app-${project}-${env}'
   location: location
   properties: {
     httpsOnly: true
