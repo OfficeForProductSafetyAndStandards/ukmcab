@@ -91,11 +91,11 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         //   value: applicationInsights.properties.InstrumentationKey
         // }
         {
-          name: 'DataConnectionString-10'
+          name: 'DataConnectionString'
           value: '@Microsoft.KeyVault(SecretUri=${storageConnectionStringSecret.properties.secretUri})'
         }
         {
-          name: 'RedisConnectionString-10'
+          name: 'RedisConnectionString'
           value: '@Microsoft.KeyVault(SecretUri=${redisConnectionStringSecret.properties.secretUri})'
         }
       ]
