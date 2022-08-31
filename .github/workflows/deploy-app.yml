@@ -34,8 +34,8 @@ jobs:
         with:
           node-version: 16
 
-      - run: npm install
-        working-directory: ${{ env.WORKING_DIRECTORY }}
+      # - run: npm install
+      #   working-directory: ${{ env.WORKING_DIRECTORY }}
 
       - run: npm ci
         working-directory: ${{ env.WORKING_DIRECTORY }}
