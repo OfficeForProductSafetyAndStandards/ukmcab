@@ -32,21 +32,24 @@ jobs:
 
       - name: Setup Node.js
         uses: actions/setup-node@v2
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         with:
           node-version: '16'
 
       - name: Cache NPM dependencies
         uses: actions/cache@v2
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         with:
           path: ~/.npm
           key: npm-${{ hashFiles('package-lock.json') }}
           restore-keys: npm-
 
       - name: Install NPM dependencies
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: npm ci --ignore-scripts
-      
 
       - name: Run Gulp task
+        working-directory: ${{ env.WORKING_DIRECTORY }}
         run: gulp
 
 
