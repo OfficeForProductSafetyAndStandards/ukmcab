@@ -27,3 +27,5 @@ gulp.task('sass-compile', compileCss);
 gulp.task('sass:watch', function () {
     gulp.watch('./scss/*.scss', compileCss);
 });
+
+gulp.task('default', compileCss);
