@@ -1,1 +1,52 @@
 ﻿@import "./node_modules/govuk-frontend/govuk/all";
+@import "./assets/finder/stylesheets/application";
+
+.gem-c-checkboxes .gem-c-checkboxes__legend--hidden {
+    position: absolute !important;
+    width: 1px !important;
+    height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    clip: rect(0 0 0 0) !important;
+    -webkit-clip-path: inset(50%) !important;
+    clip-path: inset(50%) !important;
+    border: 0 !important;
+    white-space: nowrap !important;
+}
+
+.app-search-results {
+    margin: 15px 0;
+    padding: 0;
+    list-style: none;
+
+    &__result {
+        margin-bottom: 20px;
+        border-bottom: 1px solid #b1b4b6;
+        position: relative;
+
+
+        dl {
+            font-family: "GDS Transport",arial,sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            overflow: hidden;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: $govuk-secondary-text-colour;
+        }
+
+        dt {
+            clear: left;
+            padding-right: .5em;
+        }
+
+        dt, dd {
+            float: left;
+            margin: 0;
+        }
+    }
+}
+
+

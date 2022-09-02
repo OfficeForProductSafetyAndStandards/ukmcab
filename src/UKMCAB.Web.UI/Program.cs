@@ -15,4 +15,5 @@ app.UseMiddleware<BasicAuthenticationMiddleware>();
 app.UseStaticFiles();
 app.MapRazorPages();
 app.MapDefaultControllerRoute();
+app.MapControllers();
 app.Run();

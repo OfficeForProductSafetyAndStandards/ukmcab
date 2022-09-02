@@ -8,6 +8,37 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="wwwroot\assets\finder\config\manifest.js" />
+    <Content Remove="wwwroot\assets\finder\images\.keep" />
+    <Content Remove="wwwroot\assets\finder\images\mail-icon-retina.png" />
+    <Content Remove="wwwroot\assets\finder\images\mail-icon.png" />
+    <Content Remove="wwwroot\assets\finder\images\search\search-button.png" />
+    <Content Remove="wwwroot\assets\finder\images\toggle-sprite-horizontal.png" />
+    <Content Remove="wwwroot\assets\finder\images\toggle-sprite-retina.png" />
+    <Content Remove="wwwroot\assets\finder\images\toggle-sprite.png" />
+    <Content Remove="wwwroot\assets\finder\javascripts\application.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\components\expander.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\components\option-select.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\live_search.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\modules\mobile-filters-modal.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\modules\remove-filter.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\search-analytics.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\support.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\taxonomy-select.js" />
+    <Content Remove="wwwroot\assets\finder\javascripts\test-dependencies.js" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\application.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\components\_date-filter.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\components\_email-link.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\components\_expander.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\components\_mobile-filters.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\components\_option-select.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\finder_frontend.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\print.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\views\_search.scss" />
+    <Content Remove="wwwroot\assets\finder\stylesheets\_reset.scss" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.11.0" />
     <PackageReference Include="Humanizer" Version="2.14.1" />
@@ -23,8 +54,38 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="wwwroot\assets\css\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\assets\finder\config\manifest.js" />
+    <None Include="wwwroot\assets\finder\images\.keep" />
+    <None Include="wwwroot\assets\finder\images\mail-icon-retina.png" />
+    <None Include="wwwroot\assets\finder\images\mail-icon.png" />
+    <None Include="wwwroot\assets\finder\images\search\search-button.png" />
+    <None Include="wwwroot\assets\finder\images\toggle-sprite-horizontal.png" />
+    <None Include="wwwroot\assets\finder\images\toggle-sprite-retina.png" />
+    <None Include="wwwroot\assets\finder\images\toggle-sprite.png" />
+    <None Include="wwwroot\assets\finder\javascripts\application.js" />
+    <None Include="wwwroot\assets\finder\javascripts\components\expander.js" />
+    <None Include="wwwroot\assets\finder\javascripts\components\option-select.js" />
+    <None Include="wwwroot\assets\finder\javascripts\live_search.js" />
+    <None Include="wwwroot\assets\finder\javascripts\modules\mobile-filters-modal.js" />
+    <None Include="wwwroot\assets\finder\javascripts\modules\remove-filter.js" />
+    <None Include="wwwroot\assets\finder\javascripts\search-analytics.js" />
+    <None Include="wwwroot\assets\finder\javascripts\support.js" />
+    <None Include="wwwroot\assets\finder\javascripts\taxonomy-select.js" />
+    <None Include="wwwroot\assets\finder\javascripts\test-dependencies.js" />
+    <None Include="wwwroot\assets\finder\stylesheets\application.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\components\_date-filter.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\components\_email-link.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\components\_expander.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\components\_mobile-filters.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\components\_option-select.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\finder_frontend.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\print.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\views\_search.scss" />
+    <None Include="wwwroot\assets\finder\stylesheets\_reset.scss" />
   </ItemGroup>
 
 </Project>
