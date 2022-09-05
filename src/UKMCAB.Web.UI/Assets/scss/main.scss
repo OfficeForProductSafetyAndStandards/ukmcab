@@ -50,3 +50,13 @@
 }
 
 
+.app-signin-link {
+    position: absolute;
+    top: 16px;
+    right: 0;
+    display:none;
+
+    @include govuk-media-query($from: desktop) {
+        display:block;
+    }
+}
