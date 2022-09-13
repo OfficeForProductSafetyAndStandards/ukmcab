@@ -1414,7 +1414,7 @@
             {
                 <li class="app-search-results__result">
                     <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
-                        <a class="govuk-link" href="@Url.RouteUrl(HomeController.Routes.Profile, new { id = result.id})">@result.Name</a>
+                        <a asp-action="Profile" asp-route-id="@result.id">@result.Name</a>
                     </h3>
                     <p class="govuk-body-s govuk-!-margin-bottom-1">
                         @result.Address
