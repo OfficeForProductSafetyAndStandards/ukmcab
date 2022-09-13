@@ -1,0 +1,252 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.ProfileViewModel;
+@{
+  ViewData["nav"] = "profile";
+  var accordionIndex = 0;
+}
+
+<div class="govuk-breadcrumbs govuk-!-margin-bottom-7">
+  <ol class="govuk-breadcrumbs__list">
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="#">Home</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="#">Find a CAB</a>
+    </li>
+    <li class="govuk-breadcrumbs__list-item">
+      <a class="govuk-breadcrumbs__link" href="#">Search results</a>
+    </li>
+  </ol>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Find a CAB</h1>
+  </div>
+</div>
+<div class="govuk-grid-row govuk-!-margin-bottom-7">
+  <div class="govuk-grid-column-full">
+    <a href="/" class="govuk-back-link">Back</a>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-4">
+  <div class="govuk-grid-column-full">
+    <span class="govuk-caption-m govuk-!-margin-bottom-2">Conformity Assessment Body (CAB)</span>
+    <h1 class="govuk-heading-l">@Model.Name</h1>
+  </div>
+</div>
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full govuk-!-text-align-right">
+        <span class="govuk-caption-m govuk-!-font-size-16 app-cab-profile-dates">Published: @Model.Published</span>
+        <span class="govuk-caption-m govuk-!-font-size-16 app-cab-profile-dates">Last updated: @Model.LastUpdated</span>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-9">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">Contact details</h1>
+    <hr class="govuk-section-break govuk-section-break--visible">
+    <dl class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Address
+        </dt>
+        <dd class="govuk-summary-list__value">
+          @Model.Address
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Website
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <a href="http://@Model.Website" class="govuk-link" target="_blank" rel="noreferrer noopener">@Model.Website (opens in new tab)</a> 
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Email
+        </dt>
+        <dd class="govuk-summary-list__value">
+          @Model.Email
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Phone
+        </dt>
+        <dd class="govuk-summary-list__value">
+          @Model.Phone
+        </dd>
+      </div>
+    </dl>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-9">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">Details of appointment</h1>
+    <p class="govuk-body-m">View details of this CAB’s conformity assessment procedures for each of the following regulations.</p>
+    <hr class="govuk-section-break govuk-section-break--visible">
+    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+      @foreach (var detailsOfAppointment in Model.DetailsOfAppointments)
+      {
+        accordionIndex++;
+        <div class="govuk-accordion__section ">
+          <div class="govuk-accordion__section-header">
+            <h2 class="govuk-accordion__section-heading">
+              <span class="govuk-accordion__section-button" id="accordion-default-heading-@accordionIndex">
+                @detailsOfAppointment.Title
+              </span>
+            </h2>
+          </div>
+          <div id="accordion-default-content-@accordionIndex" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-@accordionIndex">
+            <p class="govuk-body">This CAB is accredited to approve the following.</p>
+            @foreach (var appointmentDetail in detailsOfAppointment.AppointmentDetails)
+            {
+              <div class="app-cab-profile-appointment-detail-card govuk-!-margin-bottom-7">
+                <dl class="govuk-summary-list">
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                      Products
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                      <div>
+                        <p class="govuk-body">@appointmentDetail.Products.Description</p>
+                        <ul class="govuk-list govuk-list--bullet">
+                          @foreach (var product in appointmentDetail.Products.Products)
+                          {
+                            <li>@product</li>
+                          }
+                        </ul>
+                      </div>
+                    </dd>
+                  </div>
+                  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                    <dt class="govuk-summary-list__key">
+                      Applicable conformity assessment procedures
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                      @foreach (var assessmentProcedure in appointmentDetail.ApplicableConformityAssessmentProcedures)
+                      {
+                        <h3 class="govuk-heading-s">@assessmentProcedure.Title</h3>
+                        <p class="govuk-body">@assessmentProcedure.Description</p>
+                      }
+                    </dd>
+                  </div>
+                </dl>
+              </div>
+            }
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-9">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">Body and accreditation details</h1>
+    <hr class="govuk-section-break govuk-section-break--visible">
+    <dl class="govuk-summary-list">
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Body number
+    </dt>
+    <dd class="govuk-summary-list__value">
+      @Model.BodyNumber
+    </dd>
+  </div>
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Body type
+    </dt>
+    <dd class="govuk-summary-list__value">
+      @Model.BodyType
+    </dd>
+  </div>
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Registered office location
+    </dt>
+    <dd class="govuk-summary-list__value">
+      @Model.RegisteredOfficeLocation
+    </dd>
+  </div>
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Testing locations
+    </dt>
+    <dd class="govuk-summary-list__value">
+      @Model.TestingLocations
+    </dd>
+  </div>
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Accreditation body
+    </dt>
+    <dd class="govuk-summary-list__value">
+      @Html.Raw(Model.AccreditaionBody)
+    </dd>
+  </div>
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Accreditation standard
+    </dt>
+    <dd class="govuk-summary-list__value">
+      @Model.AccreditationStandard
+    </dd>
+  </div>
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Appointment details
+    </dt>
+    <dd class="govuk-summary-list__value">
+      @Html.Raw(Model.AppointmentDetails)
+    </dd>
+  </div>
+</dl>
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-9">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">Locations where certification activities are undertaken</h1>
+    <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
+    <p class="govuk-body-m">@Model.Locations</p>
+    <hr class="govuk-section-break govuk-section-break--visible">
+  </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-9">
+  <div class="govuk-grid-column-full">
+    <h1 class="govuk-heading-l">Appointment revision details</h1>
+    <table class="govuk-table">
+      <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Version</th>
+        <th scope="col" class="govuk-table__header">Date</th>
+        <th scope="col" class="govuk-table__header">Details</th>
+      </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+      @foreach (var appointmentRevision in Model.AppointmentRevisions)
+      {
+        <tr class="govuk-table__row">
+          <th scope="row" class="govuk-table__cell">@appointmentRevision.Version</th>
+          <td class="govuk-table__cell">@appointmentRevision.Date</td>
+          <td class="govuk-table__cell">@appointmentRevision.Details</td>
+        </tr>
+      }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script src="/assets/js/govuk-frontend-all.js"></script>
+<script>
+    window.GOVUKFrontend.initAll();
+</script>
+
+
