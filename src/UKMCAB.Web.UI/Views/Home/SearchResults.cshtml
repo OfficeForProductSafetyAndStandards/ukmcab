@@ -3,6 +3,7 @@
     {
         new SearchResultViewModel
         {
+            id = "1",
             Name = "Five Star Testing Ltd",
             Address = "28 Hampton Estate, Wickham, East Sussex, GU29 INY, UK",
             Blurb = @"Body type: Approved body and 1 others Registered office location: United Kingdom
@@ -15,6 +16,7 @@
         },
         new SearchResultViewModel
         {
+            id = "2",
             Name = "British Engineering Services Ltd",
             Address = "Holmes Road, Lymm, Cheshire, WA3 20S, UK",
             Blurb = @"Body type: Approved body and 2 others Registered office location: United Kingdom
@@ -27,6 +29,7 @@
         },
         new SearchResultViewModel
         {
+            id = "3",
             Name = "UI-CD International (UK) Ltd",
             Address = "Stock Road, High Wycombe, Buckinghamshire, HP14 4N, IJKD",
             Blurb = @"Body type: Approved body and 1 others Registered office location: United Kingdom
@@ -1411,7 +1414,7 @@
             {
                 <li class="app-search-results__result">
                     <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
-                        <a class="govuk-link" href="#!">@result.Name</a>
+                        <a asp-action="Profile" asp-route-id="@result.id">@result.Name</a>
                     </h3>
                     <p class="govuk-body-s govuk-!-margin-bottom-1">
                         @result.Address
