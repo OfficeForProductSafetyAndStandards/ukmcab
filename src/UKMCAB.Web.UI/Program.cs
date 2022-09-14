@@ -1,4 +1,5 @@
 using UKMCAB.Common;
+using UKMCAB.Data;
 using UKMCAB.Web.UI.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;
 
@@ -10,6 +11,7 @@ builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+builder.Services.AddHostedService<UmbracoDataRefreshBackgroundService>();
 
 // =================================================================================================
 
@@ -19,4 +21,8 @@ app.UseStaticFiles();
 app.MapRazorPages();
 app.MapDefaultControllerRoute();
 app.MapControllers();
+
+CabRepository.Config = builder.Configuration; // todo: use ioc etc.
+await CabRepository.LoadAsync(); // todo: use ioc
+
 app.Run();
