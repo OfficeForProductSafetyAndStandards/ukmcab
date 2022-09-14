@@ -1,11 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UKMCAB.Web.UI.Models.ViewModels;
+using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Controllers;
 
 [Route("")]
 public class HomeController : Controller
 {
+    private readonly ISearchFilterService _searchFilterService;
+
+    public HomeController(ISearchFilterService searchFilterService)
+    {
+        _searchFilterService = searchFilterService;
+    }
+    
     public class Routes
     {
         public const string Index = "home.index";
@@ -27,9 +35,22 @@ public class HomeController : Controller
     }
 
     [HttpGet("results", Name = Routes.SearchResults)]
-    public IActionResult SearchResults()
+    public IActionResult SearchResults(SearchResultsViewModel searchResultsViewModel)
     {
-        return View();
+        LoadFilters(searchResultsViewModel);
+
+        searchResultsViewModel.SearchResultViewModels = GetSearchResult();
+
+        return View(searchResultsViewModel);
+    }
+
+    private void LoadFilters(SearchResultsViewModel searchResultsViewModel)
+    {
+        searchResultsViewModel.BodyTypeOptions = _searchFilterService.BodyTypeFilter;
+        searchResultsViewModel.RegisteredOfficeLocationOptions = _searchFilterService.RegisteredOfficeLocationFilter;
+        searchResultsViewModel.TestingLocationOptions = _searchFilterService.TestingLocationFilter;
+        searchResultsViewModel.LegislativeAreaOptions = _searchFilterService.LegislativeAreaFilter;
+        searchResultsViewModel.CheckSelecetedItems();
     }
     
     [HttpGet("profile", Name = Routes.Profile)]
@@ -38,6 +59,52 @@ public class HomeController : Controller
         return View(GetProfile(id));
     }
 
+    private List<SearchResultViewModel> GetSearchResult()
+    {
+        return new List<SearchResultViewModel>
+        {
+            new SearchResultViewModel
+            {
+                id = "1",
+                Name = "Five Star Testing Ltd",
+                Address = "28 Hampton Estate, Wickham, East Sussex, GU29 INY, UK",
+                Blurb = @"Body type: Approved body and 1 others Registered office location: United Kingdom
+                    Testing locations: United Kingdom Legislative area: Noise emissions in the
+                    environment by equipment for use outdoors",
+                BodyType = "Approved body and 1 other",
+                RegisteredOfficeLocation = "United Kingdom",
+                TestingLocations = "United Kingdom",
+                LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
+            },
+            new SearchResultViewModel
+            {
+                id = "2",
+                Name = "British Engineering Services Ltd",
+                Address = "Holmes Road, Lymm, Cheshire, WA3 20S, UK",
+                Blurb = @"Body type: Approved body and 2 others Registered office location: United Kingdom
+                    Testing locations: United Kingdom Legislative area: Noise emissions in the
+                    environment by equipment for use outdoors",
+                BodyType = "Approved body and 2 others",
+                RegisteredOfficeLocation = "United Kingdom",
+                TestingLocations = "United Kingdom",
+                LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
+            },
+            new SearchResultViewModel
+            {
+                id = "3",
+                Name = "UI-CD International (UK) Ltd",
+                Address = "Stock Road, High Wycombe, Buckinghamshire, HP14 4N, IJKD",
+                Blurb = @"Body type: Approved body and 1 others Registered office location: United Kingdom
+                    Testing locations: United Kingdom Legislative area: Noise emissions in the
+                    environment by equipment for use outdoors",
+                BodyType = "Approved body and 1 other",
+                RegisteredOfficeLocation = "United Kingdom",
+                TestingLocations = "United Kingdom",
+                LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
+            }
+        };
+    }
+    
     private ProfileViewModel GetProfile(string id)
     {
         return new ProfileViewModel

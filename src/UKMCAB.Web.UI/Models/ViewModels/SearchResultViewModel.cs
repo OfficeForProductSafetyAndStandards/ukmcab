@@ -1,4 +1,4 @@
-﻿namespace UKMCAB.Web.UI.Models;
+﻿namespace UKMCAB.Web.UI.Models.ViewModels;
 
 public class SearchResultViewModel
 {
