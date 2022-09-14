@@ -1,11 +1,20 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels;
+using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Controllers;
 
 [Route("")]
 public class HomeController : Controller
 {
+    private readonly ISearchFilterService _searchFilterService;
+
+    public HomeController(ISearchFilterService searchFilterService)
+    {
+        _searchFilterService = searchFilterService;
+    }
+    
     public class Routes
     {
         public const string Index = "home.index";
@@ -27,9 +36,22 @@ public class HomeController : Controller
     }
 
     [HttpGet("results", Name = Routes.SearchResults)]
-    public IActionResult SearchResults()
+    public IActionResult SearchResults(SearchResultsViewModel searchResultsViewModel)
     {
-        return View();
+        LoadFilters(searchResultsViewModel);
+
+        searchResultsViewModel.SearchResultViewModels = GetSearchResult(searchResultsViewModel);
+
+        return View(searchResultsViewModel);
+    }
+
+    private void LoadFilters(SearchResultsViewModel searchResultsViewModel)
+    {
+        searchResultsViewModel.BodyTypeOptions = _searchFilterService.BodyTypeFilter;
+        searchResultsViewModel.RegisteredOfficeLocationOptions = _searchFilterService.RegisteredOfficeLocationFilter;
+        searchResultsViewModel.TestingLocationOptions = _searchFilterService.TestingLocationFilter;
+        searchResultsViewModel.LegislativeAreaOptions = _searchFilterService.LegislativeAreaFilter;
+        searchResultsViewModel.CheckSelecetedItems();
     }
     
     [HttpGet("profile", Name = Routes.Profile)]
@@ -38,6 +60,25 @@ public class HomeController : Controller
         return View(GetProfile(id));
     }
 
+    private List<SearchResultViewModel> GetSearchResult(SearchResultsViewModel searchResultsViewModel)
+    {
+        var cabData = CabRepository.Search(searchResultsViewModel.Keywords, searchResultsViewModel.TestingLocations,
+            searchResultsViewModel.BodyTypes, searchResultsViewModel.RegisteredOfficeLocations,
+            searchResultsViewModel.LegislativeAreas);
+
+        return cabData.Select(c => new SearchResultViewModel
+        {
+            id = c.ExternalID,
+            Name = c.Name,
+            Address = c.Address,
+            Blurb = "TBD",
+            BodyType = string.Join(", ", c.BodyType),
+            RegisteredOfficeLocation = string.Join(", ", c.RegisteredOfficeLocation),
+            TestingLocations = string.Join(", ", c.TestingLocations),
+            LegislativeArea = string.Join(", ", c.LegislativeAreas),
+        }).ToList();
+    }
+    
     private ProfileViewModel GetProfile(string id)
     {
         return new ProfileViewModel

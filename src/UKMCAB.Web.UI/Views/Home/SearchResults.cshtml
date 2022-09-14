@@ -1,48 +1,5 @@
-﻿@{
-    var results = new SearchResultViewModel[]
-    {
-        new SearchResultViewModel
-        {
-            id = "1",
-            Name = "Five Star Testing Ltd",
-            Address = "28 Hampton Estate, Wickham, East Sussex, GU29 INY, UK",
-            Blurb = @"Body type: Approved body and 1 others Registered office location: United Kingdom
-                    Testing locations: United Kingdom Legislative area: Noise emissions in the
-                    environment by equipment for use outdoors",
-            BodyType = "Approved body and 1 other",
-            RegisteredOfficeLocation = "United Kingdom",
-            TestingLocations = "United Kingdom",
-            LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
-        },
-        new SearchResultViewModel
-        {
-            id = "2",
-            Name = "British Engineering Services Ltd",
-            Address = "Holmes Road, Lymm, Cheshire, WA3 20S, UK",
-            Blurb = @"Body type: Approved body and 2 others Registered office location: United Kingdom
-                    Testing locations: United Kingdom Legislative area: Noise emissions in the
-                    environment by equipment for use outdoors",
-            BodyType = "Approved body and 2 others",
-            RegisteredOfficeLocation = "United Kingdom",
-            TestingLocations = "United Kingdom",
-            LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
-        },
-        new SearchResultViewModel
-        {
-            id = "3",
-            Name = "UI-CD International (UK) Ltd",
-            Address = "Stock Road, High Wycombe, Buckinghamshire, HP14 4N, IJKD",
-            Blurb = @"Body type: Approved body and 1 others Registered office location: United Kingdom
-                    Testing locations: United Kingdom Legislative area: Noise emissions in the
-                    environment by equipment for use outdoors",
-            BodyType = "Approved body and 1 other",
-            RegisteredOfficeLocation = "United Kingdom",
-            TestingLocations = "United Kingdom",
-            LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
-        },
-
-    };
-}
+﻿@using UKMCAB.Web.UI.Models.ViewModels
+@model SearchResultsViewModel
 
 <a href="@Url.RouteUrl(HomeController.Routes.Search)" class="govuk-back-link">Back</a>
 
@@ -52,8 +9,8 @@
 
     <div class="govuk-grid-column-one-third govuk-body" style="">
 
-
-        <form>
+        <form id="search-results-form" asp-action="SearchResults" method="get">
+            @Html.HiddenFor(x => Model.Keywords)
             <div id="facet-wrapper" data-module="mobile-filters-modal" class="facets" role="search" aria-label="Search filters" data-mobile-filters-modal-module-started="true">
                 <div class="facets__box">
                     <div class="facets__header">
@@ -68,8 +25,7 @@
                         </button>
                     </div>
                     <div class="facets__content">
-
-
+                        
                         <div class="app-c-option-select js-collapsible" data-module="option-select" data-closed-on-load="true" data-input-aria-controls="js-search-results-info" data-option-select-module-started="true">
                             <h2 class="app-c-option-select__heading js-container-heading">
                                 <button class="js-container-button app-c-option-select__title app-c-option-select__button" type="button" aria-expanded="true" id="option-select-title-body-type" aria-controls="uk_market_conformity_assessment_body_type">Body type</button>
@@ -78,78 +34,23 @@
                             </h2>
                             <div role="group" aria-labelledby="option-select-title-body-type" class="app-c-option-select__container js-options-container" id="uk_market_conformity_assessment_body_type" tabindex="-1" style="height: 260.333px;">
                                 <div class="app-c-option-select__container-inner js-auto-height-inner">
-
+                        
                                     <div id="checkboxes-0cce4af3" class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small" data-module="gem-checkboxes govuk-checkboxes" data-gem-checkboxes-module-started="true" data-govuk-checkboxes-module-started="true">
                                         <fieldset class="govuk-fieldset">
                                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden">Body type</legend>
-
-
-
-
                                             <ul class="govuk-checkboxes gem-c-checkboxes__list">
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-approved-body" value="approved-body" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="Approved body" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-approved-body" class="govuk-label govuk-checkboxes__label">Approved body</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-technical-assessment-body" value="technical-assessment-body" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="Technical assessment body" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-technical-assessment-body" class="govuk-label govuk-checkboxes__label">Technical assessment body</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-user-inspectorate" value="user-inspectorate" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="User inspectorate" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-user-inspectorate" class="govuk-label govuk-checkboxes__label">User inspectorate</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-recognised-third-party-organisation" value="recognised-third-party-organisation" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="Recognised third-party organisation" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-recognised-third-party-organisation" class="govuk-label govuk-checkboxes__label">Recognised third-party organisation</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-overseas-body" value="overseas-body" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="Overseas Body" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-overseas-body" class="govuk-label govuk-checkboxes__label">Overseas Body</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-notified-body-ni" value="notified-body-ni" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="NI Notified body" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-notified-body-ni" class="govuk-label govuk-checkboxes__label">NI Notified body</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-uk-body-mra-australia" value="uk-body-mra-australia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="UK body designated under MRA: Australia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-uk-body-mra-australia" class="govuk-label govuk-checkboxes__label">UK body designated under MRA: Australia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-uk-body-mra-new-zealand" value="uk-body-mra-new-zealand" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="UK body designated under MRA: New Zealand" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-uk-body-mra-new-zealand" class="govuk-label govuk-checkboxes__label">UK body designated under MRA: New Zealand</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-uk-body-mra-usa" value="uk-body-mra-usa" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="UK body designated under MRA: USA" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-uk-body-mra-usa" class="govuk-label govuk-checkboxes__label">UK body designated under MRA: USA</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-uk-body-mra-japan" value="uk-body-mra-japan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="UK body designated under MRA: Japan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-uk-body-mra-japan" class="govuk-label govuk-checkboxes__label">UK body designated under MRA: Japan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_type-uk-body-mra-canada" value="uk-body-mra-canada" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="UK body designated under MRA: Canada" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_type-uk-body-mra-canada" class="govuk-label govuk-checkboxes__label">UK body designated under MRA: Canada</label>
-
-
-                                                </li>
+                                                @foreach (var filterOption in Model.BodyTypeOptions)
+                                                {
+                                                    <li class="govuk-checkboxes__item">
+                                                        <input type="checkbox" name="BodyTypes" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
+                                                    </li>
+                                                }
                                             </ul>
                                         </fieldset>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
 
                         <div class="app-c-option-select js-collapsible js-opened" data-module="option-select" data-closed-on-load="true" data-input-aria-controls="js-search-results-info" data-option-select-module-started="true">
                             <h2 class="app-c-option-select__heading js-container-heading">
@@ -163,79 +64,19 @@
                                     <div id="checkboxes-3774339b" class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small" data-module="gem-checkboxes govuk-checkboxes" data-gem-checkboxes-module-started="true" data-govuk-checkboxes-module-started="true">
                                         <fieldset class="govuk-fieldset">
                                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden">Registered office location</legend>
-
-
-
-
                                             <ul class="govuk-checkboxes gem-c-checkboxes__list">
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-united-kingdom" value="united-kingdom" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="United Kingdom" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-united-kingdom" class="govuk-label govuk-checkboxes__label">United Kingdom</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-australia" value="australia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="Australia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-australia" class="govuk-label govuk-checkboxes__label">Australia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-canada" value="canada" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="Canada" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-canada" class="govuk-label govuk-checkboxes__label">Canada</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-france" value="france" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="France" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-france" class="govuk-label govuk-checkboxes__label">France</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-germany" value="germany" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="Germany" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-germany" class="govuk-label govuk-checkboxes__label">Germany</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-hungary" value="hungary" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="Hungary" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-hungary" class="govuk-label govuk-checkboxes__label">Hungary</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-israel" value="israel" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="Israel" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-israel" class="govuk-label govuk-checkboxes__label">Israel</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-japan" value="japan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="Japan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-japan" class="govuk-label govuk-checkboxes__label">Japan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-new-zealand" value="new-zealand" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="New Zealand" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-new-zealand" class="govuk-label govuk-checkboxes__label">New Zealand</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-slovakia" value="slovakia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="Slovakia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-slovakia" class="govuk-label govuk-checkboxes__label">Slovakia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-switzerland" value="switzerland" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="Switzerland" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-switzerland" class="govuk-label govuk-checkboxes__label">Switzerland</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="" id="uk_market_conformity_assessment_body_registered_office_location-united-states-of-america" value="united-states-of-america" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="United States of America" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_registered_office_location-united-states-of-america" class="govuk-label govuk-checkboxes__label">United States of America</label>
-
-
-                                                </li>
+                                                @foreach (var filterOption in Model.RegisteredOfficeLocationOptions)
+                                                {
+                                                    <li class="govuk-checkboxes__item">
+                                                        <input type="checkbox" name="RegisteredOfficeLocations" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
+                                                    </li>
+                                                }
                                             </ul>
                                         </fieldset>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
 
                         <div class="app-c-option-select js-collapsible js-opened" data-module="option-select" data-closed-on-load="true" data-input-aria-controls="js-search-results-info" data-option-select-module-started="true">
                             <h2 class="app-c-option-select__heading js-container-heading">
@@ -249,994 +90,19 @@
                                     <div id="checkboxes-5760821a" class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small" data-module="gem-checkboxes govuk-checkboxes" data-gem-checkboxes-module-started="true" data-govuk-checkboxes-module-started="true">
                                         <fieldset class="govuk-fieldset">
                                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden">Testing locations</legend>
-
-
-
-
                                             <ul class="govuk-checkboxes gem-c-checkboxes__list">
+                                            @foreach (var filterOption in Model.TestingLocationOptions)
+                                            {
                                                 <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-united-kingdom" value="united-kingdom" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="United Kingdom" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-united-kingdom" class="govuk-label govuk-checkboxes__label">United Kingdom</label>
-
-
+                                                    <input type="checkbox" name="TestingLocations" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
                                                 </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-afghanistan" value="afghanistan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Afghanistan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-afghanistan" class="govuk-label govuk-checkboxes__label">Afghanistan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-albania" value="albania" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Albania" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-albania" class="govuk-label govuk-checkboxes__label">Albania</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-algeria" value="algeria" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Algeria" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-algeria" class="govuk-label govuk-checkboxes__label">Algeria</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-andorra" value="andorra" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Andorra" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-andorra" class="govuk-label govuk-checkboxes__label">Andorra</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-angola" value="angola" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Angola" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-angola" class="govuk-label govuk-checkboxes__label">Angola</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-antigua-and-barbuda" value="antigua-and-barbuda" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Antigua and Barbuda" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-antigua-and-barbuda" class="govuk-label govuk-checkboxes__label">Antigua and Barbuda</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-argentina" value="argentina" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Argentina" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-argentina" class="govuk-label govuk-checkboxes__label">Argentina</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-armenia" value="armenia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Armenia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-armenia" class="govuk-label govuk-checkboxes__label">Armenia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-australia" value="australia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Australia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-australia" class="govuk-label govuk-checkboxes__label">Australia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-austria" value="austria" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Austria" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-austria" class="govuk-label govuk-checkboxes__label">Austria</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-azerbaijan" value="azerbaijan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Azerbaijan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-azerbaijan" class="govuk-label govuk-checkboxes__label">Azerbaijan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-bahrain" value="bahrain" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Bahrain" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-bahrain" class="govuk-label govuk-checkboxes__label">Bahrain</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-bangladesh" value="bangladesh" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Bangladesh" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-bangladesh" class="govuk-label govuk-checkboxes__label">Bangladesh</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-barbados" value="barbados" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Barbados" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-barbados" class="govuk-label govuk-checkboxes__label">Barbados</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-belarus" value="belarus" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Belarus" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-belarus" class="govuk-label govuk-checkboxes__label">Belarus</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-belgium" value="belgium" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Belgium" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-belgium" class="govuk-label govuk-checkboxes__label">Belgium</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-belize" value="belize" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Belize" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-belize" class="govuk-label govuk-checkboxes__label">Belize</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-benin" value="benin" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Benin" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-benin" class="govuk-label govuk-checkboxes__label">Benin</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-bhutan" value="bhutan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Bhutan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-bhutan" class="govuk-label govuk-checkboxes__label">Bhutan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-bolivia" value="bolivia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Bolivia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-bolivia" class="govuk-label govuk-checkboxes__label">Bolivia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-bosnia-and-herzegovina" value="bosnia-and-herzegovina" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Bosnia and Herzegovina" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-bosnia-and-herzegovina" class="govuk-label govuk-checkboxes__label">Bosnia and Herzegovina</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-botswana" value="botswana" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Botswana" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-botswana" class="govuk-label govuk-checkboxes__label">Botswana</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-brazil" value="brazil" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Brazil" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-brazil" class="govuk-label govuk-checkboxes__label">Brazil</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-brunei" value="brunei" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Brunei" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-brunei" class="govuk-label govuk-checkboxes__label">Brunei</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-bulgaria" value="bulgaria" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Bulgaria" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-bulgaria" class="govuk-label govuk-checkboxes__label">Bulgaria</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-burkina-faso" value="burkina-faso" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Burkina Faso" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-burkina-faso" class="govuk-label govuk-checkboxes__label">Burkina Faso</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-burma" value="burma" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Burma" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-burma" class="govuk-label govuk-checkboxes__label">Burma</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-burundi" value="burundi" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Burundi" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-burundi" class="govuk-label govuk-checkboxes__label">Burundi</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-cambodia" value="cambodia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Cambodia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-cambodia" class="govuk-label govuk-checkboxes__label">Cambodia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-cameroon" value="cameroon" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Cameroon" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-cameroon" class="govuk-label govuk-checkboxes__label">Cameroon</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-canada" value="canada" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Canada" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-canada" class="govuk-label govuk-checkboxes__label">Canada</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-cape-verde" value="cape-verde" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Cape Verde" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-cape-verde" class="govuk-label govuk-checkboxes__label">Cape Verde</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-central-african-republic" value="central-african-republic" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Central African Republic" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-central-african-republic" class="govuk-label govuk-checkboxes__label">Central African Republic</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-chad" value="chad" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Chad" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-chad" class="govuk-label govuk-checkboxes__label">Chad</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-chile" value="chile" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Chile" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-chile" class="govuk-label govuk-checkboxes__label">Chile</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-china" value="china" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="China" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-china" class="govuk-label govuk-checkboxes__label">China</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-colombia" value="colombia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Colombia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-colombia" class="govuk-label govuk-checkboxes__label">Colombia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-comoros" value="comoros" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Comoros" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-comoros" class="govuk-label govuk-checkboxes__label">Comoros</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-congo" value="congo" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Congo" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-congo" class="govuk-label govuk-checkboxes__label">Congo</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-congo-democratic-republic" value="congo-democratic-republic" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Congo (Democratic Republic)" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-congo-democratic-republic" class="govuk-label govuk-checkboxes__label">Congo (Democratic Republic)</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-costa-rica" value="costa-rica" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Costa Rica" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-costa-rica" class="govuk-label govuk-checkboxes__label">Costa Rica</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-croatia" value="croatia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Croatia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-croatia" class="govuk-label govuk-checkboxes__label">Croatia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-cuba" value="cuba" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Cuba" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-cuba" class="govuk-label govuk-checkboxes__label">Cuba</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-cyprus" value="cyprus" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Cyprus" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-cyprus" class="govuk-label govuk-checkboxes__label">Cyprus</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-czechia" value="czechia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Czechia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-czechia" class="govuk-label govuk-checkboxes__label">Czechia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-denmark" value="denmark" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Denmark" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-denmark" class="govuk-label govuk-checkboxes__label">Denmark</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-djibouti" value="djibouti" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Djibouti" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-djibouti" class="govuk-label govuk-checkboxes__label">Djibouti</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-dominica" value="dominica" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Dominica" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-dominica" class="govuk-label govuk-checkboxes__label">Dominica</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-dominican-republic" value="dominican-republic" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Dominican Republic" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-dominican-republic" class="govuk-label govuk-checkboxes__label">Dominican Republic</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-east-timor" value="east-timor" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="East Timor" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-east-timor" class="govuk-label govuk-checkboxes__label">East Timor</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-ecuador" value="ecuador" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Ecuador" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-ecuador" class="govuk-label govuk-checkboxes__label">Ecuador</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-egypt" value="egypt" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Egypt" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-egypt" class="govuk-label govuk-checkboxes__label">Egypt</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-el-salvador" value="el-salvador" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="El Salvador" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-el-salvador" class="govuk-label govuk-checkboxes__label">El Salvador</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-equatorial-guinea" value="equatorial-guinea" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Equatorial Guinea" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-equatorial-guinea" class="govuk-label govuk-checkboxes__label">Equatorial Guinea</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-eritrea" value="eritrea" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Eritrea" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-eritrea" class="govuk-label govuk-checkboxes__label">Eritrea</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-estonia" value="estonia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Estonia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-estonia" class="govuk-label govuk-checkboxes__label">Estonia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-eswatini" value="eswatini" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Eswatini" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-eswatini" class="govuk-label govuk-checkboxes__label">Eswatini</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-ethiopia" value="ethiopia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Ethiopia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-ethiopia" class="govuk-label govuk-checkboxes__label">Ethiopia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-fiji" value="fiji" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Fiji" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-fiji" class="govuk-label govuk-checkboxes__label">Fiji</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-finland" value="finland" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Finland" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-finland" class="govuk-label govuk-checkboxes__label">Finland</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-france" value="france" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="France" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-france" class="govuk-label govuk-checkboxes__label">France</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-gabon" value="gabon" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Gabon" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-gabon" class="govuk-label govuk-checkboxes__label">Gabon</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-georgia" value="georgia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Georgia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-georgia" class="govuk-label govuk-checkboxes__label">Georgia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-germany" value="germany" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Germany" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-germany" class="govuk-label govuk-checkboxes__label">Germany</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-ghana" value="ghana" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Ghana" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-ghana" class="govuk-label govuk-checkboxes__label">Ghana</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-greece" value="greece" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Greece" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-greece" class="govuk-label govuk-checkboxes__label">Greece</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-grenada" value="grenada" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Grenada" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-grenada" class="govuk-label govuk-checkboxes__label">Grenada</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-guatemala" value="guatemala" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Guatemala" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-guatemala" class="govuk-label govuk-checkboxes__label">Guatemala</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-guinea" value="guinea" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Guinea" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-guinea" class="govuk-label govuk-checkboxes__label">Guinea</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-guinea-bissau" value="guinea-bissau" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Guinea-Bissau" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-guinea-bissau" class="govuk-label govuk-checkboxes__label">Guinea-Bissau</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-guyana" value="guyana" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Guyana" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-guyana" class="govuk-label govuk-checkboxes__label">Guyana</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-haiti" value="haiti" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Haiti" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-haiti" class="govuk-label govuk-checkboxes__label">Haiti</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-honduras" value="honduras" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Honduras" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-honduras" class="govuk-label govuk-checkboxes__label">Honduras</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-hungary" value="hungary" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Hungary" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-hungary" class="govuk-label govuk-checkboxes__label">Hungary</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-iceland" value="iceland" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Iceland" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-iceland" class="govuk-label govuk-checkboxes__label">Iceland</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-india" value="india" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="India" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-india" class="govuk-label govuk-checkboxes__label">India</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-indonesia" value="indonesia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Indonesia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-indonesia" class="govuk-label govuk-checkboxes__label">Indonesia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-iran" value="iran" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Iran" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-iran" class="govuk-label govuk-checkboxes__label">Iran</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-iraq" value="iraq" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Iraq" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-iraq" class="govuk-label govuk-checkboxes__label">Iraq</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-ireland" value="ireland" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Ireland" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-ireland" class="govuk-label govuk-checkboxes__label">Ireland</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-israel" value="israel" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Israel" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-israel" class="govuk-label govuk-checkboxes__label">Israel</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-italy" value="italy" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Italy" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-italy" class="govuk-label govuk-checkboxes__label">Italy</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-ivory-coast" value="ivory-coast" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Ivory Coast" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-ivory-coast" class="govuk-label govuk-checkboxes__label">Ivory Coast</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-jamaica" value="jamaica" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Jamaica" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-jamaica" class="govuk-label govuk-checkboxes__label">Jamaica</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-japan" value="japan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Japan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-japan" class="govuk-label govuk-checkboxes__label">Japan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-jordan" value="jordan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Jordan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-jordan" class="govuk-label govuk-checkboxes__label">Jordan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-kazakhstan" value="kazakhstan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Kazakhstan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-kazakhstan" class="govuk-label govuk-checkboxes__label">Kazakhstan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-kenya" value="kenya" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Kenya" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-kenya" class="govuk-label govuk-checkboxes__label">Kenya</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-kiribati" value="kiribati" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Kiribati" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-kiribati" class="govuk-label govuk-checkboxes__label">Kiribati</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-north-korea" value="north-korea" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="North Korea" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-north-korea" class="govuk-label govuk-checkboxes__label">North Korea</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-south-korea" value="south-korea" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="South Korea" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-south-korea" class="govuk-label govuk-checkboxes__label">South Korea</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-kosovo" value="kosovo" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Kosovo" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-kosovo" class="govuk-label govuk-checkboxes__label">Kosovo</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-kuwait" value="kuwait" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Kuwait" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-kuwait" class="govuk-label govuk-checkboxes__label">Kuwait</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-kyrgyzstan" value="kyrgyzstan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Kyrgyzstan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-kyrgyzstan" class="govuk-label govuk-checkboxes__label">Kyrgyzstan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-laos" value="laos" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Laos" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-laos" class="govuk-label govuk-checkboxes__label">Laos</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-latvia" value="latvia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Latvia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-latvia" class="govuk-label govuk-checkboxes__label">Latvia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-lebanon" value="lebanon" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Lebanon" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-lebanon" class="govuk-label govuk-checkboxes__label">Lebanon</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-lesotho" value="lesotho" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Lesotho" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-lesotho" class="govuk-label govuk-checkboxes__label">Lesotho</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-liberia" value="liberia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Liberia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-liberia" class="govuk-label govuk-checkboxes__label">Liberia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-libya" value="libya" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Libya" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-libya" class="govuk-label govuk-checkboxes__label">Libya</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-liechtenstein" value="liechtenstein" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Liechtenstein" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-liechtenstein" class="govuk-label govuk-checkboxes__label">Liechtenstein</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-lithuania" value="lithuania" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Lithuania" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-lithuania" class="govuk-label govuk-checkboxes__label">Lithuania</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-luxembourg" value="luxembourg" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Luxembourg" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-luxembourg" class="govuk-label govuk-checkboxes__label">Luxembourg</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-madagascar" value="madagascar" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Madagascar" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-madagascar" class="govuk-label govuk-checkboxes__label">Madagascar</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-malawi" value="malawi" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Malawi" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-malawi" class="govuk-label govuk-checkboxes__label">Malawi</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-malaysia" value="malaysia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Malaysia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-malaysia" class="govuk-label govuk-checkboxes__label">Malaysia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-maldives" value="maldives" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Maldives" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-maldives" class="govuk-label govuk-checkboxes__label">Maldives</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-mali" value="mali" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Mali" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-mali" class="govuk-label govuk-checkboxes__label">Mali</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-malta" value="malta" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Malta" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-malta" class="govuk-label govuk-checkboxes__label">Malta</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-marshall-islands" value="marshall-islands" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Marshall Islands" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-marshall-islands" class="govuk-label govuk-checkboxes__label">Marshall Islands</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-mauritania" value="mauritania" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Mauritania" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-mauritania" class="govuk-label govuk-checkboxes__label">Mauritania</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-mauritius" value="mauritius" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Mauritius" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-mauritius" class="govuk-label govuk-checkboxes__label">Mauritius</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-mexico" value="mexico" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Mexico" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-mexico" class="govuk-label govuk-checkboxes__label">Mexico</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-micronesia" value="micronesia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Micronesia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-micronesia" class="govuk-label govuk-checkboxes__label">Micronesia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-moldova" value="moldova" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Moldova" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-moldova" class="govuk-label govuk-checkboxes__label">Moldova</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-monaco" value="monaco" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Monaco" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-monaco" class="govuk-label govuk-checkboxes__label">Monaco</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-mongolia" value="mongolia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Mongolia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-mongolia" class="govuk-label govuk-checkboxes__label">Mongolia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-montenegro" value="montenegro" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Montenegro" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-montenegro" class="govuk-label govuk-checkboxes__label">Montenegro</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-morocco" value="morocco" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Morocco" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-morocco" class="govuk-label govuk-checkboxes__label">Morocco</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-mozambique" value="mozambique" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Mozambique" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-mozambique" class="govuk-label govuk-checkboxes__label">Mozambique</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-namibia" value="namibia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Namibia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-namibia" class="govuk-label govuk-checkboxes__label">Namibia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-nauru" value="nauru" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Nauru" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-nauru" class="govuk-label govuk-checkboxes__label">Nauru</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-nepal" value="nepal" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Nepal" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-nepal" class="govuk-label govuk-checkboxes__label">Nepal</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-netherlands" value="netherlands" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Netherlands" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-netherlands" class="govuk-label govuk-checkboxes__label">Netherlands</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-new-zealand" value="new-zealand" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="New Zealand" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-new-zealand" class="govuk-label govuk-checkboxes__label">New Zealand</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-nicaragua" value="nicaragua" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Nicaragua" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-nicaragua" class="govuk-label govuk-checkboxes__label">Nicaragua</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-niger" value="niger" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Niger" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-niger" class="govuk-label govuk-checkboxes__label">Niger</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-nigeria" value="nigeria" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Nigeria" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-nigeria" class="govuk-label govuk-checkboxes__label">Nigeria</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-north-macedonia" value="north-macedonia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="North Macedonia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-north-macedonia" class="govuk-label govuk-checkboxes__label">North Macedonia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-norway" value="norway" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Norway" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-norway" class="govuk-label govuk-checkboxes__label">Norway</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-oman" value="oman" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Oman" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-oman" class="govuk-label govuk-checkboxes__label">Oman</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-pakistan" value="pakistan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Pakistan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-pakistan" class="govuk-label govuk-checkboxes__label">Pakistan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-palau" value="palau" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Palau" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-palau" class="govuk-label govuk-checkboxes__label">Palau</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-panama" value="panama" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Panama" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-panama" class="govuk-label govuk-checkboxes__label">Panama</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-papua-new-guinea" value="papua-new-guinea" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Papua New Guinea" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-papua-new-guinea" class="govuk-label govuk-checkboxes__label">Papua New Guinea</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-paraguay" value="paraguay" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Paraguay" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-paraguay" class="govuk-label govuk-checkboxes__label">Paraguay</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-peru" value="peru" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Peru" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-peru" class="govuk-label govuk-checkboxes__label">Peru</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-philippines" value="philippines" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Philippines" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-philippines" class="govuk-label govuk-checkboxes__label">Philippines</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-poland" value="poland" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Poland" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-poland" class="govuk-label govuk-checkboxes__label">Poland</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-portugal" value="portugal" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Portugal" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-portugal" class="govuk-label govuk-checkboxes__label">Portugal</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-qatar" value="qatar" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Qatar" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-qatar" class="govuk-label govuk-checkboxes__label">Qatar</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-romania" value="romania" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Romania" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-romania" class="govuk-label govuk-checkboxes__label">Romania</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-russia" value="russia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Russia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-russia" class="govuk-label govuk-checkboxes__label">Russia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-rwanda" value="rwanda" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Rwanda" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-rwanda" class="govuk-label govuk-checkboxes__label">Rwanda</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-st-kitts-and-nevis" value="st-kitts-and-nevis" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="St Kitts and Nevis" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-st-kitts-and-nevis" class="govuk-label govuk-checkboxes__label">St Kitts and Nevis</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-st-lucia" value="st-lucia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="St Lucia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-st-lucia" class="govuk-label govuk-checkboxes__label">St Lucia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-st-vincent" value="st-vincent" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="St Vincent" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-st-vincent" class="govuk-label govuk-checkboxes__label">St Vincent</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-samoa" value="samoa" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Samoa" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-samoa" class="govuk-label govuk-checkboxes__label">Samoa</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-san-marino" value="san-marino" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="San Marino" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-san-marino" class="govuk-label govuk-checkboxes__label">San Marino</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-sao-tome-and-principe" value="sao-tome-and-principe" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Sao Tome and Principe" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-sao-tome-and-principe" class="govuk-label govuk-checkboxes__label">Sao Tome and Principe</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-saudi-arabia" value="saudi-arabia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Saudi Arabia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-saudi-arabia" class="govuk-label govuk-checkboxes__label">Saudi Arabia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-senegal" value="senegal" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Senegal" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-senegal" class="govuk-label govuk-checkboxes__label">Senegal</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-serbia" value="serbia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Serbia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-serbia" class="govuk-label govuk-checkboxes__label">Serbia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-seychelles" value="seychelles" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Seychelles" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-seychelles" class="govuk-label govuk-checkboxes__label">Seychelles</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-sierra-leone" value="sierra-leone" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Sierra Leone" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-sierra-leone" class="govuk-label govuk-checkboxes__label">Sierra Leone</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-singapore" value="singapore" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Singapore" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-singapore" class="govuk-label govuk-checkboxes__label">Singapore</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-slovakia" value="slovakia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Slovakia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-slovakia" class="govuk-label govuk-checkboxes__label">Slovakia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-slovenia" value="slovenia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Slovenia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-slovenia" class="govuk-label govuk-checkboxes__label">Slovenia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-solomon-islands" value="solomon-islands" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Solomon Islands" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-solomon-islands" class="govuk-label govuk-checkboxes__label">Solomon Islands</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-somalia" value="somalia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Somalia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-somalia" class="govuk-label govuk-checkboxes__label">Somalia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-south-africa" value="south-africa" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="South Africa" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-south-africa" class="govuk-label govuk-checkboxes__label">South Africa</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-south-sudan" value="south-sudan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="South Sudan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-south-sudan" class="govuk-label govuk-checkboxes__label">South Sudan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-spain" value="spain" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Spain" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-spain" class="govuk-label govuk-checkboxes__label">Spain</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-sri-lanka" value="sri-lanka" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Sri Lanka" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-sri-lanka" class="govuk-label govuk-checkboxes__label">Sri Lanka</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-sudan" value="sudan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Sudan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-sudan" class="govuk-label govuk-checkboxes__label">Sudan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-suriname" value="suriname" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Suriname" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-suriname" class="govuk-label govuk-checkboxes__label">Suriname</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-sweden" value="sweden" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Sweden" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-sweden" class="govuk-label govuk-checkboxes__label">Sweden</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-switzerland" value="switzerland" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Switzerland" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-switzerland" class="govuk-label govuk-checkboxes__label">Switzerland</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-syria" value="syria" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Syria" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-syria" class="govuk-label govuk-checkboxes__label">Syria</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-tajikistan" value="tajikistan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Tajikistan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-tajikistan" class="govuk-label govuk-checkboxes__label">Tajikistan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-tanzania" value="tanzania" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Tanzania" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-tanzania" class="govuk-label govuk-checkboxes__label">Tanzania</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-thailand" value="thailand" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Thailand" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-thailand" class="govuk-label govuk-checkboxes__label">Thailand</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-the-bahamas" value="the-bahamas" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="The Bahamas" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-the-bahamas" class="govuk-label govuk-checkboxes__label">The Bahamas</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-the-gambia" value="the-gambia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="The Gambia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-the-gambia" class="govuk-label govuk-checkboxes__label">The Gambia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-togo" value="togo" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Togo" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-togo" class="govuk-label govuk-checkboxes__label">Togo</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-tonga" value="tonga" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Tonga" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-tonga" class="govuk-label govuk-checkboxes__label">Tonga</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-trinidad-and-tobago" value="trinidad-and-tobago" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Trinidad and Tobago" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-trinidad-and-tobago" class="govuk-label govuk-checkboxes__label">Trinidad and Tobago</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-tunisia" value="tunisia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Tunisia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-tunisia" class="govuk-label govuk-checkboxes__label">Tunisia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-turkey" value="turkey" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Turkey" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-turkey" class="govuk-label govuk-checkboxes__label">Turkey</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-turkmenistan" value="turkmenistan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Turkmenistan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-turkmenistan" class="govuk-label govuk-checkboxes__label">Turkmenistan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-tuvalu" value="tuvalu" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Tuvalu" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-tuvalu" class="govuk-label govuk-checkboxes__label">Tuvalu</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-uganda" value="uganda" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Uganda" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-uganda" class="govuk-label govuk-checkboxes__label">Uganda</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-ukraine" value="ukraine" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Ukraine" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-ukraine" class="govuk-label govuk-checkboxes__label">Ukraine</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-united-arab-emirates" value="united-arab-emirates" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="United Arab Emirates" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-united-arab-emirates" class="govuk-label govuk-checkboxes__label">United Arab Emirates</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-united-states" value="united-states" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="United States" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-united-states" class="govuk-label govuk-checkboxes__label">United States</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-uruguay" value="uruguay" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Uruguay" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-uruguay" class="govuk-label govuk-checkboxes__label">Uruguay</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-uzbekistan" value="uzbekistan" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Uzbekistan" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-uzbekistan" class="govuk-label govuk-checkboxes__label">Uzbekistan</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-vanuatu" value="vanuatu" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Vanuatu" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-vanuatu" class="govuk-label govuk-checkboxes__label">Vanuatu</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-vatican-city" value="vatican-city" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Vatican City" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-vatican-city" class="govuk-label govuk-checkboxes__label">Vatican City</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-venezuela" value="venezuela" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Venezuela" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-venezuela" class="govuk-label govuk-checkboxes__label">Venezuela</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-vietnam" value="vietnam" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Vietnam" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-vietnam" class="govuk-label govuk-checkboxes__label">Vietnam</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-yemen" value="yemen" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Yemen" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-yemen" class="govuk-label govuk-checkboxes__label">Yemen</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-zambia" value="zambia" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Zambia" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-zambia" class="govuk-label govuk-checkboxes__label">Zambia</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_testing_locations[]" id="uk_market_conformity_assessment_body_testing_locations-zimbabwe" value="zimbabwe" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="Zimbabwe" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_testing_locations-zimbabwe" class="govuk-label govuk-checkboxes__label">Zimbabwe</label>
-
-
-                                                </li>
+                                            }
                                             </ul>
                                         </fieldset>
                                     </div>
                                 </div>
                             </div>
                         </div>
-
-
 
                         <div class="app-c-option-select js-collapsible js-opened" data-module="option-select" data-closed-on-load="true" data-input-aria-controls="js-search-results-info" data-option-select-module-started="true">
                             <h2 class="app-c-option-select__heading js-container-heading">
@@ -1250,126 +116,13 @@
                                     <div id="checkboxes-f8570a30" class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small" data-module="gem-checkboxes govuk-checkboxes" data-gem-checkboxes-module-started="true" data-govuk-checkboxes-module-started="true">
                                         <fieldset class="govuk-fieldset">
                                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden">Legislative area</legend>
-
-
-
-
                                             <ul class="govuk-checkboxes gem-c-checkboxes__list">
+                                            @foreach (var filterOption in Model.LegislativeAreaOptions)
+                                            {
                                                 <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-cableway-installations" value="cableway-installations" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Cableway installations" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-cableway-installations" class="govuk-label govuk-checkboxes__label">Cableway installations</label>
-
-
+                                                    <input type="checkbox" name="LegislativeAreas" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
                                                 </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-construction-products" value="construction-products" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Construction products" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-construction-products" class="govuk-label govuk-checkboxes__label">Construction products</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-ecodesign" value="ecodesign" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Ecodesign" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-ecodesign" class="govuk-label govuk-checkboxes__label">Ecodesign</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-electromagnetic-compatibility" value="electromagnetic-compatibility" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Electromagnetic compatibility" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-electromagnetic-compatibility" class="govuk-label govuk-checkboxes__label">Electromagnetic compatibility</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-equipment-and-protective-systems-intended-for-use-in-potentially-explosive-atmospheres" value="equipment-and-protective-systems-intended-for-use-in-potentially-explosive-atmospheres" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Equipment and protective systems for use in potentially explosive atmospheres" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-equipment-and-protective-systems-intended-for-use-in-potentially-explosive-atmospheres" class="govuk-label govuk-checkboxes__label">Equipment and protective systems for use in potentially explosive atmospheres</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-explosives" value="explosives" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Explosives" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-explosives" class="govuk-label govuk-checkboxes__label">Explosives</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-gas-appliances-and-related" value="gas-appliances-and-related" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Gas appliances and related" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-gas-appliances-and-related" class="govuk-label govuk-checkboxes__label">Gas appliances and related</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-lifts" value="lifts" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Lifts" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-lifts" class="govuk-label govuk-checkboxes__label">Lifts</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-machinery" value="machinery" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Machinery" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-machinery" class="govuk-label govuk-checkboxes__label">Machinery</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-marine-equipment" value="marine-equipment" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Marine equipment" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-marine-equipment" class="govuk-label govuk-checkboxes__label">Marine equipment</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-measuring-instruments" value="measuring-instruments" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Measuring instruments" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-measuring-instruments" class="govuk-label govuk-checkboxes__label">Measuring instruments</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-medical-devices" value="medical-devices" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Medical devices" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-medical-devices" class="govuk-label govuk-checkboxes__label">Medical devices</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-noise-emissions-in-the-environment-by-equipment-for-use-outdoors" value="noise-emissions-in-the-environment-by-equipment-for-use-outdoors" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Noise emissions in the environment by equipment for use outdoors" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-noise-emissions-in-the-environment-by-equipment-for-use-outdoors" class="govuk-label govuk-checkboxes__label">Noise emissions in the environment by equipment for use outdoors</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-non-automatic-weighing-instruments" value="non-automatic-weighing-instruments" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Non-automatic weighing instruments" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-non-automatic-weighing-instruments" class="govuk-label govuk-checkboxes__label">Non-automatic weighing instruments</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-personal-protective-equipment" value="personal-protective-equipment" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Personal protective equipment" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-personal-protective-equipment" class="govuk-label govuk-checkboxes__label">Personal protective equipment</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-pressure-equipment" value="pressure-equipment" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Pressure equipment" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-pressure-equipment" class="govuk-label govuk-checkboxes__label">Pressure equipment</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-pyrotechnics" value="pyrotechnics" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Pyrotechnics" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-pyrotechnics" class="govuk-label govuk-checkboxes__label">Pyrotechnics</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-radio-equipment" value="radio-equipment" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Radio equipment" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-radio-equipment" class="govuk-label govuk-checkboxes__label">Radio equipment</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-railway-interoperability" value="railway-interoperability" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Railway interoperability" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-railway-interoperability" class="govuk-label govuk-checkboxes__label">Railway interoperability</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-recreational-craft" value="recreational-craft" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Recreational craft" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-recreational-craft" class="govuk-label govuk-checkboxes__label">Recreational craft</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-simple-pressure-vessels" value="simple-pressure-vessels" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Simple pressure vessels" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-simple-pressure-vessels" class="govuk-label govuk-checkboxes__label">Simple pressure vessels</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-toys" value="toys" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Toys" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-toys" class="govuk-label govuk-checkboxes__label">Toys</label>
-
-
-                                                </li>
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="uk_market_conformity_assessment_body_legislative_area[]" id="uk_market_conformity_assessment_body_legislative_area-transportable-pressure-equipment" value="transportable-pressure-equipment" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Legislative area" data-track-label="Transportable pressure equipment" data-controls="js-search-results-info" aria-controls="js-search-results-info"><label for="uk_market_conformity_assessment_body_legislative_area-transportable-pressure-equipment" class="govuk-label govuk-checkboxes__label">Transportable pressure equipment</label>
-
-
-                                                </li>
+                                            }
                                             </ul>
                                         </fieldset>
                                     </div>
@@ -1377,19 +130,15 @@
                             </div>
                         </div>
 
-
                         <div class="facets__tags-block js-mobile-facet-tag-block" data-module="remove-filter" data-remove-filter-module-started="true"><span class="govuk-visually-hidden"> 165 bodies </span> <div class="facet-tags"> </div></div>
                         <button class="app-c-button-as-link facets__clear-link js-clear-selected-filters" type="button">
                             Clear all filters
                         </button>
                     </div>
                     <div class="facets__footer">
-
-
-
+                        
                         <button class="gem-c-button govuk-button js-close-filters js-show-results" type="submit">Show search results</button>
-
-
+                        
                     </div>
                 </div>
             </div>
@@ -1401,7 +150,7 @@
         <div class="search-results-header">
             <div class="top-pagination">
                 <nav role="navigation" aria-label="Pagination" class="pagination">
-                    <p class="govuk-body-s">Showing 1-3 of 3 CABs</p>
+                    <p class="govuk-body-s">Showing 1-@Model.SearchResultViewModels.Count of @Model.SearchResultViewModels.Count CABs</p>
                 </nav>
             </div>
         </div>
@@ -1410,7 +159,7 @@
 
         <ul class="app-search-results">
 
-            @foreach (var result in results.OrderBy(x => Guid.NewGuid()))
+            @foreach (var result in Model.SearchResultViewModels.OrderBy(x => Guid.NewGuid()))
             {
                 <li class="app-search-results__result">
                     <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
@@ -1452,4 +201,12 @@
     for(var i = 0; i<nodes.length;i++){
         new GOVUK.Modules.OptionSelect(nodes[i]).init();
     }
+    var submitForm = document.querySelector("form");
+    var checkBoxes = document.querySelectorAll('.govuk-checkboxes__input');
+    checkBoxes.forEach(function (cbx) {
+        cbx.onchange=function (){
+            submitForm.submit();
+            };
+    });
+    
 </script>
