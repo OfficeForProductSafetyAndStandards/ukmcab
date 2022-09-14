@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Services;
 
@@ -39,7 +40,7 @@ public class HomeController : Controller
     {
         LoadFilters(searchResultsViewModel);
 
-        searchResultsViewModel.SearchResultViewModels = GetSearchResult();
+        searchResultsViewModel.SearchResultViewModels = GetSearchResult(searchResultsViewModel);
 
         return View(searchResultsViewModel);
     }
@@ -59,50 +60,23 @@ public class HomeController : Controller
         return View(GetProfile(id));
     }
 
-    private List<SearchResultViewModel> GetSearchResult()
+    private List<SearchResultViewModel> GetSearchResult(SearchResultsViewModel searchResultsViewModel)
     {
-        return new List<SearchResultViewModel>
+        var cabData = CabRepository.Search(searchResultsViewModel.Keywords, searchResultsViewModel.TestingLocations,
+            searchResultsViewModel.BodyTypes, searchResultsViewModel.RegisteredOfficeLocations,
+            searchResultsViewModel.LegislativeAreas);
+
+        return cabData.Select(c => new SearchResultViewModel
         {
-            new SearchResultViewModel
-            {
-                id = "1",
-                Name = "Five Star Testing Ltd",
-                Address = "28 Hampton Estate, Wickham, East Sussex, GU29 INY, UK",
-                Blurb = @"Body type: Approved body and 1 others Registered office location: United Kingdom
-                    Testing locations: United Kingdom Legislative area: Noise emissions in the
-                    environment by equipment for use outdoors",
-                BodyType = "Approved body and 1 other",
-                RegisteredOfficeLocation = "United Kingdom",
-                TestingLocations = "United Kingdom",
-                LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
-            },
-            new SearchResultViewModel
-            {
-                id = "2",
-                Name = "British Engineering Services Ltd",
-                Address = "Holmes Road, Lymm, Cheshire, WA3 20S, UK",
-                Blurb = @"Body type: Approved body and 2 others Registered office location: United Kingdom
-                    Testing locations: United Kingdom Legislative area: Noise emissions in the
-                    environment by equipment for use outdoors",
-                BodyType = "Approved body and 2 others",
-                RegisteredOfficeLocation = "United Kingdom",
-                TestingLocations = "United Kingdom",
-                LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
-            },
-            new SearchResultViewModel
-            {
-                id = "3",
-                Name = "UI-CD International (UK) Ltd",
-                Address = "Stock Road, High Wycombe, Buckinghamshire, HP14 4N, IJKD",
-                Blurb = @"Body type: Approved body and 1 others Registered office location: United Kingdom
-                    Testing locations: United Kingdom Legislative area: Noise emissions in the
-                    environment by equipment for use outdoors",
-                BodyType = "Approved body and 1 other",
-                RegisteredOfficeLocation = "United Kingdom",
-                TestingLocations = "United Kingdom",
-                LegislativeArea = "Noise emissions in the environment by equipment for use outdoors"
-            }
-        };
+            id = c.ExternalID,
+            Name = c.Name,
+            Address = c.Address,
+            Blurb = "TBD",
+            BodyType = string.Join(", ", c.BodyType),
+            RegisteredOfficeLocation = string.Join(", ", c.RegisteredOfficeLocation),
+            TestingLocations = string.Join(", ", c.TestingLocations),
+            LegislativeArea = string.Join(", ", c.LegislativeAreas),
+        }).ToList();
     }
     
     private ProfileViewModel GetProfile(string id)
