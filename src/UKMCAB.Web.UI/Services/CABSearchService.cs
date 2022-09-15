@@ -47,20 +47,14 @@ public class CABSearchService : ICABSearchService
             AccreditaionBody = $"{cabData.AccreditationBodyName}<br />{cabData.AccreditationBodyAddress}",
             AccreditationStandard = cabData.AccreditationStandard,
             AppointmentDetails = cabData.AppointmentDetails,
-            Locations = "Five Star Testing Ltd, 28 Hampton Estate, Wickham, East Sussex, GU29 1NY, UK", // todo
+            Locations = "TBD", // todo
             AppointmentRevisions =  new List<AppointmentRevisionViewModel> // todo
             {
                 new()
                 {
-                    Version = "1.0",
-                    Date = "15 September 2021",
-                    Details = "Issue date"
-                },
-                new()
-                {
-                    Version = "2.0",
-                    Date = "11 December 2021",
-                    Details = "Details fo appointment edited"
+                    Version = "TBD",
+                    Date = "TBD",
+                    Details = "TBD"
                 }
             }
         };
