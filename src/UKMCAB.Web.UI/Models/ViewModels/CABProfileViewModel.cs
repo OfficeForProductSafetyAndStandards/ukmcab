@@ -27,7 +27,7 @@ public class CABProfileViewModel
     public string AccreditationStandard { get; set; }
     public string AppointmentDetails { get; set; }
 
-    public string Locations { get; set; }
+    public List<string> CertificationActivityLocations { get; set; }
 
     public List<AppointmentRevisionViewModel> AppointmentRevisions { get; set; }
 

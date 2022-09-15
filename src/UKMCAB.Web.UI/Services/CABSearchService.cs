@@ -47,7 +47,6 @@ public class CABSearchService : ICABSearchService
             AccreditaionBody = $"{cabData.AccreditationBodyName}<br />{cabData.AccreditationBodyAddress}",
             AccreditationStandard = cabData.AccreditationStandard,
             AppointmentDetails = cabData.AppointmentDetails,
-            Locations = "TBD", // todo
             AppointmentRevisions =  new List<AppointmentRevisionViewModel> // todo
             {
                 new()
@@ -61,6 +60,9 @@ public class CABSearchService : ICABSearchService
         cabProfile.Regulations = cabData.Regulations != null
             ? GetRegulations(cabData.Regulations)
             : new List<RegulationViewModel>();
+        cabProfile.CertificationActivityLocations = cabData.CertificationActivitiesLocations != null
+            ? cabData.CertificationActivitiesLocations.Select(c => c.Line).ToList()
+            : new List<string>();
 
 
         return cabProfile;
