@@ -1,4 +1,4 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.ProfileViewModel;
+﻿@model UKMCAB.Web.UI.Models.ViewModels.CABProfileViewModel;
 @{
   ViewData["nav"] = "profile";
   var accordionIndex = 0;
@@ -90,32 +90,32 @@
     <p class="govuk-body-m">View details of this CAB’s conformity assessment procedures for each of the following regulations.</p>
     <hr class="govuk-section-break govuk-section-break--visible">
     <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
-      @foreach (var detailsOfAppointment in Model.DetailsOfAppointments)
+      @foreach (var regulation in Model.Regulations)
       {
         accordionIndex++;
         <div class="govuk-accordion__section ">
           <div class="govuk-accordion__section-header">
             <h2 class="govuk-accordion__section-heading">
               <span class="govuk-accordion__section-button" id="accordion-default-heading-@accordionIndex">
-                @detailsOfAppointment.Title
+                @regulation.Title
               </span>
             </h2>
           </div>
           <div id="accordion-default-content-@accordionIndex" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-@accordionIndex">
-            <p class="govuk-body">This CAB is accredited to approve the following.</p>
-            @foreach (var appointmentDetail in detailsOfAppointment.AppointmentDetails)
+            <p class="govuk-body">@regulation.Description</p>
+            @foreach (var productGroup in regulation.ProductGroups)
             {
               <div class="app-cab-profile-appointment-detail-card govuk-!-margin-bottom-7">
                 <dl class="govuk-summary-list">
                   <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                      Products
+                      @productGroup.Title
                     </dt>
                     <dd class="govuk-summary-list__value">
                       <div>
-                        <p class="govuk-body">@appointmentDetail.Products.Description</p>
+                        <p class="govuk-body">@productGroup.Description</p>
                         <ul class="govuk-list govuk-list--bullet">
-                          @foreach (var product in appointmentDetail.Products.Products)
+                          @foreach (var product in productGroup.Products)
                           {
                             <li>@product</li>
                           }
@@ -128,10 +128,10 @@
                       Applicable conformity assessment procedures
                     </dt>
                     <dd class="govuk-summary-list__value">
-                      @foreach (var assessmentProcedure in appointmentDetail.ApplicableConformityAssessmentProcedures)
+                      @foreach (var assessmentProcedure in productGroup.Schedules)
                       {
                         <h3 class="govuk-heading-s">@assessmentProcedure.Title</h3>
-                        <p class="govuk-body">@assessmentProcedure.Description</p>
+                        <p class="govuk-body">@assessmentProcedure.Label</p>
                       }
                     </dd>
                   </div>
@@ -214,8 +214,11 @@
   <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-l">Locations where certification activities are undertaken</h1>
     <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
-    <p class="govuk-body-m">@Model.Locations</p>
-    <hr class="govuk-section-break govuk-section-break--visible">
+    @foreach (var certificationActivityLocation in Model.CertificationActivityLocations)
+    {
+      <p class="govuk-body-m">@certificationActivityLocation</p>
+      <hr class="govuk-section-break govuk-section-break--visible">
+    }
   </div>
 </div>
 

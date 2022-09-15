@@ -44,6 +44,8 @@ public class ProductGroup
 
     [JsonPropertyName("name")]
     public string Name { get; set; }
+    [JsonPropertyName("description")]
+    public string Description { get; set; }
 
     [JsonPropertyName("lines")]
     public List<Line> Lines { get; set; }

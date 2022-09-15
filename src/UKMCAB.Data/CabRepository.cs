@@ -91,7 +91,11 @@ public static class CabRepository
     public static string[] GetLegislativeAreaFacets() => _cabs.SelectMany(x => x.LegislativeAreas ?? new List<string>()).Distinct().OrderBy(x => x).ToArray();
 
 
-
+    public static CabData Get(string id)
+    {
+        return _cabs.Single(c => c.ExternalID == id);
+    }
+    
     public static CabData[] Search(string text, string[] testingLocations = null!, string[] bodyTypes = null!, string[] registeredOfficeLocation = null!, string[] legislativeAreas = null!)
     {
         testingLocations ??= Array.Empty<string>();

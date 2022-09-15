@@ -8,6 +8,7 @@ var basicAuthenticationOptions = new BasicAuthenticationOptions().Pipe(x => buil
 
 builder.Services.AddSingleton(basicAuthenticationOptions);
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
+builder.Services.AddTransient<ICABSearchService, CABSearchService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
