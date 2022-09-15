@@ -105,9 +105,10 @@
             <p class="govuk-body">@regulation.Description</p>
             @foreach (var productGroup in regulation.ProductGroups)
             {
+              var hideBorder = !productGroup.Schedules.Any() && !productGroup.StandardsSpecifications.Any();
               <div class="app-cab-profile-appointment-detail-card govuk-!-margin-bottom-7">
                 <dl class="govuk-summary-list">
-                  <div class="govuk-summary-list__row">
+                  <div class="govuk-summary-list__row @(hideBorder ? "govuk-summary-list__row--no-border" : string.Empty)">
                     <dt class="govuk-summary-list__key">
                       @productGroup.Title
                     </dt>
@@ -123,18 +124,36 @@
                       </div>
                     </dd>
                   </div>
-                  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-                    <dt class="govuk-summary-list__key">
-                      Applicable conformity assessment procedures
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                      @foreach (var assessmentProcedure in productGroup.Schedules)
-                      {
-                        <h3 class="govuk-heading-s">@assessmentProcedure.Title</h3>
-                        <p class="govuk-body">@assessmentProcedure.Label</p>
-                      }
-                    </dd>
-                  </div>
+                  @if (productGroup.Schedules.Any())
+                  {
+                    hideBorder = !productGroup.StandardsSpecifications.Any();
+                   <div class="govuk-summary-list__row @(hideBorder ? "govuk-summary-list__row--no-border" : string.Empty)">
+                     <dt class="govuk-summary-list__key">
+                       Applicable conformity assessment procedures
+                     </dt>
+                     <dd class="govuk-summary-list__value">
+                       @foreach (var schedule in productGroup.Schedules)
+                       {
+                         <h3 class="govuk-heading-s">@schedule.Title</h3>
+                         <p class="govuk-body">@schedule.Label</p>
+                       }
+                     </dd>
+                   </div>
+                  }
+                  @if (productGroup.StandardsSpecifications.Any())
+                  {
+                   <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                     <dt class="govuk-summary-list__key">
+                       Specifications/standards
+                     </dt>
+                     <dd class="govuk-summary-list__value">
+                       @foreach (var standardSpecification in productGroup.StandardsSpecifications)
+                       {
+                       <p class="govuk-body">@standardSpecification.Value</p>
+                       }
+                     </dd>
+                   </div>
+                  }
                 </dl>
               </div>
             }

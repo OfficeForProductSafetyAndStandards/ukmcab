@@ -98,7 +98,8 @@ public class CABSearchService : ICABSearchService
                 Title = regulationProductGroup.Name,
                 Description = regulationProductGroup.Description,
                 Products = regulationProductGroup.Lines.Select(l => l.Name).ToList(),
-                Schedules = new List<ScheduleViewModel>()
+                Schedules = new List<ScheduleViewModel>(),
+                StandardsSpecifications = new List<StandardSpecificationViewModel>()
             };
             if (regulationProductGroup.Schedules != null)
             {
@@ -108,6 +109,15 @@ public class CABSearchService : ICABSearchService
                     Description = schedule.Description,
                     Label = schedule.Label
                 }).ToList();
+            }
+            if (regulationProductGroup.StandardsSpecificationsList != null)
+            {
+                productGroup.StandardsSpecifications = regulationProductGroup.StandardsSpecificationsList.Select(s =>
+                    new StandardSpecificationViewModel
+                    {
+                        Label = s.Label,
+                        Value = s.Value
+                    }).ToList();
             }
             
             products.Add(productGroup);

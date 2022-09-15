@@ -6,5 +6,6 @@ public class ProductsGroupViewModel
     public string Description { get; set; }
     public List<string> Products { get; set; }
     public List<ScheduleViewModel> Schedules { get; set; }
+    public List<StandardSpecificationViewModel> StandardsSpecifications { get; set; }
 
 }
