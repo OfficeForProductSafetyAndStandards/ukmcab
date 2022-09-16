@@ -57,7 +57,11 @@ public static class CabRepository
         {
             searchFields.Add(cab.ExternalID.Trim());
         }
-        
+
+        if (cab.LegislativeAreas != null && cab.LegislativeAreas.Any())
+        {
+            searchFields.AddRange(cab.LegislativeAreas);
+        }
         if (cab.Regulations != null && cab.Regulations.Any())
         {
             foreach (var regulation in cab.Regulations)
