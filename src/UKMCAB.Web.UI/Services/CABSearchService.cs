@@ -44,9 +44,6 @@ public class CABSearchService : ICABSearchService
             BodyType = string.Join(", ", cabData.BodyType),
             RegisteredOfficeLocation = string.Join(", ", cabData.RegisteredOfficeLocation),
             TestingLocations = string.Join(", ", cabData.TestingLocations),
-            AccreditaionBody = $"{cabData.AccreditationBodyName}<br />{cabData.AccreditationBodyAddress}",
-            AccreditationStandard = cabData.AccreditationStandard,
-            AppointmentDetails = cabData.AppointmentDetails,
             AppointmentRevisions =  new List<AppointmentRevisionViewModel> // todo
             {
                 new()

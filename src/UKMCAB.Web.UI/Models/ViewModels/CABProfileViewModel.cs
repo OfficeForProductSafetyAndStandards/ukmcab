@@ -23,9 +23,6 @@ public class CABProfileViewModel
     public string BodyType { get; set; }
     public string RegisteredOfficeLocation { get; set; }
     public string TestingLocations { get; set; }
-    public string AccreditaionBody { get; set; }
-    public string AccreditationStandard { get; set; }
-    public string AppointmentDetails { get; set; }
 
     public List<string> CertificationActivityLocations { get; set; }
 
