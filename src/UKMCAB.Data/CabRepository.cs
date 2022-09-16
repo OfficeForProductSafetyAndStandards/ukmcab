@@ -96,38 +96,38 @@ public static class CabRepository
         return _cabs.Single(c => c.ExternalID == id);
     }
     
-    public static CabData[] Search(string text, string[] testingLocations = null!, string[] bodyTypes = null!, string[] registeredOfficeLocation = null!, string[] legislativeAreas = null!)
+    public static CabData[] Search(string text, string[] bodyTypes = null!, string[] registeredOfficeLocation = null!, string[] testingLocations = null!,  string[] legislativeAreas = null!)
     {
-        testingLocations ??= Array.Empty<string>();
         bodyTypes ??= Array.Empty<string>();
         registeredOfficeLocation ??= Array.Empty<string>();
+        testingLocations ??= Array.Empty<string>();
         legislativeAreas ??= Array.Empty<string>();
 
         var results = _cabs;
 
         if ((text ?? "").Trim().Length > 0)
         {
-            results = results.Where(x => x.RawAllText.Contains(text)).ToArray();
-        }
-
-        if (testingLocations.Length > 0)
-        {
-            results = results.Where(x => x.TestingLocations.Intersect(testingLocations).Count() > 0).ToArray();
+            results = results.Where(x => x.RawAllText.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToArray();
         }
 
         if (bodyTypes.Length > 0)
         {
-            results = results.Where(x => x.BodyType.Intersect(bodyTypes).Count() > 0).ToArray();
+            results = results.Where(x => x.BodyType.Intersect(bodyTypes, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
         }
 
         if (registeredOfficeLocation.Length > 0)
         {
-            results = results.Where(x => x.RegisteredOfficeLocation.Intersect(registeredOfficeLocation).Count() > 0).ToArray();
+            results = results.Where(x => x.RegisteredOfficeLocation.Intersect(registeredOfficeLocation, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
+        }
+
+        if (testingLocations.Length > 0)
+        {
+            results = results.Where(x => x.TestingLocations.Intersect(testingLocations, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
         }
 
         if (legislativeAreas.Length > 0)
         {
-            results = results.Where(x => x.LegislativeAreas.Intersect(legislativeAreas).Count() > 0).ToArray();
+            results = results.Where(x => x.LegislativeAreas.Intersect(legislativeAreas, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
         }
 
         return results;
