@@ -97,7 +97,7 @@ public class CABSearchService : ICABSearchService
             {
                 Title = regulationProductGroup.Name,
                 Description = regulationProductGroup.Description,
-                Products = regulationProductGroup.Lines.Select(l => l.Name).ToList(),
+                Products = regulationProductGroup.Lines != null ? regulationProductGroup.Lines.Select(l => l.Name).ToList() : new List<string>(),
                 Schedules = new List<ScheduleViewModel>(),
                 StandardsSpecifications = new List<StandardSpecificationViewModel>()
             };
