@@ -38,20 +38,68 @@ public static class CabRepository
                 cab.RawAllPdfText += " " + (_pdfIdTextMap.ContainsKey(pdfId) ? _pdfIdTextMap[pdfId] : string.Empty);
             }
             cab.RawAllText = cab.RawJsonData + " " + cab.RawAllPdfText;
+            cab.SearchFields = GetSearchFieldsString(cab);
+        }
+    }
+
+    private static string GetSearchFieldsString(CabData cab)
+    {
+        var searchFields = new List<string>();
+        // CAB name
+        searchFields.Add(cab.Name.Trim());
+        // body number
+        if (!string.IsNullOrWhiteSpace(cab.BodyNumber))
+        {
+            searchFields.Add(cab.BodyNumber.Trim());
+        }
+        // external id: included for dev testing
+        if (!string.IsNullOrWhiteSpace(cab.ExternalID))
+        {
+            searchFields.Add(cab.ExternalID.Trim());
+        }
+        
+        if (cab.Regulations != null && cab.Regulations.Any())
+        {
+            foreach (var regulation in cab.Regulations)
+            {
+                // regulation name
+                searchFields.Add(regulation.Name.Trim());
+                if (regulation.ProductGroups != null && regulation.ProductGroups.Any())
+                {
+                    foreach (var productGroup in regulation.ProductGroups)
+                    {
+                        if (productGroup.Lines != null && productGroup.Lines.Any())
+                        {
+                            // product name
+                            searchFields.AddRange(productGroup.Lines.Select(l => l.Name.Trim()));
+                        }
+
+                        if (productGroup.StandardsSpecificationsList != null && productGroup.StandardsSpecificationsList.Any())
+                        {
+                            // standards number
+                            searchFields.AddRange(productGroup.StandardsSpecificationsList.Select(s => s.Value.Trim()));
+                        }
+
+                        if (productGroup.Schedules != null && productGroup.Schedules.Any())
+                        {
+                            foreach (var schedule in productGroup.Schedules)
+                            {
+                                // schedule name
+                                searchFields.Add(schedule.Name.Trim());
+                                if (schedule.PartsModuleList != null && schedule.PartsModuleList.Any())
+                                {
+                                    // module name
+                                    // part name
+                                    searchFields.AddRange(schedule.PartsModuleList.Select(p => p.Label.Trim()));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-
-
-
-
-        //var bodyTypes = GetBodyTypeFacets();
-        //var legislativeAreas = GetLegislativeAreaFacets();
-        //var registeredOfficeLocations = GetRegisteredOfficeLocationFacets();
-        //var testingLocations = GetTestingLocationFacets();
-        //var result = Search("4ward", new[] { "United Kingdom" });
-
-
-        //var f = 0;
+        return string.Join('|', searchFields);
     }
 
 
@@ -96,38 +144,38 @@ public static class CabRepository
         return _cabs.Single(c => c.ExternalID == id);
     }
     
-    public static CabData[] Search(string text, string[] testingLocations = null!, string[] bodyTypes = null!, string[] registeredOfficeLocation = null!, string[] legislativeAreas = null!)
+    public static CabData[] Search(string text, string[] bodyTypes = null!, string[] registeredOfficeLocation = null!, string[] testingLocations = null!,  string[] legislativeAreas = null!)
     {
-        testingLocations ??= Array.Empty<string>();
         bodyTypes ??= Array.Empty<string>();
         registeredOfficeLocation ??= Array.Empty<string>();
+        testingLocations ??= Array.Empty<string>();
         legislativeAreas ??= Array.Empty<string>();
 
         var results = _cabs;
 
         if ((text ?? "").Trim().Length > 0)
         {
-            results = results.Where(x => x.RawAllText.Contains(text)).ToArray();
-        }
-
-        if (testingLocations.Length > 0)
-        {
-            results = results.Where(x => x.TestingLocations.Intersect(testingLocations).Count() > 0).ToArray();
+            results = results.Where(x => x.SearchFields.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToArray();
         }
 
         if (bodyTypes.Length > 0)
         {
-            results = results.Where(x => x.BodyType.Intersect(bodyTypes).Count() > 0).ToArray();
+            results = results.Where(x => x.BodyType.Intersect(bodyTypes, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
         }
 
         if (registeredOfficeLocation.Length > 0)
         {
-            results = results.Where(x => x.RegisteredOfficeLocation.Intersect(registeredOfficeLocation).Count() > 0).ToArray();
+            results = results.Where(x => x.RegisteredOfficeLocation.Intersect(registeredOfficeLocation, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
+        }
+
+        if (testingLocations.Length > 0)
+        {
+            results = results.Where(x => x.TestingLocations.Intersect(testingLocations, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
         }
 
         if (legislativeAreas.Length > 0)
         {
-            results = results.Where(x => x.LegislativeAreas.Intersect(legislativeAreas).Count() > 0).ToArray();
+            results = results.Where(x => x.LegislativeAreas.Intersect(legislativeAreas, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
         }
 
         return results;
