@@ -62,7 +62,7 @@
                                 Home
                             </a>
                         </li>
-                        <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"]=="search", "govuk-header__navigation-item--active")" ">
+                        <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"]=="search", "govuk-header__navigation-item--active")">
                             <a class="govuk-header__link" href="@Url.RouteUrl(HomeController.Routes.Search)">
                                 Find a CAB
                             </a>
