@@ -134,6 +134,7 @@ public class CabData
     public string? RawJsonData { get; set; }
     public string? RawAllPdfText { get; set; }
     public string? RawAllText { get; set; }
+    public string? SearchFields { get; set; }
 }
 
 public class Schedule
@@ -146,6 +147,30 @@ public class Schedule
 
     [JsonPropertyName("description")]
     public string Description { get; set; }
+    
+    [JsonPropertyName("partsModules")]
+    public List<PartsModuleList> PartsModuleList { get; set; }
+}
+
+public class PartsModuleList
+{
+    [JsonPropertyName("key")]
+    public string Key { get; set; }
+    
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
+
+    [JsonPropertyName("ncContentTypeAlias")]
+    public string NcContentTypeAlias { get; set; }
+
+    [JsonPropertyName("PropType")]
+    public object PropType { get; set; }
+
+    [JsonPropertyName("label")]
+    public string Label { get; set; }
+
+    [JsonPropertyName("value")]
+    public string Value { get; set; }
 }
 
 public class StandardsSpecificationsList
