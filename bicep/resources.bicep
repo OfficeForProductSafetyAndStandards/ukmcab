@@ -35,6 +35,93 @@ var redisConnectionString = '${redis.name}.redis.cache.windows.net:6380,password
 
 
 
+
+
+
+
+/*
+  COSMOS
+*/
+resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
+  name: 'cosmos-${project}-${env}'
+  location: location
+  kind: 'GlobalDocumentDB'
+  properties: {
+    publicNetworkAccess: 'Enabled'
+    databaseAccountOfferType: 'Standard'
+    consistencyPolicy: { defaultConsistencyLevel: 'Session'  }
+    enableAutomaticFailover: false
+    capacity: {
+      totalThroughputLimit: 4000
+    }
+    capabilities: [
+      {
+        name: 'EnableServerless'
+      }
+    ]
+    locations: [
+      {
+        locationName: location
+        failoverPriority: 0
+        isZoneRedundant: false
+      }
+    ]
+  }
+}
+var cosmosConnectionString = cosmosDb.listConnectionStrings().connectionStrings[0].connectionString
+
+
+resource cosmosDbDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@2022-05-15' = {
+  parent: cosmosDb
+  name: 'main'
+  properties: {
+    resource: {
+      id: 'main'
+    }
+  }
+}
+
+
+resource cosmosDbContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'cabs'
+  properties: {
+    resource: {
+      id: 'cabs'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
 /*
   APP INSIGHTS
 */
@@ -74,7 +161,6 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 /*
   KEY VAULT
 */
-
 resource kv 'Microsoft.KeyVault/vaults@2022-07-01' = {
   name: 'kv-${project}-${env}'
   location: location
@@ -110,6 +196,14 @@ resource appInsightsConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@20
   name: 'appInsightsConnectionString'
   properties: {
     value: appInsights.properties.ConnectionString
+  }
+}
+
+resource cosmosConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'cosmosConnectionString'
+  properties: {
+    value: cosmosConnectionString
   }
 }
 
@@ -152,6 +246,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'RedisConnectionString'
           value: '@Microsoft.KeyVault(SecretUri=${redisConnectionStringSecret.properties.secretUri})'
+        }
+        {
+          name: 'CosmosConnectionString'
+          value: '@Microsoft.KeyVault(SecretUri=${cosmosConnectionStringSecret.properties.secretUri})'
         }
       ]
     }
