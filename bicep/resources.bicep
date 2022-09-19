@@ -288,34 +288,24 @@ resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-
                 ]
                }
           }
-      ]
-  }
-}
-
-// cheeky access policy for kd
-resource keyVaultAccessPolicy2 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
-  name: '${kv.name}/add'
-  properties: {
-      accessPolicies: [
           {
-              tenantId: subscription().tenantId
-              objectId: 'bdb1afdf-b36e-4947-880b-fc945baa7aa7'
-              permissions: {
-                certificates: [
-                  'all'
-                ]
-                keys:[
-                  'all'
-                ]
-                secrets:[
-                  'all'
-                ]
-                storage: [
-                  'all'
-                ]
-               }
-          }
+            tenantId: subscription().tenantId
+            objectId: 'bdb1afdf-b36e-4947-880b-fc945baa7aa7' // kd
+            permissions: {
+              certificates: [
+                'all'
+              ]
+              keys:[
+                'all'
+              ]
+              secrets:[
+                'all'
+              ]
+              storage: [
+                'all'
+              ]
+             }
+        }
       ]
   }
 }
-
