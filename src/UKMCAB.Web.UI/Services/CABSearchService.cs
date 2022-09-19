@@ -72,8 +72,8 @@ public class CABSearchService : ICABSearchService
         {
             var regulation = new RegulationViewModel()
             {
-                Title = cabDataRegulation.Name,
-                Description = cabDataRegulation.Description
+                Title = cabDataRegulation.RegulationName,
+                Description = cabDataRegulation.Description,
             };
             regulation.ProductGroups = cabDataRegulation.ProductGroups != null
                 ? GetProductGroups(cabDataRegulation.ProductGroups)

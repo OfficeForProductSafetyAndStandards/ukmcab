@@ -64,6 +64,11 @@ public class Regulation
 
     [JsonPropertyName("description")]
     public string Description { get; set; }
+
+    [JsonPropertyName("regulationDescriptor")]
+    public List<string> RegulationDescriptors { get; set; }
+
+    public string? RegulationName => RegulationDescriptors?.FirstOrDefault();
 }
 
 public class CabData
@@ -128,8 +133,7 @@ public class CabData
     [JsonPropertyName("appointmentDetails")]
     public string AppointmentDetails { get; set; }
 
-    [JsonPropertyName("legislativeAreas")]
-    public List<string> LegislativeAreas { get; set; }
+    public List<string>? LegislativeAreas => Regulations?.Select(x => x.RegulationName)?.ToList();
 
     public string? RawJsonData { get; set; }
     public string? RawAllPdfText { get; set; }
