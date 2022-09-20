@@ -39,6 +39,10 @@ public static class CabRepository
             }
             cab.RawAllText = cab.RawJsonData + " " + cab.RawAllPdfText;
             cab.SearchFields = GetSearchFieldsString(cab);
+
+            cab.BodyType ??= new List<string>();
+            cab.TestingLocations ??= new List<string>();
+            cab.RegisteredOfficeLocation ??= new List<string>();
         }
     }
 

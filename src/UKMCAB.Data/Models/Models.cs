@@ -133,7 +133,7 @@ public class CabData
     [JsonPropertyName("appointmentDetails")]
     public string AppointmentDetails { get; set; }
 
-    public List<string>? LegislativeAreas => Regulations?.Select(x => x.RegulationName)?.ToList();
+    public List<string> LegislativeAreas => Regulations?.Select(x => x.RegulationName)?.ToList() ?? new List<string?>();
 
     public string? RawJsonData { get; set; }
     public string? RawAllPdfText { get; set; }
