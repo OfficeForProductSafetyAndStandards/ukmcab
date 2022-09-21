@@ -1,15 +1,16 @@
 ﻿using UKMCAB.Data;
+using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels;
 
 namespace UKMCAB.Web.UI.Services;
 
 public class CABSearchService : ICABSearchService
 {
-    public List<SearchResultViewModel> Search(string text, string[] bodyTypes, string[] registeredOfficeLocations, string[] testingLocations, string[] legislativeAreas)
+    public List<SearchResultViewModel> Search(string text, string[] bodyTypes, string[] registeredOfficeLocations, string[] testingLocations, string[] regulations)
     {
         var cabData = CabRepository.Search(text, bodyTypes,
             registeredOfficeLocations, testingLocations,
-            legislativeAreas);
+            regulations);
 
         return cabData.Select(c => new SearchResultViewModel
         {
@@ -20,7 +21,7 @@ public class CABSearchService : ICABSearchService
             BodyType = string.Join(", ", c.BodyType),
             RegisteredOfficeLocation = string.Join(", ", c.RegisteredOfficeLocation),
             TestingLocations = string.Join(", ", c.TestingLocations),
-            LegislativeArea = string.Join(", ", c.LegislativeAreas),
+            Regulations = string.Join(", ", c.RegulationNames),
         }).ToList();
     }
 
@@ -58,7 +59,7 @@ public class CABSearchService : ICABSearchService
             ? GetRegulations(cabData.Regulations)
             : new List<RegulationViewModel>();
         cabProfile.CertificationActivityLocations = cabData.CertificationActivitiesLocations != null
-            ? cabData.CertificationActivitiesLocations.Select(c => c.Line).ToList()
+            ? cabData.CertificationActivitiesLocations.Select(c => c.Location).ToList()
             : new List<string>();
 
 
@@ -94,7 +95,7 @@ public class CABSearchService : ICABSearchService
             {
                 Title = regulationProductGroup.Name,
                 Description = regulationProductGroup.Description,
-                Products = regulationProductGroup.Lines != null ? regulationProductGroup.Lines.Select(l => l.Name).ToList() : new List<string>(),
+                Products = regulationProductGroup.Products != null ? regulationProductGroup.Products.Select(l => l.Name).ToList() : new List<string>(),
                 Schedules = new List<ScheduleViewModel>(),
                 StandardsSpecifications = new List<StandardSpecificationViewModel>()
             };
@@ -107,9 +108,9 @@ public class CABSearchService : ICABSearchService
                     Label = schedule.Label
                 }).ToList();
             }
-            if (regulationProductGroup.StandardsSpecificationsList != null)
+            if (regulationProductGroup.SpecificationsStandards != null)
             {
-                productGroup.StandardsSpecifications = regulationProductGroup.StandardsSpecificationsList.Select(s =>
+                productGroup.StandardsSpecifications = regulationProductGroup.SpecificationsStandards.Select(s =>
                     new StandardSpecificationViewModel
                     {
                         Label = s.Label,

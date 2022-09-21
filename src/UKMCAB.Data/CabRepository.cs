@@ -4,8 +4,8 @@ using MoreLinq;
 using Azure.Search.Documents;
 using Azure;
 using Azure.Search.Documents.Models;
-using Azure.Search.Documents.Indexes;
 using Microsoft.Extensions.Configuration;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data;
 
@@ -61,31 +61,30 @@ public static class CabRepository
         {
             searchFields.Add(cab.ExternalID.Trim());
         }
-
-        if (cab.LegislativeAreas != null && cab.LegislativeAreas.Any())
-        {
-            searchFields.AddRange(cab.LegislativeAreas);
-        }
+        
         if (cab.Regulations != null && cab.Regulations.Any())
         {
             foreach (var regulation in cab.Regulations)
             {
                 // regulation name
-                searchFields.Add(regulation.Name.Trim());
+                searchFields.Add(!string.IsNullOrWhiteSpace(regulation.RegulationName)
+                    ? regulation.RegulationName.Trim()
+                    : regulation.Name.Trim());
+                
                 if (regulation.ProductGroups != null && regulation.ProductGroups.Any())
                 {
                     foreach (var productGroup in regulation.ProductGroups)
                     {
-                        if (productGroup.Lines != null && productGroup.Lines.Any())
+                        if (productGroup.Products != null && productGroup.Products.Any())
                         {
                             // product name
-                            searchFields.AddRange(productGroup.Lines.Select(l => l.Name.Trim()));
+                            searchFields.AddRange(productGroup.Products.Select(l => l.Name.Trim()));
                         }
 
-                        if (productGroup.StandardsSpecificationsList != null && productGroup.StandardsSpecificationsList.Any())
+                        if (productGroup.SpecificationsStandards != null && productGroup.SpecificationsStandards.Any())
                         {
                             // standards number
-                            searchFields.AddRange(productGroup.StandardsSpecificationsList.Select(s => s.Value.Trim()));
+                            searchFields.AddRange(productGroup.SpecificationsStandards.Select(s => s.Value.Trim()));
                         }
 
                         if (productGroup.Schedules != null && productGroup.Schedules.Any())
@@ -94,11 +93,11 @@ public static class CabRepository
                             {
                                 // schedule name
                                 searchFields.Add(schedule.Name.Trim());
-                                if (schedule.PartsModuleList != null && schedule.PartsModuleList.Any())
+                                if (schedule.PartsModules != null && schedule.PartsModules.Any())
                                 {
                                     // module name
                                     // part name
-                                    searchFields.AddRange(schedule.PartsModuleList.Select(p => p.Label.Trim()));
+                                    searchFields.AddRange(schedule.PartsModules.Select(p => p.Label.Trim()));
                                 }
                             }
                         }
@@ -144,20 +143,19 @@ public static class CabRepository
 
     public static string[] GetTestingLocationFacets() => _cabs.SelectMany(x => x.TestingLocations ?? new List<string>()).Distinct().OrderBy(x => x).ToArray();
 
-    public static string[] GetLegislativeAreaFacets() => _cabs.SelectMany(x => x.LegislativeAreas ?? new List<string>()).Distinct().OrderBy(x => x).ToArray();
-
+    public static string[] GetRegulationFacets() => _cabs.SelectMany(c => c.RegulationNames ?? new List<string>()).Distinct().OrderBy(x => x).ToArray();
 
     public static CabData Get(string id)
     {
         return _cabs.Single(c => c.ExternalID == id);
     }
     
-    public static CabData[] Search(string text, string[] bodyTypes = null!, string[] registeredOfficeLocation = null!, string[] testingLocations = null!,  string[] legislativeAreas = null!)
+    public static CabData[] Search(string text, string[] bodyTypes = null!, string[] registeredOfficeLocation = null!, string[] testingLocations = null!,  string[] regulations = null!)
     {
         bodyTypes ??= Array.Empty<string>();
         registeredOfficeLocation ??= Array.Empty<string>();
         testingLocations ??= Array.Empty<string>();
-        legislativeAreas ??= Array.Empty<string>();
+        regulations ??= Array.Empty<string>();
 
         var results = _cabs;
 
@@ -181,9 +179,9 @@ public static class CabRepository
             results = results.Where(x => x.TestingLocations.Intersect(testingLocations, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
         }
 
-        if (legislativeAreas.Length > 0)
+        if (regulations.Length > 0)
         {
-            results = results.Where(x => x.LegislativeAreas.Intersect(legislativeAreas, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
+            results = results.Where(x =>  x.RegulationNames.Intersect(regulations, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
         }
 
         return results;
@@ -286,7 +284,4 @@ public static class CabRepository
             }
         }
     }
-
-
-
 }

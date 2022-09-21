@@ -6,11 +6,11 @@ public class SearchResultsViewModel
     public string[] BodyTypes { get; set; }
     public string[] RegisteredOfficeLocations { get; set; }
     public string[] TestingLocations { get; set; }
-    public string[] LegislativeAreas { get; set; }
+    public string[] Regulations { get; set; }
     public List<FilterOption> BodyTypeOptions { get; set; }
     public List<FilterOption> RegisteredOfficeLocationOptions { get; set; }
     public List<FilterOption> TestingLocationOptions { get; set; }
-    public List<FilterOption> LegislativeAreaOptions { get; set; }
+    public List<FilterOption> RegulationOptions { get; set; }
     public List<SearchResultViewModel> SearchResultViewModels { get; set; }
 
     public void CheckSelecetedItems()
@@ -36,11 +36,11 @@ public class SearchResultsViewModel
                 TestingLocationOptions.Single(tl => tl.Value.Equals(testingLocation, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
             }
         }
-        if (LegislativeAreas != null && LegislativeAreas.Any())
+        if (Regulations != null && Regulations.Any())
         {
-            foreach (var legislativeArea in LegislativeAreas)
+            foreach (var regulation in Regulations)
             {
-                LegislativeAreaOptions.Single(la => la.Value.Equals(legislativeArea, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
+                RegulationOptions.Single(la => la.Value.Equals(regulation, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
             }
         }
     }

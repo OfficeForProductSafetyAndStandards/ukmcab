@@ -46,7 +46,7 @@ public class HomeController : Controller
                                                                                  searchResultsViewModel.BodyTypes, 
                                                                                  searchResultsViewModel.RegisteredOfficeLocations,
                                                                                  searchResultsViewModel.TestingLocations, 
-                                                                                 searchResultsViewModel.LegislativeAreas);
+                                                                                 searchResultsViewModel.Regulations);
 
         return View(searchResultsViewModel);
     }
@@ -56,7 +56,7 @@ public class HomeController : Controller
         searchResultsViewModel.BodyTypeOptions = _searchFilterService.BodyTypeFilter;
         searchResultsViewModel.RegisteredOfficeLocationOptions = _searchFilterService.RegisteredOfficeLocationFilter;
         searchResultsViewModel.TestingLocationOptions = _searchFilterService.TestingLocationFilter;
-        searchResultsViewModel.LegislativeAreaOptions = _searchFilterService.LegislativeAreaFilter;
+        searchResultsViewModel.RegulationOptions = _searchFilterService.RegulationFilter;
         searchResultsViewModel.CheckSelecetedItems();
     }
     

@@ -7,5 +7,5 @@ public interface ISearchFilterService
     List<FilterOption> BodyTypeFilter { get; }
     List<FilterOption> RegisteredOfficeLocationFilter { get; }
     List<FilterOption> TestingLocationFilter { get; }
-    List<FilterOption> LegislativeAreaFilter { get; }
+    List<FilterOption> RegulationFilter { get; }
 }

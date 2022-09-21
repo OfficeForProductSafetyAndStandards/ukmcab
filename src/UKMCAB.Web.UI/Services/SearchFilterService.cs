@@ -234,7 +234,7 @@ public class SearchFilterService : ISearchFilterService
         "Zimbabwe"
     };
 
-    private readonly string[] _legislativeAreas =
+    private readonly string[] _regulations =
     {
         "Cableway installations",
         "Construction products",
@@ -264,7 +264,7 @@ public class SearchFilterService : ISearchFilterService
     public List<FilterOption> BodyTypeFilter { get; }
     public List<FilterOption> RegisteredOfficeLocationFilter { get; }
     public List<FilterOption> TestingLocationFilter { get; }
-    public List<FilterOption> LegislativeAreaFilter { get; }
+    public List<FilterOption> RegulationFilter { get; }
 
 
     public SearchFilterService()
@@ -272,7 +272,7 @@ public class SearchFilterService : ISearchFilterService
         BodyTypeFilter = CreateFilterOptions(_bodyTypes, "ukmcab-bodytype"); 
         RegisteredOfficeLocationFilter = CreateFilterOptions(_registeredOfficeLocations, "ukmcab-registeredofficelocation"); 
         TestingLocationFilter = CreateFilterOptions(_testingLocations, "ukmcab-testinglocation"); 
-        LegislativeAreaFilter = CreateFilterOptions(_legislativeAreas, "ukmcab-legislativearea"); 
+        RegulationFilter = CreateFilterOptions(_regulations, "ukmcab-regulation"); 
     }
 
     private static List<FilterOption> CreateFilterOptions(string[] filters, string idPrefix)
