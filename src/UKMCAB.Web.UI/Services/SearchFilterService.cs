@@ -18,24 +18,8 @@ public class SearchFilterService : ISearchFilterService
         "UK body designated under MRA: Japan",
         "UK body designated under MRA: Canada"
     };
-
-    private readonly string[] _registeredOfficeLocations = 
-    {
-        "United Kingdom",
-        "Australia",
-        "Canada",
-        "France",
-        "Germany",
-        "Hungary",
-        "Israel",
-        "Japan",
-        "New Zealand",
-        "Slovakia",
-        "Switzerland",
-        "United States of America"
-    };
-
-    private readonly string[] _testingLocations =
+    
+    private readonly string[] _countryList =
     {
         "United Kingdom",
         "Afghanistan",
@@ -270,8 +254,8 @@ public class SearchFilterService : ISearchFilterService
     public SearchFilterService()
     {
         BodyTypeFilter = CreateFilterOptions(_bodyTypes, "ukmcab-bodytype"); 
-        RegisteredOfficeLocationFilter = CreateFilterOptions(_registeredOfficeLocations, "ukmcab-registeredofficelocation"); 
-        TestingLocationFilter = CreateFilterOptions(_testingLocations, "ukmcab-testinglocation"); 
+        RegisteredOfficeLocationFilter = CreateFilterOptions(_countryList, "ukmcab-registeredofficelocation"); 
+        TestingLocationFilter = CreateFilterOptions(_countryList, "ukmcab-testinglocation"); 
         RegulationFilter = CreateFilterOptions(_regulations, "ukmcab-regulation"); 
     }
 
