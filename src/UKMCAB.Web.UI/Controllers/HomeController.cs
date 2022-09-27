@@ -5,7 +5,6 @@ using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Controllers;
 
-[Route("")]
 public class HomeController : Controller
 {
     private readonly ISearchFilterService _searchFilterService;
@@ -25,11 +24,12 @@ public class HomeController : Controller
         public const string Profile = "home.profile";
     }
 
-    [HttpGet("", Name = Routes.Index)]
     public IActionResult Index()
     {
         return View();
     }
+    
+    
 
     [HttpGet("search", Name = Routes.Search)]
     public IActionResult Search()
