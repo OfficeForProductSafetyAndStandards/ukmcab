@@ -4,7 +4,7 @@ namespace UKMCAB.Web.UI.Controllers;
 
 public class AboutController : Controller
 {
-    // GET
+    [Route("about")]
     public IActionResult Index()
     {
         return View();

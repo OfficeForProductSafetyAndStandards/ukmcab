@@ -15,11 +15,13 @@ public class FindACABController : Controller
         _cabSearchService = cabSearchService;
     }
     
+    [Route("find-a-cab")]
     public IActionResult Index()
     {
         return View();
     }
     
+    [Route("find-a-cab/results")]
     public IActionResult Results(SearchResultsViewModel searchResultsViewModel)
     {
         LoadFilters(searchResultsViewModel);
@@ -42,6 +44,7 @@ public class FindACABController : Controller
         searchResultsViewModel.CheckSelecetedItems();
     }
     
+    [Route("find-a-cab/profile")]
     public IActionResult Profile(string id)
     {
         var cabProfile = _cabSearchService.GetCAB(id);
