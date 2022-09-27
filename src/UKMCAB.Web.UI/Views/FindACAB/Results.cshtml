@@ -1,7 +1,7 @@
 ﻿@using UKMCAB.Web.UI.Models.ViewModels
 @model SearchResultsViewModel
 
-<a href="@Url.RouteUrl(HomeController.Routes.Search)" class="govuk-back-link">Back</a>
+<a asp-action="Index" class="govuk-back-link">Back</a>
 
 <h1 class="govuk-heading-l govuk-!-margin-top-3">Search results. The following CABs match your search criteria.</h1>
 
@@ -9,7 +9,7 @@
 
     <div class="govuk-grid-column-one-third govuk-body" style="">
 
-        <form id="search-results-form" asp-action="SearchResults" method="get">
+        <form id="search-results-form" asp-action="Results" method="get">
             @Html.HiddenFor(x => Model.Keywords)
             <div id="facet-wrapper" data-module="mobile-filters-modal" class="facets" role="search" aria-label="Search filters" data-mobile-filters-modal-module-started="true">
                 <div class="facets__box">
