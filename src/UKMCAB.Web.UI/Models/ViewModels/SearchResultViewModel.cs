@@ -1,4 +1,5 @@
-﻿namespace UKMCAB.Web.UI.Models.ViewModels;
+﻿
+namespace UKMCAB.Web.UI.Models.ViewModels;
 
 public class SearchResultViewModel
 {
@@ -8,9 +9,6 @@ public class SearchResultViewModel
     public string Email { get; set; }
     public string Phone { get; set; }
     public string Website { get; set; }
-    public string Blurb { get; set; }
-    public string BodyType { get; set; }
-    public string RegisteredOfficeLocation { get; set; }
-    public string TestingLocations { get; set; }
+    public string WebsiteURL => Website.StartsWith("http") ? Website : $"https://{Website}"; 
     public string Regulations { get; set; }
 }

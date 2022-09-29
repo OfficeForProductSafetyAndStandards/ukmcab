@@ -20,10 +20,7 @@ public class CABSearchService : ICABSearchService
             Email = c.Email,
             Phone = c.Phone,
             Website = c.Website,
-            BodyType = string.Join(", ", c.BodyType),
-            RegisteredOfficeLocation = string.Join(", ", c.RegisteredOfficeLocation),
-            TestingLocations = string.Join(", ", c.TestingLocations),
-            Regulations = string.Join(", ", c.RegulationNames),
+            Regulations = string.Join(", ", c.RegulationNames)
         }).ToList();
     }
 
