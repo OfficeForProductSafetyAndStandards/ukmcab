@@ -1,9 +1,16 @@
 ﻿@using UKMCAB.Web.UI.Models.ViewModels
 @model SearchResultsViewModel
+@{
+  ViewData["nav"] = "search";
+}
 
 <a asp-action="Index" class="govuk-back-link">Back</a>
-
-<h1 class="govuk-heading-l govuk-!-margin-top-3">Search results. The following CABs match your search criteria.</h1>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl govuk-!-margin-top-3">Search results</h1>
+        <p class="govuk-body govuk-!-font-size-24 govuk-!-margin-top-2 govuk-!-margin-bottom-6">CABs matching <strong class="govuk-!-font-weight-bold">"@Model.Keywords"</strong></p>
+    </div>
+</div>
 
 <div class="govuk-grid-row">
 
@@ -15,14 +22,9 @@
                 <div class="facets__box">
                     <div class="facets__header">
                         <div>
-                            <h1 class="gem-c-heading govuk-heading-xl govuk-!-margin-bottom-2">Filter</h1>
-
-                            <h2 class="gem-c-heading govuk-heading-s govuk-!-margin-bottom-0"><span class="js-result-count govuk-!-font-weight-regular">165 bodies</span></h2>
-
+                            <p class="gem-c-heading govuk-heading-s govuk-!-margin-bottom-2 govuk-!-display-inline-block">Filter</p>
+                            <span id="clear-filters"><a id="clear-filters-action" class="govuk-link" href="#">Clear filters</a></span>
                         </div>
-                        <button class="app-c-button-as-link facets__return-link js-close-filters" type="button">
-                            Return to results
-                        </button>
                     </div>
                     <div class="facets__content">
                         
@@ -150,7 +152,7 @@
         <div class="search-results-header">
             <div class="top-pagination">
                 <nav role="navigation" aria-label="Pagination" class="pagination">
-                    <p class="govuk-body-s">Showing 1-@Model.SearchResultViewModels.Count of @Model.SearchResultViewModels.Count CABs</p>
+                    <p class="govuk-body-s">Showing 1-@Model.SearchResultViewModels.Count of @Model.SearchResultViewModels.Count CABs (displayed in a random order)</p>
                 </nav>
             </div>
         </div>
@@ -168,18 +170,15 @@
                     <p class="govuk-body-s govuk-!-margin-bottom-1">
                         @result.Address
                     </p>
-                    <p class="govuk-hint govuk-!-font-size-14 govuk-!-margin-top-0" style="display:none">
-                        @result.Blurb
-                    </p>
                     <dl class="govuk-!-margin-top-0">
-                        <dt>Body type:</dt>
-                        <dd>@result.BodyType</dd>
+                        <dt>Email:</dt>
+                        <dd>@result.Email</dd>
 
-                        <dt>Registered office location:</dt>
-                        <dd>@result.RegisteredOfficeLocation</dd>
+                        <dt>Phone:</dt>
+                        <dd>@result.Phone</dd>
 
-                        <dt>Testing locations:</dt>
-                        <dd>@result.TestingLocations</dd>
+                        <dt>Website:</dt>
+                        <dd><a class="govuk-link" href="@result.Website">@result.Website</a></dd>
 
                         <dt>Regulations:</dt>
                         <dd>@result.Regulations</dd>
@@ -191,22 +190,30 @@
 
 </div>
 
-<script src="/assets/js/govuk-frontend-all.js"></script>
-<script src="/assets/finder/javascripts/components/option-select.js"></script>
-    
-<script>
-    window.GOVUKFrontend.initAll();
-    var nodes = document.querySelectorAll('.app-c-option-select');
-    
-    for(var i = 0; i<nodes.length;i++){
-        new GOVUK.Modules.OptionSelect(nodes[i]).init();
-    }
-    var submitForm = document.querySelector("form");
-    var checkBoxes = document.querySelectorAll('.govuk-checkboxes__input');
-    checkBoxes.forEach(function (cbx) {
-        cbx.onchange=function (){
-            submitForm.submit();
-            };
-    });
-    
-</script>
+@section FooterScripts
+{
+    <script src="/assets/finder/javascripts/components/option-select.js"></script>
+    <script>
+        var nodes = document.querySelectorAll('.app-c-option-select');
+        
+        for(var i = 0; i<nodes.length;i++){
+            new GOVUK.Modules.OptionSelect(nodes[i]).init();
+        }
+        var submitForm = document.querySelector("form");
+        var checkBoxes = document.querySelectorAll('.govuk-checkboxes__input');
+        checkBoxes.forEach(function (cbx) {
+            cbx.onchange=function (){
+                submitForm.submit();
+                };
+        });
+        
+        var clearFilters = document.querySelector("#clear-filters-action");
+        clearFilters.addEventListener('click', function (e){
+            e.preventDefault();
+            checkBoxes.forEach(function (cbx) {
+                    cbx.checked = false;
+                });
+            submitForm.submit();     
+        });
+    </script>
+}
