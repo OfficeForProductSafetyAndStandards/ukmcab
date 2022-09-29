@@ -1,5 +1,4 @@
-﻿@using UKMCAB.Web.UI.Models.ViewModels
-@model SearchResultsViewModel
+﻿@model SearchResultsViewModel
 @{
   ViewData["nav"] = "search";
 }
@@ -28,109 +27,10 @@
                     </div>
                     <div class="facets__content">
                         
-                        <div class="app-c-option-select js-collapsible" data-module="option-select" data-closed-on-load="true" data-input-aria-controls="js-search-results-info" data-option-select-module-started="true">
-                            <h2 class="app-c-option-select__heading js-container-heading">
-                                <button class="js-container-button app-c-option-select__title app-c-option-select__button" type="button" aria-expanded="true" id="option-select-title-body-type" aria-controls="uk_market_conformity_assessment_body_type">Body type</button>
-                                <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="app-c-option-select__icon app-c-option-select__icon--up" aria-hidden="true" focusable="false"><path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z"></path></svg>
-                                <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="app-c-option-select__icon app-c-option-select__icon--down" aria-hidden="true" focusable="false"><path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z"></path></svg>
-                            </h2>
-                            <div role="group" aria-labelledby="option-select-title-body-type" class="app-c-option-select__container js-options-container" id="uk_market_conformity_assessment_body_type" tabindex="-1" style="height: 260.333px;">
-                                <div class="app-c-option-select__container-inner js-auto-height-inner">
-                        
-                                    <div id="checkboxes-0cce4af3" class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small" data-module="gem-checkboxes govuk-checkboxes" data-gem-checkboxes-module-started="true" data-govuk-checkboxes-module-started="true">
-                                        <fieldset class="govuk-fieldset">
-                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden">Body type</legend>
-                                            <ul class="govuk-checkboxes gem-c-checkboxes__list">
-                                                @foreach (var filterOption in Model.BodyTypeOptions)
-                                                {
-                                                    <li class="govuk-checkboxes__item">
-                                                        <input type="checkbox" name="BodyTypes" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Body type" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
-                                                    </li>
-                                                }
-                                            </ul>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="app-c-option-select js-collapsible js-opened" data-module="option-select" data-closed-on-load="true" data-input-aria-controls="js-search-results-info" data-option-select-module-started="true">
-                            <h2 class="app-c-option-select__heading js-container-heading">
-                                <button class="js-container-button app-c-option-select__title app-c-option-select__button" type="button" aria-expanded="true" id="option-select-title-registered-office-location" aria-controls="uk_market_conformity_assessment_body_registered_office_location">Registered office location</button>
-                                <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="app-c-option-select__icon app-c-option-select__icon--up" aria-hidden="true" focusable="false"><path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z"></path></svg>
-                                <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="app-c-option-select__icon app-c-option-select__icon--down" aria-hidden="true" focusable="false"><path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z"></path></svg>
-                            </h2>
-                            <div role="group" aria-labelledby="option-select-title-registered-office-location" class="app-c-option-select__container js-options-container" id="uk_market_conformity_assessment_body_registered_office_location" tabindex="-1" style="height: 254.333px;">
-                                <div class="app-c-option-select__container-inner js-auto-height-inner">
-
-                                    <div id="checkboxes-3774339b" class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small" data-module="gem-checkboxes govuk-checkboxes" data-gem-checkboxes-module-started="true" data-govuk-checkboxes-module-started="true">
-                                        <fieldset class="govuk-fieldset">
-                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden">Registered office location</legend>
-                                            <ul class="govuk-checkboxes gem-c-checkboxes__list">
-                                                @foreach (var filterOption in Model.RegisteredOfficeLocationOptions)
-                                                {
-                                                    <li class="govuk-checkboxes__item">
-                                                        <input type="checkbox" name="RegisteredOfficeLocations" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Registered office location" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
-                                                    </li>
-                                                }
-                                            </ul>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="app-c-option-select js-collapsible js-opened" data-module="option-select" data-closed-on-load="true" data-input-aria-controls="js-search-results-info" data-option-select-module-started="true">
-                            <h2 class="app-c-option-select__heading js-container-heading">
-                                <button class="js-container-button app-c-option-select__title app-c-option-select__button" type="button" aria-expanded="true" id="option-select-title-testing-locations" aria-controls="uk_market_conformity_assessment_body_testing_locations">Testing locations</button>
-                                <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="app-c-option-select__icon app-c-option-select__icon--up" aria-hidden="true" focusable="false"><path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z"></path></svg>
-                                <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="app-c-option-select__icon app-c-option-select__icon--down" aria-hidden="true" focusable="false"><path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z"></path></svg>
-                            </h2>
-                            <div role="group" aria-labelledby="option-select-title-testing-locations" class="app-c-option-select__container js-options-container" id="uk_market_conformity_assessment_body_testing_locations" tabindex="-1" style="height: 254.333px;">
-                                <div class="app-c-option-select__container-inner js-auto-height-inner">
-
-                                    <div id="checkboxes-5760821a" class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small" data-module="gem-checkboxes govuk-checkboxes" data-gem-checkboxes-module-started="true" data-govuk-checkboxes-module-started="true">
-                                        <fieldset class="govuk-fieldset">
-                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden">Testing locations</legend>
-                                            <ul class="govuk-checkboxes gem-c-checkboxes__list">
-                                            @foreach (var filterOption in Model.TestingLocationOptions)
-                                            {
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="TestingLocations" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Testing locations" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
-                                                </li>
-                                            }
-                                            </ul>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="app-c-option-select js-collapsible js-opened" data-module="option-select" data-closed-on-load="true" data-input-aria-controls="js-search-results-info" data-option-select-module-started="true">
-                            <h2 class="app-c-option-select__heading js-container-heading">
-                                <button class="js-container-button app-c-option-select__title app-c-option-select__button" type="button" aria-expanded="true" id="option-select-title-regulation" aria-controls="uk_market_conformity_assessment_body_regulation">Regulations</button>
-                                <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="app-c-option-select__icon app-c-option-select__icon--up" aria-hidden="true" focusable="false"><path d="m798.16 609.84l-256-256c-16.683-16.683-43.691-16.683-60.331 0l-256 256c-16.683 16.683-16.683 43.691 0 60.331s43.691 16.683 60.331 0l225.84-225.84 225.84 225.84c16.683 16.683 43.691 16.683 60.331 0s16.683-43.691 0-60.331z"></path></svg>
-                                <svg version="1.1" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg" class="app-c-option-select__icon app-c-option-select__icon--down" aria-hidden="true" focusable="false"><path d="m225.84 414.16l256 256c16.683 16.683 43.691 16.683 60.331 0l256-256c16.683-16.683 16.683-43.691 0-60.331s-43.691-16.683-60.331 0l-225.84 225.84-225.84-225.84c-16.683-16.683-43.691-16.683-60.331 0s-16.683 43.691 0 60.331z"></path></svg>
-                            </h2>
-                            <div role="group" aria-labelledby="option-select-title-regulation" class="app-c-option-select__container js-options-container" id="uk_market_conformity_assessment_body_regulation" tabindex="-1" style="height: 235.333px;">
-                                <div class="app-c-option-select__container-inner js-auto-height-inner">
-
-                                    <div id="checkboxes-f8570a30" class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small" data-module="gem-checkboxes govuk-checkboxes" data-gem-checkboxes-module-started="true" data-govuk-checkboxes-module-started="true">
-                                        <fieldset class="govuk-fieldset">
-                                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden">Regulations</legend>
-                                            <ul class="govuk-checkboxes gem-c-checkboxes__list">
-                                            @foreach (var filterOption in Model.RegulationOptions)
-                                            {
-                                                <li class="govuk-checkboxes__item">
-                                                    <input type="checkbox" name="Regulations" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="Regulations" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
-                                                </li>
-                                            }
-                                            </ul>
-                                        </fieldset>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <partial name="_FilterOptions" model="@Model.BodyTypeOptions"/>
+                        <partial name="_FilterOptions" model="@Model.RegisteredOfficeLocationOptions"/>
+                        <partial name="_FilterOptions" model="@Model.TestingLocationOptions"/>
+                        <partial name="_FilterOptions" model="@Model.RegulationOptions"/>
 
                         <div class="facets__tags-block js-mobile-facet-tag-block" data-module="remove-filter" data-remove-filter-module-started="true"><span class="govuk-visually-hidden"> 165 bodies </span> <div class="facet-tags"> </div></div>
                         <button class="app-c-button-as-link facets__clear-link js-clear-selected-filters" type="button">

@@ -7,10 +7,13 @@ public class SearchResultsViewModel
     public string[] RegisteredOfficeLocations { get; set; }
     public string[] TestingLocations { get; set; }
     public string[] Regulations { get; set; }
-    public List<FilterOption> BodyTypeOptions { get; set; }
-    public List<FilterOption> RegisteredOfficeLocationOptions { get; set; }
-    public List<FilterOption> TestingLocationOptions { get; set; }
-    public List<FilterOption> RegulationOptions { get; set; }
+
+
+    public FilterOptionsViewModel BodyTypeOptions { get; set; }
+    public FilterOptionsViewModel RegisteredOfficeLocationOptions { get; set; }
+    public FilterOptionsViewModel TestingLocationOptions { get; set; }
+    public FilterOptionsViewModel RegulationOptions { get; set; }
+
     public List<SearchResultViewModel> SearchResultViewModels { get; set; }
 
     public void CheckSelecetedItems()
@@ -19,28 +22,28 @@ public class SearchResultsViewModel
         {
             foreach (var bodyType in BodyTypes)
             {
-                BodyTypeOptions.Single(bt => bt.Value.Equals(bodyType, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
+                BodyTypeOptions.Options.Single(bt => bt.Value.Equals(bodyType, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
             }
         }
         if (RegisteredOfficeLocations != null && RegisteredOfficeLocations.Any())
         {
             foreach (var registeredOfficeLocation in RegisteredOfficeLocations)
             {
-                RegisteredOfficeLocationOptions.Single(rol => rol.Value.Equals(registeredOfficeLocation, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
+                RegisteredOfficeLocationOptions.Options.Single(rol => rol.Value.Equals(registeredOfficeLocation, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
             }
         }
         if (TestingLocations != null && TestingLocations.Any())
         {
             foreach (var testingLocation in TestingLocations)
             {
-                TestingLocationOptions.Single(tl => tl.Value.Equals(testingLocation, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
+                TestingLocationOptions.Options.Single(tl => tl.Value.Equals(testingLocation, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
             }
         }
         if (Regulations != null && Regulations.Any())
         {
             foreach (var regulation in Regulations)
             {
-                RegulationOptions.Single(la => la.Value.Equals(regulation, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
+                RegulationOptions.Options.Single(la => la.Value.Equals(regulation, StringComparison.InvariantCultureIgnoreCase)).Checked = true;
             }
         }
     }

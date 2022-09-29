@@ -37,10 +37,31 @@ public class FindACABController : Controller
     
     private void LoadFilters(SearchResultsViewModel searchResultsViewModel)
     {
-        searchResultsViewModel.BodyTypeOptions = _searchFilterService.BodyTypeFilter;
-        searchResultsViewModel.RegisteredOfficeLocationOptions = _searchFilterService.RegisteredOfficeLocationFilter;
-        searchResultsViewModel.TestingLocationOptions = _searchFilterService.TestingLocationFilter;
-        searchResultsViewModel.RegulationOptions = _searchFilterService.RegulationFilter;
+        searchResultsViewModel.BodyTypeOptions = new FilterOptionsViewModel
+        {
+            Id = "BodyTypes",
+            Label = "Body type",
+            Options = _searchFilterService.BodyTypeFilter
+        };
+        searchResultsViewModel.RegisteredOfficeLocationOptions = new FilterOptionsViewModel
+        {
+            Id = "RegisteredOfficeLocations",
+            Label = "Registered office location",
+            Options = _searchFilterService.RegisteredOfficeLocationFilter
+
+        };
+        searchResultsViewModel.TestingLocationOptions = new FilterOptionsViewModel
+        {
+            Id = "TestingLocations",
+            Label = "Testing locations",
+            Options = _searchFilterService.TestingLocationFilter
+        };
+        searchResultsViewModel.RegulationOptions = new FilterOptionsViewModel
+        {
+            Id = "Regulations",
+            Label = "Regulations",
+            Options = _searchFilterService.RegulationFilter
+        };
         searchResultsViewModel.CheckSelecetedItems();
     }
     
