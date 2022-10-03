@@ -4,37 +4,26 @@
   var accordionIndex = 0;
 }
 
-<div class="govuk-breadcrumbs govuk-!-margin-bottom-7">
-  <ol class="govuk-breadcrumbs__list">
-    <li class="govuk-breadcrumbs__list-item">
-      <a class="govuk-breadcrumbs__link" href="#">Home</a>
-    </li>
-    <li class="govuk-breadcrumbs__list-item">
-      <a class="govuk-breadcrumbs__link" href="#">Find a CAB</a>
-    </li>
-    <li class="govuk-breadcrumbs__list-item">
-      <a class="govuk-breadcrumbs__link" href="#">Search results</a>
-    </li>
-  </ol>
-</div>
+<a href="/" class="govuk-back-link">Back</a>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Find a CAB</h1>
-  </div>
-</div>
-<div class="govuk-grid-row govuk-!-margin-bottom-7">
-  <div class="govuk-grid-column-full">
-    <a href="/" class="govuk-back-link">Back</a>
-  </div>
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl govuk-!-margin-top-3 govuk-!-margin-bottom-6">CAB profile</h1>
+    </div>
 </div>
 
+
 <div class="govuk-grid-row govuk-!-margin-bottom-4">
-  <div class="govuk-grid-column-full">
-    <span class="govuk-caption-m govuk-!-margin-bottom-2">Conformity Assessment Body (CAB)</span>
-    <h1 class="govuk-heading-l">@Model.Name</h1>
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-m govuk-!-margin-bottom-2">Conformity Assessment Body (CAB)</span>
+    </div>
+    <div class="govuk-grid-column-two-thirds govuk-!-display-inline">
+        <h1 class="govuk-heading-l">@Model.Name</h1>
+    </div>
+    <div class="govuk-grid-column-one-third govuk-!-text-align-right govuk-!-margin-top-4">
+        <a class="govuk-link" href="#">Download the CAB profile (PDF)</a>
+    </div>
   </div>
-</div>
 
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-full govuk-!-text-align-right">
@@ -45,23 +34,15 @@
 
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-l">Contact details</h1>
+    <h1 class="govuk-heading-l">Contact and body details</h1>
     <hr class="govuk-section-break govuk-section-break--visible">
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Address
+          Registered office address
         </dt>
         <dd class="govuk-summary-list__value">
           @Model.Address
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Website
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <a href="http://@Model.Website" class="govuk-link" target="_blank" rel="noreferrer noopener">@Model.Website (opens in new tab)</a> 
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -80,6 +61,30 @@
           @Model.Phone
         </dd>
       </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Website
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <a href="http://@Model.Website" class="govuk-link">@Model.Website</a> 
+        </dd>
+      </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Body number
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.BodyNumber
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Body type
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.BodyType
+            </dd>
+        </div>
     </dl>
   </div>
 </div>
@@ -89,7 +94,7 @@
     <h1 class="govuk-heading-l">Details of appointment</h1>
     <p class="govuk-body-m">View details of this CAB’s conformity assessment procedures for each of the following regulations.</p>
     <hr class="govuk-section-break govuk-section-break--visible">
-    <div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+    <div class="govuk-accordion" data-module="ukmcab-accordion" id="accordion-default">
       @foreach (var regulation in Model.Regulations)
       {
         accordionIndex++;
@@ -166,47 +171,6 @@
 
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-l">Body and accreditation details</h1>
-    <hr class="govuk-section-break govuk-section-break--visible">
-    <dl class="govuk-summary-list">
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
-      Body number
-    </dt>
-    <dd class="govuk-summary-list__value">
-      @Model.BodyNumber
-    </dd>
-  </div>
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
-      Body type
-    </dt>
-    <dd class="govuk-summary-list__value">
-      @Model.BodyType
-    </dd>
-  </div>
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
-      Registered office location
-    </dt>
-    <dd class="govuk-summary-list__value">
-      @Model.RegisteredOfficeLocation
-    </dd>
-  </div>
-  <div class="govuk-summary-list__row">
-    <dt class="govuk-summary-list__key">
-      Testing locations
-    </dt>
-    <dd class="govuk-summary-list__value">
-      @Model.TestingLocations
-    </dd>
-  </div>
-</dl>
-  </div>
-</div>
-
-<div class="govuk-grid-row govuk-!-margin-bottom-9">
-  <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-l">Locations where certification activities are undertaken</h1>
     <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
     @foreach (var certificationActivityLocation in Model.CertificationActivityLocations)
@@ -219,26 +183,69 @@
 
 <div class="govuk-grid-row govuk-!-margin-bottom-9">
   <div class="govuk-grid-column-full">
-    <h1 class="govuk-heading-l">Appointment revision details</h1>
-    <table class="govuk-table">
-      <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header">Version</th>
-        <th scope="col" class="govuk-table__header">Date</th>
-        <th scope="col" class="govuk-table__header">Details</th>
-      </tr>
-      </thead>
-      <tbody class="govuk-table__body">
-      @foreach (var appointmentRevision in Model.AppointmentRevisions)
-      {
-        <tr class="govuk-table__row">
-          <th scope="row" class="govuk-table__cell">@appointmentRevision.Version</th>
-          <td class="govuk-table__cell">@appointmentRevision.Date</td>
-          <td class="govuk-table__cell">@appointmentRevision.Details</td>
-        </tr>
-      }
-      </tbody>
-    </table>
+      <h1 class="govuk-heading-l">New for @Model.Name</h1>
+  </div>
+  <div class="govuk-grid-column-two-thirds">
+      <a class="govuk-link" href="#">Certification activity location in Kent closed</a>
+      <span class="govuk-caption-m govuk-!-font-size-16 govuk-!-margin-top-1">28 March 2023</span>
+  </div>
+  <div class="govuk-grid-column-two-thirds govuk-!-margin-top-5">
+      <a class="govuk-link" href="#">Updates to details of appointment for The Supply of Machinery (Safety) Regulations 2008</a>
+      <span class="govuk-caption-m govuk-!-font-size-16 govuk-!-margin-top-1">12 January 2023</span>
   </div>
 </div>
 
+@section FooterScripts
+{
+    <script>
+        // overriding the GDS experimental accordion to not display the Show/Hide all section and to rename the accordion text
+        GOVUKFrontend.Accordion.prototype.setExpanded = function (expanded, $section) {
+            var $icon = $section.querySelector('.' + this.upChevronIconClass);
+            var $showHideText = $section.querySelector('.' + this.sectionShowHideTextClass);
+            var $button = $section.querySelector('.' + this.sectionButtonClass);
+            var $newButtonText = expanded ? 'Hide details of appointment' : 'Show details of appointment';
+
+            // Build additional copy of "this section" for assistive technology and place inside toggle link
+            var $visuallyHiddenText = document.createElement('span');
+            $visuallyHiddenText.classList.add('govuk-visually-hidden');
+            $visuallyHiddenText.innerHTML = ' this section';
+
+            $showHideText.innerHTML = $newButtonText;
+            $showHideText.appendChild($visuallyHiddenText);
+            $button.setAttribute('aria-expanded', expanded);
+
+            // Swap icon, change class
+            if (expanded) {
+                $section.classList.add(this.sectionExpandedClass);
+                $icon.classList.remove(this.downChevronIconClass);
+            } else {
+                $section.classList.remove(this.sectionExpandedClass);
+                $icon.classList.add(this.downChevronIconClass);
+            }
+        };
+
+        GOVUKFrontend.Accordion.prototype.init = function () {
+            // Check for module
+            if (!this.$module) {
+                return;
+            }
+            this.initSectionHeaders();
+        };
+
+
+        function nodeListForEach (nodes, callback) {
+            if (window.NodeList.prototype.forEach) {
+                return nodes.forEach(callback);
+            }
+            for (var i = 0; i < nodes.length; i++) {
+                callback.call(window, nodes[i], i, nodes);
+            }
+        };
+
+        var $accordions = document.querySelectorAll('[data-module="ukmcab-accordion"]');
+        nodeListForEach($accordions, function ($accordion) {
+            new GOVUKFrontend.Accordion($accordion).init();
+        });
+
+    </script>
+}
