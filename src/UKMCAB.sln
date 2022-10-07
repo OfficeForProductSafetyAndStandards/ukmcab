@@ -13,7 +13,17 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Infrastructure", "UK
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Test", "UKMCAB.Test\UKMCAB.Test.csproj", "{717D1C16-FB8E-4B48-B4B8-11A34BD1D741}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Data", "UKMCAB.Data\UKMCAB.Data.csproj", "{3527A3E7-E932-45F7-93F6-BD7C11DB41BB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Data", "UKMCAB.Data\UKMCAB.Data.csproj", "{3527A3E7-E932-45F7-93F6-BD7C11DB41BB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data model", "Data model", "{DC77A271-C27C-419C-B8E7-ED1DD1DA51CB}"
+	ProjectSection(SolutionItems) = preProject
+		cab.json = cab.json
+		cab.xml = cab.xml
+		cab.xsd = cab.xsd
+	EndProjectSection
+	ProjectSection(FolderGlobals) = preProject
+		C_5_4Beis_4ukmcab_4src_4cab_1json__JsonSchema = https://cdn.jsdelivr.net/gh/roadrunner-server/roadrunner@latest/schemas/config/2.0.schema.json
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
