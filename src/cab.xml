@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<cab>
+	<name></name>
+	<address></address>
+	<website></website>
+	<email></email>
+	<phone></phone>
+
+	<bodyNumber></bodyNumber>
+	<bodyType></bodyType>
+	<registeredOfficeLocation></registeredOfficeLocation>
+	<testingLocations></testingLocations>
+
+	<regulations>
+		<regulation>
+			<groups>
+				<group>
+					<products>
+						<header></header>
+						<productList>
+							<product></product>
+							<product></product>
+							<product></product>
+						</productList>
+						<categories>
+							
+							<category>
+								<name></name>
+								<description></description>
+								<productList>
+									<product></product>
+									<product></product>
+									<product></product>
+								</productList>
+							</category>
+							
+							<category>
+								<name></name>
+								<description></description>
+								<productList>
+									<product></product>
+									<product></product>
+									<product></product>
+								</productList>
+							</category>
+							
+						</categories>
+						<footer></footer>
+					</products>
+					<caps>
+						<header></header>
+						<schedules>
+							<schedule>
+								<name></name>
+								<description></description>
+								<partsModules>
+									<partModule></partModule>
+									<partModule></partModule>
+									<partModule></partModule>
+								</partsModules>
+							</schedule>
+
+							<schedule>
+								<name></name>
+								<description></description>
+								<partsModules>
+									<partModule></partModule>
+									<partModule></partModule>
+									<partModule></partModule>
+								</partsModules>
+							</schedule>
+
+						</schedules>
+						<footer></footer>
+					</caps>
+					<specificationsStandards>
+						<header></header>
+						<standards>
+							<standard></standard>
+							<standard></standard>
+							<standard></standard>							
+						</standards>
+						<footer></footer>
+					</specificationsStandards>
+				</group>
+			</groups>
+		</regulation>
+	</regulations>
+</cab>

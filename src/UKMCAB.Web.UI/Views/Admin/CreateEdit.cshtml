@@ -1,0 +1,369 @@
+﻿
+
+<div class="govuk-breadcrumbs govuk-!-margin-bottom-7">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="#">Home</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="#">Find a CAB</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="#">Search results</a>
+        </li>
+    </ol>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Create CAB</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-7">
+    <div class="govuk-grid-column-full">
+        <a href="/" class="govuk-back-link">Back</a>
+    </div>
+</div>
+
+
+<div id="canvas">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-4">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m govuk-!-margin-bottom-2">Conformity Assessment Body (CAB)</span>
+            <h1 class="govuk-heading-l">
+                <input type="text" data-bind="value: name" class="govuk-input" placeholder="Enter name..." />
+            </h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full govuk-!-text-align-right">
+            <span class="govuk-caption-m govuk-!-font-size-16 app-cab-profile-dates">Published: XXXX</span>
+            <span class="govuk-caption-m govuk-!-font-size-16 app-cab-profile-dates">Last updated: XXXX</span>
+        </div>
+    </div>
+
+    <!-- Address, website, email, phone -->
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Contact details</h1>
+            <hr class="govuk-section-break govuk-section-break--visible">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Address
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: address" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Website
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: website" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: email" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Phone
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: phone" />
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Details of appointment</h1>
+            <p class="govuk-body-m">Add/edit CAB regulation details.</p>
+@*            <hr class="govuk-section-break govuk-section-break--visible">*@
+            
+
+
+
+            <!-- ko foreach: regulations -->
+            <div class="u-rel" style="border: 1px solid #bbb; padding:8px; margin-bottom:8px;">
+                <i class="fa-solid fa-xmark app-remove govuk-button govuk-button--warning" data-bind="click: $parent.removeRegulation"></i>
+                <div class="govuk-!-margin-top-2">
+                    <input type="text" class="govuk-input" data-bind="value: name" placeholder="Enter regulation name..." />
+                </div>
+
+
+                <!-- ko foreach: groups -->
+                <div class="u-rel">
+                    <i class="fa-solid fa-xmark app-remove govuk-button govuk-button--warning" data-bind="click: $parent.removeGroup"></i>
+
+
+
+
+
+
+
+
+
+                    <!-- bordered panel -->
+                    <div class="app-cab-profile-appointment-detail-card govuk-!-margin-bottom-7">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Products
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <div data-bind="with: products">
+                                        <input class="govuk-input" data-bind="value: header" placeholder="Products header..." />
+                                        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-1 govuk-!-margin-top-1">
+                                            <!-- ko foreach: products-->
+                                            <li>
+                                                <span data-bind="html: $data"></span>
+                                                <i class="fa-solid fa-xmark app-remove--inline govuk-button govuk-button--warning" data-bind="click:$parent.remove"></i>
+                                            </li>
+                                            <!-- /ko -->
+                                        </ul>
+                                        <input class="govuk-input govuk-!-margin-top-5 govuk-!-margin-bottom-5" data-bind="value: newProduct, valueUpdate: 'afterkeydown', event: {keypress: onEnter}" placeholder="Add product (hit enter when done)" />
+                                        <input class="govuk-input" data-bind="value: footer" placeholder="Products footer..." />
+                                    </div>
+                                </dd>
+                            </div>
+
+
+
+
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Applicable conformity assessment procedures
+                                </dt>
+                                <dd class="govuk-summary-list__value" data-bind="with: caps">
+                                    <!-- ko foreach: schedules -->
+                                    <h3 class="govuk-heading-s" data-bind="html: name"></h3>
+                                    <p class="govuk-body" data-bind="html: description"></p>
+                                    <!-- /ko -->
+                                    
+                                </dd>
+                            </div>
+
+
+                            <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                                <dt class="govuk-summary-list__key">
+                                    Specifications/standards
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @*@foreach (var standardSpecification in productGroup.StandardsSpecifications)
+                                    {
+                                        <p class="govuk-body">@standardSpecification.Value</p>
+                                    }*@
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    
+                </div>
+                <!-- /ko -->
+                <button class="govuk-button" data-bind="click:addGroup"><i class="fa-solid fa-plus"></i> product group</button>
+
+
+
+            </div>
+            <!-- /ko -->
+
+            <button class="govuk-button govuk-!-margin-top-5" data-bind="click:addRegulation"><i class="fa-solid fa-plus"></i> regulation section</button>
+
+
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Body number, Body type, Registered office location, Testing locations -->
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Body and accreditation details</h1>
+            <hr class="govuk-section-break govuk-section-break--visible">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Body number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: bodyNumber" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Body type
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: bodyType" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Registered office location
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: registeredOfficeLocation" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Testing locations
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: testingLocations" />
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+
+
+@*
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Locations where certification activities are undertaken</h1>
+            <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
+            @foreach (var certificationActivityLocation in Model.CertificationActivityLocations)
+            {
+                <p class="govuk-body-m">@certificationActivityLocation</p>
+                <hr class="govuk-section-break govuk-section-break--visible">
+            }
+        </div>
+    </div>
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Appointment revision details</h1>
+            <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Version</th>
+                        <th scope="col" class="govuk-table__header">Date</th>
+                        <th scope="col" class="govuk-table__header">Details</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var appointmentRevision in Model.AppointmentRevisions)
+                    {
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__cell">@appointmentRevision.Version</th>
+                            <td class="govuk-table__cell">@appointmentRevision.Date</td>
+                            <td class="govuk-table__cell">@appointmentRevision.Details</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>*@
+
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+@section FooterScripts
+{
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js" integrity="sha512-vs7+jbztHoMto5Yd/yinM4/y2DOkPLt0fATcN+j+G4ANY2z4faIzZIOMkpBmWdcxt+596FemCh9M18NUJTZwvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/assets/js/cab-creadit.js"></script>
+    <script>
+        ko.applyBindings(new createEditCabViewModel());
+    </script>
+    <style>
+        .app-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            cursor: pointer;
+            box-shadow: none;
+            height: 24px;
+            width: 24px;
+            text-align: center;
+            line-height: 24px;
+        }
+
+        .app-remove--inline {
+            cursor: pointer;
+            box-shadow: none;
+            height: 24px;
+            width: 24px;
+            text-align: center;
+            line-height: 24px;
+        }
+        .u-rel {
+            position:relative;
+        }
+        .govuk-input {width:96%;}
+    </style>
+
+}

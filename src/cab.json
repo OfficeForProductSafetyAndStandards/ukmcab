@@ -1,0 +1,99 @@
+{
+	"cab": {
+		"name": "",
+		"address": "",
+		"website": "",
+		"email": "",
+		"phone": "",
+		"bodyNumber": "",
+		"bodyType": "",
+		"registeredOfficeLocation": "",
+		"testingLocations": "",
+		"regulations": {
+			"regulation": {
+				"groups": {
+					"group": {
+						"products": {
+							"header": "",
+							"productList": {
+								"product": [
+									"",
+									"",
+									""
+								]
+							},
+							"categories": {
+								"category": [
+									{
+										"name": "",
+										"description": "",
+										"productList": {
+											"product": [
+												"",
+												"",
+												""
+											]
+										}
+									},
+									{
+										"name": "",
+										"description": "",
+										"productList": {
+											"product": [
+												"",
+												"",
+												""
+											]
+										}
+									}
+								]
+							},
+							"footer": ""
+						},
+						"caps": {
+							"header": "",
+							"schedules": {
+								"schedule": [
+									{
+										"name": "",
+										"description": "",
+										"partsModules": {
+											"partModule": [
+												"",
+												"",
+												""
+											]
+										}
+									},
+									{
+										"name": "",
+										"description": "",
+										"partsModules": {
+											"partModule": [
+												"",
+												"",
+												""
+											]
+										}
+									}
+								]
+							},
+							"footer": ""
+						},
+						"specificationsStandards": {
+							"header": "",
+							"standards": {
+								"standard": [
+									"",
+									"",
+									""
+								]
+							},
+							"footer": ""
+						}
+					}
+				}
+			}
+		}
+	}
+}

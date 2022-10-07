@@ -1,0 +1,321 @@
+﻿
+
+<div class="govuk-breadcrumbs govuk-!-margin-bottom-7">
+    <ol class="govuk-breadcrumbs__list">
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="#">Home</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="#">Find a CAB</a>
+        </li>
+        <li class="govuk-breadcrumbs__list-item">
+            <a class="govuk-breadcrumbs__link" href="#">Search results</a>
+        </li>
+    </ol>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Create CAB</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row govuk-!-margin-bottom-7">
+    <div class="govuk-grid-column-full">
+        <a href="/" class="govuk-back-link">Back</a>
+    </div>
+</div>
+
+
+<div id="canvas">
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-4">
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m govuk-!-margin-bottom-2">Conformity Assessment Body (CAB)</span>
+            <h1 class="govuk-heading-l">
+                <input type="text" data-bind="value: name" class="govuk-input" placeholder="Enter name..." />
+            </h1>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full govuk-!-text-align-right">
+            <span class="govuk-caption-m govuk-!-font-size-16 app-cab-profile-dates">Published: XXXX</span>
+            <span class="govuk-caption-m govuk-!-font-size-16 app-cab-profile-dates">Last updated: XXXX</span>
+        </div>
+    </div>
+
+    <!-- Address, website, email, phone -->
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Contact details</h1>
+            <hr class="govuk-section-break govuk-section-break--visible">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Address
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: address" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Website
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: website" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: email" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Phone
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: phone" />
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Details of appointment</h1>
+            <p class="govuk-body-m">Add/edit CAB regulation details.</p>
+            
+
+
+
+            <!-- ko foreach: regulations -->
+            <div class="u-rel" style="border: 1px solid #bbb; padding:8px; margin-bottom:8px;">
+                <i class="fa-solid fa-xmark app-remove govuk-button govuk-button--warning" data-bind="click: $parent.removeRegulation"></i>
+                <div class="govuk-!-margin-top-2">
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">
+                            Regulation
+                        </label>
+                        <select class="govuk-select" style="width:300px;" data-bind="value:name, options: regs"></select>
+                    </div>
+
+                </div>
+
+
+                <!-- ko if: product -->
+                <fieldset class="govuk-fieldset" data-bind="with:product" style="max-width:400px">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            Product details
+                        </h1>
+                    </legend>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Name</label>
+                        <input class="govuk-input" data-bind="value:name" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Product code</label>
+                        <input class="govuk-input" data-bind="value:productCode" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Part name</label>
+                        <input class="govuk-input" data-bind="value:partName" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Module name</label>
+                        <input class="govuk-input" data-bind="value:moduleName" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Schedule name</label>
+                        <input class="govuk-input" data-bind="value:scheduleName" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Standards number</label>
+                        <input class="govuk-input" data-bind="value:standardsNumber" />
+                    </div>
+
+                    <button class="govuk-button" data-module="govuk-button" data-bind="click:$parent.saveProduct">
+                        Save
+                    </button>
+
+                    <button class="govuk-button govuk-button--warning" data-module="govuk-button" data-bind="click:$parent.removeProduct">
+                        Remove
+                    </button>
+
+                </fieldset>
+                <!-- /ko -->
+                <!-- ko ifnot: product -->
+
+                    <!-- ko if: products().length -->
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">Name</th>
+                                <th scope="col" class="govuk-table__header">Code</th>
+                                <th scope="col" class="govuk-table__header">Part name</th>
+                                <th scope="col" class="govuk-table__header">Module name</th>
+                                <th scope="col" class="govuk-table__header">Schedule name</th>
+                                <th scope="col" class="govuk-table__header">Standards no.</th>
+                                <th scope="col" class="govuk-table__header"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body" data-bind="foreach:products">
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" data-bind="html:name"></td>
+                                <td class="govuk-table__cell" data-bind="html:productCode"></td>
+                                <td class="govuk-table__cell" data-bind="html:partName"></td>
+                                <td class="govuk-table__cell" data-bind="html:moduleName"></td>
+                                <td class="govuk-table__cell" data-bind="html:scheduleName"></td>
+                                <td class="govuk-table__cell" data-bind="html:standardsNumber"></td>
+                                <td class="govuk-table__cell">
+                                    <button class="govuk-button" data-bind="click: $parent.editProduct">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- /ko -->
+
+                    <!-- ko ifnot: products().length -->
+                    <p class="govuk-body">No products to display</p>
+                    <!-- /ko -->
+
+                <!-- /ko -->
+
+                <!--ko ifnot:product-->
+                <button class="govuk-button" data-bind="click:addProduct"><i class="fa-solid fa-plus"></i> product</button>
+                <!-- /ko -->
+
+
+            </div>
+            <!-- /ko -->
+
+            <button class="govuk-button govuk-!-margin-top-5" data-bind="click:addRegulation"><i class="fa-solid fa-plus"></i> regulation section</button>
+
+
+
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- Body number, Body type, Registered office location, Testing locations -->
+    <div class="govuk-grid-row govuk-!-margin-bottom-9">
+        <div class="govuk-grid-column-full">
+            <h1 class="govuk-heading-l">Body and accreditation details</h1>
+            <hr class="govuk-section-break govuk-section-break--visible">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Body number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: bodyNumber" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Body type
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: bodyType" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Registered office location
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: registeredOfficeLocation" />
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Testing locations
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <input class="govuk-input" data-bind="value: testingLocations" />
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    </div>
+
+</div>
+
+@section FooterScripts
+{
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js" integrity="sha512-vs7+jbztHoMto5Yd/yinM4/y2DOkPLt0fATcN+j+G4ANY2z4faIzZIOMkpBmWdcxt+596FemCh9M18NUJTZwvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="~/assets/js/cab-creadit2.js"></script>
+    <script>
+        ko.applyBindings(new CreateEditCabViewModel());
+    </script>
+    <style>
+        .app-remove {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            cursor: pointer;
+            box-shadow: none;
+            height: 24px;
+            width: 24px;
+            text-align: center;
+            line-height: 24px;
+        }
+
+        .app-remove--inline {
+            cursor: pointer;
+            box-shadow: none;
+            height: 24px;
+            width: 24px;
+            text-align: center;
+            line-height: 24px;
+        }
+        .u-rel {
+            position:relative;
+        }
+        .govuk-input {width:96%;}
+    </style>
+
+}

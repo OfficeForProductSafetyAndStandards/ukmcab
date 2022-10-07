@@ -1,0 +1,121 @@
+﻿<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:element name="cab">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element type="xs:string" name="name"/>
+				<xs:element type="xs:string" name="address"/>
+				<xs:element type="xs:string" name="website"/>
+				<xs:element type="xs:string" name="email"/>
+				<xs:element type="xs:string" name="phone"/>
+				<xs:element type="xs:string" name="bodyNumber"/>
+				<xs:element type="xs:string" name="bodyType"/>
+				<xs:element type="xs:string" name="registeredOfficeLocation"/>
+				<xs:element type="xs:string" name="testingLocations"/>
+				<xs:element name="regulations">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="regulation">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="groups">
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="group">
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="products">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element type="xs:string" name="header"/>
+																			<xs:element name="productList">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element type="xs:string" name="product" maxOccurs="unbounded" minOccurs="0"/>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="categories">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="category" maxOccurs="unbounded" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element type="xs:string" name="name"/>
+																									<xs:element type="xs:string" name="description"/>
+																									<xs:element name="productList">
+																										<xs:complexType>
+																											<xs:sequence>
+																												<xs:element type="xs:string" name="product" maxOccurs="unbounded" minOccurs="0"/>
+																											</xs:sequence>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element type="xs:string" name="footer"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="caps">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element type="xs:string" name="header"/>
+																			<xs:element name="schedules">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="schedule" maxOccurs="unbounded" minOccurs="0">
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element type="xs:string" name="name"/>
+																									<xs:element type="xs:string" name="description"/>
+																									<xs:element name="partsModules">
+																										<xs:complexType>
+																											<xs:sequence>
+																												<xs:element type="xs:string" name="partModule" maxOccurs="unbounded" minOccurs="0"/>
+																											</xs:sequence>
+																										</xs:complexType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element type="xs:string" name="footer"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="specificationsStandards">
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element type="xs:string" name="header"/>
+																			<xs:element name="standards">
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element type="xs:string" name="standard" maxOccurs="unbounded" minOccurs="0"/>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element type="xs:string" name="footer"/>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
