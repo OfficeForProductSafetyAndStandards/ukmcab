@@ -1,5 +1,7 @@
+using Microsoft.Azure.Cosmos;
 using UKMCAB.Common;
 using UKMCAB.Data;
+using UKMCAB.Data.CosmosDb;
 using UKMCAB.Web.UI.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;
 
@@ -12,6 +14,13 @@ builder.Services.AddSingleton(basicAuthenticationOptions);
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
 builder.Services.AddTransient<ICABSearchService, CABSearchService>();
 builder.Services.AddHostedService<UmbracoDataRefreshBackgroundService>();
+
+var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
+var account = cosmosDbSettings.GetValue<string>("Account");
+var key = cosmosDbSettings.GetValue<string>("Key");
+var database = cosmosDbSettings.GetValue<string>("Database");
+var container = cosmosDbSettings.GetValue<string>("Container");
+builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(account, key), database, container));
 
 // =================================================================================================
 
