@@ -5,7 +5,7 @@ using UKMCAB.Data.CosmosDb.Models;
 namespace UKMCAB.Web.UI.Controllers
 {
     [ApiController]
-    [Route("api/cabs")]
+    [Route("api/{controller}")]
     public class CABsController : ControllerBase
     {
         private readonly ICosmosDbService _cosmosDbService;
@@ -13,6 +13,25 @@ namespace UKMCAB.Web.UI.Controllers
         public CABsController(ICosmosDbService cosmosDbService)
         {
             _cosmosDbService = cosmosDbService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var cabs = await _cosmosDbService.GetAllAsync();
+            return Ok(cabs);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            var cab = await _cosmosDbService.GetByIdAsync(id);
+            if (cab != null)
+            {
+                return Ok(cab);
+            }
+
+            return NotFound();
         }
 
         [HttpPost]

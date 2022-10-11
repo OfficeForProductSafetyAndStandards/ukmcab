@@ -31,14 +31,28 @@ namespace UKMCAB.Data.CosmosDb
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public Task<CAB> GetByIdAsync(string id)
+        public async Task<CAB?> GetByIdAsync(string id)
         {
-            throw new NotImplementedException();
+            var response = await _container.ReadItemAsync<CAB>(id, new PartitionKey(id));
+            if (response.StatusCode == HttpStatusCode.OK && response.Resource.Id == id)
+            {
+                return response.Resource;
+            }
+
+            return null;
         }
 
-        public Task<List<CAB>> GetAllAsync()
+        public async Task<List<CAB>> GetAllAsync()
         {
-            throw new NotImplementedException();
+            var query = _container.GetItemQueryIterator<CAB>(new QueryDefinition("SELECT * FROM c"));
+            var list = new List<CAB>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                list.AddRange(response.Resource);
+            }
+
+            return list;
         }
     }
 }
