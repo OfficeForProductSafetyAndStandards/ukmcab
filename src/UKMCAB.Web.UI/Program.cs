@@ -18,9 +18,12 @@ builder.Services.AddHostedService<UmbracoDataRefreshBackgroundService>();
 var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
 var account = cosmosDbSettings.GetValue<string>("Account");
 var key = cosmosDbSettings.GetValue<string>("Key");
-var database = cosmosDbSettings.GetValue<string>("Database");
-var container = cosmosDbSettings.GetValue<string>("Container");
-builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(account, key), database, container));
+if (!string.IsNullOrWhiteSpace(account) && !string.IsNullOrWhiteSpace(key))
+{
+    var database = cosmosDbSettings.GetValue<string>("Database") ?? "main";
+    var container = cosmosDbSettings.GetValue<string>("Container") ?? "cabs";
+    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(account, key), database, container));
+}
 
 // =================================================================================================
 
