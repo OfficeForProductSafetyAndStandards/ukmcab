@@ -16,13 +16,12 @@ builder.Services.AddTransient<ICABSearchService, CABSearchService>();
 builder.Services.AddHostedService<UmbracoDataRefreshBackgroundService>();
 
 var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
-var account = cosmosDbSettings.GetValue<string>("Account");
-var key = cosmosDbSettings.GetValue<string>("Key");
-if (!string.IsNullOrWhiteSpace(account) && !string.IsNullOrWhiteSpace(key))
+var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
+if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
 {
     var database = cosmosDbSettings.GetValue<string>("Database") ?? "main";
     var container = cosmosDbSettings.GetValue<string>("Container") ?? "cabs";
-    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(account, key), database, container));
+    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(cosmosConnectionString), database, container));
 }
 
 // =================================================================================================
