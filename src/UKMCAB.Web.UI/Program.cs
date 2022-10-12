@@ -36,6 +36,6 @@ app.UseStaticFiles();
 app.MapDefaultControllerRoute();
 
 CabRepository.Config = builder.Configuration; // todo: use ioc etc.
-await CabRepository.LoadAsync(); // todo: use ioc
+//await CabRepository.LoadAsync(); // todo: use ioc
 
 app.Run();

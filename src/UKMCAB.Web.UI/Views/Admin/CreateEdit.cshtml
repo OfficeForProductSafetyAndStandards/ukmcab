@@ -1,4 +1,4 @@
-﻿
+﻿@model CreateEditCabViewModel
 
 <div class="govuk-breadcrumbs govuk-!-margin-bottom-7">
     <ol class="govuk-breadcrumbs__list">
@@ -6,17 +6,17 @@
             <a class="govuk-breadcrumbs__link" href="#">Home</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="#">Find a CAB</a>
+            <a class="govuk-breadcrumbs__link" href="/admin">List of CABs</a>
         </li>
         <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="#">Search results</a>
+            <a class="govuk-breadcrumbs__link" href="#!">@(Model.Data == null ? "Create" : "Edit") CAB</a>
         </li>
     </ol>
 </div>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Create CAB</h1>
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">@(Model.Data == null ? "Create" : "Edit") CAB</h1>
     </div>
 </div>
 
@@ -99,7 +99,6 @@
         <div class="govuk-grid-column-full">
             <h1 class="govuk-heading-l">Details of appointment</h1>
             <p class="govuk-body-m">Add/edit CAB regulation details.</p>
-@*            <hr class="govuk-section-break govuk-section-break--visible">*@
             
 
 
@@ -108,97 +107,105 @@
             <div class="u-rel" style="border: 1px solid #bbb; padding:8px; margin-bottom:8px;">
                 <i class="fa-solid fa-xmark app-remove govuk-button govuk-button--warning" data-bind="click: $parent.removeRegulation"></i>
                 <div class="govuk-!-margin-top-2">
-                    <input type="text" class="govuk-input" data-bind="value: name" placeholder="Enter regulation name..." />
-                </div>
 
-
-                <!-- ko foreach: groups -->
-                <div class="u-rel">
-                    <i class="fa-solid fa-xmark app-remove govuk-button govuk-button--warning" data-bind="click: $parent.removeGroup"></i>
-
-
-
-
-
-
-
-
-
-                    <!-- bordered panel -->
-                    <div class="app-cab-profile-appointment-detail-card govuk-!-margin-bottom-7">
-                        <dl class="govuk-summary-list">
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Products
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    <div data-bind="with: products">
-                                        <input class="govuk-input" data-bind="value: header" placeholder="Products header..." />
-                                        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-1 govuk-!-margin-top-1">
-                                            <!-- ko foreach: products-->
-                                            <li>
-                                                <span data-bind="html: $data"></span>
-                                                <i class="fa-solid fa-xmark app-remove--inline govuk-button govuk-button--warning" data-bind="click:$parent.remove"></i>
-                                            </li>
-                                            <!-- /ko -->
-                                        </ul>
-                                        <input class="govuk-input govuk-!-margin-top-5 govuk-!-margin-bottom-5" data-bind="value: newProduct, valueUpdate: 'afterkeydown', event: {keypress: onEnter}" placeholder="Add product (hit enter when done)" />
-                                        <input class="govuk-input" data-bind="value: footer" placeholder="Products footer..." />
-                                    </div>
-                                </dd>
-                            </div>
-
-
-
-
-
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Applicable conformity assessment procedures
-                                </dt>
-                                <dd class="govuk-summary-list__value" data-bind="with: caps">
-                                    <!-- ko foreach: schedules -->
-                                    <h3 class="govuk-heading-s" data-bind="html: name"></h3>
-                                    <p class="govuk-body" data-bind="html: description"></p>
-                                    <!-- /ko -->
-                                    
-                                </dd>
-                            </div>
-
-
-                            <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-                                <dt class="govuk-summary-list__key">
-                                    Specifications/standards
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @*@foreach (var standardSpecification in productGroup.StandardsSpecifications)
-                                    {
-                                        <p class="govuk-body">@standardSpecification.Value</p>
-                                    }*@
-                                </dd>
-                            </div>
-                        </dl>
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">
+                            Regulation
+                        </label>
+                        <select class="govuk-select" style="width:300px;" data-bind="value:name, options: regs"></select>
                     </div>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                    
                 </div>
-                <!-- /ko -->
-                <button class="govuk-button" data-bind="click:addGroup"><i class="fa-solid fa-plus"></i> product group</button>
 
+
+                <!-- ko if: product -->
+                <fieldset class="govuk-fieldset" data-bind="with:product" style="max-width:400px">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <h1 class="govuk-fieldset__heading">
+                            Product details
+                        </h1>
+                    </legend>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Name</label>
+                        <input class="govuk-input" data-bind="value:name" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Product code</label>
+                        <input class="govuk-input" data-bind="value:productCode" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Part name</label>
+                        <input class="govuk-input" data-bind="value:partName" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Module name</label>
+                        <input class="govuk-input" data-bind="value:moduleName" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Schedule name</label>
+                        <input class="govuk-input" data-bind="value:scheduleName" />
+                    </div>
+
+                    <div class="govuk-form-group">
+                        <label class="govuk-label" for="">Standards number</label>
+                        <input class="govuk-input" data-bind="value:standardsNumber" />
+                    </div>
+
+                    <button class="govuk-button" data-module="govuk-button" data-bind="click:$parent.saveProduct">
+                        Save
+                    </button>
+
+                    <button class="govuk-button govuk-button--warning" data-module="govuk-button" data-bind="click:$parent.removeProduct">
+                        Remove
+                    </button>
+
+                </fieldset>
+                <!-- /ko -->
+                <!-- ko ifnot: product -->
+
+                    <!-- ko if: products().length -->
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                            <tr class="govuk-table__row">
+                                <th scope="col" class="govuk-table__header">Name</th>
+                                <th scope="col" class="govuk-table__header">Code</th>
+                                <th scope="col" class="govuk-table__header">Part name</th>
+                                <th scope="col" class="govuk-table__header">Module name</th>
+                                <th scope="col" class="govuk-table__header">Schedule name</th>
+                                <th scope="col" class="govuk-table__header">Standards no.</th>
+                                <th scope="col" class="govuk-table__header"></th>
+                            </tr>
+                        </thead>
+                        <tbody class="govuk-table__body" data-bind="foreach:products">
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" data-bind="html:name"></td>
+                                <td class="govuk-table__cell" data-bind="html:productCode"></td>
+                                <td class="govuk-table__cell" data-bind="html:partName"></td>
+                                <td class="govuk-table__cell" data-bind="html:moduleName"></td>
+                                <td class="govuk-table__cell" data-bind="html:scheduleName"></td>
+                                <td class="govuk-table__cell" data-bind="html:standardsNumber"></td>
+                                <td class="govuk-table__cell">
+                                    <button class="govuk-button" data-bind="click: $parent.editProduct">Edit</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- /ko -->
+
+                    <!-- ko ifnot: products().length -->
+                    <p class="govuk-body">No products to display</p>
+                    <!-- /ko -->
+
+                <!-- /ko -->
+
+                <!--ko ifnot:product-->
+                <button class="govuk-button" data-bind="click:addProduct"><i class="fa-solid fa-plus"></i> product</button>
+                <!-- /ko -->
 
 
             </div>
@@ -271,73 +278,23 @@
                     </dd>
                 </div>
             </dl>
+
+            <button type="button" class="govuk-button" data-bind="click:save">Save</button>
+
         </div>
     </div>
-
-
-
-@*
-    <div class="govuk-grid-row govuk-!-margin-bottom-9">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l">Locations where certification activities are undertaken</h1>
-            <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-3">
-            @foreach (var certificationActivityLocation in Model.CertificationActivityLocations)
-            {
-                <p class="govuk-body-m">@certificationActivityLocation</p>
-                <hr class="govuk-section-break govuk-section-break--visible">
-            }
-        </div>
-    </div>
-
-    <div class="govuk-grid-row govuk-!-margin-bottom-9">
-        <div class="govuk-grid-column-full">
-            <h1 class="govuk-heading-l">Appointment revision details</h1>
-            <table class="govuk-table">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Version</th>
-                        <th scope="col" class="govuk-table__header">Date</th>
-                        <th scope="col" class="govuk-table__header">Details</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    @foreach (var appointmentRevision in Model.AppointmentRevisions)
-                    {
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__cell">@appointmentRevision.Version</th>
-                            <td class="govuk-table__cell">@appointmentRevision.Date</td>
-                            <td class="govuk-table__cell">@appointmentRevision.Details</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>*@
-
-
-
-
-
-
-
-
 
 </div>
 
-
-
-
-
-
-
-
 @section FooterScripts
 {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.1.2/axios.min.js" integrity="sha512-bHeT+z+n8rh9CKrSrbyfbINxu7gsBmSHlDCb3gUF1BjmjDzKhoKspyB71k0CIRBSjE5IVQiMMVBgCWjF60qsvA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.5.1/knockout-latest.min.js" integrity="sha512-vs7+jbztHoMto5Yd/yinM4/y2DOkPLt0fATcN+j+G4ANY2z4faIzZIOMkpBmWdcxt+596FemCh9M18NUJTZwvw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="~/assets/js/cab-creadit.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout.mapping/2.4.1/knockout.mapping.min.js" integrity="sha512-1LyBPWtezbX0LO4X4QzhfZd9jSetVu5W0IFpMV9ecq4lJUQBR6hx8uiNfUI2Aoe7LCF4rK1NV3rY+uil4VJ3QQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="/assets/js/cab-creadit.js"></script>
     <script>
-        ko.applyBindings(new createEditCabViewModel());
+        ko.applyBindings(new CreateEditCabViewModel(@Json.Serialize(Model.Data), @Json.Serialize(Model.EditUrlTemplate)));
     </script>
     <style>
         .app-remove {

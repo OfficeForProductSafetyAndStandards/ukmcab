@@ -24,95 +24,142 @@
 
 
 
-function createEditCabViewModel() {
-    var self = this;
-    self.name = ko.observable(null);
-    self.address = ko.observable(null);
-    self.website = ko.observable(null);
-    self.email = ko.observable(null);
-    self.phone = ko.observable(null);
-    self.bodyNumber = ko.observable(null);
-    self.bodyType = ko.observable(null);
-    self.registeredOfficeLocation = ko.observable(null);
-    self.testingLocations = ko.observable(null);
-    self.regulations = ko.observableArray([]);
+class CreateEditCabViewModel {
+    constructor(data, editUrlTemplate) {
+        var self = this;
+        self.id = data ? data.id : null;
+        self.name = ko.observable(null);
+        self.address = ko.observable(null);
+        self.website = ko.observable(null);
+        self.email = ko.observable(null);
+        self.phone = ko.observable(null);
+        self.bodyNumber = ko.observable(null);
+        self.bodyType = ko.observable(null);
+        self.registeredOfficeLocation = ko.observable(null);
+        self.testingLocations = ko.observable(null);
+        self.regulations = ko.observableArray([]);
 
-    self.addRegulation = function () {
-        self.regulations.push(new regulationViewModel());
-    };
+        self.addRegulation = function () {
+            self.regulations.push(new RegulationViewModel());
+        };
 
-    self.removeRegulation = function (regulation) {
-        self.regulations.remove(regulation);
-    };
+        self.removeRegulation = function (regulation) {
+            self.regulations.remove(regulation);
+        };
+
+        self.save = async function () {
+            var unmapped = ko.mapping.toJS(self);
+            if (self.id) {
+                var result = await axios.put("/api/cabs", unmapped);
+            } else {
+                var result = await axios.post("/api/cabs", unmapped);
+                self.id = result.data;
+                var url = editUrlTemplate.replace("guid", self.id);
+                window.location.href = url;
+            }
+        };
+
+        if (data) {
+            self.id  = data.id;
+            self.name(data.name);
+            self.address(data.address);
+            self.website(data.website);
+            self.email(data.email);
+            self.phone(data.phone);
+            self.bodyNumber(data.bodyNumber);
+            self.bodyType(data.bodyType);
+            self.registeredOfficeLocation(data.registeredOfficeLocation);
+            self.testingLocations(data.testingLocations);
+
+            for (var i = 0; i < data.regulations.length; i++) {
+                var r = data.regulations[i];
+                var vm = new RegulationViewModel();
+                vm.name(r.name);
+
+                for (var j = 0; j < r.products.length; j++) {
+                    var p = r.products[j];
+                    var pvm = new ProductViewModel();
+                    pvm.name(p.name);
+                    pvm.productCode(p.productCode);
+                    pvm.partName(p.partName);
+                    pvm.moduleName(p.moduleName);
+                    pvm.scheduleName(p.scheduleName);
+                    pvm.standardsNumber(p.standardsNumber);
+                    vm.products.push(pvm);
+                }
+
+                self.regulations.push(vm);
+            }
+
+        }
+    }
 }
 
-function regulationViewModel() {
-    var self = this;
-    self.name = ko.observable(null); //name of the reg; probably going to be a select list.
-    self.description = ko.observable(null);
-    self.groups = ko.observableArray([]);
+class RegulationViewModel {
+    constructor() {
+        var self = this;
+        self.name = ko.observable(null); //name of the reg; probably going to be a select list.
+        self.products = ko.observableArray([]);
+        self.regs = [
+            "Cableway installations",
+            "Construction products",
+            "Ecodesign",
+            "Electromagnetic compatibility",
+            "Equipment and protective systems for use in potentially explosive atmospheres",
+            "Explosives",
+            "Gas appliances and related",
+            "Lifts",
+            "Machinery",
+            "Marine equipment",
+            "Measuring instruments",
+            "Medical devices",
+            "Noise emissions in the environment by equipment for use outdoors",
+            "Non-automatic weighing instruments",
+            "Personal protective equipment",
+            "Pressure equipment",
+            "Pyrotechnics",
+            "Radio equipment",
+            "Railway interoperability",
+            "Recreational craft",
+            "Simple pressure vessels",
+            "Toys",
+            "Transportable pressure equipment"
+        ];
+        self.product = ko.observable(null);
 
-    self.addGroup = function () {
-        self.groups.push(new groupViewModel());
-    };
+        self.addProduct = function () {
+            var p = new ProductViewModel();
+            self.product(p);
+            self.products.push(p);
+        };
 
-    self.removeGroup = function (group) {
-        self.groups.remove(group);
-    };
+        self.removeProduct = function(product) {
+            self.products.remove(product);
+        };
 
+        self.saveProduct = function () {
+            self.product(null);
+        };
+
+        self.removeProduct = function (product) {
+            self.product(null);
+            self.products.remove(product);
+        };
+
+        self.editProduct = function (product) {
+            self.product(product);
+        };
+    }
 }
 
-
-function groupViewModel() {
-    var self = this;
-    self.products = new productsViewModel();
-    self.caps = new capsViewModel();
-    self.standards = new standardsViewModel();
-}
-
-function productsViewModel() {
-    var self = this;
-    self.header = ko.observable();
-    self.footer = ko.observable();
-    self.newProduct = ko.observable();
-    self.products = ko.observableArray([]); // list of text
-    self.categories = ko.observableArray([]); // list of categoryViewModel
-    self.onEnter = function (d, e) {
-        e.keyCode === 13 && self.addProduct();
-        return true;
-    };
-    self.addProduct = function () {
-        self.products.push(self.newProduct());
-        self.newProduct("");
-    };
-    self.remove = function (product) {
-        self.products.remove(product);
-    };
-}
-
-function categoryViewModel() {
-    self.name = ko.observable();
-    self.description = ko.observable();
-    self.products = ko.observableArray([]); // list of text
-}
-
-function capsViewModel() {
-    var self = this;
-    self.header = ko.observable();
-    self.footer = ko.observable();
-    self.schedules = ko.observableArray([]); // list of scheduleViewModel
-}
-
-function scheduleViewModel() {
-    var self = this;
-    self.name = ko.observable();
-    self.description = ko.observable();
-    self.partsModules = ko.observableArray([]); // list of text
-}
-
-function standardsViewModel() {
-    var self = this;
-    self.header = ko.observable();
-    self.footer = ko.observable();
-    self.items = ko.observableArray([]); // list of text
+class ProductViewModel { 
+    constructor() {
+        var self = this;
+        self.name = ko.observable();
+        self.productCode = ko.observable();
+        self.partName = ko.observable();
+        self.moduleName = ko.observable();
+        self.scheduleName = ko.observable();
+        self.standardsNumber = ko.observable();
+    }
 }
