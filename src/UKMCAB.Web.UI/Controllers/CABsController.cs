@@ -18,7 +18,7 @@ namespace UKMCAB.Web.UI.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var cabs = await _cosmosDbService.GetAllAsync();
+            var cabs = await _cosmosDbService.GetAllAsync(1, 10);
             return Ok(cabs);
         }
 

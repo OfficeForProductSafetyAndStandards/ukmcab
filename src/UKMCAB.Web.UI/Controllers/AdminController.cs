@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UKMCAB.Data.CosmosDb;
 using UKMCAB.Web.UI.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin;
 
 namespace UKMCAB.Web.UI.Controllers;
 
@@ -23,9 +24,22 @@ public class AdminController : Controller
     }
 
     [Route("", Name = RouteIds.List)]
-    public async Task<IActionResult> ListAsync()
+    public async Task<IActionResult> ListAsync(int? pageNumber)
     {
-        return await Task.FromResult(View());
+        if (pageNumber == null)
+        {
+            pageNumber = 1;
+        }
+
+        var cabs = await _cosmosDbService.GetAllAsync(pageNumber.Value, 10);
+        var viewModel = new CabListViewModel
+        {
+            CabListItems = cabs.Select(c => new CabListItemViewModel { Id = c.Id, Name = c.Name, Address = c.Address }).ToList(),
+            PageNumber = pageNumber.Value,
+        };
+        
+
+        return await Task.FromResult(View(viewModel));
     }
 
 

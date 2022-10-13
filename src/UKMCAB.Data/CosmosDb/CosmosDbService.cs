@@ -1,5 +1,7 @@
 ﻿using System.Net;
 using Microsoft.Azure.Cosmos;
+using Microsoft.VisualBasic;
+using Newtonsoft.Json.Linq;
 using UKMCAB.Data.CosmosDb.Models;
 
 namespace UKMCAB.Data.CosmosDb
@@ -42,9 +44,18 @@ namespace UKMCAB.Data.CosmosDb
             return null;
         }
 
-        public async Task<List<CAB>> GetAllAsync()
+        public async Task<List<CAB>> GetAllAsync(int pageNumber = 1, int pageCount = 10)
         {
-            var query = _container.GetItemQueryIterator<CAB>(new QueryDefinition("SELECT * FROM c"));
+            if (pageNumber < 1)
+            {
+                pageNumber = 1;
+            }
+            var offset = (pageNumber - 1) * pageCount;
+            
+            var queryText = $"SELECT * FROM c OFFSET {offset} LIMIT {pageCount}";
+            
+            
+            var query = _container.GetItemQueryIterator<CAB>(new QueryDefinition(queryText));
             var list = new List<CAB>();
             while (query.HasMoreResults)
             {
@@ -54,5 +65,6 @@ namespace UKMCAB.Data.CosmosDb
 
             return list;
         }
+
     }
 }
