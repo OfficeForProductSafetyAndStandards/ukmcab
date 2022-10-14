@@ -15,10 +15,11 @@ namespace UKMCAB.Web.UI.Controllers
             _cosmosDbService = cosmosDbService;
         }
 
+
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var cabs = await _cosmosDbService.GetAllAsync(1, 10);
+            var cabs = await _cosmosDbService.GetPagedCABsAsync(1, 10);
             return Ok(cabs);
         }
 

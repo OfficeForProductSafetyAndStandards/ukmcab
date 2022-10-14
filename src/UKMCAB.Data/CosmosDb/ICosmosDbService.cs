@@ -7,7 +7,7 @@ namespace UKMCAB.Data.CosmosDb
         Task<string> CreateAsync(CAB cab);
         Task<bool> UpdateAsync(CAB cab);
         Task<CAB?> GetByIdAsync(string id);
-        Task<List<CAB>> GetAllAsync(int pageNumber, int pageCount );
-
+        Task<List<CAB>> GetPagedCABsAsync(int pageNumber, int pageCount );
+        Task<int> GetCABCountAsync();
     }
 }

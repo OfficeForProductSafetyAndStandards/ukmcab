@@ -10,6 +10,8 @@ public class AdminController : Controller
 {
     private readonly ICosmosDbService _cosmosDbService;
 
+    private const int CABS_PER_PAGE = 10;
+
     public static class RouteIds
     {
         public const string List = "admin.cab.list";
@@ -26,19 +28,29 @@ public class AdminController : Controller
     [Route("", Name = RouteIds.List)]
     public async Task<IActionResult> ListAsync(int? pageNumber)
     {
-        if (pageNumber == null)
+        var totalCABs = await _cosmosDbService.GetCABCountAsync();
+        if (pageNumber == null || (pageNumber - 1) * CABS_PER_PAGE > totalCABs)
         {
             pageNumber = 1;
         }
 
-        var cabs = await _cosmosDbService.GetAllAsync(pageNumber.Value, 10);
+        var cabs = await _cosmosDbService.GetPagedCABsAsync(pageNumber.Value, CABS_PER_PAGE);
+
         var viewModel = new CabListViewModel
         {
+            
             CabListItems = cabs.Select(c => new CabListItemViewModel { Id = c.Id, Name = c.Name, Address = c.Address }).ToList(),
-            PageNumber = pageNumber.Value,
+            Pagination = new PaginationViewModel
+            {
+                PageNumber = pageNumber.Value,
+                TotalPages = totalCABs / CABS_PER_PAGE
+            }
         };
+        if (totalCABs % CABS_PER_PAGE != 0)
+        {
+            viewModel.Pagination.TotalPages++;
+        }
         
-
         return await Task.FromResult(View(viewModel));
     }
 
