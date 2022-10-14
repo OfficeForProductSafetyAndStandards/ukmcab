@@ -1,4 +1,4 @@
-name: App service deploy
+name: App service deploy (stage)
 
 on:
   # workflow_dispatch
@@ -9,7 +9,7 @@ on:
      - 'src/**/*'
 
 env:
-  AZURE_WEBAPP_NAME: app-opss-ukmcab-dev
+  AZURE_WEBAPP_NAME: app-opss-ukmcab-stage
   AZURE_WEBAPP_PACKAGE_PATH: UKMCAB.Web.UI/publish
   DOTNET_VERSION: '6.0.x'
   CONFIGURATION: Release

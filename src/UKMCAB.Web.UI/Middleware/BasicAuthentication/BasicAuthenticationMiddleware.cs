@@ -24,7 +24,7 @@ public class BasicAuthenticationMiddleware
                 if (authHeader.Scheme == "Basic")
                 {
                     var (userName, password) = GetCredentials(authHeader);
-                    if (userName == _basicAuthOptions.UserName && password == _basicAuthOptions.Password)
+                    if (userName == BasicAuthenticationOptions.UserName && password == _basicAuthOptions.Password)
                     {
                         await _next(context);
                     }

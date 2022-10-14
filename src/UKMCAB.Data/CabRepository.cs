@@ -27,8 +27,6 @@ public static class CabRepository
 
         _cabs.ForEach(x => x.TestingLocations = x.TestingLocations?.Where(x => x != "null").ToList() ?? new List<string>());
 
-        await LoadPdfTextAsync();
-
         foreach (var cab in _cabs)
         {
             cab.RawJsonData = JsonSerializer.Serialize(cab);
@@ -110,31 +108,6 @@ public static class CabRepository
     }
 
 
-
-    private static async Task LoadPdfTextAsync()
-    {
-        if (_pdfIdTextMap.Count == 0)
-        {
-            const string indexName = "azureblob-index";
-
-            var endpoint = new Uri(Config["AzureSearchEndPoint"]);
-            var key = Config["AzureSearchKey"];
-
-            var credential = new AzureKeyCredential(key);
-            var client = new SearchClient(endpoint, indexName, credential);
-
-            var response = await client.SearchAsync<SearchDocument>("", new SearchOptions { Size = 200 });
-            var results = response.Value.GetResults().ToArray();
-
-
-            foreach (var data in results)
-            {
-                var id = data.Document.GetString("metadata_storage_name");
-                var content = data.Document.GetString("content");
-                _pdfIdTextMap[id] = content;
-            }
-        }
-    }
 
 
     public static string[] GetBodyTypeFacets() => _cabs.SelectMany(x => x.BodyType ?? new List<string>()).Distinct().OrderBy(x => x).ToArray();
