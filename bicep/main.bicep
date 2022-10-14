@@ -2,7 +2,7 @@
 param project string = 'ukmcab'
 param env string = 'dev'
 param location string = 'uksouth'
-param basicAuthPassword string = ''
+param basicAuthPassword string = '' 
 targetScope = 'subscription'
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
