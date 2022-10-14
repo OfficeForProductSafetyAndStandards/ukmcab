@@ -2,6 +2,9 @@ param project string
 param env string
 param location string = resourceGroup().location
 
+@secure()
+param basicAuthPassword string
+
 
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
@@ -207,6 +210,14 @@ resource cosmosConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2022-07
   }
 }
 
+resource basicAuthPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'basicAuthPassword'
+  properties: {
+    value: basicAuthPassword
+  }
+}
+
 
 
 
@@ -230,7 +241,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   name: 'app-opss-${project}-${env}'
   location: location
   properties: {
-    httpsOnly: true
+    httpsOnly: false
     serverFarmId: appServicePlan.id
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|6.0'
@@ -250,6 +261,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'CosmosConnectionString'
           value: '@Microsoft.KeyVault(SecretUri=${cosmosConnectionStringSecret.properties.secretUri})'
+        }
+        {
+          name: 'BasicAuthPassword'
+          value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
         }
       ]
     }
