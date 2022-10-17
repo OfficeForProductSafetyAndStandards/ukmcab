@@ -8,7 +8,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <a class="govuk-button" href="@Url.RouteUrl(AdminController.RouteIds.Create)">Create new CAB</a>
+        <a class="govuk-button" href="@Url.RouteUrl(AdminController.RouteIds.Create)">Add new CAB</a>
     </div>
 </div>
 
@@ -44,7 +44,7 @@
                         @cab.Address
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" asp-action="CreateEdit" asp-route-id="@cab.Id">Edit CAB</a>
+                        <a class="govuk-link" asp-action="CreateEdit" asp-route-id="@cab.Id">Edit</a>
                     </dd>
                 </div>
             }

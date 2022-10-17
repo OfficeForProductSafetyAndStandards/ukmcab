@@ -10,7 +10,7 @@ public class AdminController : Controller
 {
     private readonly ICosmosDbService _cosmosDbService;
 
-    private const int CABS_PER_PAGE = 10;
+    private const int CABS_PER_PAGE = 20;
 
     public static class RouteIds
     {

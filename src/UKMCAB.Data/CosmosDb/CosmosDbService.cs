@@ -52,7 +52,7 @@ namespace UKMCAB.Data.CosmosDb
             }
             var offset = (pageNumber - 1) * pageCount;
             
-            var queryText = $"SELECT * FROM c OFFSET {offset} LIMIT {pageCount}";
+            var queryText = $"SELECT * FROM c ORDER BY c.name OFFSET {offset} LIMIT {pageCount}";
             
             
             var query = _container.GetItemQueryIterator<CAB>(new QueryDefinition(queryText));
