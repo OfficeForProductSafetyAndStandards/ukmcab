@@ -6,11 +6,10 @@ using UKMCAB.Web.UI.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-var basicAuthenticationOptions = new BasicAuthenticationOptions().Pipe(x => builder.Configuration.Bind("BasicAuthentication", x));
 
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddSingleton(basicAuthenticationOptions);
+builder.Services.AddSingleton(new BasicAuthenticationOptions() { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
 builder.Services.AddTransient<ICABSearchService, CABSearchService>();
 builder.Services.AddHostedService<UmbracoDataRefreshBackgroundService>();
