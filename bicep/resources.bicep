@@ -340,6 +340,10 @@ resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-
 resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-05-01' = {
   name: 'ip-${project}-${env}'
   location: location
+  sku: {
+    name: 'Standard'
+    tier: 'Regional'
+  }
   properties: {
     publicIPAllocationMethod: 'Static'
     publicIPAddressVersion: 'IPv4'
