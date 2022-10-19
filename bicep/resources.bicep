@@ -405,8 +405,8 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
   location: location
   properties: {
     autoscaleConfiguration: {
-      maxCapacity: 0
-      minCapacity: 10
+      maxCapacity: 10
+      minCapacity: 0
     }
     backendAddressPools: [
       {
