@@ -485,7 +485,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
             id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGwPublicFrontendIp')
           }
           frontendPort: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_80')
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
           }
           protocol: 'Https'
           sslCertificate: {
