@@ -5,6 +5,8 @@ param location string = resourceGroup().location
 @secure()
 param basicAuthPassword string
 
+@secure()
+param sslCertPfxBase64 string = ''
 
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
@@ -219,8 +221,6 @@ resource basicAuthPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' 
 }
 
 
-
-
 /*
   APP SERVICE and APP SERVICE PLAN
 */
@@ -322,5 +322,218 @@ resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-
              }
         }
       ]
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-05-01' = {
+  name: 'ip-${project}-${env}'
+  location: location
+  properties: {
+    publicIPAllocationMethod: 'Static'
+    publicIPAddressVersion: 'IPv4'
+    dnsSettings: {
+      domainNameLabel: '${project}-${env}'
+    }
+
+  }
+}
+
+
+
+
+var vnetSubnetNameApplication = 'agsubnetapp'
+var vnetSubnetNameApplicationGateway = 'agsubnetappgw'
+
+resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
+  name: 'vnet-${project}-${env}'
+  location: location
+  properties: {
+    addressSpace: {
+      addressPrefixes: [
+        '10.0.0.0/16'
+      ]
+    }
+    subnets: [
+      {
+        name: vnetSubnetNameApplicationGateway // vnet subnet for application-gateway
+        type: 'Microsoft.Network/virtualNetworks/subnets'
+        properties: {
+          addressPrefix: '10.0.0.0/24'
+        }
+      }
+      {
+        name: vnetSubnetNameApplication // vnet subnet for application itself
+        type: 'Microsoft.Network/virtualNetworks/subnets'
+        properties: {
+          addressPrefix: '10.0.1.0/24'
+        }
+      }
+    ]
+  }
+
+  resource vnetSubnetApplicationGateway 'subnets' existing = {
+    name: vnetSubnetNameApplicationGateway
+  }
+
+  resource vnetSubnetApplication 'subnets' existing = {
+    name: vnetSubnetNameApplication
+  }
+}
+
+
+
+var applicationGatewayName = 'agw-${project}-${env}'
+var applicationGatewaySslCertificateName = 'ssl-cert'
+var applicationGatewayBackendPool = 'agw-backend-pool'
+var applicationGatewayBackendHttpSettingsName = 'agw-be-http-settings'
+var applicationGatewayHttpsListener = 'agw-https-listener'
+
+resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' = {
+  name: applicationGatewayName
+  location: location
+  properties: {
+    autoscaleConfiguration: {
+      maxCapacity: 0
+      minCapacity: 10
+    }
+    backendAddressPools: [
+      {
+        name: applicationGatewayBackendPool
+        properties: {
+          backendAddresses: [
+            {
+              fqdn: appService.properties.defaultHostName
+            }
+          ]
+        }
+      }
+    ]
+
+    
+
+    backendHttpSettingsCollection: [
+      {
+        name: applicationGatewayBackendHttpSettingsName
+        properties: {
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          pickHostNameFromBackendAddress: true
+          affinityCookieName: 'ApplicationGatewayAffinity'
+          requestTimeout: 20
+        }
+      }
+    ]
+    
+    
+    enableHttp2: false
+    
+    frontendIPConfigurations: [
+      {
+        name: 'appGwPublicFrontendIp'
+        properties: {
+          privateIPAllocationMethod: 'Dynamic'
+          publicIPAddress: {
+            id: publicIpAddress.id
+          }
+        }
+      }
+    ]
+    frontendPorts: [
+      {
+        name: 'port_80'
+        properties: {
+          port: 80
+        }
+      }
+      {
+        name: 'port_443'
+        properties: {
+          port: 443
+        }
+      }
+    ]
+    gatewayIPConfigurations: [
+      {
+        name: 'appGatewayIpConfig'
+        properties: {
+          subnet: {
+            id: vnet::vnetSubnetApplicationGateway.id  
+          }
+        }
+      }
+    ]
+
+    
+    httpListeners: [
+      {
+        name: applicationGatewayHttpsListener
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGwPublicFrontendIp')
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_80')
+          }
+          protocol: 'Https'
+          sslCertificate: {
+            id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, applicationGatewaySslCertificateName)
+          }
+          hostNames: []
+          requireServerNameIndication: false
+        }
+      }
+    ]
+
+    
+    requestRoutingRules: [
+      {
+        name: 'rule2'
+        properties: {
+          ruleType: 'Basic'
+          priority: 2
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, applicationGatewayHttpsListener)
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayBackendPool)
+          }
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsName)
+          }
+        }
+      }
+    ]
+
+
+    
+    sku: {
+      name: 'Standard_v2'
+      tier: 'Standard_v2'
+    }
+
+
+    sslCertificates: [ 
+      {
+        name: applicationGatewaySslCertificateName
+        properties: {
+          data: sslCertPfxBase64
+          password: ''
+        }
+      }
+    ]
+
   }
 }
