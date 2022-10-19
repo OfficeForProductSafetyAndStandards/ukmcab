@@ -504,7 +504,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
     
     requestRoutingRules: [
       {
-        name: 'rule2'
+        name: 'httpsrule'
         properties: {
           ruleType: 'Basic'
           priority: 2
