@@ -403,6 +403,7 @@ var applicationGatewaySslCertificateName = 'ssl-cert'
 var applicationGatewayBackendPool = 'agw-backend-pool'
 var applicationGatewayBackendHttpSettingsName = 'agw-be-http-settings'
 var applicationGatewayHttpsListener = 'agw-https-listener'
+var applicationGatewayCustomProbeName = 'agw-custom-backend-probe-http'
 
 resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' = {
   name: applicationGatewayName
@@ -437,6 +438,9 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           pickHostNameFromBackendAddress: true
           affinityCookieName: 'ApplicationGatewayAffinity'
           requestTimeout: 20
+          probe: {
+            id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeName)
+          }
         }
       }
     ]
@@ -516,6 +520,29 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsName)
+          }
+        }
+      }
+    ]
+
+
+    probes: [
+      {
+        name: applicationGatewayCustomProbeName
+        properties: {
+          protocol: 'Http'
+          path: '/'
+          interval: 30
+          timeout: 30
+          unhealthyThreshold: 3
+          pickHostNameFromBackendHttpSettings: true
+          minServers: 0
+          match: {
+            statusCodes: [
+              '200-399'
+              '401'
+              '403'
+            ]
           }
         }
       }
