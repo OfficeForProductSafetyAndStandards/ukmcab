@@ -1,10 +1,7 @@
-﻿using System.Text.Json.Nodes;
-using System.Text.Json;
+﻿using Microsoft.Extensions.Configuration;
 using MoreLinq;
-using Azure.Search.Documents;
-using Azure;
-using Azure.Search.Documents.Models;
-using Microsoft.Extensions.Configuration;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data;
@@ -122,46 +119,6 @@ public static class CabRepository
     {
         return _cabs.Single(c => c.ExternalID == id);
     }
-    
-    public static CabData[] Search(string text, string[] bodyTypes = null!, string[] registeredOfficeLocation = null!, string[] testingLocations = null!,  string[] regulations = null!)
-    {
-        bodyTypes ??= Array.Empty<string>();
-        registeredOfficeLocation ??= Array.Empty<string>();
-        testingLocations ??= Array.Empty<string>();
-        regulations ??= Array.Empty<string>();
-
-        var results = _cabs;
-
-        if ((text ?? "").Trim().Length > 0)
-        {
-            results = results.Where(x => x.SearchFields.Contains(text, StringComparison.InvariantCultureIgnoreCase)).ToArray();
-        }
-
-        if (bodyTypes.Length > 0)
-        {
-            results = results.Where(x => x.BodyType.Intersect(bodyTypes, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
-        }
-
-        if (registeredOfficeLocation.Length > 0)
-        {
-            results = results.Where(x => x.RegisteredOfficeLocation.Intersect(registeredOfficeLocation, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
-        }
-
-        if (testingLocations.Length > 0)
-        {
-            results = results.Where(x => x.TestingLocations.Intersect(testingLocations, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
-        }
-
-        if (regulations.Length > 0)
-        {
-            results = results.Where(x =>  x.RegulationNames.Intersect(regulations, StringComparer.CurrentCultureIgnoreCase).Count() > 0).ToArray();
-        }
-
-        return results;
-    }
-
-
-
 
     static async Task<string> LoadTransformJsonAsync()
     {

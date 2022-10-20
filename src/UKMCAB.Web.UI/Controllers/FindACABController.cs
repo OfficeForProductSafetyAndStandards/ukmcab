@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UKMCAB.Data.CosmosDb;
+using UKMCAB.Data.CosmosDb.Models;
 using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Services;
 
@@ -8,11 +10,13 @@ public class FindACABController : Controller
 {
     private readonly ISearchFilterService _searchFilterService;
     private readonly ICABSearchService _cabSearchService;
+    private readonly ICosmosDbService _cosmosDbService;
 
-    public FindACABController(ISearchFilterService searchFilterService, ICABSearchService cabSearchService)
+    public FindACABController(ISearchFilterService searchFilterService, ICABSearchService cabSearchService, ICosmosDbService cosmosDbService)
     {
         _searchFilterService = searchFilterService;
         _cabSearchService = cabSearchService;
+        _cosmosDbService = cosmosDbService;
     }
     
     [Route("find-a-cab")]
@@ -22,15 +26,28 @@ public class FindACABController : Controller
     }
     
     [Route("find-a-cab/results")]
-    public IActionResult Results(SearchResultsViewModel searchResultsViewModel)
+    public async Task<IActionResult> Results(SearchResultsViewModel searchResultsViewModel)
     {
         LoadFilters(searchResultsViewModel);
 
-        searchResultsViewModel.SearchResultViewModels = _cabSearchService.Search(searchResultsViewModel.Keywords,
-            searchResultsViewModel.BodyTypes, 
-            searchResultsViewModel.RegisteredOfficeLocations,
-            searchResultsViewModel.TestingLocations, 
-            searchResultsViewModel.Regulations);
+        var cabs = await _cosmosDbService.Query(searchResultsViewModel.Keywords, new FilterSelections
+        {
+            BodyTypes = searchResultsViewModel.BodyTypes,
+            RegisteredOfficeLocations = searchResultsViewModel.RegisteredOfficeLocations,
+            TestingLocations = searchResultsViewModel.TestingLocations,
+            Regulations = searchResultsViewModel.Regulations
+        });
+
+        searchResultsViewModel.SearchResultViewModels = cabs == null? new List<SearchResultViewModel>() : cabs.Select(c => new SearchResultViewModel
+        {
+            Address = c.Address,
+            Email = c.Email,
+            Name = c.Name,
+            Phone = c.Phone,
+            Website = c.Website,
+            id = c.Id,
+            Regulations = string.Join(", ", c.Regulations.Select(r => r.Name))
+        }).ToList();
 
         return View(searchResultsViewModel);
     }

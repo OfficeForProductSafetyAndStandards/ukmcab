@@ -6,24 +6,6 @@ namespace UKMCAB.Web.UI.Services;
 
 public class CABSearchService : ICABSearchService
 {
-    public List<SearchResultViewModel> Search(string text, string[] bodyTypes, string[] registeredOfficeLocations, string[] testingLocations, string[] regulations)
-    {
-        var cabData = CabRepository.Search(text, bodyTypes,
-            registeredOfficeLocations, testingLocations,
-            regulations);
-
-        return cabData.Select(c => new SearchResultViewModel
-        {
-            id = c.ExternalID,
-            Name = c.Name,
-            Address = c.Address,
-            Email = c.Email,
-            Phone = c.Phone,
-            Website = c.Website,
-            Regulations = string.Join(", ", c.RegulationNames)
-        }).ToList();
-    }
-
     public CABProfileViewModel GetCAB(string id)
     {
         var cabData = CabRepository.Get(id);
