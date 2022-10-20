@@ -375,6 +375,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
         type: 'Microsoft.Network/virtualNetworks/subnets'
         properties: {
           addressPrefix: '10.0.0.0/24'
+          privateEndpointNetworkPolicies: 'Disabled'
         }
       }
       {
@@ -382,6 +383,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
         type: 'Microsoft.Network/virtualNetworks/subnets'
         properties: {
           addressPrefix: '10.0.1.0/24'
+          privateEndpointNetworkPolicies: 'Disabled'
         }
       }
     ]
