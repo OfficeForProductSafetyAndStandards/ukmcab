@@ -7,7 +7,7 @@ namespace UKMCAB.Data.CosmosDb.Models
     {
         [JsonPropertyName("name")]
         public string Name { get; set; }
-        [JsonPropertyName("code")]
+        [JsonPropertyName("productCode")]
         public string? Code { get; set; }
         [JsonPropertyName("partName")]
         public string? PartName { get; set; }
