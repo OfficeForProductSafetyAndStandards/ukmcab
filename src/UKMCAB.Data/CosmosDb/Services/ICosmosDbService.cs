@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Data.CosmosDb.Models;
 
-namespace UKMCAB.Data.CosmosDb
+namespace UKMCAB.Data.CosmosDb.Services
 {
     public interface ICosmosDbService
     {
@@ -9,6 +9,6 @@ namespace UKMCAB.Data.CosmosDb
         Task<CAB?> GetByIdAsync(string id);
         Task<List<CAB>> GetPagedCABsAsync(int pageNumber, int pageCount );
         Task<int> GetCABCountAsync();
-        Task<List<CAB>> Query(string text, FilterSelections filterSelections);
+        Task<List<CAB>> Query(string text);
     }
 }

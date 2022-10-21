@@ -1,11 +1,9 @@
-﻿using Microsoft.Azure.Cosmos;
-using System.Net;
-
+﻿using System.Net;
 using System.Text;
-using Newtonsoft.Json.Linq;
+using Microsoft.Azure.Cosmos;
 using UKMCAB.Data.CosmosDb.Models;
 
-namespace UKMCAB.Data.CosmosDb
+namespace UKMCAB.Data.CosmosDb.Services
 {
     public class CosmosDbService : ICosmosDbService
     {
@@ -77,22 +75,7 @@ namespace UKMCAB.Data.CosmosDb
             return list;
         }
 
-        private async Task<List<CAB>> QueryCABs(string queryText)
-        {
-            var query = _container.GetItemQueryIterator<CabItem>(new QueryDefinition(queryText));
-            var list = new List<CAB>();
-            while (query.HasMoreResults)
-            {
-                var response = await query.ReadNextAsync();
-                list.AddRange(response.Resource.Select(r => r.CAB));
-            }
-
-            return list;
-
-        }
-
-
-        public async Task<List<CAB>> Query(string text, FilterSelections filterSelections)
+        public async Task<List<CAB>> Query(string text)
         {
             var queryBuilder = new StringBuilder();
             queryBuilder.Append("SELECT cab ");
@@ -108,38 +91,16 @@ namespace UKMCAB.Data.CosmosDb
             queryBuilder.Append($"OR CONTAINS(product.StandardsNumber, '{text}', true))");
 
             var queryText = queryBuilder.ToString();
-            var cabs = await QueryCABs(queryText);
-            cabs = ApplyFilters(cabs, filterSelections);
-            return cabs;
-        }
+            var query = _container.GetItemQueryIterator<CabItem>(new QueryDefinition(queryText));
+            var list = new List<CAB>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                list.AddRange(response.Resource.Select(r => r.CAB));
+            }
 
-        private List<CAB> ApplyFilters(List<CAB> cabs, FilterSelections filterSelections)
-        {
-            if (filterSelections.BodyTypes != null && filterSelections.BodyTypes.Any())
-            {
-                cabs = cabs.Where(c => !string.IsNullOrWhiteSpace(c.BodyType) &&
-                    filterSelections.BodyTypes.Any(bt =>
-                         c.BodyType.Contains(bt, StringComparison.InvariantCultureIgnoreCase))).ToList();
-            }
-            if (filterSelections.RegisteredOfficeLocations != null && filterSelections.RegisteredOfficeLocations.Any())
-            {
-                cabs = cabs.Where(c => !string.IsNullOrWhiteSpace(c.RegisteredOfficeLocation) &&
-                    filterSelections.RegisteredOfficeLocations.Any(rol =>
-                         c.RegisteredOfficeLocation.Contains(rol, StringComparison.InvariantCultureIgnoreCase))).ToList();
-            }
-            if (filterSelections.TestingLocations != null && filterSelections.TestingLocations.Any())
-            {
-                cabs = cabs.Where(c => !string.IsNullOrWhiteSpace(c.TestingLocations) &&
-                    filterSelections.TestingLocations.Any(tl =>
-                        c.TestingLocations.Contains(tl, StringComparison.InvariantCultureIgnoreCase))).ToList();
-            }
-            if (filterSelections.Regulations != null && filterSelections.Regulations.Any())
-            {
-                cabs = cabs.Where(c =>
-                    filterSelections.Regulations.Any(fr =>
-                        c.Regulations.Any(r => r.Name.Equals(fr, StringComparison.InvariantCultureIgnoreCase)))).ToList();
-            }
-            return cabs;
+            return list;
+
         }
     }
 }

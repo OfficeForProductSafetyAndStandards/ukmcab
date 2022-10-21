@@ -1,21 +1,65 @@
-﻿using UKMCAB.Data;
-using UKMCAB.Data.Models;
+﻿using UKMCAB.Data.CosmosDb.Models;
+using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Web.UI.Models;
 using UKMCAB.Web.UI.Models.ViewModels;
 
 namespace UKMCAB.Web.UI.Services;
 
 public class CABSearchService : ICABSearchService
 {
-    public CABProfileViewModel GetCAB(string id)
+    private readonly ICosmosDbService _cosmosDbService;
+
+    public CABSearchService(ICosmosDbService cosmosDbService)
     {
-        var cabData = CabRepository.Get(id);
+        _cosmosDbService = cosmosDbService;
+    }
+
+    public async Task<List<CAB>> SearchCABsAsync(string text, FilterSelections filterSelections)
+    {
+        var cabs = await _cosmosDbService.Query(text);
+        cabs = ApplyFilters(cabs, filterSelections);
+        return cabs;
+    }
+
+    private List<CAB> ApplyFilters(List<CAB> cabs, FilterSelections filterSelections)
+    {
+        if (filterSelections.BodyTypes != null && filterSelections.BodyTypes.Any())
+        {
+            cabs = cabs.Where(c => !string.IsNullOrWhiteSpace(c.BodyType) &&
+                                   filterSelections.BodyTypes.Any(bt =>
+                                       c.BodyType.Contains(bt, StringComparison.InvariantCultureIgnoreCase))).ToList();
+        }
+        if (filterSelections.RegisteredOfficeLocations != null && filterSelections.RegisteredOfficeLocations.Any())
+        {
+            cabs = cabs.Where(c => !string.IsNullOrWhiteSpace(c.RegisteredOfficeLocation) &&
+                                   filterSelections.RegisteredOfficeLocations.Any(rol =>
+                                       c.RegisteredOfficeLocation.Contains(rol, StringComparison.InvariantCultureIgnoreCase))).ToList();
+        }
+        if (filterSelections.TestingLocations != null && filterSelections.TestingLocations.Any())
+        {
+            cabs = cabs.Where(c => !string.IsNullOrWhiteSpace(c.TestingLocations) &&
+                                   filterSelections.TestingLocations.Any(tl =>
+                                       c.TestingLocations.Contains(tl, StringComparison.InvariantCultureIgnoreCase))).ToList();
+        }
+        if (filterSelections.Regulations != null && filterSelections.Regulations.Any())
+        {
+            cabs = cabs.Where(c =>
+                filterSelections.Regulations.Any(fr =>
+                    c.Regulations.Any(r => r.Name.Equals(fr, StringComparison.InvariantCultureIgnoreCase)))).ToList();
+        }
+        return cabs;
+    }
+
+    public async Task<CABProfileViewModel> GetCABAsync(string id)
+    {
+        var cabData = await _cosmosDbService.GetByIdAsync(id);
         
         var cabProfile = new CABProfileViewModel
         {
             Name = cabData.Name,
             
-            Published = "TBD", // todo
-            LastUpdated = "TBD", // todo
+            Published = "xxx", // todo
+            LastUpdated = "xxx", // todo
             
             Address = cabData.Address,
             Website = cabData.Website,
@@ -39,9 +83,7 @@ public class CABSearchService : ICABSearchService
         cabProfile.Regulations = cabData.Regulations != null
             ? GetRegulations(cabData.Regulations)
             : new List<RegulationViewModel>();
-        cabProfile.CertificationActivityLocations = cabData.CertificationActivitiesLocations != null
-            ? cabData.CertificationActivitiesLocations.Select(c => c.Location).ToList()
-            : new List<string>();
+        cabProfile.CertificationActivityLocations = new List<string>(); // TODO: not in new data source
 
 
         return cabProfile;
@@ -54,11 +96,11 @@ public class CABSearchService : ICABSearchService
         {
             var regulation = new RegulationViewModel()
             {
-                Title = cabDataRegulation.RegulationName,
-                Description = cabDataRegulation.Description,
+                Title = cabDataRegulation.Name,
+                Description = string.Empty, // TODO: not in new data source
             };
-            regulation.ProductGroups = cabDataRegulation.ProductGroups != null
-                ? GetProductGroups(cabDataRegulation.ProductGroups)
+            regulation.ProductGroups = cabDataRegulation.Products != null
+                ? GetProductGroups(cabDataRegulation.Products)
                 : new List<ProductsGroupViewModel>();
             
             regulations.Add(regulation);
@@ -67,36 +109,43 @@ public class CABSearchService : ICABSearchService
         return regulations;
     }
 
-    private List<ProductsGroupViewModel> GetProductGroups(List<ProductGroup> productGroups)
+    private List<ProductsGroupViewModel> GetProductGroups(List<Product> productGroups)
     {
         var products = new List<ProductsGroupViewModel>();
-        foreach (var regulationProductGroup in productGroups)
+        foreach (var product in productGroups)
         {
             var productGroup = new ProductsGroupViewModel()
             {
-                Title = regulationProductGroup.Name,
-                Description = regulationProductGroup.Description,
-                Products = regulationProductGroup.Products != null ? regulationProductGroup.Products.Select(l => l.Name).ToList() : new List<string>(),
+                Title = product.Name,
+                Description = string.Empty, // TODO: not in new data source
+                Products = new List<string>() {product.Name},// TODO: not in new data source
                 Schedules = new List<ScheduleViewModel>(),
                 StandardsSpecifications = new List<StandardSpecificationViewModel>()
             };
-            if (regulationProductGroup.Schedules != null)
+            if (product.ScheduleName != null)
             {
-                productGroup.Schedules = regulationProductGroup.Schedules.Select(schedule => new ScheduleViewModel
+                productGroup.Schedules = new List<ScheduleViewModel>
                 {
-                    Title = schedule.Name,
-                    Description = schedule.Description,
-                    Label = schedule.Label
-                }).ToList();
+                    new ScheduleViewModel
+                    {
+                        Title = product.ScheduleName,
+                        Description = string.Empty, // TODO: not in new data source
+                        Label = string.Empty, // TODO: not in new data source
+                    }
+                };
             }
-            if (regulationProductGroup.SpecificationsStandards != null)
+
+            ;
+            if (product.StandardsNumber != null)
             {
-                productGroup.StandardsSpecifications = regulationProductGroup.SpecificationsStandards.Select(s =>
+                productGroup.StandardsSpecifications = new List<StandardSpecificationViewModel>
+                {
                     new StandardSpecificationViewModel
                     {
-                        Label = s.Label,
-                        Value = s.Value
-                    }).ToList();
+                        Label = product.StandardsNumber,
+                        Value = string.Empty, // TODO: not in new data source
+                    }
+                };
             }
             
             products.Add(productGroup);

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UKMCAB.Data.CosmosDb;
+using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Web.UI.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 
