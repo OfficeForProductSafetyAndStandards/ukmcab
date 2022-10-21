@@ -5,7 +5,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">List of CABs</h1>
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">CAB list</h1>
     </div>
 </div>
 
@@ -31,9 +31,6 @@
                 <dt class="govuk-summary-list__key">
                     CAB name
                 </dt>
-                <dd class="govuk-summary-list__value govuk-!-font-weight-bold">
-                    Address
-                </dd>
                 <dd class="govuk-summary-list__actions">
                 </dd>
             </div>
@@ -43,9 +40,6 @@
                     <dt class="govuk-summary-list__key">
                         @cab.Name
                     </dt>
-                    <dd class="govuk-summary-list__value">
-                        @cab.Address
-                    </dd>
                     <dd class="govuk-summary-list__actions">
                         <a class="govuk-link" asp-action="CreateEdit" asp-route-id="@cab.Id">Edit</a>
                     </dd>
