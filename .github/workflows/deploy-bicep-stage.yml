@@ -25,5 +25,5 @@ jobs:
         scope: 'subscription'
         region: 'uksouth'
         template: './bicep/main.bicep'
-        parameters: ./bicep/stage.parameters.json basicAuthPassword=${{ secrets.BASIC_AUTH_PASSWORD_STAGE }}
+        parameters: ./bicep/stage.parameters.json basicAuthPassword=${{ secrets.BASIC_AUTH_PASSWORD_STAGE }} sslCertPfxBase64=${{ secrets.SSL_CERT_STAGE }}
         failOnStdErr: false
