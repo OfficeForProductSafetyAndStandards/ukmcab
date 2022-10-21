@@ -1,7 +1,6 @@
 using Microsoft.Azure.Cosmos;
-using UKMCAB.Common;
-using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb;
+using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Web.UI.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;
 
@@ -12,7 +11,6 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton(new BasicAuthenticationOptions() { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
 builder.Services.AddTransient<ICABSearchService, CABSearchService>();
-builder.Services.AddHostedService<UmbracoDataRefreshBackgroundService>();
 
 var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
 var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
@@ -32,8 +30,5 @@ app.UseMiddleware<BasicAuthenticationMiddleware>();
 app.UseStaticFiles();
 
 app.MapDefaultControllerRoute();
-
-CabRepository.Config = builder.Configuration; // todo: use ioc etc.
-//await CabRepository.LoadAsync(); // todo: use ioc
 
 app.Run();

@@ -1,4 +1,4 @@
-﻿namespace UKMCAB.Data.CosmosDb.Models
+﻿namespace UKMCAB.Web.UI.Models
 {
     public class FilterSelections
     {

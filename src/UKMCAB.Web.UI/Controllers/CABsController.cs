@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using UKMCAB.Data.CosmosDb;
 using UKMCAB.Data.CosmosDb.Models;
+using UKMCAB.Data.CosmosDb.Services;
 
 namespace UKMCAB.Web.UI.Controllers
 {

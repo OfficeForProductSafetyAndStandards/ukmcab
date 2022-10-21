@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using UKMCAB.Data.CosmosDb;
-using UKMCAB.Data.CosmosDb.Models;
+using UKMCAB.Web.UI.Models;
 using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Services;
 
@@ -10,13 +9,11 @@ public class FindACABController : Controller
 {
     private readonly ISearchFilterService _searchFilterService;
     private readonly ICABSearchService _cabSearchService;
-    private readonly ICosmosDbService _cosmosDbService;
 
-    public FindACABController(ISearchFilterService searchFilterService, ICABSearchService cabSearchService, ICosmosDbService cosmosDbService)
+    public FindACABController(ISearchFilterService searchFilterService, ICABSearchService cabSearchService)
     {
         _searchFilterService = searchFilterService;
         _cabSearchService = cabSearchService;
-        _cosmosDbService = cosmosDbService;
     }
     
     [Route("find-a-cab")]
@@ -30,7 +27,7 @@ public class FindACABController : Controller
     {
         LoadFilters(searchResultsViewModel);
 
-        var cabs = await _cosmosDbService.Query(searchResultsViewModel.Keywords, new FilterSelections
+        var cabs = await _cabSearchService.SearchCABsAsync(searchResultsViewModel.Keywords, new FilterSelections
         {
             BodyTypes = searchResultsViewModel.BodyTypes,
             RegisteredOfficeLocations = searchResultsViewModel.RegisteredOfficeLocations,
@@ -83,9 +80,9 @@ public class FindACABController : Controller
     }
     
     [Route("find-a-cab/profile")]
-    public IActionResult Profile(string id)
+    public async Task<IActionResult> Profile(string id)
     {
-        var cabProfile = _cabSearchService.GetCAB(id);
+        var cabProfile = await _cabSearchService.GetCABAsync(id);
         return View(cabProfile);
     }
 }
