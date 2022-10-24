@@ -99,7 +99,9 @@ namespace UKMCAB.Data.CosmosDb.Services
                 list.AddRange(response.Resource.Select(r => r.CAB));
             }
 
-            return list;
+            
+
+            return list.Distinct().ToList();
 
         }
     }
