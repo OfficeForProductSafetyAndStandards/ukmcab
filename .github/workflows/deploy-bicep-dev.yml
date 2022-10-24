@@ -2,6 +2,8 @@ name: Azure IaC deploy (dev)
 
 on: 
   push:
+    branches:
+     - dev
     paths:
       - 'bicep/**/*'
 
