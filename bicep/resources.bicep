@@ -45,6 +45,39 @@ var redisConnectionString = '${redis.name}.redis.cache.windows.net:6380,password
 
 
 /*
+  APP INSIGHTS
+*/
+resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
+  name: 'la-${project}-${env}'
+  location: location
+  properties: {
+    sku: {
+      name: 'PerGB2018'
+    }
+    retentionInDays: 120
+    features: {
+      searchVersion: 1
+      legacy: 0
+      enableLogAccessUsingOnlyResourcePermissions: true
+    }
+  }
+}
+
+resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
+  name: 'ai-${project}-${env}'
+  location: location
+  kind: 'string'
+  properties: {
+    Application_Type: 'web'
+    WorkspaceResourceId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.OperationalInsights/workspaces/${logAnalyticsWorkspace.name}'
+  }
+}
+
+
+
+
+
+/*
   COSMOS
 */
 resource cosmosDb 'Microsoft.DocumentDB/databaseAccounts@2022-05-15' = {
@@ -127,34 +160,6 @@ resource cosmosDbContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/c
 
 
 
-/*
-  APP INSIGHTS
-*/
-resource logAnalyticsWorkspace 'Microsoft.OperationalInsights/workspaces@2020-08-01' = {
-  name: 'la-${project}-${env}'
-  location: location
-  properties: {
-    sku: {
-      name: 'PerGB2018'
-    }
-    retentionInDays: 120
-    features: {
-      searchVersion: 1
-      legacy: 0
-      enableLogAccessUsingOnlyResourcePermissions: true
-    }
-  }
-}
-
-resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
-  name: 'ai-${project}-${env}'
-  location: location
-  kind: 'string'
-  properties: {
-    Application_Type: 'web'
-    WorkspaceResourceId: '/subscriptions/${subscription().subscriptionId}/resourceGroups/${resourceGroup().name}/providers/Microsoft.OperationalInsights/workspaces/${logAnalyticsWorkspace.name}'
-  }
-}
 
 
 
@@ -408,27 +413,20 @@ var applicationGatewayHttpsListener = 'agw-https-listener'
 var applicationGatewayCustomProbeName = 'agw-custom-backend-probe-http'
 
 resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' = {
-  name: applicationGatewayName
   location: location
-  properties: {
+  name: applicationGatewayName
+  properties: {    
+
+    enableHttp2: false
+    sku: {
+      name: 'Standard_v2'
+      tier: 'Standard_v2'
+    }
+
     autoscaleConfiguration: {
       maxCapacity: 10
       minCapacity: 0
     }
-    backendAddressPools: [
-      {
-        name: applicationGatewayBackendPool
-        properties: {
-          backendAddresses: [
-            {
-              fqdn: appService.properties.defaultHostName
-            }
-          ]
-        }
-      }
-    ]
-
-    
 
     backendHttpSettingsCollection: [
       {
@@ -446,21 +444,22 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ]
-    
-    
-    enableHttp2: false
-    
-    frontendIPConfigurations: [
+
+
+    backendAddressPools: [
       {
-        name: 'appGwPublicFrontendIp'
+        name: applicationGatewayBackendPool
         properties: {
-          privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: publicIpAddress.id
-          }
+          backendAddresses: [
+            {
+              fqdn: appService.properties.defaultHostName
+            }
+          ]
         }
       }
     ]
+
+    
     frontendPorts: [
       {
         name: 'port_80'
@@ -475,13 +474,26 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ]
-    gatewayIPConfigurations: [
+
+    frontendIPConfigurations: [
       {
-        name: 'appGatewayIpConfig'
+        name: 'appGwPublicFrontendIp'
         properties: {
-          subnet: {
-            id: vnet::vnetSubnetApplicationGateway.id  
+          privateIPAllocationMethod: 'Dynamic'
+          publicIPAddress: {
+            id: publicIpAddress.id
           }
+        }
+      }
+    ]
+    
+
+    sslCertificates: [ 
+      {
+        name: applicationGatewaySslCertificateName
+        properties: {
+          data: sslCertPfxBase64
+          password: ''
         }
       }
     ]
@@ -552,18 +564,15 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
 
 
     
-    sku: {
-      name: 'Standard_v2'
-      tier: 'Standard_v2'
-    }
 
-
-    sslCertificates: [ 
+    
+    gatewayIPConfigurations: [
       {
-        name: applicationGatewaySslCertificateName
+        name: 'appGatewayIpConfig'
         properties: {
-          data: sslCertPfxBase64
-          password: ''
+          subnet: {
+            id: vnet::vnetSubnetApplicationGateway.id  
+          }
         }
       }
     ]
