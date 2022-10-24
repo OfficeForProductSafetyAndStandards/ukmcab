@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics.CodeAnalysis;
 
 namespace UKMCAB.Data.CosmosDb.Models
 {
@@ -26,5 +27,22 @@ namespace UKMCAB.Data.CosmosDb.Models
         public string? TestingLocations { get; set; }
         [JsonProperty(PropertyName = "regulations")]
         public List<Regulation> Regulations { get; set; }
+    }
+
+    public class CABComparer : IEqualityComparer<CAB>
+    {
+        public bool Equals(CAB? x, CAB? y)
+        {
+            if (x == null && y == null)
+            {
+                return false;
+            }
+            return x!.Id.Equals(y!.Id);
+        }
+
+        public int GetHashCode([DisallowNull] CAB obj)
+        {
+            return obj.Id.GetHashCode();
+        }
     }
 }

@@ -101,7 +101,7 @@ namespace UKMCAB.Data.CosmosDb.Services
 
             
 
-            return list.Distinct().ToList();
+            return list.Distinct(new CABComparer()).ToList();
 
         }
     }
