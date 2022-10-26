@@ -74,9 +74,9 @@ public class CABSearchService : ICABSearchService
             {
                 new()
                 {
-                    Version = "TBD",
-                    Date = "TBD",
-                    Details = "TBD"
+                    Version = "xxx",
+                    Date = "xxx",
+                    Details = "xxx"
                 }
             }
         };
@@ -94,63 +94,32 @@ public class CABSearchService : ICABSearchService
         var regulations = new List<RegulationViewModel>();
         foreach (var cabDataRegulation in cabDataRegulations)
         {
-            var regulation = new RegulationViewModel()
+            regulations.Add(new RegulationViewModel()
             {
                 Title = cabDataRegulation.Name,
-                Description = string.Empty, // TODO: not in new data source
-            };
-            regulation.ProductGroups = cabDataRegulation.Products != null
-                ? GetProductGroups(cabDataRegulation.Products)
-                : new List<ProductsGroupViewModel>();
-            
-            regulations.Add(regulation);
+                Products = cabDataRegulation.Products != null
+                                ? GetProducts(cabDataRegulation.Products)
+                                : new List<ProductViewModel>()
+            });
         }
-
         return regulations;
     }
 
-    private List<ProductsGroupViewModel> GetProductGroups(List<Product> productGroups)
+    private List<ProductViewModel> GetProducts(List<Product> productGroups)
     {
-        var products = new List<ProductsGroupViewModel>();
+        var products = new List<ProductViewModel>();
         foreach (var product in productGroups)
         {
-            var productGroup = new ProductsGroupViewModel()
+            products.Add(new ProductViewModel()
             {
-                Title = product.Name,
-                Description = string.Empty, // TODO: not in new data source
-                Products = new List<string>() {product.Name},// TODO: not in new data source
-                Schedules = new List<ScheduleViewModel>(),
-                StandardsSpecifications = new List<StandardSpecificationViewModel>()
-            };
-            if (product.ScheduleName != null)
-            {
-                productGroup.Schedules = new List<ScheduleViewModel>
-                {
-                    new ScheduleViewModel
-                    {
-                        Title = product.ScheduleName,
-                        Description = string.Empty, // TODO: not in new data source
-                        Label = string.Empty, // TODO: not in new data source
-                    }
-                };
-            }
-
-            ;
-            if (product.StandardsNumber != null)
-            {
-                productGroup.StandardsSpecifications = new List<StandardSpecificationViewModel>
-                {
-                    new StandardSpecificationViewModel
-                    {
-                        Label = product.StandardsNumber,
-                        Value = string.Empty, // TODO: not in new data source
-                    }
-                };
-            }
-            
-            products.Add(productGroup);
+                Name = product.Name,
+                Code = product.Code,
+                Part = product.PartName,
+                Module = product.ModuleName,
+                Schedule = product.ScheduleName,
+                StandardsSpecification = product.StandardsNumber
+            });
         }
-
         return products;
     }
 }
