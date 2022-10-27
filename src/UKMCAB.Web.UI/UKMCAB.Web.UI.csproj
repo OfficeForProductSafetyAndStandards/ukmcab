@@ -29,6 +29,20 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Assets\js\option-select.js" />
+    <None Remove="webpack.config.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Assets\js\govuk-frontend-all.js" />
+    <Content Include="Assets\js\option-select.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="webpack.config.js" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Azure.Storage.Blobs" Version="12.13.0" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.11.0" />
     <PackageReference Include="Humanizer" Version="2.14.1" />
