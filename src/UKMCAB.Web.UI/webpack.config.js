@@ -4,9 +4,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
 	devtool: "source-map",
 	mode: "development",
-	entry: "./Assets/js/main.js",
+	entry: {
+        main: "./Assets/js/main.js",
+		admin: "./Assets/js/cab-creadit.js",
+    },
 	output: {
-		filename: "main.js",
+		filename: "[name].js",
 		path: path.resolve(__dirname, "wwwroot/assets/js"),
 		clean: true,
 	},

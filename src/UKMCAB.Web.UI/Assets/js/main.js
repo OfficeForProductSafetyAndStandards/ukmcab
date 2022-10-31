@@ -71,10 +71,13 @@ checkBoxes.forEach(function (cbx) {
 });
 
 var clearFilters = document.querySelector("#clear-filters-action");
-clearFilters.addEventListener('click', function (e) {
-    e.preventDefault();
-    checkBoxes.forEach(function (cbx) {
-        cbx.checked = false;
-    });
-    submitForm.submit();
-});
+if (clearFilters) {
+    clearFilters.addEventListener('click',
+        function(e) {
+            e.preventDefault();
+            checkBoxes.forEach(function(cbx) {
+                cbx.checked = false;
+            });
+            submitForm.submit();
+        });
+}
