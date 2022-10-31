@@ -1,5 +1,6 @@
 ﻿const GOVUKFrontend = require('./govuk-frontend-all.js');
 import "./option-select.js";
+import "../scss/main.scss";
 
 GOVUKFrontend.initAll();
 
