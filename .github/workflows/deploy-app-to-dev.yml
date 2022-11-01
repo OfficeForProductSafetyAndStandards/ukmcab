@@ -37,9 +37,9 @@ jobs:
       - run: npm ci
         working-directory: ${{ env.WORKING_DIRECTORY }}
 
-      - name: Run Gulp task
+      - name: Run webpack
         working-directory: ${{ env.WORKING_DIRECTORY }}
-        run: gulp
+        run: npx webpack
 
 
       # Setup .NET Core SDK
