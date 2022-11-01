@@ -5,13 +5,11 @@ module.exports = {
 	devtool: "source-map",
 	mode: "development",
 	entry: {
-        main: "./Assets/js/main.js",
-		admin: "./Assets/js/cab-creadit.js",
+        main: "./Assets/js/main.js"
     },
 	output: {
 		filename: "[name].js",
 		path: path.resolve(__dirname, "wwwroot/assets/js"),
-		clean: true,
 	},
 	module: {
 		rules: [
