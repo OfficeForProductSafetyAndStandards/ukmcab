@@ -5,7 +5,7 @@ module.exports = {
 	devtool: "source-map",
 	mode: "development",
 	entry: {
-        main: "./Assets/js/main.js"
+        main: "./assets/js/main.js"
     },
 	output: {
 		filename: "[name].js",
