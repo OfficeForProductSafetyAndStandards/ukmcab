@@ -1,5 +1,4 @@
 using Microsoft.Azure.Cosmos;
-using UKMCAB.Data.CosmosDb;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Web.UI.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;

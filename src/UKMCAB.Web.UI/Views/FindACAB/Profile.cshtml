@@ -107,59 +107,59 @@
             </h2>
           </div>
           <div id="accordion-default-content-@accordionIndex" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-@accordionIndex">
-            <p class="govuk-body">@regulation.Description</p>
-            @foreach (var productGroup in regulation.ProductGroups)
+            @foreach (var product in regulation.Products)
             {
-              var hideBorder = !productGroup.Schedules.Any() && !productGroup.StandardsSpecifications.Any();
               <div class="app-cab-profile-appointment-detail-card govuk-!-margin-bottom-7">
-                <dl class="govuk-summary-list">
-                  <div class="govuk-summary-list__row @(hideBorder ? "govuk-summary-list__row--no-border" : string.Empty)">
-                    <dt class="govuk-summary-list__key">
-                      @productGroup.Title
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                      <div>
-                        <p class="govuk-body">@productGroup.Description</p>
-                        <ul class="govuk-list govuk-list--bullet">
-                          @foreach (var product in productGroup.Products)
-                          {
-                            <li>@product</li>
-                          }
-                        </ul>
+                  <dl class="govuk-summary-list">
+                      <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key">
+                              Product name
+                          </dt>
+                          <dd class="govuk-summary-list__value">
+                              @product.Name
+                          </dd>
                       </div>
-                    </dd>
-                  </div>
-                  @if (productGroup.Schedules.Any())
-                  {
-                    hideBorder = !productGroup.StandardsSpecifications.Any();
-                   <div class="govuk-summary-list__row @(hideBorder ? "govuk-summary-list__row--no-border" : string.Empty)">
-                     <dt class="govuk-summary-list__key">
-                       Applicable conformity assessment procedures
-                     </dt>
-                     <dd class="govuk-summary-list__value">
-                       @foreach (var schedule in productGroup.Schedules)
-                       {
-                         <h3 class="govuk-heading-s">@schedule.Title</h3>
-                         <p class="govuk-body">@schedule.Label</p>
-                       }
-                     </dd>
-                   </div>
-                  }
-                  @if (productGroup.StandardsSpecifications.Any())
-                  {
-                   <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-                     <dt class="govuk-summary-list__key">
-                       Specifications/standards
-                     </dt>
-                     <dd class="govuk-summary-list__value">
-                       @foreach (var standardSpecification in productGroup.StandardsSpecifications)
-                       {
-                       <p class="govuk-body">@standardSpecification.Value</p>
-                       }
-                     </dd>
-                   </div>
-                  }
-                </dl>
+                      <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key">
+                              Product code
+                          </dt>
+                          <dd class="govuk-summary-list__value">
+                              @product.Code
+                          </dd>
+                      </div>
+                      <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key">
+                              Part
+                          </dt>
+                          <dd class="govuk-summary-list__value">
+                              @product.Part
+                          </dd>
+                      </div>
+                      <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key">
+                              Module
+                          </dt>
+                          <dd class="govuk-summary-list__value">
+                              @product.Module
+                          </dd>
+                      </div>
+                      <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key">
+                              Schedule
+                          </dt>
+                          <dd class="govuk-summary-list__value">
+                              @product.Schedule
+                          </dd>
+                      </div>
+                      <div class="govuk-summary-list__row">
+                          <dt class="govuk-summary-list__key">
+                              Standards and specifications
+                          </dt>
+                          <dd class="govuk-summary-list__value">
+                              @product.StandardsSpecification
+                          </dd>
+                      </div>
+                  </dl>
               </div>
             }
           </div>
@@ -194,58 +194,3 @@
       <span class="govuk-caption-m govuk-!-font-size-16 govuk-!-margin-top-1">12 January 2023</span>
   </div>
 </div>
-
-@section FooterScripts
-{
-    <script>
-        // overriding the GDS experimental accordion to not display the Show/Hide all section and to rename the accordion text
-        GOVUKFrontend.Accordion.prototype.setExpanded = function (expanded, $section) {
-            var $icon = $section.querySelector('.' + this.upChevronIconClass);
-            var $showHideText = $section.querySelector('.' + this.sectionShowHideTextClass);
-            var $button = $section.querySelector('.' + this.sectionButtonClass);
-            var $newButtonText = expanded ? 'Hide details of appointment' : 'Show details of appointment';
-
-            // Build additional copy of "this section" for assistive technology and place inside toggle link
-            var $visuallyHiddenText = document.createElement('span');
-            $visuallyHiddenText.classList.add('govuk-visually-hidden');
-            $visuallyHiddenText.innerHTML = ' this section';
-
-            $showHideText.innerHTML = $newButtonText;
-            $showHideText.appendChild($visuallyHiddenText);
-            $button.setAttribute('aria-expanded', expanded);
-
-            // Swap icon, change class
-            if (expanded) {
-                $section.classList.add(this.sectionExpandedClass);
-                $icon.classList.remove(this.downChevronIconClass);
-            } else {
-                $section.classList.remove(this.sectionExpandedClass);
-                $icon.classList.add(this.downChevronIconClass);
-            }
-        };
-
-        GOVUKFrontend.Accordion.prototype.init = function () {
-            // Check for module
-            if (!this.$module) {
-                return;
-            }
-            this.initSectionHeaders();
-        };
-
-
-        function nodeListForEach (nodes, callback) {
-            if (window.NodeList.prototype.forEach) {
-                return nodes.forEach(callback);
-            }
-            for (var i = 0; i < nodes.length; i++) {
-                callback.call(window, nodes[i], i, nodes);
-            }
-        };
-
-        var $accordions = document.querySelectorAll('[data-module="ukmcab-accordion"]');
-        nodeListForEach($accordions, function ($accordion) {
-            new GOVUKFrontend.Accordion($accordion).init();
-        });
-
-    </script>
-}
