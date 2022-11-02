@@ -7,25 +7,14 @@
     <UserSecretsId>455e736c-9f79-4c46-8522-1a7749c2687d</UserSecretsId>
   </PropertyGroup>
 
+
   <ItemGroup>
-    <Content Remove="wwwroot\assets\finder\config\manifest.js" />
-    <Content Remove="wwwroot\assets\finder\images\.keep" />
-    <Content Remove="wwwroot\assets\finder\images\mail-icon-retina.png" />
-    <Content Remove="wwwroot\assets\finder\images\mail-icon.png" />
-    <Content Remove="wwwroot\assets\finder\images\search\search-button.png" />
-    <Content Remove="wwwroot\assets\finder\images\toggle-sprite-horizontal.png" />
-    <Content Remove="wwwroot\assets\finder\images\toggle-sprite-retina.png" />
-    <Content Remove="wwwroot\assets\finder\images\toggle-sprite.png" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\application.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\components\_date-filter.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\components\_email-link.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\components\_expander.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\components\_mobile-filters.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\components\_option-select.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\finder_frontend.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\print.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\views\_search.scss" />
-    <Content Remove="wwwroot\assets\finder\stylesheets\_reset.scss" />
+    <Content Include="Assets\js\govuk-frontend-all.js" />
+    <Content Include="Assets\js\option-select.js">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="webpack.config.js" />
   </ItemGroup>
 
   <ItemGroup>
@@ -46,28 +35,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\assets\css\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include="wwwroot\assets\finder\config\manifest.js" />
-    <None Include="wwwroot\assets\finder\images\.keep" />
-    <None Include="wwwroot\assets\finder\images\mail-icon-retina.png" />
-    <None Include="wwwroot\assets\finder\images\mail-icon.png" />
-    <None Include="wwwroot\assets\finder\images\search\search-button.png" />
-    <None Include="wwwroot\assets\finder\images\toggle-sprite-horizontal.png" />
-    <None Include="wwwroot\assets\finder\images\toggle-sprite-retina.png" />
-    <None Include="wwwroot\assets\finder\images\toggle-sprite.png" />
-    <None Include="wwwroot\assets\finder\stylesheets\application.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\components\_date-filter.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\components\_email-link.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\components\_expander.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\components\_mobile-filters.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\components\_option-select.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\finder_frontend.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\print.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\views\_search.scss" />
-    <None Include="wwwroot\assets\finder\stylesheets\_reset.scss" />
+    <None Include="wwwroot\assets\js\cab-creadit.js" />
   </ItemGroup>
 
 </Project>

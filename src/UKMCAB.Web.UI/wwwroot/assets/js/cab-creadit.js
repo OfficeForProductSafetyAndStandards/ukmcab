@@ -23,7 +23,6 @@
 
 
 
-
 class CreateEditCabViewModel {
     constructor(data, editUrlTemplate) {
         var self = this;
@@ -164,3 +163,6 @@ class ProductViewModel {
         self.standardsNumber = ko.observable();
     }
 }
+
+var CreateEdit = new CreateEditCabViewModel(null, null);
+
