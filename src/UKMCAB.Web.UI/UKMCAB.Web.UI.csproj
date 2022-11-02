@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -9,8 +9,8 @@
 
 
   <ItemGroup>
-    <Content Include="Assets\js\govuk-frontend-all.js" />
-    <Content Include="Assets\js\option-select.js">
+    <Content Include="assets\js\govuk-frontend-all.js" />
+    <Content Include="assets\js\option-select.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
