@@ -9,8 +9,8 @@
 
 
   <ItemGroup>
-    <Content Include="assets\js\govuk-frontend-all.js" />
-    <Content Include="assets\js\option-select.js">
+    <Content Include="web-assets\js\govuk-frontend-all.js" />
+    <Content Include="web-assets\js\option-select.js">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
