@@ -19,9 +19,21 @@ public class FindACABController : Controller
     [Route("find-a-cab")]
     public IActionResult Index()
     {
+        return View(new SearchViewModel());
+    }
+
+    [HttpPost]
+    [Route("find-a-cab")]
+    public IActionResult Index(SearchViewModel searchViewModel)
+    {
+        if (ModelState.IsValid)
+        {
+            return RedirectToAction("Results", new { Keywords = searchViewModel.Keywords });
+        }
         return View();
     }
-    
+
+
     [Route("find-a-cab/results")]
     public async Task<IActionResult> Results(SearchResultsViewModel searchResultsViewModel)
     {

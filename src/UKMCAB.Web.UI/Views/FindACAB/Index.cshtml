@@ -1,5 +1,8 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Mvc.ModelBinding
+@model SearchViewModel;
+@{
     ViewData["nav"] = "search";
+    var showError = !ViewData.ModelState.IsValid;
 }
 
 <a href="/" class="govuk-back-link">Back</a>
@@ -12,28 +15,52 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form method="get" asp-action="Results">
+        <form method="post">
             
-            <div class="govuk-form-group">
-                <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--m" for="keywords">
-                        Enter your keyword(s)
-                    </label>
-                </h1>
-                <div id="keywords-hint" class="govuk-hint">
-                    Search on any of the following:
-                    <ul class="govuk-list govuk-list--bullet govuk-hint govuk-!-margin-bottom-7 govuk-!-margin-top-3">
-                        <li>standards number</li>
-                        <li>product name</li>
-                        <li>regulation name</li>
-                        <li>schedule name</li>
-                        <li>module name</li>
-                        <li>part name</li>
-                        <li>body number</li>
-                        <li>CAB name</li>
-                    </ul>
+            @if (showError)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            <li>
+                                <a href="#Keywords">Enter a keyword or keywords</a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
-                <input class="govuk-input" id="keywords" name="keywords" type="text" aria-describedby="keywords-hint">
+            }
+
+            <div class="govuk-form-group @(showError ? "govuk-form-group--error" : string.Empty)">
+                <fieldset class="govuk-fieldset" aria-describedby="keywords-hint keywords-error">
+                    <h1 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--m" for="keywords">
+                            Enter your keyword(s)
+                        </label>
+                    </h1>
+                    <div id="keywords-hint" class="govuk-hint">
+                        Search on any of the following:
+                        <ul class="govuk-list govuk-list--bullet govuk-hint govuk-!-margin-bottom-7 govuk-!-margin-top-3">
+                            <li>standards number</li>
+                            <li>product name</li>
+                            <li>regulation name</li>
+                            <li>schedule name</li>
+                            <li>module name</li>
+                            <li>part name</li>
+                            <li>body number</li>
+                            <li>CAB name</li>
+                        </ul>
+                    </div>
+                    @if (showError)
+                    {
+                        <p id="keywords-error" class="govuk-error-message">
+                            <span class="govuk-visually-hidden">Error:</span> Enter a keyword or keywords
+                        </p>
+                    }
+                    <input class="govuk-input @(showError ? "govuk-input--error" : string.Empty)" asp-for="Keywords" type="text" aria-describedby="keywords-hint">
+                </fieldset>
             </div>
 
             <button class="govuk-button govuk-!-margin-top-7" data-module="govuk-button">

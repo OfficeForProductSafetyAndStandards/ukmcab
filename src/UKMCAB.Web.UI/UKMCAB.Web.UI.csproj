@@ -6,14 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>455e736c-9f79-4c46-8522-1a7749c2687d</UserSecretsId>
   </PropertyGroup>
-
-
-  <ItemGroup>
-    <Content Include="web-assets\js\govuk-frontend-all.js" />
-    <Content Include="web-assets\js\option-select.js">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
+	
+	<ItemGroup>
     <Content Include="webpack.config.js" />
   </ItemGroup>
 
