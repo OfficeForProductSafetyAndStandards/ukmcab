@@ -25,6 +25,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data model", "Data model", 
 		C_5_4Beis_4ukmcab_4src_4cab_1json__JsonSchema = https://cdn.jsdelivr.net/gh/roadrunner-server/roadrunner@latest/schemas/config/2.0.schema.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Web", "UKMCAB.Web\UKMCAB.Web.csproj", "{281C2A77-2FC6-4537-BCB6-5EFD54D2B759}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{3527A3E7-E932-45F7-93F6-BD7C11DB41BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3527A3E7-E932-45F7-93F6-BD7C11DB41BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3527A3E7-E932-45F7-93F6-BD7C11DB41BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{281C2A77-2FC6-4537-BCB6-5EFD54D2B759}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{281C2A77-2FC6-4537-BCB6-5EFD54D2B759}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{281C2A77-2FC6-4537-BCB6-5EFD54D2B759}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{281C2A77-2FC6-4537-BCB6-5EFD54D2B759}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
