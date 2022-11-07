@@ -1,93 +1,33 @@
 ﻿@model SearchResultsViewModel
 @{
   ViewData["nav"] = "search";
+    var resultsFound = Model.SearchResultViewModels.Any();
 }
 
 <a asp-action="Index" class="govuk-back-link">Back</a>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <h1 class="govuk-heading-xl govuk-!-margin-top-3">Search results</h1>
-        <p class="govuk-body govuk-!-font-size-24 govuk-!-margin-top-2 govuk-!-margin-bottom-6">CABs matching <strong class="govuk-!-font-weight-bold">"@Model.Keywords"</strong></p>
+        @if (resultsFound)
+        {
+            <h1 class="govuk-heading-xl govuk-!-margin-top-3">Search results</h1>
+            <p class="govuk-body govuk-!-font-size-24 govuk-!-margin-top-2 govuk-!-margin-bottom-6">CABs matching <strong class="govuk-!-font-weight-bold">"@Model.Keywords"</strong></p>
+        }
+        else
+        {
+            <h1 class="govuk-heading-xl govuk-!-margin-top-3">We found no matches for "@Model.Keywords"</h1>
+        }
     </div>
 </div>
 
 <div class="govuk-grid-row">
-
-    <div class="govuk-grid-column-one-third govuk-body" style="">
-
-        <form id="search-results-form" asp-action="Results" method="get">
-            @Html.HiddenFor(x => Model.Keywords)
-            <div id="facet-wrapper" data-module="mobile-filters-modal" class="facets" role="search" aria-label="Search filters" data-mobile-filters-modal-module-started="true">
-                <div class="facets__box">
-                    <div class="facets__header">
-                        <div>
-                            <p class="gem-c-heading govuk-heading-s govuk-!-margin-bottom-2 govuk-!-display-inline-block">Filters</p>
-                            <span id="clear-filters"><a id="clear-filters-action" class="govuk-link" href="#">Clear filters</a></span>
-                        </div>
-                    </div>
-                    <div class="facets__content">
-                        
-                        <partial name="_FilterOptions" model="@Model.BodyTypeOptions"/>
-                        <partial name="_FilterOptions" model="@Model.RegisteredOfficeLocationOptions"/>
-                        <partial name="_FilterOptions" model="@Model.TestingLocationOptions"/>
-                        <partial name="_FilterOptions" model="@Model.RegulationOptions"/>
-
-                        <div class="facets__tags-block js-mobile-facet-tag-block" data-module="remove-filter" data-remove-filter-module-started="true"><span class="govuk-visually-hidden"> 165 bodies </span> <div class="facet-tags"> </div></div>
-                        <button class="app-c-button-as-link facets__clear-link js-clear-selected-filters" type="button">
-                            Clear all filters
-                        </button>
-                    </div>
-                    <div class="facets__footer">
-                        
-                        <button class="gem-c-button govuk-button js-close-filters js-show-results" type="submit">Show search results</button>
-                        
-                    </div>
-                </div>
-            </div>
-        </form>
-
-    </div>
-    <div class="govuk-grid-column-two-thirds" id="results-container">
-
-        <div class="search-results-header">
-            <div class="top-pagination">
-                <nav role="navigation" aria-label="Pagination" class="pagination">
-                    <p class="govuk-body-s">Showing 1-@Model.SearchResultViewModels.Count of @Model.SearchResultViewModels.Count CABs (displayed in a random order)</p>
-                </nav>
-            </div>
-        </div>
-
-        <hr class="govuk-section-break govuk-section-break--visible">
-
-        <ul class="app-search-results">
-
-            @foreach (var result in Model.SearchResultViewModels.OrderBy(x => Guid.NewGuid()))
-            {
-                <li class="app-search-results__result">
-                    <h3 class="govuk-heading-s govuk-!-margin-bottom-3">
-                        <a asp-action="Profile" asp-route-id="@result.id">@result.Name</a>
-                    </h3>
-                    <p class="govuk-body-s govuk-!-margin-bottom-1">
-                        @result.Address
-                    </p>
-                    <dl class="govuk-!-margin-top-0">
-                        <dt>Email:</dt>
-                        <dd>@result.Email</dd>
-
-                        <dt>Phone:</dt>
-                        <dd>@result.Phone</dd>
-
-                        <dt>Website:</dt>
-                        <dd><a class="govuk-link" href="@result.WebsiteURL">@result.Website</a></dd>
-
-                        <dt>Regulations:</dt>
-                        <dd>@result.Regulations</dd>
-                    </dl>
-                </li>
-            }
-        </ul>
-    </div>
-
+    @if (resultsFound)
+    {
+        <partial name="Partials/_ResultsForm", model="Model"/>
+    }
+    else
+    {
+        <partial name="Partials/_NoResults"/>
+    }
 </div>
 
