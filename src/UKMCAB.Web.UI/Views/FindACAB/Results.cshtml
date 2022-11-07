@@ -1,33 +1,18 @@
 ﻿@model SearchResultsViewModel
 @{
   ViewData["nav"] = "search";
-    var resultsFound = Model.SearchResultViewModels.Any();
 }
 
 <a asp-action="Index" class="govuk-back-link">Back</a>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        @if (resultsFound)
-        {
-            <h1 class="govuk-heading-xl govuk-!-margin-top-3">Search results</h1>
+        <h1 class="govuk-heading-xl govuk-!-margin-top-3">Search results</h1>
             <p class="govuk-body govuk-!-font-size-24 govuk-!-margin-top-2 govuk-!-margin-bottom-6">CABs matching <strong class="govuk-!-font-weight-bold">"@Model.Keywords"</strong></p>
-        }
-        else
-        {
-            <h1 class="govuk-heading-xl govuk-!-margin-top-3">We found no matches for "@Model.Keywords"</h1>
-        }
     </div>
 </div>
 
 <div class="govuk-grid-row">
-    @if (resultsFound)
-    {
-        <partial name="Partials/_ResultsForm", model="Model"/>
-    }
-    else
-    {
-        <partial name="Partials/_NoResults"/>
-    }
+    <partial name="Partials/_ResultsForm", model="Model"/>
 </div>
 

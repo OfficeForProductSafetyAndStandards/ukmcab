@@ -1,4 +1,7 @@
 ﻿@model SearchResultsViewModel
+@{
+    var resultsFound = Model.SearchResultViewModels.Any();
+}
 <div class="govuk-grid-column-one-third govuk-body" style="">
 
     <form id="search-results-form" asp-action="Results" method="get">
@@ -38,15 +41,23 @@
     <div class="search-results-header">
         <div class="top-pagination">
             <nav role="navigation" aria-label="Pagination" class="pagination">
-                <p class="govuk-body-s">Showing 1-@Model.SearchResultViewModels.Count of @Model.SearchResultViewModels.Count CABs (displayed in a random order)</p>
+                @if (resultsFound)
+                {
+                    <p class="govuk-body-s">Showing 1-@Model.SearchResultViewModels.Count of @Model.SearchResultViewModels.Count CABs (displayed in a random order)</p>
+                }
+                else
+                {
+                    <p class="govuk-body-s">0 results</p>
+                }
             </nav>
         </div>
     </div>
 
     <hr class="govuk-section-break govuk-section-break--visible">
 
+    @if (resultsFound)
+    {
     <ul class="app-search-results">
-
         @foreach (var result in Model.SearchResultViewModels.OrderBy(x => Guid.NewGuid()))
         {
             <li class="app-search-results__result">
@@ -72,4 +83,16 @@
             </li>
         }
     </ul>
+    }
+    else
+    {
+        <p class="govuk-body-m"><strong class="govuk-!-font-weight-bold">There are no matching CABs.</strong></p>
+        <p class="govuk-body-m">Improve your search results by:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>removing filters</li>
+            <li>double-checking your spelling</li>
+            <li>using fewer keywords</li>
+            <li>searching for something less specific</li>
+        </ul>
+    }
 </div>
