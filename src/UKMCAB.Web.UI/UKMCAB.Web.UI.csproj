@@ -7,6 +7,9 @@
     <UserSecretsId>455e736c-9f79-4c46-8522-1a7749c2687d</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="C:\Users\krist\.nuget\packages\microsoft.azure.cosmos\3.31.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
+  </ItemGroup>
 	<ItemGroup>
     <Content Include="webpack.config.js" />
   </ItemGroup>
@@ -26,6 +29,7 @@
     <ProjectReference Include="..\UKMCAB.Core\UKMCAB.Core.csproj" />
     <ProjectReference Include="..\UKMCAB.Data\UKMCAB.Data.csproj" />
     <ProjectReference Include="..\UKMCAB.Infrastructure\UKMCAB.Infrastructure.csproj" />
+    <ProjectReference Include="..\UKMCAB.Web\UKMCAB.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>
