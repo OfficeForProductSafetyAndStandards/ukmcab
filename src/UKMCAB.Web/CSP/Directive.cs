@@ -36,7 +36,28 @@ public abstract class Directive : IEquatable<Directive>
         }
     }
 
+    public virtual string Compose()
+    {
+        var sb = new StringBuilder(_key);
+
+        foreach (var item in _value)
+        {
+            sb.Append($" {item}");
+        }
+
+        sb.Append($"{Separator} ");
+
+        return sb.ToString();
+    }
+
     public bool Equals(Directive other) => other != null && _key == other.Key;
+
+    public override bool Equals(object obj)
+    {
+        return Equals(obj as Directive);
+    }
+
+    public override int GetHashCode() => _value.GetHashCode();
 
     public void Merge(Directive directive)
     {
@@ -51,14 +72,6 @@ public abstract class Directive : IEquatable<Directive>
         }
 
         AddValues(directive.Value);
-    }
-
-    protected virtual void AddValues(IList<string> values)
-    {
-        foreach (var value in values)
-        {
-            AddValue(value);
-        }
     }
 
     protected virtual void AddValue(string value)
@@ -80,29 +93,15 @@ public abstract class Directive : IEquatable<Directive>
         }
     }
 
+    protected virtual void AddValues(IList<string> values)
+    {
+        foreach (var value in values)
+        {
+            AddValue(value);
+        }
+    }
     protected virtual void ClearValue()
     {
         _value.Clear();
     }
-
-    public virtual string Compose()
-    {
-        var sb = new StringBuilder(_key);
-
-        foreach (var item in _value)
-        {
-            sb.Append($" {item}");
-        }
-
-        sb.Append($"{Separator} ");
-
-        return sb.ToString();
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as Directive);
-    }
-
-    public override int GetHashCode() => _value.GetHashCode();
 }

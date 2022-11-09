@@ -45,6 +45,7 @@ public static class CspHeaderExtensions
             .Add(new ImageSourceDirective(CspConstants.SelfKeyword))
             .Add(new StyleSourceDirective(CspConstants.SelfKeyword));
     }
+
     public static CspHeader AddScriptNonce(this CspHeader header, string nonce) => header.Add(new NonceDirective(nonce));
 
     public static CspHeader AddScriptNonce(this CspHeader header, Func<string> nonce) => header.Add(new NonceDirective(nonce));
@@ -84,6 +85,7 @@ public static class CspHeaderExtensions
     public static CspHeader ClearDirectives(this CspHeader header) => header.RemoveAll();
 
     public static CspHeader SetBaseUris(this CspHeader header, params string[] uris) => header.Add(new BaseUriDirective(uris));
+
     public static CspHeader SetStrictDynamic(this CspHeader header) => header.Add(new ScriptSourceDirective(CspConstants.StrictDynamicKeyword));
 
     public static CspHeader UpgradeInsecureRequests(this CspHeader header) => header.Add(new UpgradeInsecureRequestsDirective());

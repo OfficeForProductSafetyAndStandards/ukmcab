@@ -4,9 +4,8 @@ namespace UKMCAB.Web.CSP;
 
 public class CspMiddleware
 {
-    private readonly RequestDelegate _next;
     private readonly CspHeader _header;
-
+    private readonly RequestDelegate _next;
     public CspMiddleware(RequestDelegate next, CspHeader header)
     {
         if (next == null)
