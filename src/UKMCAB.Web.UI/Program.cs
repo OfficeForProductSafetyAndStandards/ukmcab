@@ -1,13 +1,18 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Identity.Stores.CosmosDB.Extensions;
+using UKMCAB.Identity.Stores.CosmosDB.Stores;
+using UKMCAB.Web.CSP;
 using UKMCAB.Web.UI.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;
-using UKMCAB.Web.CSP;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
 builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 builder.Services.AddSingleton(new BasicAuthenticationOptions() { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
@@ -21,6 +26,18 @@ if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
     var container = cosmosDbSettings.GetValue<string>("Container") ?? "cabs";
     builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(cosmosConnectionString), database, container));
 }
+
+builder.Services.Configure<IdentityStoresOptions>(options =>
+    options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity"));
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Password.RequiredLength = 8;
+    })
+    .AddRoles<IdentityRole>()
+    .AddAzureCosmosDbStores();
+
 
 // =================================================================================================
 
@@ -73,5 +90,24 @@ app.UseMiddleware<BasicAuthenticationMiddleware>();
 app.UseCsp(cspHeader);
 app.UseStaticFiles();
 app.MapDefaultControllerRoute();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapRazorPages();
+
+//Seed identity
+app.UseIdentitySeeding<IdentityUser, IdentityRole>(seeds =>
+{
+    seeds
+        .AddRole(role: new IdentityRole("Administrator"))
+        .AddRole(role: new IdentityRole("UKASUser"))
+        .AddRole(role: new IdentityRole("OGDUser"))
+        .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true },
+            password: "adminP@ssw0rd!", roles: new IdentityRole("Administrator"));
+
+    // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
+});
+
 
 app.Run();
