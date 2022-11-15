@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using UKMCAB.Data.CosmosDb;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Web.UI.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
@@ -7,6 +7,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin;
 namespace UKMCAB.Web.UI.Controllers;
 
 [Route("admin")]
+[Authorize]
 public class AdminController : Controller
 {
     private readonly ICosmosDbService _cosmosDbService;
