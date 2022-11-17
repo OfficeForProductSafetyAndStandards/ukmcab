@@ -1,19 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UKMCAB.Common;
+﻿using UKMCAB.Common;
 
-namespace UKMCAB.Infrastructure.Logging;
-internal class QueuedLogEntry
-{
-    public string PartitionKey { get; } = DateTime.UtcNow.ToString("yyyyMMdd");
-    public string RowKey { get; } = Guid.NewGuid().ToString("N");
-    public LogEntry LogEntry { get; set; }
-    public string ReferenceId => string.Concat(RowKey, PartitionKey);
-    public QueuedLogEntry(LogEntry logEntry) => LogEntry = logEntry;
-}
+namespace UKMCAB.Infrastructure.Logging.Models;
 
 public class LogEntry : Dictionary<string, string>
 {
@@ -62,9 +49,9 @@ public class LogEntry : Dictionary<string, string>
         set => this[nameof(HttpMethod)] = value;
     }
 
-    public string UserData
+    public string? UserData
     {
-        get => this[nameof(UserData)];
+        get => this.Get(nameof(UserData));
         set => this[nameof(UserData)] = value;
     }
 
@@ -75,13 +62,4 @@ public class LogEntry : Dictionary<string, string>
         ExceptionData = ex.ToString();
         Message = $"{ex.Message} (base:{ex.GetBaseException()?.Message})";
     }
-}
-
-
-public interface ILoggingService
-{
-    string TableName { get; }
-    int Count { get; }
-    Task FlushAsync();
-    string Log(LogEntry entry);
 }

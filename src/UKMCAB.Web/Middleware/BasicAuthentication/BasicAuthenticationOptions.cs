@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Common;
 
-namespace UKMCAB.Web.UI.Middleware.BasicAuthentication;
+namespace UKMCAB.Web.Middleware.BasicAuthentication;
 
 public class BasicAuthenticationOptions
 {

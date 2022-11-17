@@ -1,9 +1,42 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Text.Json;
+using System.Text.RegularExpressions;
 using UKMCAB.Common.Security;
 
 namespace UKMCAB.Common;
 public static class ExtensionMethods
 {
+    public static T Chain<T>(this T obj, params Action<T>[] actions)
+    {
+        foreach (var action in actions)
+        {
+            action(obj);
+        }
+        return obj;
+    }
+
+    /// <summary>
+    /// Mutates an object if condition; otherwise returns the original model.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <param name="model"></param>
+    /// <param name="condition"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static T AdaptIf<T>(this T model, bool condition, Func<T, T> action)
+    {
+        return Pred.AdaptIf(condition, model, action);
+    }
+
+    /// <summary>
+    /// Transforms an object into something else.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="TOut"></typeparam>
+    /// <param name="incoming"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static TOut Transform<T, TOut>(this T incoming, Func<T, TOut> action) => action(incoming);
+
     /// <summary>
     /// Ensures the DateTime's kind is specified as UTC
     /// </summary>
@@ -176,4 +209,11 @@ public static class ExtensionMethods
         }
         return item;
     }
+
+    /// <summary>
+    /// Serializes an object to indented json.
+    /// </summary>
+    /// <param name="obj"></param>
+    /// <returns></returns>
+    public static string Serialize(this object obj) => JsonSerializer.Serialize(obj, JsonUtil.JsonSerializerOptions);
 }

@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels;
 
-public class CABProfileViewModel
+public class CABProfileViewModel : ILayoutModel
 {
     public string Name { get; set; }
 
@@ -28,4 +28,5 @@ public class CABProfileViewModel
 
     public List<AppointmentRevisionViewModel> AppointmentRevisions { get; set; }
 
+    public string? Title => Name;
 }
