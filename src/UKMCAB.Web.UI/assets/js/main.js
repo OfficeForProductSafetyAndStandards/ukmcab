@@ -63,7 +63,7 @@ for (var i = 0; i < nodes.length; i++) {
     new GOVUK.Modules.OptionSelect(nodes[i]).init();
 }
 var submitForm = document.querySelector("form");
-var checkBoxes = document.querySelectorAll('.govuk-checkboxes__input');
+var checkBoxes = document.querySelectorAll('.filter__input');
 checkBoxes.forEach(function (cbx) {
     cbx.onchange = function () {
         submitForm.submit();

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 using System.Reflection;
 using System.Text;
-
+using Newtonsoft.Json.Linq;
 using UKMCAB.Identity.Stores.CosmosDB.Extensions;
 using UKMCAB.Identity.Stores.CosmosDB.Stores;
 
@@ -181,6 +181,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Repositories
                             var dateTime = (DateTime)value;
                             DateTimeOffset? dateTimeOffset = dateTime;
                             property.SetValue(obj, dateTimeOffset);
+                        }
+                        else if (property.PropertyType == typeof(List<string>) && value.GetType() == typeof(JArray))
+                        {
+                            var list = ((JArray)value).ToObject<List<string>>();
+                            property.SetValue(obj, list);
                         }
                         else
                             property.SetValue(obj, Convert.ChangeType(value, property.PropertyType));

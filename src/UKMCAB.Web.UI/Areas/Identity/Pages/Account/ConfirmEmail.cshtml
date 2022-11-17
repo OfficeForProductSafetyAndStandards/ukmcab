@@ -4,5 +4,19 @@
     ViewData["Title"] = "Confirm email";
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <fieldset class="govuk-fieldset">
+            <div class="govuk-panel govuk-panel--confirmation">
+                <h1 class="govuk-panel__title">
+                    @Model.ConfirmationTitle
+                </h1>
+                <div class="govuk-panel__body">
+                    @Model.ConfirmationBody
+                </div>
+            </div>
+        </fieldset>
+    </div>
+</div>
+
+

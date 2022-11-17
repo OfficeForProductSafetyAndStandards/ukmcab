@@ -47,6 +47,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="wwwroot\assets\js\" />
     <None Include="Pages\400.cshtml" />
     <None Include="Pages\401.cshtml" />
     <None Include="Pages\403.cshtml" />
@@ -55,7 +56,6 @@
     <None Include="Pages\LoggedOff.cshtml" />
     <None Include="Pages\_ViewImports.cshtml" />
     <None Include="Pages\_ViewStart.cshtml" />
-    <None Include="wwwroot\assets\js\cab-creadit.js" />
   </ItemGroup>
 
 </Project>
