@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Identity.Stores.CosmosDB.Extensions;
 using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.UI.Middleware.BasicAuthentication;
+using UKMCAB.Web.UI.Models;
 using UKMCAB.Web.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,12 +32,13 @@ if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
 builder.Services.Configure<IdentityStoresOptions>(options =>
     options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity"));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
     {
         options.SignIn.RequireConfirmedAccount = true;
         options.Password.RequiredLength = 8;
     })
     .AddRoles<IdentityRole>()
+    //.AddUserManager<UserManager<UKMCABUser>>()
     .AddAzureCosmosDbStores();
 
 
@@ -97,14 +100,15 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 //Seed identity
-app.UseIdentitySeeding<IdentityUser, IdentityRole>(seeds =>
+app.UseIdentitySeeding<UKMCABUser, IdentityRole>(seeds =>
 {
+    var administratorRole = new IdentityRole(Constants.Roles.Administrator);
     seeds
-        .AddRole(role: new IdentityRole("Administrator"))
-        .AddRole(role: new IdentityRole("UKASUser"))
-        .AddRole(role: new IdentityRole("OGDUser"))
-        .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true },
-            password: "adminP@ssw0rd!", roles: new IdentityRole("Administrator"));
+        .AddRole(role: administratorRole)
+        .AddRole(role: new IdentityRole(Constants.Roles.UKASUser))
+        .AddRole(role: new IdentityRole(Constants.Roles.OGDUser))
+        .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string>{"Construction"}, RequestReason = "Seeded", RequestApproved = true},
+            password: "adminP@ssw0rd!", roles: administratorRole);
 
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
 });

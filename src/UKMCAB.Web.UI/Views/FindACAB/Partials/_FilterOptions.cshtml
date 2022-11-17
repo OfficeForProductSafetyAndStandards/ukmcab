@@ -22,7 +22,7 @@
                         @foreach (var filterOption in Model.Options)
 						{
 							<li class="govuk-checkboxes__item">
-								<input type="checkbox" name="@Model.Id" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@Model.Label" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
+								<input type="checkbox" name="@Model.Id" id="@filterOption.Id" value="@filterOption.Value" class="govuk-checkboxes__input filter__input" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@Model.Label" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Checked"><label for="@filterOption.Id" class="govuk-label govuk-checkboxes__label">@filterOption.Value</label>
 							</li>
 						}
 						

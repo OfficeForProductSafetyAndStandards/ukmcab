@@ -43,7 +43,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="wwwroot\assets\js\cab-creadit.js" />
+    <Folder Include="wwwroot\assets\js\" />
   </ItemGroup>
 
 </Project>

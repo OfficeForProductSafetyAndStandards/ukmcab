@@ -4,5 +4,17 @@
     ViewData["Title"] = "Confirm email";
 }
 
-<h1>@ViewData["Title"]</h1>
-<partial name="_StatusMessage" model="Model.StatusMessage" />
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    Email confirmation
+                </h1>
+            </legend>
+            <partial name="_StatusMessage" model="Model.StatusMessage" />
+        </fieldset>
+    </div>
+</div>
+
+
