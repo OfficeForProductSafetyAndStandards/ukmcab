@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 using UKMCAB.Identity.Stores.CosmosDB;
+using UKMCAB.Web.UI.Models;
 
 namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 {
@@ -20,12 +21,9 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             _userManager = userManager;
         }
 
-        /// <summary>
-        ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
-        ///     directly from your code. This API may change or be removed in future releases.
-        /// </summary>
-        [TempData]
-        public string StatusMessage { get; set; }
+        public string ConfirmationTitle { get; set; }
+        public string ConfirmationBody { get; set; }
+
         public async Task<IActionResult> OnGetAsync(string userId, string code)
         {
             if (userId == null || code == null)
@@ -41,7 +39,36 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 
             code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code));
             var result = await _userManager.ConfirmEmailAsync(user, code);
-            StatusMessage = result.Succeeded ? "Thank you for confirming your email." : "Error confirming your email.";
+
+            if (result.Succeeded)
+            {
+                ConfirmationTitle = "Thank you for confirming your email.";
+                var isODG = await _userManager.IsInRoleAsync(user, Constants.Roles.OGDUser);
+                if (isODG)
+                {
+                    ConfirmationBody =
+                        "Your registration request will be reviewed and you will receive notification once approved.";
+                }
+                else
+                {
+                    user.RequestApproved = true;
+                    var updateResult = await _userManager.UpdateAsync(user);
+                    if (updateResult.Succeeded)
+                    {
+                        ConfirmationBody = "You will now be able to login to your account.";
+                    }
+                    else
+                    {
+                        ConfirmationTitle = "There has been an error";
+                        ConfirmationBody = "Please try again or contact and administrator.";
+                    }
+                }
+            }
+            else
+            {
+                ConfirmationTitle = "There has been an error";
+                ConfirmationBody = "Please try again or contact and administrator.";
+            }
             return Page();
         }
     }
