@@ -40,7 +40,7 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             _emailSender = emailSender;
         }
 
-        public string? Title => "Register ODG user";
+        public string? Title => "Register OGD user";
 
 
         public List<string> LegislativeAreaList { get; set; }

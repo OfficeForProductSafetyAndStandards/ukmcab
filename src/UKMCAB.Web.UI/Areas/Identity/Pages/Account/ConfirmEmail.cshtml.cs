@@ -43,8 +43,8 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             if (result.Succeeded)
             {
                 ConfirmationTitle = "Thank you for confirming your email.";
-                var isODG = await _userManager.IsInRoleAsync(user, Constants.Roles.OGDUser);
-                if (isODG)
+                var isOGD = await _userManager.IsInRoleAsync(user, Constants.Roles.OGDUser);
+                if (isOGD)
                 {
                     ConfirmationBody =
                         "Your registration request will be reviewed and you will receive notification once approved.";
