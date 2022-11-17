@@ -1,13 +1,17 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Infrastructure.Logging;
+using UKMCAB.Identity.Stores.CosmosDB.Extensions;
+using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
 builder.Services.AddControllersWithViews();
@@ -32,6 +36,14 @@ if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
 
 
 
+
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+    {
+        options.SignIn.RequireConfirmedAccount = true;
+        options.Password.RequiredLength = 8;
+    })
+    .AddRoles<IdentityRole>()
+    .AddAzureCosmosDbStores();
 
 
 // =================================================================================================
@@ -112,6 +124,25 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 
 app.MapDefaultControllerRoute();
 
+
+
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapRazorPages();
+
+//Seed identity
+app.UseIdentitySeeding<IdentityUser, IdentityRole>(seeds =>
+{
+    seeds
+        .AddRole(role: new IdentityRole("Administrator"))
+        .AddRole(role: new IdentityRole("UKASUser"))
+        .AddRole(role: new IdentityRole("OGDUser"))
+        .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true },
+            password: "adminP@ssw0rd!", roles: new IdentityRole("Administrator"));
+
+    // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
+});
 
 
 app.Run();
