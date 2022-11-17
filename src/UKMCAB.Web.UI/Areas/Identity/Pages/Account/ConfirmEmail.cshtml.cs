@@ -3,16 +3,13 @@
 #nullable disable
 
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using System.Text;
 using UKMCAB.Identity.Stores.CosmosDB;
-using UKMCAB.Web.UI.Models;
 
 namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 {
-    public class ConfirmEmailModel : PageModel
+    public class ConfirmEmailModel : PageModel, ILayoutModel
     {
         private readonly UserManager<UKMCABUser> _userManager;
 
@@ -20,6 +17,9 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
         {
             _userManager = userManager;
         }
+
+        public string? Title => "Email confirmation";
+
 
         public string ConfirmationTitle { get; set; }
         public string ConfirmationBody { get; set; }

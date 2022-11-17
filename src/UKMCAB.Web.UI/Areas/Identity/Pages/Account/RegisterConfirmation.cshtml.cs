@@ -16,7 +16,7 @@ using UKMCAB.Identity.Stores.CosmosDB;
 namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 {
     [AllowAnonymous]
-    public class RegisterConfirmationModel : PageModel
+    public class RegisterConfirmationModel : PageModel, ILayoutModel
     {
         private readonly UserManager<UKMCABUser> _userManager;
         private readonly IEmailSender _sender;
@@ -26,6 +26,9 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             _userManager = userManager;
             _sender = sender;
         }
+
+        public string? Title => "Registration confirmation";
+
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used

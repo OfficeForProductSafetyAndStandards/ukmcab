@@ -16,7 +16,7 @@ using UKMCAB.Web.UI.Models;
 
 namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 {
-    public class RegisterOGDUserModel : PageModel
+    public class RegisterOGDUserModel : PageModel, ILayoutModel
     {
         private readonly SignInManager<UKMCABUser> _signInManager;
         private readonly UserManager<UKMCABUser> _userManager;
@@ -39,6 +39,9 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             _logger = logger;
             _emailSender = emailSender;
         }
+
+        public string? Title => "Register ODG user";
+
 
         public List<string> LegislativeAreaList { get; set; }
 

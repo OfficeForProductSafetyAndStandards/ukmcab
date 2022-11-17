@@ -4,14 +4,13 @@
 
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
 using UKMCAB.Identity.Stores.CosmosDB;
 
 namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 {
-    public class LoginModel : PageModel
+    public class LoginModel : PageModel, ILayoutModel
     {
         private readonly SignInManager<UKMCABUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
@@ -21,6 +20,8 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
         }
+
+        public string? Title => "Login";
 
         /// <summary>
         ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
