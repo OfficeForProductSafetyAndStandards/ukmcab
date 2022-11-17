@@ -8,9 +8,9 @@ using UKMCAB.Identity.Stores.CosmosDB.Extensions;
 using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
-using UKMCAB.Web.UI.Models;
 using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;
+using UKMCAB.Web.UI;
 
 var builder = WebApplication.CreateBuilder(args);
 
