@@ -1,9 +1,11 @@
 ﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 {
-    public class CabListViewModel
+    public class CabListViewModel : ILayoutModel
     {
         public PaginationViewModel Pagination { get; set; }
         public List<CabListItemViewModel> CabListItems { get; set; }
+
+        string? ILayoutModel.Title => "CAB list";
     }
 
     public class CabListItemViewModel

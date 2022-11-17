@@ -1,13 +1,18 @@
 ﻿using MoreLinq;
+using System;
 using System.Collections.Concurrent;
 
 namespace UKMCAB.Common;
 
-public class FixedSizedQueue<T> : ConcurrentQueue<T>
+/// <summary>
+/// Enhances ConcurrentQueue such that it will only ever fill to the maximum number of items and disregard the oldest.
+/// </summary>
+/// <typeparam name="T"></typeparam>
+public class FixedSizedConcurrentQueue<T> : ConcurrentQueue<T>
 {
     private readonly object _mutex = new();
     public int Size { get; }
-    public FixedSizedQueue(int size) => Size = size;
+    public FixedSizedConcurrentQueue(int size) => Size = size;
     public new void Enqueue(T obj)
     {
         base.Enqueue(obj);

@@ -1,0 +1,11 @@
+﻿global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Text;
+global using System.Threading.Tasks;
+global using Microsoft.AspNetCore.Mvc;
+global using UKMCAB.Common;
+global using UKMCAB.Web.UI.Models;
+global using UKMCAB.Web.UI.Controllers;
+global using UKMCAB.Web;
+global using MoreLinq;

@@ -1,0 +1,9 @@
+﻿@page
+@model UKMCAB.Web.UI.Pages._400Model
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">There was a problem</h1>
+        <p class="govuk-body-s">@(Model.Exception?.Message ?? ".")</p>
+    </div>
+</div>

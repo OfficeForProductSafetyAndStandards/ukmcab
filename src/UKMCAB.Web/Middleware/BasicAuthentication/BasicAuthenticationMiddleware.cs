@@ -1,8 +1,9 @@
-﻿using Microsoft.Net.Http.Headers;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 using System.Net.Http.Headers;
 using System.Text;
 
-namespace UKMCAB.Web.UI.Middleware.BasicAuthentication;
+namespace UKMCAB.Web.Middleware.BasicAuthentication;
 
 public class BasicAuthenticationMiddleware
 {

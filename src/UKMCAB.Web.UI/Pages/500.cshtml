@@ -1,0 +1,40 @@
+﻿@page
+@model UKMCAB.Web.UI.Pages.bdc39f6c9d90._500Model
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l" data-source="cshtml">There's an error on our server</h1>
+        <p class="govuk-body-s">A report of the error has been sent to our technical team.</p>
+        <p class="govuk-body-s">We'll fix it as soon as possible. You can:</p>
+        <ul class="govuk-body-s govuk-list govuk-list--bullet">
+            <li>use the back button and try another link</li>
+            <li>reload the page</li>
+            <li>come back later</li>
+        </ul>
+        @if (Model.ErrorCode != null)
+        {
+            <p class="govuk-body-s">Error code: @(Model.ErrorContext) @Model.ErrorCode</p>
+        }
+
+        @if (Model.Exception != null && ThisBuild.IsDebug())
+        {
+            <hr class="govuk-section-break govuk-section-break--visible" style="margin-bottom:16px;" />
+            <h1 class="govuk-heading-m">Details</h1>
+            <table>
+                <tr>
+                    <td class="govuk-body-s govuk-!-font-weight-bold" style="width:100px;">Message</td>
+                    <td class="govuk-body-s">@Model.Exception.Message</td>
+                </tr>
+                <tr>
+                    <td class="govuk-body-s govuk-!-font-weight-bold">Stack trace</td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <pre style="width:960px; overflow:auto;">@Model.Exception</pre>
+                    </td>
+                </tr>
+            </table>
+        }
+    </div>
+
+</div>

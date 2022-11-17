@@ -1,6 +1,6 @@
 ﻿namespace UKMCAB.Web.UI.Models.ViewModels;
 
-public class SearchResultsViewModel
+public class SearchResultsViewModel : ILayoutModel
 {
     public string Keywords { get; set; }
     public string[] BodyTypes { get; set; }
@@ -47,4 +47,6 @@ public class SearchResultsViewModel
             }
         }
     }
+
+    string? ILayoutModel.Title => "Search results";
 }

@@ -2,9 +2,11 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels
 {
-    public class SearchViewModel
+    public class SearchViewModel : ILayoutModel
     {
         [Required]
         public string Keywords { get; set; }
+
+        string? ILayoutModel.Title => "Search";
     }
 }
