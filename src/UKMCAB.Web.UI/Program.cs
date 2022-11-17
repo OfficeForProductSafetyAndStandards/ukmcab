@@ -36,8 +36,8 @@ if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
     builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(cosmosConnectionString), database, container));
 }
 
-
-
+builder.Services.Configure<IdentityStoresOptions>(options =>
+    options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity"));
 
 builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
     {
