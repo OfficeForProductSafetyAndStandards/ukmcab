@@ -1,0 +1,91 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.ModelBinding
+@model RegisterOGDUserModel
+@{
+    ViewData["Title"] = "Register";
+}
+
+@{
+    var errors = Model.ModelState.Where(m => m.Value.ValidationState == ModelValidationState.Invalid).SelectMany(v => v.Value.Errors.Select(e => new { Key = v.Key, Error = e.ErrorMessage }));
+}
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+            @if (!Model.ModelState.IsValid)
+            {
+                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+                    <h2 class="govuk-error-summary__title" id="error-summary-title">
+                        There is a problem
+                    </h2>
+                    <div class="govuk-error-summary__body">
+                        <ul class="govuk-list govuk-error-summary__list">
+                            @foreach (var error in errors)
+                            {
+                                <li>
+                                    <a href="#@error.Key">@error.Error</a> 
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            }
+
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        Register as ODG user
+                    </h1>
+                </legend>
+                <div class="govuk-form-group @ShowErrorClass("Input.Email")">
+                    <span asp-validation-for="Input.Email" class="govuk-error-message"></span>
+                    <label asp-for="Input.Email" class="govuk-label"></label>
+                    <input asp-for="Input.Email" class="govuk-input" autocomplete="username" aria-required="true"/>
+                </div>
+                <div class="govuk-form-group @ShowErrorClass("Input.Password")">
+                    <span asp-validation-for="Input.Password" class="govuk-error-message"></span>
+                    <label asp-for="Input.Password" class="govuk-label"></label>
+                    <input asp-for="Input.Password" class="govuk-input" autocomplete="new-password" aria-required="true"/>
+                </div>
+                <div class="govuk-form-group @ShowErrorClass("Input.ConfirmPassword")">
+                    <span asp-validation-for="Input.ConfirmPassword" class="govuk-error-message"></span>
+                    <label asp-for="Input.ConfirmPassword" class="govuk-label"></label>
+                    <input asp-for="Input.ConfirmPassword" class="govuk-input" autocomplete="new-password" aria-required="true"/>
+                </div>
+                <div class="govuk-form-group @ShowErrorClass("Input.LegislativeAreas")">
+                    <span asp-validation-for="Input.LegislativeAreas" class="govuk-error-message"></span>
+                    <label asp-for="Input.LegislativeAreas" class="govuk-label"></label>
+
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        @foreach (var area in Model.LegislativeAreaList)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="Input.LegislativeAreas" name="Input.LegislativeAreas" type="checkbox" value="@area" checked="@(Model?.Input?.LegislativeAreas != null && Model.Input.LegislativeAreas.Any(l => l == area))">
+                                <label class="govuk-label govuk-checkboxes__label">
+                                    @area
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="govuk-form-group @ShowErrorClass("Input.RequestReason")">
+                    <span asp-validation-for="Input.RequestReason" class="govuk-error-message"></span>
+                    <label asp-for="Input.RequestReason" class="govuk-label"></label>
+                    <input asp-for="Input.RequestReason" class="govuk-input" autocomplete="requestreason" aria-required="true"/>
+                </div>
+                <button id="registerSubmit" type="submit" class="govuk-button">Request account</button>
+            </fieldset>
+        </form>
+    </div>
+</div>
+
+@functions
+{
+    public string ShowErrorClass(string key)
+    {
+        return Model.ModelState.Keys.Any(k => k.Equals(key)) && Model.ModelState[key].ValidationState == ModelValidationState.Invalid ? "govuk-form-group--error" : string.Empty;
+    }
+}
+
