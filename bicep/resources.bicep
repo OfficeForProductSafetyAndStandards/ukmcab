@@ -8,6 +8,8 @@ param basicAuthPassword string
 @secure()
 param sslCertPfxBase64 string = ''
 
+@secure()
+param dataProtectionX509CertBase64 string = ''
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: 'stor${project}${env}'
@@ -226,6 +228,14 @@ resource basicAuthPasswordSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' 
 }
 
 
+resource dataProtectionX509CertBase64Secret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'dataProtectionX509CertBase64'
+  properties: {
+    value: dataProtectionX509CertBase64
+  }
+}
+
 /*
   APP SERVICE and APP SERVICE PLAN
 */
@@ -270,6 +280,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'BasicAuthPassword'
           value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
+        }
+        {
+          name: 'DataProtectionX509CertBase64'
+          value: '@Microsoft.KeyVault(SecretUri=${dataProtectionX509CertBase64Secret.properties.secretUri})'
         }
       ]
     }

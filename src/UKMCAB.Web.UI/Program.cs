@@ -11,8 +11,13 @@ using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Web.UI;
+using Microsoft.AspNetCore.DataProtection;
+using System.Security.Cryptography.X509Certificates;
+using Azure.Storage.Blobs;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration["DataConnectionString"]);
 
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
@@ -22,10 +27,13 @@ builder.Services.AddAntiforgery();
 builder.Services.AddSingleton(new BasicAuthenticationOptions() { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
 builder.Services.AddTransient<ICABSearchService, CABSearchService>();
-builder.Services.AddSingleton(new AzureDataConnectionString(builder.Configuration["DataConnectionString"]));
+builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddCustomHttpErrorHandling();
+
+builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
+    .PersistKeysToAzureBlobStorage(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, "keys.xml");
 
 var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
 var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
@@ -37,7 +45,7 @@ if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
 }
 
 builder.Services.Configure<IdentityStoresOptions>(options =>
-    options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity"));
+    options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));
 
 builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
     {
@@ -92,8 +100,6 @@ cspHeader.AllowUnsafeEvalScripts();
  * END
  */
 
-
-
 if (app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -101,19 +107,14 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-    //todo: production error pages
     app.UseHsts();
 }
-
-
 
 app.UseMiddleware<BasicAuthenticationMiddleware>();
 app.UseCustomHttpErrorHandling(builder.Environment);
 app.UseRouting();
-
 app.UseCsp(cspHeader); // content-security-policy
 app.UseStaticFiles();
-
 
 var supportedCultures = new[] { new System.Globalization.CultureInfo("en-GB") };
 app.UseRequestLocalization(new RequestLocalizationOptions
@@ -126,15 +127,11 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 });
 
 app.MapDefaultControllerRoute();
-
-
-
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapRazorPages();
 
-//Seed identity
+await new BlobContainerClient(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys).CreateIfNotExistsAsync(); // todo: put this inside 'UseIdentitySeeding' (after changing `UseIdentitySeeding` to `await UseIdentitySeedingAsync`)
 app.UseIdentitySeeding<UKMCABUser, IdentityRole>(seeds =>
 {
     var administratorRole = new IdentityRole(Constants.Roles.Administrator);
@@ -147,6 +144,5 @@ app.UseIdentitySeeding<UKMCABUser, IdentityRole>(seeds =>
 
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
 });
-
 
 app.Run();
