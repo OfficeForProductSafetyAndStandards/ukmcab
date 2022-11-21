@@ -9,6 +9,9 @@ param basicAuthPassword string = ''
 @secure()
 param sslCertPfxBase64 string = ''
 
+@secure()
+param dataProtectionX509CertBase64 string = ''
+
 targetScope = 'subscription'
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -25,5 +28,6 @@ module resourceSet './resources.bicep' = {
     location: location
     basicAuthPassword: basicAuthPassword
     sslCertPfxBase64: sslCertPfxBase64
+    dataProtectionX509CertBase64: dataProtectionX509CertBase64
   }
 }
