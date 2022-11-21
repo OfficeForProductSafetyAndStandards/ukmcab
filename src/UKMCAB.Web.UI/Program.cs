@@ -33,7 +33,9 @@ builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageReposi
 builder.Services.AddCustomHttpErrorHandling();
 
 builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
-    .PersistKeysToAzureBlobStorage(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, "keys.xml");
+    .PersistKeysToAzureBlobStorage(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, "keys.xml")
+    .SetApplicationName("UKMCAB")
+    .SetDefaultKeyLifetime(TimeSpan.FromDays(365 * 2));
 
 var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
 var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
