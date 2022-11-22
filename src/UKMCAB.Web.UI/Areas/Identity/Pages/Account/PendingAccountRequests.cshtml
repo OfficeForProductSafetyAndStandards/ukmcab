@@ -26,7 +26,7 @@
                             @user.Email
                         </dt>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-button" href="./ReviewRequest">Review</a>
+                            <a class="govuk-button" asp-page="./PendingAccountReview" asp-route-id="@user.Id">Review</a>
                         </dd>
                     </div>
                 }
