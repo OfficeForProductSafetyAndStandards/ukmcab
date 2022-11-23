@@ -5,33 +5,11 @@
     ViewData["Title"] = "Register";
 }
 
-@{
-    var errors = Model.ModelState.Where(m => m.Value.ValidationState == ModelValidationState.Invalid).SelectMany(v => v.Value.Errors.Select(e => new { Key = v.Key, Error = e.ErrorMessage }));
-}
-
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            @if (!Model.ModelState.IsValid)
-            {
-                <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
-                    <h2 class="govuk-error-summary__title" id="error-summary-title">
-                        There is a problem
-                    </h2>
-                    <div class="govuk-error-summary__body">
-                        <ul class="govuk-list govuk-error-summary__list">
-                            @foreach (var error in errors)
-                            {
-                                <li>
-                                    <a href="#@error.Key">@error.Error</a> 
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            }
-
+            <partial name="_ValidationSummary" model="Model.ModelState"/>
 
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
