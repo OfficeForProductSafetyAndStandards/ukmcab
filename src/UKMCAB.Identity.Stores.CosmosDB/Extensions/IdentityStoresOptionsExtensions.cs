@@ -10,6 +10,12 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Extensions
     {
         private static readonly Dictionary<IdentityStoresOptions, AzureCosmosDBOptions> options = new();
 
+        public static string GetContainerId(this IdentityStoresOptions identityStoresOptions) => options[identityStoresOptions].ContainerId;
+
+        public static CosmosClient GetCosmosClient(this IdentityStoresOptions identityStoresOptions) => options[identityStoresOptions].CosmosClient;
+
+        public static string GetDatabaseId(this IdentityStoresOptions identityStoresOptions) => options[identityStoresOptions].DatabaseId;
+
         public static IdentityStoresOptions UseAzureCosmosDB(this IdentityStoresOptions identityStoresOptions, string connectionString, string databaseId, string containerId = "AspNetIdentity", CosmosClientOptions? clientOptions = null) => identityStoresOptions.UseAzureCosmosDB(new CosmosClient(connectionString, clientOptions), databaseId, containerId);
 
         public static IdentityStoresOptions UseAzureCosmosDB(this IdentityStoresOptions identityStoresOptions, string accountEndpoint, string authKeyOrResourceToken, string databaseId, string containerId = "AspNetIdentity", CosmosClientOptions? clientOptions = null) => identityStoresOptions.UseAzureCosmosDB(new CosmosClient(accountEndpoint, authKeyOrResourceToken, clientOptions), databaseId, containerId);
@@ -35,11 +41,6 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Extensions
             var createDatabaseResponse = await azureCosmosDBOptions.CosmosClient.CreateDatabaseIfNotExistsAsync(azureCosmosDBOptions.DatabaseId);
             _ = await createDatabaseResponse.Database.CreateContainerIfNotExistsAsync(azureCosmosDBOptions.ContainerId, $"/{CosmosContainerEntity.PartitionKey}");
         }
-
-        public static CosmosClient GetCosmosClient(this IdentityStoresOptions identityStoresOptions) => options[identityStoresOptions].CosmosClient;
-        public static string GetDatabaseId(this IdentityStoresOptions identityStoresOptions) => options[identityStoresOptions].DatabaseId;
-        public static string GetContainerId(this IdentityStoresOptions identityStoresOptions) => options[identityStoresOptions].ContainerId;
-
         private record AzureCosmosDBOptions(CosmosClient CosmosClient, string DatabaseId, string ContainerId);
     }
 }

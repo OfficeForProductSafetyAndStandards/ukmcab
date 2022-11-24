@@ -30,6 +30,12 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
             return DeleteAsync(PartitionKey, GetHashKey(userClaim), cancellationToken: cancellationToken);
         }
 
+        public Task DeleteUserClaimsAsync(TUser user, CancellationToken cancellationToken)
+        {
+            var qry = BuildQuery(PartitionKey, (nameof(IdentityUserClaim<TKey>.UserId), user.Id));
+            return DeleteBulkAsync(qry, cancellationToken);
+        }
+
         public async Task<IList<Claim>> GetAsync(TUser user, CancellationToken cancellationToken = default)
         {
             var qry = BuildQuery(PartitionKey, (nameof(IdentityUserClaim<TKey>.UserId), user.Id));
@@ -56,12 +62,6 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
         }
 
         private static string GetHashKey(TUserClaim userClaim) => $"{userClaim.UserId}-{userClaim.ClaimType}-{userClaim.ClaimValue}".GetHashString();
-
-        public Task DeleteUserClaimsAsync(TUser user, CancellationToken cancellationToken)
-        {
-            var qry = BuildQuery(PartitionKey, (nameof(IdentityUserClaim<TKey>.UserId), user.Id));
-            return DeleteBulkAsync(qry, cancellationToken);
-        }
     }
 
 }

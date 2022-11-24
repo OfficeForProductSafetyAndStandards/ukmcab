@@ -30,6 +30,12 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
             return DeleteAsync(PartitionKey, GetHashKey(roleClaim), cancellationToken: cancellationToken);
         }
 
+        public Task DeleteRoleClaimsAsync(TRole role, CancellationToken cancellationToken)
+        {
+            var qry = BuildQuery(PartitionKey, (nameof(IdentityRoleClaim<TKey>.RoleId), role.Id));
+            return DeleteBulkAsync(qry, cancellationToken);
+        }
+
         public async Task<IList<Claim>> GetAsync(TRole role, CancellationToken cancellationToken = default)
         {
             var qry = BuildQuery(PartitionKey, (nameof(IdentityRoleClaim<TKey>.RoleId), role.Id));
@@ -37,11 +43,5 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
         }
 
         private static string GetHashKey(TRoleClaim roleClaim) => $"{roleClaim.RoleId}-{roleClaim.ClaimType}-{roleClaim.ClaimValue}".GetHashString();
-
-        public Task DeleteRoleClaimsAsync(TRole role, CancellationToken cancellationToken)
-        {
-            var qry = BuildQuery(PartitionKey, (nameof(IdentityRoleClaim<TKey>.RoleId), role.Id));
-            return DeleteBulkAsync(qry, cancellationToken);
-        }
     }
 }

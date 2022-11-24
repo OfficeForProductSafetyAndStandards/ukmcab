@@ -29,6 +29,12 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
             return DeleteAsync(PartitionKey, GetHashKey(loginProvider, providerKey), cancellationToken: cancellationToken);
         }
 
+        public Task DeleteUserLoginsAsync(TUser user, CancellationToken cancellationToken)
+        {
+            var qry = BuildQuery(PartitionKey, (nameof(IdentityUserLogin<TKey>.UserId), user.Id));
+            return DeleteBulkAsync(qry, cancellationToken);
+        }
+
         public async Task<IList<TUserLogin>> GetAsync(TUser user, CancellationToken cancellationToken)
         {
             var qry = BuildQuery(PartitionKey, (nameof(IdentityUserLogin<TKey>.UserId), user.Id));
@@ -46,12 +52,6 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
 
         private static string GetHashKey(TUserLogin userLogin) => GetHashKey(userLogin.LoginProvider, userLogin.ProviderKey);
         private static string GetHashKey(string loginProvider, string providerKey) => $"{loginProvider}-{providerKey}".GetHashString();
-
-        public Task DeleteUserLoginsAsync(TUser user, CancellationToken cancellationToken)
-        {
-            var qry = BuildQuery(PartitionKey, (nameof(IdentityUserLogin<TKey>.UserId), user.Id));
-            return DeleteBulkAsync(qry, cancellationToken);
-        }
     }
 
 }

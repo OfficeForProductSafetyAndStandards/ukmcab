@@ -44,20 +44,27 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         }
 
         #region IQueryableUserStore
-        public IQueryable<TUser> Users => usersTable.Get();
-        #endregion
 
-        void IDisposable.Dispose() { }
+        public IQueryable<TUser> Users => usersTable.Get();
+
+        #endregion IQueryableUserStore
+
+        void IDisposable.Dispose()
+        {
+        }
 
         #region IUserStore
+
         public Task<IdentityResult> CreateAsync(TUser user, CancellationToken cancellationToken) => usersTable.AddAsync(user, cancellationToken);
 
         public Task<IdentityResult> DeleteAsync(TUser user, CancellationToken cancellationToken) => usersTable.DeleteAsync(user, cancellationToken);
 
 #pragma warning disable CS8619 // Waiting for .Net7 where the returned value will be nullable
+
         public Task<TUser> FindByIdAsync(string userId, CancellationToken cancellationToken) => usersTable.GetAsync(userId, cancellationToken);
 
         public Task<TUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken) => usersTable.GetByNormalizedUserNameAsync(normalizedUserName, cancellationToken);
+
 #pragma warning restore CS8619
 
         public Task<string> GetNormalizedUserNameAsync(TUser user, CancellationToken cancellationToken) => Task.FromResult(user.NormalizedUserName);
@@ -79,9 +86,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         }
 
         public Task<IdentityResult> UpdateAsync(TUser user, CancellationToken cancellationToken) => usersTable.UpdateAsync(user, cancellationToken);
-        #endregion
+
+        #endregion IUserStore
 
         #region IUserPasswordStore
+
         public Task SetPasswordHashAsync(TUser user, string passwordHash, CancellationToken cancellationToken)
         {
             user.PasswordHash = passwordHash;
@@ -91,9 +100,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         public Task<string> GetPasswordHashAsync(TUser user, CancellationToken cancellationToken) => Task.FromResult(user.PasswordHash);
 
         public Task<bool> HasPasswordAsync(TUser user, CancellationToken cancellationToken) => Task.FromResult(!string.IsNullOrEmpty(user.PasswordHash));
-        #endregion
+
+        #endregion IUserPasswordStore
 
         #region IUserEmailStore
+
         public Task SetEmailAsync(TUser user, string email, CancellationToken cancellationToken)
         {
             user.Email = email;
@@ -111,7 +122,9 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         }
 
 #pragma warning disable CS8619 // Waiting for .Net7 where the returned value will be nullable
+
         public Task<TUser> FindByEmailAsync(string normalizedEmail, CancellationToken cancellationToken) => usersTable.GetByNormalizedEmailAsync(normalizedEmail, cancellationToken);
+
 #pragma warning restore CS8619
 
         public Task<string> GetNormalizedEmailAsync(TUser user, CancellationToken cancellationToken) => Task.FromResult(user.NormalizedEmail);
@@ -121,9 +134,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
             user.NormalizedEmail = normalizedEmail;
             return Task.CompletedTask;
         }
-        #endregion
+
+        #endregion IUserEmailStore
 
         #region IUserPhoneNumberStore
+
         public Task SetPhoneNumberAsync(TUser user, string phoneNumber, CancellationToken cancellationToken)
         {
             user.PhoneNumber = phoneNumber;
@@ -139,9 +154,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
             user.PhoneNumberConfirmed = confirmed;
             return Task.CompletedTask;
         }
-        #endregion
+
+        #endregion IUserPhoneNumberStore
 
         #region IUserSecurityStampStore
+
         public Task SetSecurityStampAsync(TUser user, string stamp, CancellationToken cancellationToken)
         {
             user.SecurityStamp = stamp;
@@ -149,9 +166,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         }
 
         public Task<string> GetSecurityStampAsync(TUser user, CancellationToken cancellationToken) => Task.FromResult(user.SecurityStamp);
-        #endregion
+
+        #endregion IUserSecurityStampStore
 
         #region IUserTwoFactorStore
+
         public Task SetTwoFactorEnabledAsync(TUser user, bool enabled, CancellationToken cancellationToken)
         {
             user.TwoFactorEnabled = enabled;
@@ -159,9 +178,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         }
 
         public Task<bool> GetTwoFactorEnabledAsync(TUser user, CancellationToken cancellationToken) => Task.FromResult(user.TwoFactorEnabled);
-        #endregion
+
+        #endregion IUserTwoFactorStore
 
         #region IUserLockoutStore
+
         public Task<DateTimeOffset?> GetLockoutEndDateAsync(TUser user, CancellationToken cancellationToken) => Task.FromResult(user.LockoutEnd);
 
         public Task SetLockoutEndDateAsync(TUser user, DateTimeOffset? lockoutEnd, CancellationToken cancellationToken)
@@ -187,9 +208,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
             user.LockoutEnabled = enabled;
             return Task.CompletedTask;
         }
-        #endregion
+
+        #endregion IUserLockoutStore
 
         #region IUserLoginStore
+
         public Task AddLoginAsync(TUser user, UserLoginInfo login, CancellationToken cancellationToken)
         {
             TUserLogin userLogin = new()
@@ -207,11 +230,15 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         public async Task<IList<UserLoginInfo>> GetLoginsAsync(TUser user, CancellationToken cancellationToken) => (await userLoginsTable.GetAsync(user, cancellationToken)).Select(i => new UserLoginInfo(i.LoginProvider, i.ProviderKey, i.ProviderDisplayName)).ToList();
 
 #pragma warning disable CS8619 // Waiting for .Net7 where the returned value will be nullable
+
         public Task<TUser> FindByLoginAsync(string loginProvider, string providerKey, CancellationToken cancellationToken) => userLoginsTable.GetAsync(loginProvider, providerKey, cancellationToken);
+
 #pragma warning restore CS8619
-        #endregion
+
+        #endregion IUserLoginStore
 
         #region IUserClaimStore
+
         public Task<IList<Claim>> GetClaimsAsync(TUser user, CancellationToken cancellationToken) => userClaimsTable.GetAsync(user, cancellationToken);
 
         public Task AddClaimsAsync(TUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
@@ -254,9 +281,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         }
 
         public Task<IList<TUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken) => userClaimsTable.GetAsync(claim, cancellationToken);
-        #endregion
+
+        #endregion IUserClaimStore
 
         #region IUserAuthenticationTokenStore
+
         public Task SetTokenAsync(TUser user, string loginProvider, string name, string value, CancellationToken cancellationToken)
         {
             TUserToken userToken = new()
@@ -272,17 +301,23 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         public Task RemoveTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken) => userTokensTable.DeleteAsync(user.Id, loginProvider, name, cancellationToken);
 
 #pragma warning disable CS8603 // Waiting for .Net7 where the returned value will be nullable
+
         public async Task<string> GetTokenAsync(TUser user, string loginProvider, string name, CancellationToken cancellationToken) => (await userTokensTable.GetAsync(user.Id, loginProvider, name, cancellationToken))?.Value;
+
 #pragma warning restore CS8603 // Possible null reference return.
-        #endregion
+
+        #endregion IUserAuthenticationTokenStore
 
         #region IUserAuthenticatorKeyStore
+
         public Task SetAuthenticatorKeyAsync(TUser user, string key, CancellationToken cancellationToken) => SetTokenAsync(user, InternalLoginProvider, AuthenticatorKeyTokenName, key, cancellationToken);
 
         public Task<string> GetAuthenticatorKeyAsync(TUser user, CancellationToken cancellationToken) => GetTokenAsync(user, InternalLoginProvider, AuthenticatorKeyTokenName, cancellationToken);
-        #endregion
+
+        #endregion IUserAuthenticatorKeyStore
 
         #region IUserTwoFactorRecoveryCodeStore
+
         public Task ReplaceCodesAsync(TUser user, IEnumerable<string> recoveryCodes, CancellationToken cancellationToken)
         {
             var mergedCodes = string.Join(";", recoveryCodes);
@@ -311,6 +346,7 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
             }
             return 0;
         }
-        #endregion
+
+        #endregion IUserTwoFactorRecoveryCodeStore
     }
 }

@@ -42,6 +42,7 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
         {
             return QueryAsync<TRole>(PartitionKey, ConvertToString(roleId), cancellationToken: cancellationToken);
         }
+
         public async Task<IEnumerable<TRole>> GetAsync(CancellationToken cancellationToken)
         {
             var qry = BuildQuery(PartitionKey);
@@ -59,5 +60,4 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
             return UpdateAsync(PartitionKey, ConvertToString(role.Id), role, cancellationToken);
         }
     }
-
 }

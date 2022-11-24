@@ -52,6 +52,7 @@ public class DomainExceptionHandlerMiddleware : BaseExceptionHandlerMiddleware
                     Path = context.Request.Path,
                 });
                 context.Request.Method = "GET";
+                context.SetInternalRewrite(true);
                 context.Request.Path = _httpErrorOptions.Error403Path;
 
                 await _next(context);
@@ -84,7 +85,8 @@ public class DomainExceptionHandlerMiddleware : BaseExceptionHandlerMiddleware
                     Path = context.Request.Path,
                 });
                 context.Request.Method = "GET";
-                context.Request.Path = _httpErrorOptions.Error400Path; //Constants.PathError400DomainException;
+                context.SetInternalRewrite(true);
+                context.Request.Path = _httpErrorOptions.Error400Path;
                 context.Response.StatusCode = StatusCodes.Status400BadRequest;
 
                 await _next(context);

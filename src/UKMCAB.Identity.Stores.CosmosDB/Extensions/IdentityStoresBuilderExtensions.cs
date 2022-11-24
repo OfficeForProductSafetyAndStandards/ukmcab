@@ -38,7 +38,6 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Extensions
                 Type userStoreType = typeof(UserOnlyStore<,,,>).MakeGenericType(builder.UserType, typeof(TUserClaim), typeof(TUserLogin), typeof(TUserToken));
                 builder.Services.TryAddScoped(typeof(IUserStore<>).MakeGenericType(builder.UserType), userStoreType);
             }
-
         }
 
         private static bool TryFindGenericBaseType(Type currentType, Type genericBaseType, [NotNullWhen(true)] out Type? type)

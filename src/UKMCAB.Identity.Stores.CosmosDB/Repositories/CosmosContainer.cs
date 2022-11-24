@@ -2,10 +2,9 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Extensions.Options;
-
+using Newtonsoft.Json.Linq;
 using System.Reflection;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using UKMCAB.Identity.Stores.CosmosDB.Extensions;
 using UKMCAB.Identity.Stores.CosmosDB.Stores;
 
@@ -13,8 +12,8 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Repositories
 {
     internal abstract class CosmosContainer
     {
-        private readonly IDataProtector dataProtector;
         private readonly Container container;
+        private readonly IDataProtector dataProtector;
 
         public CosmosContainer(IDataProtectionProvider dataProtectionProvider, IOptions<IdentityStoresOptions> options)
         {
@@ -28,6 +27,44 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Repositories
             CosmosClient cosmosClient = options.Value.GetCosmosClient();
             Database database = cosmosClient.GetDatabase(options.Value.GetDatabaseId());
             container = database.GetContainer(options.Value.GetContainerId());
+        }
+
+        public async Task<IdentityResult> UpdateAsync<T>(string partitionKey, string rowKey, T entity, CancellationToken cancellationToken) where T : class
+        {
+            try
+            {
+                var tableEntity = ToTableEntity(entity, partitionKey, rowKey);
+                _ = await container.UpsertItemAsync(tableEntity, cancellationToken: cancellationToken);
+                return IdentityResult.Success;
+            }
+            catch (CosmosException ex)
+            {
+                return IdentityResult.Failed(new IdentityError { Code = ex.StatusCode.ToString(), Description = ex.Message });
+            }
+        }
+
+        protected static QueryDefinition BuildQuery(string partitionKey, params (string Name, object Value)[] filters)
+        {
+            StringBuilder stringBuilder = new();
+            stringBuilder.Append("SELECT * FROM c WHERE c.").Append(CosmosContainerEntity.PartitionKey).Append('=').Append("@PartitionKey");
+            if (filters.Any())
+            {
+                foreach (var keyValue in filters)
+                {
+                    stringBuilder.Append(" AND c.").Append(keyValue.Name).Append('=').Append('@').Append(keyValue.Name);
+                }
+            }
+            QueryDefinition queryDefinition = new(stringBuilder.ToString());
+            queryDefinition.WithParameter("@PartitionKey", partitionKey);
+            if (filters.Any())
+            {
+                foreach (var keyValue in filters)
+                {
+                    queryDefinition.WithParameter($"@{keyValue.Name}", keyValue.Value);
+                }
+            }
+
+            return queryDefinition;
         }
 
         protected static string ConvertToString<T>(T value) where T : IEquatable<T> => Convert.ToString(value) ?? string.Empty;
@@ -57,6 +94,7 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Repositories
                 return IdentityResult.Failed(new IdentityError { Code = ex.StatusCode.ToString(), Description = ex.Message });
             }
         }
+
         protected async Task DeleteBulkAsync(QueryDefinition queryDefinition, CancellationToken cancellationToken = default)
         {
             if (queryDefinition is null)
@@ -76,6 +114,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Repositories
                     await DeleteAsync(partitionKey, id, cancellationToken);
                 }
             }
+        }
+
+        protected IEnumerable<T> Query<T>(QueryDefinition queryDefinition, CancellationToken cancellationToken = default) where T : class, new()
+        {
+            return QueryAsync<T>(queryDefinition, cancellationToken).Result;
         }
 
         protected async Task<IList<T>> QueryAsync<T>(QueryDefinition queryDefinition, CancellationToken cancellationToken = default) where T : class, new()
@@ -101,10 +144,6 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Repositories
                 return Enumerable.Empty<T>().ToList();
             }
         }
-        protected IEnumerable<T> Query<T>(QueryDefinition queryDefinition, CancellationToken cancellationToken = default) where T : class, new()
-        {
-            return QueryAsync<T>(queryDefinition, cancellationToken).Result;
-        }
 
         protected async Task<T?> QueryAsync<T>(string partitionKey, string rowKey, CancellationToken cancellationToken = default) where T : class, new()
         {
@@ -122,43 +161,6 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Repositories
             }
         }
 
-        protected static QueryDefinition BuildQuery(string partitionKey, params (string Name, object Value)[] filters)
-        {
-            StringBuilder stringBuilder = new();
-            stringBuilder.Append("SELECT * FROM c WHERE c.").Append(CosmosContainerEntity.PartitionKey).Append('=').Append("@PartitionKey");
-            if (filters.Any())
-            {
-                foreach (var keyValue in filters)
-                {
-                    stringBuilder.Append(" AND c.").Append(keyValue.Name).Append('=').Append('@').Append(keyValue.Name);
-                }
-            }
-            QueryDefinition queryDefinition = new(stringBuilder.ToString());
-            queryDefinition.WithParameter("@PartitionKey", partitionKey);
-            if (filters.Any())
-            {
-                foreach (var keyValue in filters)
-                {
-                    queryDefinition.WithParameter($"@{keyValue.Name}", keyValue.Value);
-                }
-            }
-
-            return queryDefinition;
-        }
-
-        public async Task<IdentityResult> UpdateAsync<T>(string partitionKey, string rowKey, T entity, CancellationToken cancellationToken) where T : class
-        {
-            try
-            {
-                var tableEntity = ToTableEntity(entity, partitionKey, rowKey);
-                _ = await container.UpsertItemAsync(tableEntity, cancellationToken: cancellationToken);
-                return IdentityResult.Success;
-            }
-            catch (CosmosException ex)
-            {
-                return IdentityResult.Failed(new IdentityError { Code = ex.StatusCode.ToString(), Description = ex.Message });
-            }
-        }
         private T ConvertTo<T>(CosmosContainerEntity cosmosContainerEntity) where T : class, new()
         {
             T obj = new();
@@ -217,20 +219,20 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Repositories
             return entity;
         }
     }
+
     internal class CosmosContainerEntity : Dictionary<string, object>
     {
-        public const string PartitionKey = "PartitionKey";
         public const string Id = "id";
+        public const string PartitionKey = "PartitionKey";
 
         public CosmosContainerEntity()
         {
-
         }
+
         public CosmosContainerEntity(string partitionKey, string id)
         {
             Add(PartitionKey, partitionKey);
             Add(Id, id);
         }
-
     }
 }
