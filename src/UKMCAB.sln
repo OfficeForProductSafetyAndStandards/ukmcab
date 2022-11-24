@@ -29,6 +29,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Web", "UKMCAB.Web\UK
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Identity.Stores.CosmosDB", "UKMCAB.Identity.Stores.CosmosDB\UKMCAB.Identity.Stores.CosmosDB.csproj", "{10B5C9F0-CB73-490B-9BDC-2544D412E506}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{1D2146B5-DC6D-423C-B2C2-8C34CE2F3C6B}"
+	ProjectSection(SolutionItems) = preProject
+		Architecture.md = Architecture.md
+		CodeReviewChecklist.md = CodeReviewChecklist.md
+		ExceptionHandling.md = ExceptionHandling.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

@@ -12,10 +12,19 @@ namespace UKMCAB.Web.UI.Pages
 
         public Exception? Exception { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            var exceptionHandler = HttpContext?.Features?.Get<IExceptionHandlerPathFeature>();
-            Exception = exceptionHandler?.Error;
+            if (HttpContext.IsInternalRewrite())
+            {
+                var exceptionHandler = HttpContext?.Features?.Get<IExceptionHandlerPathFeature>();
+                Exception = exceptionHandler?.Error;
+                return Page();
+            }
+            else
+            {
+                HttpContext.SetEndpoint(endpoint: null);
+                return NotFound();
+            }
         }
     }
 }

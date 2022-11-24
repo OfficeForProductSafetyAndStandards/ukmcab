@@ -113,7 +113,7 @@ else
 }
 
 app.UseMiddleware<BasicAuthenticationMiddleware>();
-app.UseCustomHttpErrorHandling(builder.Environment);
+app.UseCustomHttpErrorHandling(builder.Configuration);
 app.UseRouting();
 app.UseCsp(cspHeader); // content-security-policy
 app.UseStaticFiles();
@@ -133,8 +133,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.MapRazorPages();
 
-await new BlobContainerClient(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys).CreateIfNotExistsAsync(); // todo: put this inside 'UseIdentitySeeding' (after changing `UseIdentitySeeding` to `await UseIdentitySeedingAsync`)
-app.UseIdentitySeeding<UKMCABUser, IdentityRole>(seeds =>
+await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, seeds =>
 {
     var administratorRole = new IdentityRole(Constants.Roles.Administrator);
     seeds

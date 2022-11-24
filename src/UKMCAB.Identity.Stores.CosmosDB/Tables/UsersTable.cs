@@ -70,5 +70,4 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
             return UpdateAsync(PartitionKey, ConvertToString(user.Id), user, cancellationToken);
         }
     }
-
 }

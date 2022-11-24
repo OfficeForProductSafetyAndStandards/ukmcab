@@ -36,6 +36,7 @@ public class AdminController : Controller
             pageNumber = 1;
         }
 
+        
         var cabs = await _cosmosDbService.GetPagedCABsAsync(pageNumber.Value, CABS_PER_PAGE);
 
         var viewModel = new CabListViewModel

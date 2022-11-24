@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace UKMCAB.Common;
+﻿namespace UKMCAB.Common;
 
 public static class Guard
 {

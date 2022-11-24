@@ -17,5 +17,4 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Extensions
             return string.Join(string.Empty, hashBytes.Select(i => i.ToString("X2")));
         }
     }
-
 }

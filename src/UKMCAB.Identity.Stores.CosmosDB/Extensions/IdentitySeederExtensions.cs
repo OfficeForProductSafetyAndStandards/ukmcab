@@ -1,17 +1,22 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using System.Collections.ObjectModel;
 using System.Security.Claims;
+using UKMCAB.Common.ConnectionStrings;
 
 namespace UKMCAB.Identity.Stores.CosmosDB.Extensions
 {
     public static class IdentitySeederExtensions
     {
-        public static IApplicationBuilder UseIdentitySeeding<TUser, TRole>(this IApplicationBuilder app, Action<IdentitySeeds<TUser, TRole>> seeds)
+        public static async Task<IApplicationBuilder> InitialiseIdentitySeedingAsync<TUser, TRole>(this IApplicationBuilder app, AzureDataConnectionString azureDataConnectionString, string dataProtectionKeysContainerName, 
+            Action<IdentitySeeds<TUser, TRole>> seeds)
             where TUser : IdentityUser<string>
             where TRole : IdentityRole<string>
         {
+            await new BlobContainerClient(azureDataConnectionString, dataProtectionKeysContainerName).CreateIfNotExistsAsync(); // ensure the data protection keys blob container is created.
+
             IdentitySeeds<TUser, TRole> identitySeeds = new();
             seeds(identitySeeds);
             using (var scope = app.ApplicationServices.CreateScope())
@@ -19,60 +24,59 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Extensions
                 RoleManager<TRole>? roleManager = scope.ServiceProvider.GetService<RoleManager<TRole>>();
                 if (roleManager is not null)
                 {
-                    AddRoles(roleManager, identitySeeds);
+                    await AddRolesAsync(roleManager, identitySeeds);
                 }
 
-                AddUsers(scope.ServiceProvider.GetRequiredService<UserManager<TUser>>(), roleManager, identitySeeds);
+                await AddUsersAsync(scope.ServiceProvider.GetRequiredService<UserManager<TUser>>(), roleManager, identitySeeds);
             }
             return app;
         }
 
-        private static void AddRoles<TUser, TRole>(RoleManager<TRole> roleManager, IdentitySeeds<TUser, TRole> identitySeeds)
+        private static async Task AddRolesAsync<TUser, TRole>(RoleManager<TRole> roleManager, IdentitySeeds<TUser, TRole> identitySeeds)
             where TUser : IdentityUser<string>
             where TRole : IdentityRole<string>
         {
             foreach (var role in identitySeeds.Roles)
             {
-                if (!roleManager.RoleExistsAsync(role.Role.Name).Result)
+                if (!await roleManager.RoleExistsAsync(role.Role.Name))
                 {
-                    IdentityResult result = roleManager.CreateAsync(role.Role).Result;
+                    IdentityResult result = await roleManager.CreateAsync(role.Role);
                     if (result.Succeeded)
                     {
                         foreach (Claim claim in role.Claims)
-                            roleManager.AddClaimAsync(role.Role, claim).Wait();
+                            await roleManager.AddClaimAsync(role.Role, claim);
                     }
                 }
             }
         }
 
-        private static void AddUsers<TUser, TRole>(UserManager<TUser> userManager, RoleManager<TRole>? roleManager, IdentitySeeds<TUser, TRole> identitySeeds)
+        private static async Task AddUsersAsync<TUser, TRole>(UserManager<TUser> userManager, RoleManager<TRole>? roleManager, IdentitySeeds<TUser, TRole> identitySeeds)
             where TUser : IdentityUser<string>
             where TRole : IdentityRole<string>
         {
             foreach (var user in identitySeeds.Users)
             {
-                if (userManager.FindByEmailAsync(user.User.Email).Result == null)
+                if (await userManager.FindByEmailAsync(user.User.Email) == null)
                 {
-                    IdentityResult result = userManager.CreateAsync(user.User, user.Password).Result;
+                    IdentityResult result = await userManager.CreateAsync(user.User, user.Password);
                     if (result.Succeeded)
                     {
                         if (user.Claims?.Any() == true)
                         {
                             foreach (Claim claim in user.Claims)
                             {
-                                userManager.AddClaimAsync(user.User, claim).Wait();
+                                await userManager.AddClaimAsync(user.User, claim);
                             }
                         }
                         if (roleManager is not null && user.Roles?.Any() == true)
                         {
                             foreach (TRole role in user.Roles)
                             {
-                                if (!identitySeeds.Roles.Any(i => i.Role.Name == role.Name)
-                                    && !roleManager.RoleExistsAsync(role.Name).Result)
+                                if (!identitySeeds.Roles.Any(i => i.Role.Name == role.Name) && !await roleManager.RoleExistsAsync(role.Name))
                                 {
-                                    roleManager.CreateAsync(role).Wait();
+                                    await roleManager.CreateAsync(role);
                                 }
-                                userManager.AddToRoleAsync(user.User, role.Name).Wait();
+                                await userManager.AddToRoleAsync(user.User, role.Name);
                             }
                         }
                     }
