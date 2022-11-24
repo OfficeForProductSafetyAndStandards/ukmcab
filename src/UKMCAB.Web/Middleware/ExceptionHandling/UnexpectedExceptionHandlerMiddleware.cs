@@ -101,6 +101,7 @@ public class UnexpectedExceptionHandlerMiddleware : BaseExceptionHandlerMiddlewa
     {
         var originalPath = context.Request.Path;
         context.Request.Path = _httpErrorOptions.Error500Path;
+        context.SetInternalRewrite(true);
         context.Request.Method = "GET";
 
         try

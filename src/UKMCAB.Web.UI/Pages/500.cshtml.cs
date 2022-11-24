@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Polly;
 using static UKMCAB.Web.Middleware.ExceptionHandling.UnexpectedExceptionHandlerMiddleware;
 
-namespace UKMCAB.Web.UI.Pages.bdc39f6c9d90
+namespace UKMCAB.Web.UI.Pages
 {
     public class _500Model : PageModel, ILayoutModel
     {
@@ -14,13 +16,22 @@ namespace UKMCAB.Web.UI.Pages.bdc39f6c9d90
         public string? ErrorContext { get; set; }
 
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
-            var exceptionHandler = HttpContext?.Features?.Get<IExceptionHandlerFeature>();
-            var data = HttpContext?.Features?.Get<UnhandledExceptionData>();
-            
-            Exception = exceptionHandler?.Error;
-            ErrorCode = data?.ReferenceId;
+            if (HttpContext.IsInternalRewrite())
+            {
+                var exceptionHandler = HttpContext?.Features?.Get<IExceptionHandlerFeature>();
+                var data = HttpContext?.Features?.Get<UnhandledExceptionData>();
+
+                Exception = exceptionHandler?.Error;
+                ErrorCode = data?.ReferenceId;
+                return Page(); 
+            }
+            else
+            {
+                HttpContext.SetEndpoint(endpoint: null);
+                return NotFound();
+            }
         }
     }
 }

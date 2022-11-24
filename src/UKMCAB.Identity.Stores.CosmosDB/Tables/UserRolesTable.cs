@@ -28,10 +28,16 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
             return DeleteAsync(PartitionKey, GetHashKey(userId, roleId), cancellationToken: cancellationToken);
         }
 
-        public async Task<IList<TUserRole>> GetUsersAsync(TKey roleId, CancellationToken cancellationToken)
+        public Task DeleteRoleUsersAsync(TKey roleId, CancellationToken cancellationToken)
         {
             var qry = BuildQuery(PartitionKey, (nameof(IdentityUserRole<TKey>.RoleId), roleId));
-            return (await QueryAsync<TUserRole>(qry, cancellationToken: cancellationToken)).ToList();
+            return DeleteBulkAsync(qry, cancellationToken);
+        }
+
+        public Task DeleteUserRolesAsync(TKey userId, CancellationToken cancellationToken)
+        {
+            var qry = BuildQuery(PartitionKey, (nameof(IdentityUserRole<TKey>.UserId), userId));
+            return DeleteBulkAsync(qry, cancellationToken);
         }
 
         public async Task<IList<TUserRole>> GetRolesAsync(TKey userId, CancellationToken cancellationToken)
@@ -40,20 +46,13 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Tables
             return (await QueryAsync<TUserRole>(qry, cancellationToken: cancellationToken)).ToList();
         }
 
-        private static string GetHashKey(TUserRole userRole) => GetHashKey(userRole.UserId, userRole.RoleId);
-        private static string GetHashKey(TKey userId, TKey roleId) => $"{userId}-{roleId}".GetHashString();
-
-        public Task DeleteUserRolesAsync(TKey userId, CancellationToken cancellationToken)
-        {
-            var qry = BuildQuery(PartitionKey, (nameof(IdentityUserRole<TKey>.UserId), userId));
-            return DeleteBulkAsync(qry, cancellationToken);
-        }
-
-        public Task DeleteRoleUsersAsync(TKey roleId, CancellationToken cancellationToken)
+        public async Task<IList<TUserRole>> GetUsersAsync(TKey roleId, CancellationToken cancellationToken)
         {
             var qry = BuildQuery(PartitionKey, (nameof(IdentityUserRole<TKey>.RoleId), roleId));
-            return DeleteBulkAsync(qry, cancellationToken);
+            return (await QueryAsync<TUserRole>(qry, cancellationToken: cancellationToken)).ToList();
         }
-    }
+        private static string GetHashKey(TUserRole userRole) => GetHashKey(userRole.UserId, userRole.RoleId);
 
+        private static string GetHashKey(TKey userId, TKey roleId) => $"{userId}-{roleId}".GetHashString();
+    }
 }

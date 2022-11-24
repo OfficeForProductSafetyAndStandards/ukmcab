@@ -12,9 +12,9 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         where TUserLogin : IdentityUserLogin<string>, new()
         where TUserToken : IdentityUserToken<string>, new()
     {
-        private readonly IUsersTable<TUser, string> usersTable;
         private readonly IRolesTable<TRole, string> rolesTable;
         private readonly IUserRolesTable<TUserRole, string> userRolesTable;
+        private readonly IUsersTable<TUser, string> usersTable;
 
         public UserStore(IUsersTable<TUser, string> usersTable,
             IRolesTable<TRole, string> rolesTable,
@@ -30,6 +30,7 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
         }
 
         #region IUserRoleStore
+
         public async Task AddToRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken)
         {
             var roleEntity = await rolesTable.GetByNormalizedNameAsync(normalizedRoleName, cancellationToken);
@@ -45,16 +46,6 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
             await userRolesTable.AddAsync(userRole, cancellationToken);
         }
 
-        public async Task RemoveFromRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken)
-        {
-            var roleEntity = await rolesTable.GetByNormalizedNameAsync(normalizedRoleName, cancellationToken);
-            if (roleEntity == null)
-            {
-                throw new InvalidOperationException($"Role Not Found");
-            }
-            await userRolesTable.DeleteAsync(user.Id, roleEntity.Id, cancellationToken);
-        }
-
         public async Task<IList<string>> GetRolesAsync(TUser user, CancellationToken cancellationToken)
         {
             var roleIds = (await userRolesTable.GetRolesAsync(user.Id, cancellationToken)).Select(i => i.RoleId);
@@ -67,6 +58,16 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
                 return Enumerable.Empty<string>().ToList();
         }
 
+        public async Task<IList<TUser>> GetUsersInRoleAsync(string normalizedRoleName, CancellationToken cancellationToken)
+        {
+            var roleEntity = await rolesTable.GetByNormalizedNameAsync(normalizedRoleName, cancellationToken);
+            if (roleEntity == null)
+            {
+                throw new InvalidOperationException($"Role Not Found");
+            }
+            return (await userRolesTable.GetUsersAsync(roleEntity.Id, cancellationToken)).Select(async i => await usersTable.GetAsync(i.UserId, cancellationToken)).Select(i => i.Result).OfType<TUser>().ToList();
+        }
+
         public async Task<bool> IsInRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken)
         {
             var roleEntity = await rolesTable.GetByNormalizedNameAsync(normalizedRoleName, cancellationToken);
@@ -77,15 +78,16 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
             return (await userRolesTable.GetRolesAsync(user.Id, cancellationToken)).Any(i => i.RoleId == roleEntity.Id);
         }
 
-        public async Task<IList<TUser>> GetUsersInRoleAsync(string normalizedRoleName, CancellationToken cancellationToken)
+        public async Task RemoveFromRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken)
         {
             var roleEntity = await rolesTable.GetByNormalizedNameAsync(normalizedRoleName, cancellationToken);
             if (roleEntity == null)
             {
                 throw new InvalidOperationException($"Role Not Found");
             }
-            return (await userRolesTable.GetUsersAsync(roleEntity.Id, cancellationToken)).Select(async i => await usersTable.GetAsync(i.UserId, cancellationToken)).Select(i => i.Result).OfType<TUser>().ToList();
+            await userRolesTable.DeleteAsync(user.Id, roleEntity.Id, cancellationToken);
         }
-        #endregion
+
+        #endregion IUserRoleStore
     }
 }
