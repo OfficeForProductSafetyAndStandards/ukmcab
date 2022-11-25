@@ -15,9 +15,11 @@ using UKMCAB.Identity.Stores.CosmosDB;
 
 namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 {
-    public class ResetPasswordModel : PageModel
+    public class ResetPasswordModel : PageModel, ILayoutModel
     {
         private readonly UserManager<UKMCABUser> _userManager;
+
+        public string? Title => "Reset password";
 
         public ResetPasswordModel(UserManager<UKMCABUser> userManager)
         {

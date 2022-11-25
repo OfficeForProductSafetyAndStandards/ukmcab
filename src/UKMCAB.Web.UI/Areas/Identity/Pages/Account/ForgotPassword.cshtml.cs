@@ -72,7 +72,7 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
                     Input.Email,
                     "Reset Password",
                     $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
-
+                TempData["Code"] = code;
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }
 
