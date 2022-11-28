@@ -72,7 +72,7 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 
         public IActionResult OnGet(string code = null)
         {
-            Guard.IsTrue(code != null, ()=> new DomainException("A code must be supplied for password reset."));
+            Rule.IsTrue(code != null,"A code must be supplied for password reset.");
             Input = new InputModel
             {
                 Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))

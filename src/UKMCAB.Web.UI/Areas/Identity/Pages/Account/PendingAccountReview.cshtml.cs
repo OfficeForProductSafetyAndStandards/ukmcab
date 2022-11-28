@@ -36,7 +36,7 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             var user = await _userManager.FindByIdAsync(id);
 
             Guard.IsTrue<NotFoundException>(user != null);
-            Guard.IsTrue(user.EmailConfirmed, () => new DomainException("Email address has not been confirmed"));
+            Rule.IsTrue(user.EmailConfirmed, "Email address has not been confirmed");
 
             UserForReview = user;
             Input = new InputModel
@@ -52,7 +52,7 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             var user = await _userManager.FindByIdAsync(Input.UserId);
 
             Guard.IsTrue<NotFoundException>(user != null);
-            Guard.IsTrue(user.EmailConfirmed, () => new DomainException("Email address has not been confirmed"));
+            Rule.IsTrue(user.EmailConfirmed, "Email address has not been confirmed");
 
             user.RequestApproved = true;
             var result = await _userManager.UpdateAsync(user);
@@ -74,7 +74,7 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
             var user = await _userManager.FindByIdAsync(Input.UserId);
 
             Guard.IsTrue<NotFoundException>(user != null);
-            Guard.IsTrue(user.EmailConfirmed, () => new DomainException("Email address has not been confirmed"));
+            Rule.IsTrue(user.EmailConfirmed, "Email address has not been confirmed");
 
             var result = await _userManager.DeleteAsync(user);
             if (result.Succeeded)

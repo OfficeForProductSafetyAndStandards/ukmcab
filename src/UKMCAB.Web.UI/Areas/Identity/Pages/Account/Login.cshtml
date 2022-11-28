@@ -1,5 +1,5 @@
 ﻿@page
-@using Microsoft.AspNetCore.Mvc.ModelBinding
+@using UKMCAB.Web.UI
 @model LoginModel
 
 <div class="govuk-grid-row">
@@ -15,12 +15,12 @@
                 </legend>
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="govuk-form-group @ShowErrorClass("Input.Email")">
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(Model.ModelState,"Input.Email")">
                     <span asp-validation-for="Input.Email" class="govuk-error-message"></span>
                     <label asp-for="Input.Email" class="govuk-label"></label>
                     <input asp-for="Input.Email" class="govuk-input" autocomplete="username" aria-required="true"/>
                 </div>
-                <div class="govuk-form-group @ShowErrorClass("Input.Password")">
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(Model.ModelState,"Input.Password")">
                     <span asp-validation-for="Input.Password" class="govuk-error-message"></span>
                     <label asp-for="Input.Password" class="govuk-label"></label>
                     <input asp-for="Input.Password" class="govuk-input" autocomplete="current-password" aria-required="true"/>
@@ -40,10 +40,3 @@
         </form>
     </div>
 </div>
-@functions
-{
-    public string ShowErrorClass(string key)
-    {
-        return Model.ModelState.Keys.Any(k => k.Equals(key)) && Model.ModelState[key].ValidationState == ModelValidationState.Invalid ? "govuk-form-group--error" : string.Empty;
-    }
-}
