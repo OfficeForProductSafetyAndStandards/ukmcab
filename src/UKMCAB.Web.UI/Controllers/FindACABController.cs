@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Cosmos;
+using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models;
 using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Services;
@@ -9,16 +12,27 @@ public class FindACABController : Controller
 {
     private readonly ISearchFilterService _searchFilterService;
     private readonly ICABSearchService _cabSearchService;
+    private readonly RoleManager<IdentityRole> _roleManager;
+    private readonly UserManager<UKMCABUser> _userManager;
 
-    public FindACABController(ISearchFilterService searchFilterService, ICABSearchService cabSearchService)
+    public FindACABController(ISearchFilterService searchFilterService, ICABSearchService cabSearchService, RoleManager<IdentityRole> roleManager, UserManager<UKMCABUser> userManager)
     {
         _searchFilterService = searchFilterService;
         _cabSearchService = cabSearchService;
+        _roleManager = roleManager;
+        _userManager = userManager;
     }
     
     [Route("find-a-cab")]
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
+        var user = await _userManager.GetUserAsync(this.User);
+        if (user != null)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            var showButton =
+                roles.Any(r => Constants.Roles.AuthRoles.Contains(r, StringComparer.InvariantCultureIgnoreCase));
+        }
         return View(new SearchViewModel());
     }
 
