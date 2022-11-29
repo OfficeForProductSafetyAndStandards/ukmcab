@@ -8,5 +8,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels
         public string Keywords { get; set; }
 
         string? ILayoutModel.Title => "Search";
+        public bool IsAdmin { get; set; }
     }
 }

@@ -12,39 +12,33 @@ public class FindACABController : Controller
 {
     private readonly ISearchFilterService _searchFilterService;
     private readonly ICABSearchService _cabSearchService;
-    private readonly RoleManager<IdentityRole> _roleManager;
-    private readonly UserManager<UKMCABUser> _userManager;
+    private readonly IAdminService _adminService;
 
-    public FindACABController(ISearchFilterService searchFilterService, ICABSearchService cabSearchService, RoleManager<IdentityRole> roleManager, UserManager<UKMCABUser> userManager)
+    public FindACABController(ISearchFilterService searchFilterService, ICABSearchService cabSearchService, IAdminService adminService)
     {
         _searchFilterService = searchFilterService;
         _cabSearchService = cabSearchService;
-        _roleManager = roleManager;
-        _userManager = userManager;
+        _adminService = adminService;
     }
     
     [Route("find-a-cab")]
     public async Task<IActionResult> Index()
     {
-        var user = await _userManager.GetUserAsync(this.User);
-        if (user != null)
-        {
-            var roles = await _userManager.GetRolesAsync(user);
-            var showButton =
-                roles.Any(r => Constants.Roles.AuthRoles.Contains(r, StringComparer.InvariantCultureIgnoreCase));
-        }
-        return View(new SearchViewModel());
+        var isAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.UKASUser);
+        return View(new SearchViewModel{IsAdmin = isAdmin});
     }
 
     [HttpPost]
     [Route("find-a-cab")]
-    public IActionResult Index(SearchViewModel searchViewModel)
+    public async Task<IActionResult> Index(SearchViewModel searchViewModel)
     {
         if (ModelState.IsValid)
         {
             return RedirectToAction("Results", new { Keywords = searchViewModel.Keywords });
         }
-        return View();
+        searchViewModel.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.UKASUser);
+
+        return View(searchViewModel);
     }
 
 
@@ -52,6 +46,7 @@ public class FindACABController : Controller
     public async Task<IActionResult> Results(SearchResultsViewModel searchResultsViewModel)
     {
         LoadFilters(searchResultsViewModel);
+        searchResultsViewModel.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.UKASUser);
 
         var cabs = await _cabSearchService.SearchCABsAsync(searchResultsViewModel.Keywords, new FilterSelections
         {
@@ -109,6 +104,7 @@ public class FindACABController : Controller
     public async Task<IActionResult> Profile(string id)
     {
         var cabProfile = await _cabSearchService.GetCABAsync(id);
+        cabProfile.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.UKASUser);
         return View(cabProfile);
     }
 }
