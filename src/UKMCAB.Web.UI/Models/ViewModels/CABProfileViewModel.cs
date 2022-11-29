@@ -1,9 +1,8 @@
-﻿using System.Security.Principal;
-
-namespace UKMCAB.Web.UI.Models.ViewModels;
+﻿namespace UKMCAB.Web.UI.Models.ViewModels;
 
 public class CABProfileViewModel : ILayoutModel
 {
+    public string Id { get; set; }
     public string Name { get; set; }
 
     // Dates
