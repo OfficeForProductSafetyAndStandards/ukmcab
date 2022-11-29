@@ -49,4 +49,5 @@ public class SearchResultsViewModel : ILayoutModel
     }
 
     string? ILayoutModel.Title => "Search results";
+    public bool IsAdmin { get; set; }
 }

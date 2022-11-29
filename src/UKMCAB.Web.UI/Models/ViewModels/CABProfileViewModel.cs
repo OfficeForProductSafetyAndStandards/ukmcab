@@ -29,4 +29,6 @@ public class CABProfileViewModel : ILayoutModel
     public List<AppointmentRevisionViewModel> AppointmentRevisions { get; set; }
 
     public string? Title => Name;
+
+    public bool IsAdmin { get; set; }
 }
