@@ -56,6 +56,7 @@ public class CABSearchService : ICABSearchService
         
         var cabProfile = new CABProfileViewModel
         {
+            Id = cabData.Id,
             Name = cabData.Name,
             
             Published = "xxx", // todo
