@@ -1,9 +1,8 @@
-﻿using System.Security.Principal;
-
-namespace UKMCAB.Web.UI.Models.ViewModels;
+﻿namespace UKMCAB.Web.UI.Models.ViewModels;
 
 public class CABProfileViewModel : ILayoutModel
 {
+    public string Id { get; set; }
     public string Name { get; set; }
 
     // Dates
@@ -29,4 +28,6 @@ public class CABProfileViewModel : ILayoutModel
     public List<AppointmentRevisionViewModel> AppointmentRevisions { get; set; }
 
     public string? Title => Name;
+
+    public bool IsAdmin { get; set; }
 }

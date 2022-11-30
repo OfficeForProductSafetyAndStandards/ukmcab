@@ -20,7 +20,7 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account.Manage
         {
             var usersInRole = await _userManager.GetUsersInRoleAsync(Constants.Roles.OGDUser);
             
-            PendingUsers = usersInRole.Where(u => !u.RequestApproved).ToList();
+            PendingUsers = usersInRole.Where(u => u.EmailConfirmed && !u.RequestApproved).ToList();
             return Page();
         }
 
