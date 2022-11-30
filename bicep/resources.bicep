@@ -29,6 +29,7 @@ resource redis 'Microsoft.Cache/redis@2021-06-01' = {
   name: 'redis-${project}-${env}'
   location: location
   properties: {
+    redisVersion: '6.0'
     sku: {
       name: 'Basic'
       family: 'C'
