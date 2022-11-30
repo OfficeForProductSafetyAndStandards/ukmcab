@@ -1,19 +1,20 @@
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos;
+using Notify.Client;
+using Notify.Interfaces;
+using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
-using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Identity.Stores.CosmosDB.Extensions;
 using UKMCAB.Identity.Stores.CosmosDB.Stores;
+using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
-using UKMCAB.Web.UI.Services;
 using UKMCAB.Web.UI;
-using Microsoft.AspNetCore.DataProtection;
-using System.Security.Cryptography.X509Certificates;
-using Azure.Storage.Blobs;
+using UKMCAB.Web.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,7 @@ builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
+builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 builder.Services.AddCustomHttpErrorHandling();
 
 builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
@@ -147,4 +149,8 @@ await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConn
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
 });
 
+
+
+
 app.Run();
+
