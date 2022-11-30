@@ -16,15 +16,6 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
     [AllowAnonymous]
     public class ForgotPasswordConfirmation : PageModel, ILayoutModel
     {
-        private readonly UserManager<UKMCABUser> _userManager;
-        public ForgotPasswordConfirmation(UserManager<UKMCABUser> userManager)
-        {
-            _userManager = userManager;
-        }
-        public bool DisplayConfirmAccountLink { get; set; }
-
-        public string ResetConfirmationUrl { get; set; }
-
         public string? Title => "Forgotten password confirmation";
 
         /// <summary>
@@ -33,17 +24,6 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
         /// </summary>
         public async Task<IActionResult> OnGetAsync()
         {
-            if (TempData.Keys.Any(k => k.Equals("Code")))
-            {
-                // TODO: this is for testing purposes only and should be removed once email sending is introduced
-                DisplayConfirmAccountLink = true;
-                var code = (string)TempData["code"];
-                ResetConfirmationUrl = Url.Page(
-                    "/Account/ResetPassword",
-                    pageHandler: null,
-                    values: new { area = "Identity", code },
-                    protocol: Request.Scheme);
-            }
             return Page();
         }
     }

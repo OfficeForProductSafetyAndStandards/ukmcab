@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
-using UKMCAB.Common.Exceptions;
 using UKMCAB.Identity.Stores.CosmosDB;
 
 namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
@@ -73,6 +72,7 @@ namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
         public IActionResult OnGet(string code = null)
         {
             Rule.IsTrue(code != null,"A code must be supplied for password reset.");
+
             Input = new InputModel
             {
                 Code = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(code))
