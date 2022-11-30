@@ -1,14 +1,15 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos;
+using System.Security.Cryptography.X509Certificates;
 using Notify.Client;
 using Notify.Interfaces;
-using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Identity.Stores.CosmosDB.Extensions;
 using UKMCAB.Identity.Stores.CosmosDB.Stores;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
@@ -26,12 +27,14 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery();
 builder.Services.AddSingleton(new BasicAuthenticationOptions() { Password = builder.Configuration["BasicAuthPassword"] });
+builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
 builder.Services.AddTransient<ICABSearchService, CABSearchService>();
 builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
+builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 builder.Services.AddCustomHttpErrorHandling();
 
@@ -61,17 +64,9 @@ builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
     //.AddUserManager<UserManager<UKMCABUser>>()
     .AddAzureCosmosDbStores();
 
-
 // =================================================================================================
 
-
-
-
-
 var app = builder.Build();
-
-
-
 
 app.Use(async (context, next) =>
 {
@@ -148,6 +143,8 @@ await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConn
 
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
 });
+
+await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
 
 
 
