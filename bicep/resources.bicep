@@ -11,6 +11,9 @@ param sslCertPfxBase64 string = ''
 @secure()
 param dataProtectionX509CertBase64 string = ''
 
+@secure()
+param govukNotifyApiKey string = ''
+
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: 'stor${project}${env}'
   location: location
@@ -237,6 +240,15 @@ resource dataProtectionX509CertBase64Secret 'Microsoft.KeyVault/vaults/secrets@2
   }
 }
 
+
+resource govukNotifyApiKeySecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'govukNotifyApiKey'
+  properties: {
+    value: govukNotifyApiKey
+  }
+}
+
 /*
   APP SERVICE and APP SERVICE PLAN
 */
@@ -285,6 +297,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'DataProtectionX509CertBase64'
           value: '@Microsoft.KeyVault(SecretUri=${dataProtectionX509CertBase64Secret.properties.secretUri})'
+        }
+        {
+          name: 'GovUkNotifyApiKey'
+          value: '@Microsoft.KeyVault(SecretUri=${govukNotifyApiKeySecret.properties.secretUri})'
         }
       ]
     }

@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos;
 using System.Security.Cryptography.X509Certificates;
+using Notify.Client;
+using Notify.Interfaces;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
@@ -33,6 +35,7 @@ builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IDistCache, RedisCache>();
+builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 builder.Services.AddCustomHttpErrorHandling();
 
 builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
@@ -143,4 +146,8 @@ await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConn
 
 await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
 
+
+
+
 app.Run();
+
