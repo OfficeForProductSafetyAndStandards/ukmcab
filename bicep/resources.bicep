@@ -14,6 +14,8 @@ param dataProtectionX509CertBase64 string = ''
 @secure()
 param govukNotifyApiKey string = ''
 
+param aspNetCoreEnvironment string = 'Development'
+
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: 'stor${project}${env}'
   location: location
@@ -301,6 +303,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'GovUkNotifyApiKey'
           value: '@Microsoft.KeyVault(SecretUri=${govukNotifyApiKeySecret.properties.secretUri})'
+        }
+        {
+          name: 'ASPNETCORE_ENVIRONMENT'
+          value: aspNetCoreEnvironment
         }
       ]
     }

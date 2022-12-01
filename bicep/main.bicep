@@ -15,6 +15,8 @@ param dataProtectionX509CertBase64 string = ''
 @secure()
 param govukNotifyApiKey string = ''
 
+param aspNetCoreEnvironment string = 'Development'
+
 targetScope = 'subscription'
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -33,5 +35,6 @@ module resourceSet './resources.bicep' = {
     sslCertPfxBase64: sslCertPfxBase64
     dataProtectionX509CertBase64: dataProtectionX509CertBase64
     govukNotifyApiKey: govukNotifyApiKey
+    aspNetCoreEnvironment: aspNetCoreEnvironment
   }
 }
