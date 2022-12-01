@@ -43,6 +43,8 @@ builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certific
     .SetApplicationName("UKMCAB")
     .SetDefaultKeyLifetime(TimeSpan.FromDays(365 * 2));
 
+builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateIds"));
+
 var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
 var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
 if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
