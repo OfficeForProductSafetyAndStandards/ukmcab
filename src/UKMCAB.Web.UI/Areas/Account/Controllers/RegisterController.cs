@@ -118,6 +118,11 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 var roleResult = await _userManager.AddToRoleAsync(user, registrationDetails.UserRole);
                 if (result.Succeeded && roleResult.Succeeded)
                 {
+                    if (!registrationDetails.UserRole.Equals(Constants.Roles.UKASUser))
+                    {
+                        var response = await _asyncNotificationClient.SendEmailAsync(registrationDetails.Email,
+                            _templateOptions.RegisterConfirmation);
+                    }
                     model.Message = registrationDetails.UserRole == Constants.Roles.UKASUser ? "You will now be able to login to your account." : "Your registration request will be reviewed and you will receive notification once approved.";
                 }
                 else
