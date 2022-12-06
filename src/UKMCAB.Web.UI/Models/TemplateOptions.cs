@@ -4,5 +4,6 @@
     {
         public string ResetPassword { get; set; }
         public string Register { get; set; }
+        public string RegisterConfirmation { get; set; }
     }
 }
