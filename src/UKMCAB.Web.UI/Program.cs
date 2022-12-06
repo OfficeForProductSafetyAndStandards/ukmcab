@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using Notify.Client;
 using Notify.Interfaces;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Core.Services.Account;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Identity.Stores.CosmosDB.Extensions;
@@ -36,6 +37,7 @@ builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
+builder.Services.AddSingleton<IRegisterService, RegisterService>();
 builder.Services.AddCustomHttpErrorHandling();
 
 builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
@@ -59,12 +61,16 @@ builder.Services.Configure<IdentityStoresOptions>(options =>
 
 builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
     {
-        options.SignIn.RequireConfirmedAccount = true;
         options.Password.RequiredLength = 8;
     })
     .AddRoles<IdentityRole>()
     //.AddUserManager<UserManager<UKMCABUser>>()
     .AddAzureCosmosDbStores();
+builder.Services.ConfigureApplicationCookie(opt =>
+{
+    opt.LoginPath = new PathString("/account/login");
+    opt.LogoutPath = new PathString("/account/logout");
+});
 
 // =================================================================================================
 
@@ -128,20 +134,28 @@ app.UseRequestLocalization(new RequestLocalizationOptions
     FallBackToParentUICultures = false,
 });
 
-app.MapDefaultControllerRoute();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "Account",
+    pattern: "{area:exists}/{controller=Home}/{action=Login}/{id?}");
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{controller=Home}/{action=Index}/{id?}");
+
+//app.MapDefaultControllerRoute();
 app.MapRazorPages();
 
 await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, seeds =>
 {
-    var administratorRole = new IdentityRole(Constants.Roles.Administrator);
+    var opssAdmin = new IdentityRole(Constants.Roles.OPSSAdmin);
     seeds
-        .AddRole(role: administratorRole)
+        .AddRole(role: opssAdmin)
         .AddRole(role: new IdentityRole(Constants.Roles.UKASUser))
         .AddRole(role: new IdentityRole(Constants.Roles.OGDUser))
         .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string>{"Construction"}, RequestReason = "Seeded", RequestApproved = true},
-            password: "adminP@ssw0rd!", roles: administratorRole);
+            password: "adminP@ssw0rd!", roles: opssAdmin);
 
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
 });

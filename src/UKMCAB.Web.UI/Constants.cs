@@ -12,15 +12,15 @@ public static class Constants
 
     public class Roles
     {
-        public const string Administrator = nameof(Administrator);
+        public const string OPSSAdmin = nameof(OPSSAdmin);
         public const string UKASUser = nameof(UKASUser);
         public const string OGDUser = nameof(OGDUser);
 
         public static readonly List<string> AuthRoles = new List<string>
         {
-            Administrator,
-            UKASUser,
-            OGDUser,
+            nameof(OPSSAdmin),
+            nameof(UKASUser),
+            nameof(OGDUser),
         };
     }
 

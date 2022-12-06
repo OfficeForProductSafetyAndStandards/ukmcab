@@ -1,0 +1,41 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Account.LoginViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="account" method="post">
+            <partial name="_ValidationSummary" model="ViewData.ModelState"/>
+            <input type="hidden" asp-for="ReturnURL"/>
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        Login
+                    </h1>
+                </legend>
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Email")">
+                    <span asp-validation-for="Email" class="govuk-error-message"></span>
+                    <label asp-for="Email" class="govuk-label"></label>
+                    <input asp-for="Email" class="govuk-input" autocomplete="username" aria-required="true"/>
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Password")">
+                    <span asp-validation-for="Password" class="govuk-error-message"></span>
+                    <label asp-for="Password" class="govuk-label"></label>
+                    <input asp-for="Password" class="govuk-input" autocomplete="current-password" aria-required="true"/>
+                </div>
+                <div class="govuk-form-group">
+                    <button id="login-submit" type="submit" class="govuk-button">Log in</button>
+                </div>
+                <div>
+                    <p class="govuk-body">
+                        <a id="forgot-password" href="/identity/account/forgotpassword" class="govuk-link">Forgot your password?</a>
+                    </p>
+                    <p class="govuk-body">
+                        <a asp-controller="Register" asp-action="Index" asp-route-returnUrl="@Model.ReturnURL" class="govuk-link">Register as a new user</a>
+                    </p>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

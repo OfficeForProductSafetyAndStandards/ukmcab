@@ -6,11 +6,11 @@
 
 @if (SignInManager.IsSignedIn(User))
 {
-    <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+    <form id="logoutForm" class="form-inline" asp-area="Account" asp-controller="Home" asp-action="Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
         <button id="logout" type="submit" class="govuk-header__link app-signin-link">Logout</button>
     </form>
 }
 else
 {
-    <a class="govuk-header__link app-signin-link" id="login" asp-area="Identity" asp-page="/Account/Login">Login</a>
+    <a class="govuk-header__link app-signin-link" id="login" asp-area="Account" asp-controller="Home" asp-action="Login">Login</a>
 }
