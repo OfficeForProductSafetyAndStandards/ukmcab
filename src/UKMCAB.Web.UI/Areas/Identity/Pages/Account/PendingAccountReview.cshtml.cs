@@ -7,7 +7,7 @@ using UKMCAB.Identity.Stores.CosmosDB;
 
 namespace UKMCAB.Web.UI.Areas.Identity.Pages.Account
 {
-    [Authorize(Roles = Constants.Roles.Administrator)]
+    [Authorize(Roles = Constants.Roles.OPSSAdmin)]
     public class PendingAccountReviewModel : PageModel, ILayoutModel
     {
         private readonly UserManager<UKMCABUser> _userManager;
