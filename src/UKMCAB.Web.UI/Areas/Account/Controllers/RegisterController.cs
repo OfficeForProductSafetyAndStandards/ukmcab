@@ -66,7 +66,11 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null && await CheckPassword(model.Password))
+                if (user != null)
+                {
+                    ModelState.AddModelError("Email", "This email address has already been registered on the system.");
+                }
+                else if (await CheckPassword(model.Password))
                 {
                     var encodedPayload = _registerService.EncodeRegistrationDetails(new RegistrationDTO
                     {
@@ -86,10 +90,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                         personalisation);
 
                     return RedirectToAction("RegisterConfirmation");
-                }
-                else if (user != null)
-                {
-                    ModelState.AddModelError("Email", "This email address has already been registered on the system.");
                 }
             }
 
