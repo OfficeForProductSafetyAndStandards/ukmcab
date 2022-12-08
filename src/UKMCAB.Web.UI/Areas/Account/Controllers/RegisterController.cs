@@ -62,10 +62,11 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 }
 
             }
+
             if (ModelState.IsValid)
             {
                 var user = await _userManager.FindByEmailAsync(model.Email);
-                if (user == null)
+                if (user == null && await CheckPassword(model.Password))
                 {
                     var encodedPayload = _registerService.EncodeRegistrationDetails(new RegistrationDTO
                     {
@@ -75,20 +76,40 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                         Reason = model.RequestReason,
                         LegislativeAreas = model.LegislativeAreas
                     });
-                    var callbackUrl = Url.Action("ConfirmEmail", "Register", new { payload = encodedPayload },Request.Scheme, Request.Host.Value);
+                    var callbackUrl = Url.Action("ConfirmEmail", "Register", new { payload = encodedPayload },
+                        Request.Scheme, Request.Host.Value);
                     var personalisation = new Dictionary<string, dynamic>
                     {
-                        {"register_link", HtmlEncoder.Default.Encode(callbackUrl)}
+                        { "register_link", HtmlEncoder.Default.Encode(callbackUrl) }
                     };
-                    var response = await _asyncNotificationClient.SendEmailAsync(model.Email, _templateOptions.Register, personalisation);
+                    var response = await _asyncNotificationClient.SendEmailAsync(model.Email, _templateOptions.Register,
+                        personalisation);
 
                     return RedirectToAction("RegisterConfirmation");
                 }
-                ModelState.AddModelError("Email", "This email address has already been registered on the system.");
+                else if (user != null)
+                {
+                    ModelState.AddModelError("Email", "This email address has already been registered on the system.");
+                }
             }
 
             // If we got this far, something failed, redisplay form
             return View(model);
+        }
+
+        private async Task<bool> CheckPassword(string password)
+        {
+            var success = true;
+            foreach (var userManagerPasswordValidator in _userManager.PasswordValidators)
+            {
+                var result = await userManagerPasswordValidator.ValidateAsync(_userManager, null, password);
+                if (!result.Succeeded)
+                {
+                    success = false;
+                    result.Errors.ForEach(e => ModelState.AddModelError("Password", e.Description));
+                }
+            }
+            return success;
         }
 
         [Route("account/{controller}/register-confirmation")]
