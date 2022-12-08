@@ -31,7 +31,7 @@ public static class Guard
 
     public static void IsFalse<T>(bool condition) where T : Exception, new()
     {
-        if (!condition)
+        if (condition)
         {
             throw new T();
         }

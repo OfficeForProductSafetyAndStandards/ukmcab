@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using UKMCAB.Identity.Stores.CosmosDB;
-using UKMCAB.Web.UI.Areas.Identity.Pages.Account;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
