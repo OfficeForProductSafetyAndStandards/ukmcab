@@ -1,14 +1,9 @@
-﻿@page
-@using UKMCAB.Web.UI
-@model ForgotPasswordModel
-@{
-    ViewData["Title"] = "Forgot your password?";
-}
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Account.ForgotPasswordViewModel
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="account" method="post">
-            <partial name="_ValidationSummary" model="Model.ModelState"/>
+            <partial name="_ValidationSummary" model="ViewData.ModelState"/>
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">
@@ -16,10 +11,10 @@
                     </h1>
                 </legend>
                 
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(Model.ModelState,"Input.Email")">
-                    <span asp-validation-for="Input.Email" class="govuk-error-message"></span>
-                    <label asp-for="Input.Email" class="govuk-label"></label>
-                    <input asp-for="Input.Email" class="govuk-input" aria-required="true"/>
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Email")">
+                    <span asp-validation-for="Email" class="govuk-error-message"></span>
+                    <label asp-for="Email" class="govuk-label"></label>
+                    <input asp-for="Email" class="govuk-input" aria-required="true"/>
                 </div>
                 <div class="govuk-form-group">
                     <button id="login-submit" type="submit" class="govuk-button">Password reset</button>

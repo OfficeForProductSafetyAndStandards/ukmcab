@@ -29,7 +29,7 @@
                 </div>
                 <div>
                     <p class="govuk-body">
-                        <a id="forgot-password" href="/identity/account/forgotpassword" class="govuk-link">Forgot your password?</a>
+                        <a asp-controller="ForgotPassword" asp-action="Index" class="govuk-link">Forgot your password?</a>
                     </p>
                     <p class="govuk-body">
                         <a asp-controller="Register" asp-action="Index" asp-route-returnUrl="@Model.ReturnURL" class="govuk-link">Register as a new user</a>
