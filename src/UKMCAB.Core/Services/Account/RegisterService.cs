@@ -8,12 +8,6 @@ namespace UKMCAB.Core.Services.Account
     public class RegisterService : IRegisterService
     {
         private ITimeLimitedDataProtector _dataProtector;
-
-        // Test constructor
-        public RegisterService(ITimeLimitedDataProtector dataProtector)
-        {
-            _dataProtector = dataProtector;
-        }
         
         public RegisterService(IDataProtectionProvider dataProtectionProvider)
         {
