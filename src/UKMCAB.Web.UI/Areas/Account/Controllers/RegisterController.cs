@@ -47,7 +47,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [Route("account/{controller}/request/{role}")]
         public async Task<IActionResult> RegisterRequest(RegisterRequestViewModel model, string role)
         {
-            var returnUrl = Url.Content("~/");
             model.LegislativeAreaList = Constants.LegislativeAreas;
             if (!Constants.Roles.UKASUser.Equals(role, StringComparison.InvariantCultureIgnoreCase))
             {
@@ -60,7 +59,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 {
                     ModelState.AddModelError("RequestReason", "Please enter a reason for the request.");
                 }
-
             }
 
             if (ModelState.IsValid)

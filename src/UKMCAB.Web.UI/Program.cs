@@ -150,16 +150,18 @@ app.MapRazorPages();
 await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, seeds =>
 {
     var opssAdmin = new IdentityRole(Constants.Roles.OPSSAdmin);
+    var ogdUser = new IdentityRole(Constants.Roles.OGDUser);
+    var ukasUser = new IdentityRole(Constants.Roles.UKASUser);
     seeds
         .AddRole(role: opssAdmin)
-        .AddRole(role: new IdentityRole(Constants.Roles.UKASUser))
-        .AddRole(role: new IdentityRole(Constants.Roles.OGDUser))
+        .AddRole(role: ogdUser)
+        .AddRole(role: ukasUser)
         .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string>{"Construction"}, RequestReason = "Seeded", RequestApproved = true},
             password: "adminP@ssw0rd!", roles: opssAdmin)
         .AddUser(user: new() { Email = "ogduser@ukmcab.gov.uk", UserName = "ogduser@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string> { "Construction" }, RequestReason = "Seeded", RequestApproved = true },
-            password: "ogdP@ssw0rd!", roles: opssAdmin)
+            password: "ogdP@ssw0rd!", roles: ogdUser)
         .AddUser(user: new() { Email = "ukasuser@ukas.com", UserName = "ukasuser@ukas.com", EmailConfirmed = true, Regulations = new List<string>(), RequestReason = "Seeded", RequestApproved = true },
-            password: "ukasP@ssw0rd!", roles: opssAdmin);
+            password: "ukasP@ssw0rd!", roles: ukasUser);
 
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
 });
