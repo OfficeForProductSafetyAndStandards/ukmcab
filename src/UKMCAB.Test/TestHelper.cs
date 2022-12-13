@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.Extensions.Logging;
 using Moq;
+using UKMCAB.Identity.Stores.CosmosDB;
 
 namespace UKMCAB.Test;
 
