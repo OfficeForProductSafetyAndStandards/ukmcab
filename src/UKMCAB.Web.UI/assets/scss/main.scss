@@ -50,14 +50,14 @@
 }
 
 
-.app-signin-link {
+.app-sign-in-nav {
     position: absolute;
     top: 16px;
     right: 0;
-    display:none;
+    display: none;
 
     @include govuk-media-query($from: desktop) {
-        display:block;
+        display: block;
     }
 }
 

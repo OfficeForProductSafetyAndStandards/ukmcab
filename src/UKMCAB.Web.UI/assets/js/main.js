@@ -81,3 +81,12 @@ if (clearFilters) {
             submitForm.submit();
         });
 }
+
+var logoutLink = document.querySelector("#logoutLink");
+if (logoutLink) {
+    logoutLink.addEventListener('click',
+        function (e) {
+            e.preventDefault();
+            document.querySelector("#logoutForm").submit();
+        });
+}
