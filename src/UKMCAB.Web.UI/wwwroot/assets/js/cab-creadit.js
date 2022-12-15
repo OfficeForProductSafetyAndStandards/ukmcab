@@ -52,11 +52,8 @@ class CreateEditCabViewModel {
                 var result = await axios.put("/api/cabs", unmapped);
             } else {
                 var result = await axios.post("/api/cabs", unmapped);
-                self.id = result.data;
-                var url = editUrlTemplate.replace("guid", self.id);
-                window.location.href = url;
             }
-            alert("saved");
+            window.location.href = editUrlTemplate;
         };
 
         if (data) {

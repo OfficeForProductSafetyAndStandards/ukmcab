@@ -18,6 +18,7 @@ public class AdminController : Controller
         public const string List = "admin.cab.list";
         public const string Create = "admin.cab.create";
         public const string Edit = "admin.cab.edit";
+        public const string Feedback = "admin.cab.feedback";
     }
 
 
@@ -60,7 +61,7 @@ public class AdminController : Controller
     [Route("create", Name = RouteIds.Create)]
     public async Task<IActionResult> CreateEditAsync(string? id)
     {
-        var editUrlTemplate = Url.RouteUrl(RouteIds.Edit, new { id = "guid" }) 
+        var editUrlTemplate = Url.RouteUrl(RouteIds.Feedback) 
             ?? throw new Exception("Route not found for the edit url template");
         if (id != null)
         {
@@ -73,4 +74,9 @@ public class AdminController : Controller
         }
     }
 
+    [Route("feedback", Name = RouteIds.Feedback)]
+    public IActionResult Feedback()
+    {
+        return View();
+    }
 }
