@@ -84,7 +84,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     {
                         { "register_link", HtmlEncoder.Default.Encode(callbackUrl) }
                     };
-                    var response = await _asyncNotificationClient.SendEmailAsync(model.Email, _templateOptions.Register,
+                    var response = await _asyncNotificationClient.SendEmailAsync(model.Email, _templateOptions.RegistrationRequest,
                         personalisation);
 
                     return RedirectToAction("RegisterConfirmation");
@@ -140,7 +140,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     if (!registrationDetails.UserRole.Equals(Constants.Roles.UKASUser))
                     {
                         var response = await _asyncNotificationClient.SendEmailAsync(registrationDetails.Email,
-                            _templateOptions.RegisterConfirmation);
+                            _templateOptions.RegisterRequestConfirmation);
                     }
                     model.Message = registrationDetails.UserRole == Constants.Roles.UKASUser ? "You will now be able to login to your account." : "Your registration request will be reviewed and you will receive notification once approved.";
                 }
