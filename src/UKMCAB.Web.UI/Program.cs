@@ -25,7 +25,6 @@ var azureDataConnectionString = new AzureDataConnectionString(builder.Configurat
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
 builder.Services.AddControllersWithViews();
-builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery();
 builder.Services.AddSingleton(new BasicAuthenticationOptions() { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
@@ -64,8 +63,8 @@ builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
         options.Password.RequiredLength = 8;
     })
     .AddRoles<IdentityRole>()
-    //.AddUserManager<UserManager<UKMCABUser>>()
     .AddAzureCosmosDbStores();
+
 builder.Services.ConfigureApplicationCookie(opt =>
 {
     opt.LoginPath = new PathString("/account/login");
@@ -84,10 +83,6 @@ app.Use(async (context, next) =>
     context.Response.Headers.Add("Permissions-Policy", "accelerometer=(), ambient-light-sensor=(), autoplay=(), battery=(), camera=(), cross-origin-isolated=(), display-capture=(), document-domain=(), encrypted-media=(), execution-while-not-rendered=(), execution-while-out-of-viewport=(), fullscreen=(), geolocation=(), gyroscope=(), keyboard-map=(), magnetometer=(), microphone=(), midi=(), navigation-override=(), payment=(), picture-in-picture=(), publickey-credentials-get=(), screen-wake-lock=(), sync-xhr=(), usb=(), web-share=(), xr-spatial-tracking=(), clipboard-read=(), clipboard-write=(), gamepad=(), speaker-selection=(), conversion-measurement=(), focus-without-user-activation=(), hid=(), idle-detection=(), interest-cohort=(), serial=(), sync-script=(), trust-token-redemption=(), unload=(), window-placement=(), vertical-scroll=()");
     await next();
 });
-
-app.MapRazorPages();
-
-
 
 var cspHeader = new CspHeader().AddDefaultCspDirectives()
     .AddScriptNonce("VQ8uRGcAff")
@@ -144,9 +139,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-//app.MapDefaultControllerRoute();
-app.MapRazorPages();
-
 await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, seeds =>
 {
     var opssAdmin = new IdentityRole(Constants.Roles.OPSSAdmin);
@@ -167,9 +159,6 @@ await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConn
 });
 
 await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
-
-
-
 
 app.Run();
 

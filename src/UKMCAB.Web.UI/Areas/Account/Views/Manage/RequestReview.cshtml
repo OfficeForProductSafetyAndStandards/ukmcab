@@ -1,19 +1,15 @@
-﻿@page
-@model PendingAccountReviewModel
-@{
-    ViewData["Title"] = "Pending account review";
-}
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Account.RequestReviewViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form method="post">
-            <partial name="_ValidationSummary" model="Model.ModelState"/>
+            <partial name="_ValidationSummary" model="ViewData.ModelState"/>
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">
                         Pending account review
                     </h1>
                 </legend>
-                <button asp-page-handler="Approve" class="govuk-button" data-module="govuk-button">Approve</button>
+                <button class="govuk-button" data-module="govuk-button" name="Command" value="Approve">Approve</button>
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -41,11 +37,10 @@
                     </div>
                 </dl>
                 <div class="govuk-form-group">
-                    <label asp-for="Input.RejectionReason" class="govuk-label"></label>
-                    <input asp-for="Input.RejectionReason" class="govuk-input"/>
-                    <input asp-for="Input.UserId" type="hidden"/>
+                    <label asp-for="RejectionReason" class="govuk-label"></label>
+                    <input asp-for="RejectionReason" class="govuk-input"/>
                 </div>
-                <button asp-page-handler="Reject" class="govuk-button govuk-button--warning" data-module="govuk-button">Reject</button>
+                <button class="govuk-button govuk-button--warning" data-module="govuk-button" name="Command" value="Reject">Reject</button>
             </fieldset>
         </form>
     </div>

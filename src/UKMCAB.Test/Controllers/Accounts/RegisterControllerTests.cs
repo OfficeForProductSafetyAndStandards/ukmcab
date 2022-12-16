@@ -32,7 +32,7 @@ namespace UKMCAB.Test.Controllers.Accounts
 
             mockUserManager =
                 new Mock<UserManager<UKMCABUser>>(store.Object, null, null, null, mockPasswordValidatorList, null, null, null, null);
-            mockTemplateOptions.Setup(to => to.Value).Returns(new TemplateOptions { Register = "register", RegisterConfirmation = "register-confirmation"});
+            mockTemplateOptions.Setup(to => to.Value).Returns(new TemplateOptions { RegistrationRequest = "register", RegisterRequestConfirmation = "register-confirmation"});
             mockAsyncNotificationClient = new();
 
             _sut = new RegisterController(_mockRegisterService.Object, mockAsyncNotificationClient.Object,
