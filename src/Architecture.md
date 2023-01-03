@@ -14,6 +14,7 @@
 
 ### Dependency diagram
 
+```mermaid
 graph TB;
     Data-->Common
     
@@ -33,7 +34,7 @@ graph TB;
     Web.UI-->Infrastructure
     Web.UI-->Common
     Web.UI-->Data
-    
+```
 
 ### Common
 Sits at the bottom of the dependency chart.  Doesn't depend on anything else.  It primarily contains logic that is useful to all tiers of the application.  e.g., string extension methods, encryption helpers etc.
