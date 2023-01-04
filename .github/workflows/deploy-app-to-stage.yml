@@ -1,4 +1,4 @@
-name: App service deploy (stage)
+name: Build CI/CD (stage)
 
 on:
   # workflow_dispatch
