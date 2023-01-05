@@ -1,4 +1,4 @@
-name: App service deploy (dev)
+name: Build CI/CD (dev)
 
 on:
   # workflow_dispatch

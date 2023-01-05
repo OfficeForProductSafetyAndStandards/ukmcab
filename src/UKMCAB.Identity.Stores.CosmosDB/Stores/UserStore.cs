@@ -65,7 +65,11 @@ namespace UKMCAB.Identity.Stores.CosmosDB.Stores
             {
                 throw new InvalidOperationException($"Role Not Found");
             }
-            return (await userRolesTable.GetUsersAsync(roleEntity.Id, cancellationToken)).Select(async i => await usersTable.GetAsync(i.UserId, cancellationToken)).Select(i => i.Result).OfType<TUser>().ToList();
+
+            var userRoles = await userRolesTable.GetUsersAsync(roleEntity.Id, cancellationToken);
+            var users = usersTable.Get().ToList();
+            return users.Where(u => userRoles.Any(ur=> ur.UserId == u.Id)).ToList();
+            //return (await userRolesTable.GetUsersAsync(roleEntity.Id, cancellationToken)).Select(async i => await usersTable.GetAsync(i.UserId, cancellationToken)).Select(i => i.Result).OfType<TUser>().ToList();
         }
 
         public async Task<bool> IsInRoleAsync(TUser user, string normalizedRoleName, CancellationToken cancellationToken)
