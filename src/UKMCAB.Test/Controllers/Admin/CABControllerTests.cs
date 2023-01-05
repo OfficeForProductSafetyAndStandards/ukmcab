@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Linq.Expressions;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using System.Security.Claims;
@@ -59,7 +60,7 @@ namespace UKMCAB.Test.Controllers.Admin
         [Test]
         public async Task CreateCABWithExistingNameCausesError()
         {
-            _ICABRepository.Setup(r => r.Query(It.IsAny<string>())).ReturnsAsync(new List<Document> { new Document() });
+            _ICABRepository.Setup(r => r.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { new Document() });
 
             var result = await _sut.Create(new CreateCABViewModel
             {
@@ -75,7 +76,7 @@ namespace UKMCAB.Test.Controllers.Admin
         [Test]
         public async Task CreateCABWithUniqueNameSucceeds()
         {
-            _ICABRepository.Setup(r => r.Query(It.IsAny<string>())).ReturnsAsync(new List<Document>());
+            _ICABRepository.Setup(r => r.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
 
             mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
                 .ReturnsAsync(new UKMCABUser { Email = "test@test.com" });
@@ -96,7 +97,7 @@ namespace UKMCAB.Test.Controllers.Admin
         [Test]
         public async Task CreateCABWithUniqueNameNotSavedReturnsError()
         {
-            _ICABRepository.Setup(r => r.Query(It.IsAny<string>())).ReturnsAsync(new List<Document>());
+            _ICABRepository.Setup(r => r.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
 
             mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
                 .ReturnsAsync(new UKMCABUser { Email = "test@test.com" });
