@@ -1,6 +1,8 @@
-﻿using Microsoft.Azure.Cosmos;
+﻿using System.Linq.Expressions;
+using Microsoft.Azure.Cosmos;
 using System.Net;
 using System.Text;
+using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Core.Models;
 using UKMCAB.Core.Services;
 
@@ -43,6 +45,7 @@ namespace UKMCAB.Data.CosmosDb.Services
 
             var queryText = queryBuilder.ToString();
             var query = _container.GetItemQueryIterator<Document>(new QueryDefinition(queryText));
+
             var list = new List<Document>();
             while (query.HasMoreResults)
             {
@@ -52,5 +55,18 @@ namespace UKMCAB.Data.CosmosDb.Services
 
             return list;
         }
+        public async Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate)
+        {
+            var query = _container.GetItemLinqQueryable<T>().Where(predicate).ToFeedIterator();
+            var list = new List<T>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                list.AddRange(response.Resource.Select(r => r));
+            }
+
+            return list;
+        }
     }
+
 }

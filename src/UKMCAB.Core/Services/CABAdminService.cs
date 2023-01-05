@@ -43,8 +43,9 @@ namespace UKMCAB.Core.Services
 
         public async Task<List<Document>> FindCABDocumentsAsync(string cabName)
         {
-            var documents = await _cabRepostitory.Query($"c.CABData.Name = \"{cabName}\"");
-            return documents;
+            var docs = await _cabRepostitory.Query<Document>(d =>
+                d.CABData.Name.Equals(cabName, StringComparison.CurrentCultureIgnoreCase));
+            return docs;
         }
     }
 }

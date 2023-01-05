@@ -1,4 +1,5 @@
-﻿using UKMCAB.Core.Models;
+﻿using System.Linq.Expressions;
+using UKMCAB.Core.Models;
 
 namespace UKMCAB.Core.Services
 {
@@ -6,6 +7,7 @@ namespace UKMCAB.Core.Services
     {
         Task<Document> GetByIdAsync(string id);
         Task<List<Document>> Query(string whereClause);
+        Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate);
         Task<Document> CreateAsync(Document document);
     }
 }
