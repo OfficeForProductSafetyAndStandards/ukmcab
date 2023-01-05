@@ -1,9 +1,9 @@
 # UK Market Conformity Assessment Bodies
 ---
-![build](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-dev.yml/badge.svg)
-https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-stage.yml/badge.svg
-https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-bicep-dev.yml/badge.svg
-https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-bicep-stage.yml/badge.svg
+![dev-build](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-dev.yml/badge.svg)
+![stage-build](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-stage.yml/badge.svg)
+![IaC-dev](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-bicep-dev.yml/badge.svg)
+![IaC-stage](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-bicep-stage.yml/badge.svg)
 
 Built by the Office for Product Safety and Standards
 For enquiries, contact opss.enquiries@beis.gov.uk
