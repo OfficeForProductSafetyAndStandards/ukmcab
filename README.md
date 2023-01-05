@@ -1,6 +1,6 @@
 # UK Market Conformity Assessment Bodies
 ---
-https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-dev.yml/badge.svg
+![build](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-dev.yml/badge.svg)
 https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-stage.yml/badge.svg
 https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-bicep-dev.yml/badge.svg
 https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-bicep-stage.yml/badge.svg
