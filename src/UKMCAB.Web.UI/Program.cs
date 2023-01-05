@@ -57,7 +57,7 @@ if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
     var container = cosmosDbSettings.GetValue<string>("Container") ?? "cabs";
     var cosmosClient = new CosmosClient(cosmosConnectionString);
     builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(cosmosClient, database, container)); // Used by stop gap admin form
-    builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosClient, database, "cab-documents"));
+    builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosClient, database, "cab-documents")); // Used by new admin form
 }
 
 builder.Services.Configure<IdentityStoresOptions>(options =>
