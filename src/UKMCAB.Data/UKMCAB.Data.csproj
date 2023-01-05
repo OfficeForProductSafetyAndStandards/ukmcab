@@ -17,4 +17,8 @@
     <PackageReference Include="YamlDotNet" Version="12.0.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\UKMCAB.Core\UKMCAB.Core.csproj" />
+  </ItemGroup>
+
 </Project>

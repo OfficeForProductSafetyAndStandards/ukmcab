@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using Notify.Client;
 using Notify.Interfaces;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Core.Services;
 using UKMCAB.Core.Services.Account;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
@@ -32,6 +33,7 @@ builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["R
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
 builder.Services.AddTransient<ICABSearchService, CABSearchService>();
 builder.Services.AddTransient<IAdminService, AdminService>();
+builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
@@ -53,7 +55,9 @@ if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
 {
     var database = cosmosDbSettings.GetValue<string>("Database") ?? "main";
     var container = cosmosDbSettings.GetValue<string>("Container") ?? "cabs";
-    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(new CosmosClient(cosmosConnectionString), database, container));
+    var cosmosClient = new CosmosClient(cosmosConnectionString);
+    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(cosmosClient, database, container)); // Used by stop gap admin form
+    builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosClient, database, "cab-documents")); // Used by new admin form
 }
 
 builder.Services.Configure<IdentityStoresOptions>(options =>

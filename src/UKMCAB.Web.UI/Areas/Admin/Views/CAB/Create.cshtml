@@ -1,0 +1,132 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CreateCABViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="createcabform" method="post">
+            <partial name="_ValidationSummary" model="ViewData.ModelState"/>
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        Create a new CAB
+                    </h1>
+                </legend>
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Name")">
+                    <h1 class="govuk-label-wrapper">
+                        <span asp-validation-for="Name" class="govuk-error-message"></span>
+                        <label class="govuk-label govuk-label--l" asp-for="Name">
+                            What is the name of the Conformity Assessment Body (CAB)?
+                        </label>
+                    </h1>
+                    <div id="cab-name-hint" class="govuk-hint">
+                        This should be unique and not currently exist in the UKMCAB database
+                    </div>
+                    <input class="govuk-input" asp-for="Name" type="text" aria-describedby="cab-name-hint" placeholder="Enter name...">
+                </div>
+            </fieldset>
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        What are the contact details?
+                    </h1>
+                </legend>
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Address")">
+                    <span asp-validation-for="Address" class="govuk-error-message"></span>
+                    <label class="govuk-label" asp-for="Address">
+                        Address
+                    </label>
+                    <input class="govuk-input" asp-for="Address" type="text" autocomplete="Address">
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Website")">
+                    <span asp-validation-for="Website" class="govuk-error-message"></span>
+                    <label class="govuk-label" asp-for="Website">
+                        Website
+                    </label>
+                    <input class="govuk-input" asp-for="Website" type="text" autocomplete="Website">
+                </div>
+                <div class="govuk-form-group">
+                    <label class="govuk-label" asp-for="Email">
+                        Email
+                    </label>
+                    <input class="govuk-input" asp-for="Email" type="text" autocomplete="Email">
+                </div>
+                <div class="govuk-form-group">
+                    <label class="govuk-label" asp-for="Phone">
+                        Phone
+                    </label>
+                    <input class="govuk-input" asp-for="Phone" type="text" autocomplete="Phone">
+                </div>
+            </fieldset>
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        What are the CAB details?
+                    </h1>
+                </legend>
+                <div class="govuk-form-group">
+                    <label class="govuk-label" asp-for="RegisteredOfficeLocation">
+                        Registered office location?
+                    </label>
+                    <select class="govuk-select" asp-for="RegisteredOfficeLocation"
+                            asp-items="@Model.CountryList.Select(s => new SelectListItem(s, s, s.Equals(Model.RegisteredOfficeLocation)))">
+                        <option value="">Choose location</option>
+                    </select>
+                </div>
+            </fieldset>
+
+            <fieldset class="govuk-fieldset" aria-describedby="body-type-hint">
+                <legend class="govuk-fieldset__legend">
+                    Which Body Type(s) apply to this CAB?
+                </legend>
+                <div id="body-type-hint" class="govuk-hint">
+                    Select all that apply.
+                </div>
+                <div class="govuk-form-group">
+                    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        @foreach (var bodyType in Model.BodyTypeList)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@bodyType" name="BodyTypes" type="checkbox" value="@bodyType" checked="@(Model?.BodyTypes != null && Model.BodyTypes.Any(l => l == bodyType))">
+                                <label class="govuk-label govuk-checkboxes__label" for="@bodyType">
+                                    @bodyType
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </fieldset>
+
+            <fieldset class="govuk-fieldset" aria-describedby="regulations-hint">
+                <span asp-validation-for="Regulations" class="govuk-error-message"></span>
+                <legend class="govuk-fieldset__legend">
+                    Which Regulation(s) does this CAB cover?
+                </legend>
+                <div id="regulations-hint" class="govuk-hint">
+                    Select all that apply.
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Regulations")">
+                    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        @foreach (var regulation in Model.RegulationList)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@regulation" name="Regulations" type="checkbox" value="@regulation" checked="@(Model?.Regulations != null && Model.Regulations.Any(l => l == regulation))">
+                                <label class="govuk-label govuk-checkboxes__label" for="@regulation">
+                                    @regulation
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button">
+                    Continue
+                </button>
+                <button class="govuk-button govuk-button--secondary" onclick="return false;" data-module="govuk-button">
+                    Upload PDF schedule
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

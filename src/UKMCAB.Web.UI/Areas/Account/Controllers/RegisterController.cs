@@ -36,7 +36,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         {
             var model = new RegisterRequestViewModel
             {
-                LegislativeAreaList = Constants.LegislativeAreas,
+                LegislativeAreaList = Constants.Lists.LegislativeAreas,
                 Role = role
             };
 
@@ -47,7 +47,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [Route("account/{controller}/request/{role}")]
         public async Task<IActionResult> RegisterRequest(RegisterRequestViewModel model, string role)
         {
-            model.LegislativeAreaList = Constants.LegislativeAreas;
+            model.LegislativeAreaList = Constants.Lists.LegislativeAreas;
             if (!Constants.Roles.UKASUser.Equals(role, StringComparison.InvariantCultureIgnoreCase))
             {
                 if (model.LegislativeAreas == null || !model.LegislativeAreas.Any())
