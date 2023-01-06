@@ -24,16 +24,21 @@ namespace UKMCAB.Test.Controllers.Admin
             var store = new Mock<IUserStore<UKMCABUser>>();
             mockUserManager =
                 new Mock<UserManager<UKMCABUser>>(store.Object, null, null, null, null, null, null, null, null);
-
+            mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
+                .ReturnsAsync(new UKMCABUser { Email = "test@test.com" });
             _CABAdminService = new CABAdminService(_ICABRepository.Object);
 
             _sut = new CABController(_CABAdminService, mockUserManager.Object);
+
         }
 
         [Test]
-        public async Task CreateCABWithoutRegulationsCausesError()
+        public async Task OPSSUserCreateCABWithoutRegulationsCausesError()
         {
-            var result = await _sut.Create(new CreateCABViewModel
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(false);
+
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
             {
                 Name = "TEST",
                 Address = "test",
@@ -45,9 +50,73 @@ namespace UKMCAB.Test.Controllers.Admin
         }
 
         [Test]
-        public async Task CreateCABWithoutContactDetailCausesError()
+        public async Task UKASSUserCreateCABWithoutRegulationsCausesError()
         {
-            var result = await _sut.Create(new CreateCABViewModel
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+            var ukasReference = "1234";
+            _ICABRepository.Setup(r => r.Query<Document>(d =>
+                    d.CABData.UKASReference.Equals(ukasReference, StringComparison.CurrentCultureIgnoreCase)))
+                .ReturnsAsync(new List<Document>());
+
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
+            {
+                Name = "TEST",
+                Address = "test",
+                Website = "test",
+                UKASReference = ukasReference,
+                Regulations = new List<string>()
+            }) as ViewResult;
+
+            Assert.IsFalse(result.ViewData.ModelState.IsValid);
+        }
+
+        [Test]
+        public async Task UKASSUserCreateCABWithoutUKASReferenceNumberCausesError()
+        {
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
+            {
+                Name = "TEST",
+                Address = "test",
+                Website = "test",
+                UKASReference = string.Empty,
+                Regulations = new List<string> { "Test" }
+            }) as ViewResult;
+
+            Assert.IsFalse(result.ViewData.ModelState.IsValid);
+        }
+
+        [Test]
+        public async Task UKASUserCreateCABWithExistingUKASReferenceCausesError()
+        {
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+            var ukasReference = "1234";
+            _ICABRepository.Setup(r => r.Query<Document>(d =>
+                    d.CABData.UKASReference.Equals(ukasReference, StringComparison.CurrentCultureIgnoreCase)))
+                .ReturnsAsync(new List<Document> { new Document() });
+
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
+            {
+                Name = "TEST",
+                UKASReference = ukasReference,
+                Address = "test",
+                Website = "test",
+                Regulations = new List<string> {"Test"}
+            }) as ViewResult;
+
+            Assert.IsFalse(result.ViewData.ModelState.IsValid);
+        }
+
+        [Test]
+        public async Task OPSSCreateCABWithoutContactDetailCausesError()
+        {
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(false);
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
             {
                 Name = "TEST",
                 Address = "test",
@@ -58,13 +127,37 @@ namespace UKMCAB.Test.Controllers.Admin
         }
 
         [Test]
-        public async Task CreateCABWithExistingNameCausesError()
+        public async Task UKASCreateCABWithoutContactDetailCausesError()
         {
-            _ICABRepository.Setup(r => r.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { new Document() });
-
-            var result = await _sut.Create(new CreateCABViewModel
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(true);
+            var ukasReference = "1234";
+            _ICABRepository.Setup(r => r.Query<Document>(d =>
+                    d.CABData.UKASReference.Equals(ukasReference, StringComparison.CurrentCultureIgnoreCase)))
+                .ReturnsAsync(new List<Document>() );
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
             {
                 Name = "TEST",
+                UKASReference = ukasReference,
+                Address = "test",
+                Regulations = new List<string> { "test" }
+            }) as ViewResult;
+
+            Assert.IsFalse(result.ViewData.ModelState.IsValid);
+        }
+
+        [Test]
+        public async Task CreateCABWithExistingNameCausesError()
+        {
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(false);
+            var name = "TEST";
+            _ICABRepository.Setup(r => r.Query<Document>(d =>
+                d.CABData.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))).ReturnsAsync(new List<Document> { new Document() });
+
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
+            {
+                Name = name,
                 Address = "test",
                 Website = "test.com",
                 Regulations = new List<string> { "test" }
@@ -74,18 +167,19 @@ namespace UKMCAB.Test.Controllers.Admin
         }
 
         [Test]
-        public async Task CreateCABWithUniqueNameSucceeds()
+        public async Task OPSSCreateCABWithUniqueNameSucceeds()
         {
-            _ICABRepository.Setup(r => r.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
-
-            mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
-                .ReturnsAsync(new UKMCABUser { Email = "test@test.com" });
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(false);
+            var name = "TEST";
+            _ICABRepository.Setup(r => r.Query<Document>(d =>
+                d.CABData.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))).ReturnsAsync(new List<Document>());
 
             _ICABRepository.Setup(r => r.CreateAsync(It.IsAny<Document>())).ReturnsAsync(new Document());
 
-            var result = await _sut.Create(new CreateCABViewModel
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
             {
-                Name = "TEST",
+                Name = name,
                 Address = "test",
                 Website = "test.com",
                 Regulations = new List<string> { "test" }
@@ -97,16 +191,20 @@ namespace UKMCAB.Test.Controllers.Admin
         [Test]
         public async Task CreateCABWithUniqueNameNotSavedReturnsError()
         {
-            _ICABRepository.Setup(r => r.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
+            mockUserManager.Setup(um => um.IsInRoleAsync(It.IsAny<UKMCABUser>(), It.IsAny<string>()))
+                .ReturnsAsync(false);
+            var name = "TEST";
+            _ICABRepository.Setup(r => r.Query<Document>(d =>
+                d.CABData.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))).ReturnsAsync(new List<Document>());
 
             mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
                 .ReturnsAsync(new UKMCABUser { Email = "test@test.com" });
 
             _ICABRepository.Setup(r => r.CreateAsync(It.IsAny<Document>())).ReturnsAsync(default(Document));
 
-            var result = await _sut.Create(new CreateCABViewModel
+            var result = await _sut.Create(State.Saved, new CreateCABViewModel
             {
-                Name = "TEST",
+                Name = name,
                 Address = "test",
                 Website = "test.com",
                 Regulations = new List<string> { "test" }

@@ -23,20 +23,21 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/create")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var model = new CreateCABViewModel();
-            UpdateModel(model);
+            await UpdateModel(model);
 
             return View(model);
         }
 
-        private void UpdateModel(CreateCABViewModel model)
+        private async Task UpdateModel(CreateCABViewModel model)
         {
             model.CountryList = Constants.Lists.Countries;
             model.BodyTypeList = Constants.Lists.BodyTypes;
             model.RegulationList = Constants.Lists.LegislativeAreas;
-            model.IsUKASUser = User.IsInRole(Constants.Roles.UKASUser);
+            var user = await _userManager.GetUserAsync(User);
+            model.IsUKASUser = await _userManager.IsInRoleAsync(user, Constants.Roles.UKASUser);
         }
 
         [HttpPost]
