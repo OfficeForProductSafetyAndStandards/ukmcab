@@ -113,7 +113,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 var result = await _userManager.UpdateAsync(user);
                 if (result.Succeeded)
                 {
-                    await _asyncNotificationClient.SendEmailAsync(user.Email, _templateOptions.RegistrationApproved, new Dictionary<string, dynamic>{{"login_link", Url.Action("Login", "Home", null,Request.Scheme, Request.Host.Value)}});
+                    await _asyncNotificationClient.SendEmailAsync(user.Email, _templateOptions.RegistrationApproved, new Dictionary<string, dynamic>{{"login_link", Url.Action("Login", "Home", null,Request.Scheme, Request.GetOriginalHostFromHeaders())}});
                     return RedirectToAction("PendingRequests");
                 }
 

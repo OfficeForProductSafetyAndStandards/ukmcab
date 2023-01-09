@@ -46,7 +46,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
                 code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
-                var callbackUrl = Url.Action("Reset", "ForgotPassword", new { code = code }, Request.Scheme, Request.Host.Value);
+                var callbackUrl = Url.Action("Reset", "ForgotPassword", new { code = code }, Request.Scheme, Request.GetOriginalHostFromHeaders());
 
                 var personalisation = new Dictionary<string, dynamic>
                 {

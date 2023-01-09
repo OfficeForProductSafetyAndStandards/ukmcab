@@ -79,7 +79,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                         LegislativeAreas = model.LegislativeAreas
                     });
                     var callbackUrl = Url.Action("ConfirmEmail", "Register", new { payload = encodedPayload },
-                        Request.Scheme, GetHost(Request));
+                        Request.Scheme, Request.GetOriginalHostFromHeaders());
                     var personalisation = new Dictionary<string, dynamic>
                     {
                         { "register_link", HtmlEncoder.Default.Encode(callbackUrl) }
@@ -94,19 +94,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
-
-        private string GetHost(HttpRequest request)
-        {
-            var xOriginalHostHeaderKey = "X-ORIGINAL-HOST";
-            if (request.Headers.Any(h => h.Key.Equals(xOriginalHostHeaderKey, StringComparison.InvariantCultureIgnoreCase)))
-            {
-                return request.Headers.First(h => h.Key.Equals(xOriginalHostHeaderKey, StringComparison.InvariantCultureIgnoreCase)).Value;
-            }
-
-            return Request.Host.Value ;
-        }
-
-
 
         private async Task<bool> CheckPassword(string password)
         {
