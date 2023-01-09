@@ -52,6 +52,19 @@
         <a class="govuk-link" href="#">More news</a>
 
     </div>
+    
+    <div style="display: none">
+        @{
+            var headers =Context.Request.Headers;
+            var keys = headers.Keys;
+        }
+        @foreach (var key in keys)
+        {
+            <div>
+                <span>@key</span><span>@headers[key]</span>
+            </div>
+        }
+    </div>
 
 </div>
 
