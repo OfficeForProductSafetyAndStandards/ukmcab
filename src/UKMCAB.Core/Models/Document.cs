@@ -10,5 +10,6 @@
         public List<Audit> AuditHistory { get; set; }
         public CABData CABData { get; set; }
         public State State { get; set; }
+        public string StateAsString => State.ToString();
     }
 }

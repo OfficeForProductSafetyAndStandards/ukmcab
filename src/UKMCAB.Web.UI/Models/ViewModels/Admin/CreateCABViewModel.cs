@@ -6,6 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
     {
         [Required]
         public string Name { get; set; }
+        public string? UKASReference { get; set; }
         [Required]
         public string Address { get; set; }
         public string? Website { get; set; }
@@ -19,6 +20,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public List<string>? CountryList { get; set; }
         public List<string>? BodyTypeList { get; set; }
         public List<string>? RegulationList { get; set; }
+        public bool IsUKASUser { get; set; }
 
         public string? Title => "Create a new CAB";
     }
