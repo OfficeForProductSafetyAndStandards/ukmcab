@@ -15,6 +15,7 @@ public class TestHelper
         // HttpContext.Request needs setting up
         var mockRequest = new Mock<HttpRequest>();
         mockRequest.SetupGet(r => r.Host).Returns(It.IsAny<HostString>());
+        mockRequest.Setup(r => r.Headers).Returns(new HeaderDictionary());
         mockRequest.SetupGet(r => r.Scheme).Returns(It.IsAny<string>());
         var context = new Mock<HttpContext>();
         context.SetupGet(c => c.Request).Returns(mockRequest.Object);
