@@ -97,12 +97,13 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
 
         private string GetHost(HttpRequest request)
         {
-            if (request.Headers.Keys.Contains("x-original-host") && !string.IsNullOrWhiteSpace(request.Headers["x-original-host"]))
+            var xOriginalHostHeaderKey = "X-ORIGINAL-HOST";
+            if (request.Headers.Any(h => h.Key.Equals(xOriginalHostHeaderKey, StringComparison.InvariantCultureIgnoreCase)))
             {
-                return request.Headers["x-original-host"];
+                return request.Headers.First(h => h.Key.Equals(xOriginalHostHeaderKey, StringComparison.InvariantCultureIgnoreCase)).Value;
             }
 
-            return Request.Host.Value;
+            return Request.Host.Value ;
         }
 
 
