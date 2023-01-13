@@ -66,6 +66,8 @@ namespace UKMCAB.Core.Services
                     list.AddRange(docs);
                 }
             }
+
+            list = list.OrderByDescending(l => l.CreatedDate).ToList();
             return list;
         }
     }
