@@ -54,5 +54,19 @@ namespace UKMCAB.Core.Services
                 d.CABData.UKASReference.Equals(ukasReference, StringComparison.CurrentCultureIgnoreCase));
             return docs;
         }
+
+        public async Task<List<Document>> FindCABDocumentsByStatesAsync(State[] states)
+        {
+            var list = new List<Document>();
+            foreach (var state in states)
+            {
+                var docs = await _cabRepostitory.Query<Document>(d => d.State == state);
+                if (docs.Any())
+                {
+                    list.AddRange(docs);
+                }
+            }
+            return list;
+        }
     }
 }

@@ -1,0 +1,33 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.ReviewListViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-xl govuk-!-margin-bottom-6">Submitted CABs for review</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    CAB name
+                </dt>
+                <dd class="govuk-summary-list__actions">
+                </dd>
+            </div>
+            @foreach (var cab in Model.SubmittedCABs)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        <span>Submitted for approval: </span>@cab.CABData.Name
+                    </dt>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" asp-area="Admin" asp-controller="Review" asp-action="Review" asp-route-id="@cab.CABData.CABId">Review</a>
+                    </dd>
+                </div>
+            }
+        </dl>
+    </div>
+</div>
+
