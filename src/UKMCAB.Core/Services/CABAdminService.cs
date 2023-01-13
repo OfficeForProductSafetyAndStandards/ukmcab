@@ -61,7 +61,7 @@ namespace UKMCAB.Core.Services
             foreach (var state in states)
             {
                 var docs = await _cabRepostitory.Query<Document>(d => d.State == state);
-                if (docs.Any())
+                if (docs != null && docs.Any())
                 {
                     list.AddRange(docs);
                 }
