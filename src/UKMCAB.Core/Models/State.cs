@@ -3,8 +3,10 @@
     public enum State
     {
         Saved,
-        Submitted,
-        Approved,
+        SubmittedForPublishing,
+        SubmittedForArchive,
+        ApprovedForPublishing,
+        ApprovedForArchiving,
         Published,
         Archived
     }

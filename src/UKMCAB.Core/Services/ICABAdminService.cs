@@ -8,5 +8,7 @@ namespace UKMCAB.Core.Services
 
         Task<List<Document>> FindCABDocumentsByNameAsync(string cabName);
         Task<List<Document>> FindCABDocumentsByUKASReferenceAsync(string ukasReference);
+        Task<List<Document>> FindCABDocumentsByStatesAsync(State[] states);
+
     }
 }
