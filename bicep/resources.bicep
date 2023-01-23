@@ -695,7 +695,7 @@ resource anitvirusLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
             }
             host: {
               connection: {
-                name: connectionDefenderConnection.id
+                name: '@parameters(\'$connections\')[\'ascalert\'][\'connectionId\']'
               }
             }
             path: '/Microsoft.Security/Alert/subscribe'
@@ -714,7 +714,7 @@ resource anitvirusLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
             }
             host: {
               connection: {
-                name: connectionAzureBlob.id
+                name: '@parameters(\'$connections\')[\'azureblob\'][\'connectionId\']'
               }
             }
             method: 'delete'
@@ -724,6 +724,22 @@ resource anitvirusLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
       }
 
       outputs: {
+      }
+    }
+    parameters: {
+      '$connections': {
+        value: {
+          ascalert: {
+            connectionId: connectionDefenderConnection.id //'/subscriptions/{subcription_id}/resourceGroups/rg-playground/providers/Microsoft.Web/connections/ascalert'
+            connectionName: 'ascalert'
+            id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'ascalert') //'/subscriptions/{subcription_id}/providers/Microsoft.Web/locations/uksouth/managedApis/ascalert'
+          }
+          azureblob: {
+            connectionId: connectionAzureBlob.id //'/subscriptions/{subcription_id}/resourceGroups/rg-playground/providers/Microsoft.Web/connections/azureblob'
+            connectionName: 'azureblob'
+            id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'azureblob')           //'/subscriptions/{subcription_id}/providers/Microsoft.Web/locations/uksouth/managedApis/azureblob'
+          }
+        }
       }
     }
   }
