@@ -642,24 +642,22 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
 /*
     LOGIC APP (responds to Microsoft Defender for Cloud security alert; aka, virus alerts)
 */
-// var connectionDefenderConnectionName = 'ascalert'
-// resource connectionDefenderConnection 'Microsoft.Web/connections@2016-06-01' = {
-//   name: connectionDefenderConnectionName
-//   location: location
-//   properties: {
-//     displayName: 'Microsoft Defender Connection (security alerts)'
-//     api: {
-//       name: 'ascalert'
-//       displayName: 'Microsoft Defender for Cloud Alert'
-//       id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, connectionDefenderConnectionName) 
-//       type: 'Microsoft.Web/locations/managedApis'
-//     }
-//   }
-// }
+resource connectionDefenderConnection 'Microsoft.Web/connections@2016-06-01' = {
+  name: 'apiconn-defenderalerts-${project}-${env}'
+  location: location
+  properties: {
+    displayName: 'Microsoft Defender Connection (security alerts)'
+    api: {
+      name: 'ascalert'
+      displayName: 'Microsoft Defender Alert'
+      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'ascalert') 
+      type: 'Microsoft.Web/locations/managedApis'
+    }
+  }
+}
 
-var connectionAzureBlobName = 'azureblob-${project}-${env}'
 resource connectionAzureBlob 'Microsoft.Web/connections@2016-06-01' = {
-  name: connectionAzureBlobName
+  name: 'apiconn-azureblob-${project}-${env}'
   location: location
   properties: {
     displayName: 'Azure Blob Storage Connection'
@@ -675,7 +673,6 @@ resource connectionAzureBlob 'Microsoft.Web/connections@2016-06-01' = {
     }
   }
 }
-
 
 
 
