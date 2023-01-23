@@ -642,20 +642,20 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
 /*
     LOGIC APP (responds to Microsoft Defender for Cloud security alert; aka, virus alerts)
 */
-var connectionDefenderConnectionName = 'ascalert'
-resource connectionDefenderConnection 'Microsoft.Web/connections@2016-06-01' = {
-  name: connectionDefenderConnectionName
-  location: location
-  properties: {
-    displayName: 'Microsoft Defender Connection (security alerts)'
-    api: {
-      name: 'ascalert'
-      displayName: 'Microsoft Defender for Cloud Alert'
-      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, connectionDefenderConnectionName) 
-      type: 'Microsoft.Web/locations/managedApis'
-    }
-  }
-}
+// var connectionDefenderConnectionName = 'ascalert'
+// resource connectionDefenderConnection 'Microsoft.Web/connections@2016-06-01' = {
+//   name: connectionDefenderConnectionName
+//   location: location
+//   properties: {
+//     displayName: 'Microsoft Defender Connection (security alerts)'
+//     api: {
+//       name: 'ascalert'
+//       displayName: 'Microsoft Defender for Cloud Alert'
+//       id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, connectionDefenderConnectionName) 
+//       type: 'Microsoft.Web/locations/managedApis'
+//     }
+//   }
+// }
 
 var connectionAzureBlobName = 'azureblob-${project}-${env}'
 resource connectionAzureBlob 'Microsoft.Web/connections@2016-06-01' = {
@@ -670,7 +670,7 @@ resource connectionAzureBlob 'Microsoft.Web/connections@2016-06-01' = {
     api: {
       name: 'azureblob'
       displayName: 'Azure Blob Storage'
-      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, connectionAzureBlobName)
+      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, 'azureblob')
       type: 'Microsoft.Web/locations/managedApis'
     }
   }
