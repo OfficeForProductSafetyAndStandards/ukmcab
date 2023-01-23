@@ -23,8 +23,24 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
     name: 'Standard_LRS'
   }
   kind: 'StorageV2'
+
+  resource storageBlobService 'blobServices@2022-05-01' = {
+    name: 'default'
+    properties: {
+      deleteRetentionPolicy: {
+        allowPermanentDelete: false
+        days: 30
+        enabled: true
+      }
+    }
+  }
+
 }
 var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${storage.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${storage.listKeys().keys[0].value}'
+
+
+
+
 
 
 
@@ -616,3 +632,119 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
 
   }
 }
+
+
+
+
+
+
+
+/*
+    LOGIC APP (responds to Microsoft Defender for Cloud security alert; aka, virus alerts)
+*/
+var connectionDefenderConnectionName = 'ascalert'
+resource connectionDefenderConnection 'Microsoft.Web/connections@2016-06-01' = {
+  name: connectionDefenderConnectionName
+  location: location
+  properties: {
+    displayName: 'Microsoft Defender Connection (security alerts)'
+    api: {
+      name: 'ascalert'
+      displayName: 'Microsoft Defender for Cloud Alert'
+      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, connectionDefenderConnectionName) 
+      type: 'Microsoft.Web/locations/managedApis'
+    }
+  }
+}
+
+var connectionAzureBlobName = 'azureblob-${project}-${env}'
+resource connectionAzureBlob 'Microsoft.Web/connections@2016-06-01' = {
+  name: connectionAzureBlobName
+  location: location
+  properties: {
+    displayName: 'Azure Blob Storage Connection'
+    parameterValues: {
+      accountName: storage.name
+      accessKey: storage.listKeys().keys[0].value
+    }
+    api: {
+      name: 'azureblob'
+      displayName: 'Azure Blob Storage'
+      id: subscriptionResourceId('Microsoft.Web/locations/managedApis', location, connectionAzureBlobName)
+      type: 'Microsoft.Web/locations/managedApis'
+    }
+  }
+}
+
+
+
+
+// var workflowSchema = 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#'
+
+// resource anitvirusLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
+//   name: 'lapp-antivirus-responder-${project}-${env}'
+//   location: location
+//   properties: {
+//     state: 'Enabled'
+//     definition: {
+//       '$schema': workflowSchema
+//       contentVersion: '1.0.0.0'
+//       triggers: {
+//         DefenderSecurityAlert: {
+//           type: 'ApiConnectionWebhook'
+//           inputs: {
+//             body: {
+//               callback_url: '@{listCallbackUrl()}'
+//             }
+//             host: {
+//               connection: {
+//                 name: '@parameters(\'$connections\')[\'ascalert\'][\'connectionId\']'
+//               }
+//             }
+//             path: '/Microsoft.Security/Alert/subscribe'
+//           }
+//         }
+//       }
+      
+//       actions: {
+//         DeleteBlob: {
+//           runAfter: {
+//           }
+//           type: 'ApiConnection'
+//           inputs: {
+//             headers: {
+//               SkipDeleteIfFileNotFoundOnServer: false
+//             }
+//             host: {
+//               connection: {
+//                 name: '@parameters(\'$connections\')[\'azureblob\'][\'connectionId\']'
+//               }
+//             }
+//             method: 'delete'
+//             path: '/v2/datasets/@{encodeURIComponent(encodeURIComponent(\'AccountNameFromSettings\'))}/files/@{encodeURIComponent(encodeURIComponent(concat(\'/\',triggerBody().extendedProperties.container,\'/\',triggerBody().extendedProperties.blob)))}'
+//           }
+//         }
+//       }
+
+//       outputs: {
+//       }
+//     }
+//     parameters: {
+//       '$connections': {
+//         value: {
+//           azureblob: {
+//             connectionId: connectionAzureBlob.id
+//             connectionName: connectionAzureBlob.name
+//           }
+//           defender: {
+//             connectionId: connectionDefenderConnection.id
+//             connectionName: connectionDefenderConnection.name
+//           }
+//         }
+//       }
+//     }
+//   }
+
+
+  
+// }

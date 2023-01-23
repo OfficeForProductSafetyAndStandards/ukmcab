@@ -24,6 +24,7 @@
     (https://learn.microsoft.com/en-us/aspnet/core/security/data-protection/consumer-apis/limited-lifetime-payloads?view=aspnetcore-6.0)
 - [ ] Never catch a generic exception - allow it to propagate to the host handlers
 - [ ] Use file-scoped namespaces
+- [ ] Blob handling: Never assume a blob will exist; there is a small chance that Microsoft Defender for Cloud will have deleted a blob, if it's deemed to contain malware.
 
 
 
