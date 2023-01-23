@@ -686,6 +686,13 @@ resource anitvirusLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
     definition: {
       '$schema': workflowSchema
       contentVersion: '1.0.0.0'
+      parameters: {
+        '$connections': {
+          defaultValue: {
+          }
+          type: 'Object'
+        }
+      }
       triggers: {
         DefenderSecurityAlert: {
           type: 'ApiConnectionWebhook'
