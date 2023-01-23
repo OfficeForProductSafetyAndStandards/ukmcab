@@ -695,7 +695,7 @@ resource anitvirusLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
             }
             host: {
               connection: {
-                name: '@parameters(\'$connections\')[\'defender\'][\'connectionId\']'
+                name: connectionDefenderConnection.id
               }
             }
             path: '/Microsoft.Security/Alert/subscribe'
@@ -714,7 +714,7 @@ resource anitvirusLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
             }
             host: {
               connection: {
-                name: '@parameters(\'$connections\')[\'azureblob\'][\'connectionId\']'
+                name: connectionAzureBlob.id
               }
             }
             method: 'delete'
@@ -726,20 +726,6 @@ resource anitvirusLogicApp 'Microsoft.Logic/workflows@2019-05-01' = {
       outputs: {
       }
     }
-    parameters: {
-      '$connections': {
-        value: {
-          azureblob: {
-            connectionId: connectionAzureBlob.id
-            connectionName: connectionAzureBlob.name
-          }
-          defender: {
-            connectionId: connectionDefenderConnection.id
-            connectionName: connectionDefenderConnection.name
-          }
-        }
-      }
-    }
   }
-   
+
 }
