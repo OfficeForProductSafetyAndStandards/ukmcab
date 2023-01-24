@@ -13,14 +13,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     {
         private readonly ICABAdminService _cabAdminService;
         private readonly UserManager<UKMCABUser> _userManager;
-        private readonly IFileStorage _fileStorage;
 
-        public CABController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager,
-            IFileStorage fileStorage)
+        public CABController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager
+            )
         {
             _cabAdminService = cabAdminService;
             _userManager = userManager;
-            _fileStorage = fileStorage;
         }
 
         [HttpGet]
