@@ -17,6 +17,7 @@ namespace UKMCAB.Test.Controllers.Admin
         private Mock<UserManager<UKMCABUser>> mockUserManager;
         private ICABAdminService _CABAdminService;
         private Mock<ICABRepository> _ICABRepository = new();
+        private Mock<IFileStorage> _filestorage = new();
 
         [SetUp]
         public void Setup()
@@ -26,7 +27,7 @@ namespace UKMCAB.Test.Controllers.Admin
                 new Mock<UserManager<UKMCABUser>>(store.Object, null, null, null, null, null, null, null, null);
             mockUserManager.Setup(um => um.GetUserAsync(It.IsAny<ClaimsPrincipal>()))
                 .ReturnsAsync(new UKMCABUser { Email = "test@test.com" });
-            _CABAdminService = new CABAdminService(_ICABRepository.Object);
+            _CABAdminService = new CABAdminService(_ICABRepository.Object, _filestorage.Object);
 
             _sut = new CABController(_CABAdminService, mockUserManager.Object);
 

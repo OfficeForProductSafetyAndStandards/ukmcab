@@ -133,24 +133,11 @@
                     </div>
                 </div>
             </fieldset>
-            
-            <div class="govuk-form-group">
-                <label class="govuk-label" for="file-upload-1">
-                    Upload PDF schedule
-                </label>
-                <input class="govuk-file-upload" id="file-upload-1" name="file-upload-1" type="file">
-            </div>
 
             <div class="govuk-button-group">
                 <button class="govuk-button" name="SaveButton" value="@State.Saved" data-module="govuk-button">
-                    Save as draft
+                    Save and continue
                 </button>
-                @if (Model.IsUKASUser)
-                {
-                    <button class="govuk-button govuk-button--secondary" name="SaveButton" value="@State.SubmittedForPublishing" data-module="govuk-button">
-                        Submit for approval
-                    </button>
-                }
             </div>
         </form>
     </div>

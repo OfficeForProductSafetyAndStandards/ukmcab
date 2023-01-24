@@ -67,6 +67,12 @@ namespace UKMCAB.Data.CosmosDb.Services
 
             return list;
         }
+
+        public async Task<bool> Updated(Document document)
+        {
+            var response = await _container.UpsertItemAsync(document);
+            return response.StatusCode == HttpStatusCode.OK;
+        }
     }
 
 }

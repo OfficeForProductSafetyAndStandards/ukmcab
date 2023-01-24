@@ -12,7 +12,7 @@ namespace UKMCAB.Core.Services
             _cabRepostitory = cabRepostitory;
         }
 
-        public async Task<Document> CreateCABDocumentAsync(string email, CABData cabData, State state = State.Saved)
+        public async Task<Document> CreateCABDocumentAsync(string email, CABData cabData)
         {
             var documents = await FindCABDocumentsByNameAsync(cabData.Name);
 
@@ -36,9 +36,21 @@ namespace UKMCAB.Core.Services
                 LastModifiedBy = email,
                 LastModifiedDate = createdDate,
                 CABData = cabData,
-                State = state
+                State = State.Created
             };
             return await _cabRepostitory.CreateAsync(document);
+        }
+
+        public async Task<bool> UpdateCABAsync(string email, Document document)
+        {
+            var cab = await FindCABDocumentsByIdAsync(document.CABData.CABId);
+            Rule.IsFalse(cab == null || !cab.Any(), "CAB does not exist in database");
+
+            var updateDate = DateTime.Now;
+            document.LastModifiedBy = email;
+            document.LastModifiedDate = updateDate;
+            var result = await _cabRepostitory.Updated(document);
+            return result;
         }
 
         public async Task<List<Document>> FindCABDocumentsByNameAsync(string cabName)
@@ -47,6 +59,14 @@ namespace UKMCAB.Core.Services
                 d.CABData.Name.Equals(cabName, StringComparison.CurrentCultureIgnoreCase));
             return docs;
         }
+
+        public async Task<List<Document>> FindCABDocumentsByIdAsync(string id)
+        {
+            var docs = await _cabRepostitory.Query<Document>(d =>
+                d.CABData.CABId.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+            return docs;
+        }
+
 
         public async Task<List<Document>> FindCABDocumentsByUKASReferenceAsync(string ukasReference)
         {
