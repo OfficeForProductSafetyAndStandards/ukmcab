@@ -47,7 +47,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var model = new SchedulesUploadViewModel
             {
-                UploadedFiles = cab.CABData.Schedules?.Select(s => s.FileName).ToList() ?? new List<string>()
+                UploadedFiles = cab.CABData.Schedules?.Select(s => s.FileName).ToList() ?? new List<string>(),
+                Id = id
             };
             return View(model);
         }
@@ -128,6 +129,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             model.UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList();
+            model.Id = id;
             return View(model);
         }
 
@@ -155,7 +157,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return View(new SchedulesListViewModel
             {
-                UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList()
+                UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList(),
+                Id = id
             });
         }
 
@@ -197,7 +200,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return View(new SchedulesListViewModel
             {
-                UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList()
+                UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList(),
+                Id = id
             });
         }
     }

@@ -82,3 +82,16 @@
 .facets__header{
     display: block;
 }
+
+.app-button-link {
+    @include govuk-font($size: 19, $line-height: 19px);
+    align-items: normal;
+    border: none;
+    background: none;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: content-box;
+    cursor: pointer;
+    text-align: left;
+    color: $govuk-link-colour;
+}

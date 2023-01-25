@@ -8,7 +8,7 @@
             <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 5 PDF documents.</p>
             
             <div>
-                @using (Html.BeginForm("SchedulesList", "FileUpload", new { id = "9e521c41-e511-4099-9c8e-07891cc23f4d" }, FormMethod.Post))
+                @using (Html.BeginForm("SchedulesList", "FileUpload", new { id = @Model.Id }, FormMethod.Post, false, new { enctype="multipart/form-data" }))
                 {
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
@@ -31,7 +31,7 @@
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell">@(index++).</td>
                                     <td class="govuk-table__cell">@uploadedFile</td>
-                                    <td class="govuk-table__cell"><button class="govuk-link" name="fileName" value="@uploadedFile">Remove</button></td>
+                                    <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state app-button-link" name="fileName" value="@uploadedFile">Remove</button></td>
                                 </tr>
                             }
                         }
