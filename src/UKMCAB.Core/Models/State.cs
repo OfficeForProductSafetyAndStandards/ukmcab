@@ -8,6 +8,7 @@
         ApprovedForPublishing,
         ApprovedForArchiving,
         Published,
-        Archived
+        Archived,
+        Created
     }
 }

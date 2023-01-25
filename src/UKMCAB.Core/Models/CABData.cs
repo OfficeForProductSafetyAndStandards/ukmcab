@@ -11,6 +11,7 @@
         public string Phone { get; set; }
         public string Country { get; set; }
         public string BodyType { get; set; }
+        public List<FileUpload> Schedules { get; set; }
         public List<string> Regulation { get; set; }
     }
 }

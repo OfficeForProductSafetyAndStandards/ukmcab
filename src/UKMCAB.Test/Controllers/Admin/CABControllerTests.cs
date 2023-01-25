@@ -17,6 +17,7 @@ namespace UKMCAB.Test.Controllers.Admin
         private Mock<UserManager<UKMCABUser>> mockUserManager;
         private ICABAdminService _CABAdminService;
         private Mock<ICABRepository> _ICABRepository = new();
+        private Mock<IFileStorage> _filestorage = new();
 
         [SetUp]
         public void Setup()
@@ -175,7 +176,14 @@ namespace UKMCAB.Test.Controllers.Admin
             _ICABRepository.Setup(r => r.Query<Document>(d =>
                 d.CABData.Name.Equals(name, StringComparison.CurrentCultureIgnoreCase))).ReturnsAsync(new List<Document>());
 
-            _ICABRepository.Setup(r => r.CreateAsync(It.IsAny<Document>())).ReturnsAsync(new Document());
+            var cabId = Guid.NewGuid().ToString();
+            _ICABRepository.Setup(r => r.CreateAsync(It.IsAny<Document>())).ReturnsAsync(new Document
+            {
+                CABData = new CABData
+                {
+                    CABId = cabId
+                }
+            });
 
             var result = await _sut.Create(State.Saved, new CreateCABViewModel
             {
@@ -183,9 +191,11 @@ namespace UKMCAB.Test.Controllers.Admin
                 Address = "test",
                 Website = "test.com",
                 Regulations = new List<string> { "test" }
-            }) as RedirectResult;
-
-            Assert.IsTrue(result.Url == "/");
+            }) as RedirectToActionResult; 
+            Assert.IsTrue(result != null);
+            Assert.IsTrue(result.ActionName.Equals("SchedulesUpload"));
+            Assert.IsTrue(result.ControllerName.Equals("FileUpload"));
+            Assert.IsTrue(result.RouteValues["id"].Equals(cabId));
         }
 
         [Test]

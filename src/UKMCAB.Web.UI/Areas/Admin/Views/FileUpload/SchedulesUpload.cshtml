@@ -1,0 +1,63 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.SchedulesUploadViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_ValidationSummary" model="ViewData.ModelState"/>
+        <span class="govuk-caption-m">Create a CAB</span>
+        <fieldset class="govuk-fieldset">
+            <h1 class="govuk-heading-l">Upload the Schedule of Accreditation</h1>
+            <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 5 PDF documents.</p>
+            
+            <div>
+                @using (Html.BeginForm("SchedulesList", "FileUpload", new { id = @Model.Id }, FormMethod.Post, false, new { enctype="multipart/form-data" }))
+                {
+                    <table class="govuk-table">
+                        <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header" colspan="3">Files you have uploaded</th>
+                        </tr>
+                        </thead>
+                        <tbody class="govuk-table__body">
+                        @if (!Model.UploadedFiles.Any())
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
+                            </tr>
+                        }
+                        else
+                        {
+                            var index = 1;
+                            foreach (var uploadedFile in Model.UploadedFiles)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">@(index++).</td>
+                                    <td class="govuk-table__cell">@uploadedFile</td>
+                                    <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state app-button-link" name="fileName" value="@uploadedFile">Remove</button></td>
+                                </tr>
+                            }
+                        }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </fieldset>
+
+        <fieldset class="govuk-fieldset">
+            <form method="post" enctype="multipart/form-data">
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Files")">
+                    <span asp-validation-for="Files" class="govuk-error-message"></span>
+                    <label class="govuk-label govuk-!-font-weight-bold" asp-for="Files">
+                        Select a PDF file
+                    </label>
+                    <input class="govuk-file-upload schedules-upload" asp-for="Files" type="file">
+                </div>
+                <div class="govuk-button-group">
+                    <button id="upload-schedules-button" class="govuk-button" data-module="govuk-button">
+                        Upload
+                    </button>
+                    <a class="govuk-link govuk-link--no-visited-state" href="/">Cancel</a>
+                </div>
+            </form>
+        </fieldset>
+
+    </div>
+</div>

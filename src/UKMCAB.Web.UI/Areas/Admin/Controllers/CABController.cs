@@ -1,5 +1,4 @@
-﻿using System.Reflection.Metadata;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using UKMCAB.Core.Models;
 using UKMCAB.Core.Services;
@@ -15,7 +14,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly ICABAdminService _cabAdminService;
         private readonly UserManager<UKMCABUser> _userManager;
 
-        public CABController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager)
+        public CABController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager
+            )
         {
             _cabAdminService = cabAdminService;
             _userManager = userManager;
@@ -50,12 +50,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("Regulations", "Please select at least one regulation from the list.");
             }
-            
+
             if (string.IsNullOrWhiteSpace(model.Website) &&
                 string.IsNullOrWhiteSpace(model.Email) &&
                 string.IsNullOrWhiteSpace(model.Phone))
             {
-                ModelState.AddModelError("Website", "At least one of Email, Phone, or Website needs to be completed to create a new CAB.");
+                ModelState.AddModelError("Website",
+                    "At least one of Email, Phone, or Website needs to be completed to create a new CAB.");
             }
 
             if (model.IsUKASUser && string.IsNullOrWhiteSpace(model.UKASReference))
@@ -64,7 +65,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             else if (model.IsUKASUser)
             {
-                var existingUKASReferenceDocuments = await _cabAdminService.FindCABDocumentsByUKASReferenceAsync(model.UKASReference);
+                var existingUKASReferenceDocuments =
+                    await _cabAdminService.FindCABDocumentsByUKASReferenceAsync(model.UKASReference);
                 if (existingUKASReferenceDocuments.Any())
                 {
                     ModelState.AddModelError("UKASReference", "A CAB with this UKAS reference already exists.");
@@ -83,27 +85,30 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var user = await _userManager.GetUserAsync(User);
 
                     var document = await _cabAdminService.CreateCABDocumentAsync(user.Email, new CABData
-                        {
-                            Name = model.Name,
-                            UKASReference = model.UKASReference,
-                            Address = model.Address,
-                            Website = model.Website ?? string.Empty,
-                            Email = model.Email ?? string.Empty,
-                            Phone = model.Phone ?? string.Empty,
-                            Country = model.RegisteredOfficeLocation ?? string.Empty,
-                            BodyType = model.BodyTypes != null && model.BodyTypes.Any() ? string.Join(",", model.BodyTypes) : string.Empty,
-                            Regulation = model.Regulations
-                        },
-                        SaveButton);
+                    {
+                        Name = model.Name,
+                        UKASReference = model.UKASReference,
+                        Address = model.Address,
+                        Website = model.Website ?? string.Empty,
+                        Email = model.Email ?? string.Empty,
+                        Phone = model.Phone ?? string.Empty,
+                        Country = model.RegisteredOfficeLocation ?? string.Empty,
+                        BodyType = model.BodyTypes != null && model.BodyTypes.Any()
+                            ? string.Join(",", model.BodyTypes)
+                            : string.Empty,
+                        Regulation = model.Regulations
+                    });
                     if (document != null)
                     {
-                        return Redirect("/");
+                        return RedirectToAction("SchedulesUpload", "FileUpload", new { id = document.CABData.CABId });
                     }
+
                     ModelState.AddModelError("Name", "Failed to save the CAB to the database. Please try again.");
                 }
             }
 
             return View(model);
         }
+
     }
 }

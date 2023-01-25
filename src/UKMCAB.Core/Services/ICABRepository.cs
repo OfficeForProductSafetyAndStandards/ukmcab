@@ -9,5 +9,6 @@ namespace UKMCAB.Core.Services
         Task<List<Document>> Query(string whereClause);
         Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate);
         Task<Document> CreateAsync(Document document);
+        Task<bool> Updated(Document document);
     }
 }
