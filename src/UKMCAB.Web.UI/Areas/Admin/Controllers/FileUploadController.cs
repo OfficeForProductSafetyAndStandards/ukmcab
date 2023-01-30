@@ -27,37 +27,29 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-upload/{id}")]
         public async Task<IActionResult> SchedulesUpload(string id)
         {
-
             var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
-            if (cabs == null || !cabs.Any())
+            var redirect = ValidCABDocument(id, cabs);
+            if (redirect != null)
             {
-                return NotFound();
+                return redirect;
             }
-
-            if (cabs.Count > 1 || cabs.First().State != State.Created)
-            {
-                return BadRequest();
-            }
-
             var cab = cabs.First();
             if (cab.CABData.Schedules != null && cab.CABData.Schedules.Count >= 5)
             {
-                return RedirectToAction("SchedulesList", new { id = id });
+                return RedirectToAction("SchedulesList", new { id });
             }
 
-            var model = new SchedulesUploadViewModel
+            var model = new FileUploadViewModel()
             {
+                Title = SchedulesOptions.UploadTitle,
                 UploadedFiles = cab.CABData.Schedules?.Select(s => s.FileName).ToList() ?? new List<string>(),
                 Id = id
             };
             return View(model);
         }
 
-        [HttpPost]
-        [Route("admin/cab/schedules-upload/{id}")]
-        public async Task<IActionResult> SchedulesUpload(string id, SchedulesUploadViewModel model)
+        private ActionResult? ValidCABDocument(string id, List<Document> cabs)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
             if (cabs == null || !cabs.Any())
             {
                 return NotFound();
@@ -68,58 +60,35 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return BadRequest();
             }
 
+            return null;
+        }
+
+        [HttpPost]
+        [Route("admin/cab/schedules-upload/{id}")]
+        public async Task<IActionResult> SchedulesUpload(string id, FileUploadViewModel model)
+        {
+            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var redirect = ValidCABDocument(id, cabs);
+            if (redirect != null)
+            {
+                return redirect;
+            }
             var cab = cabs.First();
-            if (cab.CABData.Schedules == null)
+            cab.CABData.Schedules ??= new List<FileUpload>();
+            if (cab.CABData.Schedules.Count >= 5)
             {
-                cab.CABData.Schedules = new List<FileUpload>();
-            }
-            else if (cab.CABData.Schedules.Count >= 5)
-            {
-                return RedirectToAction("SchedulesList", new { id = id });
+                return RedirectToAction("SchedulesList", new { id });
             }
 
-            if (model.Files == null || !model.Files.Any())
-            {
-                ModelState.AddModelError("Files", "Please select a file for upload.");
-            }
-            else
-            {
-                if (model.Files.Count > 5)
-                {
-                    ModelState.AddModelError("Files", "A maximum of 5 files can be selected for upload at a time.");
-                }
-
-                if (model.Files.Any(f => f.Length > 10485760))
-                {
-                    ModelState.AddModelError("Files", "Files must be no more that 10Mb in size.");
-                }
-
-                if (model.Files.Any(f => Path.GetExtension(f.FileName).ToLowerInvariant() != ".pdf"))
-                {
-                    ModelState.AddModelError("Files", "Files must be in PDF format to be uploaded.");
-                }
-
-                if (model.Files.Any(f => cab.CABData.Schedules.Any(s => s.FileName.Equals(f.FileName))))
-                {
-                    ModelState.AddModelError("Files", "Uploaded files must have different names to those already uploaded.");
-                }
-            }
+            ValidateUploadFile(model, SchedulesOptions.AcceptedFileExtensions, SchedulesOptions.AcceptedFileTypes, cab);
 
             if (ModelState.IsValid)
             {
-                var user = await _userManager.GetUserAsync(User);
-                foreach (var formFile in model.Files)
-                {
-                    if (cab.CABData.Schedules.Any(s =>
-                            s.FileName.Equals(formFile.FileName, StringComparison.InvariantCultureIgnoreCase)))
-                    {
-                        continue;
-                    }
-                    var result = await _fileStorage.UploadCABSchedule(cab.CABData.CABId, formFile.FileName,
-                        formFile.OpenReadStream());
-                    cab.CABData.Schedules.Add(result);
-                }
+                var result = await _fileStorage.UploadCABFile(cab.CABData.CABId, model.File.FileName, "schedules",
+                    model.File.OpenReadStream());
+                cab.CABData.Schedules.Add(result);
 
+                var user = await _userManager.GetUserAsync(User);
                 if (await _cabAdminService.UpdateCABAsync(user.Email, cab))
                 {
                     return RedirectToAction("SchedulesList", new { id = cab.CABData.CABId });
@@ -128,35 +97,60 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ModelState.AddModelError("Files", "There was an error updating the CAB record.");
             }
 
+            model.Title = SchedulesOptions.UploadTitle;
             model.UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList();
             model.Id = id;
             return View(model);
         }
+
+        private void ValidateUploadFile(FileUploadViewModel model, string[] acceptedFileExtension, string acceptedFileTypes, Document cab)
+        {
+            if (model.File == null)
+            {
+                ModelState.AddModelError("Files", "Please select a file for upload.");
+            }
+            else
+            {
+                if (model.File.Length > 10485760)
+                {
+                    ModelState.AddModelError("Files", "Files must be no more that 10Mb in size.");
+                }
+
+                if (acceptedFileExtension.All(ext => ext != Path.GetExtension(model.File.FileName).ToLowerInvariant()))
+                {
+                    ModelState.AddModelError("Files", $"Files must be in {acceptedFileTypes} format to be uploaded.");
+                }
+
+                cab.CABData.Schedules ??= new List<FileUpload>();
+
+                if (cab.CABData.Schedules.Any(s => s.FileName.Equals(model.File.FileName)))
+                {
+                    ModelState.AddModelError("Files", "Uploaded files must have different names to those already uploaded.");
+                }
+            }
+        }
+
 
         [HttpGet]
         [Route("admin/cab/schedules-list/{id}")]
         public async Task<IActionResult> SchedulesList(string id)
         {
             var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
-            if (cabs == null || !cabs.Any())
+            var redirect = ValidCABDocument(id, cabs);
+            if (redirect != null)
             {
-                return NotFound();
-            }
-
-            if (cabs.Count > 1 || cabs.First().State != State.Created)
-            {
-                return BadRequest();
+                return redirect;
             }
 
             var cab = cabs.First();
-
             if (cab.CABData.Schedules == null || !cab.CABData.Schedules.Any())
             {
                 return RedirectToAction("SchedulesUpload", new[] { id = cab.CABData.CABId });
             }
 
-            return View(new SchedulesListViewModel
+            return View(new FileListViewModel
             {
+                Title = SchedulesOptions.ListTitle,
                 UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList(),
                 Id = id
             });
@@ -167,22 +161,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> SchedulesList(string id, string fileName)
         {
             var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
-            if (cabs == null || !cabs.Any())
+            var redirect = ValidCABDocument(id, cabs);
+            if (redirect != null)
             {
-                return NotFound();
-            }
-
-            if (cabs.Count > 1 || cabs.First().State != State.Created)
-            {
-                return BadRequest();
+                return redirect;
             }
 
             var cab = cabs.First();
-
-            if (cab.CABData.Schedules == null || !cab.CABData.Schedules.Any())
-            {
-                return RedirectToAction("SchedulesUpload", new[] { id = cab.CABData.CABId });
-            }
+            cab.CABData.Schedules ??= new List<FileUpload>();
 
             var fileToRemove = cab.CABData.Schedules.SingleOrDefault(s =>
                 s.FileName.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
@@ -190,19 +176,149 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
-                //if (result)
-                //{
-                    cab.CABData.Schedules.Remove(fileToRemove);
-                    var user = await _userManager.GetUserAsync(User);
-                    await _cabAdminService.UpdateCABAsync(user.Email, cab);
-                //}
+                cab.CABData.Schedules.Remove(fileToRemove);
+                var user = await _userManager.GetUserAsync(User);
+                await _cabAdminService.UpdateCABAsync(user.Email, cab);
             }
 
-            return View(new SchedulesListViewModel
+            if (!cab.CABData.Schedules.Any())
             {
+                return RedirectToAction("SchedulesUpload", new { id = cab.CABData.CABId });
+            }
+
+            return View(new FileListViewModel
+            {
+                Title = SchedulesOptions.ListTitle,
                 UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList(),
                 Id = id
             });
         }
+
+        [HttpGet]
+        [Route("admin/cab/documents-upload/{id}")]
+        public async Task<IActionResult> DocumentsUpload(string id)
+        {
+            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var redirect = ValidCABDocument(id, cabs);
+            if (redirect != null)
+            {
+                return redirect;
+            }
+            var cab = cabs.First();
+            cab.CABData.Documents ??= new List<FileUpload>();
+            if (cab.CABData.Documents.Count >= 10)
+            {
+                return RedirectToAction("DocumentsList", new { id });
+            }
+
+            var model = new FileUploadViewModel()
+            {
+                Title = DocumentsOptions.UploadTitle,
+                UploadedFiles = cab.CABData.Documents.Select(s => s.FileName).ToList(),
+                Id = id
+            };
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("admin/cab/documents-upload/{id}")]
+        public async Task<IActionResult> DocumentsUpload(string id, FileUploadViewModel model)
+        {
+            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var redirect = ValidCABDocument(id, cabs);
+            if (redirect != null)
+            {
+                return redirect;
+            }
+            var cab = cabs.First();
+            cab.CABData.Documents ??= new List<FileUpload>();
+            if (cab.CABData.Documents.Count >= 10)
+            {
+                return RedirectToAction("DocumentsList", new { id });
+            }
+
+            ValidateUploadFile(model, DocumentsOptions.AcceptedFileExtensions, DocumentsOptions.AcceptedFileTypes, cab);
+
+            if (ModelState.IsValid)
+            {
+                var result = await _fileStorage.UploadCABFile(cab.CABData.CABId, model.File.FileName, "documents",
+                    model.File.OpenReadStream());
+                cab.CABData.Documents.Add(result);
+
+                var user = await _userManager.GetUserAsync(User);
+                if (await _cabAdminService.UpdateCABAsync(user.Email, cab))
+                {
+                    return RedirectToAction("DocumentsList", new { id = cab.CABData.CABId });
+                }
+
+                ModelState.AddModelError("Files", "There was an error updating the CAB record.");
+            }
+
+            model.Title = DocumentsOptions.UploadTitle;
+            model.UploadedFiles = cab.CABData.Documents.Select(s => s.FileName).ToList();
+            model.Id = id;
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("admin/cab/documents-list/{id}")]
+        public async Task<IActionResult> DocumentsList(string id)
+        {
+            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var redirect = ValidCABDocument(id, cabs);
+            if (redirect != null)
+            {
+                return redirect;
+            }
+
+            var cab = cabs.First();
+            cab.CABData.Documents ??= new List<FileUpload>();
+
+            return View(new FileListViewModel
+            {
+                Title = DocumentsOptions.ListTitle,
+                UploadedFiles = cab.CABData.Documents.Select(s => s.FileName).ToList(),
+                Id = id
+            });
+        }
+
+        [HttpPost]
+        [Route("admin/cab/documents-list/{id}")]
+        public async Task<IActionResult> DocumentsList(string id, string fileName)
+        {
+            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var redirect = ValidCABDocument(id, cabs);
+            if (redirect != null)
+            {
+                return redirect;
+            }
+
+            var cab = cabs.First();
+            cab.CABData.Documents ??= new List<FileUpload>();
+
+            var fileToRemove = cab.CABData.Documents.SingleOrDefault(s =>
+                s.FileName.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
+            if (fileToRemove != null)
+            {
+                var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
+                // Even if this returns false because the file wasn't found we still want to remove it from the document
+                cab.CABData.Documents.Remove(fileToRemove);
+                var user = await _userManager.GetUserAsync(User);
+                await _cabAdminService.UpdateCABAsync(user.Email, cab);
+            }
+
+            if (!cab.CABData.Documents.Any())
+            {
+                return RedirectToAction("DocumentsUpload", new { id = cab.CABData.CABId });
+            }
+
+            return View(new FileListViewModel
+            {
+                Title = DocumentsOptions.ListTitle,
+                UploadedFiles = cab.CABData.Documents.Select(s => s.FileName).ToList(),
+                Id = id
+            });
+        }
+
     }
 }
