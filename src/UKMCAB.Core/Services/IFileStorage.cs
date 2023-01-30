@@ -4,7 +4,7 @@ namespace UKMCAB.Core.Services
 {
     public interface IFileStorage
     {
-        Task<FileUpload> UploadCABSchedule(string cabId, string FileName, Stream stream);
+        Task<FileUpload> UploadCABFile(string cabId, string FileName, string DirectoryName, Stream stream);
 
         Task<bool> DeleteCABSchedule(string blobName);
     }

@@ -20,12 +20,12 @@ namespace UKMCAB.Data.Storage
             _client.CreateIfNotExists();
         }
 
-        public async Task<FileUpload> UploadCABSchedule(string cabId, string fileName, Stream stream)
+        public async Task<FileUpload> UploadCABFile(string cabId, string fileName, string directoryName, Stream stream)
         {
             try
             {
                 fileName = MakeValidFileName(fileName);
-                var blobName = $"{cabId}/schedules/{fileName}";
+                var blobName = $"{cabId}/{directoryName}/{fileName}";
                 var blobClient = _client.GetBlobClient(blobName);
                 var blobHeaders = new BlobHttpHeaders
                 {
