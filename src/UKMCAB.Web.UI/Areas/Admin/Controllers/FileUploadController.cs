@@ -94,7 +94,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     return RedirectToAction("SchedulesList", new { id = cab.CABData.CABId });
                 }
 
-                ModelState.AddModelError("Files", "There was an error updating the CAB record.");
+                ModelState.AddModelError("File", "There was an error updating the CAB record.");
             }
 
             model.Title = SchedulesOptions.UploadTitle;
@@ -107,25 +107,25 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (model.File == null)
             {
-                ModelState.AddModelError("Files", "Please select a file for upload.");
+                ModelState.AddModelError("File", "Please select a file for upload.");
             }
             else
             {
                 if (model.File.Length > 10485760)
                 {
-                    ModelState.AddModelError("Files", "Files must be no more that 10Mb in size.");
+                    ModelState.AddModelError("File", "Files must be no more that 10Mb in size.");
                 }
 
                 if (acceptedFileExtension.All(ext => ext != Path.GetExtension(model.File.FileName).ToLowerInvariant()))
                 {
-                    ModelState.AddModelError("Files", $"Files must be in {acceptedFileTypes} format to be uploaded.");
+                    ModelState.AddModelError("File", $"Files must be in {acceptedFileTypes} format to be uploaded.");
                 }
 
                 cab.CABData.Schedules ??= new List<FileUpload>();
 
                 if (cab.CABData.Schedules.Any(s => s.FileName.Equals(model.File.FileName)))
                 {
-                    ModelState.AddModelError("Files", "Uploaded files must have different names to those already uploaded.");
+                    ModelState.AddModelError("File", "Uploaded files must have different names to those already uploaded.");
                 }
             }
         }
@@ -251,7 +251,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     return RedirectToAction("DocumentsList", new { id = cab.CABData.CABId });
                 }
 
-                ModelState.AddModelError("Files", "There was an error updating the CAB record.");
+                ModelState.AddModelError("File", "There was an error updating the CAB record.");
             }
 
             model.Title = DocumentsOptions.UploadTitle;

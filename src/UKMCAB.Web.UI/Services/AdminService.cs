@@ -13,7 +13,7 @@ namespace UKMCAB.Web.UI.Services
             _userManager = userManager;
         }
 
-        public async Task<bool> IsInRoleAsync(ClaimsPrincipal claimsPrincipal, string roleName)
+        public async Task<bool> IsInRoleAsync(ClaimsPrincipal claimsPrincipal, IEnumerable<string> roleNames)
         {
             var user = await _userManager.GetUserAsync(claimsPrincipal);
             if (user == null)
@@ -27,7 +27,7 @@ namespace UKMCAB.Web.UI.Services
                 return false;
             }
 
-            return userRoles.Any(ur => ur.Equals(roleName, StringComparison.InvariantCultureIgnoreCase));
+            return userRoles.Any(ur => roleNames.Any(r => r.Equals(ur, StringComparison.InvariantCultureIgnoreCase)));
         }
     }
 }

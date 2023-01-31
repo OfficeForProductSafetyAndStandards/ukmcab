@@ -1,9 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
-using UKMCAB.Identity.Stores.CosmosDB;
-using UKMCAB.Web.UI.Models;
-using UKMCAB.Web.UI.Models.ViewModels;
+﻿using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Controllers;
@@ -24,7 +19,7 @@ public class FindACABController : Controller
     [Route("find-a-cab")]
     public async Task<IActionResult> Index()
     {
-        var isAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.UKASUser);
+        var isAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.AuthRoles);
         return View(new SearchViewModel{IsAdmin = isAdmin});
     }
 
@@ -36,7 +31,7 @@ public class FindACABController : Controller
         {
             return RedirectToAction("Results", new { Keywords = searchViewModel.Keywords });
         }
-        searchViewModel.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.UKASUser);
+        searchViewModel.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.AuthRoles);
 
         return View(searchViewModel);
     }
@@ -46,7 +41,7 @@ public class FindACABController : Controller
     public async Task<IActionResult> Results(SearchResultsViewModel searchResultsViewModel)
     {
         LoadFilters(searchResultsViewModel);
-        searchResultsViewModel.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.UKASUser);
+        searchResultsViewModel.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.AuthRoles);
 
         var cabs = await _cabSearchService.SearchCABsAsync(searchResultsViewModel.Keywords, new FilterSelections
         {
@@ -104,7 +99,7 @@ public class FindACABController : Controller
     public async Task<IActionResult> Profile(string id)
     {
         var cabProfile = await _cabSearchService.GetCABAsync(id);
-        cabProfile.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.UKASUser);
+        cabProfile.IsAdmin = await _adminService.IsInRoleAsync(User, Constants.Roles.AuthRoles);
         return View(cabProfile);
     }
 }
