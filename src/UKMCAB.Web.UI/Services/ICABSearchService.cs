@@ -7,5 +7,5 @@ namespace UKMCAB.Web.UI.Services;
 public interface ICABSearchService
 {
     Task<List<CAB>> SearchCABsAsync(string text, FilterSelections filterSelections);
-    Task<CABProfileViewModel> GetCABAsync(string id);
+    Task<ProfileViewModel> GetCABAsync(string id);
 }

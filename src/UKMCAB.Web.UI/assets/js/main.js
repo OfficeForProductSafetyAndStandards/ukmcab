@@ -2,6 +2,11 @@
 import "./option-select.js";
 import "../scss/main.scss";
 
+
+GOVUKFrontend.Tabs.prototype.setupResponsiveChecks = function () {
+    this.setup();
+};
+
 GOVUKFrontend.initAll();
 
 // overriding the GDS experimental accordion to not display the Show/Hide all section and to rename the accordion text

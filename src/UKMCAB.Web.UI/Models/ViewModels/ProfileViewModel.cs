@@ -1,6 +1,6 @@
 ﻿namespace UKMCAB.Web.UI.Models.ViewModels;
 
-public class CABProfileViewModel : ILayoutModel
+public class ProfileViewModel : ILayoutModel
 {
     public string Id { get; set; }
     public string Name { get; set; }

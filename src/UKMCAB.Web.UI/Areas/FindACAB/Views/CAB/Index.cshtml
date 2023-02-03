@@ -1,0 +1,176 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.FindACAB.CABProfileViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_ValidationSummary" model="ViewData.ModelState"/>
+        <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
+        <h1 class="govuk-heading-l">@Model.Name</h1>
+        <div class="cab-detail-date-meta">
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToString("d MMM yyyy")</span>
+            <span class="govuk-caption-m govuk-!-display-inline-block">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
+        </div>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <div class="govuk-tabs cab-tabs" data-module="govuk-tabs">
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#details">
+                        Details
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item last">
+                    <a class="govuk-tabs__tab" href="#product-schedules">
+                        Product schedules
+                    </a>
+                </li>
+            </ul>
+
+            <div class="govuk-tabs__panel cabs__panel" id="details">
+                <div class="cab-detail-section">
+                    <h2 class="govuk-heading-l">About</h2>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                CAB name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.Name
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                UKAS reference number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.UKASReferenceNumber), Model.UKASReferenceNumber, @Constants.NotProvided)
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                <div class="cab-detail-section">
+                <h2 class="govuk-heading-l">Contact details</h2>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Address
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Raw(Model.Address)
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Website
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (!string.IsNullOrWhiteSpace(Model.Website))
+                                {
+                                    <a class="govuk-link" href="@Html.SanitiseURL(Model.Website)">@Model.Website</a>
+                                }
+                                else
+                                {
+                                    <text>@Constants.NotProvided</text>
+                                }
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (!string.IsNullOrWhiteSpace(Model.Email))
+                                {
+                                    <a class="govuk-link" href="mailto: @Model.Email">@Model.Email</a>
+                                }
+                                else
+                                {
+                                    @Constants.NotProvided
+                                }
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Phone
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.Phone), Model.Phone, @Constants.NotProvided)
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Registered office locations
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var officeLocation in Model.RegisteredOfficeLocations)
+                                {
+                                    <span class="cab-detail-list-item">@officeLocation</span>
+                                }
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+                <div class="cab-detail-section">
+                <h2 class="govuk-heading-l">Body details</h2>
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Registered test location
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var testLocation in Model.RegisteredTestLocations)
+                                {
+                                    <span class="cab-detail-list-item">@testLocation</span>
+                                }
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Body number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.BodyNumber
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Body type
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var bodyType in Model.BodyTypes)
+                                {
+                                    <span class="cab-detail-list-item">@bodyType</span>
+                                }
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Legislative body
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @foreach (var legislativeBody in Model.LegislativeBodies)
+                                {
+                                    <span class="cab-detail-list-item">@legislativeBody</span>
+                                }
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+            <div class="govuk-tabs__panel cabs__panel govuk-tabs__panel--hidden" id="product-schedules">
+                <div class="cab-detail-section">
+                    <h2 class="govuk-heading-l">Product schedules</h2>
+                    @foreach (var file in Model.ProductSchedules)
+                    {
+                        <div>
+                            <a class="govuk-link" href="@file.BlobName">@file.FileName</a>
+                            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
