@@ -3,7 +3,7 @@ import "./option-select.js";
 import "../scss/main.scss";
 
 
-GOVUKFrontend.Tabs.prototype.checkMode = function () {
+GOVUKFrontend.Tabs.prototype.setupResponsiveChecks = function () {
     this.setup();
 };
 
