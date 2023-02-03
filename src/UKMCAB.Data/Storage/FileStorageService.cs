@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
 using Microsoft.Extensions.Configuration;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Models;
@@ -18,6 +19,23 @@ namespace UKMCAB.Data.Storage
             _loggingService = loggingService;
             _client = new BlobContainerClient(config["DataConnectionString"], config["CABFileStorageContainer"]);
             _client.CreateIfNotExists();
+        }
+
+        public async Task<FileDownload> DownloadBlobStream(string blobPath)
+        {
+            var blob = _client.GetBlobClient(blobPath);
+            var blobExists = await blob.ExistsAsync();
+            if (blobExists.HasValue && blobExists.Value)
+            {
+                var properties = await blob.GetPropertiesAsync();
+                return new FileDownload
+                {
+                    ContentType = properties.Value.ContentType,
+                    ContentDisposition = properties.Value.ContentDisposition,
+                    FileStream = await blob.OpenReadAsync()
+                };
+            }
+            return null;
         }
 
         public async Task<FileUpload> UploadCABFile(string cabId, string fileName, string directoryName, Stream stream)

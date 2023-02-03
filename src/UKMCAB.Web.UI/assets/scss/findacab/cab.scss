@@ -14,6 +14,16 @@
     display: block;
 }
 
+ul.cab-profile-file-list {
+    border-top: 1px solid #b1b4b6;
+
+    li.cab-profile-file-list-item {
+        list-style: none;
+        border-bottom: 1px solid #b1b4b6;
+        padding: 20px 0;
+    }
+}
+
 .js-enabled {
 
     @include govuk-media-query($from: mobile) {

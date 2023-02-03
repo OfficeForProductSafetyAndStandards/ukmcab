@@ -7,6 +7,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.FindACAB
         // ILayoutModel
         public string? Title => $"CAB profile - {Name}";
 
+        public string CABId { get; set; }
+
         // Publish attributes
         public DateTime PublishedDate { get; set; }
 

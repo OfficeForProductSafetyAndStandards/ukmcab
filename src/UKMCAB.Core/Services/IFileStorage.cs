@@ -7,5 +7,7 @@ namespace UKMCAB.Core.Services
         Task<FileUpload> UploadCABFile(string cabId, string FileName, string DirectoryName, Stream stream);
 
         Task<bool> DeleteCABSchedule(string blobName);
+
+        Task<FileDownload> DownloadBlobStream(string blobPath);
     }
 }
