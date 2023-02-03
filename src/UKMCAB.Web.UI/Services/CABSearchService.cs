@@ -50,11 +50,11 @@ public class CABSearchService : ICABSearchService
         return cabs;
     }
 
-    public async Task<CABProfileViewModel> GetCABAsync(string id)
+    public async Task<ProfileViewModel> GetCABAsync(string id)
     {
         var cabData = await _cosmosDbService.GetByIdAsync(id);
         
-        var cabProfile = new CABProfileViewModel
+        var cabProfile = new ProfileViewModel
         {
             Id = cabData.Id,
             Name = cabData.Name,
