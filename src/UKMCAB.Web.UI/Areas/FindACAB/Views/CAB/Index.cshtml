@@ -4,7 +4,7 @@
         <partial name="_ValidationSummary" model="ViewData.ModelState"/>
         <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
         <h1 class="govuk-heading-l">@Model.Name</h1>
-        <div>
+        <div class="cab-detail-date-meta">
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToString("d MMM yyyy")</span>
             <span class="govuk-caption-m govuk-!-display-inline-block">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
         </div>
@@ -45,7 +45,7 @@
                                 UKAS reference number
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.UKASReferenceNumber
+                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.UKASReferenceNumber), Model.UKASReferenceNumber, @Constants.NotProvided)
                             </dd>
                         </div>
                     </dl>
@@ -68,7 +68,11 @@
                             <dd class="govuk-summary-list__value">
                                 @if (!string.IsNullOrWhiteSpace(Model.Website))
                                 {
-                                    <a class="govuk-link" href="@Model.Website">@Model.Website</a>
+                                    <a class="govuk-link" href="@Html.SanitiseURL(Model.Website)">@Model.Website</a>
+                                }
+                                else
+                                {
+                                    <text>@Constants.NotProvided</text>
                                 }
                             </dd>
                         </div>
@@ -81,6 +85,10 @@
                                 {
                                     <a class="govuk-link" href="mailto: @Model.Email">@Model.Email</a>
                                 }
+                                else
+                                {
+                                    @Constants.NotProvided
+                                }
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -88,7 +96,7 @@
                                 Phone
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.Phone
+                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.Phone), Model.Phone, @Constants.NotProvided)
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">

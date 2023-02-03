@@ -4,6 +4,7 @@ public static class Constants
 {
     public const string MainLayoutPath = "~/Views/Shared/_Layout.cshtml";
     public const string SiteName = "UKMCAB alpha - GOV.UK";
+    public const string NotProvided = "Not provided";
 
     public static class Config
     {
