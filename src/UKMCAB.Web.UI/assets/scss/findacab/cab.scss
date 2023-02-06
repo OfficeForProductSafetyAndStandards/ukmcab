@@ -7,7 +7,7 @@
 }
 
 .cab-detail-date-meta {
-    margin-bottom: 30px;
+    margin: -5px 0 30px;
 }
 
 .cab-detail-list-item {
@@ -52,6 +52,7 @@ ul.cab-profile-file-list {
                 @include govuk-media-query($until: tablet) {
                     display: flex;
                     justify-content: space-between;
+                    align-items: stretch;
                 }
             }
 
@@ -96,6 +97,10 @@ ul.cab-profile-file-list {
 
                 .govuk-tabs__tab {
                     text-decoration: none;
+
+                    @include govuk-media-query($until: tablet) {
+                        vertical-align: -webkit-baseline-middle;
+                    }
                 }
             }
 

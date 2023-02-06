@@ -50,7 +50,7 @@ namespace UKMCAB.Web.UI.Areas.FindACAB.Controllers
                     "Approved body",
                     "NI Notified body"
                 },
-                LegislativeBodies = new List<string>
+                LegislativeAreas = new List<string>
                 {
                     "Construction products"
                 },

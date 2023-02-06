@@ -44,7 +44,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.FindACAB
         public List<string> RegisteredTestLocations { get; set; }
         public string BodyNumber { get; set; }
         public List<string> BodyTypes { get; set; }
-        public List<string> LegislativeBodies { get; set; }
+        public List<string> LegislativeAreas { get; set; }
         public List<FileUpload> ProductSchedules { get; set; }
     }
 }
