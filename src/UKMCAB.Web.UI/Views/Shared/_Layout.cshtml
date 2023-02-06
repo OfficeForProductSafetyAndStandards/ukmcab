@@ -80,7 +80,7 @@
                             <a asp-controller="News" class="govuk-header__link">News</a>
                         </li>
                         <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "faq", "govuk-header__navigation-item--active")">
-                            <a asp-controller="FAQ" class="govuk-header__link">FAQ</a>
+                            <a asp-area="Home" asp-controller="Home" asp-action="FAQ" class="govuk-header__link">FAQ</a>
                         </li>
                         <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "about", "govuk-header__navigation-item--active")">
                             <a asp-controller="About" class="govuk-header__link">About</a>
