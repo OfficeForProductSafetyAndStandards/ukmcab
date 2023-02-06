@@ -51,7 +51,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Account\Views\Shared\" />
-    <Folder Include="Areas\Home\" />
     <Folder Include="wwwroot\assets\js\" />
     <None Include="Pages\400.cshtml" />
     <None Include="Pages\401.cshtml" />
