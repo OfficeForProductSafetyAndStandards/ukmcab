@@ -31,6 +31,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery();
 builder.Services.AddSingleton(new BasicAuthenticationOptions() { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
+builder.Services.AddSingleton(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]));
 builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
 builder.Services.AddTransient<ICABSearchService, CABSearchService>();
 builder.Services.AddTransient<IAdminService, AdminService>();
