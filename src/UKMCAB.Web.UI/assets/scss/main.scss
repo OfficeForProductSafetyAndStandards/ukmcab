@@ -1,6 +1,7 @@
 ﻿@import "./node_modules/govuk-frontend/govuk/all";
 @import "./assets/finder/stylesheets/application";
 @import "./findacab/cab.scss";
+@import "./shared/feedback-form.scss";
 
 .gem-c-checkboxes .gem-c-checkboxes__legend--hidden {
     position: absolute !important;

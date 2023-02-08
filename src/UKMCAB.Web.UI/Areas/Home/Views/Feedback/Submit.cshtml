@@ -1,0 +1,44 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Feedback.FeedbackFormViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="_ValidationSummary" model="ViewData.ModelState"/>
+        <h1 class="govuk-heading-l">Help us to improve GOV.UK</h1>
+        <p class="govuk-body">Don't include personal or financial information like your National Insurance number or credit card details.</p>
+        <form asp-area="Home" asp-controller="Feedback" asp-action="Submit" method="post">
+            <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL"/>
+            <fieldset class="govuk-fieldset">
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"WhatWereYouDoing")">
+                    <h1 class="govuk-label-wrapper">
+                        <span asp-validation-for="WhatWereYouDoing" class="govuk-error-message"></span>
+                        <label class=" govuk-heading-m" asp-for="WhatWereYouDoing">
+                            What you were doing
+                        </label>
+                    </h1>
+                    <div id="doing-hint" class="govuk-hint">
+                        Please explain, step by step, what you did. If we can reproduce a problem, we can try and fix it.
+                    </div>
+                    <textarea class="govuk-textarea" rows="5" aria-describedby="doing-hint" asp-for="WhatWereYouDoing"></textarea>
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"WhatWentWrong")">
+                    <h1 class="govuk-label-wrapper">
+                        <span asp-validation-for="WhatWentWrong" class="govuk-error-message"></span>
+                        <label class=" govuk-heading-m" asp-for="WhatWentWrong">
+                            What went wrong
+                        </label>
+                    </h1>
+                    <div id="wrong-hint" class="govuk-hint">
+                        Please explain what you expected to happen, and what actually happened. A clear explanation will help us fix the problem.
+                    </div>
+                    <textarea class="govuk-textarea" rows="5" aria-describedby="wrong-hint" asp-for="WhatWentWrong"></textarea>
+                </div>
+            </fieldset>
+            <div class="govuk-button-group">
+                <button class="govuk-button" name="Send" data-module="govuk-button">
+                    Send
+                </button>
+                <a class="govuk-button govuk-button--secondary" href="@Model.ReturnURL">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

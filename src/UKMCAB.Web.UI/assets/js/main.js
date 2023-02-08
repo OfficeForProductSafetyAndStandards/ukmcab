@@ -1,6 +1,8 @@
 ﻿const GOVUKFrontend = require('./govuk-frontend-all.js');
 import "./option-select.js";
+import "./shared/feedback-form.js";
 import "../scss/main.scss";
+
 
 // overriding to allow js on mobile, this must run before the initAll() method  
 GOVUKFrontend.Tabs.prototype.setupResponsiveChecks = function () {
@@ -8,6 +10,16 @@ GOVUKFrontend.Tabs.prototype.setupResponsiveChecks = function () {
 };
 
 GOVUKFrontend.initAll();
+
+// Feedback form
+
+//var detailsCloseButton = document.getElementById("details-close-button");
+//if (detailsCloseButton) {
+//    detailsCloseButton.addEventListener('click', function (e) {
+//        e.preventDefault();
+//        document.getElementById("feedback-form-details").removeAttribute("open");
+//    });
+//}
 
 // Results page
 
