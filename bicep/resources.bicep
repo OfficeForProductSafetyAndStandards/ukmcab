@@ -100,6 +100,23 @@ resource appInsights 'Microsoft.Insights/components@2020-02-02' = {
 
 
 
+/*
+  AZURE COGNITIVE SEARCH
+*/
+resource cognitiveSearch 'Microsoft.Search/searchServices@2022-09-01' = {
+  name: 'acs-${project}-${env}'
+  location: location
+  sku: {
+    name: 'basic'
+  }
+  properties: {
+    replicaCount: 1
+    partitionCount: 1
+    hostingMode: 'default'
+  }
+}
+var acsConnectionString = 'endpoint=https://${cognitiveSearch.name}.search.windows.net;apikey=${cognitiveSearch.listQueryKeys().value}'
+
 
 /*
   COSMOS
@@ -267,6 +284,15 @@ resource govukNotifyApiKeySecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' 
   }
 }
 
+
+resource acsConnectionStringSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'acsConnectionString'
+  properties: {
+    value: acsConnectionString
+  }
+}
+
 /*
   APP SERVICE and APP SERVICE PLAN
 */
@@ -319,6 +345,10 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
         {
           name: 'GovUkNotifyApiKey'
           value: '@Microsoft.KeyVault(SecretUri=${govukNotifyApiKeySecret.properties.secretUri})'
+        }
+        {
+          name: 'AcsConnectionString'
+          value: '@Microsoft.KeyVault(SecretUri=${acsConnectionStringSecret.properties.secretUri})'
         }
         {
           name: 'ASPNETCORE_ENVIRONMENT'
