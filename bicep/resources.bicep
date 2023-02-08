@@ -115,7 +115,7 @@ resource cognitiveSearch 'Microsoft.Search/searchServices@2022-09-01' = {
     hostingMode: 'default'
   }
 }
-var acsConnectionString = 'endpoint=https://${cognitiveSearch.name}.search.windows.net;apikey=${cognitiveSearch.listQueryKeys().value}'
+var acsConnectionString = 'endpoint=https://${cognitiveSearch.name}.search.windows.net;apikey=${cognitiveSearch.listQueryKeys().value[0].key}'
 
 
 /*
