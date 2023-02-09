@@ -11,7 +11,7 @@
                     </h1>
                 </legend>
                 
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Email")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Email")">
                     <span asp-validation-for="Email" class="govuk-error-message"></span>
                     <label asp-for="Email" class="govuk-label"></label>
                     <input asp-for="Email" class="govuk-input" aria-required="true"/>

@@ -115,6 +115,11 @@
     <div class="govuk-width-container ">
         <main class="govuk-main-wrapper " id="main-content" role="main">
             @RenderBody()
+            
+            @if (!((bool?)ViewData["HideFeeback"]).GetValueOrDefault())
+            {
+               <partial name="Partials/_FeedbackForm"/>
+            }
         </main>
     </div>
 

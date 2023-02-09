@@ -18,24 +18,24 @@
                         Register as @titlePart
                     </h1>
                 </legend>
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Email")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Email")">
                     <span asp-validation-for="Email" class="govuk-error-message"></span>
                     <label asp-for="Email" class="govuk-label"></label>
                     <input asp-for="Email" class="govuk-input" autocomplete="username" aria-required="true"/>
                 </div>
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Password")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Password")">
                     <span asp-validation-for="Password" class="govuk-error-message"></span>
                     <label asp-for="Password" class="govuk-label"></label>
                     <input asp-for="Password" class="govuk-input" autocomplete="new-password" aria-required="true"/>
                 </div>
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"ConfirmPassword")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"ConfirmPassword")">
                     <span asp-validation-for="ConfirmPassword" class="govuk-error-message"></span>
                     <label asp-for="ConfirmPassword" class="govuk-label"></label>
                     <input asp-for="ConfirmPassword" class="govuk-input" autocomplete="new-password" aria-required="true"/>
                 </div>
                 @if (!Constants.Roles.UKASUser.Equals(Model.Role, StringComparison.InvariantCultureIgnoreCase))
                 {
-                    <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState, "LegislativeAreas")">
+                    <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "LegislativeAreas")">
                         <span asp-validation-for="LegislativeAreas" class="govuk-error-message"></span>
                         <label asp-for="LegislativeAreas" class="govuk-label"></label>
 
@@ -51,7 +51,7 @@
                             }
                         </div>
                     </div>
-                    <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState, "RequestReason")">
+                    <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "RequestReason")">
                         <span asp-validation-for="RequestReason" class="govuk-error-message"></span>
                         <label asp-for="RequestReason" class="govuk-label"></label>
                         <input asp-for="RequestReason" class="govuk-input" autocomplete="requestreason" aria-required="true"/>

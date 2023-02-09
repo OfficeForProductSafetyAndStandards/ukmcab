@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace UKMCAB.Web.UI;
 
@@ -20,11 +21,19 @@ public static class Ext
 
     public static IHtmlContent SanitiseURL(this IHtmlHelper htmlHelper, string text) => text.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? htmlHelper.Raw(text) : htmlHelper.Raw($"https://{text}");
 
-    public static IHtmlContent ShowModelStateErrorClass(this IHtmlHelper htmlHelper, ModelStateDictionary modelState,
-        string modelStateKey)
+    public static IHtmlContent ShowModelStateFormGroupErrorClass(this IHtmlHelper htmlHelper, ModelStateDictionary modelState, string modelStateKey)
     {
-        return modelState.Keys.Any(k => k.Equals(modelStateKey)) && modelState[modelStateKey].ValidationState == ModelValidationState.Invalid ? 
-            htmlHelper.Raw("govuk-form-group--error") : 
+        return ShowErrorClass(htmlHelper, modelState, modelStateKey, "govuk-form-group--error");
+    }
+    public static IHtmlContent ShowModelStateInputErrorClass(this IHtmlHelper htmlHelper, ModelStateDictionary modelState, string modelStateKey)
+    {
+        return ShowErrorClass(htmlHelper, modelState, modelStateKey, "govuk-input--error");
+    }
+
+    public static IHtmlContent ShowErrorClass(this IHtmlHelper htmlHelper, ModelStateDictionary modelState, string modelStateKey, string errorClass)
+    {
+        return modelState.Keys.Any(k => k.Equals(modelStateKey)) && modelState[modelStateKey].ValidationState == ModelValidationState.Invalid ?
+            htmlHelper.Raw(errorClass) :
             HtmlString.Empty;
     }
 }

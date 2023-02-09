@@ -10,7 +10,7 @@
                         Create a new CAB
                     </h1>
                 </legend>
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Name")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Name")">
                     <h1 class="govuk-label-wrapper">
                         <span asp-validation-for="Name" class="govuk-error-message"></span>
                         <label class="govuk-label govuk-label--l" asp-for="Name">
@@ -44,14 +44,14 @@
                         What are the contact details?
                     </h1>
                 </legend>
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Address")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Address")">
                     <span asp-validation-for="Address" class="govuk-error-message"></span>
                     <label class="govuk-label" asp-for="Address">
                         Address
                     </label>
                     <input class="govuk-input" asp-for="Address" type="text" autocomplete="Address">
                 </div>
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Website")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Website")">
                     <span asp-validation-for="Website" class="govuk-error-message"></span>
                     <label class="govuk-label" asp-for="Website">
                         Website
@@ -119,7 +119,7 @@
                 <div id="regulations-hint" class="govuk-hint">
                     Select all that apply.
                 </div>
-                <div class="govuk-form-group @Html.ShowModelStateErrorClass(ViewData.ModelState,"Regulations")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Regulations")">
                     <div class="govuk-checkboxes" data-module="govuk-checkboxes">
                         @foreach (var regulation in Model.RegulationList)
                         {
