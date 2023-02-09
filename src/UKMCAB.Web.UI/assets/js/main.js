@@ -1,6 +1,8 @@
 ﻿const GOVUKFrontend = require('./govuk-frontend-all.js');
 import "./option-select.js";
+import "./shared/feedback-form.js";
 import "../scss/main.scss";
+
 
 // overriding to allow js on mobile, this must run before the initAll() method  
 GOVUKFrontend.Tabs.prototype.setupResponsiveChecks = function () {

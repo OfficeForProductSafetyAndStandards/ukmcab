@@ -10,5 +10,8 @@
         public string ResetPassword { get; set; }
         public string PasswordReset { get; set; }
         public string PasswordChanged { get; set; }
+
+        public string FeedbackForm { get; set; }
+        public string FeedbackEmail { get; set; }
     }
 }
