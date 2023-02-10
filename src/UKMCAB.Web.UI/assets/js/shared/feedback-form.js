@@ -40,7 +40,7 @@
             formData.append("WhatWentWrong", whatWentWrong.value);
             formData.append("ReturnURL", window.location.pathname);
 
-            fetch("feedback-form/submit-js",
+            fetch("/feedback-form/submit-js",
                 {
                     body: formData,
                     method: "post"

@@ -1,5 +1,4 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Feedback.FeedbackFormViewModel
-<div class="govuk-grid-row">
+﻿<div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <details class="govuk-details" data-module="govuk-details" id="feedback-form-details">
             <div id="feedback-form-error" class="feedback-form-errors-container govuk-visually-hidden">
@@ -14,29 +13,29 @@
                 <h2 class="govuk-heading-m">Help us improve GOV.UK</h2>
                 <p class="govuk-body">Don't include personal or financial information like your National Insurance number or credit card details.</p>
                 <form asp-area="Home" asp-controller="Feedback" asp-action="Submit" method="post">
-                    <input type="hidden" asp-for="ReturnURL" value="@Context.Request.Path"/>
+                    <input type="hidden" id="ReturnURL" name="ReturnURL" value="@Context.Request.Path"/>
                     <fieldset class="govuk-fieldset">
                         <div class="govuk-form-group">
                             <h1 class="govuk-label-wrapper">
-                                <label class=" govuk-heading-m" asp-for="WhatWereYouDoing">
+                                <label class=" govuk-heading-m" for="WhatWereYouDoing">
                                     What you were doing
                                 </label>
                             </h1>
                             <div id="doing-hint" class="govuk-hint">
                                 Please explain, step by step, what you did. If we can reproduce a problem, we can try and fix it.
                             </div>
-                            <textarea class="govuk-textarea" rows="5" aria-describedby="doing-hint" asp-for="WhatWereYouDoing"></textarea>
+                            <textarea class="govuk-textarea" rows="5" aria-describedby="doing-hint" id="WhatWereYouDoing" name="WhatWereYouDoing"></textarea>
                         </div>
                         <div class="govuk-form-group">
                             <h1 class="govuk-label-wrapper">
-                                <label class=" govuk-heading-m" asp-for="WhatWentWrong">
+                                <label class=" govuk-heading-m" for="WhatWentWrong">
                                     What went wrong
                                 </label>
                             </h1>
                             <div id="wrong-hint" class="govuk-hint">
                                 Please explain what you expected to happen, and what actually happened. A clear explanation will help us fix the problem.
                             </div>
-                            <textarea class="govuk-textarea" rows="5" aria-describedby="wrong-hint" asp-for="WhatWentWrong"></textarea>
+                            <textarea class="govuk-textarea" rows="5" aria-describedby="wrong-hint" id="WhatWentWrong" name="WhatWentWrong"></textarea>
                         </div>
                     </fieldset>
                     <div class="govuk-button-group">
