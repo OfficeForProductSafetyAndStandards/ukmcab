@@ -6,7 +6,6 @@ using Notify.Client;
 using Notify.Interfaces;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
-using UKMCAB.Core.Services.Account;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Storage;
 using UKMCAB.Identity.Stores.CosmosDB;
@@ -41,7 +40,6 @@ builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
-builder.Services.AddSingleton<IRegisterService, RegisterService>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
 builder.Services.AddCustomHttpErrorHandling();
 
@@ -152,18 +150,10 @@ app.MapControllerRoute(
 await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, seeds =>
 {
     var opssAdmin = new IdentityRole(Constants.Roles.OPSSAdmin);
-    var ogdUser = new IdentityRole(Constants.Roles.OGDUser);
-    var ukasUser = new IdentityRole(Constants.Roles.UKASUser);
     seeds
         .AddRole(role: opssAdmin)
-        .AddRole(role: ogdUser)
-        .AddRole(role: ukasUser)
         .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string>{"Construction"}, RequestReason = "Seeded", RequestApproved = true},
-            password: "adminP@ssw0rd!", roles: opssAdmin)
-        .AddUser(user: new() { Email = "ogduser@ukmcab.gov.uk", UserName = "ogduser@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string> { "Construction" }, RequestReason = "Seeded", RequestApproved = true },
-            password: "ogdP@ssw0rd!", roles: ogdUser)
-        .AddUser(user: new() { Email = "ukasuser@ukas.com", UserName = "ukasuser@ukas.com", EmailConfirmed = true, Regulations = new List<string>(), RequestReason = "Seeded", RequestApproved = true },
-            password: "ukasP@ssw0rd!", roles: ukasUser);
+            password: "adminP@ssw0rd!", roles: opssAdmin);
 
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
 });
