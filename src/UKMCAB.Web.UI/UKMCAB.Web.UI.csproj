@@ -7,6 +7,13 @@
     <UserSecretsId>455e736c-9f79-4c46-8522-1a7749c2687d</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Remove="Areas\Account\Views\Shared\**" />
+    <Content Remove="Areas\Account\Views\Shared\**" />
+    <EmbeddedResource Remove="Areas\Account\Views\Shared\**" />
+    <None Remove="Areas\Account\Views\Shared\**" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <Content Remove="C:\Users\krist\.nuget\packages\microsoft.azure.cosmos\3.31.0\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
@@ -50,7 +57,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\Account\Views\Shared\" />
     <Folder Include="wwwroot\assets\js\" />
     <None Include="Pages\400.cshtml" />
     <None Include="Pages\401.cshtml" />

@@ -3,7 +3,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form method="post">
-            <partial name="_ValidationSummary" model="ViewData.ModelState"/>
+            <partial name="Partials/_ValidationSummary" model="ViewData.ModelState"/>
             <input asp-for="Code" type="hidden" />
             
             <fieldset class="govuk-fieldset">
