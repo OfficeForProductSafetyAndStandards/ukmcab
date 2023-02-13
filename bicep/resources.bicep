@@ -459,7 +459,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
     }
     subnets: [
       {
-        name: vnetSubnetNameApplicationGateway // vnet subnet for application-gateway
+        name: vnetSubnetNameApplicationGateway // vnet subnet for application-gateway (range: 10.0.0.0-10.0.0.255)
         type: 'Microsoft.Network/virtualNetworks/subnets'
         properties: {
           addressPrefix: '10.0.0.0/24'
@@ -467,7 +467,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
         }
       }
       {
-        name: vnetSubnetNameApplication // vnet subnet for application itself
+        name: vnetSubnetNameApplication // vnet subnet for application itself (range: 10.0.1.0 to 10.0.1.255)
         type: 'Microsoft.Network/virtualNetworks/subnets'
         properties: {
           addressPrefix: '10.0.1.0/24'
@@ -661,6 +661,64 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
     ]
 
   }
+}
+
+
+
+/*
+  PRIVATE LINK bits
+*/
+resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
+  name: '${appService.name}-endpoint'
+  location: location
+  properties: {
+    subnet: {
+      id: vnet::vnetSubnetApplication.id
+    }
+    privateLinkServiceConnections: [
+      {
+        name: '${appService.name}-connection'
+        properties: {
+          privateLinkServiceId: appService.id
+          groupIds: [
+            'sites'
+          ]
+        }
+      }
+    ]
+  }
+}
+
+resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: 'privatelink.azurewebsites.net'
+  location: 'global'
+}
+
+resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
+  parent: privateDnsZone
+  name: '${privateDnsZone.name}-dnslink'
+  location: 'global'
+  properties: {
+    registrationEnabled: false
+    virtualNetwork: {
+      id: vnet.id
+    }
+  }
+}
+
+resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
+  name: 'privatelinkdns' 
+  properties: {
+    privateDnsZoneConfigs: [
+      {
+        name: 'config1'
+        properties: {
+          privateDnsZoneId: privateDnsZone.id
+        }
+      }
+    ]
+  }
+  parent: privateEndpoint
 }
 
 
