@@ -533,6 +533,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       {
         name: applicationGatewayBackendPool
         properties: {
+
           backendAddresses: [
             {
               fqdn: appService.properties.defaultHostName
@@ -666,10 +667,10 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
 
 
 /*
-  PRIVATE LINK bits
+  PRIVATE LINK
 */
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
-  name: 'app-endpoint'
+  name: 'ep-${appService.name}'
   location: location
   properties: {
     subnet: {
@@ -689,6 +690,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
   }
 }
 
+// DNS zone for the privatelink dns entry
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.azurewebsites.net'
   location: 'global'
