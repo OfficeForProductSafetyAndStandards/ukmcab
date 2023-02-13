@@ -694,19 +694,20 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
 resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.azurewebsites.net'
   location: 'global'
-}
 
-resource privateDnsZoneLink 'Microsoft.Network/privateDnsZones/virtualNetworkLinks@2020-06-01' = {
-  parent: privateDnsZone
-  name: 'dnslink'
-  location: 'global'
-  properties: {
-    registrationEnabled: false
-    virtualNetwork: {
-      id: vnet.id
+  resource privateDnsZoneLink 'virtualNetworkLinks@2020-06-01' = {
+    name: 'dnsVirtualNetworkLink'
+    location: 'global'
+    properties: {
+      registrationEnabled: false
+      virtualNetwork: {
+        id: vnet.id
+      }
     }
   }
 }
+
+
 
 resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
   name: 'privatelinkdns' 
