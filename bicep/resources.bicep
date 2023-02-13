@@ -680,6 +680,9 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
         name: '${appService.name}-connection'
         properties: {
           privateLinkServiceId: appService.id
+          groupIds: [
+            'a'
+          ]
         }
       }
     ]
