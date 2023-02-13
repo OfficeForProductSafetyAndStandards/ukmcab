@@ -723,7 +723,16 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
 }
 
 
+/*
+  NOTE: APPLICATION GATEWAY PRIVATE ENDPOINT DNS ISSUE
+  If the application is not accessible (returns 403), it's likely the backend pool dns needs updating. i.e, Application Gateway needs to restart
+  in order to re-resolve the DNS of the backend pool AFTER the private endpoint config has been activated above.
 
+  To restart app gateway in the dev env:
+  az network application-gateway stop -n agw-ukmcab-dev -g rg-ukmcab-dev
+  az network application-gateway start -n agw-ukmcab-dev -g rg-ukmcab-dev
+
+*/
 
 
 
