@@ -16,12 +16,6 @@
         <div class="app-sign-in-nav-item">
             <a class="govuk-header__link" id="logout" asp-area="Account" asp-controller="Manage" asp-action="ChangePassword">Change password</a>
         </div>
-        @if (isOPSS)
-        {
-            <div class="app-sign-in-nav-item">
-                <a class="govuk-header__link" id="logout" asp-area="Account" asp-controller="Manage" asp-action="PendingRequests">Pending registrations</a>
-            </div>
-        }
     }
     else
     {

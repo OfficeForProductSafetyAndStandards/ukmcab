@@ -3,7 +3,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="account" method="post">
-            <partial name="_ValidationSummary" model="ViewData.ModelState"/>
+            <partial name="Partials/_ValidationSummary" model="ViewData.ModelState"/>
             <input type="hidden" asp-for="ReturnURL"/>
 
             <fieldset class="govuk-fieldset">
@@ -30,9 +30,6 @@
                 <div>
                     <p class="govuk-body">
                         <a asp-controller="ForgotPassword" asp-action="Index" class="govuk-link">Forgot your password?</a>
-                    </p>
-                    <p class="govuk-body">
-                        <a asp-controller="Register" asp-action="Index" asp-route-returnUrl="@Model.ReturnURL" class="govuk-link">Register as a new user</a>
                     </p>
                 </div>
             </fieldset>

@@ -102,7 +102,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            if (string.IsNullOrWhiteSpace(logoutViewModel.ReturnURL))
+            if (!string.IsNullOrWhiteSpace(logoutViewModel.ReturnURL))
             {
                 return Redirect(logoutViewModel.ReturnURL);
             }
