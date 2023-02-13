@@ -669,7 +669,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
   PRIVATE LINK bits
 */
 resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
-  name: '${appService.name}-endpoint'
+  name: 'app-endpoint'
   location: location
   properties: {
     subnet: {
@@ -677,11 +677,11 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
     }
     privateLinkServiceConnections: [
       {
-        name: '${appService.name}-connection'
+        name: 'plconnection'
         properties: {
           privateLinkServiceId: appService.id
           groupIds: [
-            'a'
+            'sites'
           ]
         }
       }
