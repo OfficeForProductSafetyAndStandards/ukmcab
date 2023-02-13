@@ -695,16 +695,16 @@ resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
   name: 'privatelink.azurewebsites.net'
   location: 'global'
 
-  // resource privateDnsZoneLink 'virtualNetworkLinks@2020-06-01' = {
-  //   name: 'dnsVirtualNetworkLink'
-  //   location: 'global'
-  //   properties: {
-  //     registrationEnabled: false
-  //     virtualNetwork: {
-  //       id: vnet.id
-  //     }
-  //   }
-  // }
+  resource privateDnsZoneLink 'virtualNetworkLinks@2020-06-01' = {
+    name: 'privatelink.azurewebsites.net-dnslink'
+    location: 'global'
+    properties: {
+      registrationEnabled: false
+      virtualNetwork: {
+        id: vnet.id
+      }
+    }
+  }
 }
 
 resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
