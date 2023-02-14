@@ -42,6 +42,11 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     return RedirectToAction("Confirmation");
                 }
 
+                if (user.LockoutEnd > DateTime.UtcNow)
+                {
+                    return RedirectToAction("Lockout", "Home");
+                }
+
                 // For more information on how to enable account confirmation and password reset please
                 // visit https://go.microsoft.com/fwlink/?LinkID=532713
                 var code = await _userManager.GeneratePasswordResetTokenAsync(user);
