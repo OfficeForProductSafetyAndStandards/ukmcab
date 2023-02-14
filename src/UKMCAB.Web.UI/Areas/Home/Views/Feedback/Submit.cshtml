@@ -4,7 +4,7 @@
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <partial name="_ValidationSummary" model="ViewData.ModelState"/>
+        <partial name="Partials/_ValidationSummary" model="ViewData.ModelState"/>
         <h1 class="govuk-heading-l">Help us to improve GOV.UK</h1>
         <p class="govuk-body">Don't include personal or financial information like your National Insurance number or credit card details.</p>
         <form asp-area="Home" asp-controller="Feedback" asp-action="Submit" method="post">

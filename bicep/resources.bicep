@@ -459,7 +459,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
     }
     subnets: [
       {
-        name: vnetSubnetNameApplicationGateway // vnet subnet for application-gateway
+        name: vnetSubnetNameApplicationGateway // vnet subnet for application-gateway (range: 10.0.0.0-10.0.0.255)
         type: 'Microsoft.Network/virtualNetworks/subnets'
         properties: {
           addressPrefix: '10.0.0.0/24'
@@ -467,7 +467,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
         }
       }
       {
-        name: vnetSubnetNameApplication // vnet subnet for application itself
+        name: vnetSubnetNameApplication // vnet subnet for application itself (range: 10.0.1.0 to 10.0.1.255)
         type: 'Microsoft.Network/virtualNetworks/subnets'
         properties: {
           addressPrefix: '10.0.1.0/24'
@@ -533,6 +533,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       {
         name: applicationGatewayBackendPool
         properties: {
+
           backendAddresses: [
             {
               fqdn: appService.properties.defaultHostName
@@ -665,6 +666,73 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
 
 
 
+/*
+  PRIVATE LINK
+*/
+resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
+  name: 'ep-${appService.name}'
+  location: location
+  properties: {
+    subnet: {
+      id: vnet::vnetSubnetApplication.id
+    }
+    privateLinkServiceConnections: [
+      {
+        name: 'plconnection'
+        properties: {
+          privateLinkServiceId: appService.id
+          groupIds: [
+            'sites'
+          ]
+        }
+      }
+    ]
+  }
+}
+
+// DNS zone for the privatelink dns entry
+resource privateDnsZone 'Microsoft.Network/privateDnsZones@2020-06-01' = {
+  name: 'privatelink.azurewebsites.net'
+  location: 'global'
+
+  resource privateDnsZoneLink 'virtualNetworkLinks@2020-06-01' = {
+    name: 'privatelink.azurewebsites.net-dnslink'
+    location: 'global'
+    properties: {
+      registrationEnabled: false
+      virtualNetwork: {
+        id: vnet.id
+      }
+    }
+  }
+}
+
+resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = {
+  name: 'privatelinkdns' 
+  parent: privateEndpoint
+  properties: {
+    privateDnsZoneConfigs: [
+      {
+        name: 'config1'
+        properties: {
+          privateDnsZoneId: privateDnsZone.id
+        }
+      }
+    ]
+  }
+}
+
+
+/*
+  NOTE: APPLICATION GATEWAY PRIVATE ENDPOINT DNS ISSUE
+  If the application is not accessible (returns 403), it's likely the backend pool dns needs updating. i.e, Application Gateway needs to restart
+  in order to re-resolve the DNS of the backend pool AFTER the private endpoint config has been activated above.
+
+  To restart app gateway in the dev env:
+  az network application-gateway stop -n agw-ukmcab-dev -g rg-ukmcab-dev
+  az network application-gateway start -n agw-ukmcab-dev -g rg-ukmcab-dev
+
+*/
 
 
 
