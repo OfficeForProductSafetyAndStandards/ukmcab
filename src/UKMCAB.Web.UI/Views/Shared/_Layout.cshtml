@@ -70,11 +70,8 @@
                     <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide menu" hidden>Menu</button>
 
                     <ul id="navigation" class="govuk-header__navigation-list">
-                        <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "home", "govuk-header__navigation-item--active")">
-                            <a asp-controller="Home" asp-action="Index" class="govuk-header__link">Home</a>
-                        </li>
                         <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "search", "govuk-header__navigation-item--active")">
-                            <a asp-controller="FindACAB" asp-action="Index" class="govuk-header__link">Find a CAB</a>
+                            <a asp-area="Search" asp-controller="Search" asp-action="Index" class="govuk-header__link">Search</a>
                         </li>
                         <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "news", "govuk-header__navigation-item--active")">
                             <a asp-controller="News" class="govuk-header__link">News</a>
