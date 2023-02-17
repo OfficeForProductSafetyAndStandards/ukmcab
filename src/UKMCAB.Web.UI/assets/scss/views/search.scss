@@ -9,6 +9,68 @@
 
         #search-results-list-column {
             order: 1;
+
+            .search-results-pagination-container {
+                height: 90px;
+
+                .search-results-pagination-detail-container {
+                    width: 100%;
+                }
+
+                .search-results-pagination-links-container {
+                    text-align: left;
+                    width: 100%;
+
+                    .search-results-pagination-links {
+                        .search-results-pagination-link-item {
+                            a {
+                                span {
+                                    padding: 0;
+                                }
+                            }
+                        }
+
+                        .search-results-pagination-page-link {
+                            display: none;
+                        }
+                    }
+                }
+
+                #search-results-filters-link-container {
+                    display: block;
+
+                    a {
+                        display: block;
+                        padding: 60px 0 0 20px;
+                        position: relative;
+                    }
+
+                    a::before {
+                        content: "";
+                        position: absolute;
+                        left: 0;
+                        top: 62px;
+                        width: 18px;
+                        height: 16px;
+                        background-color: #fff;
+                        background-image: url('../images/filter-icon.png');
+                        background-repeat: no-repeat;
+                        background-size: contain;
+                    }
+                }
+            }
+
+            #search-results-sort-container {
+                fieldset {
+                    legend {
+                        display: none;
+                    }
+
+                    label, a {
+                        padding: 0 10px;
+                    }
+                }
+            }
         }
     }
 }
@@ -185,7 +247,7 @@
         float: left;
     }
 
-    .search-results-pagination-links-containter {
+    .search-results-pagination-links-container {
         width: 50%;
         float: left;
         text-align: right;
@@ -195,15 +257,16 @@
             margin: 0;
             list-style: none;
             padding: 0;
-            
+
             .search-results-pagination-link-item {
                 display: inline;
-                
+
                 a {
                     span {
                         text-decoration: underline;
                     }
                 }
+
                 span {
                     float: left;
                     position: relative;
@@ -211,6 +274,10 @@
                 }
             }
         }
+    }
+
+    #search-results-filters-link-container {
+        display: none;
     }
 }
 
