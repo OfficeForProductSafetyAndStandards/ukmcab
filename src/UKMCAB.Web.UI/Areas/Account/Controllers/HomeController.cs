@@ -65,7 +65,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     if (result.IsLockedOut)
                     {
                         _logger.LogWarning("User account locked out.");
-                        return Redirect("./Lockout"); // TODO: needs fixing
+                        return RedirectToAction("Lockout"); 
                     }
                     ModelState.AddModelError("Email", "Invalid login attempt.");
                 }

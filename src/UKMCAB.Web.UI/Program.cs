@@ -67,6 +67,7 @@ builder.Services.Configure<IdentityStoresOptions>(options =>
 builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
     {
         options.Password.RequiredLength = 8;
+        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(2);
     })
     .AddRoles<IdentityRole>()
     .AddAzureCosmosDbStores();
