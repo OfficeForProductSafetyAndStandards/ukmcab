@@ -317,6 +317,7 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     serverFarmId: appServicePlan.id
     siteConfig: {
       linuxFxVersion: 'DOTNETCORE|6.0'
+      alwaysOn: true
       appSettings: [
         {
           name: 'AppInsightsConnectionString'
