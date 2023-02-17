@@ -735,6 +735,33 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
 */
 
 
+resource webConfig 'Microsoft.Web/sites/config@2022-03-01' = {
+  name: 'web'
+  parent: appService
+  properties: {
+    publicNetworkAccess: 'Enabled'
+    ipSecurityRestrictions: [
+      {
+        ipAddress: 'Any'
+        name: 'Deny all'
+        action: 'Deny'
+        tag: 'Default'
+        priority: 1
+        description: 'Deny all access to the main site via public endpoint'
+      }
+    ]
+    scmIpSecurityRestrictions: [
+      {
+        ipAddress: 'Any'
+        name: 'Allow all'
+        action: 'Allow'
+        tag: 'Default'
+        priority: 1
+        description: 'Allow all IP access to SCM site for CI-CD pipeline.'
+      }
+    ]
+  }
+}
 
 
 /*
