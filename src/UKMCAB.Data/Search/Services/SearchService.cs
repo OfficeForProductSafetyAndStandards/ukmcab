@@ -1,7 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
-using Microsoft.VisualBasic;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Search.Models;
 
