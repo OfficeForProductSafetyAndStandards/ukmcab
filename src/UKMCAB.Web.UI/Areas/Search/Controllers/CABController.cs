@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Core.Models;
 using UKMCAB.Core.Services;
-using UKMCAB.Web.UI.Models.ViewModels.FindACAB;
+using UKMCAB.Web.UI.Models.ViewModels.Search;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
