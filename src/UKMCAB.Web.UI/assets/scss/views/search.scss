@@ -9,7 +9,7 @@
             #search-results-form {
                 #search-filter-container {
                     #search-filter-options {
-                        .search-filter-option-list{
+                        .search-filter-option-list {
                             height: 100%;
                         }
                     }
@@ -43,15 +43,23 @@
                         .search-results-pagination-page-link {
                             display: none;
                         }
+
+                        .search-results-pagination-previous {
+                            a {
+                                span {
+                                    padding-right: 10px;
+                                }
+                            }
+                        }
                     }
                 }
 
                 #search-results-filters-link-container {
-                    display: block;
+                    display: inline-block;
 
                     a {
                         display: block;
-                        padding: 60px 0 0 20px;
+                        padding-left: 20px;
                         position: relative;
                     }
 
@@ -59,7 +67,7 @@
                         content: "";
                         position: absolute;
                         left: 0;
-                        top: 62px;
+                        top: 3px;
                         width: 18px;
                         height: 16px;
                         background-color: #fff;

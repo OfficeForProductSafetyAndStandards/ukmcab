@@ -1,4 +1,4 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.FindACAB.CABProfileViewModel
+﻿@model CABProfileViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="Partials/_ValidationSummary" model="ViewData.ModelState"/>
@@ -166,7 +166,7 @@
                         @foreach (var file in Model.ProductSchedules)
                         {
                             <li class="cab-profile-file-list-item">
-                                <a class="govuk-link" asp-area="FindACAB" asp-controller="CAB" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-type="schedules">@file.FileName</a>
+                                <a class="govuk-link" asp-area="search" asp-controller="CAB" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-type="schedules">@file.FileName</a>
                             </li>
                         }                        
                     </ul>

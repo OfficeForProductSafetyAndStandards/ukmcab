@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Core.Models;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.FindACAB
+namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
     public class CABProfileViewModel : ILayoutModel
     {

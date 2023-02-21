@@ -1,0 +1,40 @@
+﻿@model PaginationViewModel
+<div class="search-results-pagination-detail-container">
+    @if (Model.Total == 0)
+    {
+        <span>Showing 0 bodies</span>
+    }
+    else
+    {
+        <span>Showing @Model.FirstResult - @Model.LastResult of <span class="govuk-!-font-weight-bold">@Model.Total</span> bodies</span>
+    }
+</div>
+
+@if (Model.TotalPages > 1)
+{
+    var basePath = Model.BaseURL(Context);
+    var pageRange = Model.PageRange();
+    <div class="search-results-pagination-links-container">
+        <ul class="search-results-pagination-links">
+            @if (Model.ShowPrevious)
+            {
+                <li class="search-results-pagination-link-item search-results-pagination-previous"><a href="@(basePath + "pagenumber=" + (Model.PageNumber - 1))" class="govuk-link govuk-link--no-visited-state"><span>Previous</span></a></li>
+            }
+            @foreach (var pageNumber in pageRange)
+            {
+                if (pageNumber == Model.PageNumber)
+                {
+                    <li class="search-results-pagination-link-item search-results-pagination-page-link"><span>@Model.PageNumber</span></li>
+                }
+                else
+                {
+                    <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="@(basePath + "pagenumber=" + pageNumber)" class="govuk-link govuk-link--no-visited-state"><span>@pageNumber</span></a></li>
+                }
+            }
+            @if (Model.ShowNext)
+            {
+                <li class="search-results-pagination-link-item"><a href="@(basePath + "pagenumber=" + (Model.PageNumber + 1))" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
+            }
+        </ul>
+    </div>
+}

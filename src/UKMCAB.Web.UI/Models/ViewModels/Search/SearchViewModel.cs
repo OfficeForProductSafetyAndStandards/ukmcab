@@ -12,6 +12,8 @@
         public string[] TestingLocations { get; set; }
         public string[] LegislativeAreas { get; set; }
 
+        public int PageNumber { get; set; }
+
         // Form elements
         public List<string> BodyTypeOptions { get; set; }
         public List<string> RegisteredOfficeLocationOptions { get; set; }
@@ -20,5 +22,6 @@
 
         // Results
         public List<ResultViewModel> SearchResults { get; set; }
+        public PaginationViewModel Pagination { get; set; }
     }
 }

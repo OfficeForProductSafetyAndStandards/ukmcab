@@ -3,21 +3,8 @@
 <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
 
     <div class="search-results-pagination-container">
-        <div class="search-results-pagination-detail-container">
-            <span>Showing 1 - 20 of <span class="govuk-!-font-weight-bold">169</span> bodies</span>
-        </div>
+        <partial name="Partials/_SearchPagination" model="Model.Pagination"/>
 
-        <div class="search-results-pagination-links-container">
-            <ul class="search-results-pagination-links">
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><span>1</span></li>
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>2</span></a></li>
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>3</span></a></li>
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>4</span></a></li>
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>5</span></a></li>
-                <li class="search-results-pagination-link-item"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
-            </ul>
-        </div>
-        
         <div id="search-results-filters-link-container">
             <a href="#search-filter-container" class="search-results-filter-toggle govuk-link govuk-link--no-visited-state">Filters (0 applied)</a>
         </div>
@@ -38,8 +25,8 @@
             @foreach (var searchResult in Model.SearchResults)
             {
                 <li class="search-result-list-item">
-                    <a href="#" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
-                    <h3 class="govuk-heading-m search-result-list-item-link"><a href="#" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
+                    <a asp-area="FindACAB" asp-controller="CAB" asp-action="Index" asp-route-id="@searchResult.id" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
+                    <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="FindACAB" asp-controller="CAB" asp-action="Index" asp-route-id="@searchResult.id" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
                     <ul class="search-result-list-item-details">
                         <li class="search-result-list-item-detail">@searchResult.Address</li>
                         <li class="search-result-list-item-detail">Body type: @searchResult.BodyType</li>
@@ -53,20 +40,7 @@
     </div>
 
     <div class="search-results-pagination-container">
-        <div class="search-results-pagination-detail-container">
-            <span>Showing 1 - 20 of <span class="govuk-!-font-weight-bold">169</span> bodies</span>
-        </div>
-
-        <div class="search-results-pagination-links-container">
-            <ul class="search-results-pagination-links">
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><span>1</span></li>
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>2</span></a></li>
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>3</span></a></li>
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>4</span></a></li>
-                <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>5</span></a></li>
-                <li class="search-results-pagination-link-item"><a href="#" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
-            </ul>
-        </div>
+        <partial name="Partials/_SearchPagination" model="Model.Pagination"/>
     </div>
 
 </div>

@@ -6,6 +6,8 @@ public static class Constants
     public const string SiteName = "UKMCAB alpha - GOV.UK";
     public const string NotProvided = "Not provided";
 
+    public const int SearchResultPerPage = 20;
+
     public static class Config
     {
         public const string ContainerNameDataProtectionKeys = "dataprotectionkeys";
