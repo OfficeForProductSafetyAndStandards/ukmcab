@@ -7,6 +7,7 @@ using Notify.Interfaces;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Identity.Stores.CosmosDB.Extensions;
@@ -41,6 +42,7 @@ builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageReposi
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
+builder.Services.AddSingleton<ISearchService, SearchService>();
 builder.Services.AddCustomHttpErrorHandling();
 
 builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
