@@ -3,5 +3,6 @@
     public class CABSearchOptions
     {
         public int PageNumber { get; set; }
+        public string Keywords { get; set; }
     }
 }

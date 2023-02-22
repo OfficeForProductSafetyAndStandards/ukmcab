@@ -9,35 +9,49 @@
             <a href="#search-filter-container" class="search-results-filter-toggle govuk-link govuk-link--no-visited-state">Filters (0 applied)</a>
         </div>
     </div>
-
-    <div id="search-results-sort-container">
-        <fieldset>
-            <legend>Sort view</legend>
-            <label>Random</label>
-            <a href="#" class="govuk-link">Last updated</a>
-            <a href="#" class="govuk-link">A to Z</a>
-            <a href="#" class="govuk-link">Z to A</a>
-        </fieldset>
-    </div>
-
-    <div id="search-results-list-container">
-        <ul id="search-results-list">
-            @foreach (var searchResult in Model.SearchResults)
-            {
-                <li class="search-result-list-item">
-                    <a asp-area="search" asp-controller="CAB" asp-action="Index" asp-route-id="@searchResult.id" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
-                    <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CAB" asp-action="Index" asp-route-id="@searchResult.id" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
-                    <ul class="search-result-list-item-details">
-                        <li class="search-result-list-item-detail">@searchResult.Address</li>
-                        <li class="search-result-list-item-detail">Body type: @searchResult.BodyType</li>
-                        <li class="search-result-list-item-detail">Registered office location: @searchResult.RegisteredOfficeLocation</li>
-                        <li class="search-result-list-item-detail">Testing location: @searchResult.RegisteredTestLocation</li>
-                        <li class="search-result-list-item-detail">Legislative ares: @searchResult.LegislativeArea</li>
-                    </ul>
-                </li>
-            }
-        </ul>
-    </div>
+    @if (Model.Pagination.Total > 0)
+    {
+        <div id="search-results-sort-container">
+            <fieldset>
+                <legend>Sort view</legend>
+                <label>Random</label>
+                <a href="#" class="govuk-link">Last updated</a>
+                <a href="#" class="govuk-link">A to Z</a>
+                <a href="#" class="govuk-link">Z to A</a>
+            </fieldset>
+        </div>
+        <div id="search-results-list-container">
+            <ul id="search-results-list">
+                @foreach (var searchResult in Model.SearchResults)
+                {
+                    <li class="search-result-list-item">
+                        <a asp-area="search" asp-controller="CAB" asp-action="Index" asp-route-id="@searchResult.id" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
+                        <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CAB" asp-action="Index" asp-route-id="@searchResult.id" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
+                        <ul class="search-result-list-item-details">
+                            <li class="search-result-list-item-detail">@searchResult.Address</li>
+                            <li class="search-result-list-item-detail">Body type: @searchResult.BodyType</li>
+                            <li class="search-result-list-item-detail">Registered office location: @searchResult.RegisteredOfficeLocation</li>
+                            <li class="search-result-list-item-detail">Testing location: @searchResult.RegisteredTestLocation</li>
+                            <li class="search-result-list-item-detail">Legislative ares: @searchResult.LegislativeArea</li>
+                        </ul>
+                    </li>
+                }
+            </ul>
+        </div>
+    }
+    else
+    {
+        <div id="search-no-results-container">
+            <p class="govuk-body">There are no matching results.</p>
+            <p class="govuk-body">Please try:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>removing filters</li>
+                <li>double-checking your spelling</li>
+                <li>use fewer keywords</li>
+                <li>searching for something less specific</li>
+            </ul>
+        </div>        
+    }
 
     <div class="search-results-pagination-container">
         <partial name="Partials/_SearchPagination" model="Model.Pagination"/>

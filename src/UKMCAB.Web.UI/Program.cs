@@ -42,7 +42,6 @@ builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageReposi
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
-builder.Services.AddSingleton<ISearchService, SearchService>();
 builder.Services.AddCustomHttpErrorHandling();
 
 builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
@@ -62,6 +61,8 @@ if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
     builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(cosmosClient, database, container)); // Used by stop gap admin form
     builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosClient, database, "cab-documents")); // Used by new admin form
 }
+
+builder.Services.AddSearchService(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]), cosmosConnectionString, Constants.SearchResultPerPage);
 
 builder.Services.Configure<IdentityStoresOptions>(options =>
     options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));
