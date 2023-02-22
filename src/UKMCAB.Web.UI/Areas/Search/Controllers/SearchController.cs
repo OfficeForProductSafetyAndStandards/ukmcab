@@ -24,7 +24,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
             var searchResult = await _searchService.QueryAsync(new CABSearchOptions
             {
-                PageNumber = model.PageNumber
+                PageNumber = model.PageNumber,
+                Keywords = model.Keywords
             });
 
 
@@ -39,7 +40,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Address = c.Address,
                 BodyType = ListToString(c.BodyTypes),
                 RegisteredOfficeLocation = c.RegisteredOfficeLocation,
-                RegisteredTestLocation = string.Empty,
+                RegisteredTestLocation = ListToString(c.TestingLocations),
                 LegislativeArea = ListToString(c.LegislativeAreas)
             }).ToList();
             model.Pagination = new PaginationViewModel
@@ -51,19 +52,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(model);
         }
 
-        private string ListToString(List<string> list)
+        private string ListToString(string[] list)
         {
-            if (list == null || list.Count == 0)
+            if (list == null || list.Length == 0)
             {
                 return string.Empty;
             }
 
-            if (list.Count == 1)
+            if (list.Length == 1)
             {
                 return list.First();
             }
 
-            return $"{list.First()} and {list.Count - 1} other{(list.Count > 2 ? "s" : string.Empty)}";
+            return $"{list.First()} and {list.Length - 1} other{(list.Length > 2 ? "s" : string.Empty)}";
         }
     }
 }

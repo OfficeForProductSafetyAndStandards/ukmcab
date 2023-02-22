@@ -1,6 +1,8 @@
-﻿using Azure;
+﻿using System.Drawing.Imaging;
+using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Search.Models;
 
@@ -11,30 +13,42 @@ namespace UKMCAB.Data.Search.Services
         private SearchClient _indexClient;
         private readonly int SearchResultPerPage;
 
-        public SearchService(CognitiveSearchConnectionString connectionString)
+        public SearchService(SearchClient searchClient, int searhchResultPerPage)
         {
-            var client = new SearchIndexClient(new Uri(connectionString.Endpoint), new AzureKeyCredential(connectionString.ApiKey));
-            _indexClient = client.GetSearchClient("ukmcab-index");
-            SearchResultPerPage = 20;
+            _indexClient = searchClient;
+            SearchResultPerPage = searhchResultPerPage;
         }
 
         public async Task<CABResults> QueryAsync(CABSearchOptions options)
         {
-            var results = await _indexClient.SearchAsync<CABResult>("*", new SearchOptions
+            var query = string.IsNullOrWhiteSpace(options.Keywords) ? "*" : options.Keywords;
+            var search = await _indexClient.SearchAsync<CABDocument>(query, new SearchOptions
             {
                 Size = SearchResultPerPage,
                 IncludeTotalCount = true,
                 Skip = SearchResultPerPage * (options.PageNumber - 1)
             });
-
-            var cabResults = results.Value.GetResults().ToList();
-            var cabs = cabResults.Select(r => r.Document).ToList();
-            return new CABResults
+            var cabResults = new CABResults
             {
-                CABs = cabs,
                 PageNumber = options.PageNumber,
-                Total = Convert.ToInt32(results.Value?.TotalCount.Value ?? 0)
+                Total = 0,
+                CABs = new List<CABDocument>()
             };
+            if (!search.HasValue)
+            {
+                return cabResults;
+            } 
+            
+            var results = search.Value.GetResults().ToList();
+            if (!results.Any())
+            {
+                return cabResults;
+            }
+
+            var cabs = results.Select(r => r.Document).ToList();
+            cabResults.CABs = cabs;
+            cabResults.Total = Convert.ToInt32(search.Value.TotalCount);
+            return cabResults;
         }
     }
 }

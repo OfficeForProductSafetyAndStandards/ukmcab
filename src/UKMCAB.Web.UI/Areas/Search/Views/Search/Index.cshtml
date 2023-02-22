@@ -1,11 +1,12 @@
 ﻿@model SearchViewModel
 @{
     ViewData["nav"] = "search";
+    var title = string.IsNullOrWhiteSpace(Model.Keywords) ? "Search" : $"Search matching &quot;{Model.Keywords}&quot;";
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Search</h1>
+        <h1 class="govuk-heading-l">@Html.Raw(title)</h1>
     </div>
 </div>
 

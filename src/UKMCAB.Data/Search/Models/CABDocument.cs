@@ -1,0 +1,60 @@
+﻿using Azure.Search.Documents.Indexes;
+
+namespace UKMCAB.Data.Search.Models
+{
+    public class CABDocument
+    {
+        [SimpleField(IsKey = true)]
+        public string id { get; set; }
+
+        [SearchableField(IsSortable = true)]
+        public string Name { get; set; }
+
+        [SimpleField]
+        public string Address { get; set; }
+
+        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        public string[] BodyTypes { get; set; }
+
+        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        public string[] LegislativeAreas { get; set; }
+
+        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        public string[] TestingLocations { get; set; }
+
+        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        public string RegisteredOfficeLocation { get; set; }
+
+        [SimpleField(IsSortable = true)]
+        public DateTime? LastUpdatedDate { get; set; }
+
+        [SearchableField]
+        public MetaData MetaData { get; set; }
+    }
+
+    public class MetaData
+    {
+        [SearchableField]
+        public string bodynumber { get; set; }
+        [SearchableField]
+        public string lastupdated { get; set; }
+        [SearchableField]
+        public string bodytype { get; set; }
+        [SearchableField]
+        public string registeredofficelocation { get; set; }
+        [SearchableField]
+        public string testinglocations { get; set; }
+        [SearchableField]
+        public string website { get; set; }
+        [SearchableField]
+        public string email { get; set; }
+        [SearchableField]
+        public string phone { get; set; }
+        [SearchableField]
+        public string legislativearea { get; set; }
+        [SearchableField]
+        public string from { get; set; }
+        [SearchableField]
+        public string published { get; set; }
+    }
+}
