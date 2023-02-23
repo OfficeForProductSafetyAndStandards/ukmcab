@@ -178,7 +178,7 @@
         .search-filter-option-list {
             overflow-x: hidden;
             overflow-y: auto;
-            height: 200px;
+            max-height: 200px;
             clear: both;
             border: #bfc1c3 1px solid;
             margin-bottom: 20px;

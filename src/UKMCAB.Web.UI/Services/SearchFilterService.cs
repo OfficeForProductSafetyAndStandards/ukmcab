@@ -2,10 +2,10 @@
 
 public class SearchFilterService : ISearchFilterService
 {
-    public List<FilterOption> BodyTypeFilter { get; }
-    public List<FilterOption> RegisteredOfficeLocationFilter { get; }
-    public List<FilterOption> TestingLocationFilter { get; }
-    public List<FilterOption> RegulationFilter { get; }
+    public List<FilterOptionn> BodyTypeFilter { get; }
+    public List<FilterOptionn> RegisteredOfficeLocationFilter { get; }
+    public List<FilterOptionn> TestingLocationFilter { get; }
+    public List<FilterOptionn> RegulationFilter { get; }
 
 
     public SearchFilterService()
@@ -16,9 +16,9 @@ public class SearchFilterService : ISearchFilterService
         RegulationFilter = CreateFilterOptions(Constants.Lists.LegislativeAreas, "ukmcab-regulation"); 
     }
 
-    private static List<FilterOption> CreateFilterOptions(List<string> filters, string idPrefix)
+    private static List<FilterOptionn> CreateFilterOptions(List<string> filters, string idPrefix)
     {
-        return filters.Select(f => new FilterOption
+        return filters.Select(f => new FilterOptionn
         {
             Id = $"{idPrefix}-{SanitiseIdString(f)}" ,
             Value = f

@@ -15,10 +15,10 @@
         public int PageNumber { get; set; }
 
         // Form elements
-        public List<string> BodyTypeOptions { get; set; }
-        public List<string> RegisteredOfficeLocationOptions { get; set; }
-        public List<string> TestingLocationOptions { get; set; }
-        public List<string> LegislativeAreaOptions { get; set; }
+        public List<FilterOption> BodyTypeOptions { get; set; }
+        public List<FilterOption> RegisteredOfficeLocationOptions { get; set; }
+        public List<FilterOption> TestingLocationOptions { get; set; }
+        public List<FilterOption> LegislativeAreaOptions { get; set; }
 
         // Results
         public List<ResultViewModel> SearchResults { get; set; }

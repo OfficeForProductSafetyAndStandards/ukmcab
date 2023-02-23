@@ -4,6 +4,6 @@
     {
         public string Id { get; set; }
         public string Label { get; set; }
-        public List<FilterOption> Options { get; set; }
+        public List<FilterOptionn> Options { get; set; }
     }
 }
