@@ -6,7 +6,7 @@
         <partial name="Partials/_SearchPagination" model="Model.Pagination"/>
 
         <div id="search-results-filters-link-container">
-            <a href="#search-filter-container" class="search-results-filter-toggle govuk-link govuk-link--no-visited-state">Filters (0 applied)</a>
+            <a href="#search-filter-container" id="search-results-filter-toggle" class="govuk-link govuk-link--no-visited-state">Filters (@Model.FilterCount applied)</a>
         </div>
     </div>
     @if (Model.Pagination.Total > 0)

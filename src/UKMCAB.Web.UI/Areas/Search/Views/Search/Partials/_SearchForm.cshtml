@@ -1,12 +1,12 @@
 ﻿@using UKMCAB.Web.UI.Extensions
 @model SearchViewModel
 
-<div id="search-results-form-column" class="govuk-grid-column-one-third govuk-body">
+<div id="search-results-form-column" class="govuk-grid-column-one-third govuk-body search-result-mobile-hidden">
     <form id="search-results-form" method="get">
         <div id="search-filter-container">
 
             <div id="search-filter-header">
-                <a href="#" class="govuk-visually-hidden">Cancel</a>
+                <a id="search-results-list-toggle" class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
                 <h3 class="govuk-heading-s">Filters</h3>
                 <a id="clear-filters-link" href="@Context.Request.RemoveQueryParameters("bodytypes","legislativeares","registeredofficelocation","testinglocations")" class="govuk-link govuk-link--no-visited-state">Clear all filters</a>
             </div>
@@ -27,7 +27,7 @@
                             @foreach (var filterOption in Model.BodyTypeOptions)
                             {
                                 <div class="search-filter-option-item">
-                                    <input type="checkbox" name="BodyTypes" id="@filterOption.Id" value="@filterOption.Value" class="" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
+                                    <input type="checkbox" name="BodyTypes" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
                                     <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Value</label>
                                 </div>
                             }
@@ -42,7 +42,7 @@
                             @foreach (var filterOption in Model.RegisteredOfficeLocationOptions)
                             {
                                 <div class="search-filter-option-item">
-                                    <input type="checkbox" name="RegisteredOfficeLocations" id="@filterOption.Id" value="@filterOption.Value" class="" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
+                                    <input type="checkbox" name="RegisteredOfficeLocations" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
                                     <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Value</label>
                                 </div>
                             }
@@ -57,7 +57,7 @@
                             @foreach (var filterOption in Model.TestingLocationOptions)
                             {
                                 <div class="search-filter-option-item">
-                                    <input type="checkbox" name="TestingLocations" id="@filterOption.Id" value="@filterOption.Value" class="" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
+                                    <input type="checkbox" name="TestingLocations" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
                                     <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Value</label>
                                 </div>
                             }
@@ -72,7 +72,7 @@
                             @foreach (var filterOption in Model.LegislativeAreaOptions)
                             {
                                 <div class="search-filter-option-item">
-                                    <input type="checkbox" name="LegislativeAreas" id="@filterOption.Id" value="@filterOption.Value" class="" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
+                                    <input type="checkbox" name="LegislativeAreas" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
                                     <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Value</label>
                                 </div>
                             }
