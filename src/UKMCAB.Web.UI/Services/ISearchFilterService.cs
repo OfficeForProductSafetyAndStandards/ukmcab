@@ -4,8 +4,8 @@ namespace UKMCAB.Web.UI.Services;
 
 public interface ISearchFilterService
 {
-    List<FilterOption> BodyTypeFilter { get; }
-    List<FilterOption> RegisteredOfficeLocationFilter { get; }
-    List<FilterOption> TestingLocationFilter { get; }
-    List<FilterOption> RegulationFilter { get; }
+    List<FilterOptionn> BodyTypeFilter { get; }
+    List<FilterOptionn> RegisteredOfficeLocationFilter { get; }
+    List<FilterOptionn> TestingLocationFilter { get; }
+    List<FilterOptionn> RegulationFilter { get; }
 }
