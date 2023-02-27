@@ -1,11 +1,4 @@
-﻿using System.Drawing.Imaging;
-using System.Text;
-using Azure;
-using Azure.Search.Documents;
-using Azure.Search.Documents.Indexes;
-using Azure.Search.Documents.Indexes.Models;
-using Microsoft.VisualBasic;
-using UKMCAB.Common.ConnectionStrings;
+﻿using Azure.Search.Documents;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
