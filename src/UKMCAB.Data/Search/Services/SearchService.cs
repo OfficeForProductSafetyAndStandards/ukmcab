@@ -4,6 +4,7 @@ using Azure;
 using Azure.Search.Documents;
 using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
+using Microsoft.VisualBasic;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Search.Models;
 
@@ -44,12 +45,14 @@ namespace UKMCAB.Data.Search.Services
         {
             var query = string.IsNullOrWhiteSpace(options.Keywords) ? "*" : options.Keywords;
             var filter = BuildFilter(options);
+            var sort = BuildSort(options);
             var search = await _indexClient.SearchAsync<CABDocument>(query, new SearchOptions
             {
                 Size = SearchResultPerPage,
                 IncludeTotalCount = true,
                 Skip = SearchResultPerPage * (options.PageNumber - 1),
-                Filter = filter
+                Filter = filter,
+                OrderBy = { sort }
             });
             var cabResults = new CABResults
             {
@@ -72,6 +75,24 @@ namespace UKMCAB.Data.Search.Services
             cabResults.CABs = cabs;
             cabResults.Total = Convert.ToInt32(search.Value.TotalCount);
             return cabResults;
+        }
+
+        private string BuildSort(CABSearchOptions options)
+        {
+            if (options.Sort == "lastupd")
+            {
+                return "LastUpdatedDate asc";
+            }
+            if (options.Sort == "a2z")
+            {
+                return "Name asc";
+            }
+            if (options.Sort == "z2a")
+            {
+                return "Name desc";
+            }
+
+            return string.Empty;
         }
 
         private string BuildFilter(CABSearchOptions options)

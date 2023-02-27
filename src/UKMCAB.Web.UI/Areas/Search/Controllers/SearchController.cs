@@ -22,10 +22,16 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 model.PageNumber = 1;
             }
+            if (model.Sort == null)
+            {
+                model.Sort = string.Empty;
+            }
+
             var searchResult = await _searchService.QueryAsync(new CABSearchOptions
             {
                 PageNumber = model.PageNumber,
                 Keywords = model.Keywords,
+                Sort = model.Sort,
                 BodyTypesFilter = model.BodyTypes,
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
@@ -34,10 +40,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var facets = await _searchService.GetFacetsAsync();
 
-            model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), facets.BodyTypes, model.BodyTypes);
-            model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), facets.LegislativeAreas, model.LegislativeAreas);
-            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
-            model.TestingLocationOptions = GetFilterOptions(nameof(model.TestingLocations), facets.TestingLocations, model.TestingLocations);
+            model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body types", facets.BodyTypes, model.BodyTypes);
+            model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative areas", facets.LegislativeAreas, model.LegislativeAreas);
+            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
+            model.TestingLocationOptions = GetFilterOptions(nameof(model.TestingLocations), "Testing location", facets.TestingLocations, model.TestingLocations);
 
             model.SearchResults = searchResult.CABs.Select(c => new ResultViewModel
             {
@@ -58,14 +64,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(model);
         }
 
-        private List<FilterOption> GetFilterOptions(string facetName, IEnumerable<string> facets, IEnumerable<string> selectedFacets)
+        private FilterViewModel GetFilterOptions(string facetName, string facetLabel, IEnumerable<string> facets, IEnumerable<string> selectedFacets)
         {
+            var filter = new FilterViewModel
+            {
+                Id = facetName,
+                Label = facetLabel
+            };
             if (selectedFacets == null)
             {
                 selectedFacets = Array.Empty<string>();
             }
-            return facets.Select(f => new FilterOption(facetName, f,
+            filter.FilterOptions = facets.Select(f => new FilterOption(facetName, f,
                 selectedFacets.Any(sf => sf.Equals(f, StringComparison.InvariantCultureIgnoreCase)))).ToList();
+            return filter;
         }
 
         private string ListToString(string[] list)

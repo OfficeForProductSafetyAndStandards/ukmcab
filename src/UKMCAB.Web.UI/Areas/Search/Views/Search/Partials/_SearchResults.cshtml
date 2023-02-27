@@ -1,4 +1,5 @@
-﻿@model SearchViewModel
+﻿@using UKMCAB.Web.UI.Extensions
+@model SearchViewModel
 
 <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
 
@@ -11,13 +12,22 @@
     </div>
     @if (Model.Pagination.Total > 0)
     {
+        var baseSortPath = Context.Request.RemoveQueryParameters("sort");
+        baseSortPath += baseSortPath.Contains("?") ?  "&sort=" : "?sort=";
         <div id="search-results-sort-container">
             <fieldset>
                 <legend>Sort view</legend>
-                <label>Random</label>
-                <a href="#" class="govuk-link">Last updated</a>
-                <a href="#" class="govuk-link">A to Z</a>
-                <a href="#" class="govuk-link">Z to A</a>
+                @foreach (var sortOption in Model.SortOptions)
+                {
+                    if (Model.Sort.Equals(sortOption.Value, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        <label>@sortOption.Key</label>
+                    }
+                    else
+                    {
+                        <a href="@(baseSortPath + sortOption.Value)"  class="govuk-link govuk-link--no-visited-state">@sortOption.Key</a>
+                    }
+                }
             </fieldset>
         </div>
         <div id="search-results-list-container">

@@ -20,67 +20,11 @@
             </div>
             
             <div id="search-filter-options">
-                <div class="search-filter-option govuk-checkboxes--small">
-                    <h3 class="govuk-heading-s">Body type</h3>
-                    <div class="search-filter-option-list">
-                        <fieldset>
-                            @foreach (var filterOption in Model.BodyTypeOptions)
-                            {
-                                <div class="search-filter-option-item">
-                                    <input type="checkbox" name="BodyTypes" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
-                                    <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Value</label>
-                                </div>
-                            }
-                        </fieldset>
-                    </div>
-                </div>
-                
-                <div class="search-filter-option govuk-checkboxes--small">
-                    <h3 class="govuk-heading-s">Registered office location</h3>
-                    <div class="search-filter-option-list">
-                        <fieldset>
-                            @foreach (var filterOption in Model.RegisteredOfficeLocationOptions)
-                            {
-                                <div class="search-filter-option-item">
-                                    <input type="checkbox" name="RegisteredOfficeLocations" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
-                                    <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Value</label>
-                                </div>
-                            }
-                        </fieldset>
-                    </div>
-                </div>
+                <partial name="Partials/_SearchFilter" model="Model.BodyTypeOptions"/>
+                <partial name="Partials/_SearchFilter" model="Model.RegisteredOfficeLocationOptions"/>
+                <partial name="Partials/_SearchFilter" model="Model.TestingLocationOptions"/>
+                <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaOptions"/>
 
-                <div class="search-filter-option govuk-checkboxes--small">
-                    <h3 class="govuk-heading-s">Testing location</h3>
-                    <div class="search-filter-option-list">
-                        <fieldset>
-                            @foreach (var filterOption in Model.TestingLocationOptions)
-                            {
-                                <div class="search-filter-option-item">
-                                    <input type="checkbox" name="TestingLocations" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
-                                    <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Value</label>
-                                </div>
-                            }
-                        </fieldset>
-                    </div>
-                </div>
-
-                <div class="search-filter-option govuk-checkboxes--small">
-                    <h3 class="govuk-heading-s">Legislative area</h3>
-                    <div class="search-filter-option-list">
-                        <fieldset>
-                            @foreach (var filterOption in Model.LegislativeAreaOptions)
-                            {
-                                <div class="search-filter-option-item">
-                                    <input type="checkbox" name="LegislativeAreas" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" data-track-category="filterClicked" data-uncheck-track-category="filterRemoved" data-track-action="@filterOption.Value" data-track-label="@filterOption.Value" data-controls="js-search-results-info" aria-controls="js-search-results-info" checked="@filterOption.Selected">
-                                    <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Value</label>
-                                </div>
-                            }
-                        </fieldset>
-                    </div>
-                </div>
-
-                
                 <div id="search-filter-button-wrapper">
                     <button class="govuk-button">Apply filters</button>
                 </div>
