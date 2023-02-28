@@ -10,5 +10,7 @@ namespace UKMCAB.Core.Services
         Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate);
         Task<Document> CreateAsync(Document document);
         Task<bool> Updated(Document document);
+
+        Task<bool> Update(dynamic document);
     }
 }

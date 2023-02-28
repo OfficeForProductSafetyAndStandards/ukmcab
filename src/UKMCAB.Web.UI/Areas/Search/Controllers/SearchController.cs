@@ -1,5 +1,6 @@
 ﻿using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
@@ -8,10 +9,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
     public class SearchController : Controller
     {
         private readonly ISearchService _searchService;
+        private readonly IDistCache _cache;
 
-        public SearchController(ISearchService searchService)
+        public SearchController(ISearchService searchService, IDistCache cache)
         {
             _searchService = searchService;
+            _cache = cache;
         }
 
 
@@ -38,7 +41,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 TestingLocationsFilter = model.TestingLocations
             });
 
-            var facets = await _searchService.GetFacetsAsync();
+            var facets = await _cache.GetOrCreateAsync("ukmcab-facets", _searchService.GetFacetsAsync, TimeSpan.FromHours(1));
 
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body types", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative areas", facets.LegislativeAreas, model.LegislativeAreas);

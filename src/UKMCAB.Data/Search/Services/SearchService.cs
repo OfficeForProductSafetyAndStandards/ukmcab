@@ -85,7 +85,7 @@ namespace UKMCAB.Data.Search.Services
                 return "Name desc";
             }
 
-            return string.Empty;
+            return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : string.Empty;
         }
 
         private string BuildFilter(CABSearchOptions options)
