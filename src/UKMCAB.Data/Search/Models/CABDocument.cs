@@ -7,22 +7,37 @@ namespace UKMCAB.Data.Search.Models
         [SimpleField(IsKey = true)]
         public string id { get; set; }
 
-        [SearchableField(IsSortable = true)]
+        [SearchableField(IsSortable = true, NormalizerName = "lowercase")]
         public string Name { get; set; }
 
-        [SimpleField]
+        [SearchableField]
         public string Address { get; set; }
 
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        [SearchableField]
+        public string Email { get; set; }
+
+        [SearchableField]
+        public string Website { get; set; }
+
+        [SearchableField]
+        public string Phone { get; set; }
+
+        [SearchableField]
+        public string HiddenText { get; set; }
+
+        [SearchableField]
+        public string BodyNumber { get; set; }
+
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string[] BodyTypes { get; set; }
 
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string[] LegislativeAreas { get; set; }
 
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string[] TestingLocations { get; set; }
 
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string RegisteredOfficeLocation { get; set; }
 
         [SimpleField(IsSortable = true)]
