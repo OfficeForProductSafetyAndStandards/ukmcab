@@ -28,6 +28,9 @@ namespace UKMCAB.Data.Search.Models
         [SimpleField(IsSortable = true)]
         public DateTime? LastUpdatedDate { get; set; }
 
+        [SimpleField(IsSortable = true)]
+        public string RandomSort { get; set; }
+
         [SearchableField]
         public MetaData MetaData { get; set; }
     }

@@ -8,15 +8,13 @@
 
     var filterOptions = document.querySelectorAll('.search-form-filter-option');
 
-    var clearFilterButton = document.getElementById('clear-filters-link');
     var searchResultsFilterToggle = document.getElementById('search-results-filter-toggle');
     var searchResultsListToggle = document.getElementById('search-results-list-toggle');
 
     function init() {
-        if (searchResultsPage && searchResultsForm && clearFilterButton) {
+        if (searchResultsPage && searchResultsForm) {
             searchResultsPage.classList.add("js-enabled");
             setUpFilterOptions();
-            clearFilterButton.addEventListener('click', clearFilters);
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);
         }
@@ -40,13 +38,6 @@
         toggleFilter(false);
     }
 
-    function clearFilters(e) {
-        e.preventDefault();
-        filterOptions.forEach(function (cbx) {
-            cbx.checked = false;
-        });
-        searchResultsForm.submit();
-    }
 
     function toggleFilter(filter) {
         if (filter) {

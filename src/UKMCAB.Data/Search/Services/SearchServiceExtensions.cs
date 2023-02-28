@@ -9,9 +9,9 @@ namespace UKMCAB.Data.Search.Services
 {
     public static class SearchServiceExtensions
     {
-        private const string SEARCH_INDEX = "ukmcab-search-index";
-        private const string SEARCH_INDEXER = "ukmcab-search-indexer";
-        private const string SEARCH_DATASOURCE = "ukmcab-search-datasource";
+        public const string SEARCH_INDEX = "ukmcab-search-index";
+        public const string SEARCH_INDEXER = "ukmcab-search-indexer";
+        public const string SEARCH_DATASOURCE = "ukmcab-search-datasource";
 
         public static void AddSearchService(this IServiceCollection services, CognitiveSearchConnectionString connectionString, string cosmosDBConnectionString, int searchResultsPerPage)
         {
