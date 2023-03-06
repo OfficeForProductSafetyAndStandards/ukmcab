@@ -600,6 +600,12 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
           hostNames: []
           requireServerNameIndication: false
+          customErrorConfigurations: [
+            {
+              statusCode: 'HttpStatus502'
+              customErrorPageUrl: 'https://storukmcabdev.blob.core.windows.net/public/badgateway.html'
+            }
+          ]
         }
       }
     ]
