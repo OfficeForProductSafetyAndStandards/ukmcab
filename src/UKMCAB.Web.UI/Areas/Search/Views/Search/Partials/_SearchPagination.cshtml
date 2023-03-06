@@ -1,8 +1,9 @@
-﻿@model PaginationViewModel
+﻿@using UKMCAB.Web.UI.Extensions
+@model PaginationViewModel
 <div class="search-results-pagination-detail-container">
     @if (Model.Total == 0)
     {
-        <span>Showing 0 bodies</span>
+        <span>Showing <span class="govuk-!-font-weight-bold">0</span> bodies</span>
     }
     else
     {
@@ -12,13 +13,13 @@
 
 @if (Model.TotalPages > 1)
 {
-    var basePath = Model.BaseURL(Context);
+    var basePath = Context.Request.RemoveQueryParameters("pagenumber");
     var pageRange = Model.PageRange();
     <div class="search-results-pagination-links-container">
         <ul class="search-results-pagination-links">
             @if (Model.ShowPrevious)
             {
-                <li class="search-results-pagination-link-item search-results-pagination-previous"><a href="@(basePath + "pagenumber=" + (Model.PageNumber - 1))" class="govuk-link govuk-link--no-visited-state"><span>Previous</span></a></li>
+                <li class="search-results-pagination-link-item search-results-pagination-previous"><a href="@(basePath + "&pagenumber=" + (Model.PageNumber - 1))" class="govuk-link govuk-link--no-visited-state"><span>Previous</span></a></li>
             }
             @foreach (var pageNumber in pageRange)
             {
@@ -28,12 +29,12 @@
                 }
                 else
                 {
-                    <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="@(basePath + "pagenumber=" + pageNumber)" class="govuk-link govuk-link--no-visited-state"><span>@pageNumber</span></a></li>
+                    <li class="search-results-pagination-link-item search-results-pagination-page-link"><a href="@(basePath + "&pagenumber=" + pageNumber)" class="govuk-link govuk-link--no-visited-state"><span>@pageNumber</span></a></li>
                 }
             }
             @if (Model.ShowNext)
             {
-                <li class="search-results-pagination-link-item"><a href="@(basePath + "pagenumber=" + (Model.PageNumber + 1))" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
+                <li class="search-results-pagination-link-item"><a href="@(basePath + "&pagenumber=" + (Model.PageNumber + 1))" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
             }
         </ul>
     </div>

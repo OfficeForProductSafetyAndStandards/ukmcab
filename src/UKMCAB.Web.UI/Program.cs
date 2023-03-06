@@ -23,27 +23,27 @@ using UKMCAB.Web.UI.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration["DataConnectionString"]);
+var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
 
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery();
-builder.Services.AddSingleton(new BasicAuthenticationOptions() { Password = builder.Configuration["BasicAuthPassword"] });
+builder.Services.AddSingleton(new BasicAuthenticationOptions { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
 builder.Services.AddSingleton(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]));
-builder.Services.AddTransient<ISearchFilterService, SearchFilterService>();
-builder.Services.AddTransient<ICABSearchService, CABSearchService>();
+builder.Services.AddSingleton(azureDataConnectionString);
+builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
+
 builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
-builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IDistCache, RedisCache>();
-builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
-builder.Services.AddSingleton<ISearchService, SearchService>();
 builder.Services.AddCustomHttpErrorHandling();
+
 
 builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
     .PersistKeysToAzureBlobStorage(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, "keys.xml")
@@ -53,15 +53,15 @@ builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certific
 builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateOptions"));
 
 var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
-var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
 if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
 {
     var database = cosmosDbSettings.GetValue<string>("Database") ?? "main";
-    var container = cosmosDbSettings.GetValue<string>("Container") ?? "cabs";
     var cosmosClient = new CosmosClient(cosmosConnectionString);
-    builder.Services.AddSingleton<ICosmosDbService>(new CosmosDbService(cosmosClient, database, container)); // Used by stop gap admin form
-    builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosClient, database, "cab-documents")); // Used by new admin form
+    builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosClient, database, "cab-data")); // Used by new admin form
 }
+builder.Services.AddHostedService<RandomSortGenerator>();
+
+builder.Services.AddSearchService(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]), cosmosConnectionString, Constants.SearchResultPerPage);
 
 builder.Services.Configure<IdentityStoresOptions>(options =>
     options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));

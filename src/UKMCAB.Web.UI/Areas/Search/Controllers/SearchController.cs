@@ -1,5 +1,6 @@
 ﻿using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
@@ -8,10 +9,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
     public class SearchController : Controller
     {
         private readonly ISearchService _searchService;
+        private readonly IDistCache _cache;
 
-        public SearchController(ISearchService searchService)
+        public SearchController(ISearchService searchService, IDistCache cache)
         {
             _searchService = searchService;
+            _cache = cache;
         }
 
 
@@ -22,16 +25,29 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 model.PageNumber = 1;
             }
+            if (model.Sort == null)
+            {
+                model.Sort = string.Empty;
+            }
+
             var searchResult = await _searchService.QueryAsync(new CABSearchOptions
             {
-                PageNumber = model.PageNumber
+                PageNumber = model.PageNumber,
+                Keywords = model.Keywords,
+                Sort = model.Sort,
+                BodyTypesFilter = model.BodyTypes,
+                LegislativeAreasFilter = model.LegislativeAreas,
+                RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
+                TestingLocationsFilter = model.TestingLocations
             });
 
+            var facets = await _cache.GetOrCreateAsync("ukmcab-facets", _searchService.GetFacetsAsync, TimeSpan.FromHours(1));
 
-            model.BodyTypeOptions = Constants.Lists.BodyTypes;
-            model.RegisteredOfficeLocationOptions = Constants.Lists.Countries;
-            model.TestingLocationOptions = Constants.Lists.Countries;
-            model.LegislativeAreaOptions = Constants.Lists.LegislativeAreas;
+            model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body types", facets.BodyTypes, model.BodyTypes);
+            model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative areas", facets.LegislativeAreas, model.LegislativeAreas);
+            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
+            model.TestingLocationOptions = GetFilterOptions(nameof(model.TestingLocations), "Testing location", facets.TestingLocations, model.TestingLocations);
+
             model.SearchResults = searchResult.CABs.Select(c => new ResultViewModel
             {
                 id = c.id,
@@ -39,7 +55,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Address = c.Address,
                 BodyType = ListToString(c.BodyTypes),
                 RegisteredOfficeLocation = c.RegisteredOfficeLocation,
-                RegisteredTestLocation = string.Empty,
+                RegisteredTestLocation = ListToString(c.TestingLocations),
                 LegislativeArea = ListToString(c.LegislativeAreas)
             }).ToList();
             model.Pagination = new PaginationViewModel
@@ -51,19 +67,35 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(model);
         }
 
-        private string ListToString(List<string> list)
+        private FilterViewModel GetFilterOptions(string facetName, string facetLabel, IEnumerable<string> facets, IEnumerable<string> selectedFacets)
         {
-            if (list == null || list.Count == 0)
+            var filter = new FilterViewModel
+            {
+                Id = facetName,
+                Label = facetLabel
+            };
+            if (selectedFacets == null)
+            {
+                selectedFacets = Array.Empty<string>();
+            }
+            filter.FilterOptions = facets.Select(f => new FilterOption(facetName, f,
+                selectedFacets.Any(sf => sf.Equals(f, StringComparison.InvariantCultureIgnoreCase)))).ToList();
+            return filter;
+        }
+
+        private string ListToString(string[] list)
+        {
+            if (list == null || list.Length == 0)
             {
                 return string.Empty;
             }
 
-            if (list.Count == 1)
+            if (list.Length == 1)
             {
                 return list.First();
             }
 
-            return $"{list.First()} and {list.Count - 1} other{(list.Count > 2 ? "s" : string.Empty)}";
+            return $"{list.First()} and {list.Length - 1} other{(list.Length > 2 ? "s" : string.Empty)}";
         }
     }
 }

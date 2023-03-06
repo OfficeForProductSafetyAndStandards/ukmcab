@@ -7,76 +7,41 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
     [Area("search")]
     public class CABController : Controller
     {
+        private readonly ICABAdminService _cabAdminService;
         private readonly IFileStorage _fileStorage;
 
-        public CABController(IFileStorage fileStorage)
+        public CABController(ICABAdminService cabAdminService, IFileStorage fileStorage)
         {
+            _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
         }
 
         [Route("search/cab-profile/{id}")]
         public async Task<IActionResult> Index(string id)
         {
+            var cabDocument = await _cabAdminService.FindCABDocumentByIdAsync(id);
+
             var cab = new CABProfileViewModel
             {
-                CABId = id,
-                PublishedDate = new DateTime(2020, 12, 3),
-                LastModifiedDate = new DateTime(2019, 10, 31),
-                Name = "CATG Ltd",
-                UKASReferenceNumber = id == "0" ? string.Empty : "12345-6789",
-                AddressLine1 = "29a Prince Crescent",
-                AddressLine2 = string.Empty,
-                TownCity = "Morecambe",
-                Postcode = "LA4 6BY",
-                Country = "United Kingdom",
-                Website = id == "0" ? string.Empty : "catg.co.uk",
-                Email = id == "0" ? string.Empty : "info@catg.co.uk",
-                Phone = id == "0" ? string.Empty : "+44 (0) 1542 400632",
-                RegisteredOfficeLocations = new List<string>
+                CABId = cabDocument.Id,
+                PublishedDate = cabDocument.PublishedDate.HasValue ? cabDocument.PublishedDate.Value.DateTime : null,
+                LastModifiedDate = cabDocument.LastUpdatedDate.HasValue ? cabDocument.LastUpdatedDate.Value.DateTime : null,
+                Name = cabDocument.Name,
+                UKASReferenceNumber =  string.Empty,
+                Address = cabDocument.Address,
+                Website = cabDocument.Website,
+                Email = cabDocument.Email,
+                Phone = cabDocument.Phone,
+                BodyNumber = cabDocument.BodyNumber,
+                BodyTypes = cabDocument.BodyTypes ?? new List<string>(),
+                RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
+                RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
+                LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
+                ProductSchedules = cabDocument.PDFs.Select(pdf => new FileUpload
                 {
-                    "France",
-                    "Italy",
-                    "United Kingdom"
-                },
-                RegisteredTestLocations = new List<string>
-                {
-                    "France",
-                    "Italy",
-                    "United Kingdom"
-                },
-                BodyNumber = "1245",
-                BodyTypes = new List<string>
-                {
-                    "Approved body",
-                    "NI Notified body"
-                },
-                LegislativeAreas = new List<string>
-                {
-                    "Construction products"
-                },
-                ProductSchedules = new List<FileUpload>
-                {
-                    new()
-                    {
-                        BlobName = "9e521c41-e511-4099-9c8e-07891cc23f4d/schedules/20230125111150-css-cheat-sheet-v1.pdf",
-                        FileName = "20230125111150-css-cheat-sheet-v1.pdf"
-                    },
-                    new()
-                    {
-                        BlobName = "9e521c41-e511-4099-9c8e-07891cc23f4d/schedules/20230125113639-regular-expressions-cheat-sheet-v2.pdf",
-                        FileName = "20230125113639-regular-expressions-cheat-sheet-v2.pdf"
-                    },
-                    new()
-                    {
-                        BlobName = "9e521c41-e511-4099-9c8e-07891cc23f4d/schedules/20230126114543-html-cheat-sheet-v1.pdf",
-                        FileName = "20230126114543-html-cheat-sheet-v1.pdf"
-                    },
-                    new()
-                    {
-                        BlobName = "9e521c41-e511-4099-9c8e-07891cc23f4d/schedules/20230127022229-html-character-entities-cheat-sheet.pdf",
-                        FileName = "20230127022229-html-character-entities-cheat-sheet.pdf"
-                    }
-                }
+                    BlobName = pdf.Url,
+                    FileName = pdf.ClientFileName
+                }).ToList(), 
             };
             return View(cab);
         }

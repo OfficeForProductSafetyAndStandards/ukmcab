@@ -1,4 +1,67 @@
-﻿#search-result-page {
+﻿@include govuk-media-query($until: tablet) {
+    .search-result-mobile-hidden {
+        display: none;
+    }
+}
+
+#search-result-page {
+    &.js-enabled {
+
+        @include govuk-media-query($from: tablet) {
+            #search-filter-button-wrapper {
+                display: none;
+            }
+        }
+
+        @include govuk-media-query($until: tablet) {
+            #search-filter-button-wrapper {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                background-color: #fff;
+                width: 100%;
+                border-top: #bfc1c3 1px solid;
+                z-index: 10;
+                padding-top: 15px; 
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                button {
+                    width: 90%;
+                }
+            }
+
+            #search-filter-header {
+                position: fixed;
+                top: 0;
+                left: 0;
+                background-color: #fff;
+                width: 100%;
+                text-align: center;
+                border-bottom: #bfc1c3 1px solid;
+                z-index: 10;
+
+                h3 {
+                    margin-top: 10px;
+                }
+
+                #clear-filters-link {
+                    position: absolute;
+                    top: 8px;
+                    right: 8px;
+                }
+
+                #search-results-list-toggle {
+                    display: block;
+                    position: absolute;
+                    top: 8px;
+                    left: 8px;
+                }
+            }
+        }
+    }
+
     @include govuk-media-query($until: tablet) {
         display: flex;
         flex-wrap: wrap;
@@ -117,6 +180,10 @@
     position: relative;
     margin-bottom: 20px;
 
+    #search-results-list-toggle {
+        display: none;
+    }
+
     #clear-filters-link {
         position: absolute;
         top: 0;
@@ -178,7 +245,7 @@
         .search-filter-option-list {
             overflow-x: hidden;
             overflow-y: auto;
-            height: 200px;
+            max-height: 200px;
             clear: both;
             border: #bfc1c3 1px solid;
             margin-bottom: 20px;
@@ -252,7 +319,6 @@
                         zoom: 1;
                         filter: alpha(opacity=100);
                         opacity: 1;
-                        border-color: #6f777b
                     }
 
                     input:focus + .search-filter-option-item-label::before {
@@ -380,4 +446,11 @@
             }
         }
     }
+}
+
+#search-no-results-container {
+    border-bottom: #bfc1c3 1px solid;
+    border-top: #bfc1c3 1px solid;
+    padding: 20px 0 10px;
+    margin: 5px 0 25px;
 }

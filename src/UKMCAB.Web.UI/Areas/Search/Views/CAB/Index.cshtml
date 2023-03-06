@@ -5,8 +5,8 @@
         <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
         <h1 class="govuk-heading-l">@Model.Name</h1>
         <div class="cab-detail-date-meta">
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToString("d MMM yyyy")</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
+            <span class="govuk-caption-m govuk-!-display-inline-block">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
         </div>
     </div>
 </div>
@@ -104,10 +104,7 @@
                                 Registered office location
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @foreach (var officeLocation in Model.RegisteredOfficeLocations)
-                                {
-                                    <span class="cab-detail-list-item">@officeLocation</span>
-                                }
+                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.RegisteredOfficeLocation), Model.RegisteredOfficeLocation, @Constants.NotProvided)
                             </dd>
                         </div>
                     </dl>

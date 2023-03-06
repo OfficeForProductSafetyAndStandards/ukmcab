@@ -1,6 +1,7 @@
 ﻿const GOVUKFrontend = require('./govuk-frontend-all.js');
 import "./option-select.js";
 import "./shared/feedback-form.js";
+import "./views/search.js";
 import "../scss/main.scss";
 
 
@@ -11,32 +12,6 @@ GOVUKFrontend.Tabs.prototype.setupResponsiveChecks = function () {
 
 GOVUKFrontend.initAll();
 
-// Results page
-
-var nodes = document.querySelectorAll('.app-c-option-select');
-
-for (var i = 0; i < nodes.length; i++) {
-    new GOVUK.Modules.OptionSelect(nodes[i]).init();
-}
-var submitForm = document.querySelector("form");
-var checkBoxes = document.querySelectorAll('.filter__input');
-checkBoxes.forEach(function (cbx) {
-    cbx.onchange = function () {
-        submitForm.submit();
-    };
-});
-
-var clearFilters = document.querySelector("#clear-filters-action");
-if (clearFilters) {
-    clearFilters.addEventListener('click',
-        function(e) {
-            e.preventDefault();
-            checkBoxes.forEach(function(cbx) {
-                cbx.checked = false;
-            });
-            submitForm.submit();
-        });
-}
 
 var logoutLink = document.querySelector("#logoutLink");
 if (logoutLink) {
