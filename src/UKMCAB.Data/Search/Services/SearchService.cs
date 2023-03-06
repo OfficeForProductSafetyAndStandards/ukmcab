@@ -17,7 +17,7 @@ namespace UKMCAB.Data.Search.Services
         public async Task<FacetResult> GetFacetsAsync()
         {
             var result = new FacetResult();
-            var search = await _indexClient.SearchAsync<CABDocument>("*", new SearchOptions
+            var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
                 Facets = { nameof(result.BodyTypes), nameof(result.LegislativeAreas), nameof(result.RegisteredOfficeLocation), nameof(result.TestingLocations) }
             });
@@ -39,7 +39,7 @@ namespace UKMCAB.Data.Search.Services
             var query = string.IsNullOrWhiteSpace(options.Keywords) ? "*" : options.Keywords;
             var filter = BuildFilter(options);
             var sort = BuildSort(options);
-            var search = await _indexClient.SearchAsync<CABDocument>(query, new SearchOptions
+            var search = await _indexClient.SearchAsync<CABIndexItem>(query, new SearchOptions
             {
                 Size = SearchResultPerPage,
                 IncludeTotalCount = true,
@@ -51,7 +51,7 @@ namespace UKMCAB.Data.Search.Services
             {
                 PageNumber = options.PageNumber,
                 Total = 0,
-                CABs = new List<CABDocument>()
+                CABs = new List<CABIndexItem>()
             };
             if (!search.HasValue)
             {

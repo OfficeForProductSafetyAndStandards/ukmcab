@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Data.Search.Models
 {
-    public class CABDocument
+    public class CABIndexItem
     {
         [SimpleField(IsKey = true)]
         public string id { get; set; }

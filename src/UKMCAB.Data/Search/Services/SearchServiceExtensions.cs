@@ -28,7 +28,7 @@ namespace UKMCAB.Data.Search.Services
         private static void CreateIndex(SearchIndexClient searchIndexClient)
         {
             var fieldBuilder = new FieldBuilder();
-            var searchFields = fieldBuilder.Build(typeof(CABDocument));
+            var searchFields = fieldBuilder.Build(typeof(CABIndexItem));
             var definition = new SearchIndex(SEARCH_INDEX, searchFields);
             try
             {

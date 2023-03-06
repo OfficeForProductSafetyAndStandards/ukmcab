@@ -12,6 +12,12 @@ namespace UKMCAB.Core.Services
             _cabRepostitory = cabRepostitory;
         }
 
+        public async Task<CABDocument> FindCABDocumentByIdAsync(string id)
+        {
+            var doc = await _cabRepostitory.GetByIdAsync<CABDocument>(id, id);
+            return doc;
+        }
+
         public async Task<Document> CreateCABDocumentAsync(string email, CABData cabData)
         {
             var documents = await FindCABDocumentsByNameAsync(cabData.Name);

@@ -22,4 +22,8 @@
     <ProjectReference Include="..\UKMCAB.Core\UKMCAB.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="CosmosDb\Models\" />
+  </ItemGroup>
+
 </Project>
