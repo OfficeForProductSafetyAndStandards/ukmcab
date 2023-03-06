@@ -10,9 +10,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string CABId { get; set; }
 
         // Publish attributes
-        public DateTime PublishedDate { get; set; }
+        public DateTime? PublishedDate { get; set; }
 
-        public DateTime LastModifiedDate { get; set; }
+        public DateTime? LastModifiedDate { get; set; }
 
         // About
         public string Name { get; set; }
@@ -20,26 +20,18 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string UKASReferenceNumber { get; set; }
 
         // Contact details
-        public string AddressLine1 { get; set; }
-        public string AddressLine2 { get; set; }
-        public string TownCity { get; set; }
-        public string Postcode { get; set; }
-        public string Country { get; set; }
+        //public string AddressLine1 { get; set; }
+        //public string AddressLine2 { get; set; }
+        //public string TownCity { get; set; }
+        //public string Postcode { get; set; }
+        //public string Country { get; set; }
 
-        public string Address
-        {
-            get
-            {
-                var addressProperties =
-                    new[] { AddressLine1, AddressLine2, TownCity, Postcode, Country }.Where(p =>
-                        !string.IsNullOrWhiteSpace(p));
-                return string.Join("<br />", addressProperties);
-            }
-        }
+        public string Address { get; set; }
         public string Website { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
-        public List<string> RegisteredOfficeLocations { get; set; }
+
+        public string RegisteredOfficeLocation { get; set; }
         // Body details
         public List<string> RegisteredTestLocations { get; set; }
         public string BodyNumber { get; set; }
