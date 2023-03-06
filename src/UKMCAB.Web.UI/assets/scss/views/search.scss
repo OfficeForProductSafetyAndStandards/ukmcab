@@ -1,12 +1,35 @@
-﻿#search-result-page {
+﻿@include govuk-media-query($until: tablet) {
+    .search-result-mobile-hidden {
+        display: none;
+    }
+}
+
+#search-result-page {
     &.js-enabled {
-        #search-filter-button-wrapper {
-            display: none;
+
+        @include govuk-media-query($from: tablet) {
+            #search-filter-button-wrapper {
+                display: none;
+            }
         }
 
         @include govuk-media-query($until: tablet) {
-            .search-result-mobile-hidden {
-                display: none;
+            #search-filter-button-wrapper {
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                background-color: #fff;
+                width: 100%;
+                border-top: #bfc1c3 1px solid;
+                z-index: 10;
+                padding-top: 15px; 
+                display: flex;
+                justify-content: center;
+                align-items: center;
+
+                button {
+                    width: 90%;
+                }
             }
 
             #search-filter-header {
