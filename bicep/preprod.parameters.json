@@ -15,7 +15,10 @@
       "value": "Production"
     },
     "appServicePlanSkuName":{
-      "value": "P0v3"
+      "value": "P1v3"
+    },
+    "storageAccountSkuName":{
+      "value": "Standard_GRS"
     }
   }
 }

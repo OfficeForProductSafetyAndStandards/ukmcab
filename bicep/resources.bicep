@@ -2,6 +2,7 @@ param project string
 param env string
 param location string = resourceGroup().location
 param appServicePlanSkuName string
+param storageAccountSkuName string
 
 @secure()
 param basicAuthPassword string
@@ -21,7 +22,7 @@ resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: 'stor${project}${env}'
   location: location
   sku: {
-    name: 'Standard_LRS'
+    name: storageAccountSkuName
   }
   kind: 'StorageV2'
 

@@ -3,6 +3,7 @@ param project string = 'ukmcab'
 param env string = 'dev'
 param location string = 'uksouth'
 param appServicePlanSkuName string = 'B1' // defaults to B1 for dev/stage/test
+param storageAccountSkuName string = 'Standard_LRS' // default to LRS for dev/test
 
 @secure()
 param basicAuthPassword string = ''
@@ -38,5 +39,6 @@ module resourceSet './resources.bicep' = {
     govukNotifyApiKey: govukNotifyApiKey
     aspNetCoreEnvironment: aspNetCoreEnvironment
     appServicePlanSkuName: appServicePlanSkuName
+    storageAccountSkuName: storageAccountSkuName
   }
 }
