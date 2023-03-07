@@ -1,6 +1,7 @@
 param project string
 param env string
 param location string = resourceGroup().location
+param appServicePlanSkuName string
 
 @secure()
 param basicAuthPassword string
@@ -304,7 +305,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
     reserved: true
   }
   sku: {
-    name: 'B1'
+    name: appServicePlanSkuName
   }
   kind: 'linux'
 }
