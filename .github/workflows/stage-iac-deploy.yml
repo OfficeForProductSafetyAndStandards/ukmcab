@@ -1,4 +1,4 @@
-name: Azure IaC deploy (stage)
+name: stage-iac-deploy
 
 on: 
   push:
