@@ -1,4 +1,5 @@
 ﻿using Azure.Search.Documents;
+using Azure.Search.Documents.Models;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
@@ -14,24 +15,36 @@ namespace UKMCAB.Data.Search.Services
             SearchResultPerPage = searhchResultPerPage;
         }
 
-        public async Task<FacetResult> GetFacetsAsync()
+        public async Task<SearchFacets> GetFacetsAsync()
         {
-            var result = new FacetResult();
+            var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
-                Facets = { nameof(result.BodyTypes), nameof(result.LegislativeAreas), nameof(result.RegisteredOfficeLocation), nameof(result.TestingLocations) }
+                Facets = { $"{nameof(result.BodyTypes)},count:0" , $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.TestingLocations)},count:0" }
             });
             if (search.HasValue)
             {
                 var facets = search.Value.Facets;
 
-                result.BodyTypes = facets[nameof(result.BodyTypes)].Select(f => f.Value.ToString()).ToList();
-                result.LegislativeAreas = facets[nameof(result.LegislativeAreas)].Select(f => f.Value.ToString()).ToList();
-                result.RegisteredOfficeLocation = facets[nameof(result.RegisteredOfficeLocation)].Select(f => f.Value.ToString()).ToList();
-                result.TestingLocations = facets[nameof(result.TestingLocations)].Select(f => f.Value.ToString()).ToList();
+                result.BodyTypes = GetFacetList(facets[nameof(result.BodyTypes)]);
+                result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)]);
+                result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
+                result.TestingLocations = GetFacetList(facets[nameof(result.TestingLocations)]);
             }
 
             return result;
+        }
+
+        private List<string> GetFacetList(IList<FacetResult> facets)
+        {
+            var list = facets.Select(f => f.Value.ToString()).OrderBy(f => f).ToList();
+            if (list.Contains("United Kingdom"))
+            {
+                list.Remove("United Kingdom");
+                list.Insert(0, "United Kingdom");
+            }
+
+            return list;
         }
 
         public async Task<CABResults> QueryAsync(CABSearchOptions options)
