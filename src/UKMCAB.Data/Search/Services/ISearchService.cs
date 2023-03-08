@@ -4,7 +4,7 @@ namespace UKMCAB.Data.Search.Services
 {
     public interface ISearchService
     {
-        Task<FacetResult> GetFacetsAsync();
+        Task<SearchFacets> GetFacetsAsync();
         Task<CABResults> QueryAsync(CABSearchOptions options);
     }
 }

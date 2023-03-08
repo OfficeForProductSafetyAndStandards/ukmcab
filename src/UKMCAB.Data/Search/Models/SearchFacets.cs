@@ -1,6 +1,6 @@
 ﻿namespace UKMCAB.Data.Search.Models
 {
-    public class FacetResult
+    public class SearchFacets
     {
         public List<string> BodyTypes { get; set; }
         public List<string> LegislativeAreas { get; set; }
