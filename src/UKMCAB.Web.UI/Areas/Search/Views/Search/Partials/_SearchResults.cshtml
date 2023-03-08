@@ -12,7 +12,7 @@
     </div>
     @if (Model.Pagination.Total > 0)
     {
-        var baseSortPath = Context.Request.RemoveQueryParameters("sort");
+        var baseSortPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
         baseSortPath += baseSortPath.Contains("?") ?  "&sort=" : "?sort=";
         <div id="search-results-sort-container">
             <fieldset>

@@ -12,7 +12,7 @@ namespace UKMCAB.Web.UI.Extensions
             {
                 collection.Remove(queryKey);
             }
-            return request.Path + "?" + collection;
+            return collection.HasKeys() ? request.Path + "?" + collection : request.Path;
         }
     }
 }
