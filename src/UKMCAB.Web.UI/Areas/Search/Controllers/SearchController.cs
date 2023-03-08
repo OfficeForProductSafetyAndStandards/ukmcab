@@ -43,8 +43,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var facets = await _cache.GetOrCreateAsync("ukmcab-facets", _searchService.GetFacetsAsync, TimeSpan.FromHours(1));
 
-            model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body types", facets.BodyTypes, model.BodyTypes);
-            model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative areas", facets.LegislativeAreas, model.LegislativeAreas);
+            model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
+            model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
             model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
             model.TestingLocationOptions = GetFilterOptions(nameof(model.TestingLocations), "Testing location", facets.TestingLocations, model.TestingLocations);
 
