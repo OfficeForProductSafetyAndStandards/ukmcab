@@ -34,4 +34,7 @@ public static class Ext
             htmlHelper.Raw(errorClass) :
             HtmlString.Empty;
     }
+
+    public static IHtmlContent OpensInNewWindow(this IHtmlHelper htmlHelper) =>
+        htmlHelper.Raw("<span class=\"govuk-visually-hidden\">(opens in a new window)</span>");
 }
