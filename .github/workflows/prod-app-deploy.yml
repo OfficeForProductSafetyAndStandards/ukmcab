@@ -1,0 +1,68 @@
+name: preprod-app-deploy
+
+on:
+  workflow_dispatch:
+
+env:
+  AZURE_WEBAPP_NAME: app-opss-ukmcab-prod/vnext
+  AZURE_WEBAPP_PACKAGE_PATH: UKMCAB.Web.UI/publish
+  DOTNET_VERSION: '6.0.x'
+  CONFIGURATION: Release
+  DOTNET_CORE_VERSION: 6.0.x
+  WORKING_DIRECTORY: src/UKMCAB.Web.UI
+  TEST_PROJECT_DIR: src/UKMCAB.Test
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repo
+      - uses: actions/checkout@main
+      - uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS_PROD }}
+
+
+      - name: Use Node.js 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - run: npm ci
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+
+      - name: Run webpack
+        working-directory: ${{ env.WORKING_DIRECTORY }}
+        run: npx webpack
+
+
+      # Setup .NET Core SDK
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }} 
+      
+      # Run dotnet build and publish
+      - name: Restore
+        run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
+
+      - name: Build
+        run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
+      
+      - name: Test
+        run: dotnet test "${{ env.TEST_PROJECT_DIR }}"
+      
+      - name: Publish
+        run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
+          
+      # Deploy to Azure Web apps
+      - name: 'Run Azure webapp deploy action using publish profile credentials'
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ env.AZURE_WEBAPP_NAME }}
+          package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+      
+      - name: logout
+        run: |
+          az logout

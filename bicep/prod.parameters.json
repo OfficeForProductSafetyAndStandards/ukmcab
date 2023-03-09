@@ -3,25 +3,25 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "env": {
-      "value": "dev"
+      "value": "prod"
     },
     "location": {
       "value": "uksouth"
     },
     "appServicePlanSkuName": {
-      "value": "B1"
+      "value": "P1v3"
     },
     "storageAccountSkuName": {
-      "value": "Standard_LRS"
+      "value": "Standard_GRS"
     },
     "provisionAppSvcVNextSlot": {
-      "value": false
+      "value": true
     },
     "appServiceUseBasicAuth": {
       "value": true
     },
     "appServiceUseBasicAuthVNext": {
-      "value": false
+      "value": true
     },
     "basicAuthPassword": {
       "value": "secret"
@@ -36,7 +36,7 @@
       "value": "secret"
     },
     "aspNetCoreEnvironment": {
-      "value": "Development"
+      "value": "Production"
     },
     "sslCertPfxBase64VNextSlot": {
       "value": "secret"

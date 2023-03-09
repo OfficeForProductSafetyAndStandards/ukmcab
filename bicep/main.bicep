@@ -1,25 +1,33 @@
 
-param project string = 'ukmcab'
-param env string = 'dev'
-param location string = 'uksouth'
-param appServicePlanSkuName string = 'B1' // defaults to B1 for dev/stage/test
-param storageAccountSkuName string = 'Standard_LRS' // default to LRS for dev/test
+param env string
+param location string
+param appServicePlanSkuName string
+param storageAccountSkuName string
+param provisionAppSvcVNextSlot bool
+param appServiceUseBasicAuth bool
+param appServiceUseBasicAuthVNext bool
+
 
 @secure()
-param basicAuthPassword string = ''
+param basicAuthPassword string
 
 @secure()
-param sslCertPfxBase64 string = ''
+param sslCertPfxBase64 string
 
 @secure()
-param dataProtectionX509CertBase64 string = ''
+param dataProtectionX509CertBase64 string
 
 @secure()
-param govukNotifyApiKey string = ''
+param govukNotifyApiKey string
 
-param aspNetCoreEnvironment string = 'Development'
+param aspNetCoreEnvironment string
+
+@secure()
+param sslCertPfxBase64VNextSlot string
 
 targetScope = 'subscription'
+
+var project = 'ukmcab'
 
 resource rg 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: 'rg-${project}-${env}'
@@ -40,5 +48,9 @@ module resourceSet './resources.bicep' = {
     aspNetCoreEnvironment: aspNetCoreEnvironment
     appServicePlanSkuName: appServicePlanSkuName
     storageAccountSkuName: storageAccountSkuName
+    provisionAppSvcVNextSlot: provisionAppSvcVNextSlot
+    sslCertPfxBase64VNextSlot: sslCertPfxBase64VNextSlot
+    appServiceUseBasicAuth: appServiceUseBasicAuth
+    appServiceUseBasicAuthVNext: appServiceUseBasicAuthVNext
   }
 }

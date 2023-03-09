@@ -3,43 +3,43 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "env": {
-      "value": "dev"
+      "value": ""
     },
     "location": {
-      "value": "uksouth"
+      "value": ""
     },
     "appServicePlanSkuName": {
-      "value": "B1"
+      "value": ""
     },
     "storageAccountSkuName": {
-      "value": "Standard_LRS"
+      "value": ""
     },
     "provisionAppSvcVNextSlot": {
       "value": false
     },
     "appServiceUseBasicAuth": {
-      "value": true
+      "value": false
     },
     "appServiceUseBasicAuthVNext": {
       "value": false
     },
     "basicAuthPassword": {
-      "value": "secret"
+      "value": ""
     },
     "sslCertPfxBase64": {
-      "value": "secret"
+      "value": ""
     },
     "dataProtectionX509CertBase64": {
-      "value": "secret"
+      "value": ""
     },
     "govukNotifyApiKey": {
-      "value": "secret"
+      "value": ""
     },
     "aspNetCoreEnvironment": {
-      "value": "Development"
+      "value": ""
     },
     "sslCertPfxBase64VNextSlot": {
-      "value": "secret"
+      "value": ""
     }
   }
 }

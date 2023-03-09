@@ -3,12 +3,18 @@ param env string
 param location string = resourceGroup().location
 param appServicePlanSkuName string
 param storageAccountSkuName string
+param provisionAppSvcVNextSlot bool
+param appServiceUseBasicAuth bool      // for prod deployment, after go-live, set to false in the prod.params.json
+param appServiceUseBasicAuthVNext bool
 
 @secure()
 param basicAuthPassword string
 
 @secure()
 param sslCertPfxBase64 string = ''
+
+@secure()
+param sslCertPfxBase64VNextSlot string = ''
 
 @secure()
 param dataProtectionX509CertBase64 string = ''
@@ -311,60 +317,71 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   kind: 'linux'
 }
 
-resource appService 'Microsoft.Web/sites@2022-03-01' = {
-  name: 'app-opss-${project}-${env}'
-  location: location
-  properties: {
-    httpsOnly: false
-    serverFarmId: appServicePlan.id
-    siteConfig: {
-      linuxFxVersion: 'DOTNETCORE|6.0'
-      alwaysOn: true
-      appSettings: [
-        {
-          name: 'AppInsightsConnectionString'
-          value: '@Microsoft.KeyVault(SecretUri=${appInsightsConnectionStringSecret.properties.secretUri})'
-        }
-        {
-          name: 'DataConnectionString'
-          value: '@Microsoft.KeyVault(SecretUri=${storageConnectionStringSecret.properties.secretUri})'
-        }
-        {
-          name: 'RedisConnectionString'
-          value: '@Microsoft.KeyVault(SecretUri=${redisConnectionStringSecret.properties.secretUri})'
-        }
-        {
-          name: 'CosmosConnectionString'
-          value: '@Microsoft.KeyVault(SecretUri=${cosmosConnectionStringSecret.properties.secretUri})'
-        }
-        {
-          name: 'BasicAuthPassword'
-          value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
-        }
-        {
-          name: 'DataProtectionX509CertBase64'
-          value: '@Microsoft.KeyVault(SecretUri=${dataProtectionX509CertBase64Secret.properties.secretUri})'
-        }
-        {
-          name: 'GovUkNotifyApiKey'
-          value: '@Microsoft.KeyVault(SecretUri=${govukNotifyApiKeySecret.properties.secretUri})'
-        }
-        {
-          name: 'AcsConnectionString'
-          value: '@Microsoft.KeyVault(SecretUri=${acsConnectionStringSecret.properties.secretUri})'
-        }
-        {
-          name: 'ASPNETCORE_ENVIRONMENT'
-          value: aspNetCoreEnvironment
-        }
-      ]
-    }
-  }
-  identity: {
-    type: 'SystemAssigned'
+
+var siteProperties = {
+  httpsOnly: false
+  serverFarmId: appServicePlan.id
+  siteConfig: {
+    linuxFxVersion: 'DOTNETCORE|6.0'
+    alwaysOn: true
+    appSettings: [
+      {
+        name: 'AppInsightsConnectionString'
+        value: '@Microsoft.KeyVault(SecretUri=${appInsightsConnectionStringSecret.properties.secretUri})'
+      }
+      {
+        name: 'DataConnectionString'
+        value: '@Microsoft.KeyVault(SecretUri=${storageConnectionStringSecret.properties.secretUri})'
+      }
+      {
+        name: 'RedisConnectionString'
+        value: '@Microsoft.KeyVault(SecretUri=${redisConnectionStringSecret.properties.secretUri})'
+      }
+      {
+        name: 'CosmosConnectionString'
+        value: '@Microsoft.KeyVault(SecretUri=${cosmosConnectionStringSecret.properties.secretUri})'
+      }
+      // {
+      //   name: 'BasicAuthPassword'
+      //   value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
+      // }
+      {
+        name: 'DataProtectionX509CertBase64'
+        value: '@Microsoft.KeyVault(SecretUri=${dataProtectionX509CertBase64Secret.properties.secretUri})'
+      }
+      {
+        name: 'GovUkNotifyApiKey'
+        value: '@Microsoft.KeyVault(SecretUri=${govukNotifyApiKeySecret.properties.secretUri})'
+      }
+      {
+        name: 'AcsConnectionString'
+        value: '@Microsoft.KeyVault(SecretUri=${acsConnectionStringSecret.properties.secretUri})'
+      }
+      {
+        name: 'ASPNETCORE_ENVIRONMENT'
+        value: aspNetCoreEnvironment
+      }
+    ]
   }
 }
 
+resource appService 'Microsoft.Web/sites@2022-03-01' = {
+  name: 'app-opss-${project}-${env}'
+  location: location
+  properties: siteProperties
+  identity: {
+    type: 'SystemAssigned'
+  }
+
+  resource vnext 'slots@2022-03-01' = if(provisionAppSvcVNextSlot) {
+    name: 'vnext'
+    location: location
+    properties: siteProperties
+    identity: {
+      type: 'SystemAssigned'
+    }
+  }
+}
 
 
 
@@ -373,26 +390,27 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
   KEY VAULT ACCESS POLICY
 */ 
 resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
-  name: '${kv.name}/add'
+  name: 'add'
+  parent: kv
   properties: {
-      accessPolicies: [
+      accessPolicies: concat([
           {
-              tenantId: subscription().tenantId
-              objectId: appService.identity.principalId
-              permissions: {
-                certificates: [
-                  'all'
-                ]
-                keys:[
-                  'all'
-                ]
-                secrets:[
-                  'all'
-                ]
-                storage: [
-                  'all'
-                ]
-               }
+            tenantId: subscription().tenantId
+            objectId: appService.identity.principalId
+            permissions: {
+              certificates: [
+                'all'
+              ]
+              keys:[
+                'all'
+              ]
+              secrets:[
+                'all'
+              ]
+              storage: [
+                'all'
+              ]
+              }
           }
           {
             tenantId: subscription().tenantId
@@ -410,11 +428,32 @@ resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-
               storage: [
                 'all'
               ]
-             }
+            }
         }
-      ]
+      ], 
+      provisionAppSvcVNextSlot ? [
+        {
+          tenantId: subscription().tenantId
+          objectId: appService::vnext.identity.principalId
+          permissions: {
+            certificates: [
+              'all'
+            ]
+            keys:[
+              'all'
+            ]
+            secrets:[
+              'all'
+            ]
+            storage: [
+              'all'
+            ]
+            }
+        }
+      ] : [])
   }
 }
+
 
 
 
@@ -444,6 +483,24 @@ resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-05-01' = {
 
   }
 }
+
+resource publicIpAddressVNext 'Microsoft.Network/publicIPAddresses@2022-05-01' = if(provisionAppSvcVNextSlot) {
+  name: 'ip-${project}-${env}-vnext'
+  location: location
+  sku: {
+    name: 'Standard'
+    tier: 'Regional'
+  }
+  properties: {
+    publicIPAllocationMethod: 'Static'
+    publicIPAddressVersion: 'IPv4'
+    dnsSettings: {
+      domainNameLabel: '${project}-${env}-vnext'
+    }
+  }
+}
+
+
 
 
 
@@ -492,11 +549,17 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
 
 
 var applicationGatewayName = 'agw-${project}-${env}'
-var applicationGatewaySslCertificateName = 'ssl-cert'
-var applicationGatewayBackendPool = 'agw-backend-pool'
-var applicationGatewayBackendHttpSettingsName = 'agw-be-http-settings'
-var applicationGatewayHttpsListener = 'agw-https-listener'
 var applicationGatewayCustomProbeName = 'agw-custom-backend-probe-http'
+var applicationGatewayBackendHttpSettingsName = 'agw-be-http-settings'
+
+var applicationGatewaySslCertificateName = 'ssl-cert'
+var applicationGatewaySslCertificateNameVNext = 'ssl-cert-vnext'
+var applicationGatewayBackendPool = 'agw-backend-pool'
+var applicationGatewayBackendPoolVNext = 'agw-backend-pool-vnext'
+var applicationGatewayHttpsListener = 'agw-https-listener'
+var applicationGatewayHttpsListenerVNext = 'agw-https-listener-vnext'
+var applicationGatewayPublicFrontendIpConfigurationName = 'appGwPublicFrontendIp'
+var applicationGatewayPublicFrontendIpConfigurationNameVNext = 'appGwPublicFrontendIpVNext'
 
 resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' = {
   location: location
@@ -532,7 +595,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
     ]
 
 
-    backendAddressPools: [
+    backendAddressPools: concat([
       {
         name: applicationGatewayBackendPool
         properties: {
@@ -544,7 +607,19 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           ]
         }
       }
-    ]
+    ], provisionAppSvcVNextSlot ? [
+      {
+        name: applicationGatewayBackendPoolVNext
+        properties: {
+
+          backendAddresses: [
+            {
+              fqdn: appService::vnext.properties.defaultHostName
+            }
+          ]
+        }
+      }
+    ] : [])
 
     
     frontendPorts: [
@@ -562,9 +637,9 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }
     ]
 
-    frontendIPConfigurations: [
+    frontendIPConfigurations: concat([
       {
-        name: 'appGwPublicFrontendIp'
+        name: applicationGatewayPublicFrontendIpConfigurationName
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           publicIPAddress: {
@@ -572,10 +647,21 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
         }
       }
-    ]
+    ], 
+    provisionAppSvcVNextSlot ? [
+      {
+        name: applicationGatewayPublicFrontendIpConfigurationNameVNext
+        properties: {
+          privateIPAllocationMethod: 'Dynamic'
+          publicIPAddress: {
+            id: publicIpAddressVNext.id
+          }
+        }
+      }
+    ] : [])
     
 
-    sslCertificates: [ 
+    sslCertificates: concat([ 
       {
         name: applicationGatewaySslCertificateName
         properties: {
@@ -583,15 +669,24 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           password: ''
         }
       }
-    ]
+    ], 
+    provisionAppSvcVNextSlot ? [
+      {
+        name: applicationGatewaySslCertificateNameVNext
+        properties: {
+          data: sslCertPfxBase64VNextSlot
+          password: ''
+        }
+      }
+    ] : [])
 
     
-    httpListeners: [
+    httpListeners: concat([
       {
         name: applicationGatewayHttpsListener
         properties: {
           frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, 'appGwPublicFrontendIp')
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayPublicFrontendIpConfigurationName)
           }
           frontendPort: {
             id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
@@ -610,10 +705,35 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           ]
         }
       }
-    ]
+    ],
+    provisionAppSvcVNextSlot ? [
+      {
+        name: applicationGatewayHttpsListenerVNext
+        properties: {
+          frontendIPConfiguration: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayPublicFrontendIpConfigurationNameVNext)
+          }
+          frontendPort: {
+            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
+          }
+          protocol: 'Https'
+          sslCertificate: {
+            id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, applicationGatewaySslCertificateNameVNext)
+          }
+          hostNames: []
+          requireServerNameIndication: false
+          customErrorConfigurations: [
+            {
+              statusCode: 'HttpStatus502'
+              customErrorPageUrl: 'https://storukmcabdev.blob.core.windows.net/public/badgateway.html'
+            }
+          ]
+        }
+      }
+    ] : [])
 
     
-    requestRoutingRules: [
+    requestRoutingRules: concat([
       {
         name: 'httpsrule'
         properties: {
@@ -630,7 +750,25 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
         }
       }
-    ]
+    ], 
+      provisionAppSvcVNextSlot ? [
+      {
+        name: 'httpsrule-vnext'
+        properties: {
+          ruleType: 'Basic'
+          priority: 2
+          httpListener: {
+            id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, applicationGatewayHttpsListenerVNext)
+          }
+          backendAddressPool: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayBackendPoolVNext)
+          }
+          backendHttpSettings: {
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsName)
+          }
+        }
+      }
+    ] : [])
 
 
     probes: [
@@ -674,7 +812,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
 }
 
 
-
 /*
   PRIVATE LINK
 */
@@ -685,7 +822,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
     subnet: {
       id: vnet::vnetSubnetApplication.id
     }
-    privateLinkServiceConnections: [
+    privateLinkServiceConnections: concat([
       {
         name: 'plconnection'
         properties: {
@@ -695,7 +832,17 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
           ]
         }
       }
-    ]
+    ], provisionAppSvcVNextSlot?[
+      {
+        name: 'plconnection-vnext'
+        properties: {
+          privateLinkServiceId: appService::vnext.id
+          groupIds: [
+            'sites'
+          ]
+        }
+      }
+    ]:[])
   }
 }
 
@@ -744,33 +891,90 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
 */
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+  =================================  
+  ADJUSTMENTS TO THE APP SERVICE(S)
+  =================================
+*/
+
+resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(appServiceUseBasicAuth) {
+  name: 'slotConfigNames'
+  parent: appService
+  kind: 'string'
+  properties:{
+    appSettingNames: [
+      'BasicAuthPassword'
+    ]
+  }
+}
+
+
 resource webConfig 'Microsoft.Web/sites/config@2022-03-01' = {
   name: 'web'
   parent: appService
   properties: {
-    publicNetworkAccess: 'Enabled'
-    ipSecurityRestrictions: [
+    publicNetworkAccess: provisionAppSvcVNextSlot ? 'Disabled' : 'Enabled'   // allow public access generally, then use ip restrictions to lock down the main site and ALLOW traffic to the SCM, otherwise this will stop deployments; unless we're provisioning a vnext slot, in which case deployments should target vnext
+    ipSecurityRestrictionsDefaultAction: 'Deny'     // ignore any bicep warnings
+    scmIpSecurityRestrictionsDefaultAction: 'Allow' // ignore any bicep warnings
+    appSettings: appServiceUseBasicAuth ? [
       {
-        ipAddress: 'Any'
-        name: 'Deny all'
-        action: 'Deny'
-        tag: 'Default'
-        priority: 1
-        description: 'Deny all access to the main site via public endpoint'
+        name: 'BasicAuthPassword'
+        value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
       }
-    ]
-    scmIpSecurityRestrictions: [
-      {
-        ipAddress: 'Any'
-        name: 'Allow all'
-        action: 'Allow'
-        tag: 'Default'
-        priority: 1
-        description: 'Allow all IP access to SCM site for CI-CD pipeline.'
-      }
-    ]
+    ] : []
   }
 }
+
+resource webConfigVNext 'Microsoft.Web/sites/slots/config@2022-03-01' = if(provisionAppSvcVNextSlot) {
+  name: 'web'
+  parent: appService::vnext
+  properties: {
+    publicNetworkAccess: 'Enabled'
+    ipSecurityRestrictionsDefaultAction: 'Deny'     // ignore any bicep warnings
+    scmIpSecurityRestrictionsDefaultAction: 'Allow' // ignore any bicep warnings
+    appSettings: appServiceUseBasicAuthVNext ? [
+      {
+        name: 'BasicAuthPassword'
+        value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
+      }
+    ] : []
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+
+
+
+
+
+
 
 
 /*
