@@ -1,4 +1,4 @@
-name: preprod-iac-deploy
+name: prod-iac-deploy
 
 on:
   workflow_dispatch:
