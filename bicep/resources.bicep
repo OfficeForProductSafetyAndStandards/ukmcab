@@ -50,12 +50,6 @@ var storageConnectionString = 'DefaultEndpointsProtocol=https;AccountName=${stor
 
 
 
-
-
-
-
-
-
 resource redis 'Microsoft.Cache/redis@2021-06-01' = {
   name: 'redis-${project}-${env}'
   location: location
@@ -69,11 +63,6 @@ resource redis 'Microsoft.Cache/redis@2021-06-01' = {
   }
 }
 var redisConnectionString = '${redis.name}.redis.cache.windows.net:6380,password=${redis.listKeys().primaryKey},ssl=True,abortConnect=False'
-
-
-
-
-
 
 
 
@@ -208,17 +197,6 @@ resource cosmosDbContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/c
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 /*
   KEY VAULT
 */
@@ -343,10 +321,6 @@ var siteProperties = {
         name: 'CosmosConnectionString'
         value: '@Microsoft.KeyVault(SecretUri=${cosmosConnectionStringSecret.properties.secretUri})'
       }
-      // {
-      //   name: 'BasicAuthPassword'
-      //   value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
-      // }
       {
         name: 'DataProtectionX509CertBase64'
         value: '@Microsoft.KeyVault(SecretUri=${dataProtectionX509CertBase64Secret.properties.secretUri})'
@@ -384,6 +358,9 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     }
   }
 }
+
+
+
 
 
 
@@ -672,6 +649,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
             customErrorConfigurations: [
               {
                 statusCode: 'HttpStatus502'
+                #disable-next-line no-hardcoded-env-urls // ultimately it needs a FQ URL
                 customErrorPageUrl: 'https://storukmcabdev.blob.core.windows.net/public/badgateway.html'
               }
             ]
@@ -697,6 +675,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           customErrorConfigurations: [
             {
               statusCode: 'HttpStatus502'
+              #disable-next-line no-hardcoded-env-urls // ultimately it needs a FQ URL
               customErrorPageUrl: 'https://storukmcabdev.blob.core.windows.net/public/badgateway.html'
             }
           ]
@@ -794,7 +773,7 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
     subnet: {
       id: vnet::vnetSubnetApplication.id
     }
-    privateLinkServiceConnections: concat([
+    privateLinkServiceConnections: [
       {
         name: 'plconnection'
         properties: {
@@ -804,17 +783,28 @@ resource privateEndpoint 'Microsoft.Network/privateEndpoints@2021-05-01' = {
           ]
         }
       }
-    ], provisionAppSvcVNextSlot?[
+    ]
+  }
+}
+
+resource privateEndpointVNext 'Microsoft.Network/privateEndpoints@2021-05-01' = if(provisionAppSvcVNextSlot) {
+  name: 'ep-${appService.name}-vnext'
+  location: location
+  properties: {
+    subnet: {
+      id: vnet::vnetSubnetApplication.id
+    }
+    privateLinkServiceConnections: [
       {
         name: 'plconnection-vnext'
         properties: {
-          privateLinkServiceId: appService::vnext.id
+          privateLinkServiceId: appService.id // this purposefully points to the parent web app
           groupIds: [
-            'sites'
+            'sites-vnext' // this is the bit which links to the vnext slot. 
           ]
         }
       }
-    ]:[])
+    ]
   }
 }
 
@@ -849,6 +839,25 @@ resource pvtEndpointDnsGroup 'Microsoft.Network/privateEndpoints/privateDnsZoneG
     ]
   }
 }
+
+resource pvtEndpointDnsGroupVNext 'Microsoft.Network/privateEndpoints/privateDnsZoneGroups@2021-05-01' = if(provisionAppSvcVNextSlot) {
+  name: 'privatelinkdns-vnext' 
+  parent: privateEndpointVNext
+  properties: {
+    privateDnsZoneConfigs: [
+      {
+        name: 'config1vnext'
+        properties: {
+          privateDnsZoneId: privateDnsZone.id
+        }
+      }
+    ]
+  }
+}
+
+
+
+
 
 
 /*
@@ -900,8 +909,13 @@ resource webConfig 'Microsoft.Web/sites/config@2022-03-01' = {
   parent: appService
   properties: {
     publicNetworkAccess: provisionAppSvcVNextSlot ? 'Disabled' : 'Enabled'   // allow public access generally, then use ip restrictions to lock down the main site and ALLOW traffic to the SCM, otherwise this will stop deployments; unless we're provisioning a vnext slot, in which case deployments should target vnext
-    ipSecurityRestrictionsDefaultAction: 'Deny'     // ignore any bicep warnings
-    scmIpSecurityRestrictionsDefaultAction: 'Allow' // ignore any bicep warnings
+    
+    #disable-next-line BCP037 // Bicep linter is wrong.
+    ipSecurityRestrictionsDefaultAction: 'Deny'
+    
+    #disable-next-line BCP037 // Bicep linter is wrong.
+    scmIpSecurityRestrictionsDefaultAction: 'Allow'
+    
     appSettings: appServiceUseBasicAuth ? [
       {
         name: 'BasicAuthPassword'
@@ -916,8 +930,13 @@ resource webConfigVNext 'Microsoft.Web/sites/slots/config@2022-03-01' = if(provi
   parent: appService::vnext
   properties: {
     publicNetworkAccess: 'Enabled'
-    ipSecurityRestrictionsDefaultAction: 'Deny'     // ignore any bicep warnings
-    scmIpSecurityRestrictionsDefaultAction: 'Allow' // ignore any bicep warnings
+    
+    #disable-next-line BCP037 // Bicep linter is wrong.
+    ipSecurityRestrictionsDefaultAction: 'Deny'
+    
+    #disable-next-line BCP037 // Bicep linter is wrong.
+    scmIpSecurityRestrictionsDefaultAction: 'Allow'
+    
     appSettings: appServiceUseBasicAuthVNext ? [
       {
         name: 'BasicAuthPassword'
