@@ -1,4 +1,4 @@
-﻿var searchPage = (function() {
+﻿var searchPage = (function () {
     'use strict';
 
     var searchResultsPage = document.getElementById("search-result-page");
@@ -24,7 +24,6 @@
             searchResultsPage.classList.add("js-enabled");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);
-            clearFiltersLink.addEventListener('click', clearFilters);
 
             mql = window.matchMedia('(min-width: 40.0625em)');
             mql.addListener(checkMode.bind(this));
@@ -45,6 +44,7 @@
             fo.onchange = function () {
             };
         });
+        clearFiltersLink.addEventListener('click', clearFilters);
     }
 
     function setUpFilterOptions() {
@@ -53,6 +53,7 @@
                 searchResultsForm.submit();
             };
         });
+        clearFiltersLink.removeEventListener('click', clearFilters);
     }
 
     function clearFilters(e) {
