@@ -32,7 +32,7 @@
             <nav aria-label="Menu" class="govuk-header__navigation ">
                 <button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide menu" hidden>Menu</button>
 
-                <ul id="navigation" class="govuk-header__navigation-list">
+                <ul id="navigation" class="govuk-header__navigation-list @Html.Conditional(signedInUser, "navigation-3-rows", "navigation-2-rows")">
                     <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "search", "govuk-header__navigation-item--active")">
                         <a asp-area="Search" asp-controller="Search" asp-action="Index" class="govuk-header__link">Search</a>
                     </li>
@@ -55,7 +55,7 @@
                     }
                     else
                     {
-                    <li class="govuk-header__navigation-item navigation-auth-link">
+                    <li class="govuk-header__navigation-item navigation-auth-link @Html.Conditional(ViewData["nav"] == "signin", "govuk-header__navigation-item--active")">
                         <a asp-area="Account" asp-controller="Home" asp-action="Login" class="govuk-header__link">Sign in</a>
                     </li>
                     }

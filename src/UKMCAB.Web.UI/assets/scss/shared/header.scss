@@ -2,15 +2,24 @@
     @include govuk-media-query($until: tablet) {
         .govuk-header__service-name {
             width: 250px;
-        } 
-        
+        }
+
         .govuk-header__menu-button {
             top: 50px;
         }
 
-        .govuk-header__navigation-item {
-            float: left;
-            width: 50%;
+        .govuk-header__navigation-list--open {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+
+            &.navigation-2-rows {
+                height: 85px;
+            }
+
+            &.navigation-3-rows {
+                height: 125px;
+            }
         }
     }
 
