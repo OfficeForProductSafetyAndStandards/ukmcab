@@ -1,0 +1,22 @@
+﻿#govuk-header {
+    @include govuk-media-query($until: tablet) {
+        .govuk-header__service-name {
+            width: 250px;
+        } 
+        
+        .govuk-header__menu-button {
+            top: 50px;
+        }
+
+        .govuk-header__navigation-item {
+            float: left;
+            width: 50%;
+        }
+    }
+
+    @include govuk-media-query($from: tablet) {
+        .navigation-auth-link {
+            float: right;
+        }
+    }
+}
