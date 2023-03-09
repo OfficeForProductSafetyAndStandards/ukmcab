@@ -27,10 +27,24 @@
             clearFiltersLink.addEventListener('click', clearFilters);
 
             mql = window.matchMedia('(min-width: 40.0625em)');
-            if (mql.matches) {
-                setUpFilterOptions();
-            }
+            mql.addListener(checkMode.bind(this));
+            checkMode();
         }
+    }
+
+    function checkMode() {
+        if (mql.matches) {
+            setUpFilterOptions();
+        } else {
+            teardown();
+        }
+    }
+
+    function teardown() {
+        filterOptions.forEach(function (fo) {
+            fo.onchange = function () {
+            };
+        });
     }
 
     function setUpFilterOptions() {
