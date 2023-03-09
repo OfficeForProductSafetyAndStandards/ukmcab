@@ -1,4 +1,8 @@
 ﻿@model CABProfileViewModel
+@{
+    ViewData["nav"] = "search";
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="Partials/_ValidationSummary" model="ViewData.ModelState"/>
