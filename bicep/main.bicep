@@ -6,6 +6,8 @@ param storageAccountSkuName string
 param provisionAppSvcVNextSlot bool
 param appServiceUseBasicAuth bool
 param appServiceUseBasicAuthVNext bool
+param appServiceHostName string
+param appServiceHostNameVNext string
 
 
 @secure()
@@ -52,5 +54,7 @@ module resourceSet './resources.bicep' = {
     sslCertPfxBase64VNextSlot: sslCertPfxBase64VNextSlot
     appServiceUseBasicAuth: appServiceUseBasicAuth
     appServiceUseBasicAuthVNext: appServiceUseBasicAuthVNext
+    appServiceHostName: appServiceHostName
+    appServiceHostNameVNext: appServiceHostNameVNext
   }
 }

@@ -6,6 +6,8 @@ param storageAccountSkuName string
 param provisionAppSvcVNextSlot bool
 param appServiceUseBasicAuth bool      // for prod deployment, after go-live, set to false in the prod.params.json
 param appServiceUseBasicAuthVNext bool
+param appServiceHostName string
+param appServiceHostNameVNext string
 
 @secure()
 param basicAuthPassword string
@@ -484,25 +486,6 @@ resource publicIpAddress 'Microsoft.Network/publicIPAddresses@2022-05-01' = {
   }
 }
 
-resource publicIpAddressVNext 'Microsoft.Network/publicIPAddresses@2022-05-01' = if(provisionAppSvcVNextSlot) {
-  name: 'ip-${project}-${env}-vnext'
-  location: location
-  sku: {
-    name: 'Standard'
-    tier: 'Regional'
-  }
-  properties: {
-    publicIPAllocationMethod: 'Static'
-    publicIPAddressVersion: 'IPv4'
-    dnsSettings: {
-      domainNameLabel: '${project}-${env}-vnext'
-    }
-  }
-}
-
-
-
-
 
 
 var vnetSubnetNameApplication = 'agsubnetapp'
@@ -551,6 +534,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
 var applicationGatewayName = 'agw-${project}-${env}'
 var applicationGatewayCustomProbeName = 'agw-custom-backend-probe-http'
 var applicationGatewayBackendHttpSettingsName = 'agw-be-http-settings'
+var applicationGatewayPublicFrontendIpConfigurationName = 'appGwPublicFrontendIp'
 
 var applicationGatewaySslCertificateName = 'ssl-cert'
 var applicationGatewaySslCertificateNameVNext = 'ssl-cert-vnext'
@@ -558,8 +542,6 @@ var applicationGatewayBackendPool = 'agw-backend-pool'
 var applicationGatewayBackendPoolVNext = 'agw-backend-pool-vnext'
 var applicationGatewayHttpsListener = 'agw-https-listener'
 var applicationGatewayHttpsListenerVNext = 'agw-https-listener-vnext'
-var applicationGatewayPublicFrontendIpConfigurationName = 'appGwPublicFrontendIp'
-var applicationGatewayPublicFrontendIpConfigurationNameVNext = 'appGwPublicFrontendIpVNext'
 
 resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' = {
   location: location
@@ -637,7 +619,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }
     ]
 
-    frontendIPConfigurations: concat([
+    frontendIPConfigurations: [
       {
         name: applicationGatewayPublicFrontendIpConfigurationName
         properties: {
@@ -647,18 +629,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
         }
       }
-    ], 
-    provisionAppSvcVNextSlot ? [
-      {
-        name: applicationGatewayPublicFrontendIpConfigurationNameVNext
-        properties: {
-          privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: publicIpAddressVNext.id
-          }
-        }
-      }
-    ] : [])
+    ]
     
 
     sslCertificates: concat([ 
@@ -681,8 +652,34 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
     ] : [])
 
     
-    httpListeners: concat([
-      {
+    httpListeners: concat(
+      provisionAppSvcVNextSlot ? [
+        {
+          name: applicationGatewayHttpsListenerVNext
+          properties: {
+            frontendIPConfiguration: {
+              id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayPublicFrontendIpConfigurationName)
+            }
+            frontendPort: {
+              id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
+            }
+            protocol: 'Https'
+            sslCertificate: {
+              id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, applicationGatewaySslCertificateNameVNext)
+            }
+            hostNames: [appServiceHostNameVNext]
+            requireServerNameIndication: false
+            customErrorConfigurations: [
+              {
+                statusCode: 'HttpStatus502'
+                customErrorPageUrl: 'https://storukmcabdev.blob.core.windows.net/public/badgateway.html'
+              }
+            ]
+          }
+        }
+      ] : [],
+      
+      [{
         name: applicationGatewayHttpsListener
         properties: {
           frontendIPConfiguration: {
@@ -695,7 +692,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           sslCertificate: {
             id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, applicationGatewaySslCertificateName)
           }
-          hostNames: []
+          hostNames: [appServiceHostName]
           requireServerNameIndication: false
           customErrorConfigurations: [
             {
@@ -704,33 +701,8 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
             }
           ]
         }
-      }
-    ],
-    provisionAppSvcVNextSlot ? [
-      {
-        name: applicationGatewayHttpsListenerVNext
-        properties: {
-          frontendIPConfiguration: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendIPConfigurations', applicationGatewayName, applicationGatewayPublicFrontendIpConfigurationNameVNext)
-          }
-          frontendPort: {
-            id: resourceId('Microsoft.Network/applicationGateways/frontendPorts', applicationGatewayName, 'port_443')
-          }
-          protocol: 'Https'
-          sslCertificate: {
-            id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, applicationGatewaySslCertificateNameVNext)
-          }
-          hostNames: []
-          requireServerNameIndication: false
-          customErrorConfigurations: [
-            {
-              statusCode: 'HttpStatus502'
-              customErrorPageUrl: 'https://storukmcabdev.blob.core.windows.net/public/badgateway.html'
-            }
-          ]
-        }
-      }
-    ] : [])
+      }]
+    ) //concat
 
     
     requestRoutingRules: concat([
@@ -756,7 +728,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         name: 'httpsrule-vnext'
         properties: {
           ruleType: 'Basic'
-          priority: 2
+          priority: 3
           httpListener: {
             id: resourceId('Microsoft.Network/applicationGateways/httpListeners', applicationGatewayName, applicationGatewayHttpsListenerVNext)
           }

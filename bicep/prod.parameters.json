@@ -40,6 +40,12 @@
     },
     "sslCertPfxBase64VNextSlot": {
       "value": "secret"
+    },
+    "appServiceHostName": {
+      "value": "ukmcab.beis.gov.uk"
+    },
+    "appServiceHostNameVNext": {
+      "value": "ukmcab-vnext.beis.gov.uk"
     }
   }
 }
