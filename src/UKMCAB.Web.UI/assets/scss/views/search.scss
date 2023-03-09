@@ -73,7 +73,7 @@
                 #search-filter-container {
                     #search-filter-options {
                         .search-filter-option-list {
-                            height: 100%;
+                            max-height: none;
                         }
                     }
                 }
@@ -119,6 +119,7 @@
 
                 #search-results-filters-link-container {
                     display: inline-block;
+                    padding-top: 10px;
 
                     a {
                         display: block;

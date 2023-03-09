@@ -14,6 +14,8 @@
 
     var searchResultsFilterToggle = document.getElementById('search-results-filter-toggle');
     var searchResultsListToggle = document.getElementById('search-results-list-toggle');
+    var clearFiltersLink = document.getElementById('clear-filters-link');
+    var keywordsInput = document.getElementById('Keywords');
 
     var mql;
 
@@ -22,6 +24,7 @@
             searchResultsPage.classList.add("js-enabled");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);
+            clearFiltersLink.addEventListener('click', clearFilters);
 
             mql = window.matchMedia('(min-width: 40.0625em)');
             if (mql.matches) {
@@ -38,6 +41,14 @@
         });
     }
 
+    function clearFilters(e) {
+        e.preventDefault();
+        keywordsInput.value = "";
+        filterOptions.forEach(function (fo) {
+            fo.checked = false;
+        });
+    }
+
     function showFilter(e) {
         e.preventDefault();
         toggleFilter(true);
@@ -47,7 +58,6 @@
         e.preventDefault();
         toggleFilter(false);
     }
-
 
     function toggleFilter(filter) {
         if (filter) {
