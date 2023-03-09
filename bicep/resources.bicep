@@ -304,40 +304,6 @@ var siteProperties = {
   siteConfig: {
     linuxFxVersion: 'DOTNETCORE|6.0'
     alwaysOn: true
-    appSettings: [
-      {
-        name: 'AppInsightsConnectionString'
-        value: '@Microsoft.KeyVault(SecretUri=${appInsightsConnectionStringSecret.properties.secretUri})'
-      }
-      {
-        name: 'DataConnectionString'
-        value: '@Microsoft.KeyVault(SecretUri=${storageConnectionStringSecret.properties.secretUri})'
-      }
-      {
-        name: 'RedisConnectionString'
-        value: '@Microsoft.KeyVault(SecretUri=${redisConnectionStringSecret.properties.secretUri})'
-      }
-      {
-        name: 'CosmosConnectionString'
-        value: '@Microsoft.KeyVault(SecretUri=${cosmosConnectionStringSecret.properties.secretUri})'
-      }
-      {
-        name: 'DataProtectionX509CertBase64'
-        value: '@Microsoft.KeyVault(SecretUri=${dataProtectionX509CertBase64Secret.properties.secretUri})'
-      }
-      {
-        name: 'GovUkNotifyApiKey'
-        value: '@Microsoft.KeyVault(SecretUri=${govukNotifyApiKeySecret.properties.secretUri})'
-      }
-      {
-        name: 'AcsConnectionString'
-        value: '@Microsoft.KeyVault(SecretUri=${acsConnectionStringSecret.properties.secretUri})'
-      }
-      {
-        name: 'ASPNETCORE_ENVIRONMENT'
-        value: aspNetCoreEnvironment
-      }
-    ]
   }
 }
 
@@ -891,16 +857,44 @@ resource pvtEndpointDnsGroupVNext 'Microsoft.Network/privateEndpoints/privateDns
   ADJUSTMENTS TO THE APP SERVICE(S)
   =================================
 */
-
-resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(appServiceUseBasicAuth) {
-  name: 'slotConfigNames'
-  parent: appService
-  kind: 'string'
-  properties:{
-    appSettingNames: [
-      'BasicAuthPassword'
-    ]
+var appSettings = [
+  {
+    name: 'AppInsightsConnectionString'
+    value: '@Microsoft.KeyVault(SecretUri=${appInsightsConnectionStringSecret.properties.secretUri})'
   }
+  {
+    name: 'DataConnectionString'
+    value: '@Microsoft.KeyVault(SecretUri=${storageConnectionStringSecret.properties.secretUri})'
+  }
+  {
+    name: 'RedisConnectionString'
+    value: '@Microsoft.KeyVault(SecretUri=${redisConnectionStringSecret.properties.secretUri})'
+  }
+  {
+    name: 'CosmosConnectionString'
+    value: '@Microsoft.KeyVault(SecretUri=${cosmosConnectionStringSecret.properties.secretUri})'
+  }
+  {
+    name: 'DataProtectionX509CertBase64'
+    value: '@Microsoft.KeyVault(SecretUri=${dataProtectionX509CertBase64Secret.properties.secretUri})'
+  }
+  {
+    name: 'GovUkNotifyApiKey'
+    value: '@Microsoft.KeyVault(SecretUri=${govukNotifyApiKeySecret.properties.secretUri})'
+  }
+  {
+    name: 'AcsConnectionString'
+    value: '@Microsoft.KeyVault(SecretUri=${acsConnectionStringSecret.properties.secretUri})'
+  }
+  {
+    name: 'ASPNETCORE_ENVIRONMENT'
+    value: aspNetCoreEnvironment
+  }
+]
+
+var appSettingBasicAuth = {
+  name: 'BasicAuthPassword'
+  value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
 }
 
 
@@ -916,12 +910,7 @@ resource webConfig 'Microsoft.Web/sites/config@2022-03-01' = {
     #disable-next-line BCP037 // Bicep linter is wrong.
     scmIpSecurityRestrictionsDefaultAction: 'Allow'
     
-    appSettings: appServiceUseBasicAuth ? [
-      {
-        name: 'BasicAuthPassword'
-        value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
-      }
-    ] : []
+    appSettings: concat(appSettings, appServiceUseBasicAuth ? [appSettingBasicAuth] : [])
   }
 }
 
@@ -937,16 +926,21 @@ resource webConfigVNext 'Microsoft.Web/sites/slots/config@2022-03-01' = if(provi
     #disable-next-line BCP037 // Bicep linter is wrong.
     scmIpSecurityRestrictionsDefaultAction: 'Allow'
     
-    appSettings: appServiceUseBasicAuthVNext ? [
-      {
-        name: 'BasicAuthPassword'
-        value: '@Microsoft.KeyVault(SecretUri=${basicAuthPasswordSecret.properties.secretUri})'
-      }
-    ] : []
+    appSettings: concat(appSettings, appServiceUseBasicAuthVNext ? [appSettingBasicAuth] : [])
   }
 }
 
 
+resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(appServiceUseBasicAuth) {
+  name: 'slotConfigNames'
+  parent: appService
+  kind: 'string'
+  properties:{
+    appSettingNames: [
+      'BasicAuthPassword'
+    ]
+  }
+}
 
 
 
