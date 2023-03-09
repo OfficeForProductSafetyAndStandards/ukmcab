@@ -3,7 +3,7 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "env": {
-      "value": "preprod"
+      "value": "prod"
     },
     "location": {
       "value": "uksouth"
@@ -15,13 +15,13 @@
       "value": "Standard_GRS"
     },
     "provisionAppSvcVNextSlot": {
-      "value": false
+      "value": true
     },
     "appServiceUseBasicAuth": {
       "value": true
     },
     "appServiceUseBasicAuthVNext": {
-      "value": false
+      "value": true
     },
     "basicAuthPassword": {
       "value": "secret"
@@ -42,10 +42,10 @@
       "value": "secret"
     },
     "appServiceHostName": {
-      "value": "ukmcab-pp.beis.gov.uk"
+      "value": "ukmcab.beis.gov.uk"
     },
     "appServiceHostNameVNext": {
-      "value": "none"
+      "value": "ukmcab-vnext.beis.gov.uk"
     }
   }
 }

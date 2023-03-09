@@ -405,3 +405,4 @@ FodyWeavers.xsd
 # End of https://www.toptal.com/developers/gitignore/api/visualstudio
 /src/.idea
 /src/UKMCAB.Web.UI/wwwroot/assets/*
+/bicep/prod.parameters.dryrun.json

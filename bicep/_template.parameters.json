@@ -3,49 +3,43 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "env": {
-      "value": "preprod"
+      "value": ""
     },
     "location": {
-      "value": "uksouth"
+      "value": ""
     },
     "appServicePlanSkuName": {
-      "value": "P1v3"
+      "value": ""
     },
     "storageAccountSkuName": {
-      "value": "Standard_GRS"
+      "value": ""
     },
     "provisionAppSvcVNextSlot": {
       "value": false
     },
     "appServiceUseBasicAuth": {
-      "value": true
+      "value": false
     },
     "appServiceUseBasicAuthVNext": {
       "value": false
     },
     "basicAuthPassword": {
-      "value": "secret"
+      "value": ""
     },
     "sslCertPfxBase64": {
-      "value": "secret"
+      "value": ""
     },
     "dataProtectionX509CertBase64": {
-      "value": "secret"
+      "value": ""
     },
     "govukNotifyApiKey": {
-      "value": "secret"
+      "value": ""
     },
     "aspNetCoreEnvironment": {
-      "value": "Production"
+      "value": ""
     },
     "sslCertPfxBase64VNextSlot": {
-      "value": "secret"
-    },
-    "appServiceHostName": {
-      "value": "ukmcab-pp.beis.gov.uk"
-    },
-    "appServiceHostNameVNext": {
-      "value": "none"
+      "value": ""
     }
   }
 }
