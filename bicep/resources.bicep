@@ -334,68 +334,53 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
 /*
   KEY VAULT ACCESS POLICY
 */ 
+var keyVaultPermissions = {
+  certificates: [
+    'all'
+  ]
+  keys:[
+    'all'
+  ]
+  secrets:[
+    'all'
+  ]
+  storage: [
+    'all'
+  ]
+}
+
+var keyVaultAccessPrincipalIds = [
+  'bdb1afdf-b36e-4947-880b-fc945baa7aa7' // usr: kd 
+  'fc5dc564-fb66-420d-8fa0-530c1f4da579' // sp: prod (secret: AZURE_CREDENTIALS_PROD),  production
+  '20003b81-d9ac-48fb-940f-200c9644a18d' // sp: uat (secret: AZURE_CREDENTIALS_UAT)     preprod/uat
+  '5ba190d7-7b3a-488f-b7df-48985aecc558' // sp: dev (secret: AZURE_CREDENTIALS)         dev/stage/test
+]
+
+var keyVaultAccessPrincipalDescriptors = [for id in keyVaultAccessPrincipalIds: {
+  tenantId: subscription().tenantId
+  objectId: id
+  permissions: keyVaultPermissions
+}]
+
 resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-01-preview' = {
   name: 'add'
   parent: kv
   properties: {
       accessPolicies: concat([
-          {
-            tenantId: subscription().tenantId
-            objectId: appService.identity.principalId
-            permissions: {
-              certificates: [
-                'all'
-              ]
-              keys:[
-                'all'
-              ]
-              secrets:[
-                'all'
-              ]
-              storage: [
-                'all'
-              ]
-              }
-          }
-          {
-            tenantId: subscription().tenantId
-            objectId: 'bdb1afdf-b36e-4947-880b-fc945baa7aa7' // kd
-            permissions: {
-              certificates: [
-                'all'
-              ]
-              keys:[
-                'all'
-              ]
-              secrets:[
-                'all'
-              ]
-              storage: [
-                'all'
-              ]
-            }
+        {
+          tenantId: subscription().tenantId
+          objectId: appService.identity.principalId
+          permissions: keyVaultPermissions
         }
       ], 
       provisionAppSvcVNextSlot ? [
         {
           tenantId: subscription().tenantId
           objectId: appService::vnext.identity.principalId
-          permissions: {
-            certificates: [
-              'all'
-            ]
-            keys:[
-              'all'
-            ]
-            secrets:[
-              'all'
-            ]
-            storage: [
-              'all'
-            ]
-            }
+          permissions: keyVaultPermissions
         }
-      ] : [])
+      ] : [],
+      keyVaultAccessPrincipalDescriptors)
   }
 }
 
