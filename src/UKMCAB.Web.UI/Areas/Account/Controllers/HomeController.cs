@@ -48,7 +48,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 var user = await _signInManager.UserManager.FindByEmailAsync(loginViewModel.Email);
                 if (user == null)
                 {
-                    ModelState.AddModelError("Email", "Invalid login attempt.");
+                    ModelState.AddModelError("Email", Constants.ErrorMessages.InvalidLoginAttempt);
                 }
                 else if (!user.RequestApproved)
                 {
@@ -67,7 +67,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                         _logger.LogWarning("User account locked out.");
                         return RedirectToAction("Lockout"); 
                     }
-                    ModelState.AddModelError("Email", "Invalid login attempt.");
+                    ModelState.AddModelError("Email", Constants.ErrorMessages.InvalidLoginAttempt);
                 }
             }
 
