@@ -68,6 +68,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                         return RedirectToAction("Lockout"); 
                     }
                     ModelState.AddModelError("Email", Constants.ErrorMessages.InvalidLoginAttempt);
+                    loginViewModel.Password = string.Empty;
                 }
             }
 
