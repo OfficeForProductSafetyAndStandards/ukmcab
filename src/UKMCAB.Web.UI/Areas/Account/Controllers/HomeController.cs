@@ -9,6 +9,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
     {
         private readonly SignInManager<UKMCABUser> _signInManager;
         private readonly ILogger<LoginViewModel> _logger;
+        private const string SignOutKey = "SignedOut";
 
         public HomeController(SignInManager<UKMCABUser> signInManager, ILogger<LoginViewModel> logger)
         {
@@ -24,14 +25,10 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 return Redirect("/");
             }
 
-            if (string.IsNullOrWhiteSpace(returnUrl))
-            {
-                returnUrl = Url.Content("~/");
-            }
-
             var model = new LoginViewModel
             {
-                ReturnURL = returnUrl
+                ReturnURL = string.IsNullOrWhiteSpace(returnUrl) ? Url.Content("~/") : returnUrl,
+                FromSignOut = TempData.Keys.Contains(SignOutKey) && (bool)TempData[SignOutKey]
             };
 
             return View(model);
@@ -76,38 +73,14 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             return View(loginViewModel);
         }
 
-        [Route("account/logout")]
-        public async Task<IActionResult> Logout(string? returnUrl = null)
-        {
-            if (_signInManager.IsSignedIn(User))
-            {
-                return Redirect("/");
-            }
-
-            if (string.IsNullOrWhiteSpace(returnUrl))
-            {
-                returnUrl = Url.Content("~/");
-            }
-
-            var model = new LogoutViewModel
-            {
-                ReturnURL = returnUrl
-            };
-
-            return View(model);
-        }
-
         [HttpPost]
         [Route("account/logout")]
-        public async Task<IActionResult> Logout(LogoutViewModel logoutViewModel)
+        public async Task<IActionResult> Logout()
         {
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
-            if (!string.IsNullOrWhiteSpace(logoutViewModel.ReturnURL))
-            {
-                return Redirect(logoutViewModel.ReturnURL);
-            }
-            return View(logoutViewModel);
+            TempData[SignOutKey] = true;
+            return RedirectToAction("Login");
         }
 
         [Route("account/lockout")]
