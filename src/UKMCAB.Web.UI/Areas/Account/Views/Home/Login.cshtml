@@ -5,6 +5,16 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        @if (Model.FromSignOut)
+        {
+            <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__content">
+                    <p class="govuk-notification-banner__heading">
+                        You have successfully signed out.
+                    </p>
+                </div>
+            </div>
+        }
         <form id="sign-in" method="post">
             <partial name="Partials/_ValidationSummary" model="ViewData.ModelState"/>
             <input type="hidden" asp-for="ReturnURL"/>
@@ -17,23 +27,23 @@
                 </legend>
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Email")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "Email")">
                     <label asp-for="Email" class="govuk-label">Email address</label>
                     <p class="govuk-error-message">
                         <span asp-validation-for="Email" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="Email" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState,"Email")" autocomplete="username" aria-required="true"/>
+                    <input asp-for="Email" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "Email")" autocomplete="username" aria-required="true"/>
                 </div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Password")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "Password")">
                     <label asp-for="Password" class="govuk-label"></label>
                     <p class="govuk-error-message">
                         <span asp-validation-for="Password" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="Password" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState,"Password")" autocomplete="current-password" aria-required="true"/>
+                    <input asp-for="Password" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "Password")" autocomplete="current-password" aria-required="true"/>
                     <a class="govuk-button govuk-button--secondary show-password-button" href="#">Show</a>
                 </div>
                 <div class="govuk-inset-text">
-                    By signing in you accept our <a class="govuk-link" asp-area="Home" asp-controller="Footer"  asp-action="TermsAndConditions">terms and conditions</a>.
+                    By signing in you accept our <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="TermsAndConditions">terms and conditions</a>.
                 </div>
                 <div class="govuk-form-group">
                     <button id="login-submit" type="submit" class="govuk-button">Sign in</button>

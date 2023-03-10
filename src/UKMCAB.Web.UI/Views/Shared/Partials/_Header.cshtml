@@ -48,7 +48,7 @@
                         <a asp-controller="Admin" asp-action="List" class="govuk-header__link">Admin</a>
                     </li>
                     <li class="govuk-header__navigation-item navigation-auth-link">
-                        <form id="logoutForm" class="form-inline" asp-area="Account" asp-controller="Home" asp-action="Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                        <form id="logoutForm" class="form-inline" asp-area="Account" asp-controller="Home" asp-action="Logout">
                             <a id="logoutLink" href="#" class="govuk-header__link">Sign out</a>
                         </form>
                     </li>
