@@ -22,8 +22,12 @@
             }
         }
 
-        .govuk-header__navigation-item:last-child {
+        .navigation-mobile-underline {
             border-bottom: 1px solid #2e3133;
+        }
+
+        .navigation-mobile-no-underline {
+            border-bottom: none;
         }
     }
 
