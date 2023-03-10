@@ -78,6 +78,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
 {
     opt.LoginPath = new PathString("/account/login");
     opt.LogoutPath = new PathString("/account/logout");
+    opt.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 });
 
 // =================================================================================================
