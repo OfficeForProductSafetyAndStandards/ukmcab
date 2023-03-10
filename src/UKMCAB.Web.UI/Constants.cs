@@ -30,6 +30,11 @@ public static class Constants
         };
     }
 
+    public class ErrorMessages
+    {
+        public const string InvalidLoginAttempt = "The information provided is not right, try again";
+    }
+
     public static class Lists
     {
         public static readonly List<string> LegislativeAreas = new()

@@ -21,6 +21,10 @@
                 height: 125px;
             }
         }
+
+        .govuk-header__navigation-item:last-child {
+            border-bottom: 1px solid #2e3133;
+        }
     }
 
     @include govuk-media-query($from: tablet) {
