@@ -90,15 +90,14 @@ namespace UKMCAB.Test.Controllers.Accounts
                 .ReturnsAsync(IdentityResult.Success);
 
             _sut.TempData = new TempDataDictionary(new DefaultHttpContext(), Mock.Of<ITempDataProvider>());
-            var result = await _sut.ChangePassword(new ChangePasswordViewModel()) as RedirectToActionResult;
+            var result = await _sut.ChangePassword(new ChangePasswordViewModel()) as ViewResult;
 
             mockSignInManager.Verify(sim => sim.RefreshSignInAsync(It.IsAny<UKMCABUser>()), Times.Once);
 
             mockAsyncNotificationClient.Verify(anc => anc.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<Dictionary<string, dynamic>>(), It.IsAny<string>(), It.IsAny<string>()), Times.Once);
-
-            Assert.IsTrue(_sut.TempData["Email"] == "test@email.com");
-            Assert.IsTrue(result.ActionName == nameof(ManageController.PasswordChanged));
+            var model = result.Model as ChangePasswordViewModel;
+            Assert.IsTrue(model.PasswordChanged);
         }
     }
 }
