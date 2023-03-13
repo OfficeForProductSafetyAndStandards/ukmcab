@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
- using UKMCAB.Common.Exceptions;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 
@@ -31,7 +31,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             var user = await _userManager.GetUserAsync(User);
             Guard.IsFalse<PermissionDeniedException>(user == null);
 
-            return View();
+            return View(new ChangePasswordViewModel());
         }
 
         [HttpPost]
@@ -48,24 +48,18 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 {
                     await _signInManager.RefreshSignInAsync(user);
                     await _asyncNotificationClient.SendEmailAsync(user.Email, _templateOptions.PasswordChanged);
-                    TempData["Email"] = user.Email;
-                    return RedirectToAction("PasswordChanged");
+                    model.PasswordChanged = true;
                 }
-                foreach (var error in changePasswordResult.Errors)
+                else
                 {
-                    ModelState.AddModelError(string.Empty, error.Description);
+                    foreach (var error in changePasswordResult.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
                 }
             }
 
             return View(model);
-        }
-
-        [Route("account/manage/password-changed")]
-        public async Task<IActionResult> PasswordChanged()
-        {
-            var user = await _userManager.GetUserAsync(User);
-            Guard.IsTrue<PermissionDeniedException>(TempData["Email"] is string emailValidation && user != null && user.Email == emailValidation);
-            return View();
         }
     }
 }

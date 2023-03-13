@@ -31,11 +31,14 @@
 
     function togglePassword(e) {
         e.preventDefault();
-        var input = e.currentTarget.previousElementSibling;
+        var toggleButton = e.currentTarget;
+        var input = toggleButton.previousElementSibling;
         if (input.type === "password") {
             input.type = "text";
+            toggleButton.innerText = "Hide";
         } else {
             input.type = "password";
+            toggleButton.innerText = "Show";
         }
     }
 
