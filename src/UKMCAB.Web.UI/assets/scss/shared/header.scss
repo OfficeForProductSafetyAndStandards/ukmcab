@@ -1,4 +1,15 @@
 ﻿#govuk-header {
+    #logout-link {
+        font-size: 1em;
+        font-weight: 700;
+        color: #ffffff;
+        background-color: black;
+        border: none;
+        margin: 0;
+        padding: 0;
+    }
+
+
     @include govuk-media-query($until: tablet) {
         .govuk-header__service-name {
             width: 250px;
