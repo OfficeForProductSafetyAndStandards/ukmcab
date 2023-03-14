@@ -4,7 +4,8 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_WEBAPP_NAME: app-opss-ukmcab-prod/vnext
+  AZURE_WEBAPP_NAME: app-opss-ukmcab-prod
+  SLOT_NAME: 'vnext'
   AZURE_WEBAPP_PACKAGE_PATH: UKMCAB.Web.UI/publish
   DOTNET_VERSION: '6.0.x'
   CONFIGURATION: Release
@@ -62,6 +63,7 @@ jobs:
         with: 
           app-name: ${{ env.AZURE_WEBAPP_NAME }}
           package: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
+          slot-name: ${{ env.SLOT_NAME }}
       
       - name: logout
         run: |
