@@ -62,7 +62,14 @@
                                 Address
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Html.Raw(Model.Address)
+                                @if (!string.IsNullOrWhiteSpace(Model.Address))
+                                {
+                                    <text>@Html.Raw(Model.Address)</text>
+                                }
+                                else
+                                {
+                                    <text>@Constants.NotProvided</text>
+                                }
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -121,9 +128,16 @@
                                 Registered test location
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @foreach (var testLocation in Model.RegisteredTestLocations)
+                                @if (!Model.RegisteredTestLocations.Any())
                                 {
-                                    <span class="cab-detail-list-item">@testLocation</span>
+                                    <text>@Constants.NotProvided</text>
+                                }
+                                else
+                                {
+                                    foreach (var testLocation in Model.RegisteredTestLocations)
+                                    {
+                                        <span class="cab-detail-list-item">@testLocation</span>
+                                    }
                                 }
                             </dd>
                         </div>
@@ -132,7 +146,7 @@
                                 Body number
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.BodyNumber
+                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.BodyNumber), Model.BodyNumber, @Constants.NotProvided)
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row">
@@ -140,9 +154,16 @@
                                 Body type
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @foreach (var bodyType in Model.BodyTypes)
+                                @if (!Model.BodyTypes.Any())
                                 {
-                                    <span class="cab-detail-list-item">@bodyType</span>
+                                    <text>@Constants.NotProvided</text>
+                                }
+                                else
+                                {
+                                    @foreach (var bodyType in Model.BodyTypes)
+                                    {
+                                        <span class="cab-detail-list-item">@bodyType</span>
+                                    }
                                 }
                             </dd>
                         </div>
@@ -151,9 +172,16 @@
                                 Legislative area
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @foreach (var legislativeArea in Model.LegislativeAreas)
+                                @if (!Model.LegislativeAreas.Any())
                                 {
-                                    <span class="cab-detail-list-item">@legislativeArea</span>
+                                    <text>@Constants.NotProvided</text>
+                                }
+                                else
+                                {
+                                    @foreach (var legislativeArea in Model.LegislativeAreas)
+                                    {
+                                        <span class="cab-detail-list-item">@legislativeArea</span>
+                                    }
                                 }
                             </dd>
                         </div>
@@ -163,14 +191,21 @@
             <div class="govuk-tabs__panel cabs__panel govuk-tabs__panel--hidden" id="product-schedules">
                 <div class="cab-detail-section">
                     <h2 class="govuk-heading-l">Product schedules</h2>
-                    <ul class="cab-profile-file-list">
-                        @foreach (var file in Model.ProductSchedules)
-                        {
-                            <li class="cab-profile-file-list-item">
-                                <a class="govuk-link" asp-area="search" asp-controller="CAB" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-type="schedules">@file.FileName</a>
-                            </li>
-                        }                        
-                    </ul>
+                    @if (!Model.ProductSchedules.Any())
+                    {
+                        <p class="govuk-body">There are no product schedules</p>
+                    }
+                    else
+                    {
+                        <ul class="cab-profile-file-list">
+                            @foreach (var file in Model.ProductSchedules)
+                            {
+                                <li class="cab-profile-file-list-item">
+                                    <a class="govuk-link" asp-area="search" asp-controller="CAB" asp-action="Download" asp-route-id="@file.BlobName" asp-route-file="@file.FileName">@file.FileName</a>
+                                </li>
+                            }
+                        </ul>
+                    }
                 </div>
             </div>
         </div>

@@ -39,7 +39,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
                 ProductSchedules = cabDocument.PDFs.Select(pdf => new FileUpload
                 {
-                    BlobName = pdf.Url,
+                    BlobName = pdf.BlobName,
                     FileName = pdf.ClientFileName
                 }).ToList(), 
             };
@@ -48,9 +48,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         [HttpGet]
         [Route("search/cab-schedule-download/{id}")]
-        public async Task<IActionResult> Download(string id, string file, string type)
+        public async Task<IActionResult> Download(string id, string file)
         {
-            var fileStream = await _fileStorage.DownloadBlobStream($"{id}/{type}/{file}");
+            var fileStream = await _fileStorage.DownloadBlobStream($"{id}");
             if (fileStream != null)
             {
                 return File(fileStream.FileStream, fileStream.ContentType, file);
