@@ -11,6 +11,11 @@
     .govuk-form-group {
         margin: 30px 0;
         padding-top: 15px;
+
+        label{
+            font-weight: 700;
+        }
+
     }
 
     @include govuk-media-query($from: tablet) {
