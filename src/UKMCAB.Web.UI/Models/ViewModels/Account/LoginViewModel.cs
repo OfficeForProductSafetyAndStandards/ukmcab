@@ -6,6 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Account
     {
         public string? Title => "Login";
         public string ReturnURL { get; set; }
+        public bool IsLockedOut { get; set; }
 
         public bool FromSignOut { get; set; }
 
