@@ -15,6 +15,18 @@
                 </div>
             </div>
         }
+        else if (Model.IsLockedOut)
+        {
+            <div class="govuk-warning-text govuk-error-summary">
+                <div id="lockout-warning-body">
+                   <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        The service is now locked for 2 hours due to multiple failed login attempts.
+                    </strong>
+                </div>
+            </div>
+        }
         <form id="sign-in" method="post">
             <partial name="Partials/_ValidationSummary" model="ViewData.ModelState"/>
             <input type="hidden" asp-for="ReturnURL"/>

@@ -62,10 +62,13 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     if (result.IsLockedOut)
                     {
                         _logger.LogWarning("User account locked out.");
-                        return RedirectToAction("Lockout"); 
+                        loginViewModel.IsLockedOut = true;
                     }
-                    ModelState.AddModelError("Email", Constants.ErrorMessages.InvalidLoginAttempt);
-                    loginViewModel.Password = string.Empty;
+                    else
+                    {
+                        ModelState.AddModelError("Email", Constants.ErrorMessages.InvalidLoginAttempt);
+                        loginViewModel.Password = string.Empty;
+                    }
                 }
             }
 
@@ -81,12 +84,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             _logger.LogInformation("User logged out.");
             TempData[SignOutKey] = true;
             return RedirectToAction("Login");
-        }
-
-        [Route("account/lockout")]
-        public IActionResult Lockout()
-        {
-            return View();
         }
     }
 }
