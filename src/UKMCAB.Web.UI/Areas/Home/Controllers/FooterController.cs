@@ -11,5 +11,11 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             return View();
         }
+
+        [Route("/cookies-policy")]
+        public IActionResult Cookies()
+        {
+            return View();
+        }
     }
 }
