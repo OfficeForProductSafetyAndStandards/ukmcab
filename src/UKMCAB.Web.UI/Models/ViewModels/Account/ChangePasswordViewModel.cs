@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Account
 {
-    public class ChangePasswordViewModel: ILayoutModel
+    public class ChangePasswordViewModel : ILayoutModel
     {
         [Required(ErrorMessage = "Enter the current password")]
         [DataType(DataType.Password)]
@@ -10,7 +10,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Account
         public string CurrentPassword { get; set; }
 
         [Required(ErrorMessage = "Enter the new password")]
-        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.", MinimumLength = 8)]
+        [StringLength(100, ErrorMessage = "The {0} must be at least {2} and at max {1} characters long.",
+            MinimumLength = 8)]
         [DataType(DataType.Password)]
         [Display(Name = "New password")]
         public string NewPassword { get; set; }
@@ -24,5 +25,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Account
         public bool PasswordChanged { get; set; }
 
         public string? Title => "Change password";
+
+        public string[] FieldOrder => new[] { nameof(CurrentPassword), nameof(NewPassword), nameof(ConfirmPassword) };
     }
 }

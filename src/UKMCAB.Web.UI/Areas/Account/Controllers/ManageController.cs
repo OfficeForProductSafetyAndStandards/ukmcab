@@ -54,12 +54,22 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 {
                     foreach (var error in changePasswordResult.Errors)
                     {
-                        ModelState.AddModelError(string.Empty, error.Description);
+                        ModelState.AddModelError(GetErrorKey(error.Code), error.Description);
                     }
                 }
             }
 
             return View(model);
+        }
+
+        public string GetErrorKey(string code)
+        {
+            return code switch
+            {
+                "PasswordRequiresNonAlphanumeric" or "PasswordRequiresDigit" or "PasswordRequiresUpper" => nameof(ChangePasswordViewModel.NewPassword),
+                "PasswordMismatch" => nameof(ChangePasswordViewModel.CurrentPassword),
+                _ => string.Empty,
+            };
         }
     }
 }
