@@ -4,6 +4,37 @@
     }
 }
 
+<<<<<<< Updated upstream
+=======
+#atom-feed-top {
+    @include govuk-media-query($until: tablet) {
+        display: none;
+    }
+
+    a {
+        float: right;
+    }
+}
+
+#atom-feed-bottom {
+    order: 3;
+    @include govuk-media-query($from: tablet) {
+        display: none;
+    }
+}
+
+.atom-feed {
+    a {
+        text-decoration: none;
+
+        .atom-feed__icon {
+            color: #0b0c0c;
+            margin-right: 5px;
+        }
+    }
+}
+
+>>>>>>> Stashed changes
 #search-result-page {
     &.js-enabled {
 
