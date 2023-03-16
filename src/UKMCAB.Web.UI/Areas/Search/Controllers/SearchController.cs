@@ -1,7 +1,11 @@
-﻿using UKMCAB.Data.Search.Models;
+﻿using System.ServiceModel.Syndication;
+using System.Xml;
+using System.Xml.Serialization;
+using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
+using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -10,26 +14,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
     {
         private readonly ISearchService _searchService;
         private readonly IDistCache _cache;
+        private readonly IFeedService _feedService;
 
-        public SearchController(ISearchService searchService, IDistCache cache)
+        public SearchController(ISearchService searchService, IDistCache cache, IFeedService feedService)
         {
             _searchService = searchService;
             _cache = cache;
+            _feedService = feedService;
         }
 
 
         [Route("search")]
         public async Task<IActionResult> Index(SearchViewModel model)
         {
-            if (model.PageNumber == 0)
-            {
-                model.PageNumber = 1;
-            }
-            if (model.Sort == null)
-            {
-                model.Sort = string.Empty;
-            }
-
             var searchResult = await _searchService.QueryAsync(new CABSearchOptions
             {
                 PageNumber = model.PageNumber,
@@ -41,23 +38,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 TestingLocationsFilter = model.TestingLocations
             });
 
-            var facets = await _cache.GetOrCreateAsync("ukmcab-facets", _searchService.GetFacetsAsync, TimeSpan.FromHours(1));
+            await SetFacetOptions(model);
 
-            model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
-            model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
-            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
-            model.TestingLocationOptions = GetFilterOptions(nameof(model.TestingLocations), "Testing location", facets.TestingLocations, model.TestingLocations);
-
-            model.SearchResults = searchResult.CABs.Select(c => new ResultViewModel
-            {
-                id = c.id,
-                Name = c.Name,
-                Address = c.Address,
-                BodyType = ListToString(c.BodyTypes),
-                RegisteredOfficeLocation = c.RegisteredOfficeLocation,
-                RegisteredTestLocation = ListToString(c.TestingLocations),
-                LegislativeArea = ListToString(c.LegislativeAreas)
-            }).ToList();
+            model.SearchResults = searchResult.CABs.Select(c => new ResultViewModel(c)).ToList();
             model.Pagination = new PaginationViewModel
             {
                 Total = searchResult.Total,
@@ -65,6 +48,62 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
 
             return View(model);
+        }
+
+        [Route("search-feed")]
+        public async Task<IActionResult> AtomFeed(SearchViewModel model)
+        {
+            model.Sort = Constants.LastUpdatedSortValue;
+            var searchResult = await _searchService.QueryAsync(new CABSearchOptions
+            {
+                PageNumber = model.PageNumber,
+                Keywords = model.Keywords,
+                Sort = model.Sort,
+                BodyTypesFilter = model.BodyTypes,
+                LegislativeAreasFilter = model.LegislativeAreas,
+                RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
+                TestingLocationsFilter = model.TestingLocations,
+                ForAtomFeed = true
+            });
+
+            var feed = _feedService.GetSyndicationFeed(Request, searchResult.CABs, Url);
+
+            var settings = new XmlWriterSettings
+            {
+                Encoding = Encoding.UTF8,
+                NewLineHandling = NewLineHandling.Entitize,
+                //NewLineOnAttributes = true,
+                Indent = true,
+                ConformanceLevel = ConformanceLevel.Document
+            };
+            using (var stream = new MemoryStream())
+            {
+                using (var xmlWriter = XmlWriter.Create(stream, settings))
+                {
+                    feed.GetAtom10Formatter().WriteTo(xmlWriter);
+                    xmlWriter.Flush();
+                }
+                return File(stream.ToArray(), "application/atom+xml;charset=utf-8");
+            }
+        }
+
+        private SyndicationLink GetProfileSyndicationLink(string id)
+        {
+            var link = Url.Action("Index", "CAB", new { Area = "search", id = id }, Request.Scheme, Request.GetOriginalHostFromHeaders());
+            var profileLink = new SyndicationLink(new Uri(link));
+            profileLink.RelationshipType = "alternate";
+            profileLink.MediaType = "text/html";
+            return profileLink;
+        }
+
+        private async Task SetFacetOptions(SearchViewModel model)
+        {
+            var facets = await _cache.GetOrCreateAsync("ukmcab-facets", _searchService.GetFacetsAsync, TimeSpan.FromHours(1));
+
+            model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
+            model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
+            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
+            model.TestingLocationOptions = GetFilterOptions(nameof(model.TestingLocations), "Testing location", facets.TestingLocations, model.TestingLocations);
         }
 
         private FilterViewModel GetFilterOptions(string facetName, string facetLabel, IEnumerable<string> facets, IEnumerable<string> selectedFacets)
@@ -81,21 +120,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             filter.FilterOptions = facets.Select(f => new FilterOption(facetName, f,
                 selectedFacets.Any(sf => sf.Equals(f, StringComparison.InvariantCultureIgnoreCase)))).ToList();
             return filter;
-        }
-
-        private string ListToString(string[] list)
-        {
-            if (list == null || list.Length == 0)
-            {
-                return string.Empty;
-            }
-
-            if (list.Length == 1)
-            {
-                return list.First();
-            }
-
-            return $"{list.First()} and {list.Length - 1} other{(list.Length > 2 ? "s" : string.Empty)}";
         }
     }
 }
