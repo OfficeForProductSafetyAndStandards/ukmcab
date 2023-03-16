@@ -54,8 +54,9 @@ namespace UKMCAB.Data.Search.Services
                 return "*";
             }
 
-            var keywordsList = keywords.Split(" ").Select(k => $"{k.Trim()}~");
-            return string.Join(" ", keywordsList);
+            return $"\'{keywords.Trim()}~\'"; 
+            //var keywordsList = keywords.Split(" ").Select(k => $"{k.Trim()}~");
+            //return string.Join(" ", keywordsList);
 
         }
 
