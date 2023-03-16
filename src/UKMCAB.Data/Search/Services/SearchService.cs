@@ -47,9 +47,21 @@ namespace UKMCAB.Data.Search.Services
             return list;
         }
 
+        private string GetKeywordsQuery(string keywords)
+        {
+            if (string.IsNullOrWhiteSpace(keywords))
+            {
+                return "*";
+            }
+
+            var keywordsList = keywords.Split(" ").Select(k => $"{k.Trim()}~");
+            return string.Join(" ", keywordsList);
+
+        }
+
         public async Task<CABResults> QueryAsync(CABSearchOptions options)
         {
-            var query = string.IsNullOrWhiteSpace(options.Keywords) ? "*" : options.Keywords;
+            var query = GetKeywordsQuery(options.Keywords);
             var filter = BuildFilter(options);
             var sort = BuildSort(options);
             var search = await _indexClient.SearchAsync<CABIndexItem>(query, new SearchOptions
@@ -58,7 +70,8 @@ namespace UKMCAB.Data.Search.Services
                 IncludeTotalCount = true,
                 Skip = options.ForAtomFeed ? null : SearchResultPerPage * (options.PageNumber - 1),
                 Filter = filter,
-                OrderBy = { sort }
+                OrderBy = { sort },
+                QueryType = SearchQueryType.Full
             });
             var cabResults = new CABResults
             {

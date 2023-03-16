@@ -17,8 +17,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Account
 
         [Required(ErrorMessage = "Re-enter the new password")]
         [DataType(DataType.Password)]
-        [Display(Name = "Confirm new password")]
         [Compare("NewPassword", ErrorMessage = "New password does not match, try again.")]
+        [Display(Name = "Confirm new password")]
         public string ConfirmPassword { get; set; }
 
         public bool PasswordChanged { get; set; }
