@@ -315,6 +315,15 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     type: 'SystemAssigned'
   }
 
+  resource hostname 'hostNameBindings@2022-03-01' = {
+    name: appServiceHostName
+    properties: {
+      customHostNameDnsRecordType: 'A'
+      hostNameType: 'Verified'
+      siteName: appService.name
+    }
+  }
+
   resource vnext 'slots@2022-03-01' = if(provisionAppSvcVNextSlot) {
     name: 'vnext'
     location: location
