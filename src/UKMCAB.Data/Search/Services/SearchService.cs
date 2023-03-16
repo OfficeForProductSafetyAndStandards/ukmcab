@@ -54,9 +54,9 @@ namespace UKMCAB.Data.Search.Services
             var sort = BuildSort(options);
             var search = await _indexClient.SearchAsync<CABIndexItem>(query, new SearchOptions
             {
-                Size = SearchResultPerPage,
+                Size = options.ForAtomFeed ? null : SearchResultPerPage,
                 IncludeTotalCount = true,
-                Skip = SearchResultPerPage * (options.PageNumber - 1),
+                Skip = options.ForAtomFeed ? null : SearchResultPerPage * (options.PageNumber - 1),
                 Filter = filter,
                 OrderBy = { sort }
             });

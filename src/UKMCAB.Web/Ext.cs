@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Storage.Blobs.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace UKMCAB.Web;
 
@@ -16,5 +17,20 @@ public static class Ext
         }
 
         return request.Host.Value;
+    }
+
+    public static Uri GetRequestUri(this HttpRequest request)
+    {
+        var builder = new UriBuilder();
+        var hostComponents = request.GetOriginalHostFromHeaders().Split(':');
+        builder.Scheme = request.Scheme;
+        builder.Host = hostComponents[0];
+        builder.Path = request.Path;
+        builder.Query = request.QueryString.ToUriComponent();
+        if (hostComponents.Length == 2)
+        {
+            builder.Port = Convert.ToInt32(hostComponents[1]);
+        }
+        return builder.Uri;
     }
 }
