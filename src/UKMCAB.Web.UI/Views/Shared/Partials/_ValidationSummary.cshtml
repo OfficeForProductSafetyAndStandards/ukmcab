@@ -1,7 +1,10 @@
-﻿@model Microsoft.AspNetCore.Mvc.ModelBinding.ModelStateDictionary
-@if (!Model.IsValid)
+﻿@model string[]
+@{
+    var modelState = ViewData.ModelState;
+}
+@if (!modelState.IsValid)
 {
-    var errors = new ErrorModelList(Model);
+    var errors = new ErrorModelList(modelState, Model);
     <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
         <h2 class="govuk-error-summary__title" id="error-summary-title">
             There is a problem
