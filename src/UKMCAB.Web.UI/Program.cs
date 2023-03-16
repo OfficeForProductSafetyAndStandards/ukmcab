@@ -38,6 +38,7 @@ builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(b
 
 builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
+builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IDistCache, RedisCache>();

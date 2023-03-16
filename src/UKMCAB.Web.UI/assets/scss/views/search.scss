@@ -4,6 +4,33 @@
     }
 }
 
+#atom-feed-top {
+    @include govuk-media-query($until: tablet) {
+        display: none;
+    }
+
+    a {
+        float: right;
+    }
+}
+
+#atom-feed-bottom {
+    @include govuk-media-query($from: tablet) {
+        display: none;
+    }
+}
+
+.atom-feed {
+    a {
+        text-decoration: none;
+
+        .atom-feed__icon {
+            color: #0b0c0c;
+            margin-right: 5px;
+        }
+    }
+}
+
 #search-result-page {
     &.js-enabled {
 

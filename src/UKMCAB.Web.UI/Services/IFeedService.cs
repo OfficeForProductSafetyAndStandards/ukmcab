@@ -1,0 +1,10 @@
+﻿using System.ServiceModel.Syndication;
+using UKMCAB.Data.Search.Models;
+
+namespace UKMCAB.Web.UI.Services
+{
+    public interface IFeedService
+    {
+        SyndicationFeed GetSyndicationFeed(HttpRequest request, IEnumerable<CABIndexItem> items, IUrlHelper url);
+    }
+}

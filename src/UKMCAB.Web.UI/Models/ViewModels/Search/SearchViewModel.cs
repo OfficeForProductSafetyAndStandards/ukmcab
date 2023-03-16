@@ -11,8 +11,8 @@
         public string[] RegisteredOfficeLocations { get; set; }
         public string[] TestingLocations { get; set; }
         public string[] LegislativeAreas { get; set; }
-        public string Sort { get; set; }
-        public int PageNumber { get; set; }
+        public string Sort { get; set; } = string.Empty;
+        public int PageNumber { get; set; } = 1;
 
         // Form elements
         public FilterViewModel BodyTypeOptions { get; set; }
