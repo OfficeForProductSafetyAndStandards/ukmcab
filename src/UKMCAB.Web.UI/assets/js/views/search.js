@@ -10,6 +10,7 @@
     var govukHeader = document.getElementById("govuk-header");
     var govukFooter = document.getElementById("govuk-footer");
     var bottomAtomFeed = document.getElementById("atom-feed-bottom");
+    var feedbackSection = document.getElementById("feedback-form-details");
 
     var filterOptions = document.querySelectorAll('.search-form-filter-option');
 
@@ -82,6 +83,7 @@
             govukHeader.classList.add("search-result-mobile-hidden");
             govukFooter.classList.add("search-result-mobile-hidden");
             bottomAtomFeed.classList.add("search-result-mobile-hidden");
+            feedbackSection.classList.add("search-result-mobile-hidden");
 
             searchResultsFormColumn.classList.remove("search-result-mobile-hidden");
         } else {
@@ -90,6 +92,7 @@
             govukHeader.classList.remove("search-result-mobile-hidden");
             govukFooter.classList.remove("search-result-mobile-hidden");
             bottomAtomFeed.classList.remove("search-result-mobile-hidden");
+            feedbackSection.classList.remove("search-result-mobile-hidden");
 
             searchResultsFormColumn.classList.add("search-result-mobile-hidden");
         }

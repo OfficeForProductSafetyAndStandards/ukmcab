@@ -56,13 +56,12 @@ namespace UKMCAB.Data.Search.Services
             {
                 return "*";
             }
-            var specialCharsRegex = new Regex("[+&|\\[!(){}\\^\"~*?:\\/]");
+            var specialCharsRegex = new Regex("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
             keywords = specialCharsRegex.Replace(keywords, String.Empty);
             if (string.IsNullOrWhiteSpace(keywords))
             {
                 return string.Empty;
             }
-
             return $"\'{keywords.Trim()}~\'"; 
         }
 
