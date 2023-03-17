@@ -469,9 +469,12 @@ resource vnet 'Microsoft.Network/virtualNetworks@2022-05-01' = {
 
 
 var applicationGatewayName = 'agw-${project}-${env}'
-var applicationGatewayCustomProbeName = 'agw-custom-backend-probe-http'
-var applicationGatewayBackendHttpSettingsName = 'agw-be-http-settings'
 var applicationGatewayPublicFrontendIpConfigurationName = 'appGwPublicFrontendIp'
+
+var applicationGatewayCustomProbeName = 'agw-custom-backend-probe-http'
+var applicationGatewayCustomProbeNameVNext = 'agw-custom-backend-probe-http-vnext'
+var applicationGatewayBackendHttpSettingsName = 'agw-be-http-settings'
+var applicationGatewayBackendHttpSettingsNameVNext = 'agw-be-http-settings-vnext'
 
 var applicationGatewaySslCertificateName = 'ssl-cert'
 var applicationGatewaySslCertificateNameVNext = 'ssl-cert-vnext'
@@ -496,22 +499,39 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       minCapacity: 0
     }
 
-    backendHttpSettingsCollection: [
+    backendHttpSettingsCollection: concat([
       {
         name: applicationGatewayBackendHttpSettingsName
         properties: {
           port: 80
           protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
-          pickHostNameFromBackendAddress: true
+          pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
           requestTimeout: 20
+          hostName: appServiceHostName
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeName)
           }
         }
       }
-    ]
+    ], provisionAppSvcVNextSlot ? [
+      {
+        name: applicationGatewayBackendHttpSettingsNameVNext
+        properties: {
+          port: 80
+          protocol: 'Http'
+          cookieBasedAffinity: 'Disabled'
+          pickHostNameFromBackendAddress: false
+          affinityCookieName: 'ApplicationGatewayAffinity'
+          requestTimeout: 20
+          hostName: appServiceHostNameVNext
+          probe: {
+            id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeNameVNext)
+          }
+        }
+      }
+    ] : [])
 
 
     backendAddressPools: concat([
@@ -675,14 +695,14 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
             id: resourceId('Microsoft.Network/applicationGateways/backendAddressPools', applicationGatewayName, applicationGatewayBackendPoolVNext)
           }
           backendHttpSettings: {
-            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsName)
+            id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsNameVNext)
           }
         }
       }
     ] : [])
 
 
-    probes: [
+    probes: concat([
       {
         name: applicationGatewayCustomProbeName
         properties: {
@@ -691,7 +711,8 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           interval: 30
           timeout: 30
           unhealthyThreshold: 3
-          pickHostNameFromBackendHttpSettings: true
+          pickHostNameFromBackendHttpSettings: false
+          host: appServiceHostName
           minServers: 0
           match: {
             statusCodes: [
@@ -702,7 +723,29 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
         }
       }
-    ]
+    ],
+    provisionAppSvcVNextSlot ? [
+      {
+        name: applicationGatewayCustomProbeNameVNext
+        properties: {
+          protocol: 'Http'
+          path: '/'
+          interval: 30
+          timeout: 30
+          unhealthyThreshold: 3
+          pickHostNameFromBackendHttpSettings: false
+          host: appServiceHostNameVNext
+          minServers: 0
+          match: {
+            statusCodes: [
+              '200-399'
+              '401'
+              '403'
+            ]
+          }
+        }
+      } 
+    ] : [])
 
 
     
