@@ -1,6 +1,9 @@
-﻿using Azure.Search.Documents;
+﻿using System.Text.RegularExpressions;
+using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using UKMCAB.Data.Search.Models;
+using UKMCAB.Infrastructure.Logging;
+using UKMCAB.Infrastructure.Logging.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
@@ -53,47 +56,61 @@ namespace UKMCAB.Data.Search.Services
             {
                 return "*";
             }
+            var specialCharsRegex = new Regex("[+&|\\[!(){}\\^\"~*?:\\/]");
+            keywords = specialCharsRegex.Replace(keywords, String.Empty);
+            if (string.IsNullOrWhiteSpace(keywords))
+            {
+                return string.Empty;
+            }
 
             return $"\'{keywords.Trim()}~\'"; 
-            //var keywordsList = keywords.Split(" ").Select(k => $"{k.Trim()}~");
-            //return string.Join(" ", keywordsList);
-
         }
 
         public async Task<CABResults> QueryAsync(CABSearchOptions options)
         {
-            var query = GetKeywordsQuery(options.Keywords);
-            var filter = BuildFilter(options);
-            var sort = BuildSort(options);
-            var search = await _indexClient.SearchAsync<CABIndexItem>(query, new SearchOptions
-            {
-                Size = options.ForAtomFeed ? null : SearchResultPerPage,
-                IncludeTotalCount = true,
-                Skip = options.ForAtomFeed ? null : SearchResultPerPage * (options.PageNumber - 1),
-                Filter = filter,
-                OrderBy = { sort },
-                QueryType = SearchQueryType.Full
-            });
             var cabResults = new CABResults
             {
                 PageNumber = options.PageNumber,
                 Total = 0,
                 CABs = new List<CABIndexItem>()
             };
-            if (!search.HasValue)
-            {
-                return cabResults;
-            } 
-            
-            var results = search.Value.GetResults().ToList();
-            if (!results.Any())
+            var query = GetKeywordsQuery(options.Keywords);
+            if (string.IsNullOrWhiteSpace(query))
             {
                 return cabResults;
             }
+            var filter = BuildFilter(options);
+            var sort = BuildSort(options);
+            try
+            {
+                var search = await _indexClient.SearchAsync<CABIndexItem>(query, new SearchOptions
+                {
+                    Size = options.ForAtomFeed ? null : SearchResultPerPage,
+                    IncludeTotalCount = true,
+                    Skip = options.ForAtomFeed ? null : SearchResultPerPage * (options.PageNumber - 1),
+                    Filter = filter,
+                    OrderBy = { sort },
+                    QueryType = SearchQueryType.Full
+                });
+                if (!search.HasValue)
+                {
+                    return cabResults;
+                } 
+                
+                var results = search.Value.GetResults().ToList();
+                if (!results.Any())
+                {
+                    return cabResults;
+                }
 
-            var cabs = results.Select(r => r.Document).ToList();
-            cabResults.CABs = cabs;
-            cabResults.Total = Convert.ToInt32(search.Value.TotalCount);
+                var cabs = results.Select(r => r.Document).ToList();
+                cabResults.CABs = cabs;
+                cabResults.Total = Convert.ToInt32(search.Value.TotalCount);
+            }
+            catch (Exception ex)
+            {
+                var error = ex.ToString();
+            }
             return cabResults;
         }
 
