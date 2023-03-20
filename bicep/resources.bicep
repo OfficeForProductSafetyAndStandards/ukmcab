@@ -398,7 +398,30 @@ resource keyVaultAccessPolicy 'Microsoft.KeyVault/vaults/accessPolicies@2021-06-
 
 
 
-
+resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirewallPolicies@2022-09-01' = {
+  name: 'wafpol-main'
+  location: location
+  properties: {
+    customRules: []
+    policySettings: {
+      requestBodyCheck: true
+      maxRequestBodySizeInKb: 128
+      fileUploadLimitInMb: 100
+      state: 'Enabled'
+      mode: 'Prevention'
+    }
+    managedRules: {
+      managedRuleSets: [
+        {
+          ruleSetType: 'OWASP'
+          ruleSetVersion: '3.2'
+          ruleGroupOverrides: []
+        }
+      ]
+      exclusions: []
+    }
+  }
+}
 
 
 
@@ -490,9 +513,15 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
 
     enableHttp2: false
     sku: {
-      name: 'Standard_v2'
-      tier: 'Standard_v2'
+      name: 'WAF_v2'
+      tier: 'WAF_v2'
     }
+
+    firewallPolicy: {
+      id: firewallPolicy.id
+    }
+    
+    forceFirewallPolicyAssociation: true
 
     autoscaleConfiguration: {
       maxCapacity: 10
