@@ -16,6 +16,18 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         public IActionResult Cookies()
         {
             return View();
+        }        
+        
+        [Route("/accessibility-statement")]
+        public IActionResult AccessibilityStatement()
+        {
+            return View();
+        }        
+        
+        [Route("/terms-and-conditions")]
+        public IActionResult TermsAndConditions()
+        {
+            return View();
         }
     }
 }
