@@ -1,6 +1,5 @@
 ﻿using System.Web;
-using Humanizer;
-using Microsoft.Extensions.Primitives;
+using UKMCAB.Data;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
@@ -10,15 +9,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public int Total { get; set; }
 
 
-        public int TotalPages => Total % Constants.SearchResultPerPage == 0
-            ? Total / Constants.SearchResultPerPage
-            : Total / Constants.SearchResultPerPage + 1;
+        public int TotalPages => Total % DataConstants.Search.ResultsPerPage == 0
+            ? Total / DataConstants.Search.ResultsPerPage
+            : Total / DataConstants.Search.ResultsPerPage + 1;
 
         public bool ShowPrevious => PageNumber > 1;
         public bool ShowNext => PageNumber < TotalPages;
-        public int FirstResult => Total > 0 ? (PageNumber - 1) * Constants.SearchResultPerPage + 1 : Total;
-        public int LastResult => PageNumber * Constants.SearchResultPerPage < Total
-            ? PageNumber * Constants.SearchResultPerPage
+        public int FirstResult => Total > 0 ? (PageNumber - 1) * DataConstants.Search.ResultsPerPage + 1 : Total;
+        public int LastResult => PageNumber * DataConstants.Search.ResultsPerPage < Total
+            ? PageNumber * DataConstants.Search.ResultsPerPage
             : Total;
 
         public List<int> PageRange()

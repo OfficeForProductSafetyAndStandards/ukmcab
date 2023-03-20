@@ -6,6 +6,13 @@ namespace UKMCAB.Data.Search.Models
     {
         [SimpleField(IsKey = true)]
         public string id { get; set; }
+        [SimpleField]
+        public string CABId { get; set; }
+        [SimpleField]
+        public bool IsPublished { get; set; }
+        [SimpleField]
+        public bool IsLatest { get; set; }
+
 
         [SearchableField(IsSortable = true, NormalizerName = "lowercase")]
         public string Name { get; set; }
@@ -41,38 +48,11 @@ namespace UKMCAB.Data.Search.Models
         public string RegisteredOfficeLocation { get; set; }
 
         [SimpleField(IsSortable = true)]
+        public DateTime? LastModifiedDate { get; set; }
+        [SimpleField(IsSortable = true)]
         public DateTime? LastUpdatedDate { get; set; }
 
         [SimpleField(IsSortable = true)]
         public string RandomSort { get; set; }
-
-        [SearchableField]
-        public MetaData MetaData { get; set; }
-    }
-
-    public class MetaData
-    {
-        [SearchableField]
-        public string bodynumber { get; set; }
-        [SearchableField]
-        public string lastupdated { get; set; }
-        [SearchableField]
-        public string bodytype { get; set; }
-        [SearchableField]
-        public string registeredofficelocation { get; set; }
-        [SearchableField]
-        public string testinglocations { get; set; }
-        [SearchableField]
-        public string website { get; set; }
-        [SearchableField]
-        public string email { get; set; }
-        [SearchableField]
-        public string phone { get; set; }
-        [SearchableField]
-        public string legislativearea { get; set; }
-        [SearchableField]
-        public string from { get; set; }
-        [SearchableField]
-        public string published { get; set; }
     }
 }

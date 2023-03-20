@@ -1,21 +1,17 @@
-﻿using System.Text.RegularExpressions;
-using Azure.Search.Documents;
+﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
+using System.Text.RegularExpressions;
 using UKMCAB.Data.Search.Models;
-using UKMCAB.Infrastructure.Logging;
-using UKMCAB.Infrastructure.Logging.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
     public class SearchService : ISearchService
     {
         private SearchClient _indexClient;
-        private readonly int SearchResultPerPage;
 
-        public SearchService(SearchClient searchClient, int searhchResultPerPage)
+        public SearchService(SearchClient searchClient)
         {
             _indexClient = searchClient;
-            SearchResultPerPage = searhchResultPerPage;
         }
 
         public async Task<SearchFacets> GetFacetsAsync()
@@ -84,9 +80,9 @@ namespace UKMCAB.Data.Search.Services
             {
                 var search = await _indexClient.SearchAsync<CABIndexItem>(query, new SearchOptions
                 {
-                    Size = options.ForAtomFeed ? null : SearchResultPerPage,
+                    Size = options.ForAtomFeed ? null : DataConstants.Search.ResultsPerPage,
                     IncludeTotalCount = true,
-                    Skip = options.ForAtomFeed ? null : SearchResultPerPage * (options.PageNumber - 1),
+                    Skip = options.ForAtomFeed ? null : DataConstants.Search.ResultsPerPage * (options.PageNumber - 1),
                     Filter = filter,
                     OrderBy = { sort },
                     QueryType = SearchQueryType.Full

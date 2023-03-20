@@ -9,11 +9,8 @@ namespace UKMCAB.Data.Search.Services
 {
     public static class SearchServiceExtensions
     {
-        public const string SEARCH_INDEX = "ukmcab-search-index";
-        public const string SEARCH_INDEXER = "ukmcab-search-indexer";
-        public const string SEARCH_DATASOURCE = "ukmcab-search-datasource";
 
-        public static void AddSearchService(this IServiceCollection services, CognitiveSearchConnectionString connectionString, string cosmosDBConnectionString, int searchResultsPerPage)
+        public static void AddSearchService(this IServiceCollection services, CognitiveSearchConnectionString connectionString, string cosmosDBConnectionString)
         {
             var searchIndexClient = new SearchIndexClient(new Uri(connectionString.Endpoint), new AzureKeyCredential(connectionString.ApiKey));
             CreateIndex(searchIndexClient);
@@ -22,14 +19,14 @@ namespace UKMCAB.Data.Search.Services
                 new AzureKeyCredential(connectionString.ApiKey));
             CreateDataSourceAndIndexer(searchIndexerClient, cosmosDBConnectionString);
 
-            services.AddSingleton<ISearchService>(new SearchService(searchIndexClient.GetSearchClient(SEARCH_INDEX), searchResultsPerPage));
+            services.AddSingleton<ISearchService>(new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX)));
         }
 
         private static void CreateIndex(SearchIndexClient searchIndexClient)
         {
             var fieldBuilder = new FieldBuilder();
             var searchFields = fieldBuilder.Build(typeof(CABIndexItem));
-            var definition = new SearchIndex(SEARCH_INDEX, searchFields);
+            var definition = new SearchIndex(DataConstants.Search.SEARCH_INDEX, searchFields);
             try
             {
                 searchIndexClient.DeleteIndex(definition.Name);
@@ -43,15 +40,17 @@ namespace UKMCAB.Data.Search.Services
 
         private static void CreateDataSourceAndIndexer(SearchIndexerClient searchIndexerClient, string cosmosDBConnectionString)
         {
-            var cosmosDbDataSource = new SearchIndexerDataSourceConnection(SEARCH_DATASOURCE,
-                SearchIndexerDataSourceType.CosmosDb, cosmosDBConnectionString + ";Database=main",
-                new SearchIndexerDataContainer("cab-data"));
+            var cosmosDbDataSource = new SearchIndexerDataSourceConnection(DataConstants.Search.SEARCH_DATASOURCE,
+                SearchIndexerDataSourceType.CosmosDb, cosmosDBConnectionString + $";Database={DataConstants.CosmosDb.Database}",
+                new SearchIndexerDataContainer(DataConstants.CosmosDb.Constainer));
+            cosmosDbDataSource.Container.Query = "SELECT * FROM c WHERE c.IsPublished = true";
+
             searchIndexerClient.CreateOrUpdateDataSourceConnection(cosmosDbDataSource);
 
             var cosmosDbIndexer =
-                new SearchIndexer(SEARCH_INDEXER, cosmosDbDataSource.Name, SEARCH_INDEX)
+                new SearchIndexer(DataConstants.Search.SEARCH_INDEXER, cosmosDbDataSource.Name, DataConstants.Search.SEARCH_INDEX)
                 {
-                    Schedule = new IndexingSchedule(TimeSpan.FromDays(1))
+                    Schedule = new IndexingSchedule(TimeSpan.FromDays(1)),
                 };
             try
             {

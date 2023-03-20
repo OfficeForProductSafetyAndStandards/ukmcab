@@ -22,7 +22,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             var model = new ReviewListViewModel
             {
-                SubmittedCABs = await _cabAdminService.FindCABDocumentsByStatesAsync(new[] { State.SubmittedForPublishing })
+                //SubmittedCABs = await _cabAdminService.FindCABDocumentsByStatesAsync(new[] { State.SubmittedForPublishing })
             };
 
             return View(model);

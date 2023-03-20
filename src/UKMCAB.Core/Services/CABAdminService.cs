@@ -1,5 +1,6 @@
 ﻿using UKMCAB.Common;
 using UKMCAB.Core.Models;
+using UKMCAB.Core.Models.Legacy;
 
 namespace UKMCAB.Core.Services
 {
@@ -30,19 +31,9 @@ namespace UKMCAB.Core.Services
             {
                 CreatedBy = email,
                 CreatedDate = createdDate,
-                AuditHistory = new List<Audit>
-                {
-                    new()
-                    {
-                        User = email,
-                        Description = "Created",
-                        Date = createdDate
-                    }
-                },
                 LastModifiedBy = email,
                 LastModifiedDate = createdDate,
-                CABData = cabData,
-                State = State.Created
+                CABData = cabData
             };
             return await _cabRepostitory.CreateAsync(document);
         }
@@ -81,20 +72,20 @@ namespace UKMCAB.Core.Services
             return docs;
         }
 
-        public async Task<List<Document>> FindCABDocumentsByStatesAsync(State[] states)
-        {
-            var list = new List<Document>();
-            foreach (var state in states)
-            {
-                var docs = await _cabRepostitory.Query<Document>(d => d.State == state);
-                if (docs != null && docs.Any())
-                {
-                    list.AddRange(docs);
-                }
-            }
+        //public async Task<List<Document>> FindCABDocumentsByStatesAsync(State[] states)
+        //{
+        //    var list = new List<Document>();
+        //    foreach (var state in states)
+        //    {
+        //        var docs = await _cabRepostitory.Query<Document>(d => d.State == state);
+        //        if (docs != null && docs.Any())
+        //        {
+        //            list.AddRange(docs);
+        //        }
+        //    }
 
-            list = list.OrderByDescending(l => l.CreatedDate).ToList();
-            return list;
-        }
+        //    list = list.OrderByDescending(l => l.CreatedDate).ToList();
+        //    return list;
+        //}
     }
 }

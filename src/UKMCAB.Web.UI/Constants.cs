@@ -6,7 +6,6 @@ public static class Constants
     public const string SiteName = "UKMCAB alpha - GOV.UK";
     public const string NotProvided = "Not provided";
 
-    public const int SearchResultPerPage = 20;
     public const string LastUpdatedSortValue = "lastupd";
     public const string A2ZSortValue = "a2z";
     public const string Z2ASortValue = "z2a";
@@ -278,5 +277,6 @@ public static class Constants
             "UK body designated under MRA: Canada"
         };
     }
+
 }
 

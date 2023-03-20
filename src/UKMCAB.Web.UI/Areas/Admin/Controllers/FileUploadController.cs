@@ -55,7 +55,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            if (cabs.Count > 1 || cabs.First().State != State.Created)
+            if (cabs.Count > 1)// || cabs.First().State != State.Created)
             {
                 return BadRequest();
             }

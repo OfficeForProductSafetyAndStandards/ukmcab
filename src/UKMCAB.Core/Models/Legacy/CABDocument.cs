@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace UKMCAB.Core.Models
+namespace UKMCAB.Core.Models.Legacy
 {
     public class CABDocument
     {

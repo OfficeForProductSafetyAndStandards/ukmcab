@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Core.Models;
+using UKMCAB.Core.Models.Legacy;
 
 namespace UKMCAB.Core.Services
 {
@@ -11,7 +12,7 @@ namespace UKMCAB.Core.Services
         Task<List<Document>> FindCABDocumentsByNameAsync(string cabName);
         Task<List<Document>> FindCABDocumentsByIdAsync(string id);
         Task<List<Document>> FindCABDocumentsByUKASReferenceAsync(string ukasReference);
-        Task<List<Document>> FindCABDocumentsByStatesAsync(State[] states);
+       //Task<List<Document>> FindCABDocumentsByStatesAsync(State[] states);
 
     }
 }

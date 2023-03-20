@@ -6,6 +6,7 @@ using Notify.Client;
 using Notify.Interfaces;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
+using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
@@ -53,16 +54,11 @@ builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certific
 
 builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateOptions"));
 
-var cosmosDbSettings = builder.Configuration.GetSection("CosmosDb");
-if (!string.IsNullOrWhiteSpace(cosmosConnectionString))
-{
-    var database = cosmosDbSettings.GetValue<string>("Database") ?? "main";
-    var cosmosClient = new CosmosClient(cosmosConnectionString);
-    builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosClient, database, "cab-data")); // Used by new admin form
-}
+builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosConnectionString)); 
+
 builder.Services.AddHostedService<RandomSortGenerator>();
 
-builder.Services.AddSearchService(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]), cosmosConnectionString, Constants.SearchResultPerPage);
+builder.Services.AddSearchService(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]), cosmosConnectionString);
 
 builder.Services.Configure<IdentityStoresOptions>(options =>
     options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));

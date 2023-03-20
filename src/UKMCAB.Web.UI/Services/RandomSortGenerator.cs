@@ -1,8 +1,9 @@
 ﻿using Azure;
 using Azure.Search.Documents.Indexes;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Core.Models;
 using UKMCAB.Core.Services;
-using UKMCAB.Data.Search.Services;
+using UKMCAB.Data;
 
 namespace UKMCAB.Web.UI.Services
 {
@@ -31,14 +32,14 @@ namespace UKMCAB.Web.UI.Services
 
         private async void RegenerateRandomSortValues(object? state)
         {
-            var allCabs = await _repository.Query<dynamic>(d => true);
+            var allCabs = await _repository.Query<Document>(d => d.IsPublished);
             foreach (var cab in allCabs)
             {
                 cab.RandomSort = Guid.NewGuid().ToString();
                 await _repository.Update(cab);
             }
 
-            await _searchIndexerClient.RunIndexerAsync(SearchServiceExtensions.SEARCH_INDEXER);
+            await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
         }
     }
 }
