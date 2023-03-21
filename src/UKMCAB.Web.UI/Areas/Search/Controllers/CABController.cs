@@ -19,13 +19,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search/cab-profile/{id}")]
         public async Task<IActionResult> Index(string id)
         {
-            var cabDocument = await _cabAdminService.FindCABDocumentByIdAsync(id);
+            var cabDocument = await _cabAdminService.FindCABDocumentByCABIdAsync(id);
 
             var cab = new CABProfileViewModel
             {
-                CABId = cabDocument.Id,
-                PublishedDate = cabDocument.PublishedDate.HasValue ? cabDocument.PublishedDate.Value.DateTime : null,
-                LastModifiedDate = cabDocument.LastUpdatedDate.HasValue ? cabDocument.LastUpdatedDate.Value.DateTime : null,
+                CABId = cabDocument.CABId,
+                PublishedDate = cabDocument.PublishedDate,
+                LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber =  string.Empty,
                 Address = cabDocument.Address,
@@ -37,10 +37,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
-                ProductSchedules = cabDocument.PDFs.Select(pdf => new FileUpload
+                ProductSchedules = cabDocument.Schedules.Select(pdf => new FileUpload
                 {
                     BlobName = pdf.BlobName,
-                    FileName = pdf.ClientFileName
+                    FileName = pdf.FileName
                 }).ToList(), 
             };
             return View(cab);
