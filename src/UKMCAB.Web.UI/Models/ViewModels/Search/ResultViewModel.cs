@@ -6,7 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
     {
         public ResultViewModel(CABIndexItem cab)
         {
-            id = cab.id;
+            CABId = cab.CABId;
             Name = cab.Name;
             Address = cab.Address;
             BodyType = ListToString(cab.BodyTypes);
@@ -15,7 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             LegislativeArea = ListToString(cab.LegislativeAreas);
         }
 
-        public string id { get; set; }
+        public string CABId { get; set; }
         public string Name { get; set; }
         public string Address { get; set; }
         public string BodyType { get; set; }

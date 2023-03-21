@@ -2,6 +2,7 @@
 import "./shared/feedback-form.js";
 import "./shared/identity.js";
 import "./views/search.js";
+import "./views/work-queue.js";
 import "../scss/main.scss";
 
 
