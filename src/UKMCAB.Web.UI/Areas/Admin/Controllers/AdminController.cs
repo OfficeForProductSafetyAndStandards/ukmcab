@@ -45,6 +45,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     Name = "Vista Laboratories, Inc",
                     CABNumber = "8765",
                     Status = "Archived"
+                },
+                new WorkQueueItemViewModel
+                {
+                    Id = "5",
+                    Name = "3c Test Ltd",
+                    CABNumber = "",
+                    Status = "Archived"
                 }
             };
             FilterAndSortItems(model);

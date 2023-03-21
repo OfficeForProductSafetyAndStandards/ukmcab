@@ -60,7 +60,7 @@
                     {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell"><label class="work-queue-item-label">Cab name</label><a href="#" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></td>
-                            <td class="govuk-table__cell"><label class="work-queue-item-label">Cab reference</label>@cab.CABNumber</td>
+                            <td class="govuk-table__cell"><label class="work-queue-item-label">Cab reference</label>@Html.Conditional(!string.IsNullOrWhiteSpace(cab.CABNumber), cab.CABNumber, @Constants.NotProvided)</td>
                             <td class="govuk-table__cell"><label class="work-queue-item-label">Status</label>@cab.Status</td>
                         </tr>
                     }
