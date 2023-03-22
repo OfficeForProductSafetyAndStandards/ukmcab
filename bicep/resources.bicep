@@ -56,7 +56,7 @@ resource redis 'Microsoft.Cache/redis@2021-06-01' = {
   properties: {
     redisVersion: '6.0'
     sku: {
-      name: 'Basic'
+      name: 'Standard'
       family: 'C'
       capacity: 0
     }
