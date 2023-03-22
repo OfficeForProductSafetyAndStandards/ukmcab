@@ -45,7 +45,7 @@
                     @if (signedInUser)
                     {
                     <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "admin", "govuk-header__navigation-item--active")">
-                        <a asp-controller="Admin" asp-action="List" class="govuk-header__link">Admin</a>
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-header__link">Admin</a>
                     </li>
                     <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "changepassword", "govuk-header__navigation-item--active")">
                         <a asp-area="Account" asp-controller="Manage" asp-action="ChangePassword" class="govuk-header__link">Change password</a>

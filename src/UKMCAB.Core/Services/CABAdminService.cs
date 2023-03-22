@@ -1,6 +1,5 @@
 ﻿using UKMCAB.Common;
 using UKMCAB.Core.Models;
-using UKMCAB.Core.Models.Legacy;
 
 namespace UKMCAB.Core.Services
 {
@@ -13,10 +12,10 @@ namespace UKMCAB.Core.Services
             _cabRepostitory = cabRepostitory;
         }
 
-        public async Task<CABDocument> FindCABDocumentByIdAsync(string id)
+        public async Task<Document> FindCABDocumentByCABIdAsync(string id)
         {
-            var doc = await _cabRepostitory.GetByIdAsync<CABDocument>(id, id);
-            return doc;
+            var doc = await _cabRepostitory.Query<Document>(d => d.IsPublished && d.CABId.Equals(id));
+            return doc.Any() && doc.Count == 1 ? doc.First() : null;
         }
 
         public async Task<Document> CreateCABDocumentAsync(string email, CABData cabData)

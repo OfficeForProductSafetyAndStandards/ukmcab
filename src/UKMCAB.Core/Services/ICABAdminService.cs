@@ -5,7 +5,7 @@ namespace UKMCAB.Core.Services
 {
     public interface ICABAdminService
     {
-        Task<CABDocument> FindCABDocumentByIdAsync(string id);
+        Task<Document> FindCABDocumentByCABIdAsync(string id);
 
         Task<Document> CreateCABDocumentAsync(string email, CABData cabData);
         Task<bool> UpdateCABAsync(string email, Document document);
