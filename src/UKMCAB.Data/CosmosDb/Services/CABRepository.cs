@@ -38,7 +38,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         Email = cabDocument.Email,
                         Website = cabDocument.Website,
                         Phone = cabDocument.Phone,
-                        BodyNumber = cabDocument.BodyNumber,
+                        CABNumber = cabDocument.BodyNumber,
                         BodyTypes = cabDocument.BodyTypes,
                         RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                         TestingLocations = cabDocument.TestingLocations,

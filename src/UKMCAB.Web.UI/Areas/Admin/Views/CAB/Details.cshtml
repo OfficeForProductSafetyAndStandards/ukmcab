@@ -1,0 +1,138 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABDetailsViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Create a CAB</h1>
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="createcabform" method="post">
+            <partial name="Partials/_ValidationSummary" model="null"/>
+            <fieldset class="govuk-fieldset">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Name))">
+                    <h1 class="govuk-label-wrapper">
+                        <label class=" govuk-heading-s" asp-for="Name">
+                            CAB name
+                        </label>
+                    </h1>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="Name" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="Name" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Name))" autocomplete="name" aria-required="true"/>
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CABNumber))">
+                    <h1 class="govuk-label-wrapper">
+                        <label class=" govuk-heading-s" asp-for="CABNumber">
+                            CAB number
+                        </label>
+                    </h1>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="CABNumber" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="CABNumber" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.CABNumber))" autocomplete="cabnumber" aria-required="true"/>
+                </div>
+                
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="appointment-date-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h1 class="govuk-label-wrapper">
+                                <label class=" govuk-heading-s" asp-for="AppointmentDateDay">
+                                    Appointment date (optional)
+                                </label>
+                            </h1>
+                        </legend>
+                        <div id="appointment-date-hint" class="govuk-hint">
+                            For example, 27 3 2007
+                        </div>
+                        <div class="govuk-date-input" id="appointment-date">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-date-input__label" asp-for="AppointmentDateDay">
+                                        Day
+                                    </label>
+                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="AppointmentDateDay" type="text" inputmode="numeric">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-date-input__label" asp-for="AppointmentDateMonth">
+                                        Month
+                                    </label>
+                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="AppointmentDateMonth" type="text" inputmode="numeric">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-date-input__label" asp-for="AppointmentDateYear">
+                                        Year
+                                    </label>
+                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="AppointmentDateYear" type="text" inputmode="numeric">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+
+                <div class="govuk-form-group">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="renewal-date-hint">
+                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                            <h1 class="govuk-label-wrapper">
+                                <label class=" govuk-heading-s" asp-for="RenewalDateDay">
+                                    Renewal date (optional)
+                                </label>
+                            </h1>
+                        </legend>
+                        <div id="renewal-date-hint" class="govuk-hint">
+                            For example, 27 3 2007
+                        </div>
+                        <div class="govuk-date-input" id="renewal-date">
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-date-input__label" asp-for="RenewalDateDay">
+                                        Day
+                                    </label>
+                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="RenewalDateDay" type="text" inputmode="numeric">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-date-input__label" asp-for="RenewalDateMonth">
+                                        Month
+                                    </label>
+                                    <input class="govuk-input govuk-date-input__input govuk-input--width-2" asp-for="RenewalDateMonth" type="text" inputmode="numeric">
+                                </div>
+                            </div>
+                            <div class="govuk-date-input__item">
+                                <div class="govuk-form-group">
+                                    <label class="govuk-label govuk-date-input__label" asp-for="RenewalDateYear">
+                                        Year
+                                    </label>
+                                    <input class="govuk-input govuk-date-input__input govuk-input--width-4" asp-for="RenewalDateYear" type="text" inputmode="numeric">
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+                
+                <div class="govuk-form-group">
+                    <h1 class="govuk-label-wrapper">
+                        <label class=" govuk-heading-s" asp-for="UKASReference">
+                            UKAS reference (optional)
+                        </label>
+                    </h1>
+                    <input asp-for="UKASReference" class="govuk-input" autocomplete="ukasreference" aria-required="true"/>
+                </div>
+                
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="continue">
+                        Continue
+                    </button>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="save">
+                        Save as draft
+                    </button>
+                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>
