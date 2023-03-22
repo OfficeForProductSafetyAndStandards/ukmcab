@@ -12,30 +12,39 @@ namespace UKMCAB.Core.Services
             _cabRepostitory = cabRepostitory;
         }
 
-        public async Task<Document> FindCABDocumentByCABIdAsync(string id)
+        public async Task<bool> DocumentWithKeyIdentifiersExists(Document document)
+        {
+            var documents = await _cabRepostitory.Query<Document>(d =>
+                d.Name.Equals(document.Name, StringComparison.InvariantCultureIgnoreCase) ||
+                d.CABNumber.Equals(document.CABNumber)
+            );
+            return documents.Any();
+        }
+
+        public async Task<Document> FindDocumentByCABIdAsync(string id)
         {
             var doc = await _cabRepostitory.Query<Document>(d => d.IsPublished && d.CABId.Equals(id));
             return doc.Any() && doc.Count == 1 ? doc.First() : null;
         }
 
-        public async Task<Document> CreateCABDocumentAsync(string email, CABData cabData)
+        public async Task<Document> CreateDocumentAsync(string userEmail, Document document)
         {
-            var documents = await FindCABDocumentsByNameAsync(cabData.Name);
+            var documentExists = await DocumentWithKeyIdentifiersExists(document);
 
-            Rule.IsFalse(documents.Any(), "CAB name already exists in database");
+            Rule.IsFalse(documentExists, "CAB name or number already exists in database");
             
             var createdDate = DateTime.Now;
-            cabData.CABId = Guid.NewGuid().ToString();
-            var document = new Document
-            {
-                CreatedBy = email,
-                CreatedDate = createdDate,
-                LastModifiedBy = email,
-                LastModifiedDate = createdDate,
-                CABData = cabData
-            };
+            document.CABId = Guid.NewGuid().ToString();
+            document.CreatedBy = userEmail;
+            document.CreatedDate = createdDate;
+            document.LastModifiedBy = userEmail;
+            document.LastModifiedDate = createdDate;
+            document.IsLatest = true;
             return await _cabRepostitory.CreateAsync(document);
         }
+
+
+
 
         public async Task<bool> UpdateCABAsync(string email, Document document)
         {

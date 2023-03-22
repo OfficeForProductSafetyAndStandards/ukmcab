@@ -8,7 +8,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
     [Area("admin")]
-    [Authorize(Roles = $"{Constants.Roles.OPSSAdmin},{Constants.Roles.UKASUser}")]
+    [Authorize(Roles = $"{Constants.Roles.OPSSAdmin}")]
     public class CABController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
@@ -20,6 +20,78 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _cabAdminService = cabAdminService;
             _userManager = userManager;
         }
+
+        [HttpGet]
+        [Route("admin/cab/details/{id?}")]
+        public async Task<IActionResult> Details(string id)
+        {
+            return View(new CABDetailsViewModel());
+        }
+
+        [HttpPost]
+        [Route("admin/cab/details/{id?}")]
+        public async Task<IActionResult> Details(string id, CABDetailsViewModel model, string submitType)
+        {
+            var appointmentDate = CheckDate(model.AppointmentDate, nameof(model.AppointmentDateDay), "appointment");
+            var renewalDate = CheckDate(model.RenewalDate, nameof(model.RenewalDateDay), "renewal");
+            if (ModelState.IsValid)
+            {
+                var document = new Document
+                {
+                    Name = model.Name,
+                    CABNumber = model.CABNumber,
+                    AppointmentDate = appointmentDate,
+                    RenewalDate = renewalDate,
+                    UKASReference = model.UKASReference
+                };
+                if (!await _cabAdminService.DocumentWithKeyIdentifiersExists(document))
+                {
+                    var user = await _userManager.GetUserAsync(User);
+                    var createdDocument = await _cabAdminService.CreateDocumentAsync(user.Email, document);
+                    if (createdDocument == null)
+                    {
+                        ModelState.AddModelError(string.Empty, "Failed to create the document, please try again.");
+                    }
+                    else if (submitType == "continue")
+                    {
+                        return RedirectToAction("Contact", "CAB", new { Area = "admin", id= createdDocument.CABId });
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError(nameof(model.Name), "A document already exists for this CAB name or number");
+                }
+            }
+
+            return View(new CABDetailsViewModel());
+        }
+
+        private DateTime? CheckDate(string date, string modelKey, string errorMessagePart)
+        {
+            if (DateTime.TryParse(date, out DateTime dateTime))
+            {
+                return dateTime;
+            }
+            if(!date.Equals("//"))
+            {
+                ModelState.AddModelError(modelKey, $"The {errorMessagePart} date in not valid");
+            }
+            return null;
+        }
+
+        [HttpGet]
+        [Route("admin/cab/contact/{id?}")]
+        public async Task<IActionResult> Contact(string id)
+        {
+            return View(new CABContactViewModel());
+        }
+
+
+
 
         [HttpGet]
         [Route("admin/cab/create")]
@@ -84,7 +156,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     var user = await _userManager.GetUserAsync(User);
 
-                    var document = await _cabAdminService.CreateCABDocumentAsync(user.Email, new CABData
+                    var document = await _cabAdminService.CreateDocumentAsync(user.Email, new Document()
                     {
                         Name = model.Name,
                         UKASReference = model.UKASReference,
@@ -93,10 +165,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         Email = model.Email ?? string.Empty,
                         Phone = model.Phone ?? string.Empty,
                         Country = model.RegisteredOfficeLocation ?? string.Empty,
-                        BodyType = model.BodyTypes != null && model.BodyTypes.Any()
-                            ? string.Join(",", model.BodyTypes)
-                            : string.Empty,
-                        Regulation = model.Regulations
+                        BodyTypes = model.BodyTypes != null && model.BodyTypes.Any()
+                            ? model.BodyTypes
+                            : new List<string>(),
+                        LegislativeAreas = model.Regulations
                     });
                     if (document != null)
                     {

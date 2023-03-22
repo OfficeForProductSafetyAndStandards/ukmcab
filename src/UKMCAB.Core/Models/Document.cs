@@ -10,17 +10,18 @@
         public string CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public string LastModifiedBy { get; set; }
-        public string PublishedBy { get; set; }
-        public DateTime PublishedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
         public DateTime LastUpdatedDate => LastModifiedDate;
-        public CABData CABData { get; set; }
+        public string PublishedBy { get; set; }
+        public DateTime PublishedDate { get; set; }
 
-
-
+        public CABData CABData { get; set; } // TODO: needs to go
 
         public string CABId { get; set; }
         public string Name { get; set; }
+        public string CABNumber { get; set; }
+        public DateTime? AppointmentDate { get; set; }
+        public DateTime? RenewalDate { get; set; }
         public string UKASReference { get; set; }
         public string Address { get; set; }
         public string AddressLine1 { get; set; }
@@ -36,7 +37,6 @@
         public string PointOfContactPhone { get; set; }
         public string RegisteredOfficeLocation { get; set; }
         public List<string> TestingLocations { get; set; }
-        public string BodyNumber { get; set; }
         public List<string> BodyTypes { get; set; }
         public List<string> LegislativeAreas { get; set; }
         public List<FileUpload>? Schedules { get; set; }

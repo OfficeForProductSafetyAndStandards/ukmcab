@@ -33,7 +33,7 @@ namespace UKMCAB.Data.Search.Models
         public string HiddenText { get; set; }
 
         [SearchableField]
-        public string BodyNumber { get; set; }
+        public string CABNumber { get; set; }
 
         [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string[] BodyTypes { get; set; }
