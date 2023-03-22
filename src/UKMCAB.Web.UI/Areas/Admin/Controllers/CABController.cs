@@ -32,8 +32,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/details/{id?}")]
         public async Task<IActionResult> Details(string id, CABDetailsViewModel model, string submitType)
         {
-            var appointmentDate = CheckDate(model.AppointmentDate, nameof(model.AppointmentDateDay), "appointment");
-            var renewalDate = CheckDate(model.RenewalDate, nameof(model.RenewalDateDay), "renewal");
+            var appointmentDate = CheckDate(model.AppointmentDate, nameof(model.AppointmentDate), "appointment");
+            var renewalDate = CheckDate(model.RenewalDate, nameof(model.RenewalDate), "renewal");
             if (ModelState.IsValid)
             {
                 var document = new Document
@@ -78,7 +78,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             if(!date.Equals("//"))
             {
-                ModelState.AddModelError(modelKey, $"The {errorMessagePart} date in not valid");
+                ModelState.AddModelError(modelKey, $"The {errorMessagePart} date is not in a valid date format");
             }
             return null;
         }
