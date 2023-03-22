@@ -16,7 +16,8 @@ namespace UKMCAB.Core.Services
         {
             var documents = await _cabRepostitory.Query<Document>(d =>
                 d.Name.Equals(document.Name, StringComparison.InvariantCultureIgnoreCase) ||
-                d.CABNumber.Equals(document.CABNumber)
+                d.CABNumber.Equals(document.CABNumber) ||
+                (!string.IsNullOrWhiteSpace(document.UKASReference) && d.UKASReference.Equals(document.UKASReference))
             );
             return documents.Any();
         }

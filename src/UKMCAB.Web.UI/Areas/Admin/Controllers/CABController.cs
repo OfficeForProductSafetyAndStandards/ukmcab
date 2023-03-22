@@ -63,7 +63,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    ModelState.AddModelError(nameof(model.Name), "A document already exists for this CAB name or number");
+                    ModelState.AddModelError(nameof(model.Name), "A document already exists for this CAB name, number or UKAS reference");
                 }
             }
 
