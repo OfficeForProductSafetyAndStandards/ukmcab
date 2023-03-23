@@ -61,9 +61,9 @@
                 <table class="govuk-table">
                     <thead>
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk-!govuk-!-width-one-third"><a href="@(baseSortPath + "name")" class="@(Model.Sort == "name" ? "sort-active" : "sort-inactive")">CAB name</a></th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a href="@(baseSortPath + "number")" class="@(Model.Sort == "number" ? "sort-active" : "sort-inactive")">CAB number</a></th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a href="@(baseSortPath + "status")" class="@(Model.Sort == "status" ? "sort-active" : "sort-inactive")">Status</a></th>
+                        <th scope="col" class="govuk-table__header govuk-!govuk-!-width-one-third"><a href="@(baseSortPath + Model.GetSortQueryValue("name"))" class="@Model.GetSortClass("name")">CAB name</a></th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a href="@(baseSortPath + Model.GetSortQueryValue("number"))" class="@Model.GetSortClass("number")">CAB number</a></th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a href="@(baseSortPath + Model.GetSortQueryValue("status"))" class="@Model.GetSortClass("status")">Status</a></th>
                     </tr>
                     </thead>
                     <tbody class="govuk-table__body">

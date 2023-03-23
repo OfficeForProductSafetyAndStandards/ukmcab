@@ -68,11 +68,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             switch (model.Sort.ToLower())
             {
+                case "status-desc":
+                    model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.Status).ToList();
+                    break;
                 case "status":
                     model.WorkQueueItems = model.WorkQueueItems.OrderBy(wqi => wqi.Status).ToList();
                     break;
+                case "number-desc":
+                    model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.CABNumber).ToList();
+                    break;
                 case "number":
                     model.WorkQueueItems = model.WorkQueueItems.OrderBy(wqi => wqi.CABNumber).ToList();
+                    break;
+                case "name-desc":
+                    model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.Name).ToList();
                     break;
                 case "name":
                 default:
