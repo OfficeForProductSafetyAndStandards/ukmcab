@@ -18,8 +18,8 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             return View();
         }
 
-        [Route("/faq")]
-        public IActionResult FAQ()
+        [Route("/help")]
+        public IActionResult Help()
         {
             return View();
         }
