@@ -19,7 +19,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search/cab-profile/{id}")]
         public async Task<IActionResult> Index(string id)
         {
-            var cabDocument = await _cabAdminService.FindDocumentByCABIdAsync(id);
+            var cabDocument = await _cabAdminService.FindPublishedDocumentByCABIdAsync(id);
 
             var cab = new CABProfileViewModel
             {

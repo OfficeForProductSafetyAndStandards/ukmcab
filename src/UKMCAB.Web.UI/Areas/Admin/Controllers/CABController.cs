@@ -44,7 +44,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     RenewalDate = renewalDate,
                     UKASReference = model.UKASReference
                 };
-                if (!await _cabAdminService.DocumentWithKeyIdentifiersExists(document))
+                if (await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document))
+                {
+                    ModelState.AddModelError(nameof(model.Name), "A document already exists for this CAB name, number or UKAS reference");
+                }
+                else
                 {
                     var user = await _userManager.GetUserAsync(User);
                     var createdDocument = await _cabAdminService.CreateDocumentAsync(user.Email, document);
@@ -58,13 +62,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     }
                     else
                     {
-                        TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} (CAB number {document.CABNumber})";
-                        return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                        return SaveDraft(document);
                     }
-                }
-                else
-                {
-                    ModelState.AddModelError(nameof(model.Name), "A document already exists for this CAB name, number or UKAS reference");
                 }
             }
 
@@ -84,12 +83,103 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return null;
         }
 
+        private IActionResult SaveDraft(Document document)
+        {
+            TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} (CAB number {document.CABNumber})";
+            return RedirectToAction("Index", "Admin", new { Area = "admin" });
+        }
+
         [HttpGet]
-        [Route("admin/cab/contact/{id?}")]
+        [Route("admin/cab/contact/{id}")]
         public async Task<IActionResult> Contact(string id)
         {
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            {
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            }
+            // Pre-populate model for edit
+            return View(new CABContactViewModel {CABId = id});
+        }
+
+        [HttpPost]
+        [Route("admin/cab/contact/{id}")]
+        public async Task<IActionResult> Contact(string id, CABContactViewModel model, string submitType)
+        {
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest))
+            {
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            }
+
+            var latestDocument = documents.Single(d => d.IsLatest);
+            if (string.IsNullOrWhiteSpace(model.Email) &&
+                string.IsNullOrWhiteSpace(model.Phone))
+            {
+                ModelState.AddModelError("Email",
+                    "Enter a valid email address or phone number.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                latestDocument.AddressLine1 = model.AddressLine1;
+                latestDocument.AddressLine2 = model.AddressLine2;
+                latestDocument.TownCity = model.TownCity;
+                latestDocument.Postcode = model.Postcode;
+                latestDocument.Country = model.Country;
+                latestDocument.Website = model.Website;
+                latestDocument.Email = model.Email;
+                latestDocument.Phone = model.Phone;
+                latestDocument.PointOfContactName = model.PointOfContactName;
+                latestDocument.PointOfContactEmail = model.PointOfContactEmail;
+                latestDocument.PointOfContactPhone = model.PointOfContactPhone;
+                latestDocument.IsPointOfContactPublicDisplay = model.IsPointOfContactPublicDisplay;
+                latestDocument.RegisteredOfficeLocation = model.RegisteredOfficeLocation;
+
+                var user = await _userManager.GetUserAsync(User);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestDocument);
+                if (submitType == "continue")
+                {
+                    return RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
+                }
+                else
+                {
+                    return SaveDraft(latestDocument);
+                }
+            }
+
             return View(new CABContactViewModel());
         }
+
+        [HttpGet]
+        [Route("admin/cab/body-details/{id}")]
+        public async Task<IActionResult> BodyDetails(string id)
+        {
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            {
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            }
+            // Pre-populate model for edit
+            return View(new CABBodyDetailsViewModel());
+        }
+
+
+
+
+
+
+
+        [HttpGet]
+        [Route("admin/cab/cancel/{id}")]
+        public async Task<IActionResult> Cancel(string id)
+        {
+            await _cabAdminService.DeleteDraftDocumentAsync(id);
+            return RedirectToAction("Index", "Admin", new { Area = "admin" });
+        }
+
+
+
 
 
 
@@ -165,7 +255,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         Website = model.Website ?? string.Empty,
                         Email = model.Email ?? string.Empty,
                         Phone = model.Phone ?? string.Empty,
-                        Country = model.RegisteredOfficeLocation ?? string.Empty,
                         BodyTypes = model.BodyTypes != null && model.BodyTypes.Any()
                             ? model.BodyTypes
                             : new List<string>(),

@@ -27,7 +27,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-upload/{id}")]
         public async Task<IActionResult> SchedulesUpload(string id)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             var redirect = ValidCABDocument(id, cabs);
             if (redirect != null)
             {
@@ -67,7 +67,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-upload/{id}")]
         public async Task<IActionResult> SchedulesUpload(string id, FileUploadViewModel model)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             var redirect = ValidCABDocument(id, cabs);
             if (redirect != null)
             {
@@ -135,7 +135,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-list/{id}")]
         public async Task<IActionResult> SchedulesList(string id)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             var redirect = ValidCABDocument(id, cabs);
             if (redirect != null)
             {
@@ -160,7 +160,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-list/{id}")]
         public async Task<IActionResult> SchedulesList(string id, string fileName)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             var redirect = ValidCABDocument(id, cabs);
             if (redirect != null)
             {
@@ -198,7 +198,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-upload/{id}")]
         public async Task<IActionResult> DocumentsUpload(string id)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             var redirect = ValidCABDocument(id, cabs);
             if (redirect != null)
             {
@@ -224,7 +224,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-upload/{id}")]
         public async Task<IActionResult> DocumentsUpload(string id, FileUploadViewModel model)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             var redirect = ValidCABDocument(id, cabs);
             if (redirect != null)
             {
@@ -264,7 +264,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-list/{id}")]
         public async Task<IActionResult> DocumentsList(string id)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             var redirect = ValidCABDocument(id, cabs);
             if (redirect != null)
             {
@@ -286,7 +286,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-list/{id}")]
         public async Task<IActionResult> DocumentsList(string id, string fileName)
         {
-            var cabs = await _cabAdminService.FindCABDocumentsByIdAsync(id);
+            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             var redirect = ValidCABDocument(id, cabs);
             if (redirect != null)
             {
