@@ -17,17 +17,20 @@
 
         public CABData CABData { get; set; } // TODO: needs to go
 
+        // Create/Details
         public string CABId { get; set; }
         public string Name { get; set; }
         public string CABNumber { get; set; }
         public DateTime? AppointmentDate { get; set; }
         public DateTime? RenewalDate { get; set; }
         public string UKASReference { get; set; }
+
+        // Contact
         public string Address { get; set; }
         public string AddressLine1 { get; set; }
         public string AddressLine2 { get; set; }
         public string TownCity { get; set; }
-        public string County { get; set; }
+        public string Postcode { get; set; }
         public string Country { get; set; }
         public string Website { get; set; }
         public string Email { get; set; }
@@ -35,7 +38,10 @@
         public string PointOfContactName { get; set; }
         public string PointOfContactEmail { get; set; }
         public string PointOfContactPhone { get; set; }
+        public bool IsPointOfContactPublicDisplay { get; set; }
         public string RegisteredOfficeLocation { get; set; }
+
+
         public List<string> TestingLocations { get; set; }
         public List<string> BodyTypes { get; set; }
         public List<string> LegislativeAreas { get; set; }

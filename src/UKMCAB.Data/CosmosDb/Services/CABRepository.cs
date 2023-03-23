@@ -78,15 +78,6 @@ namespace UKMCAB.Data.CosmosDb.Services
             return default(T);
         }
 
-        //public async Task<Document> GetByIdAsync(string id)
-        //{
-        //    var response = await _container.ReadItemAsync<Document>(id, new PartitionKey(id));
-        //    if (response.StatusCode == HttpStatusCode.OK && response.Resource.id == id)
-        //    {
-        //        return response.Resource;
-        //    }
-        //    return null;
-        //}
         public async Task<Document> CreateAsync(Document document)
         {
             document.id = Guid.NewGuid().ToString();
@@ -97,6 +88,17 @@ namespace UKMCAB.Data.CosmosDb.Services
             }
             return null;
         }
+
+
+        //public async Task<Document> GetByIdAsync(string id)
+        //{
+        //    var response = await _container.ReadItemAsync<Document>(id, new PartitionKey(id));
+        //    if (response.StatusCode == HttpStatusCode.OK && response.Resource.id == id)
+        //    {
+        //        return response.Resource;
+        //    }
+        //    return null;
+        //}
 
         //public async Task<List<Document>> Query(string whereClause)
         //{
@@ -142,18 +144,16 @@ namespace UKMCAB.Data.CosmosDb.Services
             return list;
         }
 
-        public async Task<bool> Updated(Document document)
+        public async Task<bool> Update(Document document)
         {
             var response = await _container.UpsertItemAsync(document);
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public async Task<bool> Update(dynamic document)
+        public async Task<bool> Delete(Document document)
         {
-            var response = await _container.UpsertItemAsync(document);
-            return response.StatusCode == HttpStatusCode.OK;
+            var response = await _container.DeleteItemAsync<Document>(document.id, new PartitionKey(document.CABId));
+            return response.StatusCode == HttpStatusCode.NoContent;
         }
-
     }
-
 }

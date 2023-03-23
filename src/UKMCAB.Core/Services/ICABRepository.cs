@@ -13,8 +13,8 @@ namespace UKMCAB.Core.Services
 
         Task<Document> CreateAsync(Document document);
 
-        Task<bool> Updated(Document document);
-
-        Task<bool> Update(dynamic document);
+        Task<bool> Update(Document document);
+        
+        Task<bool> Delete(Document document);
     }
 }
