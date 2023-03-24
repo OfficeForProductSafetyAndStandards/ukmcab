@@ -295,8 +295,10 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
     name: appServicePlanSkuName
   }
   kind: 'linux'
+
 }
 
+// TODO: web FARM config!
 
 var siteProperties = {
   httpsOnly: false
@@ -660,6 +662,11 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
                 statusCode: 'HttpStatus502'
                 #disable-next-line no-hardcoded-env-urls // ultimately it needs a FQ URL
                 customErrorPageUrl: 'https://storukmcabdev.blob.core.windows.net/public/badgateway.html'
+              }
+              {
+                statusCode: 'HttpStatus403'
+                #disable-next-line no-hardcoded-env-urls // ultimately it needs a FQ URL
+                customErrorPageUrl: 'https://storukmcabdev.blob.core.windows.net/public/forbidden.html'
               }
             ]
           }
