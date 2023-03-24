@@ -99,7 +99,25 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
-            return View(new CABContactViewModel {CABId = id});
+            var latest = documents.Single(d => d.IsLatest);
+            var model = new CABContactViewModel
+            {
+                CABId = latest.CABId,
+                AddressLine1 = latest.AddressLine1,
+                AddressLine2 = latest.AddressLine2,
+                TownCity = latest.TownCity,
+                Postcode = latest.Postcode,
+                Country = latest.Country,
+                Website = latest.Website,
+                Email = latest.Email,
+                Phone = latest.Phone,
+                PointOfContactName = latest.PointOfContactName,
+                PointOfContactEmail = latest.PointOfContactEmail,
+                PointOfContactPhone = latest.PointOfContactPhone,
+                IsPointOfContactPublicDisplay = latest.IsPointOfContactPublicDisplay,
+                RegisteredOfficeLocation = latest.RegisteredOfficeLocation
+            };
+            return View(model);
         }
 
         [HttpPost]
@@ -111,8 +129,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-
             var latestDocument = documents.Single(d => d.IsLatest);
+
             if (string.IsNullOrWhiteSpace(model.Email) &&
                 string.IsNullOrWhiteSpace(model.Phone))
             {
@@ -142,10 +160,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     return RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
                 }
-                else
-                {
-                    return SaveDraft(latestDocument);
-                }
+                return SaveDraft(latestDocument);
             }
 
             return View(new CABContactViewModel());
@@ -160,15 +175,53 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
+            
             // Pre-populate model for edit
-            return View(new CABBodyDetailsViewModel());
+            var latest = documents.Single(d => d.IsLatest);
+            var model = new CABBodyDetailsViewModel
+            {
+                CABId = latest.CABId,
+                TestingLocations = latest.TestingLocations ?? new List<string> {string.Empty},
+                BodyTypes = latest.BodyTypes,
+                LegislativeAreas = latest.LegislativeAreas
+            };
+            return View(model);
         }
 
+        [HttpPost]
+        [Route("admin/cab/body-details/{id}")]
+        public async Task<IActionResult> BodyDetails(string id, CABBodyDetailsViewModel model, string submitType)
+        {
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest))
+            {
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            }
+            var latestDocument = documents.Single(d => d.IsLatest);
 
+            model.TestingLocations = model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
+            if (!model.TestingLocations.Any())
+            {
+                ModelState.AddModelError("TestingLocations", "Select a registered test location");
+                model.TestingLocations.Add(string.Empty);
+            }
+            if (ModelState.IsValid)
+            {
+                latestDocument.TestingLocations = model.TestingLocations;
+                latestDocument.BodyTypes = model.BodyTypes;
+                latestDocument.LegislativeAreas = model.LegislativeAreas;
+                var user = await _userManager.GetUserAsync(User);
 
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestDocument);
+                if (submitType == "continue")
+                {
+                    return RedirectToAction("SchedulesUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
+                }
+                return SaveDraft(latestDocument);
+            }
 
-
-
+            return View(model);
+        }
 
         [HttpGet]
         [Route("admin/cab/cancel/{id}")]
@@ -177,100 +230,5 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             await _cabAdminService.DeleteDraftDocumentAsync(id);
             return RedirectToAction("Index", "Admin", new { Area = "admin" });
         }
-
-
-
-
-
-
-
-        [HttpGet]
-        [Route("admin/cab/create")]
-        public async Task<IActionResult> Create()
-        {
-            var model = new CreateCABViewModel();
-            await UpdateModel(model);
-
-            return View(model);
-        }
-
-        private async Task UpdateModel(CreateCABViewModel model)
-        {
-            model.CountryList = Constants.Lists.Countries;
-            model.BodyTypeList = Constants.Lists.BodyTypes;
-            model.RegulationList = Constants.Lists.LegislativeAreas;
-            var user = await _userManager.GetUserAsync(User);
-            model.IsUKASUser = await _userManager.IsInRoleAsync(user, Constants.Roles.UKASUser);
-        }
-
-        [HttpPost]
-        [Route("admin/cab/create")]
-        public async Task<IActionResult> Create(State SaveButton, CreateCABViewModel model)
-        {
-            UpdateModel(model);
-
-            if (model.Regulations == null || !model.Regulations.Any())
-            {
-                ModelState.AddModelError("Regulations", "Please select at least one regulation from the list.");
-            }
-
-            if (string.IsNullOrWhiteSpace(model.Website) &&
-                string.IsNullOrWhiteSpace(model.Email) &&
-                string.IsNullOrWhiteSpace(model.Phone))
-            {
-                ModelState.AddModelError("Website",
-                    "At least one of Email, Phone, or Website needs to be completed to create a new CAB.");
-            }
-
-            if (model.IsUKASUser && string.IsNullOrWhiteSpace(model.UKASReference))
-            {
-                ModelState.AddModelError("UKASReference", "A valid UKAS reference is required.");
-            }
-            else if (model.IsUKASUser)
-            {
-                var existingUKASReferenceDocuments =
-                    await _cabAdminService.FindCABDocumentsByUKASReferenceAsync(model.UKASReference);
-                if (existingUKASReferenceDocuments.Any())
-                {
-                    ModelState.AddModelError("UKASReference", "A CAB with this UKAS reference already exists.");
-                }
-            }
-
-            if (ModelState.IsValid)
-            {
-                var existingCABDocuments = await _cabAdminService.FindCABDocumentsByNameAsync(model.Name);
-                if (existingCABDocuments.Any())
-                {
-                    ModelState.AddModelError("Name", "A CAB with this name already exists.");
-                }
-                else
-                {
-                    var user = await _userManager.GetUserAsync(User);
-
-                    var document = await _cabAdminService.CreateDocumentAsync(user.Email, new Document()
-                    {
-                        Name = model.Name,
-                        UKASReference = model.UKASReference,
-                        Address = model.Address,
-                        Website = model.Website ?? string.Empty,
-                        Email = model.Email ?? string.Empty,
-                        Phone = model.Phone ?? string.Empty,
-                        BodyTypes = model.BodyTypes != null && model.BodyTypes.Any()
-                            ? model.BodyTypes
-                            : new List<string>(),
-                        LegislativeAreas = model.Regulations
-                    });
-                    if (document != null)
-                    {
-                        return RedirectToAction("SchedulesUpload", "FileUpload", new { id = document.CABData.CABId });
-                    }
-
-                    ModelState.AddModelError("Name", "Failed to save the CAB to the database. Please try again.");
-                }
-            }
-
-            return View(model);
-        }
-
     }
 }

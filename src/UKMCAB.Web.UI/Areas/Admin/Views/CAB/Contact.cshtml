@@ -151,7 +151,7 @@
                         <span asp-validation-for="RegisteredOfficeLocation" class="govuk-error-message"></span>
                     </p>
                     <select class="govuk-select @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.RegisteredOfficeLocation))" asp-for="RegisteredOfficeLocation"
-                            asp-items="@Model.CountryList.Select(s => new SelectListItem(s, s, s.Equals(Model.RegisteredOfficeLocation)))">
+                            asp-items="@Constants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(Model.RegisteredOfficeLocation)))">
                         <option value="">Choose location</option>
                     </select>
                 </div>

@@ -26,8 +26,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         [Required(ErrorMessage = "Enter a registered office location")]
         public string RegisteredOfficeLocation { get; set; }
 
-        public List<string> CountryList => Constants.Lists.Countries;
-
         public string? Title => "Contact details";
 
         public string[] FieldOrder => new[] { nameof(AddressLine1), nameof(TownCity), nameof(Postcode), nameof(Country), nameof(Email), nameof(RegisteredOfficeLocation) };

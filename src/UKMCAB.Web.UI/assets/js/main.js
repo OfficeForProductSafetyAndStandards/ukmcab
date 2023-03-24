@@ -1,6 +1,7 @@
 ﻿const GOVUKFrontend = require('./govuk-frontend-all.js');
 import "./shared/feedback-form.js";
 import "./shared/identity.js";
+import "./views/body-details.js";
 import "./views/search.js";
 import "./views/work-queue.js";
 import "../scss/main.scss";
