@@ -1,0 +1,18 @@
+﻿.test-location {
+    padding: 5px 0 10px 0;
+
+    a {
+        margin-left: 20px;
+
+        @include govuk-media-query($until: tablet) {
+            margin: 0;
+        }
+    }
+    select {
+        margin: 10px 0;
+    }
+}
+
+#add-test-location-button-container {
+    margin-bottom: 40px;
+}

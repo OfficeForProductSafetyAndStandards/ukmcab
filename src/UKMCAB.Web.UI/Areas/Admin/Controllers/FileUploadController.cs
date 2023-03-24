@@ -27,14 +27,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-upload/{id}")]
         public async Task<IActionResult> SchedulesUpload(string id)
         {
-            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            var redirect = ValidCABDocument(id, cabs);
-            if (redirect != null)
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
             {
-                return redirect;
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var cab = cabs.First();
-            if (cab.CABData.Schedules != null && cab.CABData.Schedules.Count >= 5)
+            // Pre-populate model for edit
+            var latest = documents.Single(d => d.IsLatest);
+            if (latest.Schedules != null && latest.Schedules.Count >= 5)
             {
                 return RedirectToAction("SchedulesList", new { id });
             }
@@ -42,7 +42,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new FileUploadViewModel()
             {
                 Title = SchedulesOptions.UploadTitle,
-                UploadedFiles = cab.CABData.Schedules?.Select(s => s.FileName).ToList() ?? new List<string>(),
+                UploadedFiles = latest.Schedules?.Select(s => s.FileName).ToList() ?? new List<string>(),
                 Id = id
             };
             return View(model);
