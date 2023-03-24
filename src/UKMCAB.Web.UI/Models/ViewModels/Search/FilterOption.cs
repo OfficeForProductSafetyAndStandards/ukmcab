@@ -9,7 +9,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             Id = $"{prefix}-{SanitiseIdString(filterValue)}";
             Value = filterValue;
             Selected = isSelected;
-            Label = SanitiseLabel(filterValue);
+            Label = prefix.Equals("bodytypes", StringComparison.CurrentCultureIgnoreCase) ? SanitiseLabel(filterValue) : filterValue;
         }
         private static string SanitiseIdString(string id)
         {
@@ -21,14 +21,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
         private static string SanitiseLabel(string label)
         {
-            if (string.IsNullOrWhiteSpace(label))
+            switch (label)
             {
-                return string.Empty;
+                case "third-country-body":
+                    return "Third country body";
+                case "Overseas Body":
+                    return "Overseas body";
+                default:
+                    return label;
             }
-            label = label.Replace("-", " ");
-            var labelParts = label.Split(' ');
-            labelParts[0] = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(labelParts[0]);
-            return string.Join(" ", labelParts);
         }
 
 
