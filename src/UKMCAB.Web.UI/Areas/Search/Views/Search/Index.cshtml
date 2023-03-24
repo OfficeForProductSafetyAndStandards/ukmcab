@@ -6,7 +6,7 @@
     var basePath = Context.Request.RemoveQueryParameters("sort", "pagenumber").Replace("search", "search-feed");
 }
 
-<div class="govuk-grid-row">
+<div id="search-result-header" class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">@Html.Raw(title)</h1>
     </div>

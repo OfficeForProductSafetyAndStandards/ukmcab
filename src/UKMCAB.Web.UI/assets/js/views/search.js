@@ -2,6 +2,7 @@
     'use strict';
 
     var searchResultsPage = document.getElementById("search-result-page");
+    var searchResultsHeader = document.getElementById("search-result-header");
     var searchResultsForm = document.getElementById("search-results-form");
     var searchResultsFormColumn = document.getElementById("search-results-form-column");
     var searchResultsListColumn = document.getElementById("search-results-list-column");
@@ -24,6 +25,7 @@
     function init() {
         if (searchResultsPage && searchResultsForm) {
             searchResultsPage.classList.add("js-enabled");
+            searchResultsHeader.classList.add("js-enabled");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);
 
