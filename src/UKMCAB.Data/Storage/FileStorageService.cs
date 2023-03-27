@@ -1,6 +1,5 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
 using Microsoft.Extensions.Configuration;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Models;
@@ -77,8 +76,7 @@ namespace UKMCAB.Data.Storage
             // https://stackoverflow.com/a/847251/1762
             var invalidChars = System.Text.RegularExpressions.Regex.Escape(new string(Path.GetInvalidFileNameChars()));
             var invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-            var timeStamp = DateTime.UtcNow.ToString("yyyyMMddhhmmss");
-            return $"{timeStamp}-{System.Text.RegularExpressions.Regex.Replace(fileName, invalidRegStr, string.Empty)}";
+            return $"{System.Text.RegularExpressions.Regex.Replace(fileName, invalidRegStr, string.Empty)}";
         }
 
         public async Task<bool> DeleteCABSchedule(string blobName)
