@@ -15,7 +15,6 @@
         public string PublishedBy { get; set; }
         public DateTime PublishedDate { get; set; }
 
-        public CABData CABData { get; set; } // TODO: needs to go
 
         // Create/Details
         public string CABId { get; set; }
@@ -41,12 +40,18 @@
         public bool IsPointOfContactPublicDisplay { get; set; }
         public string RegisteredOfficeLocation { get; set; }
 
-
+        // Body details
         public List<string> TestingLocations { get; set; }
         public List<string> BodyTypes { get; set; }
         public List<string> LegislativeAreas { get; set; }
+
+        // Schedules of accreditation
         public List<FileUpload>? Schedules { get; set; }
+
+        // Supporting documents
         public List<FileUpload>? Documents { get; set; }
+
+
         public string HiddenText { get; set; }
         public string RandomSort { get; set; }
     }

@@ -10,13 +10,5 @@ namespace UKMCAB.Core.Services
         Task<Document> CreateDocumentAsync(string userEmail, Document document);
         Task<bool> UpdateOrCreateDraftDocumentAsync(string email, Document draft);
         Task<bool> DeleteDraftDocumentAsync(string cabId);
-
-
-
-        Task<bool> UpdateCABAsync(string email, Document document);
-        Task<List<Document>> FindCABDocumentsByNameAsync(string cabName);
-        Task<List<Document>> FindCABDocumentsByUKASReferenceAsync(string ukasReference);
-       //Task<List<Document>> FindCABDocumentsByStatesAsync(State[] states);
-
     }
 }

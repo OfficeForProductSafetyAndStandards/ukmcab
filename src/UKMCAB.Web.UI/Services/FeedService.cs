@@ -17,12 +17,12 @@ namespace UKMCAB.Web.UI.Services
 
             feed.Items = items.Select(c => new SyndicationItem
             {
-                Id = $"tag:{request.Host.Value}:/search/cab-profile/{c.id}",
+                Id = $"tag:{request.Host.Value}:/search/cab-profile/{c.CABId}",
                 LastUpdatedTime = c.LastUpdatedDate.GetValueOrDefault(),
-                Links = { GetProfileSyndicationLink(c.id, request, url) },
+                Links = { GetProfileSyndicationLink(c.CABId, request, url) },
                 Content = SyndicationContent.CreateXmlContent(new AtomFeedContent
                 {
-                    Id = c.id,
+                    Id = c.CABId,
                     Name = c.Name,
                     Address = c.Address,
                     LegislativeAreas = c.LegislativeAreas
