@@ -420,7 +420,32 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
           ruleGroupOverrides: []
         }
       ]
-      exclusions: []
+      exclusions: [
+        {
+          matchVariable: 'RequestCookieNames'
+          selectorMatchOperator: 'Equals'
+          selector: '.AspNetCore.Identity.Application'
+          exclusionManagedRuleSets: [
+            {
+              ruleSetType: 'OWASP'
+              ruleSetVersion: '3.2'
+              ruleGroups: [
+                {
+                  ruleGroupName: 'REQUEST-942-APPLICATION-ATTACK-SQLI'
+                  rules: [
+                    {
+                      ruleId: '942440'
+                    }
+                    {
+                      ruleId: '942450'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   }
 }
