@@ -28,6 +28,7 @@ namespace UKMCAB.Core.Services
             var doc = await _cabRepostitory.Query<Document>(d => d.IsPublished && d.CABId.Equals(id));
             return doc.Any() && doc.Count == 1 ? doc.First() : null;
         }
+
         public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {
             var docs = await _cabRepostitory.Query<Document>(d =>
@@ -109,61 +110,5 @@ namespace UKMCAB.Core.Services
             Rule.IsTrue(await _cabRepostitory.Delete(latest), $"Failed to delete draft version, CAB Id: {cabId}");
             return true;
         }
-
-
-
-
-
-
-        public async Task<bool> UpdateCABAsync(string email, Document document)
-        {
-            var cab = await FindAllDocumentsByCABIdAsync(document.CABData.CABId);
-            Rule.IsFalse(cab == null || !cab.Any(), "CAB does not exist in database");
-
-            var updateDate = DateTime.Now;
-            document.LastModifiedBy = email;
-            document.LastModifiedDate = updateDate;
-            var result = await _cabRepostitory.Update(document);
-            return result;
-        }
-
-
-
-
-
-
-
-
-
-        public async Task<List<Document>> FindCABDocumentsByNameAsync(string cabName)
-        {
-            var docs = await _cabRepostitory.Query<Document>(d =>
-                d.CABData.Name.Equals(cabName, StringComparison.CurrentCultureIgnoreCase));
-            return docs;
-        }
-
-
-        public async Task<List<Document>> FindCABDocumentsByUKASReferenceAsync(string ukasReference)
-        {
-            var docs = await _cabRepostitory.Query<Document>(d =>
-                d.CABData.UKASReference.Equals(ukasReference, StringComparison.CurrentCultureIgnoreCase));
-            return docs;
-        }
-
-        //public async Task<List<Document>> FindCABDocumentsByStatesAsync(State[] states)
-        //{
-        //    var list = new List<Document>();
-        //    foreach (var state in states)
-        //    {
-        //        var docs = await _cabRepostitory.Query<Document>(d => d.State == state);
-        //        if (docs != null && docs.Any())
-        //        {
-        //            list.AddRange(docs);
-        //        }
-        //    }
-
-        //    list = list.OrderByDescending(l => l.CreatedDate).ToList();
-        //    return list;
-        //}
     }
 }

@@ -4,14 +4,6 @@
 }
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        @if (fromListPage)
-        {
-            <a asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.Id" class="govuk-back-link">Back</a>
-        }
-        else
-        {
-            <a asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.Id" class="govuk-back-link">Back</a>
-        }
     </div>
 </div>
 
@@ -24,7 +16,7 @@
             <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 10 Word, Excel, or PDF documents.</p>
             
             <div>
-                @using (Html.BeginForm("DocumentsList", "FileUpload", new { id = @Model.Id }, FormMethod.Post, false, new { enctype="multipart/form-data" }))
+                @using (Html.BeginForm("DocumentsList", "FileUpload", new { id = @Model.CABId }, FormMethod.Post, false, new { enctype="multipart/form-data" }))
                 {
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
@@ -59,6 +51,7 @@
     </div>
 </div>
 
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <fieldset class="govuk-fieldset">
@@ -70,19 +63,22 @@
                     </label>
                     <input class="govuk-file-upload schedules-upload" asp-for="File" accept=".doc,.docx,.xls,.xlsx,.pdf" type="file">
                 </div>
-                <div class="govuk-button-group">
-                    <button id="upload-schedules-button" class="govuk-button" data-module="govuk-button">
-                        Upload
-                    </button>
-                    <a class="govuk-link govuk-link--no-visited-state" href="/">Cancel</a>
+                
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
+                        <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Skip this step</a></p>
+                    </div>
                 </div>
+
+                <button class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
+                    Upload
+                </button>
+                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="Admin" asp-action="Index">
+                    Save as draft
+                </a>
+                <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </form>
         </fieldset>
     </div>
 </div>    
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
-        <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.Id">Skip this step</a></p>
-    </div>
-</div>

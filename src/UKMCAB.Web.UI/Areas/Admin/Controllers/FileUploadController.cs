@@ -33,17 +33,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
-            var latest = documents.Single(d => d.IsLatest);
-            if (latest.Schedules != null && latest.Schedules.Count >= 5)
+            var latestVersion = documents.Single(d => d.IsLatest);
+            if (latestVersion.Schedules != null && latestVersion.Schedules.Count >= 5)
             {
                 return RedirectToAction("SchedulesList", new { id });
             }
 
-            var model = new FileUploadViewModel()
+            var model = new FileUploadViewModel
             {
                 Title = SchedulesOptions.UploadTitle,
-                UploadedFiles = latest.Schedules?.Select(s => s.FileName).ToList() ?? new List<string>(),
-                Id = id
+                UploadedFiles = latestVersion.Schedules?.Select(s => s.FileName).ToList() ?? new List<string>(),
+                CABId = id
             };
             return View(model);
         }
@@ -67,43 +67,43 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-upload/{id}")]
         public async Task<IActionResult> SchedulesUpload(string id, FileUploadViewModel model)
         {
-            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            var redirect = ValidCABDocument(id, cabs);
-            if (redirect != null)
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
             {
-                return redirect;
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var cab = cabs.First();
-            cab.CABData.Schedules ??= new List<FileUpload>();
-            if (cab.CABData.Schedules.Count >= 5)
+            // Pre-populate model for edit
+            var latestVersion = documents.Single(d => d.IsLatest);
+            latestVersion.Schedules ??= new List<FileUpload>();
+            if (latestVersion.Schedules.Count >= 5)
             {
                 return RedirectToAction("SchedulesList", new { id });
             }
 
-            ValidateUploadFile(model, SchedulesOptions.AcceptedFileExtensions, SchedulesOptions.AcceptedFileTypes, cab);
+            ValidateUploadFile(model, SchedulesOptions.AcceptedFileExtensions, SchedulesOptions.AcceptedFileTypes, latestVersion);
 
             if (ModelState.IsValid)
             {
-                var result = await _fileStorage.UploadCABFile(cab.CABData.CABId, model.File.FileName, "schedules",
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, "schedules",
                     model.File.OpenReadStream());
-                cab.CABData.Schedules.Add(result);
+                latestVersion.Schedules.Add(result);
 
                 var user = await _userManager.GetUserAsync(User);
-                if (await _cabAdminService.UpdateCABAsync(user.Email, cab))
+                if (await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion))
                 {
-                    return RedirectToAction("SchedulesList", new { id = cab.CABData.CABId });
+                    return RedirectToAction("SchedulesList", new { id = latestVersion.CABId });
                 }
 
                 ModelState.AddModelError("File", "There was an error updating the CAB record.");
             }
 
             model.Title = SchedulesOptions.UploadTitle;
-            model.UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList();
-            model.Id = id;
+            model.UploadedFiles = latestVersion.Schedules.Select(s => s.FileName).ToList();
+            model.CABId = id;
             return View(model);
         }
 
-        private void ValidateUploadFile(FileUploadViewModel model, string[] acceptedFileExtension, string acceptedFileTypes, Document cab)
+        private void ValidateUploadFile(FileUploadViewModel model, string[] acceptedFileExtension, string acceptedFileTypes, Document document)
         {
             if (model.File == null)
             {
@@ -121,9 +121,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     ModelState.AddModelError("File", $"Files must be in {acceptedFileTypes} format to be uploaded.");
                 }
 
-                cab.CABData.Schedules ??= new List<FileUpload>();
+                document.Schedules ??= new List<FileUpload>();
 
-                if (cab.CABData.Schedules.Any(s => s.FileName.Equals(model.File.FileName)))
+                if (document.Schedules.Any(s => s.FileName.Equals(model.File.FileName)))
                 {
                     ModelState.AddModelError("File", "Uploaded files must have different names to those already uploaded.");
                 }
@@ -135,24 +135,23 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-list/{id}")]
         public async Task<IActionResult> SchedulesList(string id)
         {
-            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            var redirect = ValidCABDocument(id, cabs);
-            if (redirect != null)
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
             {
-                return redirect;
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-
-            var cab = cabs.First();
-            if (cab.CABData.Schedules == null || !cab.CABData.Schedules.Any())
+            // Pre-populate model for edit
+            var latestVersion = documents.Single(d => d.IsLatest);
+            if (latestVersion.Schedules == null || !latestVersion.Schedules.Any())
             {
-                return RedirectToAction("SchedulesUpload", new[] { id = cab.CABData.CABId });
+                return RedirectToAction("SchedulesUpload", new[] { id = latestVersion.CABId });
             }
 
             return View(new FileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
-                UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList(),
-                Id = id
+                UploadedFiles = latestVersion.Schedules.Select(s => s.FileName).ToList(),
+                CABId = id
             });
         }
 
@@ -160,37 +159,35 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-list/{id}")]
         public async Task<IActionResult> SchedulesList(string id, string fileName)
         {
-            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            var redirect = ValidCABDocument(id, cabs);
-            if (redirect != null)
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
             {
-                return redirect;
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
+            var latestVersion = documents.Single(d => d.IsLatest);
+            latestVersion.Schedules ??= new List<FileUpload>();
 
-            var cab = cabs.First();
-            cab.CABData.Schedules ??= new List<FileUpload>();
-
-            var fileToRemove = cab.CABData.Schedules.SingleOrDefault(s =>
+            var fileToRemove = latestVersion.Schedules.SingleOrDefault(s =>
                 s.FileName.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
             if (fileToRemove != null)
             {
                 var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
-                cab.CABData.Schedules.Remove(fileToRemove);
+                latestVersion.Schedules.Remove(fileToRemove);
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateCABAsync(user.Email, cab);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion);
             }
 
-            if (!cab.CABData.Schedules.Any())
+            if (!latestVersion.Schedules.Any())
             {
-                return RedirectToAction("SchedulesUpload", new { id = cab.CABData.CABId });
+                return RedirectToAction("SchedulesUpload", new { id = latestVersion.CABId });
             }
 
             return View(new FileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
-                UploadedFiles = cab.CABData.Schedules.Select(s => s.FileName).ToList(),
-                Id = id
+                UploadedFiles = latestVersion.Schedules.Select(s => s.FileName).ToList(),
+                CABId = id
             });
         }
 
@@ -198,15 +195,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-upload/{id}")]
         public async Task<IActionResult> DocumentsUpload(string id)
         {
-            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            var redirect = ValidCABDocument(id, cabs);
-            if (redirect != null)
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
             {
-                return redirect;
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var cab = cabs.First();
-            cab.CABData.Documents ??= new List<FileUpload>();
-            if (cab.CABData.Documents.Count >= 10)
+            var latestVersion = documents.Single(d => d.IsLatest);
+            // Pre-populate model for edit
+            latestVersion.Documents ??= new List<FileUpload>();
+            if (latestVersion.Documents.Count >= 10)
             {
                 return RedirectToAction("DocumentsList", new { id });
             }
@@ -214,8 +211,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new FileUploadViewModel()
             {
                 Title = DocumentsOptions.UploadTitle,
-                UploadedFiles = cab.CABData.Documents.Select(s => s.FileName).ToList(),
-                Id = id
+                UploadedFiles = latestVersion.Documents.Select(s => s.FileName).ToList(),
+                CABId = id
             };
             return View(model);
         }
@@ -224,39 +221,38 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-upload/{id}")]
         public async Task<IActionResult> DocumentsUpload(string id, FileUploadViewModel model)
         {
-            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            var redirect = ValidCABDocument(id, cabs);
-            if (redirect != null)
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
             {
-                return redirect;
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var cab = cabs.First();
-            cab.CABData.Documents ??= new List<FileUpload>();
-            if (cab.CABData.Documents.Count >= 10)
+            var latestVersion = documents.Single(d => d.IsLatest);
+            latestVersion.Documents ??= new List<FileUpload>();
+            if (latestVersion.Documents.Count >= 10)
             {
                 return RedirectToAction("DocumentsList", new { id });
             }
 
-            ValidateUploadFile(model, DocumentsOptions.AcceptedFileExtensions, DocumentsOptions.AcceptedFileTypes, cab);
+            ValidateUploadFile(model, DocumentsOptions.AcceptedFileExtensions, DocumentsOptions.AcceptedFileTypes, latestVersion);
 
             if (ModelState.IsValid)
             {
-                var result = await _fileStorage.UploadCABFile(cab.CABData.CABId, model.File.FileName, "documents",
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, "documents",
                     model.File.OpenReadStream());
-                cab.CABData.Documents.Add(result);
+                latestVersion.Documents.Add(result);
 
                 var user = await _userManager.GetUserAsync(User);
-                if (await _cabAdminService.UpdateCABAsync(user.Email, cab))
+                if (await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion))
                 {
-                    return RedirectToAction("DocumentsList", new { id = cab.CABData.CABId });
+                    return RedirectToAction("DocumentsList", new { id = latestVersion.CABId });
                 }
 
                 ModelState.AddModelError("File", "There was an error updating the CAB record.");
             }
 
             model.Title = DocumentsOptions.UploadTitle;
-            model.UploadedFiles = cab.CABData.Documents.Select(s => s.FileName).ToList();
-            model.Id = id;
+            model.UploadedFiles = latestVersion.Documents.Select(s => s.FileName).ToList();
+            model.CABId = id;
             return View(model);
         }
 
@@ -264,21 +260,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-list/{id}")]
         public async Task<IActionResult> DocumentsList(string id)
         {
-            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            var redirect = ValidCABDocument(id, cabs);
-            if (redirect != null)
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
             {
-                return redirect;
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-
-            var cab = cabs.First();
-            cab.CABData.Documents ??= new List<FileUpload>();
+            var latestVersion = documents.Single(d => d.IsLatest);
+            latestVersion.Documents ??= new List<FileUpload>();
 
             return View(new FileListViewModel
             {
                 Title = DocumentsOptions.ListTitle,
-                UploadedFiles = cab.CABData.Documents.Select(s => s.FileName).ToList(),
-                Id = id
+                UploadedFiles = latestVersion.Documents.Select(s => s.FileName).ToList(),
+                CABId = id
             });
         }
 
@@ -286,37 +280,35 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-list/{id}")]
         public async Task<IActionResult> DocumentsList(string id, string fileName)
         {
-            var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            var redirect = ValidCABDocument(id, cabs);
-            if (redirect != null)
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
             {
-                return redirect;
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
+            var latestVersion = documents.Single(d => d.IsLatest);
+            latestVersion.Documents ??= new List<FileUpload>();
 
-            var cab = cabs.First();
-            cab.CABData.Documents ??= new List<FileUpload>();
-
-            var fileToRemove = cab.CABData.Documents.SingleOrDefault(s =>
+            var fileToRemove = latestVersion.Documents.SingleOrDefault(s =>
                 s.FileName.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
             if (fileToRemove != null)
             {
                 var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
-                cab.CABData.Documents.Remove(fileToRemove);
+                latestVersion.Documents.Remove(fileToRemove);
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateCABAsync(user.Email, cab);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion);
             }
 
-            if (!cab.CABData.Documents.Any())
+            if (!latestVersion.Documents.Any())
             {
-                return RedirectToAction("DocumentsUpload", new { id = cab.CABData.CABId });
+                return RedirectToAction("DocumentsUpload", new { id = latestVersion.CABId });
             }
 
             return View(new FileListViewModel
             {
                 Title = DocumentsOptions.ListTitle,
-                UploadedFiles = cab.CABData.Documents.Select(s => s.FileName).ToList(),
-                Id = id
+                UploadedFiles = latestVersion.Documents.Select(s => s.FileName).ToList(),
+                CABId = id
             });
         }
 
