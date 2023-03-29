@@ -2,7 +2,8 @@
 @model SearchViewModel
 @{
     ViewData["nav"] = "search";
-    var title = string.IsNullOrWhiteSpace(Model.Keywords) ? "Search" : $"Search matching &quot;{Model.Keywords}&quot;";
+    var initialTitle = "Find a UK Market Conformity Assessment Body";
+    var title = string.IsNullOrWhiteSpace(Model.Keywords) ? initialTitle : $"{initialTitle} matching &quot;{Model.Keywords}&quot;";
     var basePath = Context.Request.RemoveQueryParameters("sort", "pagenumber").Replace("search", "search-feed");
 }
 
