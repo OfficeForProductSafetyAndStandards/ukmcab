@@ -89,12 +89,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestVersion.Schedules.Add(result);
 
                 var user = await _userManager.GetUserAsync(User);
-                if (await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion))
-                {
-                    return RedirectToAction("SchedulesList", new { id = latestVersion.CABId });
-                }
-
-                ModelState.AddModelError("File", "There was an error updating the CAB record.");
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion);
+                return RedirectToAction("SchedulesList", new { id = latestVersion.CABId });
             }
 
             model.Title = SchedulesOptions.UploadTitle;
@@ -242,12 +238,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestVersion.Documents.Add(result);
 
                 var user = await _userManager.GetUserAsync(User);
-                if (await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion))
-                {
-                    return RedirectToAction("DocumentsList", new { id = latestVersion.CABId });
-                }
-
-                ModelState.AddModelError("File", "There was an error updating the CAB record.");
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion);
+                return RedirectToAction("DocumentsList", new { id = latestVersion.CABId });
             }
 
             model.Title = DocumentsOptions.UploadTitle;

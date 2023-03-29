@@ -23,8 +23,8 @@ namespace UKMCAB.Core.Models.Legacy
 
         public List<PDF> PDFs { get; set; } = new List<PDF>();
 
-        [JsonPropertyName("HiddenText")]
-        public string LegacyHiddenText { get; set; }
+        public string HiddenText { get; set; }
+
         public string LegacyUrl { get; set; }
         [JsonPropertyName("Metadata")]
         public Dictionary<string, string> LegacyMetaData { get; set; }

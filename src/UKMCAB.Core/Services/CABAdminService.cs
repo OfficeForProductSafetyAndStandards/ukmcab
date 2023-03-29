@@ -20,7 +20,7 @@ namespace UKMCAB.Core.Services
                 d.CABNumber.Equals(document.CABNumber) ||
                 (!string.IsNullOrWhiteSpace(document.UKASReference) && d.UKASReference.Equals(document.UKASReference))
             );
-            return documents.Any();
+            return documents.Any(d => !d.CABId.Equals(document.CABId));
         }
 
         public async Task<Document> FindPublishedDocumentByCABIdAsync(string id)
@@ -33,6 +33,14 @@ namespace UKMCAB.Core.Services
         {
             var docs = await _cabRepostitory.Query<Document>(d =>
                 d.CABId.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+            return docs;
+        }
+
+        public async Task<List<Document>> FindAllWorkQueueDocuments()
+        {
+            // TODO: Archived docs need to be included once this functionality is developed 
+            var docs = await _cabRepostitory.Query<Document>(d =>
+                d.IsLatest && !d.IsPublished);
             return docs;
         }
 
@@ -52,7 +60,7 @@ namespace UKMCAB.Core.Services
             return await _cabRepostitory.CreateAsync(document);
         }
 
-        public async Task<bool> UpdateOrCreateDraftDocumentAsync(string userEmail, Document draft)
+        public async Task<Document> UpdateOrCreateDraftDocumentAsync(string userEmail, Document draft)
         {
             var currentDateTime = DateTime.UtcNow;
             if (draft.IsPublished && draft.IsLatest)
@@ -74,7 +82,7 @@ namespace UKMCAB.Core.Services
                 Rule.IsFalse(newdraft == null,
                     $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
 
-                return true;
+                return newdraft;
             }
 
             if (draft.IsLatest)
@@ -83,7 +91,7 @@ namespace UKMCAB.Core.Services
                 draft.LastModifiedDate = currentDateTime;
                 Rule.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
 
-                return true;
+                return draft;
             }
 
             throw new DomainException($"Invalid document for creating draft, CAB Id: {draft.CABId}");
@@ -110,5 +118,25 @@ namespace UKMCAB.Core.Services
             Rule.IsTrue(await _cabRepostitory.Delete(latest), $"Failed to delete draft version, CAB Id: {cabId}");
             return true;
         }
+
+        public async Task<Document> PublishDocumentAsync(string userEmail, Document latestDocument)
+        {
+            Rule.IsTrue(latestDocument.IsLatest && !latestDocument.IsPublished, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
+            var currentDateTime = DateTime.UtcNow;
+            var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
+            if (publishedVersion != null)
+            {
+                publishedVersion.IsLatest = false;
+                Rule.IsTrue(await _cabRepostitory.Update(publishedVersion),
+                    $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
+            }
+            latestDocument.PublishedBy = userEmail;
+            latestDocument.PublishedDate = currentDateTime;
+            latestDocument.IsPublished = true;
+            Rule.IsTrue(await _cabRepostitory.Update(latestDocument),
+                $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
+            return latestDocument;
+        }
+
     }
 }

@@ -67,12 +67,21 @@
                     </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                    @foreach (var cab in Model.WorkQueueItems)
+                    @if (Model.WorkQueueItems.Any())
+                    {
+                        @foreach (var cab in Model.WorkQueueItems)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"><label class="work-queue-item-label">Cab name</label><a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></td>
+                                <td class="govuk-table__cell"><label class="work-queue-item-label">Cab reference</label>@Html.Conditional(!string.IsNullOrWhiteSpace(cab.CABNumber), cab.CABNumber, @Constants.NotProvided)</td>
+                                <td class="govuk-table__cell"><label class="work-queue-item-label">Status</label>@cab.Status</td>
+                            </tr>
+                        }
+                    }
+                    else
                     {
                         <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"><label class="work-queue-item-label">Cab name</label><a href="#" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></td>
-                            <td class="govuk-table__cell"><label class="work-queue-item-label">Cab reference</label>@Html.Conditional(!string.IsNullOrWhiteSpace(cab.CABNumber), cab.CABNumber, @Constants.NotProvided)</td>
-                            <td class="govuk-table__cell"><label class="work-queue-item-label">Status</label>@cab.Status</td>
+                            <td class="govuk-table__cell" colspan="3"><p class="govuk-body">There are currently no items in your work queue</p></td>
                         </tr>
                     }
                     </tbody>

@@ -1,9 +1,20 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UKMCAB.Core.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 {
-    public class CABBodyDetailsViewModel : ILayoutModel
+    public class CABBodyDetailsViewModel : CreateEditCABViewModel, ILayoutModel
     {
+        public CABBodyDetailsViewModel() { }
+
+        public CABBodyDetailsViewModel(Document document)
+        {
+            CABId = document.CABId;
+            TestingLocations = document.TestingLocations ?? new List<string>();
+            BodyTypes = document.BodyTypes ?? new List<string>();
+            LegislativeAreas = document.LegislativeAreas ?? new List<string>();
+        }
+
         public string? CABId { get; set; }
 
         public List<string> TestingLocations { get; set; }
