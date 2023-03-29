@@ -57,7 +57,7 @@
     }
 
     function updateTestLocations() {
-        testLocations = document.querySelectorAll(".admin-test-location");
+        testLocations = document.querySelectorAll(".test-location");
     }
 
     return {

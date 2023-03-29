@@ -43,7 +43,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                         TestingLocations = cabDocument.TestingLocations,
                         LegislativeAreas = cabDocument.LegislativeAreas,
-                        HiddenText = cabDocument.LegacyHiddenText,
+                        HiddenText = cabDocument.HiddenText,
                         Schedules = cabDocument.PDFs != null && cabDocument.PDFs.Any() ? cabDocument.PDFs.Select(p => new FileUpload { BlobName  = p.BlobName, FileName = p.ClientFileName, UploadDateTime = DateTime.UtcNow}).ToList() : new List<FileUpload>(),
                         Documents = new List<FileUpload>(),
                         PublishedDate = cabDocument.PublishedDate.HasValue

@@ -1,13 +1,33 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using UKMCAB.Core.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 {
-    public class CABDetailsViewModel : ILayoutModel
+
+    public class CABDetailsViewModel : CreateEditCABViewModel, ILayoutModel
     {
+        public CABDetailsViewModel() { }
+
+        public CABDetailsViewModel(Document document)
+        {
+            CABId = document.CABId;
+            Name = document.Name;
+            CABNumber = document.CABNumber;
+            AppointmentDateDay = document.AppointmentDate?.Day.ToString("00") ?? string.Empty;
+            AppointmentDateMonth = document.AppointmentDate?.Month.ToString("00") ?? string.Empty;
+            AppointmentDateYear = document.AppointmentDate?.Year.ToString("0000") ?? string.Empty;
+            RenewalDateDay = document.RenewalDate?.Day.ToString("00") ?? string.Empty;
+            RenewalDateMonth = document.RenewalDate?.Month.ToString("00") ?? string.Empty;
+            RenewalDateYear = document.RenewalDate?.Year.ToString("0000") ?? string.Empty;
+            UKASReference = document.UKASReference;
+        }
+
+        public string? CABId { get; set; }
+
         [Required(ErrorMessage = "Enter a CAB name")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
         [Required(ErrorMessage = "Enter a CAB number")]
-        public string CABNumber { get; set; }
+        public string? CABNumber { get; set; }
 
         public string? AppointmentDateDay { get; set; }
         public string? AppointmentDateMonth { get; set; }

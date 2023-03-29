@@ -1,4 +1,18 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABDetailsViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        @if (Model.IsFromSummary)
+        {
+            <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+        }
+        else
+        {
+            <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-back-link">Back</a>
+        }
+    </div>
+</div>
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Create a CAB</h1>
@@ -7,6 +21,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="cabdetailsform" method="post">
+            <input type="hidden" asp-for="IsFromSummary"/>
             <partial name="Partials/_ValidationSummary" model="null"/>
             <fieldset class="govuk-fieldset">
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Name))">
@@ -126,13 +141,20 @@
                 </div>
                 
                 <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="continue">
+                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
                         Continue
                     </button>
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="save">
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                         Save as draft
                     </button>
-                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    @if (Model.IsFromSummary)
+                    {
+                        <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
+                    else
+                    {
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
                 </div>
             </fieldset>
         </form>

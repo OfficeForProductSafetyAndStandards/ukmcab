@@ -14,36 +14,58 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly ICABAdminService _cabAdminService;
         private readonly UserManager<UKMCABUser> _userManager;
 
-        public CABController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager
-            )
+        public CABController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager)
         {
             _cabAdminService = cabAdminService;
             _userManager = userManager;
         }
 
         [HttpGet]
-        [Route("admin/cab/details/{id?}")]
-        public async Task<IActionResult> Details(string id)
+        [Route("admin/cab/details/{id}")]
+        public async Task<IActionResult> Details(string id, bool fromSummary)
         {
-            return View(new CABDetailsViewModel());
+            var model = new CABDetailsViewModel();
+            if (fromSummary)
+            {
+                var latestDocument = await GetLatestDocument(id);
+                if (latestDocument == null) // Implies no document or archived
+                {
+                    return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                }
+
+                model = new CABDetailsViewModel(latestDocument);
+            }
+
+            model.IsFromSummary = fromSummary;
+            return View(model);
+        }
+
+        private async Task<Document?> GetLatestDocument(string cabId)
+        {
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(cabId);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            {
+                return null;
+            }
+
+            return documents.Single(d => d.IsLatest);
         }
 
         [HttpPost]
-        [Route("admin/cab/details/{id?}")]
+        [Route("admin/cab/details/{id}")]
         public async Task<IActionResult> Details(string id, CABDetailsViewModel model, string submitType)
         {
             var appointmentDate = CheckDate(model.AppointmentDate, nameof(model.AppointmentDate), "appointment");
             var renewalDate = CheckDate(model.RenewalDate, nameof(model.RenewalDate), "renewal");
             if (ModelState.IsValid)
             {
-                var document = new Document
-                {
-                    Name = model.Name,
-                    CABNumber = model.CABNumber,
-                    AppointmentDate = appointmentDate,
-                    RenewalDate = renewalDate,
-                    UKASReference = model.UKASReference
-                };
+                var document = await GetLatestDocument(id) ?? new Document();
+                document.Name = model.Name;
+                document.CABNumber = model.CABNumber;
+                document.AppointmentDate = appointmentDate;
+                document.RenewalDate = renewalDate;
+                document.UKASReference = model.UKASReference;
+
                 if (await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document))
                 {
                     ModelState.AddModelError(nameof(model.Name), "A document already exists for this CAB name, number or UKAS reference");
@@ -51,14 +73,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 else
                 {
                     var user = await _userManager.GetUserAsync(User);
-                    var createdDocument = await _cabAdminService.CreateDocumentAsync(user.Email, document);
+                    var createdDocument = model.IsFromSummary ?
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, document) :
+                        await _cabAdminService.CreateDocumentAsync(user.Email, document);
                     if (createdDocument == null)
                     {
                         ModelState.AddModelError(string.Empty, "Failed to create the document, please try again.");
                     }
-                    else if (submitType == "continue")
+                    else if (submitType == Constants.SubmitType.Continue)
                     {
-                        return RedirectToAction("Contact", "CAB", new { Area = "admin", id= createdDocument.CABId });
+                        return model.IsFromSummary ?
+                            RedirectToAction("Summary", "CAB", new { Area = "admin", id= createdDocument.CABId }):
+                            RedirectToAction("Contact", "CAB", new { Area = "admin", id= createdDocument.CABId });
                     }
                     else
                     {
@@ -91,7 +117,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/contact/{id}")]
-        public async Task<IActionResult> Contact(string id)
+        public async Task<IActionResult> Contact(string id, bool fromSummary)
         {
             var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
@@ -100,23 +126,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             // Pre-populate model for edit
             var latest = documents.Single(d => d.IsLatest);
-            var model = new CABContactViewModel
-            {
-                CABId = latest.CABId,
-                AddressLine1 = latest.AddressLine1,
-                AddressLine2 = latest.AddressLine2,
-                TownCity = latest.TownCity,
-                Postcode = latest.Postcode,
-                Country = latest.Country,
-                Website = latest.Website,
-                Email = latest.Email,
-                Phone = latest.Phone,
-                PointOfContactName = latest.PointOfContactName,
-                PointOfContactEmail = latest.PointOfContactEmail,
-                PointOfContactPhone = latest.PointOfContactPhone,
-                IsPointOfContactPublicDisplay = latest.IsPointOfContactPublicDisplay,
-                RegisteredOfficeLocation = latest.RegisteredOfficeLocation
-            };
+            var model = new CABContactViewModel(latest);
+            model.IsFromSummary = fromSummary;
             return View(model);
         }
 
@@ -138,7 +149,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     "Enter a valid email address or phone number.");
             }
 
-            if (ModelState.IsValid)
+            if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
             {
                 latestDocument.AddressLine1 = model.AddressLine1;
                 latestDocument.AddressLine2 = model.AddressLine2;
@@ -156,9 +167,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 var user = await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestDocument);
-                if (submitType == "continue")
+                if (submitType == Constants.SubmitType.Continue)
                 {
-                    return RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
+                    return model.IsFromSummary ?
+                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }):
+                        RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
                 }
                 return SaveDraft(latestDocument);
             }
@@ -168,7 +181,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/body-details/{id}")]
-        public async Task<IActionResult> BodyDetails(string id)
+        public async Task<IActionResult> BodyDetails(string id, bool fromSummary)
         {
             var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
             if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
@@ -178,13 +191,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             // Pre-populate model for edit
             var latest = documents.Single(d => d.IsLatest);
-            var model = new CABBodyDetailsViewModel
-            {
-                CABId = latest.CABId,
-                TestingLocations = latest.TestingLocations ?? new List<string> {string.Empty},
-                BodyTypes = latest.BodyTypes,
-                LegislativeAreas = latest.LegislativeAreas
-            };
+            var model = new CABBodyDetailsViewModel(latest);
+            model.IsFromSummary = fromSummary;
             return View(model);
         }
 
@@ -199,13 +207,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             var latestDocument = documents.Single(d => d.IsLatest);
 
-            model.TestingLocations = model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList();
+            model.TestingLocations = model.TestingLocations != null ? model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList() : new List<string>();
             if (!model.TestingLocations.Any())
             {
                 ModelState.AddModelError("TestingLocations", "Select a registered test location");
                 model.TestingLocations.Add(string.Empty);
             }
-            if (ModelState.IsValid)
+
+            if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
             {
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
@@ -213,14 +222,78 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var user = await _userManager.GetUserAsync(User);
 
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestDocument);
-                if (submitType == "continue")
-                {
-                    return RedirectToAction("SchedulesUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
+                if (submitType == Constants.SubmitType.Continue)
+                { 
+                    return model.IsFromSummary ?
+                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) : 
+                        RedirectToAction("SchedulesUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
                 }
                 return SaveDraft(latestDocument);
             }
 
             return View(model);
+        }
+
+        [HttpGet]
+        [Route("admin/cab/summary/{id}")]
+        public async Task<IActionResult> Summary(string id)
+        {
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            {
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            }
+
+            // Pre-populate model for edit
+            var latest = documents.Single(d => d.IsLatest);
+            var model = new CABSummaryViewModel
+            {
+                CABId = latest.CABId,
+                CabDetailsViewModel = new CABDetailsViewModel(latest),
+                CabContactViewModel = new CABContactViewModel(latest),
+                CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
+                Schedules = latest.Schedules ?? new List<FileUpload>(),
+                Documents = latest.Documents ?? new List<FileUpload>()
+            };
+            model.ValidCAB = TryValidateModel(model);
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("admin/cab/summary/{id}")]
+        public async Task<IActionResult> Summary(CABSummaryViewModel model)
+        {
+            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(model.CABId);
+            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            {
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            }
+
+            // Pre-populate model for edit
+            var latest = documents.Single(d => d.IsLatest);
+            model.CabDetailsViewModel = new CABDetailsViewModel(latest);
+            model.CabContactViewModel = new CABContactViewModel(latest);
+            model.CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest);
+            model.Schedules = latest.Schedules ?? new List<FileUpload>();
+            model.Documents = latest.Documents ?? new List<FileUpload>();
+            model.ValidCAB = TryValidateModel(model);
+            if (model.ValidCAB)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var pubishedDoc = await _cabAdminService.PublishDocumentAsync(user.Email, latest);
+                return RedirectToAction("Confirmation", "CAB", new { Area = "admin", id = latest.CABId });
+            }
+
+            model.ShowError = true;
+            model.ValidCAB = TryValidateModel(model);
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("admin/cab/confirmation/{id}")]
+        public async Task<IActionResult> Confirmation(string id)
+        {
+            return View();
         }
 
         [HttpGet]

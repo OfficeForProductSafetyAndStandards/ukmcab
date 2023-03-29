@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Web.UI;
+﻿using System.Security.Policy;
+
+namespace UKMCAB.Web.UI;
 
 public static class Constants
 {
@@ -11,6 +13,12 @@ public static class Constants
     public const string LastUpdatedSortValue = "lastupd";
     public const string A2ZSortValue = "a2z";
     public const string Z2ASortValue = "z2a";
+
+    public class SubmitType
+    {
+        public const string Continue = nameof(Continue);
+        public const string Save = nameof(Save);
+    }
 
     public static class Config
     {
