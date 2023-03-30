@@ -1,12 +1,10 @@
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Azure.Cosmos;
-using System.Security.Cryptography.X509Certificates;
 using Notify.Client;
 using Notify.Interfaces;
+using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
-using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
@@ -22,6 +20,15 @@ using UKMCAB.Web.UI;
 using UKMCAB.Web.UI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+
+if (builder.Configuration["AppInsightsConnectionString"].IsNotNullOrEmpty())
+{
+    builder.Services.AddApplicationInsightsTelemetry(x =>
+    {
+        x.ConnectionString = builder.Configuration["AppInsightsConnectionString"];
+        x.DeveloperMode = builder.Environment.IsDevelopment();
+    });
+}
 
 var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration["DataConnectionString"]);
 var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
