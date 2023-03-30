@@ -1,5 +1,4 @@
 ﻿using UKMCAB.Common;
-using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Models;
 
 namespace UKMCAB.Core.Services
@@ -54,7 +53,7 @@ namespace UKMCAB.Core.Services
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
-            Rule.IsFalse(documentExists, "CAB name or number already exists in database");
+            Guard.IsFalse(documentExists, "CAB name or number already exists in database");
             
             var createdDate = DateTime.Now;
             document.CABId = Guid.NewGuid().ToString();
@@ -72,9 +71,9 @@ namespace UKMCAB.Core.Services
             if (draft.IsPublished && draft.IsLatest)
             {
                 var publishedVersion = await FindPublishedDocumentByCABIdAsync(draft.CABId);
-                Rule.IsTrue(publishedVersion.IsLatest, $"Invalid document for creating draft, CAB Id: {draft.CABId}");
+                Guard.IsTrue(publishedVersion.IsLatest, $"Invalid document for creating draft, CAB Id: {draft.CABId}");
                 publishedVersion.IsLatest = false;
-                Rule.IsTrue(await _cabRepostitory.Update(publishedVersion),
+                Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                     $"Failed to update published version during draft update, CAB Id: {draft.CABId}");
 
                 draft.IsPublished = false;
@@ -85,7 +84,7 @@ namespace UKMCAB.Core.Services
                 draft.LastModifiedDate = currentDateTime;
                 draft.IsLatest = true;
                 var newdraft = await _cabRepostitory.CreateAsync(draft);
-                Rule.IsFalse(newdraft == null,
+                Guard.IsFalse(newdraft == null,
                     $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
 
                 return newdraft;
@@ -95,18 +94,18 @@ namespace UKMCAB.Core.Services
             {
                 draft.LastModifiedBy = userEmail;
                 draft.LastModifiedDate = currentDateTime;
-                Rule.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
+                Guard.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
 
                 return draft;
             }
 
-            throw new DomainException($"Invalid document for creating draft, CAB Id: {draft.CABId}");
+            throw new Exception($"Invalid document for creating draft, CAB Id: {draft.CABId}");
         }
 
         public async Task<bool> DeleteDraftDocumentAsync(string cabId)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
-            Rule.IsTrue(documents.Any(d => d.IsLatest) && documents.Count(d => d.IsLatest) == 1 , $"Error finding the latest document to delete, CAB Id: {cabId}");
+            Guard.IsTrue(documents.Any(d => d.IsLatest) && documents.Count(d => d.IsLatest) == 1 , $"Error finding the latest document to delete, CAB Id: {cabId}");
             var latest = documents.Single(d => d.IsLatest);
             if (latest.IsPublished)
             {
@@ -118,28 +117,29 @@ namespace UKMCAB.Core.Services
                 // Need to make the published version the latest again
                 var publishedVersion = documents.Single(d => d.IsPublished);
                 publishedVersion.IsLatest = true;
-                Rule.IsTrue(await _cabRepostitory.Update(publishedVersion),
+                Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                     $"Failed to update published version during draft update, CAB Id: {cabId}");
             }
-            Rule.IsTrue(await _cabRepostitory.Delete(latest), $"Failed to delete draft version, CAB Id: {cabId}");
+            Guard.IsTrue(await _cabRepostitory.Delete(latest), $"Failed to delete draft version, CAB Id: {cabId}");
             return true;
         }
 
         public async Task<Document> PublishDocumentAsync(string userEmail, Document latestDocument)
         {
-            Rule.IsTrue(latestDocument.IsLatest && !latestDocument.IsPublished, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
+            Guard.IsTrue(latestDocument.IsLatest && !latestDocument.IsPublished, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
             var currentDateTime = DateTime.UtcNow;
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             if (publishedVersion != null)
             {
                 publishedVersion.IsLatest = false;
-                Rule.IsTrue(await _cabRepostitory.Update(publishedVersion),
+                publishedVersion.IsPublished = false;
+                Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
             }
             latestDocument.PublishedBy = userEmail;
             latestDocument.PublishedDate = currentDateTime;
             latestDocument.IsPublished = true;
-            Rule.IsTrue(await _cabRepostitory.Update(latestDocument),
+            Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
             return latestDocument;
         }
