@@ -333,6 +333,15 @@ resource appService 'Microsoft.Web/sites@2022-03-01' = {
     identity: {
       type: 'SystemAssigned'
     }
+
+    resource hostnameVNext 'hostNameBindings@2022-03-01' = {
+      name: appServiceHostNameVNext
+      properties: {
+        customHostNameDnsRecordType: 'A'
+        hostNameType: 'Verified'
+        siteName: appService::vnext.name
+      }
+    }
   }
 }
 
