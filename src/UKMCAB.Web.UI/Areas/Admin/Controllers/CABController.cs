@@ -284,6 +284,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Schedules = latest.Schedules ?? new List<FileUpload>(),
                 Documents = latest.Documents ?? new List<FileUpload>(),
             };
+            ModelState.Clear();
             publishModel.ValidCAB = TryValidateModel(publishModel);
             if (publishModel.ValidCAB)
             {
