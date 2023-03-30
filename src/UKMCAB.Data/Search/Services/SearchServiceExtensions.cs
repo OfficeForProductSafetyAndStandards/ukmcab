@@ -50,7 +50,7 @@ namespace UKMCAB.Data.Search.Services
             var cosmosDbIndexer =
                 new SearchIndexer(DataConstants.Search.SEARCH_INDEXER, cosmosDbDataSource.Name, DataConstants.Search.SEARCH_INDEX)
                 {
-                    Schedule = new IndexingSchedule(TimeSpan.FromDays(1)),
+                    Schedule = new IndexingSchedule(TimeSpan.FromMinutes(10)),
                 };
             try
             {
