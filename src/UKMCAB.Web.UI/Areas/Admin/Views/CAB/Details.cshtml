@@ -1,17 +1,21 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABDetailsViewModel
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        @if (Model.IsFromSummary)
-        {
-            <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
-        }
-        else
-        {
-            <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-back-link">Back</a>
-        }
+@section BackButton
+{
+<div class="govuk-width-container ">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model.IsFromSummary)
+            {
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+            }
+            else
+            {
+                <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-back-link">Back</a>
+            }
+        </div>
     </div>
 </div>
+}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">

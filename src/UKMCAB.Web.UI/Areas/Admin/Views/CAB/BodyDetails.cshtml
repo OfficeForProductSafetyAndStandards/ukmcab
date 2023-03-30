@@ -1,16 +1,21 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABBodyDetailsViewModel
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        @if (Model.IsFromSummary)
-        {
-            <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
-        }
-        else
-        {
-            <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" class="govuk-back-link">Back</a>
-        }
+@section BackButton
+{
+<div class="govuk-width-container ">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model.IsFromSummary)
+            {
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+            }
+            else
+            {
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+            }
+        </div>
     </div>
 </div>
+}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -21,7 +26,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="cab-body-details-form" method="post">
-            <partial name="Partials/_ValidationSummary" model="null"/>
+            <partial name="Partials/_ValidationSummary" model="Model.FieldOrder"/>
             <input type="hidden" asp-for="IsFromSummary"/>
             <fieldset class="govuk-fieldset">
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.TestingLocations))">

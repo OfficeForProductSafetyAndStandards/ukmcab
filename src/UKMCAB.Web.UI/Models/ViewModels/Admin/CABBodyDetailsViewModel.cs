@@ -24,5 +24,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public List<string> LegislativeAreas { get; set; }
 
         public string? Title => "Body details";
+
+        public string[] FieldOrder => new[] { nameof(TestingLocations), nameof(BodyTypes), nameof(LegislativeAreas) };
     }
 }

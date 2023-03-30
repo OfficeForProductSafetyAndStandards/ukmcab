@@ -6,6 +6,12 @@ namespace UKMCAB.Core.Services
 {
     public class CABAdminService : ICABAdminService
     {
+        // Guide to document status types
+        // IsPublished: true, IsLatest: true: The latest published version, there is no draft version in progress
+        // IsPublished: true, IsLatest: false: The latest published version, there is a newer draft version in progress
+        // IsPublished: false, IsLatest: true: The latest draft version. There may be a prior published version, PublishedDate should indicate this
+        // IsPublished: false, IsLatest: false: Historical version that has been superceded by a more recent published version or versions
+
         private readonly ICABRepository _cabRepostitory;
 
         public CABAdminService(ICABRepository cabRepostitory)
@@ -137,6 +143,5 @@ namespace UKMCAB.Core.Services
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
             return latestDocument;
         }
-
     }
 }

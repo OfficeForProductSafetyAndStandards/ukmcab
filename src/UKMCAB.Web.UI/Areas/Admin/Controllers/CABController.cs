@@ -25,7 +25,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> Details(string id, bool fromSummary)
         {
             var model = new CABDetailsViewModel();
-            if (fromSummary)
+            if (!id.Equals("create", StringComparison.InvariantCultureIgnoreCase))
             {
                 var latestDocument = await GetLatestDocument(id);
                 if (latestDocument == null) // Implies no document or archived
@@ -146,7 +146,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 string.IsNullOrWhiteSpace(model.Phone))
             {
                 ModelState.AddModelError("Email",
-                    "Enter a valid email address or phone number.");
+                    "Enter either an email or phone");
             }
 
             if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
@@ -192,6 +192,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             // Pre-populate model for edit
             var latest = documents.Single(d => d.IsLatest);
             var model = new CABBodyDetailsViewModel(latest);
+            if (!model.TestingLocations.Any())
+            {
+                model.TestingLocations.Add(string.Empty);
+            }
             model.IsFromSummary = fromSummary;
             return View(model);
         }

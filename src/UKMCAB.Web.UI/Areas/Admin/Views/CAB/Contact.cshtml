@@ -1,16 +1,21 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABContactViewModel
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        @if (Model.IsFromSummary)
-        {
-            <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
-        }
-        else
-        {
-            <a asp-area="Admin" asp-controller="CAB" asp-action="Details" class="govuk-back-link">Back</a>
-        }
+@section BackButton
+{
+<div class="govuk-width-container ">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @if (Model.IsFromSummary)
+            {
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+            }
+            else
+            {
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Details" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+            }
+        </div>
     </div>
 </div>
+}
 
 
 <div class="govuk-grid-row">
@@ -81,7 +86,7 @@
                 <div class="govuk-form-group">
                     <h1 class="govuk-label-wrapper">
                         <label class=" govuk-heading-s" asp-for="Website">
-                            Website
+                            Website (optional)
                         </label>
                     </h1>
                     <input asp-for="Website" class="govuk-input govuk-!-width-two-thirds" autocomplete="website" />
