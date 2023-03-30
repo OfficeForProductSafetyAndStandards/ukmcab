@@ -46,6 +46,12 @@
     },
     "appServiceHostNameVNext": {
       "value": "ukmcab-vnext.beis.gov.uk"
+    },
+    "searchReplicaCount": {
+      "value": 2
+    },
+    "appServiceUseAutoScale": {
+      "value": true
     }
   }
 }

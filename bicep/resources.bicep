@@ -8,6 +8,8 @@ param appServiceUseBasicAuth bool      // for prod deployment, after go-live, se
 param appServiceUseBasicAuthVNext bool
 param appServiceHostName string
 param appServiceHostNameVNext string
+param appServiceUseAutoScale bool
+param searchReplicaCount int
 
 @secure()
 param basicAuthPassword string
@@ -109,7 +111,7 @@ resource cognitiveSearch 'Microsoft.Search/searchServices@2022-09-01' = {
     name: 'basic'
   }
   properties: {
-    replicaCount: 1
+    replicaCount: searchReplicaCount
     partitionCount: 1
     hostingMode: 'default'
   }
@@ -297,8 +299,6 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2022-03-01' = {
   kind: 'linux'
 
 }
-
-// TODO: web FARM config!
 
 var siteProperties = {
   httpsOnly: false
@@ -1047,8 +1047,78 @@ resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(appService
 
 
 
+/*
+  =================================  
+  App service auto-scale
+  =================================
+*/
+resource appServiceAutoscale 'Microsoft.Insights/autoscalesettings@2022-10-01' = if(appServiceUseAutoScale) {
+  location: location
+  name: 'autoscale-setting-${project}-${env}'
+  properties: {
+    enabled: true
+    name: 'autoscale-setting-${project}-${env}'
+    targetResourceUri: appServicePlan.id
+    predictiveAutoscalePolicy:{
+      scaleMode: 'Disabled'
+    }
+    profiles: [
+      {
+        name: 'autoscale'
+        capacity: {
+          minimum: '1'
+          maximum: '10'
+          default: '1'
+        }
+        rules: [
+          {
+            metricTrigger: {
+              metricName: 'CpuPercentage'
+              metricNamespace: 'microsoft.web/serverfarms'
+              metricResourceUri: appServicePlan.id
+              timeGrain: 'PT1M'
+              statistic: 'Average'
+              timeWindow: 'PT5M'
+              timeAggregation: 'Average'
+              operator: 'GreaterThan'
+              threshold: 70
+              dimensions: []
+              dividePerInstance: false
+            }
+            scaleAction: {
+              direction: 'Increase'
+              type: 'ChangeCount'
+              value: '1'
+              cooldown: 'PT5M'
+            }
+          }
+          {
+            metricTrigger: {
+              metricName: 'CpuPercentage'
+              metricNamespace: 'microsoft.web/serverfarms'
+              metricResourceUri: appServicePlan.id
+              timeGrain: 'PT1M'
+              statistic: 'Average'
+              timeWindow: 'PT5M'
+              timeAggregation: 'Average'
+              operator: 'LessThan'
+              threshold: 20
+              dimensions: []
+              dividePerInstance: false
+            }
+            scaleAction: {
+              direction: 'Decrease'
+              type: 'ChangeCount'
+              value: '1'
+              cooldown: 'PT5M'
+            }
+          }
+        ]
+      }
+    ]
 
-
+  }
+}
 
 
 
