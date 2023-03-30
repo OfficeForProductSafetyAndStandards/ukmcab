@@ -3,9 +3,10 @@ name: stage-iac-deploy
 on: 
   push:
     branches:
-    - main
+    - master
     paths:
       - 'bicep/**/*'
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
