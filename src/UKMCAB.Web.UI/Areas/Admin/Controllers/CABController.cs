@@ -259,7 +259,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Schedules = latest.Schedules ?? new List<FileUpload>(),
                 Documents = latest.Documents ?? new List<FileUpload>()
             };
-            model.ValidCAB = TryValidateModel(model);
+            model.ValidCAB = !latest.IsPublished && TryValidateModel(model);
             return View(model);
         }
 
@@ -275,21 +275,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             // Pre-populate model for edit
             var latest = documents.Single(d => d.IsLatest);
-            model.CabDetailsViewModel = new CABDetailsViewModel(latest);
-            model.CabContactViewModel = new CABContactViewModel(latest);
-            model.CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest);
-            model.Schedules = latest.Schedules ?? new List<FileUpload>();
-            model.Documents = latest.Documents ?? new List<FileUpload>();
-            model.ValidCAB = TryValidateModel(model);
-            if (model.ValidCAB)
+            var publishModel = new CABSummaryViewModel
+            {
+                CABId = latest.CABId,
+                CabDetailsViewModel = new CABDetailsViewModel(latest),
+                CabContactViewModel = new CABContactViewModel(latest),
+                CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
+                Schedules = latest.Schedules ?? new List<FileUpload>(),
+                Documents = latest.Documents ?? new List<FileUpload>(),
+            };
+            publishModel.ValidCAB = TryValidateModel(publishModel);
+            if (publishModel.ValidCAB)
             {
                 var user = await _userManager.GetUserAsync(User);
                 var pubishedDoc = await _cabAdminService.PublishDocumentAsync(user.Email, latest);
                 return RedirectToAction("Confirmation", "CAB", new { Area = "admin", id = latest.CABId });
             }
 
-            model.ShowError = true;
-            model.ValidCAB = TryValidateModel(model);
+            publishModel.ShowError = true;
             return View(model);
         }
 
