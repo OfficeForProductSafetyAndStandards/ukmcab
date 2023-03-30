@@ -1,6 +1,7 @@
 ﻿using System.ServiceModel.Syndication;
 using System.Xml;
 using System.Xml.Serialization;
+using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Infrastructure.Cache;
@@ -53,7 +54,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search-feed")]
         public async Task<IActionResult> AtomFeed(SearchViewModel model)
         {
-            model.Sort = Constants.LastUpdatedSortValue;
+            model.Sort = DataConstants.SortOptions.LastUpdated;
             var searchResult = await _searchService.QueryAsync(new CABSearchOptions
             {
                 PageNumber = model.PageNumber,
