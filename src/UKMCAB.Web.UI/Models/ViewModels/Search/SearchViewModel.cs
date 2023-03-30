@@ -1,4 +1,5 @@
-﻿namespace UKMCAB.Web.UI.Models.ViewModels.Search
+﻿using UKMCAB.Data;
+namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
     public class SearchViewModel: ILayoutModel
     {
@@ -11,7 +12,7 @@
         public string[] RegisteredOfficeLocations { get; set; }
         public string[] TestingLocations { get; set; }
         public string[] LegislativeAreas { get; set; }
-        public string Sort { get; set; } = string.Empty;
+        public string Sort { get; set; } = DataConstants.SortOptions.Default;
         public int PageNumber { get; set; } = 1;
 
         // Form elements
@@ -23,12 +24,12 @@
         public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (TestingLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0);
         public Dictionary<string, string> SortOptions => new()
         {
-            { string.IsNullOrWhiteSpace(Keywords) ? "Random" : "Relevant" , ""},
-            {"Last updated", Constants.LastUpdatedSortValue},
-            {"A to Z", Constants.A2ZSortValue},
-            {"Z to A", Constants.Z2ASortValue}
+            { string.IsNullOrWhiteSpace(Keywords) ? "Random" : "Relevant" , DataConstants.SortOptions.Default},
+            {"Last updated", DataConstants.SortOptions.LastUpdated},
+            {"A to Z", DataConstants.SortOptions.A2ZSort},
+            {"Z to A", DataConstants.SortOptions.Z2ASort}
         };
-
+            
         // Results
         public List<ResultViewModel> SearchResults { get; set; }
         public PaginationViewModel Pagination { get; set; }

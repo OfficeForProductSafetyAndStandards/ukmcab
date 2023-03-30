@@ -1,6 +1,8 @@
-﻿using Azure.Search.Documents;
+﻿using System.ComponentModel;
+using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using System.Text.RegularExpressions;
+using Microsoft.VisualBasic;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
@@ -111,20 +113,18 @@ namespace UKMCAB.Data.Search.Services
 
         private string BuildSort(CABSearchOptions options)
         {
-            if (options.Sort == "lastupd")
+            switch (options.Sort)
             {
-                return "LastUpdatedDate asc";
+                case DataConstants.SortOptions.LastUpdated:
+                    return "LastUpdatedDate asc";
+                case DataConstants.SortOptions.A2ZSort:
+                    return "Name asc";
+                case DataConstants.SortOptions.Z2ASort:
+                    return "Name desc";
+                case DataConstants.SortOptions.Default:
+                default:
+                    return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : string.Empty;
             }
-            if (options.Sort == "a2z")
-            {
-                return "Name asc";
-            }
-            if (options.Sort == "z2a")
-            {
-                return "Name desc";
-            }
-
-            return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : string.Empty;
         }
 
         private string BuildFilter(CABSearchOptions options)

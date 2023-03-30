@@ -19,7 +19,7 @@
                 <legend>Sort view</legend>
                 @foreach (var sortOption in Model.SortOptions)
                 {
-                    if (Model.Sort.Equals(sortOption.Value, StringComparison.InvariantCultureIgnoreCase))
+                    if (string.IsNullOrWhiteSpace(Model.Sort) || Model.Sort.Equals(sortOption.Value, StringComparison.InvariantCultureIgnoreCase))
                     {
                         <label>@sortOption.Key</label>
                     }

@@ -18,5 +18,13 @@
             public const string SEARCH_DATASOURCE = "ukmcab-search-datasource";
 
         }
+        public class SortOptions
+        {
+            public const string Default = "default";
+            public const string LastUpdated = "lastupd";
+            public const string A2ZSort = "a2z";
+            public const string Z2ASort = "z2a";
+        }
+
     }
 }

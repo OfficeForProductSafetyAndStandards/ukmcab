@@ -10,10 +10,6 @@ public static class Constants
 
     public const string TempDraftKey = nameof(TempDraftKey);
 
-    public const string LastUpdatedSortValue = "lastupd";
-    public const string A2ZSortValue = "a2z";
-    public const string Z2ASortValue = "z2a";
-
     public class SubmitType
     {
         public const string Continue = nameof(Continue);
