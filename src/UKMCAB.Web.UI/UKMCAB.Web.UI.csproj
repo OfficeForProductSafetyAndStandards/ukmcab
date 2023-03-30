@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+	<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.21.0" />
     <PackageReference Include="Azure.Extensions.AspNetCore.DataProtection.Blobs" Version="1.2.3" />
     <PackageReference Include="Azure.Storage.Blobs" Version="12.14.1" />
     <PackageReference Include="Azure.Storage.Queues" Version="12.12.0" />
