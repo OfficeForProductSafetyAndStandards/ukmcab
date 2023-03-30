@@ -1,6 +1,6 @@
 ﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 {
-    public class FileUploadViewModel : ILayoutModel 
+    public class FileUploadViewModel : CreateEditCABViewModel, ILayoutModel 
     {
         public string? Title { get; set; }
         public string? CABId { get; set; }

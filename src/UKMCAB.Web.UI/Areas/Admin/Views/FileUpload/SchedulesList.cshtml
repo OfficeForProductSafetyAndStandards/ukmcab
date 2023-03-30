@@ -1,19 +1,32 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.FileListViewModel
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <a asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId" asp-route-list="true" class="govuk-back-link">Back</a>
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (Model.IsFromSummary)
+                {
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                }
+                else
+                {
+                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                }
+            </div>
+        </div>
     </div>
-</div>
+}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form method="post" enctype="multipart/form-data">
+            <input type="hidden" asp-for="IsFromSummary" />
             <partial name="Partials/_ValidationSummary" model="null"/>
             <span class="govuk-caption-m">Create a CAB</span>
             <fieldset class="govuk-fieldset">
                 <h1 class="govuk-heading-l">Schedule of Accreditation uploaded</h1>
                 <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 5 pdf documents.</p>
-                
+
                 <div>
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
@@ -50,9 +63,19 @@
 
 @if (Model.UploadedFiles.Count < 5)
 {
+    var label = Model.UploadedFiles.Any() ? "Upload another file" : "Upload a file";
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
-            <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId">Upload another file</a></p>
+            <p class="govuk-body">
+                @if (Model.IsFromSummary)
+                {
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId" asp-route-fromSummary="true">@label</a>
+                }
+                else
+                {
+                    <a class="govuk-link govuk-link--no-visited-state" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId">@label</a>
+                }
+            </p>
         </div>
     </div>
 }
@@ -60,9 +83,18 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <div class="govuk-button-group">
-            <a class="govuk-button" asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsUpload" asp-route-id="@Model.CABId">
-                Continue
-            </a>
+            @if (Model.IsFromSummary)
+            {
+                <a class="govuk-button" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">
+                    Continue
+                </a>
+            }
+            else
+            {
+                <a class="govuk-button" asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsUpload" asp-route-id="@Model.CABId">
+                    Continue
+                </a>
+            }
             <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="Admin" asp-action="Index">
                 Save as draft
             </a>

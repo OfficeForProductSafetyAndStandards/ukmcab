@@ -6,10 +6,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 {
     public class CABSummaryViewModel: IValidatableObject, ILayoutModel
     {
-        public string CABId { get; set; }
-        public CABDetailsViewModel CabDetailsViewModel { get; set; }
-        public CABContactViewModel CabContactViewModel { get; set; }
-        public CABBodyDetailsViewModel CabBodyDetailsViewModel { get; set; }
+        public string? CABId { get; set; }
+        public CABDetailsViewModel? CabDetailsViewModel { get; set; }
+        public CABContactViewModel? CabContactViewModel { get; set; }
+        public CABBodyDetailsViewModel? CabBodyDetailsViewModel { get; set; }
         // Schedules of accreditation
         public List<FileUpload>? Schedules { get; set; }
         // Supporting documents

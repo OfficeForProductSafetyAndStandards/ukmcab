@@ -170,7 +170,7 @@
                         <dd class="govuk-summary-list__value">
                             @if (Model.CabBodyDetailsViewModel.TestingLocations.Any(tl => !string.IsNullOrWhiteSpace(tl)))
                             {
-                                @string.Join("<br />",Model.CabBodyDetailsViewModel.TestingLocations)
+                                @Html.Raw(string.Join("<br />",Model.CabBodyDetailsViewModel.TestingLocations))
                             }
                             else
                             {
@@ -185,7 +185,7 @@
                         <dd class="govuk-summary-list__value">
                             @if (Model.CabBodyDetailsViewModel.BodyTypes.Any())
                             {
-                                @string.Join("<br />",Model.CabBodyDetailsViewModel.BodyTypes)
+                                @Html.Raw(string.Join("<br />",Model.CabBodyDetailsViewModel.BodyTypes))
                             }
                             else
                             {
@@ -200,7 +200,7 @@
                         <dd class="govuk-summary-list__value">
                             @if (Model.CabBodyDetailsViewModel.LegislativeAreas.Any())
                             {
-                                @string.Join("<br />",Model.CabBodyDetailsViewModel.LegislativeAreas)
+                                @Html.Raw(string.Join("<br />",Model.CabBodyDetailsViewModel.LegislativeAreas))
                             }
                             else
                             {

@@ -1,11 +1,21 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.FileUploadViewModel
-@{
-    var fromListPage = Context.Request.Query["list"] == "true";
-}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (Model.IsFromSummary)
+                {
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                }
+                else
+                {
+                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                }
+            </div>
+        </div>
     </div>
-</div>
+}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -16,7 +26,7 @@
             <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 10 Word, Excel, or PDF documents.</p>
             
             <div>
-                @using (Html.BeginForm("DocumentsList", "FileUpload", new { id = @Model.CABId }, FormMethod.Post, false, new { enctype="multipart/form-data" }))
+                @using (Html.BeginForm("DocumentsList", "FileUpload", Model.IsFromSummary ? new { area="admin", id = @Model.CABId, fromSummary="true" }: new { area="admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype="multipart/form-data" }))
                 {
                     <table class="govuk-table">
                         <thead class="govuk-table__head">
@@ -51,11 +61,11 @@
     </div>
 </div>
 
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <fieldset class="govuk-fieldset">
             <form method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="IsFromSummary" />
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"File")">
                     <span asp-validation-for="File" class="govuk-error-message"></span>
                     <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
