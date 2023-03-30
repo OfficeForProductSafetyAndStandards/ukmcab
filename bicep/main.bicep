@@ -8,6 +8,8 @@ param appServiceUseBasicAuth bool
 param appServiceUseBasicAuthVNext bool
 param appServiceHostName string
 param appServiceHostNameVNext string
+param appServiceUseAutoScale bool
+param searchReplicaCount int
 
 
 @secure()
@@ -56,5 +58,7 @@ module resourceSet './resources.bicep' = {
     appServiceUseBasicAuthVNext: appServiceUseBasicAuthVNext
     appServiceHostName: appServiceHostName
     appServiceHostNameVNext: appServiceHostNameVNext
+    searchReplicaCount: searchReplicaCount
+    appServiceUseAutoScale: appServiceUseAutoScale
   }
 }

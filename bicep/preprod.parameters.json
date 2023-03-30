@@ -46,6 +46,12 @@
     },
     "appServiceHostNameVNext": {
       "value": "none"
+    },
+    "searchReplicaCount": {
+      "value": 1
+    },
+    "appServiceUseAutoScale": {
+      "value": false
     }
   }
 }
