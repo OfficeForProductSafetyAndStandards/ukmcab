@@ -454,6 +454,54 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
             }
           ]
         }
+        {
+          matchVariable: 'RequestArgKeys'
+          selectorMatchOperator: 'Equals'
+          selector: '__RequestVerificationToken'
+          exclusionManagedRuleSets: [
+            {
+              ruleSetType: 'OWASP'
+              ruleSetVersion: '3.2'
+              ruleGroups: [
+                {
+                  ruleGroupName: 'REQUEST-942-APPLICATION-ATTACK-SQLI'
+                  rules: [
+                    {
+                      ruleId: '942440'
+                    }
+                    {
+                      ruleId: '942450'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        {
+          matchVariable: 'RequestArgNames'
+          selectorMatchOperator: 'Equals'
+          selector: '__RequestVerificationToken'
+          exclusionManagedRuleSets: [
+            {
+              ruleSetType: 'OWASP'
+              ruleSetVersion: '3.2'
+              ruleGroups: [
+                {
+                  ruleGroupName: 'REQUEST-942-APPLICATION-ATTACK-SQLI'
+                  rules: [
+                    {
+                      ruleId: '942440'
+                    }
+                    {
+                      ruleId: '942450'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       ]
     }
   }
