@@ -1,8 +1,6 @@
-﻿using System.ComponentModel;
-using Azure.Search.Documents;
+﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using System.Text.RegularExpressions;
-using Microsoft.VisualBasic;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services

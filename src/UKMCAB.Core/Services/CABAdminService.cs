@@ -139,6 +139,7 @@ namespace UKMCAB.Core.Services
             latestDocument.PublishedBy = userEmail;
             latestDocument.PublishedDate = currentDateTime;
             latestDocument.IsPublished = true;
+            latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
             return latestDocument;
