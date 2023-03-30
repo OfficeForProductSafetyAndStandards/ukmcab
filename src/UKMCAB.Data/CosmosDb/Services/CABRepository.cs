@@ -2,6 +2,7 @@
 using Microsoft.Azure.Cosmos.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Models;
 using UKMCAB.Core.Models.Legacy;
 using UKMCAB.Core.Services;
@@ -11,22 +12,24 @@ namespace UKMCAB.Data.CosmosDb.Services
     public class CABRepository: ICABRepository
     {
         private Container _container;
+        private readonly CosmosDbConnectionString _cosmosDbConnectionString;
 
-        public CABRepository(string cosmosConnectionString)
+        public CABRepository(CosmosDbConnectionString cosmosDbConnectionString)
         {
-            Initialise(new CosmosClient(cosmosConnectionString));
+            _cosmosDbConnectionString = cosmosDbConnectionString;
         }
 
-        private void Initialise(CosmosClient client)
+        public async Task InitialiseAsync()
         {
+            var client = new CosmosClient(_cosmosDbConnectionString);
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
-            var result = database.CreateContainerIfNotExistsAsync(DataConstants.CosmosDb.Constainer, "/CABId").Result;
+            var result = await database.CreateContainerIfNotExistsAsync(DataConstants.CosmosDb.Constainer, "/CABId");
             
             if(result.StatusCode == HttpStatusCode.Created)
             {
                 _container = result.Container;
                 var legacyContainer = database.GetContainer(DataConstants.CosmosDb.ImportContainer);
-                var items = Query<CABDocument>(legacyContainer, document => true).Result;
+                var items = await Query<CABDocument>(legacyContainer, document => true);
                 foreach (var cabDocument in items)
                 {
                     var document = new Document
@@ -60,7 +63,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         IsPublished = true,
                         RandomSort = Guid.NewGuid().ToString()
                     };
-                    var newDoc = CreateAsync(document).Result;
+                    var newDoc = await CreateAsync(document);
                 }
             }
 

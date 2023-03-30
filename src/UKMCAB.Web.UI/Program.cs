@@ -1,3 +1,4 @@
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Notify.Client;
@@ -31,7 +32,7 @@ if (builder.Configuration["AppInsightsConnectionString"].IsNotNullOrEmpty())
 }
 
 var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration["DataConnectionString"]);
-var cosmosConnectionString = builder.Configuration.GetValue<string>("CosmosConnectionString");
+var cosmosDbConnectionString = new CosmosDbConnectionString(builder.Configuration.GetValue<string>("CosmosConnectionString"));
 
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
@@ -41,6 +42,7 @@ builder.Services.AddAntiforgery();
 builder.Services.AddSingleton(new BasicAuthenticationOptions { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
 builder.Services.AddSingleton(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]));
+builder.Services.AddSingleton(cosmosDbConnectionString);
 builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 
@@ -61,14 +63,14 @@ builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certific
 
 builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateOptions"));
 
-builder.Services.AddSingleton<ICABRepository>(new CABRepository(cosmosConnectionString)); 
+builder.Services.AddSingleton<ICABRepository, CABRepository>(); 
 
 builder.Services.AddHostedService<RandomSortGenerator>();
 
-builder.Services.AddSearchService(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]), cosmosConnectionString);
+builder.Services.AddSearchService(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]), cosmosDbConnectionString);
 
 builder.Services.Configure<IdentityStoresOptions>(options =>
-    options.UseAzureCosmosDB(cosmosConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));
+    options.UseAzureCosmosDB(cosmosDbConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));
 
 builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
     {
@@ -85,7 +87,11 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.ExpireTimeSpan = TimeSpan.FromMinutes(20);
 });
 
+
+
 // =================================================================================================
+
+
 
 var app = builder.Build();
 
@@ -167,6 +173,17 @@ await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConn
 });
 
 await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
+
+try
+{
+    await app.Services.GetRequiredService<ICABRepository>().InitialiseAsync();
+}
+catch (Exception ex)
+{
+    app.Services.GetRequiredService<TelemetryClient>().TrackException(ex);
+    await app.Services.GetRequiredService<TelemetryClient>().FlushAsync(CancellationToken.None);
+    throw;
+}
 
 app.Run();
 
