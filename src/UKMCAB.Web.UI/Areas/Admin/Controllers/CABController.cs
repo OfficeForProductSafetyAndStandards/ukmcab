@@ -151,10 +151,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
             {
-                latestDocument.AddressLine1 = model.AddressLine1;
-                latestDocument.AddressLine2 = model.AddressLine2;
-                latestDocument.TownCity = model.TownCity;
-                latestDocument.Postcode = model.Postcode;
+                latestDocument.SetAddress(model.AddressLine1, model.AddressLine2, model.TownCity, model.Postcode);
                 latestDocument.Country = model.Country;
                 latestDocument.Website = model.Website;
                 latestDocument.Email = model.Email;
