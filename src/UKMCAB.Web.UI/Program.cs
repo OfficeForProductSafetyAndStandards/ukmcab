@@ -33,6 +33,7 @@ if (builder.Configuration["AppInsightsConnectionString"].IsNotNullOrEmpty())
 
 var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration["DataConnectionString"]);
 var cosmosDbConnectionString = new CosmosDbConnectionString(builder.Configuration.GetValue<string>("CosmosConnectionString"));
+var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]);
 
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
@@ -41,7 +42,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery();
 builder.Services.AddSingleton(new BasicAuthenticationOptions { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
-builder.Services.AddSingleton(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]));
+builder.Services.AddSingleton(cognitiveSearchConnectionString);
 builder.Services.AddSingleton(cosmosDbConnectionString);
 builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
@@ -67,7 +68,7 @@ builder.Services.AddSingleton<ICABRepository, CABRepository>();
 
 builder.Services.AddHostedService<RandomSortGenerator>();
 
-builder.Services.AddSearchService(new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]), cosmosDbConnectionString);
+builder.Services.AddSearchService(cognitiveSearchConnectionString);
 
 builder.Services.Configure<IdentityStoresOptions>(options =>
     options.UseAzureCosmosDB(cosmosDbConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));
@@ -177,6 +178,7 @@ await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
 try
 {
     await app.Services.GetRequiredService<ICABRepository>().InitialiseAsync();
+    await app.Services.GetRequiredService<SearchServiceManagment>().InitialiseAsync();
 }
 catch (Exception ex)
 {

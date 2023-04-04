@@ -7,63 +7,79 @@ using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
-    public static class SearchServiceExtensions
+    public class SearchServiceManagment
     {
+        private readonly SearchIndexClient _searchIndexClient;
+        private readonly SearchIndexerClient _searchIndexerClient;
+        private readonly CosmosDbConnectionString _cosmosDbConnectionString;
 
-        public static void AddSearchService(this IServiceCollection services, CognitiveSearchConnectionString connectionString, string cosmosDBConnectionString)
+        public SearchServiceManagment(SearchIndexClient searchIndexClient, SearchIndexerClient searchIndexerClient, CosmosDbConnectionString cosmosDbConnectionString) 
         {
-            var searchIndexClient = new SearchIndexClient(new Uri(connectionString.Endpoint), new AzureKeyCredential(connectionString.ApiKey));
-            CreateIndex(searchIndexClient);
-
-            var searchIndexerClient = new SearchIndexerClient(new Uri(connectionString.Endpoint),
-                new AzureKeyCredential(connectionString.ApiKey));
-            CreateDataSourceAndIndexer(searchIndexerClient, cosmosDBConnectionString);
-
-            services.AddSingleton<ISearchService>(new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX)));
+            _searchIndexClient = searchIndexClient;
+            _searchIndexerClient = searchIndexerClient;
+            _cosmosDbConnectionString = cosmosDbConnectionString;
         }
 
-        private static void CreateIndex(SearchIndexClient searchIndexClient)
+        public async Task InitialiseAsync()
+        {
+            await CreateIndexAsync(_searchIndexClient);
+            await CreateDataSourceAndIndexerAsync(_searchIndexerClient, _cosmosDbConnectionString);
+        }
+
+        private static async Task CreateIndexAsync(SearchIndexClient searchIndexClient)
         {
             var fieldBuilder = new FieldBuilder();
             var searchFields = fieldBuilder.Build(typeof(CABIndexItem));
             var definition = new SearchIndex(DataConstants.Search.SEARCH_INDEX, searchFields);
             try
             {
-                searchIndexClient.DeleteIndex(definition.Name);
+                await searchIndexClient.DeleteIndexAsync(definition.Name);
             }
             catch
             {
                 // We don't want to throw if this fails as it does not exist
             }
-            searchIndexClient.CreateIndex(definition);
+            await searchIndexClient.CreateIndexAsync(definition);
         }
 
-        private static void CreateDataSourceAndIndexer(SearchIndexerClient searchIndexerClient, string cosmosDBConnectionString)
+        private static async Task CreateDataSourceAndIndexerAsync(SearchIndexerClient searchIndexerClient, string cosmosDBConnectionString)
         {
             var cosmosDbDataSource = new SearchIndexerDataSourceConnection(DataConstants.Search.SEARCH_DATASOURCE,
                 SearchIndexerDataSourceType.CosmosDb, cosmosDBConnectionString + $";Database={DataConstants.CosmosDb.Database}",
                 new SearchIndexerDataContainer(DataConstants.CosmosDb.Constainer));
+
             cosmosDbDataSource.Container.Query = "SELECT * FROM c WHERE c.IsPublished = true";
 
-            searchIndexerClient.CreateOrUpdateDataSourceConnection(cosmosDbDataSource);
+            await searchIndexerClient.CreateOrUpdateDataSourceConnectionAsync(cosmosDbDataSource);
 
-            var cosmosDbIndexer =
-                new SearchIndexer(DataConstants.Search.SEARCH_INDEXER, cosmosDbDataSource.Name, DataConstants.Search.SEARCH_INDEX)
-                {
-                    Schedule = new IndexingSchedule(TimeSpan.FromMinutes(10)),
-                };
+            var cosmosDbIndexer = new SearchIndexer(DataConstants.Search.SEARCH_INDEXER, cosmosDbDataSource.Name, DataConstants.Search.SEARCH_INDEX) { Schedule = new IndexingSchedule(TimeSpan.FromMinutes(10)) };
+
             try
             {
-                searchIndexerClient.GetIndexer(cosmosDbIndexer.Name);
-                searchIndexerClient.ResetIndexer(cosmosDbIndexer.Name);
+                await searchIndexerClient.GetIndexerAsync(cosmosDbIndexer.Name);
+                await searchIndexerClient.ResetIndexerAsync(cosmosDbIndexer.Name);
             }
             catch
             {
                 // don't throw if indexer doesn't exist
             }
 
-            searchIndexerClient.CreateOrUpdateIndexer(cosmosDbIndexer);
-            searchIndexerClient.RunIndexer(cosmosDbIndexer.Name);
+            await searchIndexerClient.CreateOrUpdateIndexerAsync(cosmosDbIndexer);
+            await searchIndexerClient.RunIndexerAsync(cosmosDbIndexer.Name);
+        }
+    }
+
+    public static class SearchServiceExtensions
+    {
+        public static void AddSearchService(this IServiceCollection services, CognitiveSearchConnectionString connectionString)
+        {
+            var searchIndexClient = new SearchIndexClient(new Uri(connectionString.Endpoint), new AzureKeyCredential(connectionString.ApiKey));
+            var searchIndexerClient = new SearchIndexerClient(new Uri(connectionString.Endpoint), new AzureKeyCredential(connectionString.ApiKey));
+
+            services.AddSingleton(searchIndexClient);
+            services.AddSingleton(searchIndexerClient);
+            services.AddSingleton<ISearchService>(new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX)));
+            services.AddSingleton<SearchServiceManagment>();
         }
     }
 }
