@@ -3,13 +3,12 @@ using Microsoft.Azure.Cosmos.Linq;
 using System.Linq.Expressions;
 using System.Net;
 using UKMCAB.Common.ConnectionStrings;
-using UKMCAB.Core.Models;
-using UKMCAB.Core.Models.Legacy;
-using UKMCAB.Core.Services;
+using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Legacy;
 
 namespace UKMCAB.Data.CosmosDb.Services
 {
-    public class CABRepository: ICABRepository
+    public class CABRepository : ICABRepository
     {
         private Container _container;
         private readonly CosmosDbConnectionString _cosmosDbConnectionString;
@@ -85,6 +84,8 @@ namespace UKMCAB.Data.CosmosDb.Services
         {
             return await Query<T>(_container, predicate);
         }
+
+        public IQueryable<Document> GetItemLinqQueryable() => _container.GetItemLinqQueryable<Document>();
 
         private async Task<List<T>> Query<T>(Container container, Expression<Func<T, bool>> predicate)
         {

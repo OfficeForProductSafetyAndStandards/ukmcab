@@ -24,7 +24,8 @@ public interface IDistCache : ICachedFactory
     void SetAdd(string key, string item, int databaseId = -1);
     Task SetAddAsync(string key, string item, int databaseId = -1);
     Task<string> SetAsync<T>(string key, T value, TimeSpan? expiry = null, int databaseId = -1);
-    string[] SetMembers(string key, int databaseId = -1);
+    string[] GetSetMembers(string key, int databaseId = -1);
+    Task<string[]> GetSetMembersAsync(string key, int databaseId = -1);
     void SetRemove(string key, string item, int databaseId = -1);
     void SetRemove(string key, string[] items, int databaseId = -1);
     LockOwner WaitForLock(object key, bool throwExceptionIfLockNotAcquired = true);

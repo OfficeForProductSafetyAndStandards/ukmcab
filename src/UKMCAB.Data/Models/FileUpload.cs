@@ -1,4 +1,4 @@
-﻿namespace UKMCAB.Core.Models
+﻿namespace UKMCAB.Data.Models
 {
     public class FileUpload
     {

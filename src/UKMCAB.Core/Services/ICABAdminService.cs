@@ -1,4 +1,4 @@
-﻿using UKMCAB.Core.Models;
+﻿using UKMCAB.Data.Models;
 
 namespace UKMCAB.Core.Services
 {
@@ -12,5 +12,6 @@ namespace UKMCAB.Core.Services
         Task<Document> UpdateOrCreateDraftDocumentAsync(string email, Document draft);
         Task<bool> DeleteDraftDocumentAsync(string cabId);
         Task<Document> PublishDocumentAsync(string userEmail, Document latestDocument);
+        IAsyncEnumerable<string> GetAllCabIds();
     }
 }

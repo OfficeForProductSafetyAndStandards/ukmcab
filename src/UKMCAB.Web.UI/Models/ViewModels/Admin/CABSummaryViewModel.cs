@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using UKMCAB.Core.Models;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 {

@@ -1,12 +1,13 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace UKMCAB.Core.Models.Legacy
+
+namespace UKMCAB.Data.Models.Legacy
 {
     public class CABDocument
     {
         [JsonPropertyName("id")]
         public string Id { get; set; }
-        
+
         public string Name { get; set; }
         public string Address { get; set; }
         public string Email { get; set; }

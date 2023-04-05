@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
-using UKMCAB.Core.Models;
+using UKMCAB.Data.Models;
 
-namespace UKMCAB.Core.Services
+namespace UKMCAB.Data.CosmosDb.Services
 {
     public interface ICABRepository
     {
@@ -13,5 +13,6 @@ namespace UKMCAB.Core.Services
         
         Task<bool> Delete(Document document);
         Task InitialiseAsync();
+        IQueryable<Document> GetItemLinqQueryable();
     }
 }

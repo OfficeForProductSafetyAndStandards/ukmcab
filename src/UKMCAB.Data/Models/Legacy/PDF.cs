@@ -1,4 +1,4 @@
-﻿namespace UKMCAB.Core.Models.Legacy
+﻿namespace UKMCAB.Data.Models.Legacy
 {
     public class PDF
     {
