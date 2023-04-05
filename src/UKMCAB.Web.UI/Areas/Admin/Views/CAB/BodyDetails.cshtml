@@ -35,7 +35,7 @@
             <fieldset class="govuk-fieldset">
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.TestingLocations))">
                     <h1 class="govuk-label-wrapper">
-                        <label class="govuk-heading-s" for="TestingLocations1">
+                        <label class="govuk-heading-s" for="TestingLocations1" id="TestingLocations">
                             Registered test location
                         </label>
                     </h1>
@@ -63,7 +63,7 @@
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"BodyTypes")">
                     <fieldset class="govuk-fieldset" aria-describedby="body-types-hint">
                         <h1 class="govuk-label-wrapper">
-                            <label class=" govuk-heading-s" asp-for="BodyTypes">
+                            <label class=" govuk-heading-s" asp-for="BodyTypes" id="BodyTypes">
                                 Body type
                             </label>
                         </h1>
@@ -90,7 +90,7 @@
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "LegislativeAreas")">
                     <fieldset class="govuk-fieldset" aria-describedby="legislative-area-hint">
                         <h1 class="govuk-label-wrapper">
-                            <label class=" govuk-heading-s" asp-for="LegislativeAreas">
+                            <label class=" govuk-heading-s" asp-for="LegislativeAreas" id="LegislativeAreas">
                                 Legislative area
                             </label>
                         </h1>
