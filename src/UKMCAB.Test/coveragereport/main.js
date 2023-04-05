@@ -249,7 +249,7 @@ var assemblies = [
   {
     "name": "UKMCAB.Core",
     "classes": [
-      { "name": "UKMCAB.Core.Models.Account.RegistrationDTO", "rp": "UKMCAB.Core_RegistrationDTO.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 11, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
+      { "name": "UKMCAB.Data.Models.Account.RegistrationDTO", "rp": "UKMCAB.Core_RegistrationDTO.html", "cl": 0, "ucl": 5, "cal": 5, "tl": 11, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
       { "name": "UKMCAB.Core.Services.Account.RegisterService", "rp": "UKMCAB.Core_RegisterService.html", "cl": 0, "ucl": 11, "cal": 11, "tl": 29, "ct": "LineCoverage", "cbm": "-", "cb": 0, "tb": 0, "cm": 0, "tm": 0, "lch": [], "bch": [], "mch": [], "hc": [] },
     ]},
   {

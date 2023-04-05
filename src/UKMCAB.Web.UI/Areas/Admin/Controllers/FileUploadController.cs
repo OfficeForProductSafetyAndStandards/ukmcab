@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using UKMCAB.Core.Models;
+using UKMCAB.Data.Models;
 using UKMCAB.Core.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Data.Storage;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -15,8 +16,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly UserManager<UKMCABUser> _userManager;
         private readonly IFileStorage _fileStorage;
 
-        public FileUploadController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager,
-        IFileStorage fileStorage)
+        public FileUploadController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager, IFileStorage fileStorage)
         {
             _cabAdminService = cabAdminService;
             _userManager = userManager;

@@ -31,7 +31,7 @@ public class RedisCache : IDistCache
         _connectionMultiplexer = await ConnectionMultiplexer.ConnectAsync(_redisConnectionString);
     }
 
-    public T? GetOrCreate<T>(string key, Func<T> action, TimeSpan? expiry = null, Action<string> onCacheItemCreation = null, int databaseId = -1)
+    public T? GetOrCreate<T>(string key, Func<T> action, TimeSpan? expiry = null, Action<T> onCacheItemCreation = null, int databaseId = -1)
     {
         var db = Connection.GetDatabase(databaseId);
         var redisResult = _retryPolicy.Execute(() => db.StringGet(key));
@@ -46,13 +46,13 @@ public class RedisCache : IDistCache
         if (result != null)
         {
             _retryPolicy.Execute(() => db.StringSet(key, GZipRedisValueCompressor.Compress(JsonSerializer.Serialize(result)), expiry));
-            onCacheItemCreation?.Invoke(key);
+            onCacheItemCreation?.Invoke(result);
         }
 
         return result;
     }
 
-    public async Task<T> GetOrCreateAsync<T>(string key, Func<Task<T>> action, TimeSpan? expiry = null, Func<string, Task> onCacheItemCreation = null, int databaseId = -1)
+    public async Task<T> GetOrCreateAsync<T>(string key, Func<Task<T>> action, TimeSpan? expiry = null, Func<T, Task> onCacheItemCreation = null, int databaseId = -1)
     {
         var db = Connection.GetDatabase(databaseId);
         var redisResult = await _retryPolicyAsync.ExecuteAsync(async () => GZipRedisValueCompressor.Decompress(await db.StringGetAsync(key).ConfigureAwait(false))).ConfigureAwait(false);
@@ -68,7 +68,7 @@ public class RedisCache : IDistCache
             await _retryPolicyAsync.ExecuteAsync(async () => await db.StringSetAsync(key, GZipRedisValueCompressor.Compress(JsonSerializer.Serialize(result)), expiry).ConfigureAwait(false)).ConfigureAwait(false);
             if (onCacheItemCreation != null)
             {
-                await onCacheItemCreation(key).ConfigureAwait(false);
+                await onCacheItemCreation(result).ConfigureAwait(false);
             }
         }
         return result;
@@ -149,8 +149,11 @@ public class RedisCache : IDistCache
     public async Task SetAddAsync(string key, string item, int databaseId = -1) => await _retryPolicyAsync.ExecuteAsync(async () =>
         await Connection.GetDatabase(databaseId).SetAddAsync(key, item ?? throw new Exception("item cannot be null!")));
 
-    public string[] SetMembers(string key, int databaseId = -1) => _retryPolicy.Execute(() =>
-        Connection.GetDatabase(databaseId).SetMembers(key)?.Select(x => x.ToString()).ToArray() ?? new string[0]);
+    public string[] GetSetMembers(string key, int databaseId = -1) => _retryPolicy.Execute(() =>
+        Connection.GetDatabase(databaseId).SetMembers(key)?.Select(x => x.ToString()).ToArray() ?? Array.Empty<string>());
+
+    public async Task<string[]> GetSetMembersAsync(string key, int databaseId = -1) => await _retryPolicyAsync.ExecuteAsync(async () =>
+        (await Connection.GetDatabase(databaseId).SetMembersAsync(key))?.Select(x => x.ToString()).ToArray() ?? Array.Empty<string>());
 
     public void SetRemove(string key, string item, int databaseId = -1) => _retryPolicy.Execute(() =>
         Connection.GetDatabase(databaseId).SetRemove(key, item ?? throw new Exception("item cannot be null!")));

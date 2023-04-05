@@ -1,9 +1,9 @@
 ﻿using Azure;
 using Azure.Search.Documents.Indexes;
 using UKMCAB.Common.ConnectionStrings;
-using UKMCAB.Core.Models;
-using UKMCAB.Core.Services;
 using UKMCAB.Data;
+using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Services
 {

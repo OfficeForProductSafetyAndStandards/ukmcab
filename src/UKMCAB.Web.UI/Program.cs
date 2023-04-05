@@ -49,6 +49,7 @@ builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(b
 
 builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
+builder.Services.AddTransient<ICachedPublishedCabService, CachedPublishedCabService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
@@ -179,6 +180,8 @@ try
 {
     await app.Services.GetRequiredService<ICABRepository>().InitialiseAsync();
     await app.Services.GetRequiredService<SearchServiceManagment>().InitialiseAsync();
+    var count = await app.Services.GetRequiredService<ICachedPublishedCabService>().PreCacheAllCabsAsync();
+    app.Services.GetRequiredService<ILogger<Program>>().LogInformation($"Precached {count} CABs");
 }
 catch (Exception ex)
 {

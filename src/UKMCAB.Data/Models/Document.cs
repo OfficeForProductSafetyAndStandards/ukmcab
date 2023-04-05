@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Common;
 
-namespace UKMCAB.Core.Models
+namespace UKMCAB.Data.Models
 {
     public class Document
     {
