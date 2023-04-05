@@ -89,7 +89,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (model.File == null)
             {
-                ModelState.AddModelError("File", "Please select a file for upload.");
+                ModelState.AddModelError("File", $"Select a {acceptedFileTypes} file, 10 megabytes or less.");
             }
             else
             {

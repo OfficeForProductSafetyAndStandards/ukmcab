@@ -33,7 +33,7 @@
             </div>
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
+                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
                         <dt class="govuk-summary-list__key">
                             CAB name
                         </dt>
@@ -67,7 +67,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            UKAS reference number
+                            UKAS reference number (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Html.ValueOrNotProvided(Model.CabDetailsViewModel.UKASReference)
@@ -77,12 +77,12 @@
             </div>
 
             <div class="cab-summary-header">
-                <h3 class="govuk-heading-l">Contact details</h3>
+                <h3 class="govuk-heading-l govuk-!-padding-top-5">Contact details</h3>
                 <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             </div>
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
+                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
                         <dt class="govuk-summary-list__key">
                             Address
                         </dt>
@@ -92,7 +92,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Website
+                            Website (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Html.ValueOrNotProvided(Model.CabContactViewModel.Website)
@@ -158,12 +158,12 @@
             </div>
 
             <div class="cab-summary-header">
-                <h3 class="govuk-heading-l">Body details</h3>
+                <h3 class="govuk-heading-l   govuk-!-padding-top-5">Body details</h3>
                 <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             </div>
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
+                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
                         <dt class="govuk-summary-list__key">
                             Registered test location
                         </dt>
@@ -211,13 +211,13 @@
                 </dl>
             </div>
 
-            <div class="cab-summary-header">
+            <div class="cab-summary-header  govuk-!-padding-top-5">
                 <h3 class="govuk-heading-l">Product schedules</h3>
                 <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             </div>
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
+                    <div class="govuk-summary-list__row govuk-!-padding-top-5">
                         <dt class="govuk-summary-list__key">
                             Schedule
                         </dt>
@@ -240,13 +240,13 @@
                 </dl>
             </div>
 
-            <div class="cab-summary-header">
+            <div class="cab-summary-header govuk-!-padding-top-5">
                 <h3 class="govuk-heading-l">Supporting documents</h3>
                 <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             </div>
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
+                    <div class="govuk-summary-list__row govuk-!-padding-top-5">
                         <dt class="govuk-summary-list__key">
                             Document
                         </dt>
@@ -282,16 +282,20 @@
                     }
                 </strong>
             </div>
-        <div class="govuk-button-group">
+
+            <div>
+                <!--<div class="govuk-button-group"-->
             <form method="post">
                 <input type="hidden" asp-for="CABId"/>
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
-                    Publish
+                        &nbsp&nbsp&nbsp Publish &nbsp&nbsp&nbsp&nbsp
                 </button>
                 <a class="govuk-button govuk-button--secondary" asp-area="admin" asp-controller="Admin" asp-action="Index">
                     Save as draft
                 </a>
-                <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="button govuk-link govuk-link--no-visited-state govuk-!-padding-top-5">
+                    Cancel
+                </a>
             </form>
         </div>
 
