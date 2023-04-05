@@ -284,21 +284,21 @@
             </div>
 
             <div>
-                <!--<div class="govuk-button-group"-->
-            <form method="post">
-                <input type="hidden" asp-for="CABId"/>
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
-                        &nbsp&nbsp&nbsp Publish &nbsp&nbsp&nbsp&nbsp
-                </button>
-                <a class="govuk-button govuk-button--secondary" asp-area="admin" asp-controller="Admin" asp-action="Index">
-                    Save as draft
-                </a>
-                <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="button govuk-link govuk-link--no-visited-state govuk-!-padding-top-5">
-                    Cancel
-                </a>
-            </form>
-        </div>
-
+                <form method="post">
+                    <input type="hidden" asp-for="CABId"/>
+                        <div class="govuk-button-group">
+                            <button class="govuk-button" data-module="govuk-button" name="submitType" value="continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                                    Publish
+                            </button>
+                            <a class="govuk-button govuk-button--secondary" asp-area="admin" asp-controller="Admin" asp-action="Index">
+                                Save as draft
+                            </a>
+                            <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="button govuk-link govuk-link--no-visited-state govuk-!-padding-top-5">
+                                Cancel
+                            </a>
+                        </div>
+                </form>
+            </div>
         </fieldset>
     </div>
 </div>

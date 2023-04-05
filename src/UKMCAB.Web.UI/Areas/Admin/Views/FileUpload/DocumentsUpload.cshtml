@@ -66,10 +66,10 @@
         <fieldset class="govuk-fieldset">
             <form method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="IsFromSummary" />
-                <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
-                    Select a file
-                </label>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"File")">
+                    <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
+                        Select a file
+                    </label>
                     <span asp-validation-for="File" class="govuk-error-message"></span>
                     <input class="govuk-file-upload schedules-upload" asp-for="File" accept=".doc,.docx,.xls,.xlsx,.pdf" type="file">
                 </div>
@@ -79,14 +79,16 @@
                         <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Skip this step</a></p>
                     </div>
                 </div>
-
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
-                    Upload
-                </button>
-                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="Admin" asp-action="Index">
-                    Save as draft
-                </a>
-                <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <div class="govuk-button-group">
+                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
+                        Upload
+                    </button>
+                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="Admin" asp-action="Index">
+                        Save as draft
+                    </a>
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
+                
             </form>
         </fieldset>
     </div>
