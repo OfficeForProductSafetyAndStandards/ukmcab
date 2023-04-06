@@ -96,6 +96,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private async Task SetFacetOptions(SearchViewModel model)
         {
             var facets = await _cachedSearchService.GetFacetsAsync();
+
+            facets.LegislativeAreas = facets.LegislativeAreas.Select(la => la.ToSentenceCase()).ToList()!;
+
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
             model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
