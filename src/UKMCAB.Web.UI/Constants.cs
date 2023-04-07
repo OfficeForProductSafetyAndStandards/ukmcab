@@ -44,10 +44,10 @@ public static class Constants
     {
         public static readonly List<string> LegislativeAreas = new()
         {
-            "Cableway Installation",
-            "Construction Products",
+            "Cableway installation",
+            "Construction products",
             "Ecodesign",
-            "Electromagnetic Compatibility",
+            "Electromagnetic compatibility",
             "Equipment and protective systems for use in potentially explosive atmospheres",
             "Explosives",
             "Gas appliances and related",
