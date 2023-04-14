@@ -271,16 +271,16 @@ public static class Constants
         public static readonly List<string> BodyTypes = new()
         {
             "Approved body",
-            "Technical assessment body",
-            "User inspectorate",
-            "Recognised third-party",
-            "Overseas Body",
             "NI Notified body",
+            "Overseas Body",
+            "Recognised third-party",
+            "Technical assessment body",
             "UK body designated under MRA: Australia",
+            "UK body designated under MRA: Canada",
+            "UK body designated under MRA: Japan",
             "UK body designated under MRA: New Zealand",
             "UK body designated under MRA: USA",
-            "UK body designated under MRA: Japan",
-            "UK body designated under MRA: Canada"
+            "User inspectorate"
         };
     }
 
