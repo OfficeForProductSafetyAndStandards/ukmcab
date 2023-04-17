@@ -2,6 +2,7 @@
 using Azure.Search.Documents.Models;
 using System.Text.RegularExpressions;
 using UKMCAB.Data.Search.Models;
+using UKMCAB.Common;
 
 namespace UKMCAB.Data.Search.Services
 {
@@ -26,7 +27,7 @@ namespace UKMCAB.Data.Search.Services
                 var facets = search.Value.Facets;
 
                 result.BodyTypes = GetFacetList(facets[nameof(result.BodyTypes)]);
-                result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)]);
+                result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)]).Select(x => x.ToSentenceCase()).ToList()!;
                 result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
                 result.TestingLocations = GetFacetList(facets[nameof(result.TestingLocations)]);
             }

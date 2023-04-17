@@ -454,6 +454,54 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
             }
           ]
         }
+        {
+          matchVariable: 'RequestArgKeys'
+          selectorMatchOperator: 'Equals'
+          selector: '__RequestVerificationToken'
+          exclusionManagedRuleSets: [
+            {
+              ruleSetType: 'OWASP'
+              ruleSetVersion: '3.2'
+              ruleGroups: [
+                {
+                  ruleGroupName: 'REQUEST-942-APPLICATION-ATTACK-SQLI'
+                  rules: [
+                    {
+                      ruleId: '942440'
+                    }
+                    {
+                      ruleId: '942450'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+        {
+          matchVariable: 'RequestArgNames'
+          selectorMatchOperator: 'Equals'
+          selector: '__RequestVerificationToken'
+          exclusionManagedRuleSets: [
+            {
+              ruleSetType: 'OWASP'
+              ruleSetVersion: '3.2'
+              ruleGroups: [
+                {
+                  ruleGroupName: 'REQUEST-942-APPLICATION-ATTACK-SQLI'
+                  rules: [
+                    {
+                      ruleId: '942440'
+                    }
+                    {
+                      ruleId: '942450'
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
       ]
     }
   }
@@ -573,7 +621,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
-          requestTimeout: 20
+          requestTimeout: 30
           hostName: appServiceHostName
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeName)
@@ -589,7 +637,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
-          requestTimeout: 20
+          requestTimeout: 30
           hostName: appServiceHostNameVNext
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeNameVNext)
@@ -1075,9 +1123,9 @@ resource appServiceAutoscale 'Microsoft.Insights/autoscalesettings@2022-10-01' =
       {
         name: 'autoscale'
         capacity: {
-          minimum: '1'
+          minimum: '2'
           maximum: '10'
-          default: '1'
+          default: '2'
         }
         rules: [
           {

@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Core.Models
+﻿using UKMCAB.Common;
+
+namespace UKMCAB.Data.Models
 {
     public class Document
     {
@@ -25,11 +27,11 @@
         public string UKASReference { get; set; }
 
         // Contact
-        public string Address { get; set; }
-        public string AddressLine1 { get; set; }
-        public string AddressLine2 { get; set; }
-        public string TownCity { get; set; }
-        public string Postcode { get; set; }
+        public string? Address { get; set; }
+        public string? AddressLine1 { get; set; }
+        public string? AddressLine2 { get; set; }
+        public string? TownCity { get; set; }
+        public string? Postcode { get; set; }
         public string Country { get; set; }
         public string Website { get; set; }
         public string Email { get; set; }
@@ -54,5 +56,14 @@
 
         public string HiddenText { get; set; }
         public string RandomSort { get; set; }
+
+        public void SetAddress(string? addressLine1, string? addressLine2, string? townCity, string? postCode)
+        {
+            AddressLine1 = addressLine1;
+            AddressLine2 = addressLine2;
+            TownCity = townCity;
+            Postcode = postCode;
+            Address = StringExt.Join(", ", AddressLine1, AddressLine2, TownCity, Postcode);
+        }
     }
 }

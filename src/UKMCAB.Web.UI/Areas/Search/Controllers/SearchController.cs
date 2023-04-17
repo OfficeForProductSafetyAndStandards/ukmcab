@@ -1,10 +1,8 @@
 ﻿using System.ServiceModel.Syndication;
 using System.Xml;
-using System.Xml.Serialization;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
-using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
 
@@ -13,14 +11,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
     [Area("search")]
     public class SearchController : Controller
     {
-        private readonly ISearchService _searchService;
-        private readonly IDistCache _cache;
+        private readonly ICachedSearchService _cachedSearchService;
         private readonly IFeedService _feedService;
 
-        public SearchController(ISearchService searchService, IDistCache cache, IFeedService feedService)
+        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService)
         {
-            _searchService = searchService;
-            _cache = cache;
+            _cachedSearchService = cachedSearchService;
             _feedService = feedService;
         }
 
@@ -28,7 +24,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search")]
         public async Task<IActionResult> Index(SearchViewModel model)
         {
-            var searchResult = await _searchService.QueryAsync(new CABSearchOptions
+            var searchResult = await _cachedSearchService.QueryAsync(new CABSearchOptions
             {
                 PageNumber = model.PageNumber,
                 Keywords = model.Keywords,
@@ -55,7 +51,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> AtomFeed(SearchViewModel model)
         {
             model.Sort = DataConstants.SortOptions.LastUpdated;
-            var searchResult = await _searchService.QueryAsync(new CABSearchOptions
+            var searchResult = await _cachedSearchService.QueryAsync(new CABSearchOptions
             {
                 PageNumber = model.PageNumber,
                 Keywords = model.Keywords,
@@ -99,7 +95,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task SetFacetOptions(SearchViewModel model)
         {
-            var facets = await _cache.GetOrCreateAsync("ukmcab-facets", _searchService.GetFacetsAsync, TimeSpan.FromHours(1));
+            var facets = await _cachedSearchService.GetFacetsAsync();
+
+            facets.LegislativeAreas = facets.LegislativeAreas.Select(la => la.ToSentenceCase()).ToList()!;
 
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);

@@ -2,13 +2,21 @@
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Configuration;
 using UKMCAB.Common.Exceptions;
-using UKMCAB.Core.Models;
-using UKMCAB.Core.Services;
+using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Infrastructure.Logging.Models;
 
 namespace UKMCAB.Data.Storage
 {
+    public interface IFileStorage
+    {
+        Task<FileUpload> UploadCABFile(string cabId, string FileName, string DirectoryName, Stream stream);
+
+        Task<bool> DeleteCABSchedule(string blobName);
+
+        Task<FileDownload> DownloadBlobStream(string blobPath);
+    }
+
     public class FileStorageService : IFileStorage
     {
         private readonly ILoggingService _loggingService;

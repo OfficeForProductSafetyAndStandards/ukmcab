@@ -67,10 +67,10 @@
             <form method="post" enctype="multipart/form-data">
                 <input type="hidden" asp-for="IsFromSummary" />
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "File")">
-                    <span asp-validation-for="File" class="govuk-error-message"></span>
                     <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
                         Select a PDF file
                     </label>
+                    <span asp-validation-for="File" class="govuk-error-message"></span>
                     <input class="govuk-file-upload schedules-upload" asp-for="File" accept=".pdf" type="file">
                 </div>
                 <div class="govuk-grid-row">

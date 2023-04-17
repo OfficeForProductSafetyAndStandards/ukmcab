@@ -1,22 +1,23 @@
-﻿using UKMCAB.Core.Models;
+﻿using UKMCAB.Data.Models;
 using UKMCAB.Core.Services;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
+using UKMCAB.Data.Storage;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
     [Area("search")]
     public class CABController : Controller
     {
-        private readonly ICABAdminService _cabAdminService;
+        private readonly ICachedPublishedCabService _cabAdminService;
         private readonly IFileStorage _fileStorage;
 
-        public CABController(ICABAdminService cabAdminService, IFileStorage fileStorage)
+        public CABController(ICachedPublishedCabService cabAdminService, IFileStorage fileStorage)
         {
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
         }
 
-        [Route("search/cab-profile/{id}")]
+        [HttpGet("search/cab-profile/{id}")]
         public async Task<IActionResult> Index(string id)
         {
             var cabDocument = await _cabAdminService.FindPublishedDocumentByCABIdAsync(id);
@@ -46,8 +47,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(cab);
         }
 
-        [HttpGet]
-        [Route("search/cab-schedule-download/{id}")]
+        [HttpGet("search/cab-schedule-download/{id}")]
         public async Task<IActionResult> Download(string id, string file)
         {
             var fileStream = await _fileStorage.DownloadBlobStream($"{id}");

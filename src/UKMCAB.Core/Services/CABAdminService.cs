@@ -1,5 +1,7 @@
 ﻿using UKMCAB.Common;
-using UKMCAB.Core.Models;
+using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.Models;
+using UKMCAB.Data;
 
 namespace UKMCAB.Core.Services
 {
@@ -10,6 +12,16 @@ namespace UKMCAB.Core.Services
         // IsPublished: true, IsLatest: false: The latest published version, there is a newer draft version in progress
         // IsPublished: false, IsLatest: true: The latest draft version. There may be a prior published version, PublishedDate should indicate this
         // IsPublished: false, IsLatest: false: Historical version that has been superceded by a more recent published version or versions
+
+
+        /*
+          NOTE FROM KRIS, RE: EDITING/UPDATING CABS
+            We now have a ICachedSearchService.  When a *published* CAB changes, ideally we should manually update the search index for the associated item and then call `ICachedSearchService.ClearAsync(CABId)`
+            As this will clear all search results from the cache that contained _THAT_ cab id.
+
+            ALSO: when updating a published cab, call `ICachedPublishedCabService.ClearAsync`, as ICachedPublishedCabService refs ICABAdminService, 
+            you might want to do updating via ICachedPublishedCabService and then clear the cache that way (otherwise if you ref ICachedPublishedCabService from here, you'll get circular dependency)
+         */
 
         private readonly ICABRepository _cabRepostitory;
 
@@ -47,6 +59,11 @@ namespace UKMCAB.Core.Services
             var docs = await _cabRepostitory.Query<Document>(d =>
                 d.IsLatest && !d.IsPublished);
             return docs;
+        }
+
+        public IAsyncEnumerable<string> GetAllCabIds()
+        {
+            return _cabRepostitory.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
         }
 
         public async Task<Document> CreateDocumentAsync(string userEmail, Document document)
@@ -142,6 +159,10 @@ namespace UKMCAB.Core.Services
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
+
+            //todo (potentially): update the search index in real-time
+            // afterwards: (inject ICachedSearchService) Call `ICachedSearchService.ClearAsync()` to clear all searches from the cache, so that the new CAB becomes visible.
+
             return latestDocument;
         }
     }
