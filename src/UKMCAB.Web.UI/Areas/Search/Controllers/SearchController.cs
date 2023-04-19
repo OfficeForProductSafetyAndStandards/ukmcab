@@ -61,7 +61,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var searchResults = await SearchInternalAsync(model, x => x.IgnorePaging = true);
             searchResults.CABs.ForEach(x => x.HiddenText = "[omitted]");
             Response.Headers.Add("X-Count", searchResults.Total.ToString());
-            return Json(searchResults.CABs);
+            return Json(searchResults.CABs); // TODO: transform into models provided by the UKMCAB.Subscriptions.Core assembly
         }
 
         private async Task<CABResults> SearchInternalAsync(SearchViewModel model, Action<CABSearchOptions>? configure = null)
