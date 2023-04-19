@@ -14,6 +14,18 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly ICachedSearchService _cachedSearchService;
         private readonly IFeedService _feedService;
 
+        private static readonly List<string> _select = new()
+        {
+            nameof(CABIndexItem.CABId),
+            nameof(CABIndexItem.Name),
+            nameof(CABIndexItem.Address),
+            nameof(CABIndexItem.BodyTypes),
+            nameof(CABIndexItem.RegisteredOfficeLocation),
+            nameof(CABIndexItem.TestingLocations),
+            nameof(CABIndexItem.LegislativeAreas),
+            nameof(CABIndexItem.LastUpdatedDate),
+        };
+
         public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService)
         {
             _cachedSearchService = cachedSearchService;
@@ -24,7 +36,37 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search")]
         public async Task<IActionResult> Index(SearchViewModel model)
         {
-            var searchResult = await _cachedSearchService.QueryAsync(new CABSearchOptions
+            var searchResults = await SearchInternalAsync(model);
+
+            await SetFacetOptions(model);
+
+            model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
+            model.Pagination = new PaginationViewModel
+            {
+                Total = searchResults.Total,
+                PageNumber = model.PageNumber
+            };
+
+            return View(model);
+        }
+
+        /// <summary>
+        /// Search API (used by the email subscriptions functionality)
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [HttpGet("~/__api/search")]
+        public async Task<IActionResult> GetSearchResultsAsync(SearchViewModel model)
+        {
+            var searchResults = await SearchInternalAsync(model, x => x.IgnorePaging = true);
+            searchResults.CABs.ForEach(x => x.HiddenText = "[omitted]");
+            Response.Headers.Add("X-Count", searchResults.Total.ToString());
+            return Json(searchResults.CABs);
+        }
+
+        private async Task<CABResults> SearchInternalAsync(SearchViewModel model, Action<CABSearchOptions>? configure = null)
+        {
+            var opt = new CABSearchOptions
             {
                 PageNumber = model.PageNumber,
                 Keywords = model.Keywords,
@@ -32,19 +74,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 BodyTypesFilter = model.BodyTypes,
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
-                TestingLocationsFilter = model.TestingLocations
-            });
-
-            await SetFacetOptions(model);
-
-            model.SearchResults = searchResult.CABs.Select(c => new ResultViewModel(c)).ToList();
-            model.Pagination = new PaginationViewModel
-            {
-                Total = searchResult.Total,
-                PageNumber = model.PageNumber
+                TestingLocationsFilter = model.TestingLocations,
+                Select = _select,
             };
-
-            return View(model);
+            configure?.Invoke(opt);
+            return await _cachedSearchService.QueryAsync(opt);
         }
 
         [Route("search-feed")]
@@ -60,7 +94,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
                 TestingLocationsFilter = model.TestingLocations,
-                ForAtomFeed = true
+                IgnorePaging = true,
+                Select = _select,
             });
 
             var feed = _feedService.GetSyndicationFeed(Request, searchResult.CABs, Url);

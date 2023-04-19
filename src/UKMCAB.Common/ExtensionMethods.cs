@@ -136,7 +136,7 @@ public static class ExtensionMethods
     /// <returns></returns>
     public static TOut Map<TIn, TOut>(this TIn obj, Func<TIn, TOut> func) => obj != null ? func(obj) : default;
 
-    public static string? Md5(this string text) => Md5Helper.CalculateMD5(text);
+    public static string? Md5(this string text) => Md5Helper.CalculateMD5(text).Replace("-", string.Empty);
 
     /// <summary>
     /// Runs an object through the supplied pipes and then returns the original object

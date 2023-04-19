@@ -12,6 +12,8 @@
         public string[] RegisteredOfficeLocationsFilter { get; set; }
         public string[] TestingLocationsFilter { get; set; }
 
-        public bool ForAtomFeed { get; set; }
+        public bool IgnorePaging { get; set; }
+
+        public List<string> Select { get; set; } = new List<string>();
     }
 }

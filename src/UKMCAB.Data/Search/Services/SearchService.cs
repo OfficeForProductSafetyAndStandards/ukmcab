@@ -3,6 +3,7 @@ using Azure.Search.Documents.Models;
 using System.Text.RegularExpressions;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Common;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
@@ -70,43 +71,50 @@ namespace UKMCAB.Data.Search.Services
                 Total = 0,
                 CABs = new List<CABIndexItem>()
             };
+            
             var query = GetKeywordsQuery(options.Keywords);
+            
             if (string.IsNullOrWhiteSpace(query))
             {
                 return cabResults;
             }
+
             var filter = BuildFilter(options);
             var sort = BuildSort(options);
-            try
-            {
-                var search = await _indexClient.SearchAsync<CABIndexItem>(query, new SearchOptions
-                {
-                    Size = options.ForAtomFeed ? null : DataConstants.Search.ResultsPerPage,
-                    IncludeTotalCount = true,
-                    Skip = options.ForAtomFeed ? null : DataConstants.Search.ResultsPerPage * (options.PageNumber - 1),
-                    Filter = filter,
-                    OrderBy = { sort },
-                    QueryType = SearchQueryType.Full
-                });
-                if (!search.HasValue)
-                {
-                    return cabResults;
-                } 
-                
-                var results = search.Value.GetResults().ToList();
-                if (!results.Any())
-                {
-                    return cabResults;
-                }
 
-                var cabs = results.Select(r => r.Document).ToList();
-                cabResults.CABs = cabs;
-                cabResults.Total = Convert.ToInt32(search.Value.TotalCount);
-            }
-            catch (Exception ex)
+            var searchOptions = new SearchOptions
             {
-                var error = ex.ToString();
+                Size = options.IgnorePaging ? null : DataConstants.Search.ResultsPerPage,
+                IncludeTotalCount = true,
+                Skip = options.IgnorePaging ? null : DataConstants.Search.ResultsPerPage * (options.PageNumber - 1),
+                Filter = filter,
+                OrderBy = { sort },
+                QueryType = SearchQueryType.Full
+            };
+
+            if (options.Select.Count > 0)
+            {
+                options.Select.ForEach(x => searchOptions.Select.Add(x));
             }
+
+            var search = await _indexClient.SearchAsync<CABIndexItem>(query, searchOptions);
+
+            if (!search.HasValue)
+            {
+                return cabResults;
+            } 
+                
+            var results = search.Value.GetResults().ToList();
+            if (!results.Any())
+            {
+                return cabResults;
+            }
+
+            var cabs = results.Select(r => r.Document).ToList();
+            cabResults.CABs = cabs;
+            cabResults.Total = Convert.ToInt32(search.Value.TotalCount);
+            
+
             return cabResults;
         }
 
