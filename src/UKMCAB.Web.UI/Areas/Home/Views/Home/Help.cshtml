@@ -487,10 +487,7 @@
                         </p>
                     </div>
             </div>
-
-            @if (Context.Request.Query["link"] == "contact")
-            {
-                <div class="govuk-accordion__section govuk-accordion__section--expanded" id="contact-info">
+            <div class="govuk-accordion__section" id="contact-info">
                     <div class="govuk-accordion__section-header">
                         <h2 class="govuk-accordion__section-heading">
                             <span class="govuk-accordion__section-button" id="accordion-default-heading-20">
@@ -509,31 +506,7 @@
                             Please reference the UKMCAB service when you are emailing and ensure you clearly state what you are emailing regarding.
                         </p>
                     </div>
-                </div>
-            }
-            else{
-                <div class="govuk-accordion__section" id="contact-info">
-                    <div class="govuk-accordion__section-header">
-                        <h2 class="govuk-accordion__section-heading">
-                            <span class="govuk-accordion__section-button" id="accordion-default-heading-20">
-                                How do I contact those responsible for the UKMCAB service?
-                            </span>
-                        </h2>
-                    </div>
-                    <div id="accordion-default-content-20" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-20">
-                        <p class='govuk-body'>
-                            <a class="govuk-link" href="#">Contact us</a>.
-                        </p>
-                        <p class='govuk-body'>
-                            You can contact OPSS on the following email address: <a class="govuk-link" href="mailto:opss.enquiries@beis.gov.uk">opss.enquiries@beis.gov.uk</a>
-                        </p>
-                        <p class='govuk-body'>
-                            Please reference the UKMCAB service when you are emailing and ensure you clearly state what you are emailing regarding.
-                        </p>
-                    </div>
-                </div>
-            }
-            
+            </div>   
         </div>
     </div>
 </div>
