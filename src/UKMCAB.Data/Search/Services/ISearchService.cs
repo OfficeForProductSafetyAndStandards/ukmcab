@@ -6,5 +6,6 @@ namespace UKMCAB.Data.Search.Services
     {
         Task<SearchFacets> GetFacetsAsync();
         Task<CABResults> QueryAsync(CABSearchOptions options);
+        Task ReIndexAsync();
     }
 }

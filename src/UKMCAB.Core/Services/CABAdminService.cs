@@ -2,6 +2,7 @@
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data;
+using UKMCAB.Data.Search.Services;
 
 namespace UKMCAB.Core.Services
 {
@@ -24,10 +25,12 @@ namespace UKMCAB.Core.Services
          */
 
         private readonly ICABRepository _cabRepostitory;
+        private readonly ICachedSearchService _cachedSearchService;
 
-        public CABAdminService(ICABRepository cabRepostitory)
+        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService)
         {
             _cabRepostitory = cabRepostitory;
+            _cachedSearchService = cachedSearchService;
         }
 
         public async Task<bool> DocumentWithKeyIdentifiersExistsAsync(Document document)
@@ -160,8 +163,8 @@ namespace UKMCAB.Core.Services
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
 
-            //todo (potentially): update the search index in real-time
-            // afterwards: (inject ICachedSearchService) Call `ICachedSearchService.ClearAsync()` to clear all searches from the cache, so that the new CAB becomes visible.
+            // TODO: look at introducing CAB targeted index updates rather than complete index update
+            await _cachedSearchService.ReIndexAsync();
 
             return latestDocument;
         }

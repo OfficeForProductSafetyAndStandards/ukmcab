@@ -14,7 +14,7 @@ namespace UKMCAB.Data.Search.Services
 
             services.AddSingleton(searchIndexClient);
             services.AddSingleton(searchIndexerClient);
-            services.AddSingleton<ISearchService>(new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX)));
+            services.AddSingleton<ISearchService>(new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX), searchIndexerClient));
             services.AddSingleton<SearchServiceManagment>();
             services.AddSingleton<ICachedSearchService, CachedSearchService>();
         }

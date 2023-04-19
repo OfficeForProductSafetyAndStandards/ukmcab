@@ -50,7 +50,14 @@ namespace UKMCAB.Data.Search.Services
 
             await searchIndexerClient.CreateOrUpdateDataSourceConnectionAsync(cosmosDbDataSource);
 
-            var cosmosDbIndexer = new SearchIndexer(DataConstants.Search.SEARCH_INDEXER, cosmosDbDataSource.Name, DataConstants.Search.SEARCH_INDEX) { Schedule = new IndexingSchedule(TimeSpan.FromMinutes(10)) };
+            var cosmosDbIndexer =
+                new SearchIndexer(DataConstants.Search.SEARCH_INDEXER, cosmosDbDataSource.Name, DataConstants.Search.SEARCH_INDEX)
+                {
+                    Schedule = new IndexingSchedule(TimeSpan.FromDays(1))
+                    {
+                        StartTime = DateTime.Today.Date + new TimeSpan(1,3,0,0) // Start the reindex schedule from tomorrow at 3.00AM
+                    }
+                };
 
             try
             {
