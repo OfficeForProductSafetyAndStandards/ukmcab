@@ -5,7 +5,7 @@ var helpPage = (function () {
 
     function init() {
 
-        if (window.location.pathname === "/help" && !window.location.hashValue) {
+        if (window.location.pathname === "/help" && !hashValue) {
             document.getElementById('contact-footer-link').addEventListener('click', function (e) {
 
                 e.preventDefault();
