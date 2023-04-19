@@ -83,4 +83,9 @@ internal class CachedSearchService : ICachedSearchService
 
     private static string GetCabSearchResultSetCacheKey(string cabId) => $"cab_res_{cabId}";
 
+    public async Task ReIndexAsync()
+    {
+        await _search.ReIndexAsync();
+        await ClearAsync();
+    }
 }
