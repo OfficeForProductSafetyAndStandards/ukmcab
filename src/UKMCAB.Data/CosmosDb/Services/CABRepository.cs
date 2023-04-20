@@ -36,7 +36,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         CABId = Guid.NewGuid().ToString(),
 
                         Name = cabDocument.Name,
-                        Address = cabDocument.Address,
+                        AddressLine1 = cabDocument.Address,
                         Email = cabDocument.Email,
                         Website = cabDocument.Website,
                         Phone = cabDocument.Phone,

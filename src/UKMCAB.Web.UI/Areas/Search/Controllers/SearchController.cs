@@ -37,7 +37,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(SearchViewModel model)
         {
             var searchResults = await SearchInternalAsync(model);
-
             await SetFacetOptions(model);
 
             model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
