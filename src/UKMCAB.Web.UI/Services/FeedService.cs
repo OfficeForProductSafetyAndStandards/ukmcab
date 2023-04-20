@@ -20,15 +20,8 @@ namespace UKMCAB.Web.UI.Services
                 Id = $"tag:{request.Host.Value}:/search/cab-profile/{c.CABId}",
                 LastUpdatedTime = c.LastUpdatedDate.GetValueOrDefault(),
                 Links = { GetProfileSyndicationLink(c.CABId, request, url) },
-                Content = SyndicationContent.CreateXmlContent(new AtomFeedContent
-                {
-                    Id = c.CABId,
-                    Name = c.Name,
-                    Address = StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.Postcode, c.Country),
-                    LegislativeAreas = c.LegislativeAreas
-                }),
                 Title = new TextSyndicationContent(c.Name),
-                Summary = new TextSyndicationContent(StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.Postcode, c.Country)),
+                Summary = new TextSyndicationContent(StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.Postcode, c.Country), TextSyndicationContentKind.Html),
             }).ToList();
             feed.LastUpdatedTime = feed.Items.Max(f => f.LastUpdatedTime).DateTime;
             return feed;
