@@ -18,7 +18,16 @@ namespace UKMCAB.Data.Search.Models
         public string Name { get; set; }
 
         [SearchableField]
+        public string AddressLine1 { get; set; }
         public string Address { get; set; }
+        [SearchableField]
+        public string AddressLine2 { get; set; }
+        [SearchableField]
+        public string TownCity { get; set; }
+        [SearchableField]
+        public string Postcode { get; set; }
+        [SearchableField]
+        public string Country { get; set; }
 
         [SearchableField]
         public string Email { get; set; }

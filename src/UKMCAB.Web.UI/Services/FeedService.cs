@@ -24,11 +24,11 @@ namespace UKMCAB.Web.UI.Services
                 {
                     Id = c.CABId,
                     Name = c.Name,
-                    Address = c.Address,
+                    Address = StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.Postcode, c.Country),
                     LegislativeAreas = c.LegislativeAreas
                 }),
                 Title = new TextSyndicationContent(c.Name),
-                Summary = new TextSyndicationContent(c.Address),
+                Summary = new TextSyndicationContent(StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.Postcode, c.Country)),
             }).ToList();
             feed.LastUpdatedTime = feed.Items.Max(f => f.LastUpdatedTime).DateTime;
             return feed;
@@ -37,7 +37,7 @@ namespace UKMCAB.Web.UI.Services
 
         private SyndicationLink GetProfileSyndicationLink(string id, HttpRequest request, IUrlHelper url)
         {
-            var link = url.Action("Index", "CAB", new { Area = "search", id = id }, request.Scheme, request.GetOriginalHostFromHeaders());
+            var link = url.Action("Index", "CABProfile", new { Area = "search", id = id }, request.Scheme, request.GetOriginalHostFromHeaders());
             var profileLink = new SyndicationLink(new Uri(link));
             profileLink.RelationshipType = "alternate";
             profileLink.MediaType = "text/html";

@@ -18,7 +18,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             nameof(CABIndexItem.CABId),
             nameof(CABIndexItem.Name),
-            nameof(CABIndexItem.Address),
+            nameof(CABIndexItem.AddressLine1),
+            nameof(CABIndexItem.AddressLine2),
+            nameof(CABIndexItem.TownCity),
+            nameof(CABIndexItem.Postcode),
+            nameof(CABIndexItem.Country),
             nameof(CABIndexItem.BodyTypes),
             nameof(CABIndexItem.RegisteredOfficeLocation),
             nameof(CABIndexItem.TestingLocations),
@@ -116,15 +120,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 }
                 return File(stream.ToArray(), "application/atom+xml;charset=utf-8");
             }
-        }
-
-        private SyndicationLink GetProfileSyndicationLink(string id)
-        {
-            var link = Url.Action("Index", "CAB", new { Area = "search", id = id }, Request.Scheme, Request.GetOriginalHostFromHeaders());
-            var profileLink = new SyndicationLink(new Uri(link));
-            profileLink.RelationshipType = "alternate";
-            profileLink.MediaType = "text/html";
-            return profileLink;
         }
 
         private async Task SetFacetOptions(SearchViewModel model)
