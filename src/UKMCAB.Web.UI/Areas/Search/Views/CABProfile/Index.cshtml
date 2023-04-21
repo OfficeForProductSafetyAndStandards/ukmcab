@@ -207,7 +207,7 @@
                             @foreach (var file in Model.ProductSchedules)
                             {
                                 <li class="cab-profile-file-list-item">
-                                    <a class="govuk-link" asp-area="search" asp-controller="CAB" asp-action="Download" asp-route-id="@file.BlobName" asp-route-file="@file.FileName">@file.FileName</a>
+                                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@file.BlobName" asp-route-file="@file.FileName">@file.FileName</a>
                                 </li>
                             }
                         </ul>
