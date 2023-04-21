@@ -1,4 +1,5 @@
 ﻿using System.Text.Json.Serialization;
+using UKMCAB.Web.UI.Models;
 
 namespace UKMCAB.Web.UI.Areas.Subscriptions.Models;
 
@@ -8,7 +9,7 @@ public enum SubscriptionType
     Cab
 }
 
-public class SubscriptionRequestViewModel
+public class SubscriptionRequestFlowModel
 {
     [JsonPropertyName("st")]
     public SubscriptionType? SubscriptionType { get; set; }
@@ -24,6 +25,4 @@ public class SubscriptionRequestViewModel
 
     [JsonPropertyName("f")]
     public Frequency? Frequency { get; set; }
-
-
 }

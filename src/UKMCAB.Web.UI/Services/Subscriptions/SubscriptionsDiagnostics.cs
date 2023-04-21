@@ -1,6 +1,8 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using UKMCAB.Subscriptions.Core;
+using UKMCAB.Subscriptions.Core.Domain;
+using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
 using UKMCAB.Subscriptions.Core.Services;
 using static UKMCAB.Web.UI.Services.Subscriptions.SubscriptionsDateTimeProvider;
 
@@ -46,6 +48,14 @@ public static class SubscriptionsDiagnostics
             var subscriptionsDateTimeProvider = ctx.RequestServices.GetRequiredService<ISubscriptionsDateTimeProvider>();
             subscriptionsDateTimeProvider.Set(payload);
             await ctx.Response.WriteAsJsonAsync(new { message = $"Ok. Set override {payload.DateTime}. This override expires in {payload.ExpiryHours} hours." });
+        });
+
+        builder.MapGet($"{b}/sent-emails", async (ctx) =>
+        {
+            var sender = ctx.RequestServices.GetRequiredService<IOutboundEmailSender>();
+            var opt = new JsonSerializerOptions { WriteIndented = true };
+            opt.Converters.Add(new EmailAddressConverter());
+            await ctx.Response.WriteAsJsonAsync(new { mode = sender.Mode == OutboundEmailSenderMode.Send ?"sending":"pretending", requests = sender.Requests }, opt);
         });
 
 
