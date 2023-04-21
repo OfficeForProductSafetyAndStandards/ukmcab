@@ -88,9 +88,9 @@ namespace UKMCAB.Data.Search.Services
 
             var searchOptions = new SearchOptions
             {
-                Size = options.IgnorePaging ? null : DataConstants.Search.ResultsPerPage,
+                Size = options.IgnorePaging ? null : DataConstants.Search.SearchResultsPerPage,
                 IncludeTotalCount = true,
-                Skip = options.IgnorePaging ? null : DataConstants.Search.ResultsPerPage * (options.PageNumber - 1),
+                Skip = options.IgnorePaging ? null : DataConstants.Search.SearchResultsPerPage * (options.PageNumber - 1),
                 Filter = filter,
                 OrderBy = { sort },
                 QueryType = SearchQueryType.Full
