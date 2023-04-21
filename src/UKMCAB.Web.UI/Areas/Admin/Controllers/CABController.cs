@@ -149,9 +149,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     "Enter either an email or phone");
             }
 
+            if (!documents.Any(d => d.IsPublished))
+            {
+                ValidateAdditionalAddressFields(model);
+            }
+
             if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
             {
-                latestDocument.SetAddress(model.AddressLine1, model.AddressLine2, model.TownCity, model.Postcode);
+                latestDocument.AddressLine1 = model.AddressLine1;
+                latestDocument.AddressLine2 = model.AddressLine2;
+                latestDocument.TownCity = model.TownCity;
+                latestDocument.Postcode = model.Postcode;
                 latestDocument.Country = model.Country;
                 latestDocument.Website = model.Website;
                 latestDocument.Email = model.Email;
@@ -174,6 +182,22 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             return View(new CABContactViewModel());
+        }
+
+        private void ValidateAdditionalAddressFields(CABContactViewModel model)
+        {
+            if (string.IsNullOrWhiteSpace(model.TownCity))
+            {
+                ModelState.AddModelError("TownCity", "Enter a town or city");
+            }
+            if (string.IsNullOrWhiteSpace(model.Postcode))
+            {
+                ModelState.AddModelError("Postcode", "Enter a postcode");
+            }
+            if (string.IsNullOrWhiteSpace(model.Country))
+            {
+                ModelState.AddModelError("Country", "Enter a country");
+            }
         }
 
         [HttpGet]
@@ -256,6 +280,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Schedules = latest.Schedules ?? new List<FileUpload>(),
                 Documents = latest.Documents ?? new List<FileUpload>()
             };
+            if (!documents.Any(d => d.IsPublished))
+            {
+                ValidateAdditionalAddressFields(model.CabContactViewModel);
+            }
             model.ValidCAB = !latest.IsPublished && TryValidateModel(model);
             return View(model);
         }
@@ -282,6 +310,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Documents = latest.Documents ?? new List<FileUpload>(),
             };
             ModelState.Clear();
+            if (!documents.Any(d => d.IsPublished))
+            {
+                ValidateAdditionalAddressFields(publishModel.CabContactViewModel);
+            }
             publishModel.ValidCAB = TryValidateModel(publishModel);
             if (publishModel.ValidCAB)
             {

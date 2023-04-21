@@ -1,10 +1,10 @@
-﻿using System.ServiceModel.Syndication;
-using System.Xml;
+﻿using System.Xml;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
@@ -19,7 +19,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             nameof(CABIndexItem.CABId),
             nameof(CABIndexItem.Name),
-            nameof(CABIndexItem.Address),
+            nameof(CABIndexItem.AddressLine1),
+            nameof(CABIndexItem.AddressLine2),
+            nameof(CABIndexItem.TownCity),
+            nameof(CABIndexItem.Postcode),
+            nameof(CABIndexItem.Country),
             nameof(CABIndexItem.BodyTypes),
             nameof(CABIndexItem.RegisteredOfficeLocation),
             nameof(CABIndexItem.TestingLocations),
@@ -45,7 +49,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             model.Pagination = new PaginationViewModel
             {
                 Total = searchResults.Total,
-                PageNumber = model.PageNumber
+                PageNumber = model.PageNumber,
+                ResultsPerPage = DataConstants.Search.SearchResultsPerPage,
+                ResultType = "bodies"
             };
 
             return View(model);
@@ -118,15 +124,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 }
                 return File(stream.ToArray(), "application/atom+xml;charset=utf-8");
             }
-        }
-
-        private SyndicationLink GetProfileSyndicationLink(string id)
-        {
-            var link = Url.Action("Index", "CAB", new { Area = "search", id = id }, Request.Scheme, Request.GetOriginalHostFromHeaders());
-            var profileLink = new SyndicationLink(new Uri(link));
-            profileLink.RelationshipType = "alternate";
-            profileLink.MediaType = "text/html";
-            return profileLink;
         }
 
         private async Task SetFacetOptions(SearchViewModel model)

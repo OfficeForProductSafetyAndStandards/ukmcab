@@ -24,6 +24,14 @@ ul.cab-profile-file-list {
     }
 }
 
+#cab-edit-button {
+    float: right;
+
+    @include govuk-media-query($until: tablet) {
+        float: none;
+    }
+}
+
 .js-enabled {
 
     @include govuk-media-query($from: mobile) {

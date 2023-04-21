@@ -12,7 +12,8 @@ public class DataConstants
 
     public static class Search
     {
-        public const int ResultsPerPage = 20;
+        public const int SearchResultsPerPage = 20;
+        public const int WorkQueurResultsPerPage = 10;
         public const string SEARCH_INDEX = "ukmcab-search-index";
         public const string SEARCH_INDEXER = "ukmcab-search-indexer";
         public const string SEARCH_DATASOURCE = "ukmcab-search-datasource";

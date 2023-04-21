@@ -1,41 +1,47 @@
-﻿using UKMCAB.Data.Models;
+﻿using Microsoft.AspNetCore.Identity;
+using UKMCAB.Data.Models;
 using UKMCAB.Core.Services;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
+using UKMCAB.Identity.Stores.CosmosDB;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
     [Area("search")]
-    public class CABController : Controller
+    public class CABProfileController : Controller
     {
         private readonly ICachedPublishedCabService _cabAdminService;
         private readonly IFileStorage _fileStorage;
+        private readonly UserManager<UKMCABUser> _userManager;
 
         public static class Routes
         {
             public const string CabDetails = "cab.detail";
         }
 
-        public CABController(ICachedPublishedCabService cabAdminService, IFileStorage fileStorage)
+        public CABProfileController(ICachedPublishedCabService cabAdminService, IFileStorage fileStorage, UserManager<UKMCABUser> userManager)
         {
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
+            _userManager = userManager;
         }
 
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
         public async Task<IActionResult> Index(string id)
         {
             var cabDocument = await _cabAdminService.FindPublishedDocumentByCABIdAsync(id);
-
+            var user = await _userManager.GetUserAsync(User);
+            var opssUser = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
             var cab = new CABProfileViewModel
             {
+                IsLoggedIn = opssUser,
                 CABId = cabDocument.CABId,
                 PublishedDate = cabDocument.PublishedDate,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber =  string.Empty,
-                Address = cabDocument.Address,
+                Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode),
                 Website = cabDocument.Website,
                 Email = cabDocument.Email,
                 Phone = cabDocument.Phone,
@@ -74,7 +80,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     LastModifiedDate = cabDocument.LastUpdatedDate,
                     Name = cabDocument.Name,
                     UKASReferenceNumber = string.Empty,
-                    Address = cabDocument.Address,
+                    Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode),
                     Website = cabDocument.Website,
                     Email = cabDocument.Email,
                     Phone = cabDocument.Phone,
