@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Subscriptions.Core.Domain.Emails;
-using UKMCAB.Web.Middleware.ExceptionHandling;
-using UKMCAB.Web.Middleware;
+using UKMCAB.Subscriptions.Core.Domain.Emails.Uris;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
 
 namespace UKMCAB.Web.UI.Services.Subscriptions;
 
@@ -21,13 +21,41 @@ public class SubscriptionsUriTemplatesConfiguratorMiddleware
     {
         if (!_emailTemplatesService.IsConfigured())
         {
-            _emailTemplatesService.Configure(new UKMCAB.Subscriptions.Core.Domain.Emails.Uris.UriTemplateOptions
+            var options = new UriTemplateOptions
             {
                 BaseUri = context.Request.GetRequestUri(),
-                CabDetails = new UKMCAB.Subscriptions.Core.Domain.Emails.Uris.ViewCabUriTemplateOptions("@cabid", 
-                    _linkGenerator.GetUriByRouteValues(context, Areas.Search.Controllers.CABController.Routes.CabDetails, new { id = "@cabid" }) 
+                
+                CabDetails = new("@cabid", _linkGenerator.GetPathByRouteValues(CABProfileController.Routes.CabDetails, new { id = "@cabid" })
                     ?? throw new Exception("Cab details route not found")),
-            });
+
+                Search = new(_linkGenerator.GetPathByAction(nameof(SearchController.Index), nameof(SearchController).Replace("Controller",""))
+                    ?? throw new Exception("Search CABs route not found")),
+
+                ConfirmCabSubscription = new("@token",
+                    _linkGenerator.GetPathByRouteValues(Areas.Subscriptions.Controllers.SubscriptionsController.Routes.ConfirmCabSubscription, new { token = "@token" })
+                    ?? throw new Exception("Confirm cab subscription route not found")),
+
+                ConfirmSearchSubscription = new("@token",
+                    _linkGenerator.GetPathByRouteValues(Areas.Subscriptions.Controllers.SubscriptionsController.Routes.ConfirmSearchSubscription, new { token = "@token" })
+                    ?? throw new Exception("Confirm search subscription route not found")),
+
+                ConfirmUpdateEmailAddress = new("@token",
+                    _linkGenerator.GetPathByRouteValues(Areas.Subscriptions.Controllers.SubscriptionsController.Routes.ConfirmUpdatedEmailAddress, new { token = "@token" })
+                    ?? throw new Exception("Confirm updated email address route not found")),
+
+                ManageSubscription = new("@subscriptionid",
+                    _linkGenerator.GetPathByRouteValues(Areas.Subscriptions.Controllers.SubscriptionsController.Routes.ManageSubscription, new { id = "@subscriptionid" })
+                    ?? throw new Exception("Manage subscription route not found")),
+                
+                Unsubscribe = new("@subscriptionid",
+                    _linkGenerator.GetPathByRouteValues(Areas.Subscriptions.Controllers.SubscriptionsController.Routes.Unsubscribe, new { id = "@subscriptionid" })
+                    ?? throw new Exception("Unsubscribe route not found")),
+
+                UnsubscribeAll = new("@emailaddress",
+                    _linkGenerator.GetPathByRouteValues(Areas.Subscriptions.Controllers.SubscriptionsController.Routes.UnsubscribeAll, new { emailAddress = "@emailaddress" })
+                    ?? throw new Exception("Unsubscribe-all route not found")),
+            };
+            _emailTemplatesService.Configure(options);
         }
 
         await _next(context);
