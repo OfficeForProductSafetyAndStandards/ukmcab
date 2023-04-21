@@ -20,12 +20,5 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public bool ValidCAB { get; set; }
         public bool ShowError { get; set; }
         public string? Title => "Check details before publishing";
-        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        //{
-        //    if (Schedules == null || !Schedules.Any())
-        //    {
-        //        yield return new ValidationResult("At least one schedule of accreditation is required");
-        //    }
-        //}
     }
 }
