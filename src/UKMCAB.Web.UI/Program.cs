@@ -14,11 +14,17 @@ using UKMCAB.Identity.Stores.CosmosDB.Extensions;
 using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
+using UKMCAB.Subscriptions.Core;
+using UKMCAB.Subscriptions.Core.Domain;
+using UKMCAB.Subscriptions.Core.Integration.CabService;
+using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI;
+using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
+using UKMCAB.Web.UI.Services.Subscriptions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -57,6 +63,7 @@ builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
 builder.Services.AddCustomHttpErrorHandling();
 
+AddSubscriptionCoreServices(builder, azureDataConnectionString);
 
 builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certificate2(Convert.FromBase64String(builder.Configuration["DataProtectionX509CertBase64"])))
     .PersistKeysToAzureBlobStorage(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, "keys.xml")
@@ -65,7 +72,7 @@ builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certific
 
 builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateOptions"));
 
-builder.Services.AddSingleton<ICABRepository, CABRepository>(); 
+builder.Services.AddSingleton<ICABRepository, CABRepository>();
 
 builder.Services.AddHostedService<RandomSortGenerator>();
 
@@ -75,10 +82,10 @@ builder.Services.Configure<IdentityStoresOptions>(options =>
     options.UseAzureCosmosDB(cosmosDbConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));
 
 builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
-    {
-        options.Password.RequiredLength = 8;
-        options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(2);
-    })
+{
+    options.Password.RequiredLength = 8;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(2);
+})
     .AddRoles<IdentityRole>()
     .AddAzureCosmosDbStores();
 
@@ -143,6 +150,7 @@ app.UseRouting();
 app.UseCsp(cspHeader); // content-security-policy
 app.UseStaticFiles();
 
+
 var supportedCultures = new[] { new System.Globalization.CultureInfo("en-GB") };
 app.UseRequestLocalization(new RequestLocalizationOptions
 {
@@ -163,12 +171,14 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+UseSubscriptions(app);
+
 await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, seeds =>
 {
     var opssAdmin = new IdentityRole(Constants.Roles.OPSSAdmin);
     seeds
         .AddRole(role: opssAdmin)
-        .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string>{"Construction"}, RequestReason = "Seeded", RequestApproved = true},
+        .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string> { "Construction" }, RequestReason = "Seeded", RequestApproved = true },
             password: "adminP@ssw0rd!", roles: opssAdmin);
 
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements
@@ -192,3 +202,35 @@ catch (Exception ex)
 
 app.Run();
 
+#region Subscriptions stuff
+
+static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureDataConnectionString azureDataConnectionString)
+{
+    var subscriptionsDateTimeProvider = new SubscriptionsDateTimeProvider();
+    builder.Services.AddSingleton<IDateTimeProvider>(subscriptionsDateTimeProvider);
+    builder.Services.AddSingleton<ISubscriptionsDateTimeProvider>(subscriptionsDateTimeProvider);
+    builder.Services.AddSingleton<ICabService, SubscriptionsCabService>();          // INJECT OUR OWN `ICabService` as this is slightly more efficient in that it doesn't use a json api
+    var subscriptionServicesCoreOptions = new SubscriptionsCoreServicesOptions
+    {
+        DataConnectionString = azureDataConnectionString,
+        SearchQueryStringRemoveKeys = SearchViewModel.NonFilterProperties,
+        OutboundEmailSenderMode = OutboundEmailSenderMode.Pretend
+    }.Pipe(x => builder.Configuration.Bind("SubscriptionsCore", x));
+
+    builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
+
+    builder.Services.AddSingleton<ISubscriptionEngineCoordinator, SubscriptionEngineCoordinator>();
+    builder.Services.AddHostedService<SubscriptionsBackgroundService>();
+}
+
+static void UseSubscriptions(WebApplication app)
+{
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSubscriptionsDiagnostics();
+
+    }
+    app.UseSubscriptionsUriTemplatesConfiguratorMiddleware();
+}
+
+#endregion
