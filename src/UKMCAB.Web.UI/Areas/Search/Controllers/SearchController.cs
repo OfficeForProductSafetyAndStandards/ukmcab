@@ -2,6 +2,7 @@
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
@@ -13,6 +14,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
     {
         private readonly ICachedSearchService _cachedSearchService;
         private readonly IFeedService _feedService;
+        private readonly BasicAuthenticationOptions _basicAuthOptions;
 
         private static readonly List<string> _select = new()
         {
@@ -30,10 +32,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.LastUpdatedDate),
         };
 
-        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService)
+        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions)
         {
             _cachedSearchService = cachedSearchService;
             _feedService = feedService;
+            _basicAuthOptions = basicAuthOptions;
         }
 
 
@@ -150,6 +153,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             filter.FilterOptions = facets.Select(f => new FilterOption(facetName, f,
                 selectedFacets.Any(sf => sf.Equals(f, StringComparison.InvariantCultureIgnoreCase)))).ToList();
             return filter;
+        }
+
+        [Route("cache-clear")]
+        public async Task<IActionResult> ClearCache(string password)
+        {
+            if (password == _basicAuthOptions.Password)
+            {
+                await _cachedSearchService.ClearAsync();
+                await Task.Delay(1000);
+                return RedirectToAction("Index");
+            }
+
+            return BadRequest();
         }
     }
 }
