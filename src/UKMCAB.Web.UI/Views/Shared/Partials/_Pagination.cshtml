@@ -1,0 +1,44 @@
+﻿@using UKMCAB.Web.UI.Extensions
+@model PaginationViewModel
+<div class="pagination-container">
+    <div class="pagination-detail-container">
+        @if (Model.Total == 0)
+        {
+            <span>Showing <span class="govuk-!-font-weight-bold">0</span> @Model.ResultType</span>
+        }
+        else
+        {
+            <span>Showing @Model.FirstResult - @Model.LastResult of <span class="govuk-!-font-weight-bold">@Model.Total</span> @Model.ResultType</span>
+        }
+    </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        var basePath = Context.Request.RemoveQueryParameters("pagenumber");
+        basePath += basePath.Contains("?") ? "&pagenumber=" : "?pagenumber=";
+        var pageRange = Model.PageRange();
+        <div class="pagination-links-container">
+            <ul class="pagination-links">
+                @if (Model.ShowPrevious)
+                {
+                    <li class="pagination-link-item pagination-previous"><a href="@(basePath + (Model.PageNumber - 1))" class="govuk-link govuk-link--no-visited-state"><span>Previous</span></a></li>
+                }
+                @foreach (var pageNumber in pageRange)
+                {
+                    if (pageNumber == Model.PageNumber)
+                    {
+                        <li class="pagination-link-item pagination-page-link"><span>@Model.PageNumber</span></li>
+                    }
+                    else
+                    {
+                        <li class="pagination-link-item pagination-page-link"><a href="@(basePath + pageNumber)" class="govuk-link govuk-link--no-visited-state"><span>@pageNumber</span></a></li>
+                    }
+                }
+                @if (Model.ShowNext)
+                {
+                    <li class="pagination-link-item"><a href="@(basePath + (Model.PageNumber + 1))" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
+                }
+            </ul>
+        </div>
+    }
+</div>

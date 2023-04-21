@@ -1,9 +1,9 @@
-﻿using System.ServiceModel.Syndication;
-using System.Xml;
+﻿using System.Xml;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
@@ -47,7 +47,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             model.Pagination = new PaginationViewModel
             {
                 Total = searchResults.Total,
-                PageNumber = model.PageNumber
+                PageNumber = model.PageNumber,
+                ResultsPerPage = DataConstants.Search.SearchResultsPerPage,
+                ResultType = "bodies"
             };
 
             return View(model);
