@@ -25,6 +25,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
             PointOfContactPhone = document.PointOfContactPhone;
             IsPointOfContactPublicDisplay = document.IsPointOfContactPublicDisplay;
             RegisteredOfficeLocation = document.RegisteredOfficeLocation;
+            DocumentStatus = document.StatusValue;
         }
 
         public string? CABId { get; set; }

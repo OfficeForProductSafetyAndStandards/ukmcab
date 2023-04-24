@@ -17,10 +17,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
         public string? CABId { get; set; }
 
+        [CannotBeEmpty(ErrorMessage = "Select a registered test location")]
         public List<string> TestingLocations { get; set; }
-        [Required(ErrorMessage = "Select a body type")]
+        [CannotBeEmpty(ErrorMessage = "Select a body type")]
         public List<string> BodyTypes { get; set; }
-        [Required(ErrorMessage = "Select a legislative area")]
+        [CannotBeEmpty(ErrorMessage = "Select a legislative area")]
         public List<string> LegislativeAreas { get; set; }
 
         public string? Title => "Body details";
