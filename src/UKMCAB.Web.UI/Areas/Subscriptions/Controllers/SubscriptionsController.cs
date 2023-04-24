@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security;
 using UKMCAB.Core.Services;
 using UKMCAB.Subscriptions.Core.Domain;
@@ -72,7 +73,7 @@ public class SubscriptionsController : Controller
             public const string RequestUpdateEmailAddress = $"{_base}RequestUpdateEmailAddress";
             public const string RequestedUpdateEmailAddress = $"{_base}RequestedUpdateEmailAddress";
             public const string Unsubscribed = $"{_base}Unsubscribe";
-            public const string Unsubscribe = $"{_base}Unsubscribed";
+            public const string Unsubscribe = $"{_base}Unsubscribe";
             public const string UnsubscribeAll = $"{_base}UnsubscribeAll";
             public const string UnsubscribedAll = $"{_base}UnsubscribedAll";
 
@@ -108,12 +109,13 @@ public class SubscriptionsController : Controller
     }
 
     [HttpGet("subscribe/request/cab/{id}", Name = Routes.Step0RequestCabSubscription)]
-    public IActionResult Step0RequestCabSubscription(Guid id)
+    public async Task<IActionResult> Step0RequestCabSubscriptionAsync(Guid id)
     {
         var req = new SubscriptionRequestFlowModel
         {
             SubscriptionType = SubscriptionType.Cab,
             CabId = id,
+            CabName = await GetCabNameAsync(id),
         };
         return RedirectToRoute(Routes.Step1RequestConfirmSubscription, new { tok = JsonBase64UrlToken.Serialize(req) });
     }
@@ -123,7 +125,7 @@ public class SubscriptionsController : Controller
     {
         if(Request.Method == HttpMethod.Get.Method)
         {
-            return View(new SubscriptionRequestFlowViewModel(JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok)));
+            return View(Views.RequestFlow.Step1RequestConfirmSubscription, new SubscriptionRequestFlowViewModel(JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok)));
         }
         else
         {
@@ -136,7 +138,7 @@ public class SubscriptionsController : Controller
     {
         if (Request.Method == HttpMethod.Get.Method)
         {
-            return View();
+            return View(Views.RequestFlow.Step2RequestSubscriptionFrequency);
         }
         else // todo: VALIDATION
         {
@@ -150,7 +152,7 @@ public class SubscriptionsController : Controller
     {
         if (Request.Method == HttpMethod.Get.Method)
         {
-            return View();
+            return View(Views.RequestFlow.Step3RequestSubscriptionEmailAddress);
         }
         else // todo: VALIDATION
         {
@@ -163,11 +165,9 @@ public class SubscriptionsController : Controller
     [Route("subscribe/request", Name = Routes.Step4RequestSubscription)]
     public async Task<IActionResult> Step4RequestSubscriptionAsync(string tok)
     {
-        _ = new QueryCollection();
-
         if (Request.Method == HttpMethod.Get.Method)
         {
-            return View();
+            return View(Views.RequestFlow.Step4RequestSubscription);
         }
         else
         {
@@ -189,7 +189,7 @@ public class SubscriptionsController : Controller
     public IActionResult Step5RequestedSubscription(string tok)
     {
         var viewModel = JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok);
-        return View(new SubscriptionRequestFlowViewModel(viewModel));
+        return View(Views.RequestFlow.Step5RequestedSubscription, new SubscriptionRequestFlowViewModel(viewModel));
     }
 
     #endregion
@@ -207,7 +207,7 @@ public class SubscriptionsController : Controller
     public async Task<IActionResult> ConfirmCabSubscriptionAsync(string token)
     {
         var result = await _subscriptions.ConfirmCabSubscriptionAsync(token).ConfigureAwait(false);
-        ViewBag.CabName = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(result.CabSubscriptionRequest.CabId.ToString());
+        ViewBag.CabName = await GetCabNameAsync(result.CabSubscriptionRequest.CabId);
         return View(Views.Confirmation.ConfirmedCabSubscription);
     }
 
@@ -223,7 +223,8 @@ public class SubscriptionsController : Controller
     [HttpGet("manage/{id}", Name = Routes.ManageSubscription)]
     public async Task<IActionResult> ManageSubscriptionAsync(string id)
     {
-        return View(Views.Manage.ManageSubscription, new SubscriptionViewModel(await _subscriptions.GetSubscriptionAsync(id).ConfigureAwait(false)));
+        var viewModel = await GetSubscriptionViewModelAsync(id, "Manage subscription");
+        return View(Views.Manage.ManageSubscription, viewModel);
     }
 
     #region Unsubscribe
@@ -233,7 +234,8 @@ public class SubscriptionsController : Controller
     {
         if (Request.Method == HttpMethod.Get.Method)
         {
-            return View(Views.Manage.Unsubscribe, new SubscriptionViewModel(await _subscriptions.GetSubscriptionAsync(id).ConfigureAwait(false)));
+            var viewModel = await GetSubscriptionViewModelAsync(id, "Unsubscribe");
+            return View(Views.Manage.Unsubscribe, viewModel);
         }
         else
         {
@@ -243,13 +245,13 @@ public class SubscriptionsController : Controller
     }
 
     [Route("unsubscribe-all", Name = Routes.UnsubscribeAll)]
-    public async Task<IActionResult> UnsubscribeAllAsync([FromForm] string? emailAddress = null)
+    public async Task<IActionResult> UnsubscribeAllAsync(string? emailAddress = null)
     {
         if (Request.Method == HttpMethod.Get.Method)
         {
-            return View(Views.Manage.UnsubscribeAll);
+            return View(Views.Manage.UnsubscribeAll, new UnsubscribeAllViewModel { EmailAddress = emailAddress });
         }
-        else
+        else // TODO: VALIDATION!
         {
             var done = await _subscriptions.UnsubscribeAllAsync(emailAddress).ConfigureAwait(false);
             return View(Views.Manage.UnsubscribedAll);
@@ -265,7 +267,7 @@ public class SubscriptionsController : Controller
     {
         if (Request.Method == HttpMethod.Get.Method)
         {
-            return View();
+            return View(Views.Manage.RequestUpdateEmailAddress);
         }
         else // todo: VALIDATION
         {
@@ -288,9 +290,10 @@ public class SubscriptionsController : Controller
     [Route("manage/{id}/change-frequency", Name = Routes.ChangeFrequency)]
     public async Task<IActionResult> ChangeFrequencyAsync(string id, [FromForm] Frequency frequency)
     {
+        var viewModel = await GetSubscriptionViewModelAsync(id, "Change frequency");
         if (Request.Method == HttpMethod.Get.Method)
         {
-            return View(Views.Manage.ChangeFrequency);
+            return View(Views.Manage.ChangeFrequency, viewModel);
         }
         else // todo: VALIDATION
         {
@@ -300,11 +303,34 @@ public class SubscriptionsController : Controller
     }
 
     [HttpGet("manage/{id}/frequency-changed", Name = Routes.FrequencyChanged)]
-    public IActionResult FrequencyChanged(string id)
+    public async Task<IActionResult> FrequencyChangedAsync(string id)
     {
-        return View(Views.Manage.FrequencyChanged);
+        var viewModel = await GetSubscriptionViewModelAsync(id, "Frequency changed");
+        return View(Views.Manage.FrequencyChanged, viewModel);
     }
 
     #endregion
 
+
+    private async Task<string> GetCabNameAsync(Guid id)
+    {
+        var cab = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id.ToString());
+        if (cab != null)
+        {
+            return cab.Name;
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+    private async Task<SubscriptionViewModel> GetSubscriptionViewModelAsync(string id, string title)
+    {
+        var model = await _subscriptions.GetSubscriptionAsync(id).ConfigureAwait(false) ?? throw new DomainException("Subscription not found");
+        var viewModel = new SubscriptionViewModel(model, title);
+        return viewModel;
+    }
+
 }
+

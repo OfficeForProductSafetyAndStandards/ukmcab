@@ -1,13 +1,23 @@
-﻿<form method="post">
-    <div class="govuk-!-margin-top-8 govuk-!-margin-bottom-8">
-        <h1 class="govuk-heading-xl">
-            Are you sure you want to unsubscribe from everything?
-        </h1>
+﻿@model UnsubscribeAllViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post">
+            <div class="govuk-!-margin-top-4 govuk-!-margin-bottom-8">
+                <h1 class="govuk-heading-xl">
+                    Are you sure you want to unsubscribe from everything?
+                </h1>
+            </div>
+
+            <p class="govuk-body">
+                You won't get any more automated emails from UKMCAB
+            </p>
+
+            <div class="govuk-form-group">
+                <input autocomplete="email" class="govuk-input" id="email-address-input" name="emailaddress" spellcheck="false" type="email" value="@Model.EmailAddress">
+            </div>
+
+            <button class="gem-c-button govuk-button gem-c-button--bottom-margin" type="submit">Unsubscribe</button>
+        </form>
     </div>
-
-    <p class="govuk-body">
-        You won't get any more automated emails from UKMCAB
-    </p>
-
-    <button class="gem-c-button govuk-button gem-c-button--bottom-margin" type="submit">Unsubscribe</button>
-</form>
+</div>

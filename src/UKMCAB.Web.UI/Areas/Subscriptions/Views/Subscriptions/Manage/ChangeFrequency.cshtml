@@ -1,6 +1,6 @@
 ﻿@model SubscriptionViewModel
 
-<h1>Change frequency</h1>
+<h1 class="govuk-heading-m">Change frequency</h1>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -13,18 +13,18 @@
 
                     <div class="govuk-radios">
                         <div class="gem-c-radio govuk-radios__item">
-                            <input type="radio" name="frequency" id="radio-a813b9ca-0" value="daily" class="govuk-radios__input">
+                            <input type="radio" name="frequency" id="radio-a813b9ca-0" value="daily" class="govuk-radios__input" @Html.Conditional(Model.Subscription.Frequency== Frequency.Daily,"checked")>
                             <label for="radio-a813b9ca-0" class="gem-c-label govuk-label govuk-radios__label">Once a day</label>
                         </div>
 
                         <div class="gem-c-radio govuk-radios__item">
-                            <input type="radio" name="frequency" id="radio-a813b9ca-1" value="weekly" class="govuk-radios__input">
+                            <input type="radio" name="frequency" id="radio-a813b9ca-1" value="weekly" class="govuk-radios__input" @Html.Conditional(Model.Subscription.Frequency== Frequency.Weekly,"checked")>
                             <label for="radio-a813b9ca-1" class="gem-c-label govuk-label govuk-radios__label">Once a week</label>
                         </div>
 
                         <div class="govuk-radios__divider">or</div>
                         <div class="govuk-radios__item">
-                            <input type="radio" name="frequency" id="radio-a813b9ca-3" value="realtime" class="govuk-radios__input">
+                            <input type="radio" name="frequency" id="radio-a813b9ca-3" value="realtime" class="govuk-radios__input" @Html.Conditional(Model.Subscription.Frequency== Frequency.Realtime,"checked")>
                             <label for="radio-a813b9ca-3" class="gem-c-label govuk-label govuk-radios__label">Each time we add or update a page (you may get more than one email a day)</label>
                         </div>
 
@@ -32,7 +32,10 @@
                 </fieldset>
             </div>
 
-            <button class="govuk-button" type="submit">Continue</button>
+            <div class="govuk-button-group">
+                <button class="govuk-button" type="submit">Continue</button>
+                <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new{id= ViewContext.RouteData.Values.GetValueOrDefault("id")})">Cancel</a>
+            </div>
 
 
             <p class="govuk-body">

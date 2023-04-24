@@ -1,2 +1,11 @@
-﻿
-<h1>Frequency has been updated</h1>
+﻿@model SubscriptionViewModel
+<div class="govuk-panel govuk-panel--confirmation">
+    <h1 class="govuk-panel__title">
+        Frequency changed
+    </h1>
+    <div class="govuk-panel__body">
+        You have changed your subscription frequency to:<br /> @Model.FrequencyDescription
+    </div>
+</div>
+
+<a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new{id= ViewContext.RouteData.Values.GetValueOrDefault("id")})">Manage subscription</a>

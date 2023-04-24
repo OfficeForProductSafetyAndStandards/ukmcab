@@ -2,12 +2,23 @@
 
 namespace UKMCAB.Web.UI.Areas.Subscriptions.Models;
 
-public class SubscriptionViewModel
+public class SubscriptionViewModel : ILayoutModel
 {
     public SubscriptionModel Subscription { get; set; }
 
-    public SubscriptionViewModel(SubscriptionModel subscription)
+    public string? Title { get; set; }
+
+    public SubscriptionViewModel(SubscriptionModel subscription, string? title)
     {
         Subscription = subscription;
+        Title = title;
     }
+
+    public string FrequencyDescription => Subscription.Frequency switch
+    {
+        Frequency.Realtime => Subscription.SubscriptionType == SubscriptionType.Search ? "as soon as the search is updated" : "as soon as the CAB is updated",
+        Frequency.Daily => "daily",
+        Frequency.Weekly => "weekly",
+        _ => throw new NotImplementedException(),
+    };
 }

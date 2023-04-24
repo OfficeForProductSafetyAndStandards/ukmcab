@@ -8,10 +8,10 @@
 </p>
 
 <p class="govuk-body">
-    <a href="@Url.RouteUrl(SubscriptionsController.Routes.RequestUpdateEmailAddress, new {Model.Subscription.Id})">Change email address</a>
+    <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.RequestUpdateEmailAddress, new {Model.Subscription.Id})">Change email address</a>
 </p>
 
-<hr class="govuk-section-break govuk-section-break--visible" />
+<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
 
 <p class="govuk-body">
     Topic
@@ -31,9 +31,9 @@ else
 }
 
 <p class="govuk-body">
-    <a href="@Url.RouteUrl(SubscriptionsController.Routes.ChangeFrequency, new {Model.Subscription.Id})">Change how often you get emails</a>
+    <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.ChangeFrequency, new {Model.Subscription.Id})">Change how often you get emails</a>
 </p>
 
 <p class="govuk-body">
-    <a href="@Url.RouteUrl(SubscriptionsController.Routes.Unsubscribe, new {Model.Subscription.Id})">Unsubscribe</a>
+    <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.Unsubscribe, new {Model.Subscription.Id})">Unsubscribe</a>
 </p>

@@ -1,7 +1,7 @@
 ﻿@model SubscriptionRequestFlowViewModel
 
 <form method="post">
-    <div class="govuk-!-margin-top-8 govuk-!-margin-bottom-8">
+    <div class="govuk-!-margin-bottom-8">
         <h1 class="govuk-heading-xl">
             Get emails from GOV.UK
         </h1>
@@ -18,7 +18,7 @@
         }
         else
         {
-            <strong class="govuk-!-font-weight-bold">UKMCAB CAB '@Model.Flow.CabName'</strong>
+            <strong class="govuk-!-font-weight-bold">@Model.Flow.CabName</strong>
         }
     </p>
 
