@@ -1,4 +1,5 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.FileUploadViewModel
+﻿@using UKMCAB.Data.Models
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.FileUploadViewModel
 @section BackButton
 {
     <div class="govuk-width-container ">
@@ -83,10 +84,17 @@
                     <button class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
                         Upload
                     </button>
-                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="Admin" asp-action="Index">
+                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">
                         Save as draft
                     </a>
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                    {
+                        <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
+                    else
+                    {
+                        <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
                 </div>
                 
             </form>
