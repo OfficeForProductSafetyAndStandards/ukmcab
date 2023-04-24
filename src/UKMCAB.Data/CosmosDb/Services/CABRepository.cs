@@ -36,7 +36,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         CABId = Guid.NewGuid().ToString(),
 
                         Name = cabDocument.Name,
-                        Address = cabDocument.Address,
+                        AddressLine1 = cabDocument.Address,
                         Email = cabDocument.Email,
                         Website = cabDocument.Website,
                         Phone = cabDocument.Phone,
@@ -58,8 +58,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         LastModifiedBy = "admin",
                         CreatedDate = DateTime.UtcNow,
                         CreatedBy = "admin",
-                        IsLatest = true,
-                        IsPublished = true,
+                        StatusValue = Status.Published,
                         RandomSort = Guid.NewGuid().ToString()
                     };
                     var newDoc = await CreateAsync(document);

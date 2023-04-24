@@ -27,13 +27,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-upload/{id}")]
         public async Task<IActionResult> SchedulesUpload(string id, bool fromSummary)
         {
-            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
-            var latestVersion = documents.Single(d => d.IsLatest);
             if (latestVersion.Schedules != null && latestVersion.Schedules.Count >= 5)
             {
                 return RedirectToAction("SchedulesList", fromSummary ? new {id, fromSummary = "true"} : new { id });
@@ -53,13 +52,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-upload/{id}")]
         public async Task<IActionResult> SchedulesUpload(string id, FileUploadViewModel model)
         {
-            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
-            var latestVersion = documents.Single(d => d.IsLatest);
             latestVersion.Schedules ??= new List<FileUpload>();
             if (latestVersion.Schedules.Count >= 5)
             {
@@ -116,13 +114,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-list/{id}")]
         public async Task<IActionResult> SchedulesList(string id, bool fromSummary)
         {
-            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
-            var latestVersion = documents.Single(d => d.IsLatest);
 
             return View(new FileListViewModel
             {
@@ -137,12 +134,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-list/{id}")]
         public async Task<IActionResult> SchedulesList(string id, string fileName, bool fromSummary)
         {
-            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var latestVersion = documents.Single(d => d.IsLatest);
             latestVersion.Schedules ??= new List<FileUpload>();
 
             var fileToRemove = latestVersion.Schedules.SingleOrDefault(s =>
@@ -169,12 +165,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-upload/{id}")]
         public async Task<IActionResult> DocumentsUpload(string id, bool fromSummary)
         {
-            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var latestVersion = documents.Single(d => d.IsLatest);
             // Pre-populate model for edit
             latestVersion.Documents ??= new List<FileUpload>();
             if (latestVersion.Documents.Count >= 10)
@@ -196,12 +191,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-upload/{id}")]
         public async Task<IActionResult> DocumentsUpload(string id, FileUploadViewModel model)
         {
-            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var latestVersion = documents.Single(d => d.IsLatest);
             latestVersion.Documents ??= new List<FileUpload>();
             if (latestVersion.Documents.Count >= 10)
             {
@@ -231,12 +225,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-list/{id}")]
         public async Task<IActionResult> DocumentsList(string id, bool fromSummary)
         {
-            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var latestVersion = documents.Single(d => d.IsLatest);
             latestVersion.Documents ??= new List<FileUpload>();
 
             return View(new FileListViewModel
@@ -252,12 +245,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/documents-list/{id}")]
         public async Task<IActionResult> DocumentsList(string id, string fileName, bool fromSummary)
         {
-            var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-            if (!documents.Any(d => d.IsLatest)) // Implies no document or archived
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            var latestVersion = documents.Single(d => d.IsLatest);
             latestVersion.Documents ??= new List<FileUpload>();
 
             var fileToRemove = latestVersion.Documents.SingleOrDefault(s =>

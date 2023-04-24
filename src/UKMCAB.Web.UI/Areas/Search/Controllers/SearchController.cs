@@ -1,9 +1,10 @@
-﻿using System.ServiceModel.Syndication;
-using System.Xml;
+﻿using System.Xml;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
@@ -13,12 +14,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
     {
         private readonly ICachedSearchService _cachedSearchService;
         private readonly IFeedService _feedService;
+        private readonly BasicAuthenticationOptions _basicAuthOptions;
 
         private static readonly List<string> _select = new()
         {
             nameof(CABIndexItem.CABId),
             nameof(CABIndexItem.Name),
-            nameof(CABIndexItem.Address),
+            nameof(CABIndexItem.AddressLine1),
+            nameof(CABIndexItem.AddressLine2),
+            nameof(CABIndexItem.TownCity),
+            nameof(CABIndexItem.Postcode),
+            nameof(CABIndexItem.Country),
             nameof(CABIndexItem.BodyTypes),
             nameof(CABIndexItem.RegisteredOfficeLocation),
             nameof(CABIndexItem.TestingLocations),
@@ -26,10 +32,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.LastUpdatedDate),
         };
 
-        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService)
+        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions)
         {
             _cachedSearchService = cachedSearchService;
             _feedService = feedService;
+            _basicAuthOptions = basicAuthOptions;
         }
 
 
@@ -37,14 +44,15 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(SearchViewModel model)
         {
             var searchResults = await SearchInternalAsync(model);
-
             await SetFacetOptions(model);
 
             model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
             model.Pagination = new PaginationViewModel
             {
                 Total = searchResults.Total,
-                PageNumber = model.PageNumber
+                PageNumber = model.PageNumber,
+                ResultsPerPage = DataConstants.Search.SearchResultsPerPage,
+                ResultType = "bodies"
             };
 
             return View(model);
@@ -61,7 +69,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var searchResults = await SearchInternalAsync(model, x => x.IgnorePaging = true);
             searchResults.CABs.ForEach(x => x.HiddenText = "[omitted]");
             Response.Headers.Add("X-Count", searchResults.Total.ToString());
-            return Json(searchResults.CABs);
+            return Json(searchResults.CABs); // TODO: transform into models provided by the UKMCAB.Subscriptions.Core assembly
         }
 
         private async Task<CABResults> SearchInternalAsync(SearchViewModel model, Action<CABSearchOptions>? configure = null)
@@ -119,15 +127,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
         }
 
-        private SyndicationLink GetProfileSyndicationLink(string id)
-        {
-            var link = Url.Action("Index", "CAB", new { Area = "search", id = id }, Request.Scheme, Request.GetOriginalHostFromHeaders());
-            var profileLink = new SyndicationLink(new Uri(link));
-            profileLink.RelationshipType = "alternate";
-            profileLink.MediaType = "text/html";
-            return profileLink;
-        }
-
         private async Task SetFacetOptions(SearchViewModel model)
         {
             var facets = await _cachedSearchService.GetFacetsAsync();
@@ -154,6 +153,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             filter.FilterOptions = facets.Select(f => new FilterOption(facetName, f,
                 selectedFacets.Any(sf => sf.Equals(f, StringComparison.InvariantCultureIgnoreCase)))).ToList();
             return filter;
+        }
+
+        [Route("cache-clear")]
+        public async Task<IActionResult> ClearCache(string password)
+        {
+            if (password == _basicAuthOptions.Password)
+            {
+                await _cachedSearchService.ClearAsync();
+                await Task.Delay(1000);
+                return RedirectToAction("Index");
+            }
+
+            return BadRequest();
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
 using System.Text.RegularExpressions;
+using Azure.Search.Documents.Indexes;
+using Azure.Search.Documents.Indexes.Models;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Common;
 using UKMCAB.Data.Models;
@@ -10,10 +12,12 @@ namespace UKMCAB.Data.Search.Services
     public class SearchService : ISearchService
     {
         private SearchClient _indexClient;
+        private readonly SearchIndexerClient _searchIndexerClient;
 
-        public SearchService(SearchClient searchClient)
+        public SearchService(SearchClient searchClient, SearchIndexerClient searchIndexerClient)
         {
             _indexClient = searchClient;
+            _searchIndexerClient = searchIndexerClient;
         }
 
         public async Task<SearchFacets> GetFacetsAsync()
@@ -84,9 +88,9 @@ namespace UKMCAB.Data.Search.Services
 
             var searchOptions = new SearchOptions
             {
-                Size = options.IgnorePaging ? null : DataConstants.Search.ResultsPerPage,
+                Size = options.IgnorePaging ? null : DataConstants.Search.SearchResultsPerPage,
                 IncludeTotalCount = true,
-                Skip = options.IgnorePaging ? null : DataConstants.Search.ResultsPerPage * (options.PageNumber - 1),
+                Skip = options.IgnorePaging ? null : DataConstants.Search.SearchResultsPerPage * (options.PageNumber - 1),
                 Filter = filter,
                 OrderBy = { sort },
                 QueryType = SearchQueryType.Full
@@ -159,6 +163,11 @@ namespace UKMCAB.Data.Search.Services
             }
 
             return filters.Count > 1 ? $"({string.Join(" and ", filters)})" : filters.FirstOrDefault() ?? string.Empty;
+        }
+
+        public async Task ReIndexAsync()
+        {
+            await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
         }
     }
 }

@@ -125,38 +125,7 @@
 
             .search-results-pagination-container {
                 height: 90px;
-
-                .search-results-pagination-detail-container {
-                    width: 100%;
-                }
-
-                .search-results-pagination-links-container {
-                    text-align: left;
-                    width: 100%;
-
-                    .search-results-pagination-links {
-                        .search-results-pagination-link-item {
-                            a {
-                                span {
-                                    padding: 0;
-                                }
-                            }
-                        }
-
-                        .search-results-pagination-page-link {
-                            display: none;
-                        }
-
-                        .search-results-pagination-previous {
-                            a {
-                                span {
-                                    padding-right: 10px;
-                                }
-                            }
-                        }
-                    }
-                }
-
+                
                 #search-results-filters-link-container {
                     display: inline-block;
                     padding-top: 10px;
@@ -380,40 +349,6 @@
 
 .search-results-pagination-container {
     height: 40px;
-
-    .search-results-pagination-detail-container {
-        width: 50%;
-        float: left;
-    }
-
-    .search-results-pagination-links-container {
-        width: 50%;
-        float: left;
-        text-align: right;
-
-        .search-results-pagination-links {
-            display: inline-block;
-            margin: 0;
-            list-style: none;
-            padding: 0;
-
-            .search-results-pagination-link-item {
-                display: inline;
-
-                a {
-                    span {
-                        text-decoration: underline;
-                    }
-                }
-
-                span {
-                    float: left;
-                    position: relative;
-                    padding: 0 5px;
-                }
-            }
-        }
-    }
 
     #search-results-filters-link-container {
         display: none;

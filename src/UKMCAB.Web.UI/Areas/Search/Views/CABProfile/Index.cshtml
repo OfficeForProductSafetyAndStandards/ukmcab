@@ -13,6 +13,12 @@
             <span class="govuk-caption-m govuk-!-display-inline-block">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
         </div>
     </div>
+    <div class="govuk-grid-column-one-third">
+        @if (Model.IsLoggedIn)
+        {
+            <a id="cab-edit-button" class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Edit</a>
+        }
+    </div>
 </div>
 
 <div class="govuk-grid-row">
@@ -201,7 +207,7 @@
                             @foreach (var file in Model.ProductSchedules)
                             {
                                 <li class="cab-profile-file-list-item">
-                                    <a class="govuk-link" asp-area="search" asp-controller="CAB" asp-action="Download" asp-route-id="@file.BlobName" asp-route-file="@file.FileName">@file.FileName</a>
+                                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@file.BlobName" asp-route-file="@file.FileName">@file.FileName</a>
                                 </li>
                             }
                         </ul>

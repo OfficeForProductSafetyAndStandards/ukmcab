@@ -7,6 +7,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         // ILayoutModel
         public string? Title => $"CAB profile - {Name}";
 
+        public bool IsLoggedIn { get; set; }
+
         public string CABId { get; set; }
 
         // Publish attributes

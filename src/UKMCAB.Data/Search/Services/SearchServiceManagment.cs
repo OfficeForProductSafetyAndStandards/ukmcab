@@ -1,6 +1,7 @@
 ﻿using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
@@ -46,11 +47,18 @@ namespace UKMCAB.Data.Search.Services
                 SearchIndexerDataSourceType.CosmosDb, cosmosDBConnectionString + $";Database={DataConstants.CosmosDb.Database}",
                 new SearchIndexerDataContainer(DataConstants.CosmosDb.Constainer));
 
-            cosmosDbDataSource.Container.Query = "SELECT * FROM c WHERE c.IsPublished = true";
+            cosmosDbDataSource.Container.Query = $"SELECT * FROM c WHERE c.Status = \"{Status.Published}\"";
 
             await searchIndexerClient.CreateOrUpdateDataSourceConnectionAsync(cosmosDbDataSource);
 
-            var cosmosDbIndexer = new SearchIndexer(DataConstants.Search.SEARCH_INDEXER, cosmosDbDataSource.Name, DataConstants.Search.SEARCH_INDEX) { Schedule = new IndexingSchedule(TimeSpan.FromMinutes(10)) };
+            var cosmosDbIndexer =
+                new SearchIndexer(DataConstants.Search.SEARCH_INDEXER, cosmosDbDataSource.Name, DataConstants.Search.SEARCH_INDEX)
+                {
+                    Schedule = new IndexingSchedule(TimeSpan.FromDays(1))
+                    {
+                        StartTime = DateTime.Today.Date + new TimeSpan(1,3,0,0) // Start the reindex schedule from tomorrow at 3.00AM
+                    }
+                };
 
             try
             {

@@ -57,7 +57,7 @@
                     Create a CAB
                 </a>
             </div>
-            <div id="work-queue-list-container" class="govuk-grid-column-full">
+            <div id="work-queue-list-container" class="govuk-grid-column-full govuk-body">
                 <table class="govuk-table">
                     <thead>
                     <tr class="govuk-table__row">
@@ -86,6 +86,9 @@
                     }
                     </tbody>
                 </table>
+                <div id="work-queue-pagination-container">
+                    <partial name="Partials/_Pagination" model="Model.Pagination"/>
+                </div>
             </div>
         </div>
     </form>

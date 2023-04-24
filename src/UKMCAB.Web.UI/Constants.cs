@@ -272,7 +272,7 @@ public static class Constants
         {
             "Approved body",
             "NI Notified body",
-            "Overseas Body",
+            "Overseas body",
             "Recognised third-party",
             "Technical assessment body",
             "UK body designated under MRA: Australia",

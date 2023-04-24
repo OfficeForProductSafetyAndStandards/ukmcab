@@ -8,7 +8,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         {
             CABId = cab.CABId;
             Name = cab.Name;
-            Address = cab.Address;
+            Address = StringExt.Join(", ", cab.AddressLine1, cab.AddressLine2, cab.TownCity, cab.Postcode, cab.Country);
             BodyType = ListToString(cab.BodyTypes);
             RegisteredOfficeLocation = cab.RegisteredOfficeLocation;
             RegisteredTestLocation = ListToString(cab.TestingLocations);

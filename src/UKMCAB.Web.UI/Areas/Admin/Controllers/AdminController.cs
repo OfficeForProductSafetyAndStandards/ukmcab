@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Components.Forms;
 using UKMCAB.Core.Services;
+using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -22,7 +25,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (string.IsNullOrEmpty(model.Sort))
             {
-                model.Sort = "name";
+                model.Sort = "default";
             }
 
             var workQueueItems = await _cabAdminService.FindAllWorkQueueDocuments();
@@ -32,15 +35,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     Id = wqi.CABId,
                     Name = wqi.Name,
                     CABNumber = wqi.CABNumber,
-                    Status = "Draft" // TODO: we don't have archived yet
+                    Status = "Draft", // TODO: we don't have archived yet
+                    LastUpdated = wqi.LastUpdatedDate
                 }).ToList()
                 : new List<WorkQueueItemViewModel>();
-            FilterAndSortItems(model);
+
+            FilterSortAndPaginateItems(model);
 
             return View(model);
         }
 
-        private void FilterAndSortItems(WorkQueueViewModel model)
+        private void FilterSortAndPaginateItems(WorkQueueViewModel model)
         {
             if (!string.IsNullOrEmpty(model.Filter))
             {
@@ -65,9 +70,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.Name).ToList();
                     break;
                 case "name":
-                default:
                     model.WorkQueueItems = model.WorkQueueItems.OrderBy(wqi => wqi.Name).ToList();
                     break;
+                default:
+                    model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.LastUpdated).ToList();
+                    break;
+            }
+            model.Pagination = new PaginationViewModel
+            {
+                Total = model.WorkQueueItems.Count,
+                PageNumber = model.PageNumber,
+                ResultsPerPage = DataConstants.Search.WorkQueurResultsPerPage,
+                ResultType = "items"
+            };
+
+            if (model.Pagination.Total > 10)
+            {
+                var skip = (model.PageNumber - 1) * 10; 
+                model.WorkQueueItems = model.WorkQueueItems.Skip(skip).Take(10).ToList();
             }
         }
     }

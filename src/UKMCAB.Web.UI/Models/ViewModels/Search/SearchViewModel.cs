@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Data;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
     public class SearchViewModel: ILayoutModel

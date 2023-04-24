@@ -8,17 +8,22 @@ namespace UKMCAB.Data.Search.Models
         public string id { get; set; }
         [SimpleField]
         public string CABId { get; set; }
-        [SimpleField]
-        public bool IsPublished { get; set; }
-        [SimpleField]
-        public bool IsLatest { get; set; }
 
 
         [SearchableField(IsSortable = true, NormalizerName = "lowercase")]
         public string Name { get; set; }
 
         [SearchableField]
+        public string AddressLine1 { get; set; }
         public string Address { get; set; }
+        [SearchableField]
+        public string AddressLine2 { get; set; }
+        [SearchableField]
+        public string TownCity { get; set; }
+        [SearchableField]
+        public string Postcode { get; set; }
+        [SearchableField]
+        public string Country { get; set; }
 
         [SearchableField]
         public string Email { get; set; }
