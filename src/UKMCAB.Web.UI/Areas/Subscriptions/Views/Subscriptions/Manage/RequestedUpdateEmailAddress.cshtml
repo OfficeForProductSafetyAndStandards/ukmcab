@@ -1,5 +1,4 @@
-﻿@model SubscriptionRequestFlowViewModel
-<div id="email-alert-frontend">
+﻿<div id="email-alert-frontend">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
@@ -7,25 +6,13 @@
 
 
             <p class="govuk-body">
-                We’ve sent an email to <strong>@Model.Flow.EmailAddress</strong>
+                We’ve sent an email @ViewBag.Email
             </p>
 
             <p class="govuk-body">
-                Click the link in the email to confirm you want emails from UKMCAB about:
+                Click the link in the email to confirm your update email address
             </p>
 
-            @if(Model.Flow.SubscriptionType == SubscriptionType.Search)
-            {
-                <p class="govuk-body govuk-!-font-weight-bold">
-                    UKMCAB search results
-                </p>
-            }
-            else
-            {
-                <p class="govuk-body govuk-!-font-weight-bold">
-                    CAB @Model.Flow.CabId
-                </p>
-            }
 
             <p class="govuk-body">
                 The link will stop working after 7 days.
@@ -36,7 +23,7 @@
                     <span class="govuk-details__summary-text">
                         Not received an email?
                     </span>
-                </summary>  
+                </summary>
                 <div class="govuk-details__text">
                     <p>Emails sometimes take a few minutes to arrive.</p>
                     <p>If you do not receive an email soon, check your spam or junk folder.</p>

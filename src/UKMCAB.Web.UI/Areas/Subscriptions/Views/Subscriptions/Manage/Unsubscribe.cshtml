@@ -1,0 +1,25 @@
+﻿@model SubscriptionViewModel
+<form method="post">
+    <div class="govuk-!-margin-top-8 govuk-!-margin-bottom-8">
+        <h1 class="govuk-heading-xl">
+            Unsubscribe
+        </h1>
+    </div>
+
+    <p class="govuk-body">
+        Are you sure you want to unsubscribe from:
+    </p>
+
+    <p class="govuk-body govuk-!-margin-bottom-8">
+        @if (Model.Subscription.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
+        {
+            <strong class="govuk-!-font-weight-bold">UKMCAB search results</strong>
+        }
+        else
+        {
+            <strong class="govuk-!-font-weight-bold">UKMCAB CAB @Model.Subscription.CabName</strong>
+        }
+    </p>
+
+    <button class="gem-c-button govuk-button gem-c-button--bottom-margin" type="submit">Unsubscribe</button>
+</form>

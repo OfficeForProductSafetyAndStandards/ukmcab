@@ -1,0 +1,48 @@
+﻿@model SubscriptionRequestFlowViewModel
+<div id="email-alert-frontend">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="gem-c-heading govuk-heading-l govuk-!-margin-bottom-6">Check your email</h1>
+
+
+            <p class="govuk-body">
+                We’ve sent an email to <strong>@Model.Flow.EmailAddress</strong>
+            </p>
+
+            <p class="govuk-body">
+                Click the link in the email to confirm you want emails from UKMCAB about:
+            </p>
+
+            @if(Model.Flow.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
+            {
+                <p class="govuk-body govuk-!-font-weight-bold">
+                    UKMCAB search results
+                </p>
+            }
+            else
+            {
+                <p class="govuk-body govuk-!-font-weight-bold">
+                    CAB '@Model.Flow.CabName'
+                </p>
+            }
+
+            <p class="govuk-body">
+                The link will stop working after 7 days.
+            </p>
+
+            <details class="gem-c-details govuk-details govuk-!-margin-bottom-3" data-module="govuk-details gem-details" data-govuk-details-module-started="true" data-gem-details-module-started="true">
+                <summary class="govuk-details__summary" data-details-track-click="">
+                    <span class="govuk-details__summary-text">
+                        Not received an email?
+                    </span>
+                </summary>  
+                <div class="govuk-details__text">
+                    <p>Emails sometimes take a few minutes to arrive.</p>
+                    <p>If you do not receive an email soon, check your spam or junk folder.</p>
+                    <p>If this does not work, <a class="govuk-link" href="https://www.gov.uk/contact/govuk">contact GOV.UK</a> for help.</p>
+                </div>
+            </details>
+        </div>
+    </div>
+</div>

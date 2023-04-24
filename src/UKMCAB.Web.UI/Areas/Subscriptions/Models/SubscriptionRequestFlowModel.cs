@@ -1,13 +1,7 @@
 ﻿using System.Text.Json.Serialization;
-using UKMCAB.Web.UI.Models;
+using UKMCAB.Subscriptions.Core.Domain;
 
 namespace UKMCAB.Web.UI.Areas.Subscriptions.Models;
-
-public enum SubscriptionType
-{
-    Search,
-    Cab
-}
 
 public class SubscriptionRequestFlowModel
 {
@@ -16,6 +10,9 @@ public class SubscriptionRequestFlowModel
 
     [JsonPropertyName("c")]
     public Guid? CabId { get; set; }
+
+    [JsonPropertyName("cn")]
+    public string? CabName { get; set; }
 
     [JsonPropertyName("q")]
     public string? SearchQueryString { get; set; }

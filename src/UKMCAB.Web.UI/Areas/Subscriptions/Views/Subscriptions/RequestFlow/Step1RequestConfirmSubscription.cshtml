@@ -12,13 +12,13 @@
     </p>
 
     <p class="govuk-body govuk-!-margin-bottom-8">
-        @if(Model.Flow.SubscriptionType == SubscriptionType.Search)
+        @if(Model.Flow.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
         {
             <strong class="govuk-!-font-weight-bold">UKMCAB search results</strong>
         }
         else
         {
-            <strong class="govuk-!-font-weight-bold">UKMCAB CAB @Model.Flow.CabId</strong>
+            <strong class="govuk-!-font-weight-bold">UKMCAB CAB '@Model.Flow.CabName'</strong>
         }
     </p>
 

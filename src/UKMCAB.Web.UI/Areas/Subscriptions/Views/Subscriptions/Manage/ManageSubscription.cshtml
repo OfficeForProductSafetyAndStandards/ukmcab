@@ -1,0 +1,39 @@
+﻿@model SubscriptionViewModel
+
+
+<h1 class="govuk-heading-l">Manage your UKMCAB subscription</h1>
+
+<p class="govuk-body">
+    Subscription for @Model.Subscription.EmailAddress
+</p>
+
+<p class="govuk-body">
+    <a href="@Url.RouteUrl(SubscriptionsController.Routes.RequestUpdateEmailAddress, new {Model.Subscription.Id})">Change email address</a>
+</p>
+
+<hr class="govuk-section-break govuk-section-break--visible" />
+
+<p class="govuk-body">
+    Topic
+</p>
+
+@if(Model.Subscription.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
+{
+    <p class="govuk-body govuk-!-font-weight-bold">
+        UKMCAB search results
+    </p>
+}
+else
+{
+    <p class="govuk-body govuk-!-font-weight-bold">
+        CAB: '@Model.Subscription.CabName'
+    </p>
+}
+
+<p class="govuk-body">
+    <a href="@Url.RouteUrl(SubscriptionsController.Routes.ChangeFrequency, new {Model.Subscription.Id})">Change how often you get emails</a>
+</p>
+
+<p class="govuk-body">
+    <a href="@Url.RouteUrl(SubscriptionsController.Routes.Unsubscribe, new {Model.Subscription.Id})">Unsubscribe</a>
+</p>

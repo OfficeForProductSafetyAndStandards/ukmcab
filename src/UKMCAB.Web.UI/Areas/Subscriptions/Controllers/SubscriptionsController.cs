@@ -1,7 +1,6 @@
-﻿using Humanizer;
-using Microsoft.IdentityModel.Tokens;
-using System.Net.Mail;
+﻿using Microsoft.IdentityModel.Tokens;
 using UKMCAB.Common.Security;
+using UKMCAB.Core.Services;
 using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Services;
 using UKMCAB.Web.UI.Areas.Subscriptions.Models;
@@ -13,6 +12,7 @@ namespace UKMCAB.Web.UI.Areas.Subscriptions.Controllers;
 public class SubscriptionsController : Controller
 {
     private readonly ISubscriptionService _subscriptions;
+    private readonly ICachedPublishedCabService _cachedPublishedCabService;
 
     public static class Routes
     {
@@ -26,17 +26,65 @@ public class SubscriptionsController : Controller
         public const string Step5RequestedSubscription = "subscription.requested";
         #endregion
 
+        #region Confirmation
         public const string ConfirmSearchSubscription = "subscription.confirm.search";
         public const string ConfirmCabSubscription = "subscription.confirm.cab";
         public const string ConfirmUpdatedEmailAddress = "subscription.confirm.update-email-address";
+        #endregion
+
         public const string ManageSubscription = "subscription.manage";
-        public const string Unsubscribe = "subscription.unsubscribe";
+        public const string ChangeFrequency = "subscription.manage.change-frequency";
+        public const string FrequencyChanged = "subscription.manage.frequency-changed";
+        public const string Unsubscribe = "subscription.manage.unsubscribe";
         public const string UnsubscribeAll = "subscription.unsubscribe-all";
+
+        #region Update email address flow
+        public const string RequestUpdateEmailAddress = "subscription.manage.request.update-email-address"; 
+        public const string RequestedUpdateEmailAddress = "subscription.manage.requested.update-email-address";
+        #endregion
     }
 
-    public SubscriptionsController(ISubscriptionService subscriptions)
+    public class Views
+    {
+        public static class RequestFlow
+        {
+            private const string _base = "RequestFlow/";
+            public const string Step1RequestConfirmSubscription = $"{_base}Step1RequestConfirmSubscription";
+            public const string Step2RequestSubscriptionFrequency = $"{_base}Step2RequestSubscriptionFrequency";
+            public const string Step3RequestSubscriptionEmailAddress = $"{_base}Step3RequestSubscriptionEmailAddress";
+            public const string Step4RequestSubscription = $"{_base}Step4RequestSubscription";
+            public const string Step5RequestedSubscription = $"{_base}Step5RequestedSubscription";
+        }
+
+        public static class Confirmation
+        {
+            private const string _base = "Confirmation/";
+            public const string ConfirmedSearchSubscription = $"{_base}ConfirmedSearchSubscription";
+            public const string ConfirmedCabSubscription = $"{_base}ConfirmedCabSubscription";
+            public const string ConfirmedUpdatedEmailAddress = $"{_base}ConfirmedUpdatedEmailAddress";
+        }
+
+
+        public static class Manage
+        {
+            private const string _base = "Manage/";
+            public const string ManageSubscription = $"{_base}ManageSubscription";
+            public const string RequestUpdateEmailAddress = $"{_base}RequestUpdateEmailAddress";
+            public const string RequestedUpdateEmailAddress = $"{_base}RequestedUpdateEmailAddress";
+            public const string Unsubscribed = $"{_base}Unsubscribe";
+            public const string Unsubscribe = $"{_base}Unsubscribed";
+            public const string UnsubscribeAll = $"{_base}UnsubscribeAll";
+            public const string UnsubscribedAll = $"{_base}UnsubscribedAll";
+
+            public const string ChangeFrequency = $"{_base}ChangeFrequency";
+            public const string FrequencyChanged = $"{_base}FrequencyChanged";
+        }
+    }
+
+    public SubscriptionsController(ISubscriptionService subscriptions, ICachedPublishedCabService cachedPublishedCabService)
     {
         _subscriptions = subscriptions;
+        _cachedPublishedCabService = cachedPublishedCabService;
     }
 
     #region Subscription request flow
@@ -53,7 +101,7 @@ public class SubscriptionsController : Controller
     {
         var req = new SubscriptionRequestFlowModel
         {
-            SubscriptionType = Models.SubscriptionType.Search,
+            SubscriptionType = SubscriptionType.Search,
             SearchQueryString = Request.QueryString.Value,
         };
         return RedirectToRoute(Routes.Step1RequestConfirmSubscription, new { tok = JsonBase64UrlToken.Serialize(req) });
@@ -64,7 +112,7 @@ public class SubscriptionsController : Controller
     {
         var req = new SubscriptionRequestFlowModel
         {
-            SubscriptionType = Models.SubscriptionType.Cab,
+            SubscriptionType = SubscriptionType.Cab,
             CabId = id,
         };
         return RedirectToRoute(Routes.Step1RequestConfirmSubscription, new { tok = JsonBase64UrlToken.Serialize(req) });
@@ -90,7 +138,7 @@ public class SubscriptionsController : Controller
         {
             return View();
         }
-        else
+        else // todo: VALIDATION
         {
             tok = JsonBase64UrlToken.Pipe<SubscriptionRequestFlowModel>(tok, x => x.Frequency = Enum.Parse<Frequency>(frequency!, true));
             return RedirectToRoute(Routes.Step3RequestSubscriptionEmailAddress, new { tok });
@@ -104,7 +152,7 @@ public class SubscriptionsController : Controller
         {
             return View();
         }
-        else
+        else // todo: VALIDATION
         {
             tok = JsonBase64UrlToken.Pipe<SubscriptionRequestFlowModel>(tok, x => x.EmailAddress = emailAddress);
             return RedirectToRoute(Routes.Step4RequestSubscription, new { tok });
@@ -124,7 +172,7 @@ public class SubscriptionsController : Controller
         else
         {
             var req = JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok);
-            if (req.SubscriptionType == Models.SubscriptionType.Search)
+            if (req.SubscriptionType == SubscriptionType.Search)
             {
                 await _subscriptions.RequestSubscriptionAsync(new SearchSubscriptionRequest(req.EmailAddress, req.SearchQueryString, req.Frequency.Value));
             }
@@ -146,49 +194,117 @@ public class SubscriptionsController : Controller
 
     #endregion
 
-
-
+    #region Confirmation
 
     [HttpGet("subscribe/search/confirm", Name = Routes.ConfirmSearchSubscription)]
     public async Task<IActionResult> ConfirmSearchSubscriptionAsync(string token)
     {
         var result = await _subscriptions.ConfirmSearchSubscriptionAsync(token).ConfigureAwait(false);
-        return Content("ok; search sub confirmed");
+        return View(Views.Confirmation.ConfirmedSearchSubscription);
     }
 
     [HttpGet("subscribe/cab/confirm", Name = Routes.ConfirmCabSubscription)]
     public async Task<IActionResult> ConfirmCabSubscriptionAsync(string token)
     {
         var result = await _subscriptions.ConfirmCabSubscriptionAsync(token).ConfigureAwait(false);
-        return Content("ok; cab sub confirmed");
+        ViewBag.CabName = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(result.CabSubscriptionRequest.CabId.ToString());
+        return View(Views.Confirmation.ConfirmedCabSubscription);
     }
 
-    [HttpGet("update/email-address", Name = Routes.ConfirmUpdatedEmailAddress)]
+    [HttpGet("update/email-address/confirm", Name = Routes.ConfirmUpdatedEmailAddress)]
     public async Task<IActionResult> ConfirmUpdateEmailAddressAsync(string token)
     {
         var result = await _subscriptions.ConfirmUpdateEmailAddressAsync(token).ConfigureAwait(false);
-        return Content("ok; email address updated: " + result);
+        return View(Views.Confirmation.ConfirmedUpdatedEmailAddress);
     }
+
+    #endregion
 
     [HttpGet("manage/{id}", Name = Routes.ManageSubscription)]
     public async Task<IActionResult> ManageSubscriptionAsync(string id)
     {
-        var sub = await _subscriptions.GetSubscriptionAsync(id).ConfigureAwait(false);
-        return Content("todo - manage sub");
+        return View(Views.Manage.ManageSubscription, new SubscriptionViewModel(await _subscriptions.GetSubscriptionAsync(id).ConfigureAwait(false)));
     }
 
-    [HttpGet("unsubscribe/{id}", Name = Routes.Unsubscribe)]
+    #region Unsubscribe
+
+    [Route("unsubscribe/{id}", Name = Routes.Unsubscribe)]
     public async Task<IActionResult> UnsubscribeAsync(string id)
     {
-        var done = await _subscriptions.UnsubscribeAsync(id).ConfigureAwait(false);
-        return Content("unsubscribed: "+done);
+        if (Request.Method == HttpMethod.Get.Method)
+        {
+            return View(Views.Manage.Unsubscribe, new SubscriptionViewModel(await _subscriptions.GetSubscriptionAsync(id).ConfigureAwait(false)));
+        }
+        else
+        {
+            var done = await _subscriptions.UnsubscribeAsync(id).ConfigureAwait(false);
+            return View(Views.Manage.Unsubscribed);
+        }
     }
 
-    [HttpGet("unsubscribe/all", Name = Routes.UnsubscribeAll)]
-    public async Task<IActionResult> UnsubscribeAllAsync(string emailAddress)
+    [Route("unsubscribe-all", Name = Routes.UnsubscribeAll)]
+    public async Task<IActionResult> UnsubscribeAllAsync([FromForm] string? emailAddress = null)
     {
-        var count = await _subscriptions.UnsubscribeAllAsync(emailAddress).ConfigureAwait(false);
-        return Content("unsubscribed all; count=" + count);
+        if (Request.Method == HttpMethod.Get.Method)
+        {
+            return View(Views.Manage.UnsubscribeAll);
+        }
+        else
+        {
+            var done = await _subscriptions.UnsubscribeAllAsync(emailAddress).ConfigureAwait(false);
+            return View(Views.Manage.UnsubscribedAll);
+        }
     }
+
+    #endregion
+
+    #region Update email address
+
+    [Route("manage/{id}/update-email-address/request", Name = Routes.RequestUpdateEmailAddress)]
+    public async Task<IActionResult> RequestUpdateEmailAddressAsync(string id, [FromForm] string emailAddress)
+    {
+        if (Request.Method == HttpMethod.Get.Method)
+        {
+            return View();
+        }
+        else // todo: VALIDATION
+        {
+            await _subscriptions.RequestUpdateEmailAddressAsync(new SubscriptionService.UpdateEmailAddressOptions(id, emailAddress));
+            return RedirectToRoute(Routes.RequestedUpdateEmailAddress, new { id, email = Base64UrlEncoder.Encode(emailAddress)});
+        }
+    }
+
+    [HttpGet("manage/{id}/update-email-address/requested", Name = Routes.RequestedUpdateEmailAddress)]
+    public IActionResult RequestedUpdateEmailAddress(string id, string email)
+    {
+        ViewBag.Email = Base64UrlEncoder.Decode(email);
+        return View(Views.Manage.RequestedUpdateEmailAddress);
+    }
+
+    #endregion
+
+    #region Change frequency
+
+    [Route("manage/{id}/change-frequency", Name = Routes.ChangeFrequency)]
+    public async Task<IActionResult> ChangeFrequencyAsync(string id, [FromForm] Frequency frequency)
+    {
+        if (Request.Method == HttpMethod.Get.Method)
+        {
+            return View(Views.Manage.ChangeFrequency);
+        }
+        else // todo: VALIDATION
+        {
+            await _subscriptions.UpdateFrequencyAsync(id, frequency);
+            return RedirectToRoute(Routes.FrequencyChanged, new { id });
+        }
+    }
+
+    [HttpGet("manage/{id}/frequency-changed", Name = Routes.FrequencyChanged)]
+    public IActionResult FrequencyChanged(string id)
+    {
+        return View(Views.Manage.FrequencyChanged);
+    }
+
+    #endregion
 
 }
