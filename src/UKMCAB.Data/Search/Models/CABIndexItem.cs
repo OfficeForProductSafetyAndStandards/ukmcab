@@ -8,10 +8,6 @@ namespace UKMCAB.Data.Search.Models
         public string id { get; set; }
         [SimpleField]
         public string CABId { get; set; }
-        [SimpleField]
-        public bool IsPublished { get; set; }
-        [SimpleField]
-        public bool IsLatest { get; set; }
 
 
         [SearchableField(IsSortable = true, NormalizerName = "lowercase")]
