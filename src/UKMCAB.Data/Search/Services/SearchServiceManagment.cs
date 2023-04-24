@@ -1,6 +1,7 @@
 ﻿using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
@@ -46,7 +47,7 @@ namespace UKMCAB.Data.Search.Services
                 SearchIndexerDataSourceType.CosmosDb, cosmosDBConnectionString + $";Database={DataConstants.CosmosDb.Database}",
                 new SearchIndexerDataContainer(DataConstants.CosmosDb.Constainer));
 
-            cosmosDbDataSource.Container.Query = "SELECT * FROM c WHERE c.IsPublished = true";
+            cosmosDbDataSource.Container.Query = $"SELECT * FROM c WHERE c.Status = \"{Status.Published}\"";
 
             await searchIndexerClient.CreateOrUpdateDataSourceConnectionAsync(cosmosDbDataSource);
 

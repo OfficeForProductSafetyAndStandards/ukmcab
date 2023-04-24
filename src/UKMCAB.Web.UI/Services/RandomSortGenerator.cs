@@ -32,7 +32,7 @@ namespace UKMCAB.Web.UI.Services
 
         private async void RegenerateRandomSortValues(object? state)
         {
-            var allCabs = await _repository.Query<Document>(d => d.IsPublished);
+            var allCabs = await _repository.Query<Document>(d => d.StatusValue == Status.Published);
             foreach (var cab in allCabs)
             {
                 cab.RandomSort = Guid.NewGuid().ToString();

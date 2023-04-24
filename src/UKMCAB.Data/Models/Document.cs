@@ -1,13 +1,11 @@
-﻿using UKMCAB.Common;
-
-namespace UKMCAB.Data.Models
+﻿namespace UKMCAB.Data.Models
 {
     public class Document
     {
         public string id { get; set; }
 
-        public bool IsPublished { get; set; }
-        public bool IsLatest { get; set; }
+        public Status StatusValue { get; set; }
+        public string Status => StatusValue.ToString();
 
         public string CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }

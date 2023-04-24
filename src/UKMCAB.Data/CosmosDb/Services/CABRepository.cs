@@ -58,8 +58,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         LastModifiedBy = "admin",
                         CreatedDate = DateTime.UtcNow,
                         CreatedBy = "admin",
-                        IsLatest = true,
-                        IsPublished = true,
+                        StatusValue = Status.Published,
                         RandomSort = Guid.NewGuid().ToString()
                     };
                     var newDoc = await CreateAsync(document);
