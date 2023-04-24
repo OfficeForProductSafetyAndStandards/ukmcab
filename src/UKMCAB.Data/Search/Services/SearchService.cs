@@ -127,7 +127,7 @@ namespace UKMCAB.Data.Search.Services
             switch (options.Sort)
             {
                 case DataConstants.SortOptions.LastUpdated:
-                    return "LastUpdatedDate asc";
+                    return "LastUpdatedDate desc";
                 case DataConstants.SortOptions.A2ZSort:
                     return "Name asc";
                 case DataConstants.SortOptions.Z2ASort:

@@ -6,7 +6,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
     public class CABDetailsViewModel : CreateEditCABViewModel, ILayoutModel
     {
-        public CABDetailsViewModel() { }
+        public CABDetailsViewModel()
+        {
+            DocumentStatus = Status.Created;
+        }
 
         public CABDetailsViewModel(Document document)
         {
@@ -20,6 +23,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
             RenewalDateMonth = document.RenewalDate?.Month.ToString("00") ?? string.Empty;
             RenewalDateYear = document.RenewalDate?.Year.ToString("0000") ?? string.Empty;
             UKASReference = document.UKASReference;
+            DocumentStatus = document.StatusValue;
         }
 
         public string? CABId { get; set; }

@@ -1,4 +1,5 @@
 ﻿@using Microsoft.EntityFrameworkCore
+@using UKMCAB.Data.Models
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CABSummaryViewModel
 @if (Model.ShowError)
 {
@@ -286,17 +287,22 @@
             <div>
                 <form method="post">
                     <input type="hidden" asp-for="CABId"/>
-                        <div class="govuk-button-group">
-                            <button class="govuk-button" data-module="govuk-button" name="submitType" value="continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
-                                    Publish
-                            </button>
-                            <a class="govuk-button govuk-button--secondary" asp-area="admin" asp-controller="Admin" asp-action="Index">
-                                Save as draft
-                            </a>
-                            <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="button govuk-link govuk-link--no-visited-state govuk-!-padding-top-5">
-                                Cancel
-                            </a>
-                        </div>
+                    <div class="govuk-button-group">
+                        <button class="govuk-button" data-module="govuk-button" name="submitType" value="continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                                Publish
+                        </button>
+                        <a class="govuk-button govuk-button--secondary" asp-area="admin" asp-controller="Admin" asp-action="Index">
+                            Save as draft
+                        </a>
+                        @if (Model.CabDetailsViewModel.DocumentStatus == Status.Created)
+                        {
+                            <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        }
+                        else
+                        {
+                            <a asp-area="admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        }
+                    </div>
                 </form>
             </div>
         </fieldset>
