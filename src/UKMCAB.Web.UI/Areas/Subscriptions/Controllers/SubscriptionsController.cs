@@ -206,8 +206,26 @@ public class SubscriptionsController : Controller
     public async Task<IActionResult> ConfirmCabSubscriptionAsync(string token)
     {
         var result = await _subscriptions.ConfirmCabSubscriptionAsync(token).ConfigureAwait(false);
-        var cabName = await GetCabNameAsync(result.CabSubscriptionRequest.CabId);
-        return RedirectToRoute(Routes.ManageSubscription, new { id = result.SubscriptionId, smsg = Base64UrlEncoder.Encode($"You've subscribed to emails about '{cabName}'") });
+
+        if (result.ValidationResult == SubscriptionService.ValidationResult.Success)
+        {
+            var cabName = await GetCabNameAsync(result.CabSubscriptionRequest.CabId);
+            return RedirectToRoute(Routes.ManageSubscription, new { id = result.SubscriptionId, smsg = Base64UrlEncoder.Encode($"You've subscribed to emails about '{cabName}'") });
+        }
+        else if (result.ValidationResult == SubscriptionService.ValidationResult.EmailBlocked)
+        {
+            throw new DomainException("Unable to fulfil this request");
+        }
+        else if (result.ValidationResult == SubscriptionService.ValidationResult.AlreadySubscribed)
+        {
+            throw new DomainException("You are already subscribed");
+        }
+        else
+        {
+            throw new NotSupportedException("The validation result " + result.ValidationResult.ToString() + " is not supported");
+        }
+
+
     }
 
     [HttpGet("update/email-address/confirm", Name = Routes.ConfirmUpdatedEmailAddress)]
@@ -238,15 +256,15 @@ public class SubscriptionsController : Controller
     [Route("unsubscribe/{id}", Name = Routes.Unsubscribe)]
     public async Task<IActionResult> UnsubscribeAsync(string id)
     {
+        var viewModel = await GetSubscriptionViewModelAsync(id, "Unsubscribe");
         if (Request.Method == HttpMethod.Get.Method)
         {
-            var viewModel = await GetSubscriptionViewModelAsync(id, "Unsubscribe");
             return View(Views.Manage.Unsubscribe, viewModel);
         }
         else
         {
             var done = await _subscriptions.UnsubscribeAsync(id).ConfigureAwait(false);
-            return View(Views.Manage.Unsubscribed);
+            return View(Views.Manage.Unsubscribed, viewModel);
         }
     }
 

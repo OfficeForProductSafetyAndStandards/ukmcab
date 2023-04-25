@@ -1,0 +1,128 @@
+﻿@using UKMCAB.Common.Security;
+@using UKMCAB.Subscriptions.Core.Services;
+@model SubscriptionsDiagnosticsViewModel
+
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        @if (Model.SuccessBannerMessage != null)
+        {
+            <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+                 aria-labelledby="govuk-notification-banner-title"
+                 data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                        Success
+                    </h2>
+                </div>
+                <div class="govuk-notification-banner__content">
+                    <h3 class="govuk-notification-banner__heading">
+                        @Model.SuccessBannerMessage
+                    </h3>
+                </div>
+            </div>
+        }
+
+        @if(Context.Request.Query["stat"].ToString().Clean() != null)
+        {
+            <h4 class="govuk-heading-s">Request process subscriptions action gave stats:</h4>
+            <div class="govuk-body-xs">
+                @{
+                    var stats = JsonBase64UrlToken.Deserialize<SubscriptionEngine.ResultAccumulator>(Context.Request.Query["stat"]);
+                }
+                Errors: @stats.Errors<br/>
+                Initialised: @stats.Initialised<br />
+                NotDue: @stats.NotDue<br />
+                NoChange: @stats.NoChange<br />
+                Notified: @stats.Notified
+            </div>
+        }
+
+        
+        <h1 class="govuk-heading-l">Email subscriptions diagnostics</h1>
+        
+        <h2 class="govuk-heading-m">Status</h2>
+
+        <table class="govuk-table">
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Outbound sender mode</th>
+                    <td class="govuk-table__cell">@Model.OutboundSenderMode</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Date Time</th>
+                    <td class="govuk-table__cell">
+                        @Model.DateTimeEnvelope.DateTime.ToString("F")
+                        (@Model.DateTimeEnvelope.Status)
+                    </td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Last confirm link</th>
+                    <td class="govuk-table__cell">
+                        @if(Model.LastConfirmationLink != null)
+                        {
+                            <a href="@Model.LastConfirmationLink">Confirm</a>
+                        }
+                        else
+                        {
+                            @:none
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p class="govuk-body-s">
+            <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsDiagnosticsController.Routes.SentEmails)">View sent emails</a>
+            | 
+            <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsDiagnosticsController.Routes.SubscriptionList)">View current subscriptions</a>
+        </p>
+
+        <hr class="govuk-section-break--l" />
+
+        <h2 class="govuk-heading-m">Date/time</h2>
+        <p class="govuk-body">Override the real date time with a fake one for a while</p>
+        <div>
+            <form method="post" action="@Url.RouteUrl(SubscriptionsDiagnosticsController.Routes.FakeDateTimeSet)">
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="when">
+                        Fake date/time (UTC timezone)
+                    </label>
+                    <div class="govuk-hint">
+                        Must be in the exact format: @SubscriptionsDiagnosticsViewModel.FakeDateTimeFormat, e.g., 01/01/2024 23:00:00  (UTC timezone)
+                    </div>
+                    <input class="govuk-input govuk-input--width-20" id="when" name="when" value="@Model.FakeDateTime" placeholder="dd/mm/yyyy HH:mm:ss" />
+                </div>
+
+                <div class="govuk-form-group">
+                    <label class="govuk-label" for="expires-hours">
+                        Expiry in hours
+                    </label>
+                    <div class="govuk-hint">
+                        How many hours do you want the overridden date-time to last before the system reverts to real-date/time.
+                    </div>
+                    <input class="govuk-input govuk-input--width-20" name="expiryInHours" value="1" type="number" min="1" max="24" step="1" />
+                </div>
+                <button class="govuk-button">Save</button>
+            </form>
+        </div>
+
+
+
+
+        <h2 class="govuk-heading-m">Actions</h2>
+        <form method="post" class="govuk-!-display-inline-block" action="@Url.RouteUrl(SubscriptionsDiagnosticsController.Routes.ClearAllData)">
+            <button class="govuk-button">Clear all data</button>
+        </form>
+
+        <form method="post" class="govuk-!-display-inline-block" action="@Url.RouteUrl(SubscriptionsDiagnosticsController.Routes.RequestProcess)">
+            <button class="govuk-button">Request process subscriptions</button>
+        </form>
+
+
+
+    </div>
+</div>
+
