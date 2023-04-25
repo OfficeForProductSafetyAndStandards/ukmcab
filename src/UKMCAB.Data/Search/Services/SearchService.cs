@@ -167,5 +167,10 @@ namespace UKMCAB.Data.Search.Services
         {
             await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
         }
+
+        public async Task RemoveFromIndexAsync(string id)
+        {
+            await _indexClient.DeleteDocumentsAsync("id", new [] { id });
+        }
     }
 }

@@ -139,6 +139,7 @@ namespace UKMCAB.Core.Services
                 publishedVersion.StatusValue = Status.Historical;
                 Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
+                await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
             }
             latestDocument.PublishedBy = userEmail;
             latestDocument.PublishedDate = currentDateTime;
@@ -149,6 +150,7 @@ namespace UKMCAB.Core.Services
 
             // TODO: look at introducing CAB targeted index updates rather than complete index update
             await _cachedSearchService.ReIndexAsync();
+            await _cachedSearchService.ClearAsync();
             await _cachedPublishedCabService.ClearAsync(latestDocument.CABId);
 
             return latestDocument;

@@ -66,6 +66,9 @@ internal class CachedSearchService : ICachedSearchService
     public async Task ReIndexAsync()
     {
         await _search.ReIndexAsync();
-        await ClearAsync();
+    }
+    public async Task RemoveFromIndexAsync(string id)
+    {
+        await _search.RemoveFromIndexAsync(id);
     }
 }
