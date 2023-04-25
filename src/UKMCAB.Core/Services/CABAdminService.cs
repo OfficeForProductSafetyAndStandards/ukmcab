@@ -10,11 +10,13 @@ namespace UKMCAB.Core.Services
     {
         private readonly ICABRepository _cabRepostitory;
         private readonly ICachedSearchService _cachedSearchService;
+        private readonly ICachedPublishedCABService _cachedPublishedCabService;
 
-        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService)
+        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService, ICachedPublishedCABService cachedPublishedCabService)
         {
             _cabRepostitory = cabRepostitory;
             _cachedSearchService = cachedSearchService;
+            _cachedPublishedCabService = cachedPublishedCabService;
         }
 
         public async Task<bool> DocumentWithKeyIdentifiersExistsAsync(Document document)
@@ -147,6 +149,7 @@ namespace UKMCAB.Core.Services
 
             // TODO: look at introducing CAB targeted index updates rather than complete index update
             await _cachedSearchService.ReIndexAsync();
+            await _cachedPublishedCabService.ClearAsync(latestDocument.CABId);
 
             return latestDocument;
         }
