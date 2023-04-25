@@ -322,6 +322,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var user = await _userManager.GetUserAsync(User);
                 var pubishedDoc = await _cabAdminService.PublishDocumentAsync(user.Email, latest);
+                TempData["Confirmation"] = true;
                 return RedirectToAction("Confirmation", "CAB", new { Area = "admin", id = latest.CABId });
             }
 
@@ -333,7 +334,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/confirmation/{id}")]
         public async Task<IActionResult> Confirmation(string id)
         {
-            return View();
+            var latest = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latest == null || latest.StatusValue != Status.Published || !TempData.ContainsKey("Confirmation")) 
+            {
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            }
+            return View(new CABConfirmationViewModel
+            {
+                CABId = latest.CABId,
+                Name = latest.Name,
+                CABNumber = latest.CABNumber
+            });
         }
 
         [HttpGet]
