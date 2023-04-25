@@ -64,7 +64,7 @@ public class SubscriptionsController : Controller
             public const string ManageSubscription = $"{_base}ManageSubscription";
             public const string RequestUpdateEmailAddress = $"{_base}RequestUpdateEmailAddress";
             public const string RequestedUpdateEmailAddress = $"{_base}RequestedUpdateEmailAddress";
-            public const string Unsubscribed = $"{_base}Unsubscribe";
+            public const string Unsubscribed = $"{_base}Unsubscribed";
             public const string Unsubscribe = $"{_base}Unsubscribe";
             public const string UnsubscribeAll = $"{_base}UnsubscribeAll";
             public const string UnsubscribedAll = $"{_base}UnsubscribedAll";
@@ -91,6 +91,7 @@ public class SubscriptionsController : Controller
     [HttpGet("subscribe/request/search", Name = Routes.Step0RequestSearchSubscription)]
     public IActionResult Step0RequestSearchSubscription()
     {
+        var queryString = Request.QueryString.Value;
         var req = new SubscriptionRequestFlowModel
         {
             SubscriptionType = SubscriptionType.Search,
