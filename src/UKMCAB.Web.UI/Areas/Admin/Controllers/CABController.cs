@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using StackExchange.Redis;
 using UKMCAB.Data.Models;
 using UKMCAB.Core.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
