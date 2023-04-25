@@ -41,10 +41,10 @@ namespace UKMCAB.Data.CosmosDb.Services
                         Website = cabDocument.Website,
                         Phone = cabDocument.Phone,
                         CABNumber = cabDocument.BodyNumber,
-                        BodyTypes = cabDocument.BodyTypes,
-                        RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
-                        TestingLocations = cabDocument.TestingLocations,
-                        LegislativeAreas = cabDocument.LegislativeAreas,
+                        BodyTypes = SanitiseLists(cabDocument.BodyTypes, DataConstants.Lists.BodyTypes) ,
+                        RegisteredOfficeLocation = string.IsNullOrWhiteSpace(cabDocument.RegisteredOfficeLocation) ? string.Empty : SanitiseLists(new List<string> {cabDocument.RegisteredOfficeLocation}, DataConstants.Lists.Countries).First(),
+                        TestingLocations = SanitiseLists(cabDocument.TestingLocations, DataConstants.Lists.Countries),
+                        LegislativeAreas = SanitiseLists(cabDocument.LegislativeAreas, DataConstants.Lists.LegislativeAreas),
                         HiddenText = cabDocument.HiddenText,
                         Schedules = cabDocument.PDFs != null && cabDocument.PDFs.Any() ? cabDocument.PDFs.Select(p => new FileUpload { BlobName  = p.BlobName, FileName = p.ClientFileName, UploadDateTime = DateTime.UtcNow}).ToList() : new List<FileUpload>(),
                         Documents = new List<FileUpload>(),
@@ -66,6 +66,43 @@ namespace UKMCAB.Data.CosmosDb.Services
             }
 
             _container = result.Container;
+        }
+
+        private List<string> SanitiseLists(List<string> importData, List<string> masterList)
+        {
+            var sanitisedList = new List<string>();
+            if (importData == null)
+            {
+                return null;
+            }
+            foreach (var data in importData)
+            {
+                var listItem =
+                    masterList.SingleOrDefault(ml => ml.Equals(data, StringComparison.InvariantCultureIgnoreCase));
+                if (listItem != null)
+                {
+                    sanitisedList.Add(listItem);
+                }
+                else
+                {
+                    switch (data.ToLower())
+                    {
+                        case "united states of america":
+                            sanitisedList.Add("United States");
+                            break;
+                        case "recognised third-party organisation":
+                            sanitisedList.Add("Recognised third-party");
+                            break;
+                        case "third-country-body":
+                            sanitisedList.Add("Third country body");
+                            break;
+                        default:
+                            sanitisedList.Add(data);
+                            break;
+                    }
+                }
+            }
+            return sanitisedList;
         }
 
         public async Task<Document> CreateAsync(Document document)
