@@ -6,7 +6,7 @@ public interface ICachedPublishedCabService
 {
     Task<Document> FindPublishedDocumentByCABIdAsync(string id);
     Task<int> PreCacheAllCabsAsync();
-}
+    Task ClearAsync(string id);
 
 public class CachedPublishedCabService : ICachedPublishedCabService
 {
