@@ -8,6 +8,8 @@ public class SubscriptionViewModel : ILayoutModel
 
     public string? Title { get; set; }
 
+    public string? SuccessBannerMessage { get; set; }
+
     public SubscriptionViewModel(SubscriptionModel subscription, string? title)
     {
         Subscription = subscription;
@@ -21,4 +23,6 @@ public class SubscriptionViewModel : ILayoutModel
         Frequency.Weekly => "weekly",
         _ => throw new NotImplementedException(),
     };
+
+    public string CabName { get; internal set; }
 }

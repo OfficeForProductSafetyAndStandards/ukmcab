@@ -4,14 +4,23 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="null" />
         <form method="post">
             <div id="email-frequency-input" class="govuk-form-group govuk-!-margin-bottom-6">
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <h1 class="govuk-fieldset__heading gem-c-radio__heading-text">How often do you want to get emails?</h1>
                     </legend>
-
-                    <div class="govuk-radios">
+                    <div class="govuk-hint">
+                        Select one
+                    </div>
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <p class="govuk-error-message">
+                            <span class="govuk-visually-hidden">Error:</span> @(ViewData.ModelState.FirstOrDefault().Value?.Errors.FirstOrDefault()?.ErrorMessage)
+                        </p>
+                    }
+                    <div class="govuk-radios @Html.Conditional(!ViewData.ModelState.IsValid,"govuk-form-group--error")">
                         <div class="gem-c-radio govuk-radios__item">
                             <input type="radio" name="frequency" id="radio-a813b9ca-0" value="daily" class="govuk-radios__input" @Html.Conditional(Model.Subscription.Frequency== Frequency.Daily,"checked")>
                             <label for="radio-a813b9ca-0" class="gem-c-label govuk-label govuk-radios__label">Once a day</label>

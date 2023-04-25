@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using Microsoft.EntityFrameworkCore.Storage;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using UKMCAB.Subscriptions.Core;
 using UKMCAB.Subscriptions.Core.Domain;
@@ -17,7 +18,13 @@ public static class SubscriptionsDiagnostics
         builder.MapPost($"{b}/process-subs", async (context) =>
         {
             var result = await context.RequestServices.GetRequiredService<ISubscriptionEngineCoordinator>().RequestProcessAsync(CancellationToken.None);
-            await context.Response.WriteAsJsonAsync(result, new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
+            
+            await context.Response.WriteAsJsonAsync(new 
+            {
+                result.Stats,
+                result.Status,
+                Exception = result.Exception?.ToString(),
+            }, new JsonSerializerOptions { DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull });
         });
 
         builder.MapPost($"{b}/clear-all-data", async (context) =>

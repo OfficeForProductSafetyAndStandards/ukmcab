@@ -214,7 +214,7 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
     {
         DataConnectionString = azureDataConnectionString,
         SearchQueryStringRemoveKeys = SearchViewModel.NonFilterProperties,
-        OutboundEmailSenderMode = OutboundEmailSenderMode.Pretend
+        OutboundEmailSenderMode = OutboundEmailSenderMode.Send
     }.Pipe(x => builder.Configuration.Bind("SubscriptionsCore", x));
 
     builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);

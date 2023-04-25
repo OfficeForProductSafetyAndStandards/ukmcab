@@ -37,10 +37,11 @@ public class SubscriptionsController : Controller
         public const string ChangeFrequency = "subscription.manage.change-frequency";
         public const string FrequencyChanged = "subscription.manage.frequency-changed";
         public const string Unsubscribe = "subscription.manage.unsubscribe";
-        public const string UnsubscribeAll = "subscription.unsubscribe-all";
+        public const string UnsubscribeAll = "subscriptions.unsubscribe-all";
+        public const string UnsubscribedAll = "subscriptions.unsubscribed-all";
 
         #region Update email address flow
-        public const string RequestUpdateEmailAddress = "subscription.manage.request.update-email-address"; 
+        public const string RequestUpdateEmailAddress = "subscription.manage.request.update-email-address";
         public const string RequestedUpdateEmailAddress = "subscription.manage.requested.update-email-address";
         #endregion
     }
@@ -57,15 +58,6 @@ public class SubscriptionsController : Controller
             public const string Step5RequestedSubscription = $"{_base}Step5RequestedSubscription";
         }
 
-        public static class Confirmation
-        {
-            private const string _base = "Confirmation/";
-            public const string ConfirmedSearchSubscription = $"{_base}ConfirmedSearchSubscription";
-            public const string ConfirmedCabSubscription = $"{_base}ConfirmedCabSubscription";
-            public const string ConfirmedUpdatedEmailAddress = $"{_base}ConfirmedUpdatedEmailAddress";
-        }
-
-
         public static class Manage
         {
             private const string _base = "Manage/";
@@ -78,7 +70,6 @@ public class SubscriptionsController : Controller
             public const string UnsubscribedAll = $"{_base}UnsubscribedAll";
 
             public const string ChangeFrequency = $"{_base}ChangeFrequency";
-            public const string FrequencyChanged = $"{_base}FrequencyChanged";
         }
     }
 
@@ -123,7 +114,7 @@ public class SubscriptionsController : Controller
     [Route("subscribe/request/confirm", Name = Routes.Step1RequestConfirmSubscription)]
     public IActionResult Step1RequestConfirmSubscription(string tok)
     {
-        if(Request.Method == HttpMethod.Get.Method)
+        if (Request.Method == HttpMethod.Get.Method)
         {
             return View(Views.RequestFlow.Step1RequestConfirmSubscription, new SubscriptionRequestFlowViewModel(JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok)));
         }
@@ -136,29 +127,37 @@ public class SubscriptionsController : Controller
     [Route("subscribe/request/frequency", Name = Routes.Step2RequestSubscriptionFrequency)]
     public IActionResult Step2RequestSubscriptionFrequency(string tok, [FromForm] string? frequency = null)
     {
-        if (Request.Method == HttpMethod.Get.Method)
+        if (Request.Method == HttpMethod.Post.Method)
         {
-            return View(Views.RequestFlow.Step2RequestSubscriptionFrequency);
+            if (Enum.TryParse<Frequency>(frequency!, true, out var f))
+            {
+                tok = JsonBase64UrlToken.Pipe<SubscriptionRequestFlowModel>(tok, x => x.Frequency = f);
+                return RedirectToRoute(Routes.Step3RequestSubscriptionEmailAddress, new { tok });
+            }
+            else
+            {
+                ModelState.AddModelError("", "Choose how often you want to get emails");
+            }
         }
-        else // todo: VALIDATION
-        {
-            tok = JsonBase64UrlToken.Pipe<SubscriptionRequestFlowModel>(tok, x => x.Frequency = Enum.Parse<Frequency>(frequency!, true));
-            return RedirectToRoute(Routes.Step3RequestSubscriptionEmailAddress, new { tok });
-        }
+        return View(Views.RequestFlow.Step2RequestSubscriptionFrequency);
     }
 
     [Route("subscribe/request/email-address", Name = Routes.Step3RequestSubscriptionEmailAddress)]
-    public IActionResult Step3RequestSubscriptionEmailAddress(string tok, [FromForm] string emailAddress)
+    public IActionResult Step3RequestSubscriptionEmailAddress(string tok, [FromForm] string? emailAddress)
     {
-        if (Request.Method == HttpMethod.Get.Method)
+        if (Request.Method == HttpMethod.Post.Method)
         {
-            return View(Views.RequestFlow.Step3RequestSubscriptionEmailAddress);
+            if (emailAddress.IsValidEmail())
+            {
+                tok = JsonBase64UrlToken.Pipe<SubscriptionRequestFlowModel>(tok, x => x.EmailAddress = emailAddress);
+                return RedirectToRoute(Routes.Step4RequestSubscription, new { tok });
+            }
+            else
+            {
+                ModelState.AddModelError("", $"Enter a{(emailAddress?.Clean() == null ? "n" : " valid")} email address");
+            }
         }
-        else // todo: VALIDATION
-        {
-            tok = JsonBase64UrlToken.Pipe<SubscriptionRequestFlowModel>(tok, x => x.EmailAddress = emailAddress);
-            return RedirectToRoute(Routes.Step4RequestSubscription, new { tok });
-        }
+        return View(Views.RequestFlow.Step3RequestSubscriptionEmailAddress);
     }
 
 
@@ -200,30 +199,37 @@ public class SubscriptionsController : Controller
     public async Task<IActionResult> ConfirmSearchSubscriptionAsync(string token)
     {
         var result = await _subscriptions.ConfirmSearchSubscriptionAsync(token).ConfigureAwait(false);
-        return View(Views.Confirmation.ConfirmedSearchSubscription);
+        return RedirectToRoute(Routes.ManageSubscription, new { id = result.SubscriptionId, smsg = Base64UrlEncoder.Encode("You've subscribed to emails about UKMCAB search results") });
     }
 
     [HttpGet("subscribe/cab/confirm", Name = Routes.ConfirmCabSubscription)]
     public async Task<IActionResult> ConfirmCabSubscriptionAsync(string token)
     {
         var result = await _subscriptions.ConfirmCabSubscriptionAsync(token).ConfigureAwait(false);
-        ViewBag.CabName = await GetCabNameAsync(result.CabSubscriptionRequest.CabId);
-        return View(Views.Confirmation.ConfirmedCabSubscription);
+        var cabName = await GetCabNameAsync(result.CabSubscriptionRequest.CabId);
+        return RedirectToRoute(Routes.ManageSubscription, new { id = result.SubscriptionId, smsg = Base64UrlEncoder.Encode($"You've subscribed to emails about '{cabName}'") });
     }
 
     [HttpGet("update/email-address/confirm", Name = Routes.ConfirmUpdatedEmailAddress)]
     public async Task<IActionResult> ConfirmUpdateEmailAddressAsync(string token)
     {
-        var result = await _subscriptions.ConfirmUpdateEmailAddressAsync(token).ConfigureAwait(false);
-        return View(Views.Confirmation.ConfirmedUpdatedEmailAddress);
+        var subscriptionId = await _subscriptions.ConfirmUpdateEmailAddressAsync(token).ConfigureAwait(false);
+        return RedirectToRoute(Routes.ManageSubscription, new { id = subscriptionId, smsg = Base64UrlEncoder.Encode("You have successfully updated your email address.") });
     }
 
     #endregion
 
     [HttpGet("manage/{id}", Name = Routes.ManageSubscription)]
-    public async Task<IActionResult> ManageSubscriptionAsync(string id)
+    public async Task<IActionResult> ManageSubscriptionAsync(string id, string? smsg)
     {
         var viewModel = await GetSubscriptionViewModelAsync(id, "Manage subscription");
+        viewModel.SuccessBannerMessage = smsg != null ? Base64UrlEncoder.Decode(smsg) : null;
+
+        if (viewModel.Subscription.SubscriptionType == SubscriptionType.Cab)
+        {
+            viewModel.CabName = await GetCabNameAsync(viewModel.Subscription.CabId!.Value);
+        }
+
         return View(Views.Manage.ManageSubscription, viewModel);
     }
 
@@ -245,35 +251,47 @@ public class SubscriptionsController : Controller
     }
 
     [Route("unsubscribe-all", Name = Routes.UnsubscribeAll)]
-    public async Task<IActionResult> UnsubscribeAllAsync(string? emailAddress = null)
+    public async Task<IActionResult> UnsubscribeAllAsync(UnsubscribeAllViewModel viewModel)
     {
-        if (Request.Method == HttpMethod.Get.Method)
+        if (Request.Method == HttpMethod.Post.Method)
         {
-            return View(Views.Manage.UnsubscribeAll, new UnsubscribeAllViewModel { EmailAddress = emailAddress });
+            if (viewModel.EmailAddress.IsValidEmail())
+            {
+                _ = await _subscriptions.UnsubscribeAllAsync(viewModel.EmailAddress).ConfigureAwait(false);
+                return RedirectToRoute(Routes.UnsubscribedAll);
+            }
+            else
+            {
+                ModelState.AddModelError("", $"Enter a{(viewModel.EmailAddress?.Clean() == null ? "n" : " valid")} email address");
+            }
         }
-        else // TODO: VALIDATION!
-        {
-            var done = await _subscriptions.UnsubscribeAllAsync(emailAddress).ConfigureAwait(false);
-            return View(Views.Manage.UnsubscribedAll);
-        }
+        return View(Views.Manage.UnsubscribeAll, viewModel);
     }
+
+    [Route("unsubscribed-all", Name = Routes.UnsubscribedAll)]
+    public async Task<IActionResult> UnsubscribedAll() => View(Views.Manage.UnsubscribedAll);
 
     #endregion
 
     #region Update email address
 
     [Route("manage/{id}/update-email-address/request", Name = Routes.RequestUpdateEmailAddress)]
-    public async Task<IActionResult> RequestUpdateEmailAddressAsync(string id, [FromForm] string emailAddress)
+    public async Task<IActionResult> RequestUpdateEmailAddressAsync(string id, [FromForm] string? emailAddress)
     {
-        if (Request.Method == HttpMethod.Get.Method)
+        if (Request.Method == HttpMethod.Post.Method)
         {
-            return View(Views.Manage.RequestUpdateEmailAddress);
+            if (emailAddress.IsValidEmail())
+            {
+                await _subscriptions.RequestUpdateEmailAddressAsync(new SubscriptionService.UpdateEmailAddressOptions(id, emailAddress));
+                return RedirectToRoute(Routes.RequestedUpdateEmailAddress, new { id, email = Base64UrlEncoder.Encode(emailAddress) });
+            }
+            else
+            {
+                ModelState.AddModelError("", $"Enter a{(emailAddress?.Clean() == null ? "n" : " valid")} email address");
+            }
         }
-        else // todo: VALIDATION
-        {
-            await _subscriptions.RequestUpdateEmailAddressAsync(new SubscriptionService.UpdateEmailAddressOptions(id, emailAddress));
-            return RedirectToRoute(Routes.RequestedUpdateEmailAddress, new { id, email = Base64UrlEncoder.Encode(emailAddress)});
-        }
+        var viewModel = await GetSubscriptionViewModelAsync(id, "").ConfigureAwait(false);
+        return View(Views.Manage.RequestUpdateEmailAddress, viewModel);
     }
 
     [HttpGet("manage/{id}/update-email-address/requested", Name = Routes.RequestedUpdateEmailAddress)]
@@ -288,26 +306,27 @@ public class SubscriptionsController : Controller
     #region Change frequency
 
     [Route("manage/{id}/change-frequency", Name = Routes.ChangeFrequency)]
-    public async Task<IActionResult> ChangeFrequencyAsync(string id, [FromForm] Frequency frequency)
+    public async Task<IActionResult> ChangeFrequencyAsync(string id, [FromForm] string? frequency)
     {
         var viewModel = await GetSubscriptionViewModelAsync(id, "Change frequency");
-        if (Request.Method == HttpMethod.Get.Method)
+        if (Request.Method == HttpMethod.Post.Method)
         {
-            return View(Views.Manage.ChangeFrequency, viewModel);
+            if (Enum.TryParse<Frequency>(frequency!, true, out var f))
+            {
+                await _subscriptions.UpdateFrequencyAsync(id, f);
+                return RedirectToRoute(Routes.FrequencyChanged, new { id });
+            }
+            else
+            {
+                ModelState.AddModelError("", "Choose how often you want to get emails");
+            }
         }
-        else // todo: VALIDATION
-        {
-            await _subscriptions.UpdateFrequencyAsync(id, frequency);
-            return RedirectToRoute(Routes.FrequencyChanged, new { id });
-        }
+        return View(Views.Manage.ChangeFrequency, viewModel);
     }
 
     [HttpGet("manage/{id}/frequency-changed", Name = Routes.FrequencyChanged)]
-    public async Task<IActionResult> FrequencyChangedAsync(string id)
-    {
-        var viewModel = await GetSubscriptionViewModelAsync(id, "Frequency changed");
-        return View(Views.Manage.FrequencyChanged, viewModel);
-    }
+    public IActionResult FrequencyChanged(string id)
+        => RedirectToRoute(Routes.ManageSubscription, new { id, smsg = Base64UrlEncoder.Encode("You have successfully updated the email frequency.") });
 
     #endregion
 

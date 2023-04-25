@@ -2,5 +2,5 @@
 
 public class UnsubscribeAllViewModel : BasicPageModel
 {
-    public string EmailAddress { get; set; }
+    public string? EmailAddress { get; set; }
 }

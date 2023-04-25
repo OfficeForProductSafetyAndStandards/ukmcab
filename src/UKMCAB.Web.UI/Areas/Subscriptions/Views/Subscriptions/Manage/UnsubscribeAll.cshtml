@@ -2,22 +2,31 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+
+        <partial name="Partials/_ValidationSummary" model="null" />
+
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-6">
+            Are you sure you want to unsubscribe from everything?
+        </h1>
+        
+        <p class="govuk-body">
+            You won't get any more automated emails from UKMCAB
+        </p>
+
         <form method="post">
-            <div class="govuk-!-margin-top-4 govuk-!-margin-bottom-8">
-                <h1 class="govuk-heading-xl">
-                    Are you sure you want to unsubscribe from everything?
-                </h1>
+            <div class="govuk-form-group @Html.Conditional(!ViewData.ModelState.IsValid,"govuk-form-group--error")">
+                <label class="govuk-label govuk-!-font-weight-bold" for="email-address-input">Email address</label>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <p class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> @(ViewData.ModelState.FirstOrDefault().Value?.Errors.FirstOrDefault()?.ErrorMessage)
+                    </p>
+                }
+                <input autocomplete="email" class="govuk-input govuk-input--width-20 @Html.Conditional(!ViewData.ModelState.IsValid,"govuk-input--error")" id="email-address-input" name="emailaddress" spellcheck="false" type="email" value="@Model.EmailAddress">
             </div>
-
-            <p class="govuk-body">
-                You won't get any more automated emails from UKMCAB
-            </p>
-
-            <div class="govuk-form-group">
-                <input autocomplete="email" class="govuk-input" id="email-address-input" name="emailaddress" spellcheck="false" type="email" value="@Model.EmailAddress">
+            <div class="govuk-button-group">
+                <button class="govuk-button" type="submit">Unsubscribe</button>
             </div>
-
-            <button class="gem-c-button govuk-button gem-c-button--bottom-margin" type="submit">Unsubscribe</button>
         </form>
     </div>
 </div>

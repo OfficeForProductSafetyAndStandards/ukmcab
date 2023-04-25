@@ -64,7 +64,7 @@ public class SubscriptionsCabService : ICabService
     public async Task<CabApiService.SearchResults> SearchAsync(string? query)
     {
         var model = await BindAsync<SearchViewModel>(query).ConfigureAwait(false);
-        var data = await SearchController.SearchInternalAsync(_cachedSearchService, model, x => x.IgnorePaging = true);
+        var data = await SearchController.SearchInternalAsync(_cachedSearchService, model ?? new SearchViewModel(), x => x.IgnorePaging = true);
         return new CabApiService.SearchResults(data.Total, data.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = Guid.Parse(x.CABId), Name = x.Name }).ToList());
     }
 

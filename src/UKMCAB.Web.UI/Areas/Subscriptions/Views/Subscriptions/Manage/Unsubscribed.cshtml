@@ -1,18 +1,21 @@
 ﻿@model SubscriptionViewModel
 
-<div class="govuk-panel govuk-panel--confirmation">
-    <h1 class="govuk-panel__title">
-        Unsubscribed
-    </h1>
-    <div class="govuk-panel__body">
-        @if (Model.Subscription.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
-        {
-            <span>UKMCAB search results</span>
-        }
-        else
-        {
-            <span>UKMCAB CAB @Model.Subscription.CabName</span>
-        }
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">
+                Unsubscribed
+            </h1>
+            <div class="govuk-panel__body">
+                @if (Model.Subscription.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
+                {
+                    <span>UKMCAB search results</span>
+                }
+                else
+                {
+                    <span>UKMCAB CAB @Model.Subscription.CabName</span>
+                }
+            </div>
+        </div>
     </div>
 </div>
-

@@ -1,17 +1,27 @@
-﻿
-<div id="email-alert-frontend">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <h1 class="gem-c-heading govuk-heading-l govuk-!-margin-bottom-6">Enter your updated email address</h1>
-            <form method="post">
-                <div class="govuk-form-group">
-                    <input autocomplete="email" class="gem-c-input govuk-input" id="email-address-input" name="emailaddress" spellcheck="false" type="email">
-                </div>
-                <div class="govuk-button-group">
-                    <button class="govuk-button" type="submit">Continue</button>
-                    <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new{id= ViewContext.RouteData.Values.GetValueOrDefault("id")})">Cancel</a>
-                </div>
-            </form>
-        </div>
+﻿@model SubscriptionViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <partial name="Partials/_ValidationSummary" model="null" />
+
+        <h1 class="govuk-heading-l govuk-!-margin-bottom-6">Change your email address</h1>
+        <p class="govuk-body">Your current email address is @Model.Subscription.EmailAddress</p>
+        <form method="post">
+            <div class="govuk-form-group @Html.Conditional(!ViewData.ModelState.IsValid,"govuk-form-group--error")">
+                <label class="govuk-label govuk-!-font-weight-bold" for="email-address-input">What's your new email address?</label>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <p class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> @(ViewData.ModelState.FirstOrDefault().Value?.Errors.FirstOrDefault()?.ErrorMessage)
+                    </p>
+                }
+                <input autocomplete="email" class="govuk-input govuk-input--width-20 @Html.Conditional(!ViewData.ModelState.IsValid,"govuk-input--error")" id="email-address-input" name="emailaddress" spellcheck="false" type="email">
+            </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" type="submit">Continue</button>
+                <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new{id= ViewContext.RouteData.Values.GetValueOrDefault("id")})">Cancel</a>
+            </div>
+        </form>
     </div>
 </div>
