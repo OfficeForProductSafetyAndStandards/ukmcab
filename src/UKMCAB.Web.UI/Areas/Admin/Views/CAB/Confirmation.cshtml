@@ -1,5 +1,34 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABConfirmationViewModel
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-back-link">Back</a>
+            </div>
+        </div>
+    </div>
 }
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-panel govuk-panel--confirmation">
+            <h1 class="govuk-panel__title">
+                @Model.Name
+            </h1>
+            <div class="govuk-panel__body">
+                CAB number<br><strong class="govuk-!-font-weight-bold">@Model.CABNumber</strong>
+            </div>
+        </div>
+        <h2 class="govuk-heading-m govuk-!-margin-top-9">What happens next</h2>
+        <p class="govuk-body">
+            CAB is now publicly available.
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId">View CAB</a>
+        </p>
+        <p class="govuk-body">
+            <a class="govuk-link" asp-area="admin" asp-controller="Admin" asp-action="Index">View work queue</a>
+        </p>
+    </div>
+</div>
