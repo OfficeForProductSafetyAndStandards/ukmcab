@@ -8,22 +8,15 @@ namespace UKMCAB.Core.Services
 {
     public class CABAdminService : ICABAdminService
     {
-        /*
-          NOTE FROM KRIS, RE: EDITING/UPDATING CABS
-            We now have a ICachedSearchService.  When a *published* CAB changes, ideally we should manually update the search index for the associated item and then call `ICachedSearchService.ClearAsync(CABId)`
-            As this will clear all search results from the cache that contained _THAT_ cab id.
-
-            ALSO: when updating a published cab, call `ICachedPublishedCabService.ClearAsync`, as ICachedPublishedCabService refs ICABAdminService, 
-            you might want to do updating via ICachedPublishedCabService and then clear the cache that way (otherwise if you ref ICachedPublishedCabService from here, you'll get circular dependency)
-         */
-
         private readonly ICABRepository _cabRepostitory;
         private readonly ICachedSearchService _cachedSearchService;
+        private readonly ICachedPublishedCabService _cachedPublishedCabService;
 
-        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService)
+        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService, ICachedPublishedCabService cachedPublishedCabService)
         {
             _cabRepostitory = cabRepostitory;
             _cachedSearchService = cachedSearchService;
+            _cachedPublishedCabService = cachedPublishedCabService;
         }
 
         public async Task<bool> DocumentWithKeyIdentifiersExistsAsync(Document document)
@@ -156,6 +149,7 @@ namespace UKMCAB.Core.Services
 
             // TODO: look at introducing CAB targeted index updates rather than complete index update
             await _cachedSearchService.ReIndexAsync();
+            await _cachedPublishedCabService.ClearAsync(latestDocument.CABId);
 
             return latestDocument;
         }
