@@ -228,8 +228,14 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
     {
         DataConnectionString = azureDataConnectionString,
         SearchQueryStringRemoveKeys = SearchViewModel.NonFilterProperties,
-        OutboundEmailSenderMode = OutboundEmailSenderMode.Send
-    }.Pipe(x => builder.Configuration.Bind("SubscriptionsCore", x));
+        OutboundEmailSenderMode = OutboundEmailSenderMode.Send,
+        GovUkNotifyApiKey = builder.Configuration["GovUkNotifyApiKey"],
+        EncryptionKey = builder.Configuration["EncryptionKey"] 
+            ?? throw new Exception("Configuration item 'EncryptionKey' is not set; here's a key you can use (add to secrets): " 
+            + UKMCAB.Subscriptions.Core.Common.Security.Tokens.KeyIV.GenerateKey())
+    };
+
+    builder.Configuration.Bind("SubscriptionsCoreEmailTemplates", subscriptionServicesCoreOptions.EmailTemplates);
 
     builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
 
