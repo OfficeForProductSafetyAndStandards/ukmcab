@@ -10,15 +10,15 @@ public static class Constants
 
     public const string TempDraftKey = nameof(TempDraftKey);
 
+    public static class Config
+    {
+        public const string ContainerNameDataProtectionKeys = "dataprotectionkeys";
+    }
+
     public class SubmitType
     {
         public const string Continue = nameof(Continue);
         public const string Save = nameof(Save);
-    }
-
-    public static class Config
-    {
-        public const string ContainerNameDataProtectionKeys = "dataprotectionkeys";
     }
 
     public class Roles
