@@ -10,7 +10,7 @@ namespace UKMCAB.Core.Services
         Task<List<Document>> FindAllWorkQueueDocuments();
         Task<Document> GetLatestDocumentAsync(string id);
 
-        Task<Document> CreateDocumentAsync(string userEmail, Document document);
+        Task<Document> CreateDocumentAsync(string userEmail, Document document, bool saveAsDraft = false);
         Task<Document> UpdateOrCreateDraftDocumentAsync(string email, Document draft, bool saveAsDraft = false);
         Task<bool> DeleteDraftDocumentAsync(string cabId);
         Task<Document> PublishDocumentAsync(string userEmail, Document latestDocument);

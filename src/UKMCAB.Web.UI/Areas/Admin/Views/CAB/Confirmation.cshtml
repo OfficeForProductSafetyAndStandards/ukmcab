@@ -1,14 +1,4 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABConfirmationViewModel
-@section BackButton
-{
-    <div class="govuk-width-container ">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-back-link">Back</a>
-            </div>
-        </div>
-    </div>
-}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -25,7 +15,7 @@
             CAB is now publicly available.
         </p>
         <p class="govuk-body">
-            <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId">View CAB</a>
+            <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-returnURL="confirmation">View CAB</a>
         </p>
         <p class="govuk-body">
             <a class="govuk-link" asp-area="admin" asp-controller="Admin" asp-action="Index">View work queue</a>

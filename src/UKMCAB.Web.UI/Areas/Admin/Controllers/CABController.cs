@@ -68,7 +68,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var user = await _userManager.GetUserAsync(User);
                     var createdDocument = model.IsFromSummary ?
                         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, document, submitType == Constants.SubmitType.Save) :
-                        await _cabAdminService.CreateDocumentAsync(user.Email, document);
+                        await _cabAdminService.CreateDocumentAsync(user.Email, document, submitType == Constants.SubmitType.Save);
                     if (createdDocument == null)
                     {
                         ModelState.AddModelError(string.Empty, "Failed to create the document, please try again.");
@@ -293,11 +293,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("admin/cab/summary/{id}")]
-        public async Task<IActionResult> Summary(CABSummaryViewModel model)
+        public async Task<IActionResult> Summary(CABSummaryViewModel model, string submitType)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(model.CABId);
             if (latest == null) // Implies no document or archived
             {
+                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            }
+
+            if (submitType == Constants.SubmitType.Save)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latest, submitType == Constants.SubmitType.Save);
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
 
@@ -318,7 +325,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ValidateAdditionalAddressFields(publishModel.CabContactViewModel);
             }
             publishModel.ValidCAB = TryValidateModel(publishModel);
-            if (publishModel.ValidCAB)
+            if (publishModel.ValidCAB && submitType == Constants.SubmitType.Continue)
             {
                 var user = await _userManager.GetUserAsync(User);
                 var pubishedDoc = await _cabAdminService.PublishDocumentAsync(user.Email, latest);
@@ -335,7 +342,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> Confirmation(string id)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
-            if (latest == null || latest.StatusValue != Status.Published || !TempData.ContainsKey("Confirmation")) 
+            if (latest == null || latest.StatusValue != Status.Published) 
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }

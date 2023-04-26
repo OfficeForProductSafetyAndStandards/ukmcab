@@ -28,7 +28,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Index(string id, string returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
             var user = await _userManager.GetUserAsync(User);
@@ -36,12 +36,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var cab = new CABProfileViewModel
             {
                 IsLoggedIn = opssUser,
+                ReturnUrl = returnUrl,
                 CABId = cabDocument.CABId,
                 PublishedDate = cabDocument.PublishedDate,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber =  string.Empty,
-                Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode),
+                Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode, cabDocument.Country),
                 Website = cabDocument.Website,
                 Email = cabDocument.Email,
                 Phone = cabDocument.Phone,
@@ -80,7 +81,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     LastModifiedDate = cabDocument.LastUpdatedDate,
                     Name = cabDocument.Name,
                     UKASReferenceNumber = string.Empty,
-                    Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode),
+                    Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode, cabDocument.Country),
                     Website = cabDocument.Website,
                     Email = cabDocument.Email,
                     Phone = cabDocument.Phone,
