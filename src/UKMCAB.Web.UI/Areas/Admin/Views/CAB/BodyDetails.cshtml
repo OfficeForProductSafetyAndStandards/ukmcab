@@ -1,4 +1,5 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABBodyDetailsViewModel
+﻿@using UKMCAB.Data.Models
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABBodyDetailsViewModel
 @section BackButton
 {
 <div class="govuk-width-container ">
@@ -121,7 +122,14 @@
                     <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                         Save as draft
                     </button>
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                    {
+                        <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
+                    else
+                    {
+                        <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
                 </div>
 
             </fieldset>

@@ -1,41 +1,42 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
-using UKMCAB.Core.Services;
-using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Data.Storage;
 using UKMCAB.Identity.Stores.CosmosDB;
+using UKMCAB.Web.UI.Models.ViewModels.Search;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
     [Area("search")]
     public class CABProfileController : Controller
     {
-        private readonly ICachedPublishedCabService _cabAdminService;
+        private readonly ICachedPublishedCABService _cachedPublishedCabService;
         private readonly IFileStorage _fileStorage;
         private readonly UserManager<UKMCABUser> _userManager;
 
-        public CABProfileController(ICachedPublishedCabService cabAdminService, IFileStorage fileStorage, UserManager<UKMCABUser> userManager)
+        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, IFileStorage fileStorage, UserManager<UKMCABUser> userManager)
         {
-            _cabAdminService = cabAdminService;
+            _cachedPublishedCabService = cachedPublishedCabService;
             _fileStorage = fileStorage;
             _userManager = userManager;
         }
 
         [HttpGet("search/cab-profile/{id}")]
-        public async Task<IActionResult> Index(string id)
+        public async Task<IActionResult> Index(string id, string returnUrl)
         {
-            var cabDocument = await _cabAdminService.FindPublishedDocumentByCABIdAsync(id);
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
             var user = await _userManager.GetUserAsync(User);
             var opssUser = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
             var cab = new CABProfileViewModel
             {
                 IsLoggedIn = opssUser,
+                ReturnUrl = returnUrl,
                 CABId = cabDocument.CABId,
                 PublishedDate = cabDocument.PublishedDate,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber =  string.Empty,
-                Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode),
+                Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode, cabDocument.Country),
                 Website = cabDocument.Website,
                 Email = cabDocument.Email,
                 Phone = cabDocument.Phone,
@@ -56,7 +57,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [HttpGet("~/__api/cab/{id}")]
         public async Task<IActionResult> GetCabAsync(string id)
         {
-            var cabDocument = await _cabAdminService.FindPublishedDocumentByCABIdAsync(id);
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
 
             if (cabDocument != null)
             {
@@ -67,7 +68,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     LastModifiedDate = cabDocument.LastUpdatedDate,
                     Name = cabDocument.Name,
                     UKASReferenceNumber = string.Empty,
-                    Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode),
+                    Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode, cabDocument.Country),
                     Website = cabDocument.Website,
                     Email = cabDocument.Email,
                     Phone = cabDocument.Phone,
