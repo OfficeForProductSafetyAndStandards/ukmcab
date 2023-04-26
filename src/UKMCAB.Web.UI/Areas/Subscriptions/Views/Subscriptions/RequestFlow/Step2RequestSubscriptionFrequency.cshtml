@@ -10,33 +10,35 @@
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <h1 class="govuk-fieldset__heading gem-c-radio__heading-text">How often do you want to get emails?</h1>
                     </legend>
-                    <div class="govuk-hint">
-                        Select one
+                    <div class="@Html.Conditional(!ViewData.ModelState.IsValid,"govuk-form-group--error")">
+                        <div class="govuk-body govuk-!-font-weight-bold">
+                            Select one
+                        </div>
+                        @if (!ViewData.ModelState.IsValid)
+                        {
+                            <p class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span> @(ViewData.ModelState.FirstOrDefault().Value?.Errors.FirstOrDefault()?.ErrorMessage)
+                            </p>
+                        }
+                        <div class="govuk-radios">
+                            <div class="gem-c-radio govuk-radios__item">
+                                <input type="radio" name="frequency" id="radio-a813b9ca-0" value="daily" class="govuk-radios__input">
+                                <label for="radio-a813b9ca-0" class="gem-c-label govuk-label govuk-radios__label">Once a day</label>
+                            </div>
+
+                            <div class="gem-c-radio govuk-radios__item">
+                                <input type="radio" name="frequency" id="radio-a813b9ca-1" value="weekly" class="govuk-radios__input">
+                                <label for="radio-a813b9ca-1" class="gem-c-label govuk-label govuk-radios__label">Once a week</label>
+                            </div>
+
+                            <div class="govuk-radios__divider">or</div>
+                            <div class="govuk-radios__item">
+                                <input type="radio" name="frequency" id="radio-a813b9ca-3" value="realtime" class="govuk-radios__input">
+                                <label for="radio-a813b9ca-3" class="gem-c-label govuk-label govuk-radios__label">Each time we add or update a page (you may get more than one email a day)</label>
+                            </div>
+                        </div>
                     </div>
-                    @if (!ViewData.ModelState.IsValid)
-                    {
-                        <p class="govuk-error-message">
-                            <span class="govuk-visually-hidden">Error:</span> @(ViewData.ModelState.FirstOrDefault().Value?.Errors.FirstOrDefault()?.ErrorMessage)
-                        </p>
-                    }
-                    <div class="govuk-radios @Html.Conditional(!ViewData.ModelState.IsValid,"govuk-form-group--error")">
-                        <div class="gem-c-radio govuk-radios__item">
-                            <input type="radio" name="frequency" id="radio-a813b9ca-0" value="daily" class="govuk-radios__input">
-                            <label for="radio-a813b9ca-0" class="gem-c-label govuk-label govuk-radios__label">Once a day</label>
-                        </div>
 
-                        <div class="gem-c-radio govuk-radios__item">
-                            <input type="radio" name="frequency" id="radio-a813b9ca-1" value="weekly" class="govuk-radios__input">
-                            <label for="radio-a813b9ca-1" class="gem-c-label govuk-label govuk-radios__label">Once a week</label>
-                        </div>
-
-                        <div class="govuk-radios__divider">or</div>
-                        <div class="govuk-radios__item">
-                            <input type="radio" name="frequency" id="radio-a813b9ca-3" value="realtime" class="govuk-radios__input">
-                            <label for="radio-a813b9ca-3" class="gem-c-label govuk-label govuk-radios__label">Each time we add or update a page (you may get more than one email a day)</label>
-                        </div>
-
-                    </div>
                 </fieldset>
             </div>
 

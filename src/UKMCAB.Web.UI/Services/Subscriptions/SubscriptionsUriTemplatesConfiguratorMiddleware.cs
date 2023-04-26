@@ -56,8 +56,8 @@ public class SubscriptionsUriTemplatesConfiguratorMiddleware
                     _linkGenerator.GetPathByRouteValues(SubscriptionsController.Routes.UnsubscribeAll, new { emailAddress = "@emailaddress" })
                     ?? throw new Exception("Unsubscribe-all route not found")),
 
-                SearchChangesSummary = new("@subscriptionid", "@changesDescriptorId",
-                    _linkGenerator.GetPathByRouteValues(SubscriptionsController.Routes.SearchChangesSummary, new { subscriptionId = "@subscriptionId", changesDescriptorId = "@changesDescriptorId" })
+                SearchChangesSummary = new("@subscriptionid", "@changesdescriptorid",
+                    _linkGenerator.GetPathByRouteValues(SubscriptionsController.Routes.SearchChangesSummary, new { subscriptionId = "@subscriptionid", changesDescriptorId = "@changesdescriptorid" })
                     ?? throw new Exception("Search-changes-summary route not found"))
             };
             _emailTemplatesService.Configure(options);
