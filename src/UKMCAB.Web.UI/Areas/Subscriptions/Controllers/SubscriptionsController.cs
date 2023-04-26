@@ -177,11 +177,27 @@ public class SubscriptionsController : Controller
             var req = JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok);
             if (req.SubscriptionType == SubscriptionType.Search)
             {
-                await _subscriptions.RequestSubscriptionAsync(new SearchSubscriptionRequest(req.EmailAddress, req.SearchQueryString, req.Frequency.Value));
+                var result = await _subscriptions.RequestSubscriptionAsync(new SearchSubscriptionRequest(req.EmailAddress, req.SearchQueryString, req.Frequency.Value));
+                if (result.ValidationResult == SubscriptionService.ValidationResult.AlreadySubscribed)
+                {
+                    throw new DomainException("You are already subscribed to this search");
+                }
+                else if (result.ValidationResult == SubscriptionService.ValidationResult.EmailBlocked)
+                {
+                    throw new DomainException("Your email address is on a no-send list");
+                }
             }
             else
             {
-                await _subscriptions.RequestSubscriptionAsync(new CabSubscriptionRequest(req.EmailAddress, req.CabId ?? throw new Exception("CAB id should not be null"), req.Frequency.Value));
+                var result = await _subscriptions.RequestSubscriptionAsync(new CabSubscriptionRequest(req.EmailAddress, req.CabId ?? throw new Exception("CAB id should not be null"), req.Frequency.Value));
+                if (result.ValidationResult == SubscriptionService.ValidationResult.AlreadySubscribed)
+                {
+                    throw new DomainException("You are already subscribed to this CAB");
+                }
+                else if (result.ValidationResult == SubscriptionService.ValidationResult.EmailBlocked)
+                {
+                    throw new DomainException("Your email address is on a no-send list");
+                }
             }
             return RedirectToRoute(Routes.Step5RequestedSubscription, new { tok = JsonBase64UrlToken.Serialize(req) });
         }
@@ -214,7 +230,7 @@ public class SubscriptionsController : Controller
         if (result.ValidationResult == SubscriptionService.ValidationResult.Success)
         {
             var cabName = await GetCabNameAsync(result.CabSubscriptionRequest.CabId);
-            return RedirectToRoute(Routes.ManageSubscription, new { id = result.SubscriptionId, smsg = Base64UrlEncoder.Encode($"You've subscribed to emails about '{cabName}'") });
+            return RedirectToRoute(Routes.ManageSubscription, new { id = result.SubscriptionId, smsg = Base64UrlEncoder.Encode($"You've subscribed to emails about UKMCAB profile for '{cabName}'") });
         }
         else if (result.ValidationResult == SubscriptionService.ValidationResult.EmailBlocked)
         {
@@ -245,11 +261,12 @@ public class SubscriptionsController : Controller
     [HttpGet("{subscriptionId}/search/changes/{changesDescriptorId}", Name = Routes.SearchChangesSummary)]
     public async Task<IActionResult> SearchChangesSummaryAsync(string subscriptionId, string changesDescriptorId)
     {
-        var subscription = await _subscriptions.GetSubscriptionAsync(subscriptionId).ConfigureAwait(false) ?? throw new DomainException("Subscription not found");
+        var subscription = (await _subscriptions.GetSubscriptionAsync(subscriptionId).ConfigureAwait(false)) ?? throw new DomainException("Subscription not found");
         var changes = await _subscriptions.GetSearchResultsChangesAsync(changesDescriptorId).ConfigureAwait(false) ?? throw new DomainException("Search result changes information could not be found");
-        var searchUrl = string.Concat(Url.Action(nameof(SearchController.Index), nameof(SearchController).ControllerName()), (subscription?.SearchQueryString?.EnsureStartsWith("?")) ?? "");
+        var searchActionUrl = Url.Action(nameof(SearchController.Index), nameof(SearchController).ControllerName(), new { area = "search" }) ?? throw new Exception("Search action url could not be resolved");
+        var searchUrl = string.IsNullOrEmpty(subscription?.SearchQueryString) ? searchActionUrl : string.Concat(searchActionUrl, (subscription?.SearchQueryString?.EnsureStartsWith("?")));
         var viewModel = new SearchChangesSummaryViewModel(subscriptionId, changes, searchUrl);
-        return View(Views.Manage.SearchChangesSummary);
+        return View(Views.Manage.SearchChangesSummary, viewModel);
     }
 
     [HttpGet("manage/{id}", Name = Routes.ManageSubscription)]

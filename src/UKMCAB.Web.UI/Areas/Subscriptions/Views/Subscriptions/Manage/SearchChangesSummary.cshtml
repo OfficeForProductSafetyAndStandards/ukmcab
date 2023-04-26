@@ -1,15 +1,34 @@
 ﻿@model SearchChangesSummaryViewModel
-<h1>Search changes</h1>
 
-<p>Search results have changed</p>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Search results changes</h1>
 
-<p class="govuk-body">
-    Added: @Model.Changes.Added.Count<br />
-    Removed: @Model.Changes.Removed.Count<br />
-    Modified: @Model.Changes.Modified.Count<br />
-</p>
+        <p class="govuk-body-lead">Search results have changed</p>
 
+        <table class="govuk-table" style="max-width:400px;">
+            <caption class="govuk-table__caption govuk-table__caption--m">Summary of changes</caption>
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Additions</th>
+                    <td class="govuk-table__cell">@Model.Changes.Added.Count</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Removed</th>
+                    <td class="govuk-table__cell">@Model.Changes.Removed.Count</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header">Modified</th>
+                    <td class="govuk-table__cell">@Model.Changes.Modified.Count</td>
+                </tr>
+            </tbody>
+        </table>
 
-<a class="govuk-button" href="@Model.SearchUrl">View search results</a>
+        <div class="govuk-button-group govuk-!-margin-top-8">
 
-<a class="govuk-button govuk-button--secondary" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new { id = Model.SubscriptionId })">Manage subscription</a>
+            <a class="govuk-button" href="@Model.SearchUrl">View search results</a>
+            <a class="govuk-button govuk-button--secondary" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new { id = Model.SubscriptionId })">Manage subscription</a>
+
+        </div>
+    </div>
+</div>

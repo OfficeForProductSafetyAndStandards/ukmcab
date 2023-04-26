@@ -7,14 +7,14 @@
                 Unsubscribed
             </h1>
             <div class="govuk-panel__body">
-                You have unsubscribed from
+                You have successfully unsubscribed from
                 @if (Model.Subscription.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
                 {
-                    <span>UKMCAB search results</span>
+                    <span>UKMCAB search results.</span>
                 }
                 else
                 {
-                    <span>UKMCAB CAB @Model.Subscription.CabName</span>
+                    <span>UKMCAB profile for '@Model.Subscription.CabName'.</span>
                 }
             </div>
         </div>
