@@ -161,6 +161,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (password == _basicAuthOptions.Password)
             {
                 await _cachedSearchService.ClearAsync();
+                
                 await Task.Delay(1000);
                 return RedirectToAction("Index");
             }

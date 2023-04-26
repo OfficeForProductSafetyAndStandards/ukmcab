@@ -35,7 +35,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     Id = wqi.CABId,
                     Name = wqi.Name,
                     CABNumber = wqi.CABNumber,
-                    Status = "Draft", // TODO: we don't have archived yet
+                    Status = wqi.Status,
                     LastUpdated = wqi.LastUpdatedDate
                 }).ToList()
                 : new List<WorkQueueItemViewModel>();

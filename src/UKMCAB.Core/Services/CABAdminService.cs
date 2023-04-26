@@ -8,22 +8,15 @@ namespace UKMCAB.Core.Services
 {
     public class CABAdminService : ICABAdminService
     {
-        /*
-          NOTE FROM KRIS, RE: EDITING/UPDATING CABS
-            We now have a ICachedSearchService.  When a *published* CAB changes, ideally we should manually update the search index for the associated item and then call `ICachedSearchService.ClearAsync(CABId)`
-            As this will clear all search results from the cache that contained _THAT_ cab id.
-
-            ALSO: when updating a published cab, call `ICachedPublishedCabService.ClearAsync`, as ICachedPublishedCabService refs ICABAdminService, 
-            you might want to do updating via ICachedPublishedCabService and then clear the cache that way (otherwise if you ref ICachedPublishedCabService from here, you'll get circular dependency)
-         */
-
         private readonly ICABRepository _cabRepostitory;
         private readonly ICachedSearchService _cachedSearchService;
+        private readonly ICachedPublishedCABService _cachedPublishedCabService;
 
-        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService)
+        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService, ICachedPublishedCABService cachedPublishedCabService)
         {
             _cabRepostitory = cabRepostitory;
             _cachedSearchService = cachedSearchService;
+            _cachedPublishedCabService = cachedPublishedCabService;
         }
 
         public async Task<bool> DocumentWithKeyIdentifiersExistsAsync(Document document)
@@ -79,7 +72,7 @@ namespace UKMCAB.Core.Services
             return _cabRepostitory.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
         }
 
-        public async Task<Document> CreateDocumentAsync(string userEmail, Document document)
+        public async Task<Document> CreateDocumentAsync(string userEmail, Document document, bool saveAsDraft = false)
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
@@ -91,7 +84,7 @@ namespace UKMCAB.Core.Services
             document.CreatedDate = createdDate;
             document.LastModifiedBy = userEmail;
             document.LastModifiedDate = createdDate;
-            document.StatusValue = Status.Created;
+            document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
             return await _cabRepostitory.CreateAsync(document);
         }
 
@@ -100,7 +93,7 @@ namespace UKMCAB.Core.Services
             var currentDateTime = DateTime.UtcNow;
             if (draft.StatusValue == Status.Published)
             {
-                draft.StatusValue = Status.Draft;
+                draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
                 draft.id = string.Empty;
                 draft.CreatedBy = userEmail;
                 draft.CreatedDate = currentDateTime;
@@ -131,8 +124,9 @@ namespace UKMCAB.Core.Services
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             // currently we only delete newly created docs that haven't been saved as draft
-            Guard.IsTrue(documents.Count == 1 && documents.First().StatusValue == Status.Created, $"Error finding the document to delete, CAB Id: {cabId}");
-            Guard.IsTrue(await _cabRepostitory.Delete(documents.First()), $"Failed to delete draft version, CAB Id: {cabId}");
+            var createdDoc = documents.SingleOrDefault(d => d.StatusValue == Status.Created);
+            Guard.IsTrue(createdDoc != null, $"Error finding the document to delete, CAB Id: {cabId}");
+            Guard.IsTrue(await _cabRepostitory.Delete(createdDoc), $"Failed to delete draft version, CAB Id: {cabId}");
             return true;
         }
 
@@ -146,6 +140,7 @@ namespace UKMCAB.Core.Services
                 publishedVersion.StatusValue = Status.Historical;
                 Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
+                await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
             }
             latestDocument.PublishedBy = userEmail;
             latestDocument.PublishedDate = currentDateTime;
@@ -156,6 +151,8 @@ namespace UKMCAB.Core.Services
 
             // TODO: look at introducing CAB targeted index updates rather than complete index update
             await _cachedSearchService.ReIndexAsync();
+            await _cachedSearchService.ClearAsync();
+            await _cachedPublishedCabService.ClearAsync(latestDocument.CABId);
 
             return latestDocument;
         }
