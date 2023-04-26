@@ -94,7 +94,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                             sanitisedList.Add("Recognised third-party");
                             break;
                         case "third-country-body":
-                            sanitisedList.Add("Third country body");
+                            sanitisedList.Add("Overseas body");
                             break;
                         default:
                             sanitisedList.Add(data);
