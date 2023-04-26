@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Globalization;
-using UKMCAB.Core.Services;
+using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
@@ -16,10 +16,10 @@ namespace UKMCAB.Web.UI.Services.Subscriptions;
 public class SubscriptionsCabService : ICabService
 {
     private readonly ICachedSearchService _cachedSearchService;
-    private readonly ICachedPublishedCabService _cachedPublishedCabService;
+    private readonly ICachedPublishedCABService _cachedPublishedCabService;
     private readonly IServiceProvider _services;
 
-    public SubscriptionsCabService(ICachedSearchService cachedSearchService, ICachedPublishedCabService cachedPublishedCabService, IServiceProvider services)
+    public SubscriptionsCabService(ICachedSearchService cachedSearchService, ICachedPublishedCABService cachedPublishedCabService, IServiceProvider services)
     {
         _cachedSearchService = cachedSearchService;
         _cachedPublishedCabService = cachedPublishedCabService;

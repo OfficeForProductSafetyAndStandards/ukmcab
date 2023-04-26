@@ -15,6 +15,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly IFileStorage _fileStorage;
         private readonly UserManager<UKMCABUser> _userManager;
 
+        public static class Routes
+        {
+            public const string CabDetails = "cab.detail";
+        }
+
         public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, IFileStorage fileStorage, UserManager<UKMCABUser> userManager)
         {
             _cachedPublishedCabService = cachedPublishedCabService;

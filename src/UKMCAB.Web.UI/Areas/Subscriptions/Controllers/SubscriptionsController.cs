@@ -1,7 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security;
-using UKMCAB.Core.Services;
+using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Services;
 using UKMCAB.Web.UI.Areas.Subscriptions.Models;
@@ -13,7 +13,7 @@ namespace UKMCAB.Web.UI.Areas.Subscriptions.Controllers;
 public class SubscriptionsController : Controller
 {
     private readonly ISubscriptionService _subscriptions;
-    private readonly ICachedPublishedCabService _cachedPublishedCabService;
+    private readonly ICachedPublishedCABService _cachedPublishedCabService;
 
     public static class Routes
     {
@@ -73,7 +73,7 @@ public class SubscriptionsController : Controller
         }
     }
 
-    public SubscriptionsController(ISubscriptionService subscriptions, ICachedPublishedCabService cachedPublishedCabService)
+    public SubscriptionsController(ISubscriptionService subscriptions, ICachedPublishedCABService cachedPublishedCabService)
     {
         _subscriptions = subscriptions;
         _cachedPublishedCabService = cachedPublishedCabService;
