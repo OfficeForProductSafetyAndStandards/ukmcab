@@ -72,7 +72,7 @@ namespace UKMCAB.Core.Services
             return _cabRepostitory.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
         }
 
-        public async Task<Document> CreateDocumentAsync(string userEmail, Document document)
+        public async Task<Document> CreateDocumentAsync(string userEmail, Document document, bool saveAsDraft = false)
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
@@ -84,7 +84,7 @@ namespace UKMCAB.Core.Services
             document.CreatedDate = createdDate;
             document.LastModifiedBy = userEmail;
             document.LastModifiedDate = createdDate;
-            document.StatusValue = Status.Created;
+            document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
             return await _cabRepostitory.CreateAsync(document);
         }
 
