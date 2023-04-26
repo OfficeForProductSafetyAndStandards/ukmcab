@@ -1,0 +1,15 @@
+﻿@model SearchChangesSummaryViewModel
+<h1>Search changes</h1>
+
+<p>Search results have changed</p>
+
+<p class="govuk-body">
+    Added: @Model.Changes.Added.Count<br />
+    Removed: @Model.Changes.Removed.Count<br />
+    Modified: @Model.Changes.Modified.Count<br />
+</p>
+
+
+<a class="govuk-button" href="@Model.SearchUrl">View search results</a>
+
+<a class="govuk-button govuk-button--secondary" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new { id = Model.SubscriptionId })">Manage subscription</a>

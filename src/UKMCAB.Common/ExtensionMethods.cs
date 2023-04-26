@@ -19,6 +19,8 @@ public static class ExtensionMethods
         return Pred.AdaptIf(condition, model, action);
     }
 
+    public static string EnsureStartsWith(this string text, string prepender) => text.StartsWith(prepender) ? text : string.Concat(prepender, text);
+
     public static string? AppendIf(this string? text, string appender) => text.Clean() != null ? text + appender : null;
 
     /// <summary>

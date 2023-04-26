@@ -4,6 +4,7 @@ using UKMCAB.Common.Security;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Services;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Areas.Subscriptions.Models;
 
 namespace UKMCAB.Web.UI.Areas.Subscriptions.Controllers;
@@ -34,6 +35,7 @@ public class SubscriptionsController : Controller
         #endregion
 
         public const string ManageSubscription = "subscription.manage";
+        public const string SearchChangesSummary = "subscription.search.changes-summary";
         public const string ChangeFrequency = "subscription.manage.change-frequency";
         public const string FrequencyChanged = "subscription.manage.frequency-changed";
         public const string Unsubscribe = "subscription.manage.unsubscribe";
@@ -62,6 +64,7 @@ public class SubscriptionsController : Controller
         {
             private const string _base = "Manage/";
             public const string ManageSubscription = $"{_base}ManageSubscription";
+            public const string SearchChangesSummary = $"{_base}SearchChangesSummary";
             public const string RequestUpdateEmailAddress = $"{_base}RequestUpdateEmailAddress";
             public const string RequestedUpdateEmailAddress = $"{_base}RequestedUpdateEmailAddress";
             public const string Unsubscribed = $"{_base}Unsubscribed";
@@ -237,6 +240,17 @@ public class SubscriptionsController : Controller
     }
 
     #endregion
+
+
+    [HttpGet("{subscriptionId}/search/changes/{changesDescriptorId}", Name = Routes.SearchChangesSummary)]
+    public async Task<IActionResult> SearchChangesSummaryAsync(string subscriptionId, string changesDescriptorId)
+    {
+        var subscription = await _subscriptions.GetSubscriptionAsync(subscriptionId).ConfigureAwait(false) ?? throw new DomainException("Subscription not found");
+        var changes = await _subscriptions.GetSearchResultsChangesAsync(changesDescriptorId).ConfigureAwait(false) ?? throw new DomainException("Search result changes information could not be found");
+        var searchUrl = string.Concat(Url.Action(nameof(SearchController.Index), nameof(SearchController).ControllerName()), (subscription?.SearchQueryString?.EnsureStartsWith("?")) ?? "");
+        var viewModel = new SearchChangesSummaryViewModel(subscriptionId, changes, searchUrl);
+        return View(Views.Manage.SearchChangesSummary);
+    }
 
     [HttpGet("manage/{id}", Name = Routes.ManageSubscription)]
     public async Task<IActionResult> ManageSubscriptionAsync(string id, string? smsg)

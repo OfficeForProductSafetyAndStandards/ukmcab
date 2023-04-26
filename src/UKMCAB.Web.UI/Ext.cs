@@ -40,4 +40,6 @@ public static class Ext
 
     public static IHtmlContent ValueOrNotProvided(this IHtmlHelper htmlHelper, string text) =>
         string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.NotProvided) : htmlHelper.Raw(text);
+
+    public static string ControllerName(this string text) => text.Replace("Controller", string.Empty);
 }
