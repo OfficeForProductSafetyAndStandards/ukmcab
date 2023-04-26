@@ -36,7 +36,7 @@
       "value": "secret"
     },
     "aspNetCoreEnvironment": {
-      "value": "Production"
+      "value": "Preprod"
     },
     "sslCertPfxBase64VNextSlot": {
       "value": "secret"
