@@ -54,12 +54,13 @@ builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 
 builder.Services.AddTransient<IAdminService, AdminService>();
+builder.Services.AddSingleton<IDistCache, RedisCache>();
+builder.Services.AddSingleton<ICABRepository, CABRepository>(); 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
-builder.Services.AddTransient<ICachedPublishedCabService, CachedPublishedCabService>();
+builder.Services.AddSingleton<ICachedPublishedCABService, CachedPublishedCABService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
-builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
 builder.Services.AddCustomHttpErrorHandling();
 
@@ -72,7 +73,6 @@ builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certific
 
 builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateOptions"));
 
-builder.Services.AddSingleton<ICABRepository, CABRepository>();
 
 builder.Services.AddHostedService<RandomSortGenerator>();
 
@@ -204,7 +204,7 @@ _ = Task.Run(async () =>
     try
     {
         await Task.Delay(5000);
-        var count = await app.Services.GetRequiredService<ICachedPublishedCabService>().PreCacheAllCabsAsync();
+        var count = await app.Services.GetRequiredService<ICachedPublishedCABService>().PreCacheAllCabsAsync();
         app.Services.GetRequiredService<ILogger<Program>>().LogInformation($"Precached {count} CABs");
     }
     catch (Exception ex)

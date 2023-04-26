@@ -1,11 +1,9 @@
 ﻿using Azure.Search.Documents;
+using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Models;
 using System.Text.RegularExpressions;
-using Azure.Search.Documents.Indexes;
-using Azure.Search.Documents.Indexes.Models;
-using UKMCAB.Data.Search.Models;
 using UKMCAB.Common;
-using UKMCAB.Data.Models;
+using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
@@ -168,6 +166,11 @@ namespace UKMCAB.Data.Search.Services
         public async Task ReIndexAsync()
         {
             await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
+        }
+
+        public async Task RemoveFromIndexAsync(string id)
+        {
+            await _indexClient.DeleteDocumentsAsync("id", new [] { id });
         }
     }
 }
