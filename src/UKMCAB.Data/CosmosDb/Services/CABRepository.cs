@@ -68,7 +68,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             _container = result.Container;
         }
 
-        private List<string> SanitiseLists(List<string> importData, List<string> masterList)
+        private static List<string> SanitiseLists(List<string> importData, List<string> masterList)
         {
             var sanitisedList = new List<string>();
             if (importData == null)
