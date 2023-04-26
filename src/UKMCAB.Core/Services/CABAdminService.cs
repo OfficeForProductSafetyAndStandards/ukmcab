@@ -93,7 +93,7 @@ namespace UKMCAB.Core.Services
             var currentDateTime = DateTime.UtcNow;
             if (draft.StatusValue == Status.Published)
             {
-                draft.StatusValue = Status.Draft;
+                draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
                 draft.id = string.Empty;
                 draft.CreatedBy = userEmail;
                 draft.CreatedDate = currentDateTime;
@@ -124,8 +124,9 @@ namespace UKMCAB.Core.Services
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             // currently we only delete newly created docs that haven't been saved as draft
-            Guard.IsTrue(documents.Count == 1 && documents.First().StatusValue == Status.Created, $"Error finding the document to delete, CAB Id: {cabId}");
-            Guard.IsTrue(await _cabRepostitory.Delete(documents.First()), $"Failed to delete draft version, CAB Id: {cabId}");
+            var createdDoc = documents.SingleOrDefault(d => d.StatusValue == Status.Created);
+            Guard.IsTrue(createdDoc != null, $"Error finding the document to delete, CAB Id: {cabId}");
+            Guard.IsTrue(await _cabRepostitory.Delete(createdDoc), $"Failed to delete draft version, CAB Id: {cabId}");
             return true;
         }
 
