@@ -10,10 +10,18 @@ namespace UKMCAB.Web.UI.Services
             var feed = new SyndicationFeed("UK Market Conformity Assessment Bodies", "", new Uri("https://www.gov.uk"));
             feed.Id = "tag:www.gov.uk,2005:/uk-market-conformity-assessment-bodies";
             feed.Authors.Add(new SyndicationPerson("", "HM Government", ""));
-            var selfLink = new SyndicationLink(request.GetRequestUri());
+            var feedUrl = request.GetRequestUri();
+            var selfLink = new SyndicationLink(feedUrl);
             selfLink.RelationshipType = "self";
             selfLink.MediaType = "application/atom+xml";
             feed.Links.Add(selfLink);
+
+            var feedAbsoluteUri = feedUrl.AbsoluteUri;
+            var alternateUrl = new Uri(feedAbsoluteUri.Replace("-feed", string.Empty));
+            var alternateLink = new SyndicationLink(alternateUrl);
+            alternateLink.RelationshipType = "alternate";
+            alternateLink.MediaType = "text/html";
+            feed.Links.Add(alternateLink);
 
             feed.Items = items.Select(c => new SyndicationItem
             {
