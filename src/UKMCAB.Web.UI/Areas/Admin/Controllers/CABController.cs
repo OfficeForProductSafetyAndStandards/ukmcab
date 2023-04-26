@@ -68,7 +68,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var user = await _userManager.GetUserAsync(User);
                     var createdDocument = model.IsFromSummary ?
                         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, document, submitType == Constants.SubmitType.Save) :
-                        await _cabAdminService.CreateDocumentAsync(user.Email, document);
+                        await _cabAdminService.CreateDocumentAsync(user.Email, document, submitType == Constants.SubmitType.Save);
                     if (createdDocument == null)
                     {
                         ModelState.AddModelError(string.Empty, "Failed to create the document, please try again.");
