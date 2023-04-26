@@ -16,6 +16,17 @@
     }
 }
 
+@if (!string.IsNullOrEmpty(Model.ReturnUrl) && Model.ReturnUrl.Contains("/search"))
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="@Model.ReturnUrl" class="govuk-back-link">Return to Search Results</a>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="Partials/_ValidationSummary" model="null"/>
