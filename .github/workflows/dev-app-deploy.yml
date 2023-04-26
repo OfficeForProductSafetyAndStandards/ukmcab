@@ -49,7 +49,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }} 
 
       - name: Add internal package source
-        run: dotnet nuget add source --username anything --password ${{ github.token }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/OfficeForProductSafetyAndStandards/index.json"
+        run: dotnet nuget add source --username anything --password ${{ secrets.OPSS_UKMCAB_PACKAGES_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/OfficeForProductSafetyAndStandards/index.json"
       
       # Run dotnet build and publish
       - name: Restore
