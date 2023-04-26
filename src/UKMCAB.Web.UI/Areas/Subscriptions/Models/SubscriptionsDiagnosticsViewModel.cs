@@ -27,4 +27,6 @@ public class SubscriptionsDiagnosticsViewModel : ILayoutModel
     }
 
     public string? Title => "Subscriptions diagnostics";
+
+    public bool IsBackgroundServiceEnabled { get; internal set; }
 }

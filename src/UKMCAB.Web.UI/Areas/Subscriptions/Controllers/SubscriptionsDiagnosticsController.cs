@@ -26,11 +26,12 @@ public class SubscriptionsDiagnosticsController : Controller
     private readonly ISubscriptionEngineCoordinator _subscriptionEngineCoordinator;
     private readonly ISubscriptionRepository _subscriptionRepository;
     private readonly IWebHostEnvironment _webHostEnvironment;
+    private readonly SubscriptionsBackgroundService _subscriptionsBackgroundService;
 
     public SubscriptionsDiagnosticsController(ISubscriptionService subscriptions, ISubscriptionEngine subscriptionEngine, 
         ISubscriptionsDateTimeProvider subscriptionsDateTimeProvider, IOutboundEmailSender outboundEmailSender,
         ISubscriptionEngineCoordinator subscriptionEngineCoordinator, ISubscriptionRepository subscriptionRepository,
-        IWebHostEnvironment webHostEnvironment)
+        IWebHostEnvironment webHostEnvironment, SubscriptionsBackgroundService subscriptionsBackgroundService)
     {
         _subscriptions = subscriptions;
         _engine = subscriptionEngine;
@@ -39,6 +40,7 @@ public class SubscriptionsDiagnosticsController : Controller
         _subscriptionEngineCoordinator = subscriptionEngineCoordinator;
         _subscriptionRepository = subscriptionRepository;
         _webHostEnvironment = webHostEnvironment;
+        _subscriptionsBackgroundService = subscriptionsBackgroundService;
     }
 
     public class Routes
@@ -52,6 +54,7 @@ public class SubscriptionsDiagnosticsController : Controller
         public const string FakeDateTimeClear = "subscriptions.diagnostics.fake-datetime.clear";
         public const string SubscriptionList = "subscriptions.diagnostics.subscriptions-list";
         public const string SubscriptionPoke = "subscriptions.diagnostics.subscription.poke";
+        public const string ToggleBackgroundServiceIsEnabled = "subscriptions.diagnostics.background-service.is-enabled.toggle";
     }
 
     public override void OnActionExecuting(ActionExecutingContext context)
@@ -74,10 +77,11 @@ public class SubscriptionsDiagnosticsController : Controller
             DateTimeEnvelope = _subscriptionsDateTimeProvider.Get(),
             OutboundSenderMode = _outboundEmailSender.Mode,
             SentEmails = _outboundEmailSender.Requests,
-            SuccessBannerMessage = m!=null?Base64UrlEncoder.Decode(m):null, 
+            SuccessBannerMessage = m != null ? Base64UrlEncoder.Decode(m) : null,
+            IsBackgroundServiceEnabled = _subscriptionsBackgroundService.IsEnabled,
         };
 
-        model.LastConfirmationLink = model.SentEmails.LastOrDefault()?.Replacements.GetValueOrDefault(EmailPlaceholders.ConfirmLink);
+        model.LastConfirmationLink = model.SentEmails.OrderBy(x=>x.Timestamp).LastOrDefault()?.Replacements.GetValueOrDefault(EmailPlaceholders.ConfirmLink);
         return View(model);
     }
 
@@ -100,9 +104,24 @@ public class SubscriptionsDiagnosticsController : Controller
     public async Task<IActionResult> PokeSubscriptionAsync(string id, string returnurl)
     {
         var e = await _subscriptionRepository.GetAsync(new SubscriptionKey(id))??throw new DomainException("Subscription not found");
-        e.LastThumbprint = "fake-thumbprint";
+        e.LastThumbprint = Guid.NewGuid().ToString();
         await _subscriptionRepository.UpsertAsync(e);
         return Redirect(QueryHelpers.AddQueryString(returnurl, "p", "1"));
+    }
+
+    [HttpPost("background-service/toggle", Name = Routes.ToggleBackgroundServiceIsEnabled)]
+    public IActionResult ToggleBackgroundServiceIsEnabled()
+    {
+        if(_subscriptionsBackgroundService.IsEnabled)
+        {
+            _subscriptionsBackgroundService.IsEnabled = false;
+            return RedirectToAction(nameof(Index), new { m = Base64UrlEncoder.Encode("Background service has been disabled") });
+        }
+        else
+        {
+            _subscriptionsBackgroundService.IsEnabled = true;
+            return RedirectToAction(nameof(Index), new { m = Base64UrlEncoder.Encode("Background service has been enabled") });
+        }
     }
 
 

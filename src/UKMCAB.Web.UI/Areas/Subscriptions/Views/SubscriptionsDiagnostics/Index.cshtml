@@ -124,6 +124,10 @@
             <button class="govuk-button">Request process subscriptions</button>
         </form>
 
+        <form method="post" class="govuk-!-display-inline-block" action="@Url.RouteUrl(SubscriptionsDiagnosticsController.Routes.ToggleBackgroundServiceIsEnabled)">
+            <button class="govuk-button govuk-button--secondary">@(Model.IsBackgroundServiceEnabled ? "Turn off background service" : "Turn on background service")</button>
+        </form>
+
 
 
     </div>

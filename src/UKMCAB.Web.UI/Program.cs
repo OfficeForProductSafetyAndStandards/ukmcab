@@ -190,8 +190,6 @@ try
 {
     await app.Services.GetRequiredService<ICABRepository>().InitialiseAsync();
     await app.Services.GetRequiredService<SearchServiceManagment>().InitialiseAsync();
-    var count = await app.Services.GetRequiredService<ICachedPublishedCabService>().PreCacheAllCabsAsync();
-    app.Services.GetRequiredService<ILogger<Program>>().LogInformation($"Precached {count} CABs");
 }
 catch (Exception ex)
 {
@@ -199,6 +197,22 @@ catch (Exception ex)
     await app.Services.GetRequiredService<TelemetryClient>().FlushAsync(CancellationToken.None);
     throw;
 }
+
+// asynchronously precache
+_ = Task.Run(async () =>
+{
+    try
+    {
+        await Task.Delay(5000);
+        var count = await app.Services.GetRequiredService<ICachedPublishedCabService>().PreCacheAllCabsAsync();
+        app.Services.GetRequiredService<ILogger<Program>>().LogInformation($"Precached {count} CABs");
+    }
+    catch (Exception ex)
+    {
+        app.Services.GetRequiredService<TelemetryClient>().TrackException(ex);
+        await app.Services.GetRequiredService<TelemetryClient>().FlushAsync(CancellationToken.None);
+    }
+});
 
 app.Run();
 
@@ -220,7 +234,9 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
     builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
 
     builder.Services.AddSingleton<ISubscriptionEngineCoordinator, SubscriptionEngineCoordinator>();
-    builder.Services.AddHostedService<SubscriptionsBackgroundService>();
+
+    builder.Services.AddSingleton<SubscriptionsBackgroundService>();
+    builder.Services.AddHostedService(p => p.GetRequiredService<SubscriptionsBackgroundService>());
 }
 
 static void UseSubscriptions(WebApplication app)
