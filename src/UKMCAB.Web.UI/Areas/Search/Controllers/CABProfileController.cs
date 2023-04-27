@@ -29,7 +29,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
-        public async Task<IActionResult> Index(string id, string returnUrl)
+        public async Task<IActionResult> Index(string id, string? returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
             var user = await _userManager.GetUserAsync(User);
@@ -37,7 +37,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var cab = new CABProfileViewModel
             {
                 IsLoggedIn = opssUser,
-                ReturnUrl = WebUtility.UrlDecode(returnUrl),
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? null : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
                 PublishedDate = cabDocument.PublishedDate,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
