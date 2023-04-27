@@ -14,22 +14,20 @@
             </div>
         </div>
     }
-}
-
-@if (!string.IsNullOrEmpty(Model.ReturnUrl) && Model.ReturnUrl.Contains("/search"))
-{
-    <div class="govuk-width-container ">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <a href="@Model.ReturnUrl" class="govuk-back-link">Return to Search Results</a>
+    else
+    {
+        <div class="govuk-width-container ">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <a href="@Model.ReturnUrl" class="govuk-back-link">Return to Search Results</a>
+                </div>
             </div>
         </div>
-    </div>
+    }
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <partial name="Partials/_ValidationSummary" model="null" />
         <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
         <h1 class="govuk-heading-l">@Model.Name</h1>
         <div class="cab-detail-date-meta">

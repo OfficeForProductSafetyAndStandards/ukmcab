@@ -1,4 +1,6 @@
-﻿using System.Xml;
+﻿using System.Net;
+using System.Xml;
+using Microsoft.AspNetCore.Http.Extensions;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
@@ -48,6 +50,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var searchResults = await SearchInternalAsync(_cachedSearchService, model);
 
             await SetFacetOptions(model);
+            
+            model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
 
             model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
             model.Pagination = new PaginationViewModel
