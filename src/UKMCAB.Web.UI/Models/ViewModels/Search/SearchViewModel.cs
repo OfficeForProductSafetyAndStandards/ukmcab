@@ -12,6 +12,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         /// </remarks>
         public static readonly string[] NonFilterProperties = new[] { nameof(Sort), nameof(PageNumber) };
 
+        public string? ReturnUrl { get; set; }
+
         // ILayout
         public string? Title => "Search";
 

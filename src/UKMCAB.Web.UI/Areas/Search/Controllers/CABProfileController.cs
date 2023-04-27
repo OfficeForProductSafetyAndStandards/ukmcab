@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Net;
+using Microsoft.AspNetCore.Identity;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
@@ -36,7 +37,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var cab = new CABProfileViewModel
             {
                 IsLoggedIn = opssUser,
-                ReturnUrl = returnUrl,
+                ReturnUrl = WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
                 PublishedDate = cabDocument.PublishedDate,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
