@@ -23,12 +23,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string UKASReferenceNumber { get; set; }
 
         // Contact details
-        //public string AddressLine1 { get; set; }
-        //public string AddressLine2 { get; set; }
-        //public string TownCity { get; set; }
-        //public string Postcode { get; set; }
-        //public string Country { get; set; }
-
         public string Address { get; set; }
         public string Website { get; set; }
         public string Email { get; set; }
