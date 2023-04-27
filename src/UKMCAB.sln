@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{1D2146B5-D
 		CodeReviewChecklist.md = CodeReviewChecklist.md
 		ExceptionHandling.md = ExceptionHandling.md
 		notes.md = notes.md
+		nuget.config = nuget.config
+		NuGetPackageSourceSetup.md = NuGetPackageSourceSetup.md
 	EndProjectSection
 EndProject
 Global

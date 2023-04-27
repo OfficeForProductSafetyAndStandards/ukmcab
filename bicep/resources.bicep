@@ -28,6 +28,9 @@ param govukNotifyApiKey string = ''
 
 param aspNetCoreEnvironment string = 'Development'
 
+@secure()
+param encryptionKey string
+
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: 'stor${project}${env}'
   location: location
@@ -265,6 +268,13 @@ resource dataProtectionX509CertBase64Secret 'Microsoft.KeyVault/vaults/secrets@2
   }
 }
 
+resource encryptionKeySecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'encryptionKey'
+  properties: {
+    value: encryptionKey
+  }
+}
 
 resource govukNotifyApiKeySecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
   parent: kv
@@ -1037,6 +1047,10 @@ var appSettings = [
   {
     name: 'DataProtectionX509CertBase64'
     value: '@Microsoft.KeyVault(SecretUri=${dataProtectionX509CertBase64Secret.properties.secretUri})'
+  }
+  {
+    name: 'EncryptionKey'
+    value: '@Microsoft.KeyVault(SecretUri=${encryptionKeySecret.properties.secretUri})'
   }
   {
     name: 'GovUkNotifyApiKey'

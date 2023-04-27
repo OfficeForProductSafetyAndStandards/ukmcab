@@ -22,4 +22,11 @@ public class JsonBase64UrlToken
             return default;
         }
     }
+
+    public static string Pipe<T>(string token, Action<T> pipe)
+    {
+        var obj = Deserialize<T>(token);
+        pipe(obj);
+        return Serialize(obj);
+    }
 }
