@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using UKMCAB.Web.UI.Models.ViewModels.Home;
 
 namespace UKMCAB.Web.UI.Areas.Home.Controllers
 {
@@ -23,5 +24,19 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             return View();
         }
+
+        [Route("/contact-us")]
+        public IActionResult ContactUs()
+        {
+            return View(new ContactUsViewModel());
+        }
+
+        [HttpPost]
+        [Route("/contact-us")]
+        public IActionResult ContactUs(ContactUsViewModel model)
+        {
+            return View(model);
+        }
+
     }
 }
