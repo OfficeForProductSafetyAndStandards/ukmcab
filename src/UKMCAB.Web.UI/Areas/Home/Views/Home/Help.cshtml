@@ -29,12 +29,12 @@
                         EU service that provides the same functionality across all member countries and organisations.
                     </p>
                     <p class='govuk-body'>
-                        In <span class="govuk-body govuk-!-font-weight-bold" style="color:red">xxxx</span> a UK version of NANDO was created on Gov.UK, however it lacked functionality, specifically around the process for 
+                        In <span class="govuk-body govuk-!-font-weight-bold" style="color:red">xxxx</span> a UK version of NANDO was created, on Gov.UK, however it lacked functionality, specifically around the process for 
                         CAB creation and approvals from the various organisations and departments involved. These requirements, and others, are intended 
                         to be delivered with the bespoke developed UKMCAB service.
                     </p>
                     <p class='govuk-body'>
-                        For more information about the service, visit our <a class="govuk-link" href="./about">About page</a>.
+                        For more information about the service, visit our <a class="govuk-link" asp-area="Home" asp-controller="Home" asp-action="About">About page</a>.
                     </p>
                 </div>
             </div>
@@ -207,6 +207,9 @@
                     </div>
                     <div id="accordion-default-content-9" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-9">
                         <p class='govuk-body'>
+                        Please see the <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="Privacy">Privacy and Terms of Use</a> statements for more information about how your data and privacy is managed.
+                        </p>
+                        <p class='govuk-body'>
                             OGDs will use the service to create CAB records, manage approvals and archive requests, and to request entries are 
                             archived for the legislative areas that they hold responsibility for.
                         </p>
@@ -214,6 +217,7 @@
                             They may also request reports and analysis from OPSS to understand CAB coverage for their legislative areas and for 
                             other purposes relating to their business and operation.
                         </p>
+
                     </div>
             </div>
 
@@ -227,7 +231,7 @@
                     </div>
                     <div id="accordion-default-content-10" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-10">
                         <p class='govuk-body'>
-                            Please see the Privacy and Terms of Use statements for more information about how your data and privacy is managed.
+                        Please see the <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="TermsAndConditions">Privacy and Terms of Use</a> statements for more information about how your data and privacy is managed.
                         </p>
                         <p class='govuk-body'>
                             UKAS will use the service to create CAB records, manage approvals and archive requests, and to request entries are 
@@ -269,12 +273,8 @@
                     </div>
                     <div id="accordion-default-content-12" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-12">
                         <p class='govuk-body'>
-                            When you sign into your account by using the  <a class="govuk-link" href="../account/login">Sign-in</a> link in the header you will be able to access the 
-                            administration menu. This will be shown by the link in the header titled <a class="govuk-link" href="">Admin</a>.
-                        </p>
-                        <p class='govuk-body'>
-                            Feed notifications from search results and CAB profile pages can be unsubscribed from by simply deleting them from your 
-                            feed reader of choice.
+                        When you sign into your account by using the  <a class="govuk-link" asp-area="Account" asp-controller="Home" asp-action="Login">Sign-in</a> link in the header you will be able to access the
+                        administration menu. This will be shown by the link in the header titled <a class="govuk-link" asp-area="Admin" asp-controller="Admin" asp-action="Index">Admin</a>.
                         </p>
                     </div>
             </div>
@@ -289,15 +289,13 @@
                     </div>
                     <div id="accordion-default-content-13" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-13">
                         <p class='govuk-body'>
-                            Your notifications and actions can be seen in your work queue when you first sign into your account by using the 
-                            <a class="govuk-link" href="../account/login">Sign-in</a> link in the header.
+                            Your notifications and actions can be seen in your work queue when you first sign into your account by using the
+                        <a class="govuk-link" asp-area="Account" asp-controller="Home" asp-action="Login">Sign-in</a> link in the header.
                         </p>
                         <p class='govuk-body'>
                             The work queue shows all the CAB records you have had some involvement in either by creating, editing or approving 
                             and where they are in that process.
                         </p>
-
-                        <img src="example.png" alt="Screenshot of Work Queue.">
 
                         <p class='govuk-body govuk-!-padding-top-5'>
                             The statuses shown for the records and an explanation follow:
@@ -438,8 +436,8 @@
                     </div>
                     <div id="accordion-default-content-16" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-16">
                         <p class='govuk-body'>
-                            Please read our <a class="govuk-link" href="../cookies-policy">cookies policy</a>. 
-                        </p>
+                        Please read our <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="Cookies">cookies policy</a>.
+                    </p>
                     </div>
             </div>
 
@@ -453,8 +451,8 @@
                     </div>
                     <div id="accordion-default-content-17" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-17">
                         <p class='govuk-body'>
-                            Please read our <a class="govuk-link" href="../accessibility-statement">accessibility policy</a>. 
-                        </p>
+                        Please read our <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="AccessibilityStatement">accessibility policy</a>.
+                    </p>
                     </div>
             </div>
 
@@ -468,8 +466,8 @@
                     </div>
                     <div id="accordion-default-content-18" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-18">
                         <p class='govuk-body'>
-                            Please read our <a class="govuk-link" href="../terms-and-conditions">terms and conditions policy</a>. 
-                        </p>
+                        Please read our <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="TermsAndConditions">terms and conditions policy</a>.
+                    </p>
                     </div>
             </div>
 
@@ -483,8 +481,8 @@
                     </div>
                     <div id="accordion-default-content-19" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-19">
                         <p class='govuk-body'>
-                            Please read our <a class="govuk-link" href="../privacy-notice">privacy policy</a>. 
-                        </p>
+                        Please read our <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="Privacy">privacy policy</a>.
+                    </p>
                     </div>
             </div>
             <div class="govuk-accordion__section" id="contact-info">
