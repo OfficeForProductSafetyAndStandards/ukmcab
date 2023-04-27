@@ -16,6 +16,7 @@ env:
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: src/UKMCAB.Web.UI
   TEST_PROJECT_DIR: src/UKMCAB.Test
+  OPSS_UKMCAB_PACKAGES_TOKEN: ${{ secrets.OPSS_UKMCAB_PACKAGES_TOKEN }}
 
 jobs:
   build:
@@ -47,6 +48,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: ${{ env.DOTNET_VERSION }} 
+
+      # - name: Add internal package source
+      #   run: dotnet nuget add source --username anything --password ${{ secrets.OPSS_UKMCAB_PACKAGES_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/OfficeForProductSafetyAndStandards/index.json?test=1"
       
       # Run dotnet build and publish
       - name: Restore

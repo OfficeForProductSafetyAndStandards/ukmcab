@@ -21,6 +21,22 @@
     }
 }
 
+.u-until-tablet {
+    @include govuk-media-query($until: tablet) {
+        display: block;
+    }
+
+    display: none;
+}
+
+.u-from-tablet {
+    display:none;
+
+    @include govuk-media-query($from: tablet) {
+        display: block;
+    }
+}
+
 .atom-feed {
     a {
         text-decoration: none;

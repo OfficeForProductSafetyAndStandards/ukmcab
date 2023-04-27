@@ -29,6 +29,9 @@ param aspNetCoreEnvironment string
 @secure()
 param sslCertPfxBase64VNextSlot string
 
+@secure()
+param encryptionKey string
+
 targetScope = 'subscription'
 
 var project = 'ukmcab'
@@ -60,5 +63,6 @@ module resourceSet './resources.bicep' = {
     appServiceHostNameVNext: appServiceHostNameVNext
     searchReplicaCount: searchReplicaCount
     appServiceUseAutoScale: appServiceUseAutoScale
+    encryptionKey: encryptionKey
   }
 }

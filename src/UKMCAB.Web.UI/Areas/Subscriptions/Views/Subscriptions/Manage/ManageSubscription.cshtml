@@ -1,0 +1,77 @@
+﻿@model SubscriptionViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+
+        @if (Model.SuccessBannerMessage != null)
+        {
+            <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+                 aria-labelledby="govuk-notification-banner-title"
+                 data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                        Success
+                    </h2>
+                </div>
+                <div class="govuk-notification-banner__content">
+                    <h3 class="govuk-notification-banner__heading">
+                        @Model.SuccessBannerMessage
+                    </h3>
+                </div>
+            </div>
+        }
+
+        <h1 class="govuk-heading-l">Manage your UKMCAB subscription</h1>
+
+        <p class="govuk-body">
+            Subscription for @Model.Subscription.EmailAddress
+        </p>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.RequestUpdateEmailAddress, new {Model.Subscription.Id})">Change email address</a>
+        </p>
+
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
+
+        <p class="govuk-body">
+            Topic
+        </p>
+
+        @if (Model.Subscription.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
+        {
+            <p class="govuk-body govuk-!-font-weight-bold">
+                UKMCAB search results
+            </p>
+        }
+        else
+        {
+            <p class="govuk-body govuk-!-font-weight-bold">
+                UKMCAB profile for '@Model.CabName'
+            </p>
+        }
+
+        <p class="govuk-body">
+            @if (Model.Subscription.Frequency == Frequency.Realtime)
+            {
+                @:You subscribed to get updates as they happen.
+            }
+            else if (Model.Subscription.Frequency == Frequency.Daily)
+            {
+                @:You subscribed to get updates once a day.
+            }
+            else
+            {
+                @:You subscribed to get updates once a week.
+            }
+        </p>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.ChangeFrequency, new {Model.Subscription.Id})">Change how often you get emails</a>
+        </p>
+
+        <p class="govuk-body">
+            <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.Unsubscribe, new {Model.Subscription.Id})">Unsubscribe</a>
+        </p>
+    </div>
+</div>

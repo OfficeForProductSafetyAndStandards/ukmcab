@@ -4,6 +4,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
     public class SearchViewModel: ILayoutModel
     {
+        /// <summary>
+        ///     Defines the list of properties that are not filters; such as paging or sorting info
+        /// </summary>
+        /// <remarks>
+        ///     This is used by Subscriptions Core so that it can retrieve search results that are not paged or sorted
+        /// </remarks>
+        public static readonly string[] NonFilterProperties = new[] { nameof(Sort), nameof(PageNumber) };
+
+        public string? ReturnUrl { get; set; }
+
         // ILayout
         public string? Title => "Search";
 
