@@ -2,6 +2,7 @@
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
+using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 
@@ -14,6 +15,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly IFileStorage _fileStorage;
         private readonly UserManager<UKMCABUser> _userManager;
 
+        public static class Routes
+        {
+            public const string CabDetails = "cab.detail";
+        }
+
         public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, IFileStorage fileStorage, UserManager<UKMCABUser> userManager)
         {
             _cachedPublishedCabService = cachedPublishedCabService;
@@ -21,7 +27,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             _userManager = userManager;
         }
 
-        [HttpGet("search/cab-profile/{id}")]
+        [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
         public async Task<IActionResult> Index(string id, string returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
@@ -54,14 +60,21 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(cab);
         }
 
-        [HttpGet("~/__api/cab/{id}")]
+
+        /// <summary>
+        /// CAB data API used by the Email Subscriptions Core
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+
+        [HttpGet("~/__api/subscriptions/core/cab/{id}")]
         public async Task<IActionResult> GetCabAsync(string id)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
 
             if (cabDocument != null)
             {
-                var cab = new CABProfileViewModel
+                var cab = new SubscriptionsCoreCabModel
                 {
                     CABId = cabDocument.CABId,
                     PublishedDate = cabDocument.PublishedDate,
@@ -77,13 +90,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                     RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                     LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
-                    ProductSchedules = cabDocument.Schedules.Select(pdf => new FileUpload
+                    ProductSchedules = cabDocument.Schedules?.Select(pdf => new SubscriptionsCoreCabFileModel
                     {
                         BlobName = pdf.BlobName,
                         FileName = pdf.FileName
-                    }).ToList(),
+                    }).ToList() ?? new List<SubscriptionsCoreCabFileModel>(),
                 };
-                return Json(cab);  // TODO: transform into models provided by the UKMCAB.Subscriptions.Core assembly
+                return Json(cab);
             }
             else
             {

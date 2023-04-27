@@ -29,4 +29,5 @@ jobs:
           dataProtectionX509CertBase64=${{ secrets.PROD_DATA_PROTECTION_X509_CERT }} 
           govukNotifyApiKey=${{ secrets.PROD_GOVUK_NOTIFY_API_KEY }} 
           sslCertPfxBase64VNextSlot=${{ secrets.PROD_SSL_CERT_VNEXT }}
+          encryptionKey=${{ secrets.PROD_ENCRYPTION_KEY }}
         failOnStdErr: false

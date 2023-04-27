@@ -23,5 +23,10 @@ jobs:
         scope: 'subscription'
         region: 'uksouth'
         template: './bicep/main.bicep'
-        parameters: ./bicep/preprod.parameters.json basicAuthPassword=${{ secrets.PP_BASIC_AUTH_PASSWORD }} sslCertPfxBase64=${{ secrets.PP_SSL_CERT }} dataProtectionX509CertBase64=${{ secrets.PP_DATA_PROTECTION_X509_CERT }} govukNotifyApiKey=${{ secrets.PP_GOVUK_NOTIFY_API_KEY }}
+        parameters: ./bicep/preprod.parameters.json 
+          basicAuthPassword=${{ secrets.PP_BASIC_AUTH_PASSWORD }} 
+          sslCertPfxBase64=${{ secrets.PP_SSL_CERT }}
+          dataProtectionX509CertBase64=${{ secrets.PP_DATA_PROTECTION_X509_CERT }} 
+          govukNotifyApiKey=${{ secrets.PP_GOVUK_NOTIFY_API_KEY }}
+          encryptionKey=${{ secrets.PP_ENCRYPTION_KEY }}
         failOnStdErr: false

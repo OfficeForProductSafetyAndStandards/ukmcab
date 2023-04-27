@@ -3,6 +3,7 @@ using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Web.Middleware.BasicAuthentication;
+using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
@@ -44,7 +45,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("/")]
         public async Task<IActionResult> Index(SearchViewModel model)
         {
-            var searchResults = await SearchInternalAsync(model);
+            var searchResults = await SearchInternalAsync(_cachedSearchService, model);
+
             await SetFacetOptions(model);
 
             model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
@@ -60,20 +62,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         /// <summary>
-        /// Search API (used by the email subscriptions functionality)
+        /// CAB search API used by the Email Subscriptions Core
         /// </summary>
         /// <param name="model"></param>
         /// <returns></returns>
-        [HttpGet("~/__api/search")]
+        [HttpGet("~/__api/subscriptions/core/cab-search")]
         public async Task<IActionResult> GetSearchResultsAsync(SearchViewModel model)
         {
-            var searchResults = await SearchInternalAsync(model, x => x.IgnorePaging = true);
+            var searchResults = await SearchInternalAsync(_cachedSearchService, model, x => x.IgnorePaging = true);
             searchResults.CABs.ForEach(x => x.HiddenText = "[omitted]");
             Response.Headers.Add("X-Count", searchResults.Total.ToString());
-            return Json(searchResults.CABs); // TODO: transform into models provided by the UKMCAB.Subscriptions.Core assembly
+            return Json(searchResults.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = Guid.Parse(x.CABId), Name = x.Name }));
         }
 
-        private async Task<CABResults> SearchInternalAsync(SearchViewModel model, Action<CABSearchOptions>? configure = null)
+        internal static async Task<CABResults> SearchInternalAsync(ICachedSearchService cachedSearchService, SearchViewModel model, Action<CABSearchOptions>? configure = null)
         {
             var opt = new CABSearchOptions
             {
@@ -87,7 +89,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Select = _select,
             };
             configure?.Invoke(opt);
-            return await _cachedSearchService.QueryAsync(opt);
+            return await cachedSearchService.QueryAsync(opt);
         }
 
         [Route("search-feed")]

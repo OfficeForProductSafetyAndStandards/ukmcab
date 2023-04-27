@@ -29,7 +29,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <partial name="Partials/_ValidationSummary" model="null"/>
+        <partial name="Partials/_ValidationSummary" model="null" />
         <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
         <h1 class="govuk-heading-l">@Model.Name</h1>
         <div class="cab-detail-date-meta">
@@ -38,10 +38,23 @@
         </div>
     </div>
     <div class="govuk-grid-column-one-third">
-        @if (Model.IsLoggedIn)
-        {
-            <a id="cab-edit-button" class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Edit</a>
-        }
+
+        <div class="govuk-!-margin-right-3">
+
+            <div class="govuk-!-text-align-right u-from-tablet govuk-!-margin-bottom-3">
+                @{RenderGetEmailsButton();}
+            </div>
+
+            @if (Model.IsLoggedIn)
+            {
+                <div class="govuk-!-display-block govuk-!-text-align-right">
+                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Edit</a>
+                </div>
+            }
+        </div>
+
+
+        
     </div>
 </div>
 
@@ -85,7 +98,7 @@
                     </dl>
                 </div>
                 <div class="cab-detail-section">
-                <h2 class="govuk-heading-l">Contact details</h2>
+                    <h2 class="govuk-heading-l">Contact details</h2>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -151,7 +164,7 @@
                     </dl>
                 </div>
                 <div class="cab-detail-section">
-                <h2 class="govuk-heading-l">Body details</h2>
+                    <h2 class="govuk-heading-l">Body details</h2>
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
@@ -241,3 +254,25 @@
         </div>
     </div>
 </div>
+
+<div class="govuk-!-text-align-left u-until-tablet">
+    @{
+        RenderGetEmailsButton();
+    }
+</div>
+
+
+@functions{
+
+    private void RenderGetEmailsButton()
+    {
+        <a href="@Url.RouteUrl(UKMCAB.Web.UI.Areas.Subscriptions.Controllers.SubscriptionsController.Routes.Step0RequestCabSubscription, new{id=Model.CABId})" style="text-decoration:none;"
+           class="govuk-link govuk-link--no-visited-state govuk-!-display-inline-block govuk-!-margin-right-1 govuk-!-margin-left-1 govuk-!-display-block">
+            <svg xmlns="http://www.w3.org/2000/svg" width="21" height="15.75" class="atom-feed__icon" focusable="false" fill="black" aria-hidden="true">
+                <path d="M19.687 0H1.312C.589 0 0 .587 0 1.313v13.124c0 .726.588 1.313 1.313 1.313h18.374c.725 0 1.313-.587 1.313-1.313V1.313C21 .587 20.412 0 19.687 0zm-2.625 2.625L10.5 7.875l-6.563-5.25h13.126zm1.313 10.5H2.625V3.937L10.5 10.5l7.875-6.563v9.188z"></path>
+            </svg>
+            Get emails
+        </a>
+    }
+
+}

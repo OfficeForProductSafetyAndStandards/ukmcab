@@ -1,0 +1,59 @@
+﻿@model SubscriptionsDiagnosticsSubscriptionListViewModel
+
+<a href="@Url.RouteUrl(SubscriptionsDiagnosticsController.Routes.Home)" class="govuk-back-link">Back</a>
+
+<h1 class="govuk-heading-l">Subscriptions</h1>
+
+@if (Context.Request.Query["p"] == "1")
+{
+    <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+         aria-labelledby="govuk-notification-banner-title"
+         data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                Success
+            </h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+            <h3 class="govuk-notification-banner__heading">
+                The subscription has been successfully poked
+            </h3>
+        </div>
+    </div>
+}
+
+<table class="govuk-table">
+    <thead>
+        <tr>
+            <th class="govuk-table__header">Recipient</th>
+            <th class="govuk-table__header">Topic</th>
+            <th class="govuk-table__header">Frequency</th>
+            <th class="govuk-table__header">Status</th>
+            <th class="govuk-table__header">Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var sub in Model.List)
+        {
+            <tr>
+                <td>@sub.EmailAddress</td>
+                <td>@(sub.SubscriptionType== UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Cab?sub.CabName:"Search results")</td>
+                <td>@sub.Frequency.ToString()</td>
+                <td>@(sub.LastThumbprint==null?"Not initialised":"Initialised")</td>
+                <td nowrap>
+                    <form method="post" class="govuk-!-display-inline-block" action="@Url.RouteUrl(SubscriptionsDiagnosticsController.Routes.SubscriptionPoke, new{id=sub.GetKeys().ToString(), returnurl=Context.Request.Path+Context.Request.QueryString})">
+                        <button class="govuk-button">Poke</button>
+                    </form>
+
+                    <a href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new { id = sub.GetKeys().ToString()})">Manage</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (Model.Skip != null)
+{
+    <a href="?skip=@Model.Skip">Next &gt;</a>
+}
+
