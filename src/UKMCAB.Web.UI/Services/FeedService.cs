@@ -1,4 +1,5 @@
-﻿using System.ServiceModel.Syndication;
+﻿using System.Net;
+using System.ServiceModel.Syndication;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Web.UI.Services
@@ -39,7 +40,8 @@ namespace UKMCAB.Web.UI.Services
         private SyndicationLink GetProfileSyndicationLink(string id, HttpRequest request, IUrlHelper url)
         {
             var link = url.Action("Index", "CABProfile", new { Area = "search", id = id }, request.Scheme, request.GetOriginalHostFromHeaders());
-            var profileLink = new SyndicationLink(new Uri(link));
+            var returnUrl = WebUtility.UrlEncode(request.GetRequestUri().PathAndQuery.Replace("-feed", string.Empty));
+            var profileLink = new SyndicationLink(new Uri($"{link}?returnUrl={returnUrl}"));
             profileLink.RelationshipType = "alternate";
             profileLink.MediaType = "text/html";
             return profileLink;
