@@ -1,7 +1,8 @@
 ﻿@using UKMCAB.Web.UI.Extensions
 @model SearchViewModel
 @{
-    var returnUrl = Context.Request.GetRequestUri();
+    var returnUrl = Context.Request.GetRequestUri().OriginalString;
+    returnUrl = returnUrl.Contains("search") ? returnUrl : returnUrl += "search";
 }
 
 <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
