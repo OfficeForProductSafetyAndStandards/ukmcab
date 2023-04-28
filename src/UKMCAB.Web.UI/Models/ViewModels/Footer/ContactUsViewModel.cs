@@ -1,7 +1,7 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Home
+namespace UKMCAB.Web.UI.Models.ViewModels.Footer
 {
     public class ContactUsViewModel : ILayoutModel
     {
