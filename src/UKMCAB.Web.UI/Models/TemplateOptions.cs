@@ -13,5 +13,8 @@
 
         public string FeedbackForm { get; set; }
         public string FeedbackEmail { get; set; }
+        public string ContactUsUser { get; set; }
+        public string ContactUsOPSS { get; set; }
+        public string ContactUsOPSSEmail { get; set; }
     }
 }

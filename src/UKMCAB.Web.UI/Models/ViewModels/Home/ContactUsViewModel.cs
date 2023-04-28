@@ -12,6 +12,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Home
         public string? Name { get; set; }
 
         [Required(ErrorMessage = "Enter an email address")]
+        [RegularExpression("^[\\S]*@[\\S]*$", ErrorMessage = "Enter a valid email address")]
         [MaxLength(50, ErrorMessage = "Maximum email address length is 50 characters")]
         public string? Email { get; set; }
 
