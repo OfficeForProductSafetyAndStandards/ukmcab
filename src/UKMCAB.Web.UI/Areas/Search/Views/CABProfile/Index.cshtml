@@ -234,7 +234,7 @@
                     <h2 class="govuk-heading-l">Product schedules</h2>
                     @if (!Model.ProductSchedules.Any())
                     {
-                        <p class="govuk-body">There are no product schedules.</p>
+                        <p class="govuk-body">@Constants.NotProvided</p>
                     }
                     else
                     {

@@ -18,7 +18,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         }
 
         [Route("account/login")]
-        public async Task<IActionResult> Login(string? returnUrl = null)
+        public async Task<IActionResult> Login()
         {
             if (_signInManager.IsSignedIn(User))
             {
@@ -27,7 +27,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
 
             var model = new LoginViewModel
             {
-                ReturnURL = string.IsNullOrWhiteSpace(returnUrl) ? Url.Content("~/") : returnUrl,
                 FromSignOut = TempData.Keys.Contains(SignOutKey) && (bool)TempData[SignOutKey]
             };
 
@@ -57,7 +56,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     if (result.Succeeded)
                     {
                         _logger.LogInformation("User logged in.");
-                        return Redirect(loginViewModel.ReturnURL);
+                        return RedirectToAction("Index", "Admin", new {Area = "Admin"});
                     }
                     if (result.IsLockedOut)
                     {

@@ -37,7 +37,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var cab = new CABProfileViewModel
             {
                 IsLoggedIn = opssUser,
-                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? null : WebUtility.UrlDecode(returnUrl),
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/search" : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
                 PublishedDate = cabDocument.PublishedDate,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
