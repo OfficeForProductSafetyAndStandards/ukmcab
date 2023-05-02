@@ -3,7 +3,6 @@
     [Area("Home")]
     public class HomeController : Controller
     {
-        //[Route("/")]
         [Route("home")]
         public IActionResult Index()
         {
