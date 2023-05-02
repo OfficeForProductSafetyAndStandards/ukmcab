@@ -12,6 +12,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="contactusform" method="post">
+            <input type="hidden" id="ReturnUrl" name="ReturnUrl" value="@Model.ReturnUrl"/>
             <fieldset class="govuk-fieldset">
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Name))">
                     <h1 class="govuk-label-wrapper">
@@ -46,7 +47,7 @@
                     </p>
                     <input asp-for="Subject" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Subject))" autocomplete="subject" aria-required="true" maxlength="100"/>
                 </div>
-                
+
                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
                     <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Message))">
                         <h1 class="govuk-label-wrapper">
@@ -71,7 +72,7 @@
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        <text>By sending this message, you confirm you have read and agreed to <a asp-area="Home" asp-controller="Footer" asp-action="Privacy">privacy policy</a> and <a asp-area="Home" asp-controller="Footer" asp-action="TermsAndConditions">terms of service</a></text> 
+                        <text>By sending this message, you confirm you have read and agreed to <a asp-area="Home" asp-controller="Footer" asp-action="Privacy">privacy policy</a> and <a asp-area="Home" asp-controller="Footer" asp-action="TermsAndConditions">terms of service</a></text>
                     </strong>
                 </div>
 
@@ -79,7 +80,7 @@
                     <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
                         Submit
                     </button>
-                    <a href="#" class="govuk-link">Cancel</a>
+                    <a href="@Model.ReturnUrl" class="govuk-link">Cancel</a>
                 </div>
 
             </fieldset>
