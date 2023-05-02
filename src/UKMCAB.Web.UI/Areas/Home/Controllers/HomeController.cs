@@ -3,12 +3,6 @@
     [Area("Home")]
     public class HomeController : Controller
     {
-        [Route("home")]
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [Route("/about")]
         public IActionResult About()
         {
