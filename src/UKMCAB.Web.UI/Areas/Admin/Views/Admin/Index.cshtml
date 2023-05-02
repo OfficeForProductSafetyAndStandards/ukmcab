@@ -87,9 +87,12 @@
                     }
                     </tbody>
                 </table>
-                <div id="work-queue-pagination-container">
-                    <partial name="Partials/_Pagination" model="Model.Pagination"/>
-                </div>
+                @if (Model.WorkQueueItems.Any())
+                {
+                    <div id="work-queue-pagination-container">
+                        <partial name="Partials/_Pagination" model="Model.Pagination"/>
+                    </div>
+                }
             </div>
         </div>
     </form>
