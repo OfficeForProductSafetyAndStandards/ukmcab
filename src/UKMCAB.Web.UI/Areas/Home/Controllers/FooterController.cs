@@ -43,7 +43,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
 
 
         [Route("/contact-us")]
-        public IActionResult ContactUs(string returnUrl)
+        public IActionResult ContactUs(string? returnUrl)
         {
             return View(new ContactUsViewModel{ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl) });
         }
