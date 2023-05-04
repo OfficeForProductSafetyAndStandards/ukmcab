@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using System.Net;
+using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Web.UI.Models.ViewModels.Footer;
 
@@ -42,9 +43,9 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
 
 
         [Route("/contact-us")]
-        public IActionResult ContactUs()
+        public IActionResult ContactUs(string? returnUrl)
         {
-            return View(new ContactUsViewModel());
+            return View(new ContactUsViewModel{ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl) });
         }
 
         [HttpPost]
@@ -65,7 +66,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
                 {
                     await _asyncNotificationClient.SendEmailAsync(_templateOptions.ContactUsOPSSEmail, _templateOptions.ContactUsOPSS, personalisation);
                     await _asyncNotificationClient.SendEmailAsync(model.Email, _templateOptions.ContactUsUser, personalisation);
-                    return RedirectToAction("ContactUsConfirmation");
+                    return RedirectToAction("ContactUsConfirmation", new {returnUrl = WebUtility.UrlEncode(model.ReturnUrl)});
                 }
                 catch
                 {
@@ -73,13 +74,18 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
                 }
 
             }
+
             return View(model);
         }
 
         [Route("/contact-us-confirmation")]
-        public IActionResult ContactUsConfirmation()
+        public IActionResult ContactUsConfirmation(string returnUrl)
         {
-            return View();
+            if (string.IsNullOrWhiteSpace(returnUrl))
+            {
+                returnUrl = WebUtility.UrlEncode("/");
+            }
+            return View(new ContactUsConfirmationViewModel{ReturnUrl = returnUrl});
         }
     }
 }

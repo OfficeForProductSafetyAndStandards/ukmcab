@@ -7,6 +7,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Footer
     {
         public string? Title => "Contact us";
 
+        public string? ReturnUrl { get; set; }
+
         [Required(ErrorMessage = "Enter a name")]
         [MaxLength(50, ErrorMessage = "Maximum name length is 50 characters")]
         public string? Name { get; set; }

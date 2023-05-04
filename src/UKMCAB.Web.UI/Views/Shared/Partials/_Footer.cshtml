@@ -1,4 +1,8 @@
-﻿<footer id="govuk-footer" class="govuk-footer " role="contentinfo">
+﻿@using System.Net
+@{
+    var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
+}
+<footer id="govuk-footer" class="govuk-footer " role="contentinfo">
     <div class="govuk-width-container ">
         <div class="govuk-footer__meta">
             <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
@@ -14,7 +18,7 @@
                         <a class="govuk-footer__link" asp-area="Home" asp-controller="Footer" asp-action="AccessibilityStatement">Accessibility statement</a>
                     </li>
                     <li class="govuk-footer__inline-list-item">
-                        <a class="govuk-footer__link" asp-area="Home" asp-controller="Footer" asp-action="ContactUs">Contact</a>
+                        <a class="govuk-footer__link" asp-area="Home" asp-controller="Footer" asp-action="ContactUs" asp-route-returnUrl="@returnUrl">Contact</a>
                     </li>
                     <li class="govuk-footer__inline-list-item">
                         <a class="govuk-footer__link" asp-area="Home" asp-controller="Footer" asp-action="TermsAndConditions">Terms and conditions</a>
