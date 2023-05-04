@@ -5,11 +5,20 @@ namespace UKMCAB.Web.UI;
 public static class Constants
 {
     public const string MainLayoutPath = "~/Views/Shared/_Layout.cshtml";
-    public const string SiteName = "UKMCAB alpha - GOV.UK";
+    public const string SiteName = "UKMCAB";
     public const string NotProvided = "Not provided";
 
     public const string TempDraftKey = nameof(TempDraftKey);
 
+    public class PageTitle
+    {
+        public const string About = "About";
+        public const string AccessibilityStatement = "Accessibility Statement";
+        public const string CookiesPolicy = "Cookies Policy";
+        public const string Help = "Help";
+        public const string PrivacyNotice = "Privacy Notice";
+        public const string TermsAndConditions = "Terms And Conditions";
+    }
     public static class Config
     {
         public const string ContainerNameDataProtectionKeys = "dataprotectionkeys";
