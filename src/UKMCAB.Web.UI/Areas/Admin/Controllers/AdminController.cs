@@ -20,7 +20,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [Route("/admin")]
-        [Route("/admin/work-queue")]
+        [Route("/admin/cab-management")]
         public async Task<IActionResult> Index(WorkQueueViewModel model)
         {
             if (string.IsNullOrEmpty(model.Sort))
