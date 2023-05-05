@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using UKMCAB.Data.Models;
 using UKMCAB.Core.Services;
+using UKMCAB.Data;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Data.Storage;
@@ -71,7 +72,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, "schedules",
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, DataConstants.Storage.Schedules,
                     model.File.OpenReadStream());
                 latestVersion.Schedules.Add(result);
 
@@ -232,7 +233,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, "documents",
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, DataConstants.Storage.Documents,
                     model.File.OpenReadStream());
                 latestVersion.Documents.Add(result);
 

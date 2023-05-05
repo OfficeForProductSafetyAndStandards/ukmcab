@@ -5,6 +5,7 @@ using System.Net;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Legacy;
+using UKMCAB.Data.Storage;
 
 namespace UKMCAB.Data.CosmosDb.Services
 {
@@ -12,17 +13,19 @@ namespace UKMCAB.Data.CosmosDb.Services
     {
         private Container _container;
         private readonly CosmosDbConnectionString _cosmosDbConnectionString;
+        private readonly IFileStorage _fileStorage;
 
-        public CABRepository(CosmosDbConnectionString cosmosDbConnectionString)
+        public CABRepository(CosmosDbConnectionString cosmosDbConnectionString, IFileStorage fileStorage)
         {
             _cosmosDbConnectionString = cosmosDbConnectionString;
+            _fileStorage = fileStorage;
         }
 
-        public async Task InitialiseAsync()
+        public async Task InitialiseAsync()//(IFileStorage fileStorage)
         {
             var client = new CosmosClient(_cosmosDbConnectionString);
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
-            var result = await database.CreateContainerIfNotExistsAsync(DataConstants.CosmosDb.Constainer, "/CABId");
+            var result = await database.CreateContainerIfNotExistsAsync(DataConstants.CosmosDb.Container, "/CABId");
             
             if(result.StatusCode == HttpStatusCode.Created)
             {
@@ -31,9 +34,10 @@ namespace UKMCAB.Data.CosmosDb.Services
                 var items = await Query<CABDocument>(legacyContainer, document => true);
                 foreach (var cabDocument in items)
                 {
+                    var cabId = Guid.NewGuid().ToString();
                     var document = new Document
                     {
-                        CABId = Guid.NewGuid().ToString(),
+                        CABId = cabId,
 
                         Name = cabDocument.Name,
                         AddressLine1 = cabDocument.Address,
@@ -46,7 +50,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         TestingLocations = SanitiseLists(cabDocument.TestingLocations, DataConstants.Lists.Countries),
                         LegislativeAreas = SanitiseLists(cabDocument.LegislativeAreas, DataConstants.Lists.LegislativeAreas),
                         HiddenText = cabDocument.HiddenText,
-                        Schedules = cabDocument.PDFs != null && cabDocument.PDFs.Any() ? cabDocument.PDFs.Select(p => new FileUpload { BlobName  = p.BlobName, FileName = p.ClientFileName, UploadDateTime = DateTime.UtcNow}).ToList() : new List<FileUpload>(),
+                        Schedules = await ImportSchedules(cabDocument.PDFs, cabId),
                         Documents = new List<FileUpload>(),
                         PublishedDate = cabDocument.PublishedDate.HasValue
                             ? cabDocument.PublishedDate.Value.DateTime
@@ -66,6 +70,26 @@ namespace UKMCAB.Data.CosmosDb.Services
             }
 
             _container = result.Container;
+        }
+
+        private async Task<List<FileUpload>> ImportSchedules(List<PDF> pdfs, string cabId)
+        {
+            var schedules = new List<FileUpload>();
+            if (pdfs == null || pdfs.Count == 0)
+            {
+                return schedules;
+            }
+
+            foreach (var pdf in pdfs)
+            {
+                var legacyblobStream = await _fileStorage.GetLegacyBlogStream(pdf.BlobName);
+                if (legacyblobStream != null)
+                {
+                    schedules.Add(await _fileStorage.UploadCABFile(cabId, pdf.ClientFileName, DataConstants.Storage.Schedules, legacyblobStream));
+                }
+            }
+
+            return schedules;
         }
 
         private static List<string> SanitiseLists(List<string> importData, List<string> masterList)

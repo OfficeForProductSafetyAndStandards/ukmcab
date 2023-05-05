@@ -15,17 +15,34 @@ namespace UKMCAB.Data.Storage
         Task<bool> DeleteCABSchedule(string blobName);
 
         Task<FileDownload> DownloadBlobStream(string blobPath);
+
+        Task<Stream> GetLegacyBlogStream(string blobPath);
     }
 
     public class FileStorageService : IFileStorage
     {
         private readonly ILoggingService _loggingService;
         private BlobContainerClient _client;
+        private BlobContainerClient _legacyClient;
         public FileStorageService(IConfiguration config, ILoggingService loggingService)
         {
             _loggingService = loggingService;
-            _client = new BlobContainerClient(config["DataConnectionString"], config["CABFileStorageContainer"]);
+            _client = new BlobContainerClient(config["DataConnectionString"], DataConstants.Storage.Container);
             _client.CreateIfNotExists();
+            _legacyClient = new BlobContainerClient(config["DataConnectionString"], DataConstants.Storage.ImportContainer);
+
+        }
+
+
+        public async Task<Stream> GetLegacyBlogStream(string blobPath)
+        {
+            var blob = _legacyClient.GetBlobClient(blobPath);
+            var blobExists = await blob.ExistsAsync();
+            if (blobExists.HasValue && blobExists.Value)
+            {
+                return await blob.OpenReadAsync();
+            }
+            return null;
         }
 
         public async Task<FileDownload> DownloadBlobStream(string blobPath)
@@ -54,7 +71,7 @@ namespace UKMCAB.Data.Storage
                 var blobClient = _client.GetBlobClient(blobName);
                 var blobHeaders = new BlobHttpHeaders
                 {
-                    ContentType = "application/pdf",
+                    ContentType = "application/pdf", // TODO: needs fixing
                     ContentDisposition = "attachment; filename=" + fileName
                 };
 

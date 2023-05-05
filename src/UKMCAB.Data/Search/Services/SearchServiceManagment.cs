@@ -45,7 +45,7 @@ namespace UKMCAB.Data.Search.Services
         {
             var cosmosDbDataSource = new SearchIndexerDataSourceConnection(DataConstants.Search.SEARCH_DATASOURCE,
                 SearchIndexerDataSourceType.CosmosDb, cosmosDBConnectionString + $";Database={DataConstants.CosmosDb.Database}",
-                new SearchIndexerDataContainer(DataConstants.CosmosDb.Constainer));
+                new SearchIndexerDataContainer(DataConstants.CosmosDb.Container));
 
             cosmosDbDataSource.Container.Query = $"SELECT * FROM c WHERE c.Status = \"{Status.Published}\"";
 

@@ -5,7 +5,7 @@ public class DataConstants
     public static class CosmosDb
     {
         public const string Database = "main";
-        public const string Constainer = "cab-documents";
+        public const string Container = "cab-documents";
         public const string ImportContainer = "cab-data";
 
     }
@@ -19,6 +19,16 @@ public class DataConstants
         public const string SEARCH_DATASOURCE = "ukmcab-search-datasource";
 
     }
+
+    public static class Storage
+    {
+        public const string Container = "documents";
+        public const string ImportContainer = "pdfs-from-data-import";
+        public const string Documents = "documents";
+        public const string Schedules = "schedules";
+
+    }
+
     public class SortOptions
     {
         public const string Default = "default";
