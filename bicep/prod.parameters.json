@@ -42,7 +42,7 @@
       "value": "secret"
     },
     "appServiceHostName": {
-      "value": "ukmcab.beis.gov.uk"
+      "value": "find-a-conformity-assessment-body.service.gov.uk"
     },
     "appServiceHostNameVNext": {
       "value": "ukmcab-vnext.beis.gov.uk"
