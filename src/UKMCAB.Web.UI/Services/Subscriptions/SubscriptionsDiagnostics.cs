@@ -71,6 +71,18 @@ public static class SubscriptionsDiagnostics
             await ctx.Response.WriteAsJsonAsync(new { host = ctx.Request.Host });
         });
 
+        builder.MapPost($"{b}/service/off", async (ctx) =>
+        {
+            ctx.RequestServices.GetRequiredService<SubscriptionsBackgroundService>().IsEnabled = false;
+            await ctx.Response.WriteAsJsonAsync(new { backgroundServiceState = "disabled" });
+        });
+
+        builder.MapPost($"{b}/service/on", async (ctx) =>
+        {
+            ctx.RequestServices.GetRequiredService<SubscriptionsBackgroundService>().IsEnabled = true;
+            await ctx.Response.WriteAsJsonAsync(new { backgroundServiceState = "enabled" });
+        });
+
         return builder;
     }
 
