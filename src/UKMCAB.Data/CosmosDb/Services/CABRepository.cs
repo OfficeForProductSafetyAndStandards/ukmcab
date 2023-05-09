@@ -85,7 +85,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                 var legacyblobStream = await _fileStorage.GetLegacyBlogStream(pdf.BlobName);
                 if (legacyblobStream != null)
                 {
-                    schedules.Add(await _fileStorage.UploadCABFile(cabId, pdf.ClientFileName, DataConstants.Storage.Schedules, legacyblobStream));
+                    schedules.Add(await _fileStorage.UploadCABFile(cabId, pdf.ClientFileName, DataConstants.Storage.Schedules, legacyblobStream, "application/pdf"));
                 }
             }
 

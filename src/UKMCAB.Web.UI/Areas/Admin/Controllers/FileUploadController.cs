@@ -68,12 +68,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id, fromSummary = "true" }: new { id });
             }
 
-            ValidateUploadFile(model, SchedulesOptions.AcceptedFileExtensions, SchedulesOptions.AcceptedFileTypes, latestVersion);
+            var contentType = ValidateUploadFileAndGetContentType(model, SchedulesOptions.AcceptedFileExtensionsContentTypes, SchedulesOptions.AcceptedFileTypes, latestVersion);
 
             if (ModelState.IsValid)
             {
                 var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, DataConstants.Storage.Schedules,
-                    model.File.OpenReadStream());
+                    model.File.OpenReadStream(), contentType);
                 latestVersion.Schedules.Add(result);
 
                 var user = await _userManager.GetUserAsync(User);
@@ -107,8 +107,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return RedirectToAction("Index", "Admin", new { Area = "admin" });
         }
 
-        private void ValidateUploadFile(FileUploadViewModel model, string[] acceptedFileExtension, string acceptedFileTypes, Document document)
+        private string ValidateUploadFileAndGetContentType(FileUploadViewModel model, Dictionary<string, string> acceptedFileExtensionsContentTypes, string acceptedFileTypes, Document document)
         {
+            var contentType = string.Empty;
             if (model.File == null)
             {
                 ModelState.AddModelError("File", $"Select a {acceptedFileTypes} file 10 megabytes or less.");
@@ -120,7 +121,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     ModelState.AddModelError("File", "Files must be no more that 10Mb in size.");
                 }
 
-                if (acceptedFileExtension.All(ext => ext != Path.GetExtension(model.File.FileName).ToLowerInvariant()))
+                contentType = acceptedFileExtensionsContentTypes.SingleOrDefault(ct =>
+                    ct.Key.Equals(Path.GetExtension(model.File.FileName), StringComparison.InvariantCultureIgnoreCase)).Value;
+                if (string.IsNullOrWhiteSpace(contentType))
                 {
                     ModelState.AddModelError("File", $"Files must be in {acceptedFileTypes} format to be uploaded.");
                 }
@@ -132,6 +135,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     ModelState.AddModelError("File", "Uploaded files must have different names to those already uploaded.");
                 }
             }
+
+            return contentType;
         }
 
         [HttpGet]
@@ -229,12 +234,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("DocumentsList", model.IsFromSummary ? new { id, fromSummary = "true" } : new { id });
             }
 
-            ValidateUploadFile(model, DocumentsOptions.AcceptedFileExtensions, DocumentsOptions.AcceptedFileTypes, latestVersion);
+            var contentType = ValidateUploadFileAndGetContentType(model, DocumentsOptions.AcceptedFileExtensionsContentTypes, DocumentsOptions.AcceptedFileTypes, latestVersion);
 
             if (ModelState.IsValid)
             {
                 var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, DataConstants.Storage.Documents,
-                    model.File.OpenReadStream());
+                    model.File.OpenReadStream(), contentType);
                 latestVersion.Documents.Add(result);
 
                 var user = await _userManager.GetUserAsync(User);

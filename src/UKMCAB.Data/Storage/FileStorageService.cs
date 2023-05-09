@@ -10,7 +10,7 @@ namespace UKMCAB.Data.Storage
 {
     public interface IFileStorage
     {
-        Task<FileUpload> UploadCABFile(string cabId, string FileName, string DirectoryName, Stream stream);
+        Task<FileUpload> UploadCABFile(string cabId, string FileName, string DirectoryName, Stream stream, string contentType);
 
         Task<bool> DeleteCABSchedule(string blobName);
 
@@ -62,7 +62,7 @@ namespace UKMCAB.Data.Storage
             return null;
         }
 
-        public async Task<FileUpload> UploadCABFile(string cabId, string fileName, string directoryName, Stream stream)
+        public async Task<FileUpload> UploadCABFile(string cabId, string fileName, string directoryName, Stream stream, string contentType)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace UKMCAB.Data.Storage
                 var blobClient = _client.GetBlobClient(blobName);
                 var blobHeaders = new BlobHttpHeaders
                 {
-                    ContentType = "application/pdf", // TODO: needs fixing
+                    ContentType = contentType, 
                     ContentDisposition = "attachment; filename=" + fileName
                 };
 
