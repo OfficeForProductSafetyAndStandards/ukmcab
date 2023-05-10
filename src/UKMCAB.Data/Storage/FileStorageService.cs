@@ -1,10 +1,7 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.Extensions.Configuration;
-using UKMCAB.Common.Exceptions;
 using UKMCAB.Data.Models;
-using UKMCAB.Infrastructure.Logging;
-using UKMCAB.Infrastructure.Logging.Models;
 
 namespace UKMCAB.Data.Storage
 {
@@ -21,12 +18,10 @@ namespace UKMCAB.Data.Storage
 
     public class FileStorageService : IFileStorage
     {
-        private readonly ILoggingService _loggingService;
         private BlobContainerClient _client;
         private BlobContainerClient _legacyClient;
-        public FileStorageService(IConfiguration config, ILoggingService loggingService)
+        public FileStorageService(IConfiguration config)
         {
-            _loggingService = loggingService;
             _client = new BlobContainerClient(config["DataConnectionString"], DataConstants.Storage.Container);
             _client.CreateIfNotExists();
             _legacyClient = new BlobContainerClient(config["DataConnectionString"], DataConstants.Storage.ImportContainer);
@@ -64,34 +59,32 @@ namespace UKMCAB.Data.Storage
 
         public async Task<FileUpload> UploadCABFile(string cabId, string fileName, string directoryName, Stream stream, string contentType)
         {
-            try
+            fileName = MakeValidFileName(fileName);
+            var blobName = $"{cabId}/{directoryName}/{fileName}";
+            var blobClient = _client.GetBlobClient(blobName);
+            var blobHeaders = new BlobHttpHeaders
             {
-                fileName = MakeValidFileName(fileName);
-                var blobName = $"{cabId}/{directoryName}/{fileName}";
-                var blobClient = _client.GetBlobClient(blobName);
-                var blobHeaders = new BlobHttpHeaders
+                ContentType = contentType, 
+                ContentDisposition = "attachment; filename=" + fileName
+            };
+
+            var result = await blobClient.UploadAsync(stream, blobHeaders);
+            if (result.HasValue)
+            {
+                return new FileUpload
                 {
-                    ContentType = contentType, 
-                    ContentDisposition = "attachment; filename=" + fileName
+                    FileName = fileName,
+                    BlobName = blobName,
+                    UploadDateTime = DateTime.UtcNow
                 };
-
-                var result = await blobClient.UploadAsync(stream, blobHeaders);
-                if (result.HasValue)
-                {
-                    return new FileUpload
-                    {
-                        FileName = fileName,
-                        BlobName = blobName,
-                        UploadDateTime = DateTime.UtcNow
-                    };
-                }
-
-                throw new DomainException("File upload failed.");
             }
-            catch (Exception ex)
+            else
             {
-                _loggingService.Log(new LogEntry(ex));
-                throw;
+                // given this is an unexpected condition, throw a normal exception, let it propagate (UnexpectedExceptionHandlerMiddleware will handle it).
+                // The user will receive the "something went wrong+error code" page and it'll be logged in application insights and in the error log
+                // Domain exceptions are more for when Ralph states some business rule but then doesn't provide any UX or explanation as to how to tell the user.
+                // Domain exceptions are like a fallback business error mechanism, where you want to tell the user a message, but you don't want to log the error because it's a bona fide business rule. 
+                throw new Exception("UploadCABFile::File upload failed. UploadAsync returned result.HasValue==false."); 
             }
         }
 
@@ -106,16 +99,8 @@ namespace UKMCAB.Data.Storage
 
         public async Task<bool> DeleteCABSchedule(string blobName)
         {
-            try
-            {
-                var result = await _client.DeleteBlobIfExistsAsync(blobName, DeleteSnapshotsOption.IncludeSnapshots);
-                return result.Value;
-            }
-            catch (Exception ex)
-            {
-                _loggingService.Log(new LogEntry(ex));
-                throw;
-            }
+            var result = await _client.DeleteBlobIfExistsAsync(blobName, DeleteSnapshotsOption.IncludeSnapshots);  // let exceptions propagate
+            return result.Value;
         }
     }
 }

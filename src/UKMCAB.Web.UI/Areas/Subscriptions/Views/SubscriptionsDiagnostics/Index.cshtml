@@ -14,7 +14,7 @@
                  data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__header">
                     <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                        Success
+                        Message
                     </h2>
                 </div>
                 <div class="govuk-notification-banner__content">
@@ -27,17 +27,24 @@
 
         @if(Context.Request.Query["stat"].ToString().Clean() != null)
         {
-            <h4 class="govuk-heading-s">Request process subscriptions action gave stats:</h4>
-            <div class="govuk-body-xs">
-                @{
-                    var stats = JsonBase64UrlToken.Deserialize<SubscriptionEngine.ResultAccumulator>(Context.Request.Query["stat"]);
-                }
-                Errors: @stats.Errors<br/>
-                Initialised: @stats.Initialised<br />
-                NotDue: @stats.NotDue<br />
-                NoChange: @stats.NoChange<br />
-                Notified: @stats.Notified
-            </div>
+            var stats = JsonBase64UrlToken.Deserialize<SubscriptionEngine.ResultAccumulator>(Context.Request.Query["stat"]);
+            if (stats != null)
+            {
+                <h4 class="govuk-heading-s">Request process subscriptions action gave stats:</h4>
+                <div class="govuk-body-xs">
+                
+
+                
+                        <div>
+                            Errors: @stats.Errors<br/>
+                            Initialised: @stats.Initialised<br />
+                            NotDue: @stats.NotDue<br />
+                            NoChange: @stats.NoChange<br />
+                            Notified: @stats.Notified
+                        </div>
+                
+                </div>
+            }
         }
 
         
