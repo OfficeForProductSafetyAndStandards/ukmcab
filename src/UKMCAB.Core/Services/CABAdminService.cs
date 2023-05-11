@@ -156,5 +156,23 @@ namespace UKMCAB.Core.Services
 
             return latestDocument;
         }
+
+        public async Task<Document> ArchiveDocumentAsync(string userEmail, Document latestDocument, string archiveReason)
+        {
+            var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
+            Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
+            var currentDateTime = DateTime.UtcNow;
+            publishedVersion.StatusValue = Status.Archived;
+            publishedVersion.ArchivedBy = userEmail;
+            publishedVersion.ArchivedDate = currentDateTime;
+            publishedVersion.ArchivedReason = archiveReason;
+            Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
+                $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
+            await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
+            await _cachedSearchService.ReIndexAsync();
+            await _cachedSearchService.ClearAsync();
+            await _cachedPublishedCabService.ClearAsync(latestDocument.CABId);
+            return publishedVersion;
+        }
     }
 }

@@ -14,6 +14,9 @@
         public DateTime LastUpdatedDate => LastModifiedDate;
         public string PublishedBy { get; set; }
         public DateTime PublishedDate { get; set; }
+        public string ArchivedBy { get; set; }
+        public DateTime ArchivedDate { get; set; }
+        public string ArchivedReason { get; set; }
 
 
         // Create/Details
