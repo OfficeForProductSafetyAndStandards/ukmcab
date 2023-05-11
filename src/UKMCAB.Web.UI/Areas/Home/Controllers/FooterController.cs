@@ -20,25 +20,41 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         [Route("/privacy-notice")]
         public IActionResult Privacy()
         {
-            return View();
+            var model = new BasicPageModel()
+            {
+                Title = Constants.PageTitle.PrivacyNotice
+            };
+            return View(model);
         }
 
         [Route("/cookies-policy")]
         public IActionResult Cookies()
         {
-            return View();
+            var model = new BasicPageModel()
+            {
+                Title = Constants.PageTitle.CookiesPolicy
+            };
+            return View(model);
         }        
         
         [Route("/accessibility-statement")]
         public IActionResult AccessibilityStatement()
         {
-            return View();
+            var model = new BasicPageModel()
+            {
+                Title = Constants.PageTitle.AccessibilityStatement
+            };
+            return View(model);
         }        
         
         [Route("/terms-and-conditions")]
         public IActionResult TermsAndConditions()
         {
-            return View();
+            var model = new BasicPageModel()
+            {
+                Title = Constants.PageTitle.TermsAndConditions
+            };
+            return View(model);
         }
 
 

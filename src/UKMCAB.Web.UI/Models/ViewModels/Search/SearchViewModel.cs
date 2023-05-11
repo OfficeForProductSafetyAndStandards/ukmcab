@@ -15,7 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? ReturnUrl { get; set; }
 
         // ILayout
-        public string? Title => "Search";
+        public string? Title => Keywords.IsNotNullOrEmpty()? Keywords: "Search";
 
         // Form fields
         public string Keywords { get; set; }

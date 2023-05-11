@@ -6,13 +6,21 @@
         [Route("/about")]
         public IActionResult About()
         {
-            return View();
+            var model = new BasicPageModel()
+            {
+                Title = Constants.PageTitle.About
+            };
+            return View(model);
         }
 
         [Route("/help")]
         public IActionResult Help()
         {
-            return View();
+            var model = new BasicPageModel()
+            {
+                Title = Constants.PageTitle.Help
+            };
+            return View(model);
         }
     }
 }
