@@ -4,7 +4,11 @@ public class SubscriptionsBackgroundService : BackgroundService
 {
     private readonly ISubscriptionEngineCoordinator _subscriptionEngineCoordinator;
 
-    public bool IsEnabled { get; set; } = true;
+#if (DEBUG)
+    public bool IsEnabled { get; set; } = false; // in debug-mode, default to disabled.
+#else
+    public bool IsEnabled { get; set; } = true;  // in release-mode, assume it's deployed to a server and default to enabled.
+#endif
 
     public SubscriptionsBackgroundService(ISubscriptionEngineCoordinator subscriptionEngineCoordinator) => _subscriptionEngineCoordinator = subscriptionEngineCoordinator;
 
