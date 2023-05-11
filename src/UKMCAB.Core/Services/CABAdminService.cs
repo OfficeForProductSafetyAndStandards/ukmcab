@@ -3,6 +3,7 @@ using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Services;
+using UKMCAB.Identity.Stores.CosmosDB;
 
 namespace UKMCAB.Core.Services
 {
@@ -72,33 +73,30 @@ namespace UKMCAB.Core.Services
             return _cabRepostitory.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
         }
 
-        public async Task<Document> CreateDocumentAsync(string userEmail, Document document, bool saveAsDraft = false)
+        public async Task<Document> CreateDocumentAsync(UKMCABUser user, Document document, bool saveAsDraft = false)
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
             Guard.IsFalse(documentExists, "CAB name or number already exists in database");
             
             var createdDate = DateTime.Now;
+            var auditItem = new Audit(user, createdDate);
             document.CABId = Guid.NewGuid().ToString();
-            document.CreatedBy = userEmail;
-            document.CreatedDate = createdDate;
-            document.LastModifiedBy = userEmail;
-            document.LastModifiedDate = createdDate;
+            document.Created = auditItem;
+            document.LastUpdated = auditItem;
             document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
             return await _cabRepostitory.CreateAsync(document);
         }
 
-        public async Task<Document> UpdateOrCreateDraftDocumentAsync(string userEmail, Document draft, bool saveAsDraft = false)
+        public async Task<Document> UpdateOrCreateDraftDocumentAsync(UKMCABUser user, Document draft, bool saveAsDraft = false)
         {
-            var currentDateTime = DateTime.UtcNow;
+            var audit = new Audit(user, DateTime.UtcNow);
             if (draft.StatusValue == Status.Published)
             {
                 draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
                 draft.id = string.Empty;
-                draft.CreatedBy = userEmail;
-                draft.CreatedDate = currentDateTime;
-                draft.LastModifiedBy = userEmail;
-                draft.LastModifiedDate = currentDateTime;
+                draft.Created = audit;
+                draft.LastUpdated = audit;
                 var newdraft = await _cabRepostitory.CreateAsync(draft);
                 Guard.IsFalse(newdraft == null,
                     $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
@@ -111,8 +109,7 @@ namespace UKMCAB.Core.Services
             }
             if (draft.StatusValue == Status.Created || draft.StatusValue == Status.Draft)
             {
-                draft.LastModifiedBy = userEmail;
-                draft.LastModifiedDate = currentDateTime;
+                draft.LastUpdated = audit;
                 Guard.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
                 return draft;
             }
@@ -130,10 +127,9 @@ namespace UKMCAB.Core.Services
             return true;
         }
 
-        public async Task<Document> PublishDocumentAsync(string userEmail, Document latestDocument)
+        public async Task<Document> PublishDocumentAsync(UKMCABUser user, Document latestDocument)
         {
             Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
-            var currentDateTime = DateTime.UtcNow;
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             if (publishedVersion != null)
             {
@@ -142,19 +138,41 @@ namespace UKMCAB.Core.Services
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
                 await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
             }
-            latestDocument.PublishedBy = userEmail;
-            latestDocument.PublishedDate = currentDateTime;
+
+            latestDocument.Published = new Audit(user, DateTime.UtcNow);
             latestDocument.StatusValue = Status.Published;
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
 
-            // TODO: look at introducing CAB targeted index updates rather than complete index update
-            await _cachedSearchService.ReIndexAsync();
-            await _cachedSearchService.ClearAsync(latestDocument.CABId);
-            await _cachedPublishedCabService.ClearAsync(latestDocument.CABId);
+            await RefreshCaches(latestDocument.CABId);
 
             return latestDocument;
         }
+
+        public async Task<Document> ArchiveDocumentAsync(UKMCABUser user, Document latestDocument, string archiveReason)
+        {
+            var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
+            Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
+            publishedVersion.StatusValue = Status.Archived;
+            publishedVersion.Archived = new Audit(user, DateTime.UtcNow);
+            publishedVersion.ArchivedReason = archiveReason;
+            Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
+                $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
+
+            await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
+            await RefreshCaches(latestDocument.CABId);
+            return publishedVersion;
+        }
+
+        private async Task RefreshCaches(string cabId)
+        {
+            await _cachedSearchService.ReIndexAsync();
+            await _cachedSearchService.ClearAsync();
+            await _cachedSearchService.ClearAsync(cabId);
+            await _cachedPublishedCabService.ClearAsync(cabId);
+        }
     }
+
+
 }

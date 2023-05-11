@@ -77,7 +77,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestVersion.Schedules.Add(result);
 
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
                 return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
             }
 
@@ -101,7 +101,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (latestVersion.StatusValue == Status.Created)
             {
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion, true);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion, true);
             }
             TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} (CAB number {latestVersion.CABNumber})";
             return RedirectToAction("Index", "Admin", new { Area = "admin" });
@@ -179,7 +179,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
                 latestVersion.Schedules.Remove(fileToRemove);
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
             }
 
             return View(new FileListViewModel
@@ -243,7 +243,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestVersion.Documents.Add(result);
 
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
                 return RedirectToAction("DocumentsList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
             }
 
@@ -295,7 +295,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
                 latestVersion.Documents.Remove(fileToRemove);
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestVersion);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
             }
 
             return View(new FileListViewModel

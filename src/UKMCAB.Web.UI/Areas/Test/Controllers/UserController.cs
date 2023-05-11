@@ -25,16 +25,25 @@ namespace UKMCAB.Web.UI.Areas.Test.Controllers
             {
                 return Unauthorized();
             }
-            var user = new UKMCABUser
+
+            if (ModelState.IsValid)
             {
-                UserName = testUser.Email,
-                Email = testUser.Email,
-                EmailConfirmed = true,
-                RequestApproved = true
-            };
-            var result = await _userManager.CreateAsync(user, testUser.Password);
-            var roleResult = await _userManager.AddToRoleAsync(user, Constants.Roles.OPSSAdmin);
-            return result.Succeeded && roleResult.Succeeded ? Ok(user.Id) : BadRequest();
+                var user = new UKMCABUser
+                {
+                    UserName = testUser.Email,
+                    Email = testUser.Email,
+                    EmailConfirmed = true,
+                    RequestApproved = true,
+                    FirstName = testUser.FirstName,
+                    LastName = testUser.LastName
+                };
+                var result = await _userManager.CreateAsync(user, testUser.Password);
+                var roleResult = await _userManager.AddToRoleAsync(user, Constants.Roles.OPSSAdmin);
+                return result.Succeeded && roleResult.Succeeded ? Ok(user.Id) : BadRequest();
+
+            }
+
+            return BadRequest(ModelState);
         }
 
         [HttpDelete]

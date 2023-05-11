@@ -25,7 +25,27 @@
         </div>
     }
 }
-
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="null" />
+    </div>
+</div>
+@if (Model.IsArchived)
+{
+    <div class="govuk-notification-banner" role="region"
+         aria-labelledby="govuk-notification-banner-title"
+         data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__content">
+        
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">   
+                <p class="govuk-notification-banner__heading">Archived on @Model.ArchivedDate</p>
+                </strong>
+            </div>
+        </div>
+    </div>
+}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
@@ -71,6 +91,14 @@
                         Product schedules
                     </a>
                 </li>
+            @if (Model.IsLoggedIn)
+            {
+                <li class="govuk-tabs__list-item last">
+                    <a class="govuk-tabs__tab" href="#archive">
+                        Archive
+                    </a>
+                </li>
+            }
             </ul>
 
             <div class="govuk-tabs__panel cabs__panel" id="details">
@@ -229,6 +257,7 @@
                     </dl>
                 </div>
             </div>
+
             <div class="govuk-tabs__panel cabs__panel govuk-tabs__panel--hidden" id="product-schedules">
                 <div class="cab-detail-section">
                     <h2 class="govuk-heading-l">Product schedules</h2>
@@ -249,6 +278,41 @@
                     }
                 </div>
             </div>
+            
+        @if (Model.IsLoggedIn)
+        {
+            <div class="govuk-tabs__panel cabs__panel govuk-tabs__panel--hidden" id="archive">
+                <div class="cab-detail-section">
+                    <h2 class="govuk-heading-l">Archive</h2>
+                    @if (Model.IsArchived)
+                    {
+                        <p class="govuk-body">Archived on @Model.ArchivedDate by @Model.ArchivedBy</p>
+                        <p class="govuk-body">@Model.ArchiveReason</p>
+                    }
+                    else
+                    {
+                        <form method="post">
+                            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))">
+                                <div id="archive-hint" class="govuk-hint">
+                                    State the reason for archiving this CAB record.
+                                </div>
+                                <p class="govuk-error-message">
+                                    <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
+                                </p>
+                                <textarea class="govuk-textarea govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))"  asp-for="ArchiveReason" rows="5" aria-describedby="archive-hint"></textarea>
+                            </div>
+
+                            <div class="govuk-button-group">
+                                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                                    Continue
+                                </button>
+                                <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
         </div>
     </div>
 </div>

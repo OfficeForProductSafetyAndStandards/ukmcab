@@ -31,6 +31,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UKMCAB.Common\UKMCAB.Common.csproj" />
+    <ProjectReference Include="..\UKMCAB.Identity.Stores.CosmosDB\UKMCAB.Identity.Stores.CosmosDB.csproj" />
     <ProjectReference Include="..\UKMCAB.Infrastructure\UKMCAB.Infrastructure.csproj" />
   </ItemGroup>
 

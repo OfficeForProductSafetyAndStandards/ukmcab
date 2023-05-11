@@ -67,8 +67,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     var user = await _userManager.GetUserAsync(User);
                     var createdDocument = model.IsFromSummary ?
-                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, document, submitType == Constants.SubmitType.Save) :
-                        await _cabAdminService.CreateDocumentAsync(user.Email, document, submitType == Constants.SubmitType.Save);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, document, submitType == Constants.SubmitType.Save) :
+                        await _cabAdminService.CreateDocumentAsync(user, document, submitType == Constants.SubmitType.Save);
                     if (createdDocument == null)
                     {
                         ModelState.AddModelError(string.Empty, "Failed to create the document, please try again.");
@@ -164,7 +164,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.RegisteredOfficeLocation = model.RegisteredOfficeLocation;
 
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestDocument, submitType == Constants.SubmitType.Save);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary ?
@@ -236,7 +236,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.LegislativeAreas = model.LegislativeAreas;
                 var user = await _userManager.GetUserAsync(User);
 
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latestDocument, submitType == Constants.SubmitType.Save);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
                 { 
                     return model.IsFromSummary ?
@@ -304,7 +304,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType == Constants.SubmitType.Save)
             {
                 var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user.Email, latest, submitType == Constants.SubmitType.Save);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latest, submitType == Constants.SubmitType.Save);
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
 
@@ -328,7 +328,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (publishModel.ValidCAB && submitType == Constants.SubmitType.Continue)
             {
                 var user = await _userManager.GetUserAsync(User);
-                var pubishedDoc = await _cabAdminService.PublishDocumentAsync(user.Email, latest);
+                var pubishedDoc = await _cabAdminService.PublishDocumentAsync(user, latest);
                 TempData["Confirmation"] = true;
                 return RedirectToAction("Confirmation", "CAB", new { Area = "admin", id = latest.CABId });
             }
