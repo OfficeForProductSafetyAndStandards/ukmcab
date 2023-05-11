@@ -37,16 +37,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
-                {
-                    await SubmitEmailAsync(model);
-                    return RedirectToAction("Success", new {returnURL = model.ReturnURL});
-                }
-                catch (Exception ex)
-                {
-                    _loggingService.Log(new LogEntry(ex));
-                    ModelState.AddModelError("", "There was a problem submitting your feedback, please try again later.");
-                }
+                await SubmitEmailAsync(model);
+                return RedirectToAction("Success", new {returnURL = model.ReturnURL}); 
+                // let exceptions propagate.  they'll be handled by UnexpectedExceptionHandlerMiddleware which will show the standard friendly error message+error code.
+                // if you override this behaviour, then exceptions won't get logged by application insights and will be less visible.
             }
 
             return View(model);
@@ -72,19 +66,12 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             if (ModelState.IsValid)
             {
-                try
+                await SubmitEmailAsync(model); // let exceptions propagate. they'll be handled by UnexpectedExceptionHandlerMiddleware which will show the standard friendly error message+error code.
+                return Json(new FeedbackFormResult
                 {
-                    await SubmitEmailAsync(model);
-                    return Json(new FeedbackFormResult
-                    {
-                        Submitted = true,
-                        ErrorMessage = string.Empty
-                    });
-                }
-                catch (Exception ex)
-                {
-                    _loggingService.Log(new LogEntry(ex));
-                }
+                    Submitted = true,
+                    ErrorMessage = string.Empty
+                });
             }
 
             return Json(new FeedbackFormResult
