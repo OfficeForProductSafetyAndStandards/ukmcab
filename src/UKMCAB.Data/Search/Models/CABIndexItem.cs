@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using Azure.Search.Documents.Indexes;
+﻿using Azure.Search.Documents.Indexes;
 
 namespace UKMCAB.Data.Search.Models
 {
@@ -54,12 +53,8 @@ namespace UKMCAB.Data.Search.Models
         public string RegisteredOfficeLocation { get; set; }
 
         [SimpleField(IsSortable = true)]
-        public DateTime? LastModifiedDate { get; set; }
-        [SimpleField(IsSortable = true)]
         public DateTime? LastUpdatedDate { get; set; }
 
-        [SimpleField(IsSortable = true)]
-        public DateTime? LastUpdatedDateTime { get; set; }
 
         [SimpleField(IsSortable = true)]
         public string RandomSort { get; set; }
