@@ -53,9 +53,8 @@ namespace UKMCAB.Data.Search.Models
         public string RegisteredOfficeLocation { get; set; }
 
         [SimpleField(IsSortable = true)]
-        public DateTime? LastModifiedDate { get; set; }
-        [SimpleField(IsSortable = true)]
         public DateTime? LastUpdatedDate { get; set; }
+
 
         [SimpleField(IsSortable = true)]
         public string RandomSort { get; set; }

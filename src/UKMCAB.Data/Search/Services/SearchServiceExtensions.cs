@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Search.Documents.Indexes;
+using Microsoft.ApplicationInsights;
 using Microsoft.Extensions.DependencyInjection;
 using UKMCAB.Common.ConnectionStrings;
 
@@ -14,7 +15,7 @@ namespace UKMCAB.Data.Search.Services
 
             services.AddSingleton(searchIndexClient);
             services.AddSingleton(searchIndexerClient);
-            services.AddSingleton<ISearchService>(new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX), searchIndexerClient));
+            services.AddSingleton<ISearchService>(x=>new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX), searchIndexerClient, x.GetRequiredService<TelemetryClient>()));
             services.AddSingleton<SearchServiceManagment>();
             services.AddSingleton<ICachedSearchService, CachedSearchService>();
         }

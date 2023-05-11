@@ -20,11 +20,13 @@
     <PackageReference Include="morelinq" Version="3.4.2" />
     <PackageReference Include="Polly" Version="7.2.3" />
     <PackageReference Include="YamlDotNet" Version="13.1.0" />
+	<PackageReference Include="Microsoft.ApplicationInsights" Version="2.21.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UKMCAB.Common\UKMCAB.Common.csproj" />
     <ProjectReference Include="..\UKMCAB.Data\UKMCAB.Data.csproj" />
+    <ProjectReference Include="..\UKMCAB.Identity.Stores.CosmosDB\UKMCAB.Identity.Stores.CosmosDB.csproj" />
     <ProjectReference Include="..\UKMCAB.Infrastructure\UKMCAB.Infrastructure.csproj" />
   </ItemGroup>
 
