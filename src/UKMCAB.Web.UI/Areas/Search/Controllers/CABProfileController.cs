@@ -48,16 +48,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var user = await _userManager.GetUserAsync(User);
             var opssUser = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
+            var isArchived = cabDocument.StatusValue == Status.Archived;
             var cab = new CABProfileViewModel
             {
                 IsLoggedIn = opssUser,
-                IsArchived = cabDocument.StatusValue == Status.Archived,
-                ArchivedBy = cabDocument.ArchivedBy,
-                ArchivedDate = cabDocument.ArchivedDate.ToString("dd MMM yyyy"),
+                IsArchived = isArchived,
+                ArchivedBy = isArchived ? cabDocument.Archived.UserName : string.Empty,
+                ArchivedDate = isArchived ? cabDocument.Archived.DateTime.ToString("dd MMM yyyy") : string.Empty,
                 ArchiveReason = cabDocument.ArchivedReason,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/search" : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
-                PublishedDate = cabDocument.PublishedDate,
+                PublishedDate = cabDocument.Published.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber =  string.Empty,
@@ -88,22 +89,24 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var opssUser = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
             if (!string.IsNullOrWhiteSpace(ArchiveReason))
             {
-                cabDocument = await _cabAdminService.ArchiveDocumentAsync(user.UserName, cabDocument, ArchiveReason);
+                cabDocument = await _cabAdminService.ArchiveDocumentAsync(user, cabDocument, ArchiveReason);
             }
             else
             {
                 ModelState.AddModelError("ArchiveReason", "State the reason for archiving this CAB record");
             }
+
+            var isArchived = cabDocument.StatusValue == Status.Archived;
             var cab = new CABProfileViewModel
             {
                 IsLoggedIn = opssUser,
-                IsArchived = cabDocument.StatusValue == Status.Archived,
-                ArchivedBy = cabDocument.ArchivedBy,
-                ArchivedDate = cabDocument.ArchivedDate.ToString("dd MMM yyyy"),
+                IsArchived = isArchived,
+                ArchivedBy = isArchived ? cabDocument.Archived.UserName : string.Empty,
+                ArchivedDate = isArchived ? cabDocument.Archived.DateTime.ToString("dd MMM yyyy") : string.Empty,
                 ArchiveReason = cabDocument.ArchivedReason,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/search" : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
-                PublishedDate = cabDocument.PublishedDate,
+                PublishedDate = cabDocument.Published.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber = string.Empty,
@@ -142,7 +145,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 var cab = new SubscriptionsCoreCabModel
                 {
                     CABId = cabDocument.CABId,
-                    PublishedDate = cabDocument.PublishedDate,
+                    PublishedDate = cabDocument.Published.DateTime,
                     LastModifiedDate = cabDocument.LastUpdatedDate,
                     Name = cabDocument.Name,
                     UKASReferenceNumber = string.Empty,

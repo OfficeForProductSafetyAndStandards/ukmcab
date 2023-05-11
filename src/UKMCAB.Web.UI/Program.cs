@@ -178,7 +178,7 @@ await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConn
     var opssAdmin = new IdentityRole(Constants.Roles.OPSSAdmin);
     seeds
         .AddRole(role: opssAdmin)
-        .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", EmailConfirmed = true, Regulations = new List<string> { "Construction" }, RequestReason = "Seeded", RequestApproved = true },
+        .AddUser(user: new() { Email = "admin@ukmcab.gov.uk", UserName = "admin@ukmcab.gov.uk", FirstName = "OPSS", LastName = "Admin User", EmailConfirmed = true, Regulations = new List<string> { "Construction" }, RequestReason = "Seeded", RequestApproved = true },
             password: "adminP@ssw0rd!", roles: opssAdmin);
 
     // Note: Username should be provided as its a required field in identity framework and email should be marked as confirmed to allow login, also password should meet identity password requirements

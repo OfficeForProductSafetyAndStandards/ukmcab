@@ -52,16 +52,28 @@ namespace UKMCAB.Data.CosmosDb.Services
                         HiddenText = cabDocument.HiddenText,
                         Schedules = await ImportSchedules(cabDocument.PDFs, cabId),
                         Documents = new List<FileUpload>(),
-                        PublishedDate = cabDocument.PublishedDate.HasValue
-                            ? cabDocument.PublishedDate.Value.DateTime
-                            : DateTime.UtcNow,
-                        PublishedBy = "admin",
-                        LastModifiedDate = cabDocument.LastUpdatedDate.HasValue
-                            ? cabDocument.LastUpdatedDate.Value.DateTime
-                            : DateTime.UtcNow,
-                        LastModifiedBy = "admin",
-                        CreatedDate = DateTime.UtcNow,
-                        CreatedBy = "admin",
+                        Created = new Audit
+                        {
+                            UserId = "00000000-0000-0000-0000-000000000000",
+                            UserName = "Data import",
+                            DateTime = DateTime.UtcNow
+                        },
+                        LastUpdated = new Audit
+                        {
+                            UserId = "00000000-0000-0000-0000-000000000000",
+                            UserName = "Data import",
+                            DateTime = cabDocument.LastUpdatedDate.HasValue
+                                ? cabDocument.LastUpdatedDate.Value.DateTime
+                                : DateTime.UtcNow
+                        },
+                        Published = new Audit
+                        {
+                            UserId = "00000000-0000-0000-0000-000000000000",
+                            UserName = "Data import",
+                            DateTime = cabDocument.PublishedDate.HasValue
+                                ? cabDocument.PublishedDate.Value.DateTime
+                                : DateTime.UtcNow
+                        },
                         StatusValue = Status.Published,
                         RandomSort = Guid.NewGuid().ToString()
                     };

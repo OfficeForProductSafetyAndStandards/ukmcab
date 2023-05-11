@@ -34,7 +34,7 @@ public class SubscriptionsCabService : ICabService
             var cab = new SubscriptionsCoreCabModel
             {
                 CABId = cabDocument.CABId,
-                PublishedDate = cabDocument.PublishedDate,
+                PublishedDate = cabDocument.Published.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber = string.Empty,

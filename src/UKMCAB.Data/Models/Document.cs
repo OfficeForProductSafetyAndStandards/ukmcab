@@ -7,15 +7,13 @@
         public Status StatusValue { get; set; }
         public string Status => StatusValue.ToString();
 
-        public string CreatedBy { get; set; }
-        public DateTime CreatedDate { get; set; }
-        public string LastModifiedBy { get; set; }
-        public DateTime LastModifiedDate { get; set; }
-        public DateTime LastUpdatedDate => LastModifiedDate;
-        public string PublishedBy { get; set; }
-        public DateTime PublishedDate { get; set; }
-        public string ArchivedBy { get; set; }
-        public DateTime ArchivedDate { get; set; }
+        // Audit
+        public Audit Created { get; set; }
+        public Audit LastUpdated { get; set; }
+        // Used by the search index, saves a lot of effort to flatten the model in the data source
+        public DateTime LastUpdatedDate => LastUpdated.DateTime;
+        public Audit Published { get; set; }
+        public Audit Archived { get; set; }
         public string ArchivedReason { get; set; }
 
 
