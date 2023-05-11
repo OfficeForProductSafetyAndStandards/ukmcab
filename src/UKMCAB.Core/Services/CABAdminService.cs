@@ -151,7 +151,7 @@ namespace UKMCAB.Core.Services
 
             // TODO: look at introducing CAB targeted index updates rather than complete index update
             await _cachedSearchService.ReIndexAsync();
-            await _cachedSearchService.ClearAsync();
+            await _cachedSearchService.ClearAsync(latestDocument.CABId);
             await _cachedPublishedCabService.ClearAsync(latestDocument.CABId);
 
             return latestDocument;
