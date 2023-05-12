@@ -104,6 +104,8 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 var app = builder.Build();
 
+app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
+
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Add("X-XSS-Protection", "0"); // deprecated header, recommendation is to turn off with '0' value, in favour of a strong CSP header.
