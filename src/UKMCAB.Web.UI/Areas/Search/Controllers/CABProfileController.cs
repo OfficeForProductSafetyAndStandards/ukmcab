@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Identity;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
@@ -43,7 +44,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument == null)
             {
-                return NotFound();
+                throw new NotFoundException($"The CAB with the following CABId cound not be found: {id}");
             }
 
             var user = await _userManager.GetUserAsync(User);
