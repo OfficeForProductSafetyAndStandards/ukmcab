@@ -35,7 +35,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(string id, string? returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
-            if (cabDocument == null)
+            if (cabDocument == null && User.Identity.IsAuthenticated)
             {
                 var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
                 cabDocument = documents.SingleOrDefault(d => d.StatusValue == Status.Archived);
