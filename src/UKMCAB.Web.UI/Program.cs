@@ -106,6 +106,7 @@ var app = builder.Build();
 
 app.Use(async (context, next) =>
 {
+    context.Response.Headers.Add("X-XSS-Protection", "0"); // deprecated header, recommendation is to turn off with '0' value, in favour of a strong CSP header.
     context.Response.Headers.Add("X-Frame-Options", "DENY");
     context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
     context.Response.Headers.Add("Referrer-Policy", "no-referrer");
@@ -144,10 +145,10 @@ else
     app.UseHsts();
 }
 
+app.UseCsp(cspHeader); // content-security-policy
 app.UseMiddleware<BasicAuthenticationMiddleware>();
 app.UseCustomHttpErrorHandling(builder.Configuration);
 app.UseRouting();
-app.UseCsp(cspHeader); // content-security-policy
 app.UseStaticFiles();
 
 
