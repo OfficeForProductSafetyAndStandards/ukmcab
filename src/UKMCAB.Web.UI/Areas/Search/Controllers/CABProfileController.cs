@@ -86,6 +86,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(string id, string? returnUrl, string? ArchiveReason)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
+            Guard.IsTrue(cabDocument != null, $"No published document found for CAB Id {id}");
             var user = await _userManager.GetUserAsync(User);
             var opssUser = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
             if (!string.IsNullOrWhiteSpace(ArchiveReason))
