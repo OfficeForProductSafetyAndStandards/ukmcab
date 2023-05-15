@@ -1,4 +1,4 @@
-﻿.cab-tabs {
+﻿.cab-tabs{
     .cabs__panel {
         padding-left: 0px;
         padding-right: 0px;
@@ -56,27 +56,28 @@ ul.cab-profile-file-list {
                 @include govuk-media-query($from: tablet) {
                     border-bottom: 1px solid $govuk-border-colour;
                 }
+
+                @include govuk-media-query($until: tablet) {
+                    display: flex;
+                    flex-wrap: wrap;
+                    justify-content: space-between;
+                    align-items: stretch;
+                }
             }
 
             .govuk-tabs__list-item {
                 position: relative;
-                margin-bottom: 4px;
-                margin-left: 0;
-                margin-right: 12px;
-                margin-top: 4px;
-                padding: govuk-spacing(2) govuk-spacing(4);
+                padding: govuk-spacing(2) 0;
+                margin: govuk-spacing(1) 0;
                 float: left;
                 background-color: govuk-colour("light-grey", $legacy: "grey-4");
-                border: 1px solid govuk-colour("light-grey", $legacy: "grey-4");
                 text-align: center;
-                width: 35%;
+                width: 48%;
 
                 @include govuk-media-query($from: tablet) {
                     width: auto;
-                    margin-bottom: 0;
-                    margin-left: 0;
-                    margin-right: govuk-spacing(1);
-                    margin-top: 0;
+                    padding: govuk-spacing(2) govuk-spacing(4);
+                    margin: 0 govuk-spacing(1) 0 0;
                 }
 
                 &:before {
@@ -95,6 +96,7 @@ ul.cab-profile-file-list {
                 @include govuk-media-query($from: tablet) {
                     border-bottom: 0;
                     margin-top: govuk-spacing(-1);
+                    margin-bottom: -$border-width;
                     padding-top: govuk-spacing(3) - $border-width;
                     padding-right: govuk-spacing(4) - $border-width;
                     padding-bottom: govuk-spacing(3) + $border-width;
