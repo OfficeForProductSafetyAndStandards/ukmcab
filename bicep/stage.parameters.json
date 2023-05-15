@@ -36,7 +36,7 @@
       "value": "secret"
     },
     "aspNetCoreEnvironment": {
-      "value": "Staging"
+      "value": "Development"
     },
     "sslCertPfxBase64VNextSlot": {
       "value": "secret"
