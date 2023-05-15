@@ -606,6 +606,11 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
   name: applicationGatewayName
   properties: {    
 
+    sslPolicy: {
+      policyType: 'Predefined'
+      policyName: 'AppGwSslPolicy20220101'
+    }
+
     enableHttp2: false
     sku: {
       name: 'WAF_v2'
