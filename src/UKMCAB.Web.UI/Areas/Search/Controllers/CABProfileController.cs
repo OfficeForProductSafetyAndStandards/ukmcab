@@ -4,6 +4,7 @@ using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Legacy;
 using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Identity.Stores.CosmosDB;
@@ -48,60 +49,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
 
             var user = await _userManager.GetUserAsync(User);
-            var opssUser = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
-            var isArchived = cabDocument.StatusValue == Status.Archived;
-            var cab = new CABProfileViewModel
-            {
-                IsLoggedIn = opssUser,
-                IsArchived = isArchived,
-                ArchivedBy = isArchived ? cabDocument.Archived.UserName : string.Empty,
-                ArchivedDate = isArchived ? cabDocument.Archived.DateTime.ToString("dd MMM yyyy") : string.Empty,
-                ArchiveReason = cabDocument.ArchivedReason,
-                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/search" : WebUtility.UrlDecode(returnUrl),
-                CABId = cabDocument.CABId,
-                PublishedDate = cabDocument.Published.DateTime,
-                LastModifiedDate = cabDocument.LastUpdatedDate,
-                Name = cabDocument.Name,
-                UKASReferenceNumber =  string.Empty,
-                Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.Postcode, cabDocument.Country),
-                Website = cabDocument.Website,
-                Email = cabDocument.Email,
-                Phone = cabDocument.Phone,
-                BodyNumber = cabDocument.CABNumber,
-                BodyTypes = cabDocument.BodyTypes ?? new List<string>(),
-                RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
-                RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
-                LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
-                ProductSchedules = cabDocument.Schedules?.Select(pdf => new FileUpload
-                {
-                    BlobName = pdf.BlobName,
-                    FileName = pdf.FileName
-                }).ToList() ?? new List<FileUpload>() 
-            };
+            var isOPSSUer = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
+
+            var cab = GetCabProfileViewModel(cabDocument, isOPSSUer, returnUrl);
+
             return View(cab);
         }
 
-        [HttpPost]
-        [Route("search/cab-profile/{id}")]
-        public async Task<IActionResult> Index(string id, string? returnUrl, string? ArchiveReason)
+        private CABProfileViewModel GetCabProfileViewModel(Document cabDocument, bool isOPSSUer, string returnUrl)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
-            Guard.IsTrue(cabDocument != null, $"No published document found for CAB Id {id}");
-            var user = await _userManager.GetUserAsync(User);
-            var opssUser = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
-            if (!string.IsNullOrWhiteSpace(ArchiveReason))
-            {
-                cabDocument = await _cabAdminService.ArchiveDocumentAsync(user, cabDocument, ArchiveReason);
-            }
-            else
-            {
-                ModelState.AddModelError("ArchiveReason", "State the reason for archiving this CAB record");
-            }
-
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var cab = new CABProfileViewModel
             {
-                IsLoggedIn = opssUser,
+                IsLoggedIn = isOPSSUer,
                 IsArchived = isArchived,
                 ArchivedBy = isArchived ? cabDocument.Archived.UserName : string.Empty,
                 ArchivedDate = isArchived ? cabDocument.Archived.DateTime.ToString("dd MMM yyyy") : string.Empty,
@@ -127,6 +87,26 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     FileName = pdf.FileName
                 }).ToList() ?? new List<FileUpload>()
             };
+            return cab;
+        }
+
+        [HttpPost]
+        [Route("search/cab-profile/{id}")]
+        public async Task<IActionResult> Index(string id, string? returnUrl, string? ArchiveReason)
+        {
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
+            Guard.IsTrue(cabDocument != null, $"No published document found for CAB Id {id}");
+            var user = await _userManager.GetUserAsync(User);
+            var isOPSSUer = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
+            if (!string.IsNullOrWhiteSpace(ArchiveReason))
+            {
+                await _cabAdminService.ArchiveDocumentAsync(user, cabDocument, ArchiveReason);
+                return RedirectToAction("Index", new { id, returnUrl });
+            }
+            ModelState.AddModelError("ArchiveReason", "State the reason for archiving this CAB record");
+
+            var cab = GetCabProfileViewModel(cabDocument, isOPSSUer, returnUrl);
+
             return View(cab);
         }
 
