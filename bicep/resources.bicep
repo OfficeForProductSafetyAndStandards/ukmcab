@@ -599,11 +599,17 @@ var applicationGatewayBackendPool = 'agw-backend-pool'
 var applicationGatewayBackendPoolVNext = 'agw-backend-pool-vnext'
 var applicationGatewayHttpsListener = 'agw-https-listener'
 var applicationGatewayHttpsListenerVNext = 'agw-https-listener-vnext'
+var applicationGatewaySslProfileName = 'agw-ssl-profile-main'
 
 resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' = {
   location: location
   name: applicationGatewayName
   properties: {    
+
+    sslPolicy: {
+      policyType: 'Predefined'
+      policyName: 'AppGwSslPolicy20220101'
+    }
 
     enableHttp2: false
     sku: {
@@ -731,6 +737,19 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }
     ] : [])
 
+
+    sslProfiles: [
+      {
+        name: applicationGatewaySslProfileName
+        properties: {
+          sslPolicy: {
+            policyType: 'Predefined'
+            policyName: 'AppGwSslPolicy20220101'
+          }
+        }
+      }
+    ]
+
     
     httpListeners: concat(
       provisionAppSvcVNextSlot ? [
@@ -746,6 +765,9 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
             protocol: 'Https'
             sslCertificate: {
               id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, applicationGatewaySslCertificateNameVNext)
+            }
+            sslProfile: {
+              id: resourceId('Microsoft.Network/applicationGateways/sslProfiles', applicationGatewayName, applicationGatewaySslProfileName)
             }
             hostNames: [appServiceHostNameVNext]
             requireServerNameIndication: false
@@ -777,6 +799,9 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           protocol: 'Https'
           sslCertificate: {
             id: resourceId('Microsoft.Network/applicationGateways/sslCertificates', applicationGatewayName, applicationGatewaySslCertificateName)
+          }
+          sslProfile: {
+            id: resourceId('Microsoft.Network/applicationGateways/sslProfiles', applicationGatewayName, applicationGatewaySslProfileName)
           }
           hostNames: [appServiceHostName]
           requireServerNameIndication: false
