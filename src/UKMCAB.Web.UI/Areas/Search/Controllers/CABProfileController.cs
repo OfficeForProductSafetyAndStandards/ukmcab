@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using Microsoft.AspNetCore.Identity;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
@@ -35,7 +36,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(string id, string? returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
-            if (cabDocument == null)
+            if (cabDocument == null && User.Identity.IsAuthenticated)
             {
                 var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
                 cabDocument = documents.SingleOrDefault(d => d.StatusValue == Status.Archived);
@@ -43,7 +44,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument == null)
             {
-                return NotFound();
+                throw new NotFoundException($"The CAB with the following CABId cound not be found: {id}");
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -85,6 +86,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(string id, string? returnUrl, string? ArchiveReason)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
+            Guard.IsTrue(cabDocument != null, $"No published document found for CAB Id {id}");
             var user = await _userManager.GetUserAsync(User);
             var opssUser = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
             if (!string.IsNullOrWhiteSpace(ArchiveReason))

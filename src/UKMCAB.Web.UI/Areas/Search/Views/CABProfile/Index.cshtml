@@ -86,7 +86,7 @@
                         Details
                     </a>
                 </li>
-                <li class="govuk-tabs__list-item last">
+                <li class="govuk-tabs__list-item @Html.Conditional(!Model.IsLoggedIn, "last")">
                     <a class="govuk-tabs__tab" href="#product-schedules">
                         Product schedules
                     </a>
@@ -292,21 +292,29 @@
                     else
                     {
                         <form method="post">
-                            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))">
-                                <div id="archive-hint" class="govuk-hint">
-                                    State the reason for archiving this CAB record.
+                            <div class="govuk-!-width-two-thirds">
+                                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))">
+                                    <div id="archive-hint" class="govuk-hint">
+                                        State the reason for archiving this CAB record.
+                                    </div>
+                                    <p class="govuk-error-message">
+                                        <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
+                                    </p>
+                                    <textarea class="govuk-textarea  @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))"  asp-for="ArchiveReason" rows="5" aria-describedby="archive-hint"></textarea>
                                 </div>
-                                <p class="govuk-error-message">
-                                    <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
-                                </p>
-                                <textarea class="govuk-textarea govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))"  asp-for="ArchiveReason" rows="5" aria-describedby="archive-hint"></textarea>
-                            </div>
-
-                            <div class="govuk-button-group">
-                                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                                    Continue
-                                </button>
-                                <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        <span class="govuk-warning-text__assistive">Warning</span>
+                                        Archiving this CAB record will remove it from the search results. Once archived the record can be re-published and returned to the search reaults by internal users.
+                                    </strong>
+                                </div>
+                                <div class="govuk-button-group">
+                                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                                        Continue
+                                    </button>
+                                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                                </div>
                             </div>
                         </form>
                     }

@@ -45,7 +45,8 @@ builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddAntiforgery();
+builder.Services.AddAntiforgery(x => x.Cookie.SecurePolicy = CookieSecurePolicy.Always);
+builder.Services.AddHsts(x => x.MaxAge = TimeSpan.FromDays(370));
 builder.Services.AddSingleton(new BasicAuthenticationOptions { Password = builder.Configuration["BasicAuthPassword"] });
 builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
 builder.Services.AddSingleton(cognitiveSearchConnectionString);
@@ -104,8 +105,11 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 var app = builder.Build();
 
+app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
+
 app.Use(async (context, next) =>
 {
+    context.Response.Headers.Add("X-XSS-Protection", "0"); // deprecated header, recommendation is to turn off with '0' value, in favour of a strong CSP header.
     context.Response.Headers.Add("X-Frame-Options", "DENY");
     context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
     context.Response.Headers.Add("Referrer-Policy", "no-referrer");
@@ -144,10 +148,10 @@ else
     app.UseHsts();
 }
 
+app.UseCsp(cspHeader); // content-security-policy
 app.UseMiddleware<BasicAuthenticationMiddleware>();
 app.UseCustomHttpErrorHandling(builder.Configuration);
 app.UseRouting();
-app.UseCsp(cspHeader); // content-security-policy
 app.UseStaticFiles();
 
 
