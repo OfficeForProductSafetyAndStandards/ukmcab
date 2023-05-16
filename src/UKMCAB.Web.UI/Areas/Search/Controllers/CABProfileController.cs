@@ -155,9 +155,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab-schedule-download/{id}")]
-        public async Task<IActionResult> Download(string id, string file)
+        public async Task<IActionResult> Download(string id, string file, string filetype)
         {
-            var fileStream = await _fileStorage.DownloadBlobStream($"{id}");
+            var fileStream = await _fileStorage.DownloadBlobStream($"{id}/{filetype}/{file}");
             if (fileStream != null)
             {
                 return File(fileStream.FileStream, fileStream.ContentType, file);

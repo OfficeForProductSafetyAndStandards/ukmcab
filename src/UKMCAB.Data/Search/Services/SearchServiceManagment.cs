@@ -21,8 +21,12 @@ namespace UKMCAB.Data.Search.Services
 
         public async Task InitialiseAsync()
         {
-            await CreateIndexAsync(_searchIndexClient);
-            await CreateDataSourceAndIndexerAsync(_searchIndexerClient, _cosmosDbConnectionString);
+            var response = await _searchIndexClient.GetIndexAsync(DataConstants.Search.SEARCH_INDEX);
+            if (!response.HasValue)
+            {
+                await CreateIndexAsync(_searchIndexClient);
+                await CreateDataSourceAndIndexerAsync(_searchIndexerClient, _cosmosDbConnectionString);
+            }
         }
 
         private static async Task CreateIndexAsync(SearchIndexClient searchIndexClient)
