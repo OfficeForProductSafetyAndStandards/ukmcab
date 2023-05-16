@@ -74,7 +74,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> GetSearchResultsAsync(SearchViewModel model)
         {
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, x => x.IgnorePaging = true);
-            searchResults.CABs.ForEach(x => x.HiddenText = "[omitted]");
+            searchResults.CABs.OrderBy(x => x.Name).ForEach(x => x.HiddenText = "[omitted]");
+            //searchResults.CABs.ToList()
             Response.Headers.Add("X-Count", searchResults.Total.ToString());
             return Json(searchResults.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = Guid.Parse(x.CABId), Name = x.Name }));
         }
