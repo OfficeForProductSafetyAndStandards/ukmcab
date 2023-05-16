@@ -131,7 +131,13 @@ namespace UKMCAB.Core.Services
         {
             Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
-            if (publishedVersion != null)
+            var audit = new Audit(user, DateTime.UtcNow);
+            if (publishedVersion == null)
+            {
+                // If there is no published version then we set the published date
+                latestDocument.Published = audit;
+            }
+            else
             {
                 publishedVersion.StatusValue = Status.Historical;
                 Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
@@ -139,7 +145,7 @@ namespace UKMCAB.Core.Services
                 await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
             }
 
-            latestDocument.Published = new Audit(user, DateTime.UtcNow);
+            latestDocument.LastUpdated = audit;
             latestDocument.StatusValue = Status.Published;
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
