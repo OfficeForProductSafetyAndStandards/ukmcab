@@ -4,6 +4,7 @@ using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 
+
 namespace UKMCAB.Data.Search.Services
 {
     public class SearchServiceManagment
@@ -21,8 +22,8 @@ namespace UKMCAB.Data.Search.Services
 
         public async Task InitialiseAsync()
         {
-            var response = await _searchIndexClient.GetIndexAsync(DataConstants.Search.SEARCH_INDEX);
-            if (!response.HasValue)
+            var indexes = await _searchIndexClient.GetIndexesAsync().ToArrayAsync();
+            if (!indexes.Any(x => x.Name == DataConstants.Search.SEARCH_INDEX))
             {
                 await CreateIndexAsync(_searchIndexClient);
                 await CreateDataSourceAndIndexerAsync(_searchIndexerClient, _cosmosDbConnectionString);

@@ -10,7 +10,7 @@ namespace UKMCAB.Data.Search.Models
         public string CABId { get; set; }
 
 
-        [SearchableField(IsSortable = true, NormalizerName = "lowercase")]
+        [SearchableField(IsSortable = true, NormalizerName = "lowercase", AnalyzerName = "en.microsoft")]
         public string Name { get; set; }
 
         [SearchableField]
@@ -34,7 +34,7 @@ namespace UKMCAB.Data.Search.Models
         [SearchableField]
         public string Phone { get; set; }
 
-        [SearchableField]
+        [SearchableField(IsFilterable = true, NormalizerName = "lowercase", AnalyzerName = "en.microsoft")]
         public string HiddenText { get; set; }
 
         [SearchableField]

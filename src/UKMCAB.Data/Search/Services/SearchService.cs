@@ -58,6 +58,7 @@ namespace UKMCAB.Data.Search.Services
 
         private string GetKeywordsQuery(string keywords)
         {
+            keywords = keywords?.Trim();
             if (string.IsNullOrWhiteSpace(keywords))
             {
                 return "*";
@@ -68,7 +69,7 @@ namespace UKMCAB.Data.Search.Services
             {
                 return string.Empty;
             }
-            return $"\'{keywords.Trim()}~\'"; 
+            return $"{keywords}"; 
         }
 
         public async Task<CABResults> QueryAsync(CABSearchOptions options)
@@ -97,7 +98,7 @@ namespace UKMCAB.Data.Search.Services
                 Skip = options.IgnorePaging ? null : DataConstants.Search.SearchResultsPerPage * (options.PageNumber - 1),
                 Filter = filter,
                 OrderBy = { sort },
-                QueryType = SearchQueryType.Full
+                QueryType = SearchQueryType.Simple
             };
 
             if (options.Select.Count > 0)
