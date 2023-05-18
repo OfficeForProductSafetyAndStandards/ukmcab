@@ -81,7 +81,7 @@ namespace UKMCAB.Core.Services
             
             var createdDate = DateTime.Now;
             var auditItem = new Audit(user, createdDate);
-            document.CABId = Guid.NewGuid().ToString();
+            document.CABId = Guid.NewGuid().ToString().Md5();
             document.Created = auditItem;
             document.LastUpdated = auditItem;
             document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
