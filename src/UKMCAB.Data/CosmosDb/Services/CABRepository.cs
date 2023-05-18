@@ -41,7 +41,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                     {
                         CABId = id,
                         Name = cabDocument.Name,
-
+                        
                         AddressLine1 = cabDocument.AddressLine1.Clean(),
                         AddressLine2 = cabDocument.AddressLine2.Clean(),
                         TownCity = cabDocument.TownCity.Clean(),
@@ -83,7 +83,8 @@ namespace UKMCAB.Data.CosmosDb.Services
                                 : DateTime.UtcNow
                         },
                         StatusValue = Status.Published,
-                        RandomSort = Guid.NewGuid().ToString()
+                        RandomSort = Guid.NewGuid().ToString(),
+                        LegacyCabId = cabDocument.Id
                     };
                     var newDoc = await CreateAsync(document);
                 }
