@@ -105,7 +105,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private IActionResult SaveDraft(Document document)
         {
-            TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} (CAB number {document.CABNumber})";
+            TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
             return RedirectToAction("Index", "Admin", new { Area = "admin" });
         }
 

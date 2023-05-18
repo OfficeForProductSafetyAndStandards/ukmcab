@@ -103,7 +103,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion, true);
             }
-            TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} (CAB number {latestVersion.CABNumber})";
+            TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} <br>CAB number {latestVersion.CABNumber}";
             return RedirectToAction("Index", "Admin", new { Area = "admin" });
         }
 
