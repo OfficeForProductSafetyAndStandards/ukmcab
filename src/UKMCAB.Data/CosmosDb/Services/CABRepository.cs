@@ -34,11 +34,9 @@ namespace UKMCAB.Data.CosmosDb.Services
                 var items = await Query<CABDocument>(legacyContainer, document => true);
                 foreach (var cabDocument in items)
                 {
-                    var cabId = Guid.NewGuid().ToString();
                     var document = new Document
                     {
-                        CABId = cabId,
-
+                        CABId = cabDocument.Id,
                         Name = cabDocument.Name,
                         AddressLine1 = cabDocument.Address,
                         Email = cabDocument.Email,
@@ -50,7 +48,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         TestingLocations = SanitiseLists(cabDocument.TestingLocations, DataConstants.Lists.Countries),
                         LegislativeAreas = SanitiseLists(cabDocument.LegislativeAreas, DataConstants.Lists.LegislativeAreas),
                         HiddenText = cabDocument.HiddenText,
-                        Schedules = await ImportSchedules(cabDocument.PDFs, cabId),
+                        Schedules = await ImportSchedules(cabDocument.PDFs, cabDocument.Id),
                         Documents = new List<FileUpload>(),
                         Created = new Audit
                         {
