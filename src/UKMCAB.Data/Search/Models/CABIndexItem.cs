@@ -15,11 +15,12 @@ namespace UKMCAB.Data.Search.Models
 
         [SearchableField]
         public string AddressLine1 { get; set; }
-        public string Address { get; set; }
         [SearchableField]
         public string AddressLine2 { get; set; }
         [SearchableField]
         public string TownCity { get; set; }
+        [SearchableField]
+        public string County { get; set; }
         [SearchableField]
         public string Postcode { get; set; }
         [SearchableField]

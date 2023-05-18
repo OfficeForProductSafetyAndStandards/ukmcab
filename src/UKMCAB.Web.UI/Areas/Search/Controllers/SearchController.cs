@@ -25,6 +25,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.AddressLine1),
             nameof(CABIndexItem.AddressLine2),
             nameof(CABIndexItem.TownCity),
+            nameof(CABIndexItem.County),
             nameof(CABIndexItem.Postcode),
             nameof(CABIndexItem.Country),
             nameof(CABIndexItem.BodyTypes),

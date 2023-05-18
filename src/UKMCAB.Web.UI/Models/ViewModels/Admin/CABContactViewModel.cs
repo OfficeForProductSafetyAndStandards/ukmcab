@@ -15,6 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
             AddressLine1 = document.AddressLine1;
             AddressLine2 = document.AddressLine2;
             TownCity = document.TownCity;
+            County = document.County;
             Postcode = document.Postcode;
             Country = document.Country;
             Website = document.Website;
@@ -33,12 +34,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         [Required(ErrorMessage = "Enter an address")]
         public string AddressLine1 { get; set; }
         public string? AddressLine2 { get; set; }
-        public string? TownCity { get; set; }
-        public string? Postcode { get; set; }
-        public string? Country { get; set; }
+        [Required(ErrorMessage = "Enter a town or city")]
+        public string TownCity { get; set; }
+        [Required(ErrorMessage = "Enter a postcode")]
+        public string Postcode { get; set; }
+        public string? County { get; set; }
+        [Required(ErrorMessage = "Enter a country")]
+        public string Country { get; set; }
 
         public string? FormattedAddress => string.Join("<br />",
-            new [] { AddressLine1, AddressLine2, TownCity, Postcode, Country }.Where(a =>
+            new [] { AddressLine1, AddressLine2, TownCity, County, Postcode, Country }.Where(a =>
                 !string.IsNullOrWhiteSpace(a)));
 
         public string? Website { get; set; }
