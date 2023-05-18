@@ -46,7 +46,7 @@ namespace UKMCAB.Data.Search.Models
         [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string[] LegislativeAreas { get; set; }
 
-        [SearchableField(IsFacetable = true, IsFilterable = true)]
+        [SearchableField]
         public string[] TestingLocations { get; set; }
 
         [SearchableField(IsFacetable = true, IsFilterable = true)]
