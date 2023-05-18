@@ -10,7 +10,6 @@
         public string[] BodyTypesFilter { get; set; }
         public string[] LegislativeAreasFilter { get; set; }
         public string[] RegisteredOfficeLocationsFilter { get; set; }
-        public string[] TestingLocationsFilter { get; set; }
 
         public bool IgnorePaging { get; set; }
 

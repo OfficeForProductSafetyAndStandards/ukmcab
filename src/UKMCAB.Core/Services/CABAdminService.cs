@@ -81,7 +81,7 @@ namespace UKMCAB.Core.Services
             
             var createdDate = DateTime.Now;
             var auditItem = new Audit(user, createdDate);
-            document.CABId = Guid.NewGuid().ToString();
+            document.CABId = Guid.NewGuid().ToString().Md5();
             document.Created = auditItem;
             document.LastUpdated = auditItem;
             document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
@@ -160,8 +160,10 @@ namespace UKMCAB.Core.Services
         {
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
+            var audit = new Audit(user, DateTime.UtcNow);
             publishedVersion.StatusValue = Status.Archived;
-            publishedVersion.Archived = new Audit(user, DateTime.UtcNow);
+            publishedVersion.Archived = audit;
+            publishedVersion.LastUpdated = audit;
             publishedVersion.ArchivedReason = archiveReason;
             Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                 $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
