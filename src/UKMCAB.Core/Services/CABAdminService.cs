@@ -79,8 +79,7 @@ namespace UKMCAB.Core.Services
 
             Guard.IsFalse(documentExists, "CAB name or number already exists in database");
             
-            var createdDate = DateTime.Now;
-            var auditItem = new Audit(user, createdDate);
+            var auditItem = new Audit(user);
             document.CABId = Guid.NewGuid().ToString().Md5();
             document.Created = auditItem;
             document.LastUpdated = auditItem;
@@ -90,7 +89,7 @@ namespace UKMCAB.Core.Services
 
         public async Task<Document> UpdateOrCreateDraftDocumentAsync(UKMCABUser user, Document draft, bool saveAsDraft = false)
         {
-            var audit = new Audit(user, DateTime.UtcNow);
+            var audit = new Audit(user);
             if (draft.StatusValue == Status.Published)
             {
                 draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
@@ -131,7 +130,7 @@ namespace UKMCAB.Core.Services
         {
             Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
-            var audit = new Audit(user, DateTime.UtcNow);
+            var audit = new Audit(user);
             if (publishedVersion == null)
             {
                 // If there is no published version then we set the published date
@@ -160,7 +159,7 @@ namespace UKMCAB.Core.Services
         {
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
-            var audit = new Audit(user, DateTime.UtcNow);
+            var audit = new Audit(user);
             publishedVersion.StatusValue = Status.Archived;
             publishedVersion.Archived = audit;
             publishedVersion.LastUpdated = audit;
