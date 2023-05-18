@@ -160,8 +160,10 @@ namespace UKMCAB.Core.Services
         {
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
+            var audit = new Audit(user, DateTime.UtcNow);
             publishedVersion.StatusValue = Status.Archived;
-            publishedVersion.Archived = new Audit(user, DateTime.UtcNow);
+            publishedVersion.Archived = audit;
+            publishedVersion.LastUpdated = audit;
             publishedVersion.ArchivedReason = archiveReason;
             Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                 $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
