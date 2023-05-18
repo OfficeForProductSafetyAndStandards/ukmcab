@@ -55,5 +55,6 @@
 
         public string HiddenText { get; set; }
         public string RandomSort { get; set; }
+        public string LegacyCabId { get; set; }
     }
 }

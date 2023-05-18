@@ -80,7 +80,7 @@ namespace UKMCAB.Core.Services
             Guard.IsFalse(documentExists, "CAB name or number already exists in database");
             
             var auditItem = new Audit(user);
-            document.CABId = Guid.NewGuid().ToString().Md5();
+            document.CABId = Guid.NewGuid().ToString();
             document.Created = auditItem;
             document.LastUpdated = auditItem;
             document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
