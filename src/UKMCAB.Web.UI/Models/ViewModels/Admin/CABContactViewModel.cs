@@ -43,7 +43,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string Country { get; set; }
 
         public string? FormattedAddress => string.Join("<br />",
-            new [] { AddressLine1, AddressLine2, TownCity, Postcode, Country }.Where(a =>
+            new [] { AddressLine1, AddressLine2, TownCity, County, Postcode, Country }.Where(a =>
                 !string.IsNullOrWhiteSpace(a)));
 
         public string? Website { get; set; }
