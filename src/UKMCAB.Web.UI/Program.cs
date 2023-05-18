@@ -123,8 +123,9 @@ var cspHeader = new CspHeader().AddDefaultCspDirectives()
     .AddScriptNonce("VQ8uRGcAff")
     .AddScriptNonce("uKK1n1fxoi")
     .AllowFontSources(CspConstants.SelfKeyword, "https://cdnjs.cloudflare.com")
-    .AllowScriptSources("https://cdnjs.cloudflare.com")
-    .AllowStyleSources("https://cdnjs.cloudflare.com");
+    .AllowScriptSources("https://cdnjs.cloudflare.com", "https://js.monitor.azure.com")
+    .AllowStyleSources("https://cdnjs.cloudflare.com")
+    .AllowConnectSources("https://uksouth-1.in.applicationinsights.azure.com");
 
 /*
  * 
