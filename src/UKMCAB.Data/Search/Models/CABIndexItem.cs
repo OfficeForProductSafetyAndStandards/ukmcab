@@ -34,7 +34,7 @@ namespace UKMCAB.Data.Search.Models
         [SearchableField]
         public string Phone { get; set; }
 
-        [SearchableField(IsFilterable = true, NormalizerName = "lowercase", AnalyzerName = "en.microsoft")]
+        [SearchableField(AnalyzerName = "en.microsoft")]
         public string HiddenText { get; set; }
 
         [SearchableField]

@@ -1,7 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
 using System.Net;
+using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Legacy;
@@ -38,7 +40,14 @@ namespace UKMCAB.Data.CosmosDb.Services
                     {
                         CABId = cabDocument.Id,
                         Name = cabDocument.Name,
-                        AddressLine1 = cabDocument.Address,
+
+                        AddressLine1 = cabDocument.AddressLine1.Clean(),
+                        AddressLine2 = cabDocument.AddressLine2.Clean(),
+                        TownCity = cabDocument.TownCity.Clean(),
+                        Postcode = cabDocument.Postcode.Clean(),
+                        County = cabDocument.County.Clean(),
+                        Country = cabDocument.Country.Clean(),
+
                         Email = cabDocument.Email,
                         Website = cabDocument.Website,
                         Phone = cabDocument.Phone,
