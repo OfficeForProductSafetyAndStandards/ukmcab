@@ -63,7 +63,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var index = 0; 
                     while (existingDocs.Any(d => !d.CABId.Equals(document.CABId)))
                     {
-                        newSlug = $"{slug}{index++}";
+                        newSlug = $"{slug}-{index++}";
                         existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
                     }
 

@@ -31,7 +31,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                 var newSlug = $"{slug}{index}";
                 while (slugs.Contains(newSlug))
                 {
-                    newSlug = $"{slug}{++index}";
+                    newSlug = $"{slug}-{++index}";
                 }
 
                 slug = newSlug;
