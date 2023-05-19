@@ -9,7 +9,8 @@ namespace UKMCAB.Data.Models.Legacy
         public string Id { get; set; }
 
         public string Name { get; set; }
-        public string Address { get; set; }
+
+        // public string Address { get; set; } // deprecated in favour of AddressLine1, AddressLine2, TownCity etc.
         public string Email { get; set; }
         public string Website { get; set; }
         public string Phone { get; set; }
@@ -27,7 +28,15 @@ namespace UKMCAB.Data.Models.Legacy
         public string HiddenText { get; set; }
 
         public string LegacyUrl { get; set; }
+        
         [JsonPropertyName("Metadata")]
         public Dictionary<string, string> LegacyMetaData { get; set; }
+
+        public string? AddressLine1 { get; set; }
+        public string? AddressLine2 { get; set; }
+        public string? TownCity { get; set; }
+        public string? Postcode { get; set; }
+        public string? County { get; set; }
+        public string? Country { get; set; }
     }
 }

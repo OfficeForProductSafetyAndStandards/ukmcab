@@ -15,11 +15,12 @@ namespace UKMCAB.Data.Search.Models
 
         [SearchableField]
         public string AddressLine1 { get; set; }
-        public string Address { get; set; }
         [SearchableField]
         public string AddressLine2 { get; set; }
         [SearchableField]
         public string TownCity { get; set; }
+        [SearchableField]
+        public string County { get; set; }
         [SearchableField]
         public string Postcode { get; set; }
         [SearchableField]
@@ -34,7 +35,7 @@ namespace UKMCAB.Data.Search.Models
         [SearchableField]
         public string Phone { get; set; }
 
-        [SearchableField(IsFilterable = true, NormalizerName = "lowercase", AnalyzerName = "en.microsoft")]
+        [SearchableField(AnalyzerName = "en.microsoft")]
         public string HiddenText { get; set; }
 
         [SearchableField]
@@ -46,7 +47,7 @@ namespace UKMCAB.Data.Search.Models
         [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string[] LegislativeAreas { get; set; }
 
-        [SearchableField(IsFacetable = true, IsFilterable = true)]
+        [SearchableField]
         public string[] TestingLocations { get; set; }
 
         [SearchableField(IsFacetable = true, IsFilterable = true)]

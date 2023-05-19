@@ -1,39 +1,25 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Areas.Test.Model;
 
 namespace UKMCAB.Web.UI.Areas.Test.Controllers
 {
     [Route("api/[controller]")]
+    [Authorize(Roles = $"{Constants.Roles.OPSSAdmin}")]
     [ApiController]
     public class UserController : ControllerBase
     {
         private readonly UserManager<UKMCABUser> _userManager;
-        private readonly IWebHostEnvironment _webHostEnvironment;
-        private readonly string _authPassword;
 
         public UserController(UserManager<UKMCABUser> userManager, IConfiguration config, IWebHostEnvironment webHostEnvironment)
         {
             _userManager = userManager;
-            _webHostEnvironment = webHostEnvironment;
-            _authPassword = config["BasicAuthPassword"];
         }
 
         [HttpPost]
         public async Task<IActionResult> Create(CreateTestUser testUser)
         {
-            if(!_webHostEnvironment.IsDevelopment())
-            {
-                return NotFound();
-            }
-
-            Guard.IsTrue(_webHostEnvironment.IsDevelopment(), "UserController api is not enabled");
-
-            if (!testUser.ApiPassword.Equals(_authPassword))
-            {
-                return Unauthorized();
-            }
-
             if (ModelState.IsValid)
             {
                 var user = new UKMCABUser
@@ -57,18 +43,6 @@ namespace UKMCAB.Web.UI.Areas.Test.Controllers
         [HttpDelete]
         public async Task<IActionResult> Delete(DeleteTestUser testuser)
         {
-            if (!_webHostEnvironment.IsDevelopment())
-            {
-                return NotFound();
-            }
-
-            Guard.IsTrue(_webHostEnvironment.IsDevelopment(), "UserController api is not enabled");
-
-            if (!testuser.ApiPassword.Equals(_authPassword))
-            {
-                return Unauthorized();
-            }
-
             var user = await _userManager.FindByEmailAsync(testuser.Email);
             if (user != null)
             {

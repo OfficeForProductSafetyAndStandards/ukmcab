@@ -30,7 +30,7 @@ namespace UKMCAB.Web.UI.Services
                 LastUpdatedTime = c.LastUpdatedDate.GetValueOrDefault(),
                 Links = { GetProfileSyndicationLink(c.CABId, request, url) },
                 Title = new TextSyndicationContent(c.Name),
-                Summary = new TextSyndicationContent(StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.Postcode, c.Country), TextSyndicationContentKind.Html),
+                Summary = new TextSyndicationContent(StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.County, c.Postcode, c.Country), TextSyndicationContentKind.Html),
             }).ToList();
             feed.LastUpdatedTime = feed.Items.Max(f => f.LastUpdatedTime).DateTime;
             return feed;
