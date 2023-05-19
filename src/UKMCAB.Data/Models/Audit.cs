@@ -14,11 +14,7 @@ namespace UKMCAB.Data.Models
             DateTime = date;
         }
 
-        public Audit(UKMCABUser user, DateTime date) : this(user.Id, $"{user.FirstName} {user.LastName}", date)
-        {
-            
-        }
-
+        public Audit(UKMCABUser user) : this(user.Id, $"{user.FirstName} {user.LastName}", DateTime.UtcNow) { }
 
         public string UserId { get; set; }
         public string UserName { get; set; }
