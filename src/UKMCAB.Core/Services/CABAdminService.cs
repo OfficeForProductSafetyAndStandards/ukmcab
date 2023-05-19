@@ -1,4 +1,5 @@
-﻿using UKMCAB.Common;
+﻿using System.Resources;
+using UKMCAB.Common;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data;
@@ -40,6 +41,13 @@ namespace UKMCAB.Core.Services
         {
             var docs = await _cabRepostitory.Query<Document>(d =>
                 d.CABId.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+            return docs;
+        }
+
+        public async Task<List<Document>> FindAllDocumentsByCABURLAsync(string url)
+        {
+            var docs = await _cabRepostitory.Query<Document>(d =>
+                d.URLSlug.Equals(url, StringComparison.CurrentCultureIgnoreCase));
             return docs;
         }
 
@@ -150,7 +158,7 @@ namespace UKMCAB.Core.Services
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
 
-            await RefreshCaches(latestDocument.CABId);
+            await RefreshCaches(latestDocument.CABId, latestDocument.URLSlug);
 
             return latestDocument;
         }
@@ -168,16 +176,16 @@ namespace UKMCAB.Core.Services
                 $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
 
             await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
-            await RefreshCaches(latestDocument.CABId);
+            await RefreshCaches(latestDocument.CABId, latestDocument.URLSlug);
             return publishedVersion;
         }
 
-        private async Task RefreshCaches(string cabId)
+        private async Task RefreshCaches(string cabId, string slug)
         {
             await _cachedSearchService.ReIndexAsync();
             await _cachedSearchService.ClearAsync();
             await _cachedSearchService.ClearAsync(cabId);
-            await _cachedPublishedCabService.ClearAsync(cabId);
+            await _cachedPublishedCabService.ClearAsync(cabId, slug);
         }
     }
 

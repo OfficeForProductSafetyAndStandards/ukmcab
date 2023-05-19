@@ -22,6 +22,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             nameof(CABIndexItem.CABId),
             nameof(CABIndexItem.Name),
+            nameof(CABIndexItem.URLSlug),
             nameof(CABIndexItem.AddressLine1),
             nameof(CABIndexItem.AddressLine2),
             nameof(CABIndexItem.TownCity),

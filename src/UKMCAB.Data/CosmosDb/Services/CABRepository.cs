@@ -1,6 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
-using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
 using System.Net;
 using UKMCAB.Common;
@@ -23,6 +22,24 @@ namespace UKMCAB.Data.CosmosDb.Services
             _fileStorage = fileStorage;
         }
 
+        private string GetSlug(string cabName, List<string> slugs)
+        {
+            var slug = Slug.Make(cabName);
+            if (slugs.Contains(slug))
+            {
+                var index = 0;
+                var newSlug = $"{slug}{index}";
+                while (slugs.Contains(newSlug))
+                {
+                    newSlug = $"{slug}{++index}";
+                }
+
+                slug = newSlug;
+            }
+            slugs.Add(slug);
+            return slug;
+        }
+
         public async Task InitialiseAsync()//(IFileStorage fileStorage)
         {
             var client = new CosmosClient(_cosmosDbConnectionString);
@@ -34,14 +51,17 @@ namespace UKMCAB.Data.CosmosDb.Services
                 _container = result.Container;
                 var legacyContainer = database.GetContainer(DataConstants.CosmosDb.ImportContainer);
                 var items = await Query<CABDocument>(legacyContainer, document => true);
+                var slugList = new List<string>();
                 foreach (var cabDocument in items)
                 {
                     var id = Guid.NewGuid().ToString();
+                    var slug = GetSlug(cabDocument.Name, slugList);
                     var document = new Document
                     {
                         CABId = id,
                         Name = cabDocument.Name,
-                        
+                        URLSlug = slug,
+
                         AddressLine1 = cabDocument.AddressLine1.Clean(),
                         AddressLine2 = cabDocument.AddressLine2.Clean(),
                         TownCity = cabDocument.TownCity.Clean(),

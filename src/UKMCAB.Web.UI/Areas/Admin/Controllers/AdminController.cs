@@ -34,6 +34,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     Id = wqi.CABId,
                     Name = wqi.Name,
+                    URLSlug = wqi.URLSlug,
                     CABNumber = wqi.CABNumber,
                     Status = wqi.Status,
                     LastUpdated = wqi.LastUpdatedDate

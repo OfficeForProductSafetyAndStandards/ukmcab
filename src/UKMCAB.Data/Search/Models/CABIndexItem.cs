@@ -13,6 +13,8 @@ namespace UKMCAB.Data.Search.Models
         [SearchableField(IsSortable = true, NormalizerName = "lowercase", AnalyzerName = "en.microsoft")]
         public string Name { get; set; }
 
+        [SimpleField]
+        public string URLSlug { get; set; }
         [SearchableField]
         public string AddressLine1 { get; set; }
         [SearchableField]

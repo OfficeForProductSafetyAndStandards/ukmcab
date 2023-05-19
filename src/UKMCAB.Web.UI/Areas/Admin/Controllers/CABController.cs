@@ -53,6 +53,22 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     document = new Document();
                 }
+
+                if (string.IsNullOrWhiteSpace(document.URLSlug) || !document.Name.Equals(model.Name))
+                {
+                    document.URLSlugRedirect = document.URLSlug;
+                    var slug = Slug.Make(model.Name);
+                    var newSlug = slug;
+                    var existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
+                    var index = 0; 
+                    while (existingDocs.Any(d => !d.CABId.Equals(document.CABId)))
+                    {
+                        newSlug = $"{slug}{index++}";
+                        existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
+                    }
+
+                    document.URLSlug = newSlug;
+                }
                 document.Name = model.Name;
                 document.CABNumber = model.CABNumber;
                 document.AppointmentDate = appointmentDate;
@@ -320,8 +336,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             return View(new CABConfirmationViewModel
             {
-                CABId = latest.CABId,
                 Name = latest.Name,
+                URLSlug = latest.URLSlug,
                 CABNumber = latest.CABNumber
             });
         }
