@@ -21,7 +21,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string Keywords { get; set; }
         public string[] BodyTypes { get; set; }
         public string[] RegisteredOfficeLocations { get; set; }
-        public string[] TestingLocations { get; set; }
         public string[] LegislativeAreas { get; set; }
         public string Sort { get; set; } = DataConstants.SortOptions.Default;
         public int PageNumber { get; set; } = 1;
@@ -29,10 +28,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         // Form elements
         public FilterViewModel BodyTypeOptions { get; set; }
         public FilterViewModel RegisteredOfficeLocationOptions { get; set; }
-        public FilterViewModel TestingLocationOptions { get; set; }
         public FilterViewModel LegislativeAreaOptions { get; set; }
 
-        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (TestingLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0);
+        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0);
         public Dictionary<string, string> SortOptions => new()
         {
             { string.IsNullOrWhiteSpace(Keywords) ? "Random" : "Relevant" , DataConstants.SortOptions.Default},

@@ -26,17 +26,18 @@
         public string UKASReference { get; set; }
 
         // Contact
-        public string? AddressLine1 { get; set; }
+        public string AddressLine1 { get; set; }
         public string? AddressLine2 { get; set; }
-        public string? TownCity { get; set; }
-        public string? Postcode { get; set; }
+        public string TownCity { get; set; }
+        public string? County { get; set; }
+        public string Postcode { get; set; }
         public string Country { get; set; }
-        public string Website { get; set; }
-        public string Email { get; set; }
-        public string Phone { get; set; }
-        public string PointOfContactName { get; set; }
-        public string PointOfContactEmail { get; set; }
-        public string PointOfContactPhone { get; set; }
+        public string? Website { get; set; }
+        public string? Email { get; set; }
+        public string? Phone { get; set; }
+        public string? PointOfContactName { get; set; }
+        public string? PointOfContactEmail { get; set; }
+        public string? PointOfContactPhone { get; set; }
         public bool IsPointOfContactPublicDisplay { get; set; }
         public string RegisteredOfficeLocation { get; set; }
 
@@ -54,5 +55,6 @@
 
         public string HiddenText { get; set; }
         public string RandomSort { get; set; }
+        public string LegacyCabId { get; set; }
     }
 }

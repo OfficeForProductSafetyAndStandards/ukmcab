@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Xml;
-using Microsoft.AspNetCore.Http.Extensions;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
@@ -26,6 +25,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.AddressLine1),
             nameof(CABIndexItem.AddressLine2),
             nameof(CABIndexItem.TownCity),
+            nameof(CABIndexItem.County),
             nameof(CABIndexItem.Postcode),
             nameof(CABIndexItem.Country),
             nameof(CABIndexItem.BodyTypes),
@@ -90,7 +90,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 BodyTypesFilter = model.BodyTypes,
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
-                TestingLocationsFilter = model.TestingLocations,
                 Select = _select,
             };
             configure?.Invoke(opt);
@@ -109,7 +108,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 BodyTypesFilter = model.BodyTypes,
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
-                TestingLocationsFilter = model.TestingLocations,
                 IgnorePaging = true,
                 Select = _select,
             });
@@ -144,7 +142,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
             model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
-            model.TestingLocationOptions = GetFilterOptions(nameof(model.TestingLocations), "Testing location", facets.TestingLocations, model.TestingLocations);
         }
 
         private FilterViewModel GetFilterOptions(string facetName, string facetLabel, IEnumerable<string> facets, IEnumerable<string> selectedFacets)

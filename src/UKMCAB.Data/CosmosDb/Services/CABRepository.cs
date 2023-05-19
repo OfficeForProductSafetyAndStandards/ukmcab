@@ -1,7 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
 using System.Net;
+using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Legacy;
@@ -34,13 +36,19 @@ namespace UKMCAB.Data.CosmosDb.Services
                 var items = await Query<CABDocument>(legacyContainer, document => true);
                 foreach (var cabDocument in items)
                 {
-                    var cabId = Guid.NewGuid().ToString();
+                    var id = Guid.NewGuid().ToString();
                     var document = new Document
                     {
-                        CABId = cabId,
-
+                        CABId = id,
                         Name = cabDocument.Name,
-                        AddressLine1 = cabDocument.Address,
+                        
+                        AddressLine1 = cabDocument.AddressLine1.Clean(),
+                        AddressLine2 = cabDocument.AddressLine2.Clean(),
+                        TownCity = cabDocument.TownCity.Clean(),
+                        Postcode = cabDocument.Postcode.Clean(),
+                        County = cabDocument.County.Clean(),
+                        Country = cabDocument.Country.Clean(),
+
                         Email = cabDocument.Email,
                         Website = cabDocument.Website,
                         Phone = cabDocument.Phone,
@@ -50,7 +58,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                         TestingLocations = SanitiseLists(cabDocument.TestingLocations, DataConstants.Lists.Countries),
                         LegislativeAreas = SanitiseLists(cabDocument.LegislativeAreas, DataConstants.Lists.LegislativeAreas),
                         HiddenText = cabDocument.HiddenText,
-                        Schedules = await ImportSchedules(cabDocument.PDFs, cabId),
+                        Schedules = await ImportSchedules(cabDocument.PDFs, id),
                         Documents = new List<FileUpload>(),
                         Created = new Audit
                         {
@@ -75,7 +83,8 @@ namespace UKMCAB.Data.CosmosDb.Services
                                 : DateTime.UtcNow
                         },
                         StatusValue = Status.Published,
-                        RandomSort = Guid.NewGuid().ToString()
+                        RandomSort = Guid.NewGuid().ToString(),
+                        LegacyCabId = cabDocument.Id
                     };
                     var newDoc = await CreateAsync(document);
                 }
