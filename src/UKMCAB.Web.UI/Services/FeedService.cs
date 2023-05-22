@@ -32,7 +32,7 @@ namespace UKMCAB.Web.UI.Services
                 Title = new TextSyndicationContent(c.Name),
                 Summary = new TextSyndicationContent(StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.County, c.Postcode, c.Country), TextSyndicationContentKind.Html),
             }).ToList();
-            feed.LastUpdatedTime = feed.Items.Max(f => f.LastUpdatedTime).DateTime;
+            feed.LastUpdatedTime = feed.Items.Any() ? feed.Items.Max(f => f.LastUpdatedTime).DateTime : DateTime.UtcNow;
             return feed;
         }
 
