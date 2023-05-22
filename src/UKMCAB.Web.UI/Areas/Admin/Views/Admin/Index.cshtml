@@ -9,11 +9,11 @@
 
 @if (TempData[Constants.TempDraftKey] != null)
 {
-    <div class="govuk-notification-banner" role="region"
+    <div class="govuk-notification-banner govuk-grid-row" role="region"
          aria-labelledby="govuk-notification-banner-title"
          data-module="govuk-notification-banner">
-        <div class="govuk-notification-banner__content">
-            <p class="govuk-notification-banner__heading">@TempData[Constants.TempDraftKey].ToString()</p>
+        <div class="govuk-notification-banner__content justify-content--center">
+            <p class="govuk-notification-banner__heading">@Html.Raw(@TempData[Constants.TempDraftKey].ToString())</p>
         </div>
     </div>
 }
