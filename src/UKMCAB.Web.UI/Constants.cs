@@ -50,3 +50,11 @@ public static class Constants
     }
 }
 
+public class Nonces
+{
+    public const string GoogleAnalyticsScript = "2490d105cb874";
+    public const string GoogleAnalyticsInlineScript = "b1b40840d8d84";
+    public const string AppInsights = "VQ8uRGcAff";
+    public const string Main = "uKK1n1fxoi";
+}
+

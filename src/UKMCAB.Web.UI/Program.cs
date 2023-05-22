@@ -120,12 +120,14 @@ app.Use(async (context, next) =>
 app.MapRazorPages();
 
 var cspHeader = new CspHeader().AddDefaultCspDirectives()
-    .AddScriptNonce("VQ8uRGcAff")
-    .AddScriptNonce("uKK1n1fxoi")
+    .AddScriptNonce(Nonces.Main)
+    .AddScriptNonce(Nonces.GoogleAnalyticsScript)
+    .AddScriptNonce(Nonces.GoogleAnalyticsInlineScript)
+    .AddScriptNonce(Nonces.AppInsights)
     .AllowFontSources(CspConstants.SelfKeyword, "https://cdnjs.cloudflare.com")
-    .AllowScriptSources("https://cdnjs.cloudflare.com", "https://js.monitor.azure.com")
+    .AllowScriptSources("https://cdnjs.cloudflare.com", "https://js.monitor.azure.com", "https://region1.google-analytics.com")
     .AllowStyleSources("https://cdnjs.cloudflare.com")
-    .AllowConnectSources("https://uksouth-1.in.applicationinsights.azure.com");
+    .AllowConnectSources("https://uksouth-1.in.applicationinsights.azure.com", "https://region1.google-analytics.com");
 
 /*
  * 
