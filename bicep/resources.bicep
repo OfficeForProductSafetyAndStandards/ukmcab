@@ -443,7 +443,7 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
         {
           matchVariable: 'RequestCookieNames'
           selectorMatchOperator: 'StartsWith'
-          selector: '.AspNetCore'
+          selector: 'UKMCAB_'
           exclusionManagedRuleSets: [
             {
               ruleSetType: 'OWASP'
@@ -457,6 +457,9 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
                     }
                     {
                       ruleId: '942450'
+                    }
+                    {
+                      ruleId: '949110'
                     }
                   ]
                 }
@@ -482,29 +485,8 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
                     {
                       ruleId: '942450'
                     }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-        {
-          matchVariable: 'RequestArgNames'
-          selectorMatchOperator: 'Equals'
-          selector: '__RequestVerificationToken'
-          exclusionManagedRuleSets: [
-            {
-              ruleSetType: 'OWASP'
-              ruleSetVersion: '3.2'
-              ruleGroups: [
-                {
-                  ruleGroupName: 'REQUEST-942-APPLICATION-ATTACK-SQLI'
-                  rules: [
                     {
-                      ruleId: '942440'
-                    }
-                    {
-                      ruleId: '942450'
+                      ruleId: '949110'
                     }
                   ]
                 }

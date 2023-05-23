@@ -1,11 +1,14 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.Extensions.Logging;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
+using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
@@ -15,9 +18,11 @@ using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Subscriptions.Core;
+using UKMCAB.Subscriptions.Core.Data;
 using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
+using UKMCAB.Subscriptions.Core.Services;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
@@ -185,6 +190,9 @@ await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConn
     seeds.AddRole(role: new IdentityRole(Constants.Roles.OPSSAdmin));
 });
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+var telemetryClient = app.Services.GetRequiredService<TelemetryClient>();
+
 await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
 
 try
@@ -194,26 +202,65 @@ try
 }
 catch (Exception ex)
 {
-    app.Services.GetRequiredService<TelemetryClient>().TrackException(ex);
-    await app.Services.GetRequiredService<TelemetryClient>().FlushAsync(CancellationToken.None);
+    telemetryClient.TrackException(ex);
+    await telemetryClient.FlushAsync(CancellationToken.None);
     throw;
 }
 
-// asynchronously precache
-_ = Task.Run(async () =>
+_ = Task.Run(async () => // asynchronously precache
 {
     try
     {
         await Task.Delay(5000);
         var count = await app.Services.GetRequiredService<ICachedPublishedCABService>().PreCacheAllCabsAsync();
-        app.Services.GetRequiredService<ILogger<Program>>().LogInformation($"Precached {count} CABs");
+        logger.LogInformation($"Precached {count} CABs");
     }
     catch (Exception ex)
     {
-        app.Services.GetRequiredService<TelemetryClient>().TrackException(ex);
-        await app.Services.GetRequiredService<TelemetryClient>().FlushAsync(CancellationToken.None);
+        telemetryClient.TrackException(ex);
+        await telemetryClient.FlushAsync(CancellationToken.None);
+        logger.LogError(ex, "Error precaching");
     }
 });
+
+var stats = new Timer(async state =>
+{
+    using var scope = app.Services.CreateScope();
+    try
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UKMCABUser>>();
+        telemetryClient.TrackMetric(AiTracking.Metrics.UsersCount, await userManager.Users.CountAsync());
+        await app.Services.GetRequiredService<ICABAdminService>().RecordStatsAsync();
+
+        var pages1 = await app.Services.GetRequiredService<ISubscriptionRepository>().GetAllAsync(take: 1);
+        var pages2 = await pages1.ToListAsync();
+        var subscriptions = pages2.SelectMany(x => x.Values).ToList();
+
+        var cabSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Cab);
+        var searchSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Search);
+
+        telemetryClient.GetMetric(AiTracking.Metrics.CabSubscriptionsCount).TrackValue(cabSubscriptionsCount);
+        telemetryClient.GetMetric(AiTracking.Metrics.SearchSubscriptionsCount).TrackValue(searchSubscriptionsCount);
+
+        var cabs = await app.Services.GetRequiredService<ICABRepository>().GetItemLinqQueryable().AsAsyncEnumerable().ToListAsync();
+        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count > 0));
+        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithoutSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count == 0));
+
+        logger.LogInformation($"Recorded stats successfully");
+    }
+    catch (Exception ex)
+    {
+        telemetryClient.TrackException(ex);
+        await telemetryClient.FlushAsync(CancellationToken.None);
+        logger.LogError(ex, "Error recording stats");
+    }
+}, null, TimeSpan.Zero,
+#if(DEBUG)
+    TimeSpan.FromSeconds(30)
+#else
+    TimeSpan.FromDays(1)
+#endif
+);
 
 app.Run();
 
