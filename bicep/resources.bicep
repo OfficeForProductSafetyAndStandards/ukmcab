@@ -429,7 +429,7 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
       maxRequestBodySizeInKb: 128
       fileUploadLimitInMb: 100
       state: 'Enabled'
-      mode: 'Prevention'
+      mode: 'Detection'
     }
     managedRules: {
       managedRuleSets: [

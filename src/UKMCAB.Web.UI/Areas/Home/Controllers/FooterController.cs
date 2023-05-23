@@ -27,16 +27,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             return View(model);
         }
 
-        [Route("/cookies-policy")]
-        public IActionResult Cookies()
-        {
-            var model = new BasicPageModel()
-            {
-                Title = Constants.PageTitle.CookiesPolicy
-            };
-            return View(model);
-        }        
-        
+
         [Route("/accessibility-statement")]
         public IActionResult AccessibilityStatement()
         {
