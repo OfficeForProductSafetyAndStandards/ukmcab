@@ -49,7 +49,7 @@ namespace UKMCAB.Test.Controllers.Accounts
             mockAsyncNotificationClient = new();
 
             _sut = new ManageController(mockUserManager.Object, mockSignInManager.Object, mockAsyncNotificationClient.Object,
-                mockTemplateOptions.Object);
+                mockTemplateOptions.Object, null);
         }
 
         [Test]

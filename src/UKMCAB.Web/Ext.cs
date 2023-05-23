@@ -1,5 +1,5 @@
-﻿using Azure.Storage.Blobs.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using UKMCAB.Common;
 
 namespace UKMCAB.Web;
 
@@ -32,5 +32,24 @@ public static class Ext
             builder.Port = Convert.ToInt32(hostComponents[1]);
         }
         return builder.Uri;
+    }
+
+    public static IDictionary<string, string> ToTrackingMetadata(this HttpContext ctx, Dictionary<string,string>? extra = null)
+    {
+        var dictionary = new Dictionary<string, string>
+        {
+            [AiTracking.Metadata.UserAgent] = ctx.Request.Headers.UserAgent.ToString(),
+            [AiTracking.Metadata.User] = ctx.User?.Identity?.Name??"",
+        };
+
+        if (extra != null)
+        {
+            foreach (var kvp in extra)
+            {
+                dictionary.Add(kvp.Key, kvp.Value);
+            }
+        }
+
+        return dictionary;
     }
 }

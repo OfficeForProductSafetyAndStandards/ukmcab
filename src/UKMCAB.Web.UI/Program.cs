@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Antiforgery;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
 using UKMCAB.Data.CosmosDb.Services;
@@ -95,7 +96,11 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.LoginPath = new PathString("/account/login");
     opt.LogoutPath = new PathString("/account/logout");
     opt.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    opt.Cookie.Name = "UKMCAB_Identity";
 });
+
+builder.Services.Configure<CookieTempDataProviderOptions>(options => options.Cookie.Name = "UKMCAB_TempData");
+builder.Services.Configure<AntiforgeryOptions>(options => options.Cookie.Name = "UKMCAB_AntiForgery");
 
 
 
@@ -120,12 +125,14 @@ app.Use(async (context, next) =>
 app.MapRazorPages();
 
 var cspHeader = new CspHeader().AddDefaultCspDirectives()
-    .AddScriptNonce("VQ8uRGcAff")
-    .AddScriptNonce("uKK1n1fxoi")
+    .AddScriptNonce(Nonces.Main)
+    .AddScriptNonce(Nonces.GoogleAnalyticsScript)
+    .AddScriptNonce(Nonces.GoogleAnalyticsInlineScript)
+    .AddScriptNonce(Nonces.AppInsights)
     .AllowFontSources(CspConstants.SelfKeyword, "https://cdnjs.cloudflare.com")
-    .AllowScriptSources("https://cdnjs.cloudflare.com", "https://js.monitor.azure.com")
+    .AllowScriptSources("https://cdnjs.cloudflare.com", "https://js.monitor.azure.com", "https://region1.google-analytics.com")
     .AllowStyleSources("https://cdnjs.cloudflare.com")
-    .AllowConnectSources("https://uksouth-1.in.applicationinsights.azure.com");
+    .AllowConnectSources("https://uksouth-1.in.applicationinsights.azure.com", "https://region1.google-analytics.com");
 
 /*
  * 
