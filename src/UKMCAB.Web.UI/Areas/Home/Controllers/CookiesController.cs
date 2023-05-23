@@ -34,6 +34,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
                 return Redirect(model.ReturnURL);
             }
 
+            TempData[Constants.TempCookieChangeKey] = true;
             return RedirectToAction("Cookies");
         }
     }
