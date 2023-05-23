@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div class="govuk-button-group">
-                <form method="post" asp-area="Home" asp-controller="Footer" asp-action="Cookies">
+                <form method="post" asp-area="Home" asp-controller="Cookies" asp-action="Cookies">
                     <input type="hidden" id="ReturnURL" name="ReturnURL" value="@Context.Request.Path"/>
                     <button value="accept" type="submit" name="cookies" class="govuk-button" data-module="govuk-button">
                         Accept analytics cookies
@@ -22,7 +22,7 @@
                         Reject analytics cookies
                     </button>
                 </form>
-                <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="Cookies">View cookies</a>
+                <a class="govuk-link" asp-area="Home" asp-controller="Cookies" asp-action="Cookies">View cookies</a>
             </div>
         </div>
     </div>
