@@ -1,17 +1,26 @@
 ﻿@inject IConfiguration config
 @model ILayoutModel
+@{
+    var showCookieHeader = !Context.Request.Cookies.ContainsKey(Constants.AnalyticsOptInCookieName);
+    var loadAnalytics = !showCookieHeader && Context.Request.Cookies[Constants.AnalyticsOptInCookieName] == "accept";
+}
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
 
 <head>
     <meta charset="utf-8"/>
-    <script nonce="@Nonces.GoogleAnalyticsScript" async src="https://www.googletagmanager.com/gtag/js?id=@(config.GetValue<string>("GoogleAnalyticsId"))"></script>
-    <script nonce="@Nonces.GoogleAnalyticsInlineScript">
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-        gtag('config', '@(config.GetValue<string>("GoogleAnalyticsId"))');
-    </script>
+    @if (loadAnalytics)
+    {
+        <script nonce="@Nonces.GoogleAnalyticsScript" async src="https://www.googletagmanager.com/gtag/js?id=@(config.GetValue<string>("GoogleAnalyticsId"))"></script>
+        <script nonce="@Nonces.GoogleAnalyticsInlineScript">
+            window.dataLayer = window.dataLayer || [];
+
+            function gtag() { dataLayer.push(arguments); }
+
+            gtag('js', new Date());
+            gtag('config', '@(config.GetValue<string>("GoogleAnalyticsId"))');
+        </script>
+    }
     <title>@((Model?.Title).IsNotNullOrEmpty() ? string.Concat(Model?.Title, " - ") : null)@Constants.SiteName</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta name="theme-color" content="#0b0c0c"/>
@@ -28,7 +37,10 @@
     <link href="/assets/css/site.css" rel="stylesheet" asp-append-version="true" />
     
     <meta property="og:image" content="/assets/images/govuk-opengraph-image.png"/>
-    <script nonce="@Nonces.AppInsights">@Html.Raw(JavaScriptSnippet.ScriptBody)</script>
+    @if (loadAnalytics)
+    {
+        <script nonce="@Nonces.AppInsights">@Html.Raw(JavaScriptSnippet.ScriptBody)</script>
+    }
 </head>
 
 <body class="govuk-template__body ">
@@ -37,7 +49,8 @@
     </script>
 
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
-    
+
+    <partial name="Partials/_CookieBanner" model="showCookieHeader" />
     <partial name="Partials/_Header" />
 
     <div class="govuk-width-container ">
