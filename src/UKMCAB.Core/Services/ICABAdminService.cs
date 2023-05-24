@@ -17,5 +17,6 @@ namespace UKMCAB.Core.Services
         Task<Document> PublishDocumentAsync(UKMCABUser user, Document latestDocument);
         Task<Document> ArchiveDocumentAsync(UKMCABUser user, Document latestDocument, string archiveReason);
         IAsyncEnumerable<string> GetAllCabIds();
+        Task RecordStatsAsync();
     }
 }

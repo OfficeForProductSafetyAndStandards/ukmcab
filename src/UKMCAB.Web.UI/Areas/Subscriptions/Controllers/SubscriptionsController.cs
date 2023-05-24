@@ -219,7 +219,18 @@ public class SubscriptionsController : Controller
     public async Task<IActionResult> ConfirmSearchSubscriptionAsync(string token)
     {
         var result = await _subscriptions.ConfirmSearchSubscriptionAsync(token).ConfigureAwait(false);
-        return RedirectToRoute(Routes.ManageSubscription, new { id = result.SubscriptionId, smsg = Base64UrlEncoder.Encode("You've subscribed to emails about UKMCAB search results") });
+        if(result.ValidationResult == SubscriptionService.ValidationResult.Success)
+        {
+            return RedirectToRoute(Routes.ManageSubscription, new { id = result.SubscriptionId, smsg = Base64UrlEncoder.Encode("You've subscribed to emails about UKMCAB search results") });
+        }
+        else if(result.ValidationResult == SubscriptionService.ValidationResult.AlreadySubscribed)
+        {
+            throw new DomainException("You are already subscribed");
+        }
+        else
+        {
+            throw new DomainException("Unable to fulfil this request");
+        }
     }
 
     [HttpGet("subscribe/cab/confirm", Name = Routes.ConfirmCabSubscription)]
