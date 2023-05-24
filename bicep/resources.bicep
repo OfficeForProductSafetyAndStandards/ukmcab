@@ -458,9 +458,6 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
                     {
                       ruleId: '942450'
                     }
-                    {
-                      ruleId: '949110'
-                    }
                   ]
                 }
               ]
@@ -484,9 +481,6 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
                     }
                     {
                       ruleId: '942450'
-                    }
-                    {
-                      ruleId: '949110'
                     }
                   ]
                 }
