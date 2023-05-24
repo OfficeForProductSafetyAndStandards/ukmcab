@@ -1,7 +1,7 @@
 ﻿@model bool
 @if (Model)
 {
-    <div class="govuk-cookie-banner " data-nosnippet role="region" aria-label="Cookies on UK Market Conformity Assessment Bodies">
+    <div class="govuk-cookie-banner" data-nosnippet role="region" aria-label="Cookies on UK Market Conformity Assessment Bodies">
         <div class="govuk-cookie-banner__message govuk-width-container">
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds">
@@ -12,18 +12,18 @@
                     </div>
                 </div>
             </div>
+            <form method="post" asp-area="Home" asp-controller="Cookies" asp-action="Cookies">
             <div class="govuk-button-group">
-                <form method="post" asp-area="Home" asp-controller="Cookies" asp-action="Cookies">
-                    <input type="hidden" id="ReturnURL" name="ReturnURL" value="@Context.Request.Path"/>
-                    <button value="accept" type="submit" name="cookies" class="govuk-button" data-module="govuk-button">
-                        Accept analytics cookies
-                    </button>
-                    <button value="reject" type="submit" name="cookies" class="govuk-button" data-module="govuk-button">
-                        Reject analytics cookies
-                    </button>
-                </form>
+                <input type="hidden" id="ReturnURL" name="ReturnURL" value="@Context.Request.Path"/>
+                <button value="accept" type="submit" name="cookies" class="govuk-button" data-module="govuk-button">
+                    Accept analytics cookies
+                </button>
+                <button value="reject" type="submit" name="cookies" class="govuk-button" data-module="govuk-button">
+                    Reject analytics cookies
+                </button>
                 <a class="govuk-link" asp-area="Home" asp-controller="Cookies" asp-action="Cookies">View cookies</a>
             </div>
+            </form>
         </div>
     </div>
 }

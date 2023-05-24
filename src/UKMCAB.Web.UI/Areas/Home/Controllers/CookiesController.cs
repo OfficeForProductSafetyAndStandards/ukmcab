@@ -1,4 +1,6 @@
 ﻿
+using UKMCAB.Web.UI.Models.ViewModels.Cookies;
+
 namespace UKMCAB.Web.UI.Areas.Home.Controllers
 {
     [Area("Home")]
@@ -7,18 +9,18 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         [Route("/cookies-policy")]
         public IActionResult Cookies()
         {
-            var model = new BasicPageModel
+            var model = new CookiesViewModel
             {
-                Title = Constants.PageTitle.CookiesPolicy
+                Cookies = Request.Cookies.ContainsKey(Constants.AnalyticsOptInCookieName) ? Request.Cookies[Constants.AnalyticsOptInCookieName] : null
             };
             return View(model);
         }
 
         [Route("/cookies-policy")]
         [HttpPost]
-        public IActionResult Cookies(string returnURL, string cookies)
+        public IActionResult Cookies(CookiesViewModel model)
         {
-            if (cookies == "reject")
+            if (model.Cookies == "reject")
             {
                 var cookiesToDelete = Request.Cookies.Keys.Where(c => c.StartsWith("ai_") || c.StartsWith("_ga"));
                 foreach (var cookie in cookiesToDelete)
@@ -26,16 +28,14 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
                     Response.Cookies.Delete(cookie);
                 }
             }
-            Response.Cookies.Append(Constants.AnalyticsOptInCookieName, cookies, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) });
-            if (!string.IsNullOrWhiteSpace(returnURL))
+            Response.Cookies.Append(Constants.AnalyticsOptInCookieName, model.Cookies, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) });
+            if (!string.IsNullOrWhiteSpace(model.ReturnURL))
             {
-                return Redirect(returnURL);
+                return Redirect(model.ReturnURL);
             }
-            var model = new BasicPageModel
-            {
-                Title = Constants.PageTitle.CookiesPolicy
-            };
-            return View(model);
+
+            TempData[Constants.TempCookieChangeKey] = true;
+            return RedirectToAction("Cookies");
         }
     }
 }

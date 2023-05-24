@@ -9,6 +9,7 @@ public static class Constants
     public const string NotProvided = "Not provided";
 
     public const string TempDraftKey = nameof(TempDraftKey);
+    public const string TempCookieChangeKey = nameof(TempCookieChangeKey);
 
     public const string AnalyticsOptInCookieName = "accept_analytics_cookies";
 

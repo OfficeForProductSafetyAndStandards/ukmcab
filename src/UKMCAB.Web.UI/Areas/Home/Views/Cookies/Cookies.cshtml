@@ -1,4 +1,33 @@
-﻿<div class="govuk-grid-row">
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Cookies.CookiesViewModel
+
+
+@if (TempData[Constants.TempCookieChangeKey] != null)
+{
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+                 aria-labelledby="govuk-notification-banner-title"
+                 data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                        Success
+                    </h2>
+                </div>
+                <div class="govuk-notification-banner__content">
+                    <p class="govuk-notification-banner__heading">
+                        Your cookie settings were saved
+                    </p>
+                    <p class="govuk-body">Government services may set additional cookies and, if so, will have their own cookie policy and banner.</p>
+                    <p class="govuk-body">
+                        <a class="govuk-link success-banner-link" href="/">Go to UK Market Conformity Assessment Bodies homepage</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Cookies policy</h1>
     </div>
@@ -15,11 +44,6 @@
             collect is based on your browsing device's IP-address (hardware
             identifier).
         </p>
-    </div>
-</div>
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-m govuk-!-padding-top-3">What do the cookies do?</h2>
         <p class="govuk-body">The cookies we use:</p>
         <p class="govuk-body">
@@ -33,6 +57,113 @@
             monitor their activities; allow us to see how people arrive at our
             site (e.g. via search engine); allow us to gather geographic
             location and browser information.
+        </p>
+        <h2 class="govuk-heading-m govuk-!-padding-top-3">What cookies does the website use?</h2>
+        <p class="govuk-body">This website uses two types of cookies:</p>
+        <p class="govuk-body">
+            1. Persistent cookies, which remain on your device to capture and remember your preferences (if chosen) for any future re-visit (e.g. your location).
+        </p>
+        <p class="govuk-body">
+            2. Session cookies, which are deleted when your browser is closed. 
+        </p>
+        <p class="govuk-body">
+            Some cookies are essential for the running of the site however a few are used for analytical services such as those provided by Google Inc. in the US on our behalf. The analysis allows an insight into where and how our website is used so that we can continuously work on its improvement. Google will not associate your IP address with any other data held by Google. However, if you don't wish to be part of this analysis, feel free to download and install a browser plug-in to opt-out under <a href="https://tools.google.com/dlpage/gaoptout?hl=en-G" class="govuk-link">https://tools.google.com/dlpage/gaoptout?hl=en-G</a>.
+        </p>
+        <p class="govuk-body">
+            The cookies we use, what they are used for and how long they remain on your device are set out below:
+        </p>
+        <h2 class="govuk-heading-m govuk-!-padding-top-3">UK Market Conformity Assessement Bodies</h2>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th class="govuk-table__header">Name</th>
+                <th class="govuk-table__header">Purpose</th>
+                <th class="govuk-table__header">Lifetime of cookie</th>
+            </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">UKMCAB_Identity</td>
+                <td class="govuk-table__cell">This is an essential cookie used to handle user authentication in the service.</td>
+                <td class="govuk-table__cell">When you close your browser</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">UKMCAB_AntiForgery</td>
+                <td class="govuk-table__cell">This is an essential cookie used to handle form submission and prevent forged requests.</td>
+                <td class="govuk-table__cell">When you close your browser</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">UKMCAB_TempData</td>
+                <td class="govuk-table__cell">This is an essential cookie that handles temporary data between some requests.</td>
+                <td class="govuk-table__cell">When you close your browser</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">ARRAFinity</td>
+                <td class="govuk-table__cell">This is an essential cookie used by our server hosting to ensure a visitor’s session is directed to a specific instance of the website.</td>
+                <td class="govuk-table__cell">When you close your browser</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">accept_analytics_cookies</td>
+                <td class="govuk-table__cell">Stores whether you have accepted or rejected the use of analytics cookies that are detailed below.</td>
+                <td class="govuk-table__cell">30 days</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">_ga</td>
+                <td class="govuk-table__cell">We use Google Analytics to measure how you use the website so we can improve it based on user needs.</td>
+                <td class="govuk-table__cell">2 years</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">ai_session</td>
+                <td class="govuk-table__cell">This cookie name is associated with the site hosting, which collects statistical usage and telemetry information for apps built on the hosting cloud platform. This is a unique anonymous session identifier cookie and is used to help understand site performance.</td>
+                <td class="govuk-table__cell">When you close your browser</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">ai_user</td>
+                <td class="govuk-table__cell">This cookie name is associated with the site hosting, which collects statistical usage and telemetry information for apps built on the hosting cloud platform. This is a unique user identifier cookie enabling counting of the number of users accessing the application over time and is used to help understand site performance.</td>
+                <td class="govuk-table__cell">1 year</td>
+            </tr>
+            </tbody>
+        </table>
+        
+        <h2 class="govuk-heading-m">Change your cookie settings</h2>
+        <form asp-area="Home" asp-controller="Cookies" asp-action="Cookies" method="post" novalidate>
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                        Do you want to accept analytics cookies?
+                    </legend>
+                    
+                    <div class="govuk-radios" data-module="govuk-radios">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="AcceptCookies" asp-for="Cookies" type="radio" value="accept">
+                            <label class="govuk-label govuk-radios__label" for="AcceptCookies">
+                                Yes
+                            </label>
+                        </div>
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="RejectCookies" asp-for="Cookies" type="radio" value="reject">
+                            <label class="govuk-label govuk-radios__label" for="RejectCookies">
+                                No
+                            </label>
+                        </div>
+                    </div>
+
+                </fieldset>
+            </div>
+            <button type="submit" class="govuk-button" data-module="govuk-button">
+                Save cookie settings
+            </button>
+        </form>
+        <p class="govuk-body">
+            You can also <a href="https://tools.google.com/dlpage/gaoptout" class="govuk-link">opt out of Google Analytics cookies here</a>.
+        </p>
+        <h2 class="govuk-heading-m">How are cookies deleted?</h2>
+        <p class="govuk-body">
+            To delete or stop cookies being placed on your device, please check the help menu of your internet browser. Blocking cookies may reduce the functionality of this website.
+        </p>
+        <h2 class="govuk-heading-m">For more information</h2>
+        <p class="govuk-body">
+            To learn more about cookies and similar technologies, we recommend you visit: <a href="http://www.allaboutcookies.org/" class="govuk-link">http://www.allaboutcookies.org/</a>
         </p>
     </div>
 </div>

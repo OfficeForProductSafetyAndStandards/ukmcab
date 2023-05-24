@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Antiforgery;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
 using UKMCAB.Data.CosmosDb.Services;
@@ -95,7 +96,11 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.LoginPath = new PathString("/account/login");
     opt.LogoutPath = new PathString("/account/logout");
     opt.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    opt.Cookie.Name = "UKMCAB_Identity";
 });
+
+builder.Services.Configure<CookieTempDataProviderOptions>(options => options.Cookie.Name = "UKMCAB_TempData");
+builder.Services.Configure<AntiforgeryOptions>(options => options.Cookie.Name = "UKMCAB_AntiForgery");
 
 
 
