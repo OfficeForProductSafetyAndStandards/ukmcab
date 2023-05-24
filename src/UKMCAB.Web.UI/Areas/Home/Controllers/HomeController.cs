@@ -22,5 +22,15 @@
             };
             return View(model);
         }
+
+        [Route("/updates")]
+        public IActionResult Updates()
+        {
+            var model = new BasicPageModel()
+            {
+                Title = Constants.PageTitle.Updates
+            };
+            return View(model);
+        }
     }
 }

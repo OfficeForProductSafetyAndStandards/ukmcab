@@ -42,6 +42,9 @@
                     <li class="govuk-header__navigation-item @Html.Conditional(signedInUser, "navigation-mobile-no-underline", string.Empty) @Html.Conditional(ViewData["nav"] == "about", "govuk-header__navigation-item--active")">
                         <a asp-area="Home" asp-controller="Home" asp-action="About" class="govuk-header__link">About</a>
                     </li>
+                    <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "updates", "govuk-header__navigation-item--active")">
+                        <a asp-area="Home" asp-controller="Home" asp-action="Updates" class="govuk-header__link">Updates</a>
+                    </li>
                     @if (signedInUser)
                     {
                     <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "admin", "govuk-header__navigation-item--active")">
