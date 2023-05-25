@@ -7,6 +7,7 @@ using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Antiforgery;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
+using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
@@ -16,7 +17,6 @@ using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Subscriptions.Core;
-using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
 using UKMCAB.Web.CSP;
@@ -64,6 +64,7 @@ builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
+builder.Services.AddSingleton<IInitialiseDataService, InitialiseDataService>();
 builder.Services.AddCustomHttpErrorHandling();
 
 AddSubscriptionCoreServices(builder, azureDataConnectionString);
@@ -194,8 +195,7 @@ await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
 
 try
 {
-    await app.Services.GetRequiredService<ICABRepository>().InitialiseAsync();
-    await app.Services.GetRequiredService<SearchServiceManagment>().InitialiseAsync();
+    await app.Services.GetRequiredService<IInitialiseDataService>().InitialiseAsync();
 }
 catch (Exception ex)
 {

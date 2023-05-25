@@ -23,16 +23,26 @@ namespace UKMCAB.Data.CosmosDb.Services
             _fileStorage = fileStorage;
         }
 
-        public async Task InitialiseAsync()//(IFileStorage fileStorage)
+        public async Task InitialiseAsync(bool force = false)//(IFileStorage fileStorage)
         {
             var client = new CosmosClient(_cosmosDbConnectionString);
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
+            if (force)
+            {
+                var container = database.GetContainer(DataConstants.CosmosDb.Container);
+                if (container != null)
+                {
+                    await container.DeleteContainerAsync();
+                    await Task.Delay(2000);
+                }
+            }
             var result = await database.CreateContainerIfNotExistsAsync(DataConstants.CosmosDb.Container, "/CABId");
             
             if(result.StatusCode == HttpStatusCode.Created)
             {
                 _container = result.Container;
                 var legacyContainer = database.GetContainer(DataConstants.CosmosDb.ImportContainer);
+                await _fileStorage.DropAndRebuildContainer();
                 var items = await Query<CABDocument>(legacyContainer, document => true);
                 foreach (var cabDocument in items)
                 {
@@ -106,7 +116,7 @@ namespace UKMCAB.Data.CosmosDb.Services
                 var legacyblobStream = await _fileStorage.GetLegacyBlogStream(pdf.BlobName);
                 if (legacyblobStream != null)
                 {
-                    schedules.Add(await _fileStorage.UploadCABFile(cabId, pdf.ClientFileName, DataConstants.Storage.Schedules, legacyblobStream, "application/pdf"));
+                    schedules.Add(await _fileStorage.UploadCABFile(cabId, pdf.Label, pdf.ClientFileName, DataConstants.Storage.Schedules, legacyblobStream, "application/pdf"));
                 }
             }
 
