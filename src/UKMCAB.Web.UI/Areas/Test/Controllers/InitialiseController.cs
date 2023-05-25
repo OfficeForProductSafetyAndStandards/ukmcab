@@ -35,6 +35,7 @@ namespace UKMCAB.Web.UI.Areas.Test.Controllers
             {
                 try
                 {
+                    _temClient.TrackEvent("init_started");
                     if (DateTime.UtcNow < cutOffDate)
                     {
                         await _initialiseDataService.InitialiseAsync(true);
