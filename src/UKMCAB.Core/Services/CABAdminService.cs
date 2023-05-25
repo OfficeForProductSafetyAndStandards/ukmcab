@@ -4,6 +4,8 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
+using Microsoft.ApplicationInsights;
+using Microsoft.Azure.Cosmos.Linq;
 
 namespace UKMCAB.Core.Services
 {
@@ -12,12 +14,14 @@ namespace UKMCAB.Core.Services
         private readonly ICABRepository _cabRepostitory;
         private readonly ICachedSearchService _cachedSearchService;
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
+        private readonly TelemetryClient _telemetryClient;
 
-        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService, ICachedPublishedCABService cachedPublishedCabService)
+        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService, ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient)
         {
             _cabRepostitory = cabRepostitory;
             _cachedSearchService = cachedSearchService;
             _cachedPublishedCabService = cachedPublishedCabService;
+            _telemetryClient = telemetryClient;
         }
 
         public async Task<bool> DocumentWithKeyIdentifiersExistsAsync(Document document)
@@ -84,7 +88,11 @@ namespace UKMCAB.Core.Services
             document.Created = auditItem;
             document.LastUpdated = auditItem;
             document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
-            return await _cabRepostitory.CreateAsync(document);
+            var rv = await _cabRepostitory.CreateAsync(document);
+
+            await RecordStatsAsync();
+
+            return rv;
         }
 
         public async Task<Document> UpdateOrCreateDraftDocumentAsync(UKMCABUser user, Document draft, bool saveAsDraft = false)
@@ -110,6 +118,9 @@ namespace UKMCAB.Core.Services
             {
                 draft.LastUpdated = audit;
                 Guard.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
+
+                await RecordStatsAsync();
+
                 return draft;
             }
 
@@ -123,6 +134,7 @@ namespace UKMCAB.Core.Services
             var createdDoc = documents.SingleOrDefault(d => d.StatusValue == Status.Created);
             Guard.IsTrue(createdDoc != null, $"Error finding the document to delete, CAB Id: {cabId}");
             Guard.IsTrue(await _cabRepostitory.Delete(createdDoc), $"Failed to delete draft version, CAB Id: {cabId}");
+            await RecordStatsAsync();
             return true;
         }
 
@@ -152,6 +164,8 @@ namespace UKMCAB.Core.Services
 
             await RefreshCaches(latestDocument.CABId);
 
+            await RecordStatsAsync();
+
             return latestDocument;
         }
 
@@ -169,6 +183,8 @@ namespace UKMCAB.Core.Services
 
             await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
             await RefreshCaches(latestDocument.CABId);
+            await RecordStatsAsync();
+
             return publishedVersion;
         }
 
@@ -178,6 +194,19 @@ namespace UKMCAB.Core.Services
             await _cachedSearchService.ClearAsync();
             await _cachedSearchService.ClearAsync(cabId);
             await _cachedPublishedCabService.ClearAsync(cabId);
+        }
+
+        public async Task RecordStatsAsync()
+        {
+            async Task RecordStatAsync(Status status) => _telemetryClient.TrackMetric(string.Format(AiTracking.Metrics.CabsByStatusFormat, status.ToString()), 
+                await _cabRepostitory.GetItemLinqQueryable().Where(x => x.StatusValue == status).CountAsync());
+
+            await RecordStatAsync(Status.Unknown);
+            await RecordStatAsync(Status.Created);
+            await RecordStatAsync(Status.Draft);
+            await RecordStatAsync(Status.Published);
+            await RecordStatAsync(Status.Archived);
+            await RecordStatAsync(Status.Historical);
         }
     }
 
