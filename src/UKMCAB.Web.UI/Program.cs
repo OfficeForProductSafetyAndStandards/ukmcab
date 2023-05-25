@@ -42,6 +42,12 @@ var azureDataConnectionString = new AzureDataConnectionString(builder.Configurat
 var cosmosDbConnectionString = new CosmosDbConnectionString(builder.Configuration.GetValue<string>("CosmosConnectionString"));
 var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]);
 
+var redisConnectionString = builder.Configuration["RedisConnectionString"];
+if (redisConnectionString.Contains("allowAdmin"))
+{
+    redisConnectionString = redisConnectionString + ",allowAdmin=true";
+}
+
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
 builder.Services.AddControllersWithViews();
@@ -49,7 +55,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery(x => x.Cookie.SecurePolicy = CookieSecurePolicy.Always);
 builder.Services.AddHsts(x => x.MaxAge = TimeSpan.FromDays(370));
 builder.Services.AddSingleton(new BasicAuthenticationOptions { Password = builder.Configuration["BasicAuthPassword"] });
-builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
+builder.Services.AddSingleton(new RedisConnectionString(redisConnectionString));
 builder.Services.AddSingleton(cognitiveSearchConnectionString);
 builder.Services.AddSingleton(cosmosDbConnectionString);
 builder.Services.AddSingleton(azureDataConnectionString);
