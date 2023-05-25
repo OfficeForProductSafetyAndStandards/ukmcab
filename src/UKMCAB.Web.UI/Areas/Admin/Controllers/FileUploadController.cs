@@ -72,7 +72,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, DataConstants.Storage.Schedules,
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, model.File.FileName, DataConstants.Storage.Schedules,
                     model.File.OpenReadStream(), contentType);
                 latestVersion.Schedules.Add(result);
 
@@ -238,7 +238,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, DataConstants.Storage.Documents,
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, model.File.FileName, DataConstants.Storage.Documents,
                     model.File.OpenReadStream(), contentType);
                 latestVersion.Documents.Add(result);
 

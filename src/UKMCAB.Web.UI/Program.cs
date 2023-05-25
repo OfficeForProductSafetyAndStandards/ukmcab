@@ -47,6 +47,12 @@ var azureDataConnectionString = new AzureDataConnectionString(builder.Configurat
 var cosmosDbConnectionString = new CosmosDbConnectionString(builder.Configuration.GetValue<string>("CosmosConnectionString"));
 var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]);
 
+var redisConnectionString = builder.Configuration["RedisConnectionString"];
+if (!redisConnectionString.Contains("allowAdmin"))
+{
+    redisConnectionString = redisConnectionString + ",allowAdmin=true";
+}
+
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
 builder.Services.AddControllersWithViews();
@@ -54,7 +60,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery(x => x.Cookie.SecurePolicy = CookieSecurePolicy.Always);
 builder.Services.AddHsts(x => x.MaxAge = TimeSpan.FromDays(370));
 builder.Services.AddSingleton(new BasicAuthenticationOptions { Password = builder.Configuration["BasicAuthPassword"] });
-builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
+builder.Services.AddSingleton(new RedisConnectionString(redisConnectionString));
 builder.Services.AddSingleton(cognitiveSearchConnectionString);
 builder.Services.AddSingleton(cosmosDbConnectionString);
 builder.Services.AddSingleton(azureDataConnectionString);
@@ -69,6 +75,7 @@ builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
+builder.Services.AddSingleton<IInitialiseDataService, InitialiseDataService>();
 builder.Services.AddCustomHttpErrorHandling();
 
 AddSubscriptionCoreServices(builder, azureDataConnectionString);
@@ -202,8 +209,7 @@ await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
 
 try
 {
-    await app.Services.GetRequiredService<ICABRepository>().InitialiseAsync();
-    await app.Services.GetRequiredService<SearchServiceManagment>().InitialiseAsync();
+    await app.Services.GetRequiredService<IInitialiseDataService>().InitialiseAsync();
 }
 catch (Exception ex)
 {
