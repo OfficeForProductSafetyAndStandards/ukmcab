@@ -91,7 +91,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
-                ProductSchedules = cabDocument.Schedules.Select(s => new FileUpload
+                ProductSchedules = cabDocument.Schedules?.Select(s => new FileUpload
                 {
                     Label = s.Label ?? s.FileName,
                     FileName = s.FileName,

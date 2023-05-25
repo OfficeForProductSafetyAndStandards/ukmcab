@@ -140,6 +140,11 @@ namespace UKMCAB.Core.Services
 
         public async Task<Document> PublishDocumentAsync(UKMCABUser user, Document latestDocument)
         {
+            if (latestDocument.StatusValue == Status.Published)
+            {
+                // An accidental double sumbmit might cause this action to be repeated so just return the already published doc.
+                return latestDocument;
+            }
             Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             var audit = new Audit(user);
