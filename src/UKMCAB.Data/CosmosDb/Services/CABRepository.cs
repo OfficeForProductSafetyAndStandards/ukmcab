@@ -3,6 +3,7 @@ using Microsoft.Azure.Cosmos.Linq;
 using System.Diagnostics.Metrics;
 using System.Linq.Expressions;
 using System.Net;
+using System.Text.RegularExpressions;
 using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
@@ -114,9 +115,10 @@ namespace UKMCAB.Data.CosmosDb.Services
             foreach (var pdf in pdfs)
             {
                 var legacyblobStream = await _fileStorage.GetLegacyBlogStream(pdf.BlobName);
+                var label = Regex.Replace(pdf.Label, "\\u202F", " ");
                 if (legacyblobStream != null)
                 {
-                    schedules.Add(await _fileStorage.UploadCABFile(cabId, pdf.Label, pdf.ClientFileName, DataConstants.Storage.Schedules, legacyblobStream, "application/pdf"));
+                    schedules.Add(await _fileStorage.UploadCABFile(cabId, label, pdf.ClientFileName, DataConstants.Storage.Schedules, legacyblobStream, "application/pdf"));
                 }
             }
 
