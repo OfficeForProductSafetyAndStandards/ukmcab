@@ -28,7 +28,7 @@ namespace UKMCAB.Data
             await _searchServiceManagment.InitialiseAsync(force);
             if (force)
             {
-                await _redisCache.FlushAsync(10);
+                await _redisCache.FlushAsync();
             }
         }
     }
