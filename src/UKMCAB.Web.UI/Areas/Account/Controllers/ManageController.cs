@@ -1,5 +1,4 @@
 ﻿using Microsoft.ApplicationInsights;
-using Microsoft.ApplicationInsights.Channel;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;

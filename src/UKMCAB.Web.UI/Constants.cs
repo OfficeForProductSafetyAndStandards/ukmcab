@@ -21,6 +21,7 @@ public static class Constants
         public const string Help = "Help";
         public const string PrivacyNotice = "Privacy Notice";
         public const string TermsAndConditions = "Terms And Conditions";
+        public const string Updates = "Updates";
     }
     public static class Config
     {
