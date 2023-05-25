@@ -48,7 +48,7 @@ var cosmosDbConnectionString = new CosmosDbConnectionString(builder.Configuratio
 var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]);
 
 var redisConnectionString = builder.Configuration["RedisConnectionString"];
-if (redisConnectionString.Contains("allowAdmin"))
+if (!redisConnectionString.Contains("allowAdmin"))
 {
     redisConnectionString = redisConnectionString + ",allowAdmin=true";
 }

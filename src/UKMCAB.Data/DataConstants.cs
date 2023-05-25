@@ -7,17 +7,15 @@ public class DataConstants
         public const string Database = "main";
         public const string Container = "cab-documents";
         public const string ImportContainer = "cab-data";
-
     }
 
     public static class Search
     {
         public const int SearchResultsPerPage = 20;
         public const int WorkQueurResultsPerPage = 10;
-        public const string SEARCH_INDEX = "kris-ukmcab-search-index";
-        public const string SEARCH_INDEXER = "kris-ukmcab-search-indexer";
-        public const string SEARCH_DATASOURCE = "kris-ukmcab-search-datasource";
-
+        public const string SEARCH_INDEX = "ukmcab-search-index";
+        public const string SEARCH_INDEXER = "ukmcab-search-indexer";
+        public const string SEARCH_DATASOURCE = "ukmcab-search-datasource";
     }
 
     public static class Storage
@@ -26,7 +24,6 @@ public class DataConstants
         public const string ImportContainer = "pdfs-from-data-import";
         public const string Documents = "documents";
         public const string Schedules = "schedules";
-
     }
 
     public class SortOptions
