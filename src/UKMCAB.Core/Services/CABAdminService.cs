@@ -177,6 +177,15 @@ namespace UKMCAB.Core.Services
         public async Task<Document> ArchiveDocumentAsync(UKMCABUser user, Document latestDocument, string archiveReason)
         {
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
+            if (publishedVersion == null)
+            {
+                // An accidental double sumbmit might cause this action to be repeated so just return the already archived doc.
+                var latest = await GetLatestDocumentAsync(latestDocument.id);
+                if (latest.StatusValue == Status.Archived)
+                {
+                    return latest;
+                }
+            }
             Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
             var audit = new Audit(user);
             publishedVersion.StatusValue = Status.Archived;
