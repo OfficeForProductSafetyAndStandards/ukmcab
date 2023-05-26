@@ -613,7 +613,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
-          requestTimeout: 30
+          requestTimeout: 240
           hostName: appServiceHostName
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeName)
