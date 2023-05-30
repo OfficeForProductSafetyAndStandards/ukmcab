@@ -1114,6 +1114,7 @@ resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(provisionA
     appSettingNames: [
       'BasicAuthPassword'
       'AppHostName'
+      'DisableSubscriptionsEngine'
     ]
   }
 }
