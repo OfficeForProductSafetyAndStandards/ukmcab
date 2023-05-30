@@ -122,7 +122,7 @@ builder.Services.Configure<AntiforgeryOptions>(options => options.Cookie.Name = 
 
 var app = builder.Build();
 
-//app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
+app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.SameAsRequest });
 
 app.Use(async (context, next) =>
 {
