@@ -1085,7 +1085,7 @@ resource webConfig 'Microsoft.Web/sites/config@2022-03-01' = {
     #disable-next-line BCP037 // Bicep linter is wrong.
     scmIpSecurityRestrictionsDefaultAction: 'Allow'
     
-    appSettings: concat(appSettings, appServiceUseBasicAuth ? [appSettingBasicAuth] : [])
+    appSettings: concat(appSettings, appServiceUseBasicAuth ? [appSettingBasicAuth] : [], [{name:'AppHostName',value:appServiceHostName}])
   }
 }
 
@@ -1101,7 +1101,7 @@ resource webConfigVNext 'Microsoft.Web/sites/slots/config@2022-03-01' = if(provi
     #disable-next-line BCP037 // Bicep linter is wrong.
     scmIpSecurityRestrictionsDefaultAction: 'Allow'
     
-    appSettings: concat(appSettings, appServiceUseBasicAuthVNext ? [appSettingBasicAuth] : [])
+    appSettings: concat(appSettings, appServiceUseBasicAuthVNext ? [appSettingBasicAuth] : [], [{name:'DisableSubscriptionsEngine',value:'true'}, {name:'AppHostName',value:appServiceHostNameVNext}])
   }
 }
 
