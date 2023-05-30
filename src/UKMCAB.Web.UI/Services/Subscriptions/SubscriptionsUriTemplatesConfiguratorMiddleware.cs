@@ -49,9 +49,7 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
     {
         try
         {
-            var feat = _server.Features.Get<IServerAddressesFeature>();
-            var addresses = feat?.Addresses.ToArray() ?? Array.Empty<string>();
-            Initialise(addresses?.FirstOrDefault(x => x.StartsWith("https")) ?? throw new Exception("The app url is not obtainable"));
+            Initialise();
         } 
         catch (Exception ex)
         {
@@ -69,11 +67,13 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
     }
 
 
-    public void Initialise(string appUrl)
+    public void Initialise()
     {
-        var configuredAddress = _configuration["AppHostName"] != null ? $"https://{_configuration["AppHostName"]}" : null;
-        var addr = configuredAddress ?? appUrl ?? throw new Exception("No web addresses obtainable");
-        var @base = new Uri(addr);
+        var defaultAppAddresses = _server.Features.Get<IServerAddressesFeature>()?.Addresses.ToArray() ?? Array.Empty<string>();
+        var defaultAppAddress = defaultAppAddresses.FirstOrDefault(x => x.StartsWith("https"));
+        var configuredAppAddress = _configuration["AppHostName"].PrependIf("https://");
+        var baseAddress = configuredAppAddress ?? defaultAppAddress ?? throw new Exception("No web addresses obtainable");
+        var @base = new Uri(baseAddress);
 
         var options = new UriTemplateOptions
         {
@@ -118,9 +118,10 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
 
         _telemetry.TrackEvent(AiTracking.Events.SubscriptionsInitialise, new Dictionary<string, string>()
         {
-            ["options"] = options.Serialize(),
-            ["defaultUrl"] = appUrl ?? "",
-            ["configuredAddress"] = configuredAddress ?? "",
+            [nameof(options)] = options.Serialize() ?? "",
+            [nameof(defaultAppAddresses)] = defaultAppAddresses.Serialize() ?? "",
+            [nameof(defaultAppAddress)] = defaultAppAddress ?? "",
+            [nameof(baseAddress)] = baseAddress ?? "",
         });
 
         _logger.LogInformation($"{nameof(SubscriptionsConfiguratorHostedService)} initialised successfully");
