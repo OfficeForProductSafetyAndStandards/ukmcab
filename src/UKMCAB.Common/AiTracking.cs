@@ -17,6 +17,8 @@ public static class AiTracking
         public const string CabsSearched = "app_cab_searched";
 
         public const string UsersCount = "app_users_count";
+
+        public const string SubscriptionsInitialise = "app_subscriptions_initialise";
     }
 
     public static class Metrics

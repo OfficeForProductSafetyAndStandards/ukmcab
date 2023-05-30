@@ -1,4 +1,6 @@
-﻿using UKMCAB.Subscriptions.Core.Domain.Emails;
+﻿using Microsoft.ApplicationInsights;
+using UKMCAB.Common;
+using UKMCAB.Subscriptions.Core.Domain.Emails;
 using UKMCAB.Subscriptions.Core.Domain.Emails.Uris;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Areas.Subscriptions.Controllers;
@@ -10,22 +12,26 @@ public class SubscriptionsUriTemplatesConfiguratorMiddleware
     private readonly RequestDelegate _next;
     private readonly IEmailTemplatesService _emailTemplatesService;
     private readonly LinkGenerator _linkGenerator;
+    private readonly TelemetryClient _telemetry;
+    private readonly ILogger<SubscriptionsUriTemplatesConfiguratorMiddleware> _logger;
 
-    public SubscriptionsUriTemplatesConfiguratorMiddleware(RequestDelegate next, IEmailTemplatesService emailTemplatesService, LinkGenerator linkGenerator)
+    public SubscriptionsUriTemplatesConfiguratorMiddleware(RequestDelegate next, IEmailTemplatesService emailTemplatesService, LinkGenerator linkGenerator, TelemetryClient telemetry, ILogger<SubscriptionsUriTemplatesConfiguratorMiddleware> logger)
     {
         _next = next;
         _emailTemplatesService = emailTemplatesService;
         _linkGenerator = linkGenerator;
+        _telemetry = telemetry;
+        _logger = logger;
     }
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (!_emailTemplatesService.IsConfigured())
+        if (!_emailTemplatesService.IsConfigured() || context.Request.Query["subscriptionsuritemplatesconfiguratormiddlewareinit"] == "1")
         {
             var options = new UriTemplateOptions
             {
                 BaseUri = context.Request.GetRequestUri(),
-                
+
                 CabDetails = new("@cabid", _linkGenerator.GetPathByRouteValues(CABProfileController.Routes.CabDetails, new { id = "@cabid" })
                     ?? throw new Exception("Cab details route not found")),
 
@@ -47,7 +53,7 @@ public class SubscriptionsUriTemplatesConfiguratorMiddleware
                 ManageSubscription = new("@subscriptionid",
                     _linkGenerator.GetPathByRouteValues(SubscriptionsController.Routes.ManageSubscription, new { id = "@subscriptionid" })
                     ?? throw new Exception("Manage subscription route not found")),
-                
+
                 Unsubscribe = new("@subscriptionid",
                     _linkGenerator.GetPathByRouteValues(SubscriptionsController.Routes.Unsubscribe, new { id = "@subscriptionid" })
                     ?? throw new Exception("Unsubscribe route not found")),
@@ -61,6 +67,24 @@ public class SubscriptionsUriTemplatesConfiguratorMiddleware
                     ?? throw new Exception("Search-changes-summary route not found"))
             };
             _emailTemplatesService.Configure(options);
+
+
+            var d = new Dictionary<string, string>
+            {
+                [nameof(UriTemplateOptions)] = options.Serialize()
+            };
+
+            foreach (var item in context.Request.Headers)
+            {
+                var key = $"hdr_{item.Key}";
+                if (!d.ContainsKey(key) && item.Key.DoesNotEqual("cookie"))
+                {
+                    d[key] = item.Value.ToString();
+                }
+            }
+            _telemetry.TrackEvent(AiTracking.Events.SubscriptionsInitialise, context.ToTrackingMetadata(d));
+
+            _logger.LogInformation($"{nameof(SubscriptionsUriTemplatesConfiguratorMiddleware)} initialised successfully");
         }
 
         await _next(context);
