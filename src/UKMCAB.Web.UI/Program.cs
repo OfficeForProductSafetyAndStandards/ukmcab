@@ -1,12 +1,11 @@
 using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Azure.Cosmos.Linq;
-using Microsoft.Extensions.Logging;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
-using Microsoft.AspNetCore.Antiforgery;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
 using UKMCAB.Data;
@@ -23,7 +22,6 @@ using UKMCAB.Subscriptions.Core.Data;
 using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
-using UKMCAB.Subscriptions.Core.Services;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
@@ -89,6 +87,7 @@ builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("Go
 
 
 builder.Services.AddHostedService<RandomSortGenerator>();
+
 
 builder.Services.AddSearchService(cognitiveSearchConnectionString);
 
@@ -302,6 +301,7 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
 
     builder.Services.AddSingleton<SubscriptionsBackgroundService>();
     builder.Services.AddHostedService(p => p.GetRequiredService<SubscriptionsBackgroundService>());
+    builder.Services.AddHostedService<SubscriptionsConfiguratorHostedService>();
 }
 
 static void UseSubscriptions(WebApplication app)
@@ -309,9 +309,7 @@ static void UseSubscriptions(WebApplication app)
     if (app.Environment.IsDevelopment())
     {
         app.UseSubscriptionsDiagnostics();
-
     }
-    app.UseSubscriptionsUriTemplatesConfiguratorMiddleware();
 }
 
 #endregion

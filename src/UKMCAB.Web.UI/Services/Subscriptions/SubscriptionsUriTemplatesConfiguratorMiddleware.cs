@@ -1,5 +1,7 @@
 ﻿using Microsoft.ApplicationInsights;
-using UKMCAB.Common;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using UKMCAB.Subscriptions.Core.Domain.Emails;
 using UKMCAB.Subscriptions.Core.Domain.Emails.Uris;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
@@ -7,41 +9,74 @@ using UKMCAB.Web.UI.Areas.Subscriptions.Controllers;
 
 namespace UKMCAB.Web.UI.Services.Subscriptions;
 
-public class SubscriptionsUriTemplatesConfiguratorMiddleware
+public class SubscriptionsConfiguratorHostedService : IHostedService
 {
-    private readonly RequestDelegate _next;
     private readonly IEmailTemplatesService _emailTemplatesService;
     private readonly LinkGenerator _linkGenerator;
     private readonly TelemetryClient _telemetry;
-    private readonly ILogger<SubscriptionsUriTemplatesConfiguratorMiddleware> _logger;
+    private readonly ILogger<SubscriptionsConfiguratorHostedService> _logger;
+    private readonly IConfiguration _configuration;
+    private readonly IHostApplicationLifetime _hostApplicationLifetime;
+    private readonly IServer _server;
 
-    public SubscriptionsUriTemplatesConfiguratorMiddleware(RequestDelegate next, IEmailTemplatesService emailTemplatesService, LinkGenerator linkGenerator, TelemetryClient telemetry, ILogger<SubscriptionsUriTemplatesConfiguratorMiddleware> logger)
+    public SubscriptionsConfiguratorHostedService(IEmailTemplatesService emailTemplatesService, LinkGenerator linkGenerator, 
+        TelemetryClient telemetry, ILogger<SubscriptionsConfiguratorHostedService> logger, IConfiguration configuration, IHostApplicationLifetime hostApplicationLifetime, IServer server)
     {
-        _next = next;
         _emailTemplatesService = emailTemplatesService;
         _linkGenerator = linkGenerator;
         _telemetry = telemetry;
         _logger = logger;
+        _configuration = configuration;
+        _hostApplicationLifetime = hostApplicationLifetime;
+        _server = server;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        var path = context?.Request?.Path.Value ?? string.Empty;
-        if (!path.StartsWith("/robots933456.txt"))
+        _hostApplicationLifetime.ApplicationStarted.Register(OnStarted);
+        _hostApplicationLifetime.ApplicationStopping.Register(OnStopping);
+        _hostApplicationLifetime.ApplicationStopped.Register(OnStopped);
+        return Task.CompletedTask;
+    }
+
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        return Task.CompletedTask;
+    }
+
+
+    private void OnStarted()
+    {
+        try
         {
-            if (!_emailTemplatesService.IsConfigured() || context.Request.Query["subscriptionsuritemplatesconfiguratormiddlewareinit"] == "1")
-            {
-                Initialise(context);
-            }
-            await _next(context);
+            var feat = _server.Features.Get<IServerAddressesFeature>();
+            var addresses = feat?.Addresses.ToArray() ?? Array.Empty<string>();
+            Initialise(addresses?.FirstOrDefault(x => x.StartsWith("https")) ?? throw new Exception("The app url is not obtainable"));
+        } 
+        catch (Exception ex)
+        {
+
         }
     }
 
-    private void Initialise(HttpContext context)
+    private void OnStopping()
     {
+    }
+
+    private void OnStopped()
+    {
+    }
+
+
+    public void Initialise(string appUrl)
+    {
+        var configuredAddress = _configuration["AppHostName"] != null ? $"https://{_configuration["AppHostName"]}" : null;
+        var addr = configuredAddress ?? appUrl ?? throw new Exception("No web addresses obtainable");
+        var @base = new Uri(addr);
+
         var options = new UriTemplateOptions
         {
-            BaseUri = context.Request.GetRequestUri(),
+            BaseUri = @base,
 
             CabDetails = new("@cabid", _linkGenerator.GetPathByRouteValues(CABProfileController.Routes.CabDetails, new { id = "@cabid" })
                                 ?? throw new Exception("Cab details route not found")),
@@ -77,33 +112,18 @@ public class SubscriptionsUriTemplatesConfiguratorMiddleware
                                 _linkGenerator.GetPathByRouteValues(SubscriptionsController.Routes.SearchChangesSummary, new { subscriptionId = "@subscriptionid", changesDescriptorId = "@changesdescriptorid" })
                                 ?? throw new Exception("Search-changes-summary route not found"))
         };
+
         _emailTemplatesService.Configure(options);
 
-
-        var d = new Dictionary<string, string>
+        _telemetry.TrackEvent(AiTracking.Events.SubscriptionsInitialise, new Dictionary<string, string>()
         {
-            [nameof(UriTemplateOptions)] = options.Serialize()
-        };
+            ["options"] = options.Serialize(),
+            ["defaultUrl"] = appUrl ?? "",
+            ["configuredAddress"] = configuredAddress ?? "",
+        });
 
-        foreach (var item in context.Request.Headers)
-        {
-            var key = $"hdr_{item.Key}";
-            if (!d.ContainsKey(key) && item.Key.DoesNotEqual("cookie"))
-            {
-                d[key] = item.Value.ToString();
-            }
-        }
-        _telemetry.TrackEvent(AiTracking.Events.SubscriptionsInitialise, context.ToTrackingMetadata(d));
-
-        _logger.LogInformation($"{nameof(SubscriptionsUriTemplatesConfiguratorMiddleware)} initialised successfully");
+        _logger.LogInformation($"{nameof(SubscriptionsConfiguratorHostedService)} initialised successfully");
     }
 }
 
-public static class SubscriptionsUriTemplatesConfiguratorMiddlewareExtensions
-{
-    public static IApplicationBuilder UseSubscriptionsUriTemplatesConfiguratorMiddleware(this IApplicationBuilder app)
-    {
-        app.UseMiddleware<SubscriptionsUriTemplatesConfiguratorMiddleware>();
-        return app;
-    }
-}
+
