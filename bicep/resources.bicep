@@ -1106,13 +1106,14 @@ resource webConfigVNext 'Microsoft.Web/sites/slots/config@2022-03-01' = if(provi
 }
 
 
-resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(appServiceUseBasicAuth) {
+resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(provisionAppSvcVNextSlot) {
   name: 'slotConfigNames'
   parent: appService
   kind: 'string'
   properties:{
     appSettingNames: [
       'BasicAuthPassword'
+      'AppHostName'
     ]
   }
 }
