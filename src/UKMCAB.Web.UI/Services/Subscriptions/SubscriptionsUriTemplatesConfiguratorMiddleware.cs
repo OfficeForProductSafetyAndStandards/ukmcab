@@ -55,7 +55,8 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
         } 
         catch (Exception ex)
         {
-
+            _telemetry.TrackException(ex);
+            _telemetry.TrackEvent(AiTracking.Events.SubscriptionsInitialise+"_FAIL");
         }
     }
 
