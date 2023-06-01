@@ -44,9 +44,9 @@
                     </label>
                     <a href="@(baseSortPath + Model.GetSortQueryValue(Model.Sort.Replace("-desc", string.Empty)))" aria-sort="@(Model.Sort.EndsWith("-desc")? "descending" : "ascending")" class="cab-manage-sort" role="button"></a>
                     <select class="govuk-select cab-management-options" asp-for="Sort">
-                        <option value="lastupd">Last updated</option>
                         <option value="name">CAB name</option>
                         <option value="number">CAB number</option>
+                        <option value="lastupd-desc">Last updated</option>
                         <option value="status">Status</option>
                     </select>
                 </div>
