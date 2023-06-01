@@ -8,7 +8,7 @@ namespace UKMCAB.Core.Services
         Task<bool> DocumentWithKeyIdentifiersExistsAsync(Document document);
         Task<Document> FindPublishedDocumentByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABIdAsync(string id);
-        Task<List<Document>> FindAllWorkQueueDocuments();
+        Task<List<Document>> FindAllCABManagementQueueDocuments();
         Task<Document> GetLatestDocumentAsync(string id);
 
         Task<Document> CreateDocumentAsync(UKMCABUser user, Document document, bool saveAsDraft = false);

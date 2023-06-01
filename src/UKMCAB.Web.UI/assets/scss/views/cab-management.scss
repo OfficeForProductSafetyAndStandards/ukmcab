@@ -1,6 +1,6 @@
-﻿#admin-work-queue {
+﻿#admin-cab-management {
     &.js-enabled {
-        #work-queue-filters-submit {
+        #cab-management-filters-submit {
             display: none;
         }
     }
@@ -53,8 +53,8 @@
         }
     }
 
-    #work-queue-filters-submit {
-        
+    #cab-management-filters-submit {
+
         button {
             margin: 30px 0 0 20px;
 
@@ -65,7 +65,7 @@
     }
 
     @include govuk-media-query($from: tablet) {
-        #work-queue-create-container {
+        #cab-management-create-container {
             a {
                 float: right;
                 margin-top: 30px;
@@ -73,8 +73,8 @@
             }
         }
 
-        #work-queue-filter-container {
-            #work-queue-filter {
+        #cab-management-filter-container {
+            #cab-management-filter {
                 float: left;
             }
 
@@ -87,7 +87,7 @@
             }
         }
 
-        #work-queue-list-container {
+        #cab-management-list-container {
             td {
                 padding: 20px 0;
 
@@ -102,11 +102,11 @@
         display: flex;
         flex-wrap: wrap;
 
-        #work-queue-create-container {
+        #cab-management-create-container {
             order: 1;
         }
 
-        #work-queue-filter-container {
+        #cab-management-filter-container {
             order: 2;
 
             select {
@@ -114,7 +114,7 @@
             }
         }
 
-        #work-queue-list-container {
+        #cab-management-list-container {
             order: 3;
 
             thead {
