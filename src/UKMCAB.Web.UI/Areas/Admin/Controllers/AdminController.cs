@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using UKMCAB.Core.Services;
 using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
@@ -25,7 +24,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (string.IsNullOrEmpty(model.Sort))
             {
-                model.Sort = "default";
+                model.Sort = "lastupd-desc";
             }
 
             var workQueueItems = await _cabAdminService.FindAllWorkQueueDocuments();
@@ -72,6 +71,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 case "name":
                     model.WorkQueueItems = model.WorkQueueItems.OrderBy(wqi => wqi.Name).ToList();
                     break;
+                case "lastupd":
+                    model.WorkQueueItems = model.WorkQueueItems.OrderBy(wqi => wqi.LastUpdated).ToList();
+                    break;
+                case "lastupd-desc":
                 default:
                     model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.LastUpdated).ToList();
                     break;

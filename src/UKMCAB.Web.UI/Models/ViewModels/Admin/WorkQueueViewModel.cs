@@ -12,14 +12,14 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public int PageNumber { get; set; } = 1;
         public PaginationViewModel Pagination { get; set; }
 
-        public HtmlString GetSortClass(string sortName)
+        public HtmlString GetAriaSort(string sortName)
         {
             if (Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
             {
-                return Sort.EndsWith("desc") ? new HtmlString("sort-active-descending") : new HtmlString("sort-active");
+                return Sort.EndsWith("desc") ? new HtmlString("descending") : new HtmlString("ascending");
             }
 
-            return new HtmlString("sort-inactive");
+            return new HtmlString("none");
         }
 
         public HtmlString GetSortQueryValue(string sortName)
