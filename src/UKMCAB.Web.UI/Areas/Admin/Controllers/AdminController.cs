@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Components.Forms;
 using UKMCAB.Core.Services;
 using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
@@ -21,73 +20,77 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [Route("/admin")]
         [Route("/admin/cab-management")]
-        public async Task<IActionResult> Index(WorkQueueViewModel model)
+        public async Task<IActionResult> Index(CABManagementViewModel model)
         {
             if (string.IsNullOrEmpty(model.Sort))
             {
-                model.Sort = "default";
+                model.Sort = "lastupd-desc";
             }
 
-            var workQueueItems = await _cabAdminService.FindAllWorkQueueDocuments();
-            model.WorkQueueItems = workQueueItems.Any()
-                ? workQueueItems.Select(wqi => new WorkQueueItemViewModel
+            var cabManagementItems = await _cabAdminService.FindAllCABManagementQueueDocuments();
+            model.CABManagementItems = cabManagementItems.Any()
+                ? cabManagementItems.Select(cmi => new CABManagementItemViewModel
                 {
-                    Id = wqi.CABId,
-                    Name = wqi.Name,
-                    CABNumber = wqi.CABNumber,
-                    Status = wqi.Status,
-                    LastUpdated = wqi.LastUpdatedDate
+                    Id = cmi.CABId,
+                    Name = cmi.Name,
+                    CABNumber = cmi.CABNumber,
+                    Status = cmi.Status,
+                    LastUpdated = cmi.LastUpdatedDate
                 }).ToList()
-                : new List<WorkQueueItemViewModel>();
+                : new List<CABManagementItemViewModel>();
 
             FilterSortAndPaginateItems(model);
 
             return View(model);
         }
 
-        private void FilterSortAndPaginateItems(WorkQueueViewModel model)
+        private void FilterSortAndPaginateItems(CABManagementViewModel model)
         {
             if (!string.IsNullOrEmpty(model.Filter))
             {
-                model.WorkQueueItems = model.WorkQueueItems.Where(wqi =>
+                model.CABManagementItems = model.CABManagementItems.Where(wqi =>
                     model.Filter.Equals(wqi.Status, StringComparison.InvariantCultureIgnoreCase)).ToList();
             }
             switch (model.Sort.ToLower())
             {
                 case "status-desc":
-                    model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.Status).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.Status).ToList();
                     break;
                 case "status":
-                    model.WorkQueueItems = model.WorkQueueItems.OrderBy(wqi => wqi.Status).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Status).ToList();
                     break;
                 case "number-desc":
-                    model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.CABNumber).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.CABNumber).ToList();
                     break;
                 case "number":
-                    model.WorkQueueItems = model.WorkQueueItems.OrderBy(wqi => wqi.CABNumber).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.CABNumber).ToList();
                     break;
                 case "name-desc":
-                    model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.Name).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.Name).ToList();
                     break;
                 case "name":
-                    model.WorkQueueItems = model.WorkQueueItems.OrderBy(wqi => wqi.Name).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Name).ToList();
                     break;
+                case "lastupd":
+                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.LastUpdated).ToList();
+                    break;
+                case "lastupd-desc":
                 default:
-                    model.WorkQueueItems = model.WorkQueueItems.OrderByDescending(wqi => wqi.LastUpdated).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
             }
             model.Pagination = new PaginationViewModel
             {
-                Total = model.WorkQueueItems.Count,
+                Total = model.CABManagementItems.Count,
                 PageNumber = model.PageNumber,
-                ResultsPerPage = DataConstants.Search.WorkQueurResultsPerPage,
+                ResultsPerPage = DataConstants.Search.CABManagementQueueResultsPerPage,
                 ResultType = "items"
             };
 
             if (model.Pagination.Total > 10)
             {
                 var skip = (model.PageNumber - 1) * 10; 
-                model.WorkQueueItems = model.WorkQueueItems.Skip(skip).Take(10).ToList();
+                model.CABManagementItems = model.CABManagementItems.Skip(skip).Take(10).ToList();
             }
         }
     }
