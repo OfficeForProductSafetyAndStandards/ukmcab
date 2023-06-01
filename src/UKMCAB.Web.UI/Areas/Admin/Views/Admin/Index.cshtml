@@ -1,6 +1,6 @@
 ﻿@using UKMCAB.Web.UI.Extensions
 @using UKMCAB.Data.Models
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.WorkQueueViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABManagementViewModel
 @{
     ViewData["nav"] = "admin";
     var baseSortPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
@@ -24,14 +24,14 @@
     </div>
 </div>
 <div class="govuk-grid-row">
-    <form id="work-queue-form" method="get">
-        <div id="admin-work-queue">
-            <div id="work-queue-filter-container" class="govuk-grid-column-one-half">
-                <div id="work-queue-filter" class="govuk-form-group">
+    <form id="cab-management-form" method="get">
+        <div id="admin-cab-management">
+            <div id="cab-management-filter-container" class="govuk-grid-column-one-half">
+                <div id="cab-management-filter" class="govuk-form-group">
                     <label class="govuk-label" asp-for="Filter">
                         Showing
                     </label>
-                    <select class="govuk-select work-queue-options" asp-for="Filter">
+                    <select class="govuk-select cab-management-options" asp-for="Filter">
                         <option value="">All</option>
                         <option value="draft">Draft</option>
                         <option value="archived">Archived</option>
@@ -42,39 +42,41 @@
                     <label class="govuk-label" asp-for="Filter">
                         Sort by
                     </label>
-                    <select class="govuk-select work-queue-options" asp-for="Sort">
-                        <option value="default">Last updated</option>
+                    <a href="@(baseSortPath + Model.GetSortQueryValue(Model.Sort.Replace("-desc", string.Empty)))" aria-sort="@(Model.Sort.EndsWith("-desc")? "descending" : "ascending")" class="cab-manage-sort" role="button"></a>
+                    <select class="govuk-select cab-management-options" asp-for="Sort">
+                        <option value="lastupd">Last updated</option>
                         <option value="name">CAB name</option>
                         <option value="number">CAB number</option>
                         <option value="status">Status</option>
                     </select>
                 </div>
                 
-                <div id="work-queue-filters-submit" class="govuk-form-group">
+                <div id="cab-management-filters-submit" class="govuk-form-group">
                     <button class="govuk-button" type="submit">Apply</button>
                 </div>
             </div>
-            <div id="work-queue-create-container" class="govuk-grid-column-one-half">
+            <div id="cab-management-create-container" class="govuk-grid-column-one-half">
                 <a class="govuk-button" asp-area="Admin" asp-controller="CAB" asp-action="Details" asp-route-id="create" data-module="govuk-button">
                     Create a CAB
                 </a>
             </div>
-            <div id="work-queue-list-container" class="govuk-grid-column-full govuk-body">
+            <div id="cab-management-list-container" class="govuk-grid-column-full govuk-body">
                 <table class="govuk-table">
                     <thead>
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk-!govuk-!-width-one-third"><a href="@(baseSortPath + Model.GetSortQueryValue("name"))" class="@Model.GetSortClass("name")">CAB name</a></th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a href="@(baseSortPath + Model.GetSortQueryValue("number"))" class="@Model.GetSortClass("number")">CAB number</a></th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a href="@(baseSortPath + Model.GetSortQueryValue("status"))" class="@Model.GetSortClass("status")">Status</a></th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("name"))" aria-sort="@Model.GetAriaSort("name")">CAB name</a></th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("number"))" aria-sort="@Model.GetAriaSort("number")">CAB number</a></th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("lastupd"))" aria-sort="@Model.GetAriaSort("lastupd")">Last updated</a></th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("status"))" aria-sort="@Model.GetAriaSort("status")">Status</a></th>
                     </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                    @if (Model.WorkQueueItems.Any())
+                    @if (Model.CABManagementItems.Any())
                     {
-                        @foreach (var cab in Model.WorkQueueItems)
+                        @foreach (var cab in Model.CABManagementItems)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><label class="work-queue-item-label">Cab name</label>
+                                <td class="govuk-table__cell"><label class="cab-management-item-label">Cab name</label>
                                     @if (cab.Status == Status.Archived.ToString())
                                     {
                                         <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
@@ -84,8 +86,9 @@
                                         <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
                                     }
                                 </td>
-                                <td class="govuk-table__cell"><label class="work-queue-item-label">Cab reference</label>@Html.Conditional(!string.IsNullOrWhiteSpace(cab.CABNumber), cab.CABNumber, @Constants.NotProvided)</td>
-                                <td class="govuk-table__cell"><label class="work-queue-item-label">Status</label>@cab.Status</td>
+                                <td class="govuk-table__cell"><label class="cab-management-item-label">Cab reference</label>@Html.Conditional(!string.IsNullOrWhiteSpace(cab.CABNumber), cab.CABNumber, @Constants.NotProvided)</td>
+                                <td class="govuk-table__cell"><label class="cab-management-item-label">Last updated</label>@cab.LastUpdated.ToString("dd/MM/yyyy")</td>
+                                <td class="govuk-table__cell"><label class="cab-management-item-label">Status</label>@cab.Status</td>
                             </tr>
                         }
                     }
@@ -97,9 +100,9 @@
                     }
                     </tbody>
                 </table>
-                @if (Model.WorkQueueItems.Any())
+                @if (Model.CABManagementItems.Any())
                 {
-                    <div id="work-queue-pagination-container">
+                    <div id="cab-management-pagination-container">
                         <partial name="Partials/_Pagination" model="Model.Pagination"/>
                     </div>
                 }

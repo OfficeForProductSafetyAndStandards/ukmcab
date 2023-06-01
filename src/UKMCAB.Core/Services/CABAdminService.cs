@@ -47,7 +47,7 @@ namespace UKMCAB.Core.Services
             return docs;
         }
 
-        public async Task<List<Document>> FindAllWorkQueueDocuments()
+        public async Task<List<Document>> FindAllCABManagementQueueDocuments()
         {
             // TODO: Archived docs need to be included once this functionality is developed 
             var docs = await _cabRepostitory.Query<Document>(d =>
