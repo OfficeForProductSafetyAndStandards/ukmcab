@@ -21,8 +21,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("admin/cab/details/{id}")]
-        public async Task<IActionResult> Details(string id, bool fromSummary)
+        [Route("admin/cab/about/{id}")]
+        public async Task<IActionResult> About(string id, bool fromSummary)
         {
             var model = new CABDetailsViewModel();
             if (!id.Equals("create", StringComparison.InvariantCultureIgnoreCase))
@@ -41,8 +41,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Route("admin/cab/details/{id}")]
-        public async Task<IActionResult> Details(string id, CABDetailsViewModel model, string submitType)
+        [Route("admin/cab/about/{id}")]
+        public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
             var appointmentDate = CheckDate(model.AppointmentDate, nameof(model.AppointmentDate), "appointment");
             var renewalDate = CheckDate(model.RenewalDate, nameof(model.RenewalDate), "renewal");

@@ -1,5 +1,4 @@
-﻿@using Microsoft.EntityFrameworkCore
-@using UKMCAB.Data.Models
+﻿@using UKMCAB.Data.Models
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CABSummaryViewModel
 @if (Model.ShowError)
 {
@@ -30,7 +29,7 @@
         <fieldset class="govuk-fieldset">
             <div class="cab-summary-header">
                 <h3 class="govuk-heading-l">About</h3>
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Details" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             </div>
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
