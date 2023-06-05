@@ -429,7 +429,7 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
       maxRequestBodySizeInKb: 128
       fileUploadLimitInMb: 100
       state: 'Enabled'
-      mode: 'Prevention'
+      mode: 'Detection'
     }
     managedRules: {
       managedRuleSets: [
@@ -443,7 +443,7 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
         {
           matchVariable: 'RequestCookieNames'
           selectorMatchOperator: 'StartsWith'
-          selector: '.AspNetCore'
+          selector: 'UKMCAB_'
           exclusionManagedRuleSets: [
             {
               ruleSetType: 'OWASP'
@@ -466,30 +466,6 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
         }
         {
           matchVariable: 'RequestArgKeys'
-          selectorMatchOperator: 'Equals'
-          selector: '__RequestVerificationToken'
-          exclusionManagedRuleSets: [
-            {
-              ruleSetType: 'OWASP'
-              ruleSetVersion: '3.2'
-              ruleGroups: [
-                {
-                  ruleGroupName: 'REQUEST-942-APPLICATION-ATTACK-SQLI'
-                  rules: [
-                    {
-                      ruleId: '942440'
-                    }
-                    {
-                      ruleId: '942450'
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-        {
-          matchVariable: 'RequestArgNames'
           selectorMatchOperator: 'Equals'
           selector: '__RequestVerificationToken'
           exclusionManagedRuleSets: [
@@ -637,7 +613,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
-          requestTimeout: 30
+          requestTimeout: 240
           hostName: appServiceHostName
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeName)
@@ -1109,7 +1085,7 @@ resource webConfig 'Microsoft.Web/sites/config@2022-03-01' = {
     #disable-next-line BCP037 // Bicep linter is wrong.
     scmIpSecurityRestrictionsDefaultAction: 'Allow'
     
-    appSettings: concat(appSettings, appServiceUseBasicAuth ? [appSettingBasicAuth] : [])
+    appSettings: concat(appSettings, appServiceUseBasicAuth ? [appSettingBasicAuth] : [], [{name:'AppHostName',value:appServiceHostName}])
   }
 }
 
@@ -1125,18 +1101,20 @@ resource webConfigVNext 'Microsoft.Web/sites/slots/config@2022-03-01' = if(provi
     #disable-next-line BCP037 // Bicep linter is wrong.
     scmIpSecurityRestrictionsDefaultAction: 'Allow'
     
-    appSettings: concat(appSettings, appServiceUseBasicAuthVNext ? [appSettingBasicAuth] : [])
+    appSettings: concat(appSettings, appServiceUseBasicAuthVNext ? [appSettingBasicAuth] : [], [{name:'DisableSubscriptionsEngine',value:'true'}, {name:'AppHostName',value:appServiceHostNameVNext}])
   }
 }
 
 
-resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(appServiceUseBasicAuth) {
+resource slotConfigNames 'Microsoft.Web/sites/config@2022-03-01' = if(provisionAppSvcVNextSlot) {
   name: 'slotConfigNames'
   parent: appService
   kind: 'string'
   properties:{
     appSettingNames: [
       'BasicAuthPassword'
+      'AppHostName'
+      'DisableSubscriptionsEngine'
     ]
   }
 }

@@ -38,7 +38,7 @@
                         <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
                         <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
                         <ul class="search-result-list-item-details">
-                            <li class="search-result-list-item-detail">@searchResult.Address</li>
+                            <li class="search-result-list-item-detail">@Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.Address), searchResult.Address, @Constants.NotProvided)</li>
                             <li class="search-result-list-item-detail">Body type: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.BodyType), searchResult.BodyType, @Constants.NotProvided)</li>
                             <li class="search-result-list-item-detail">Registered office location: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.RegisteredOfficeLocation), searchResult.RegisteredOfficeLocation, @Constants.NotProvided)</li>
                             <li class="search-result-list-item-detail">Testing location: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.RegisteredTestLocation), searchResult.RegisteredTestLocation, @Constants.NotProvided)</li>

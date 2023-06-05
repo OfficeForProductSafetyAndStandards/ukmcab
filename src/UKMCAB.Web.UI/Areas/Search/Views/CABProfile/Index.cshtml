@@ -271,7 +271,7 @@
                             @foreach (var file in Model.ProductSchedules)
                             {
                                 <li class="cab-profile-file-list-item">
-                                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="schedules">@file.FileName</a>
+                                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="schedules">@file.Label</a>
                                 </li>
                             }
                         </ul>
@@ -306,7 +306,7 @@
                                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                                     <strong class="govuk-warning-text__text">
                                         <span class="govuk-warning-text__assistive">Warning</span>
-                                        Archiving this CAB record will remove it from the search results. Once archived the record can be re-published and returned to the search reaults by internal users.
+                                        Archiving this CAB record will remove it from the search results. Once archived the record can be re-published and returned to the search results by internal users.
                                     </strong>
                                 </div>
                                 <div class="govuk-button-group">

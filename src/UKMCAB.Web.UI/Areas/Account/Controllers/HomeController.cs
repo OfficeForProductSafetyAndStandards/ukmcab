@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Identity;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 
@@ -9,12 +10,14 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
     {
         private readonly SignInManager<UKMCABUser> _signInManager;
         private readonly ILogger<LoginViewModel> _logger;
+        private readonly TelemetryClient _telemetry;
         private const string SignOutKey = "SignedOut";
 
-        public HomeController(SignInManager<UKMCABUser> signInManager, ILogger<LoginViewModel> logger)
+        public HomeController(SignInManager<UKMCABUser> signInManager, ILogger<LoginViewModel> logger, TelemetryClient telemetry)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _telemetry = telemetry;
         }
 
         [Route("account/login")]
@@ -37,6 +40,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [Route("account/login")]
         public async Task<IActionResult> Login(LoginViewModel loginViewModel)
         {
+            var trackingEventKey = AiTracking.Events.LoginFailed;
             if (ModelState.IsValid)
             {
                 // This doesn't count login failures towards account lockout
@@ -55,12 +59,14 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     var result = await _signInManager.PasswordSignInAsync(loginViewModel.Email, loginViewModel.Password, false, lockoutOnFailure: true);
                     if (result.Succeeded)
                     {
+                        trackingEventKey = AiTracking.Events.LoginSuccess;
                         _logger.LogInformation("User logged in.");
                         return RedirectToAction("Index", "Admin", new {Area = "Admin"});
                     }
                     if (result.IsLockedOut)
                     {
                         _logger.LogWarning("User account locked out.");
+                        trackingEventKey = AiTracking.Events.Lockout;
                         loginViewModel.IsLockedOut = true;
                     }
                     else
@@ -70,6 +76,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     }
                 }
             }
+
+            _telemetry.TrackEvent(trackingEventKey, HttpContext.ToTrackingMetadata());
 
             // If we got this far, something failed, redisplay form
             return View(loginViewModel);
@@ -82,6 +90,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User logged out.");
             TempData[SignOutKey] = true;
+            _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
             return RedirectToAction("Login");
         }
     }

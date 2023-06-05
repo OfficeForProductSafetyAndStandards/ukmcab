@@ -1,0 +1,140 @@
+﻿#admin-cab-management {
+    &.js-enabled {
+        #cab-management-filters-submit {
+            display: none;
+        }
+    }
+
+    .cab-manage-sort {
+        position: relative;
+        text-decoration: none;
+        color: black;
+
+        &[aria-sort]:before {
+            content: " \25bc";
+            position: absolute;
+            right: -15px;
+            top: 10px;
+            font-size: 0.5em;
+        }
+
+        &[aria-sort]:after {
+            content: " \25b2";
+            position: absolute;
+            right: -15px;
+            top: 1px;
+            font-size: 0.5em;
+        }
+
+        &[aria-sort="ascending"]:before,
+        &[aria-sort="descending"]:before {
+            content: none;
+        }
+
+        &[aria-sort="ascending"]:after {
+            content: " \25b2";
+            font-size: 0.8em;
+            right: -18px;
+            top: 3px;
+        }
+
+        &[aria-sort="descending"]:after {
+            content: " \25bc";
+            font-size: 0.8em;
+            right: -18px;
+            top: 3px;
+        }
+    }
+
+    #mobile-sort {
+        label,
+        .cab-manage-sort {
+            float: left;
+        }
+    }
+
+    #cab-management-filters-submit {
+
+        button {
+            margin: 30px 0 0 20px;
+
+            @include govuk-media-query($until: tablet) {
+                margin: 0;
+            }
+        }
+    }
+
+    @include govuk-media-query($from: tablet) {
+        #cab-management-create-container {
+            a {
+                float: right;
+                margin-top: 30px;
+                width: 200px;
+            }
+        }
+
+        #cab-management-filter-container {
+            #cab-management-filter {
+                float: left;
+            }
+
+            select {
+                width: 300px;
+            }
+
+            #mobile-sort {
+                display: none;
+            }
+        }
+
+        #cab-management-list-container {
+            td {
+                padding: 20px 0;
+
+                label {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    @include govuk-media-query($until: tablet) {
+        display: flex;
+        flex-wrap: wrap;
+
+        #cab-management-create-container {
+            order: 1;
+        }
+
+        #cab-management-filter-container {
+            order: 2;
+
+            select {
+                width: 100%;
+            }
+        }
+
+        #cab-management-list-container {
+            order: 3;
+
+            thead {
+                display: none;
+            }
+
+            td {
+                display: block;
+                border-bottom: none;
+
+                label {
+                    display: block;
+                    font-weight: 600;
+                    padding-bottom: 10px;
+                }
+            }
+
+            tr {
+                border-bottom: 1px solid #b1b4b6;
+            }
+        }
+    }
+}

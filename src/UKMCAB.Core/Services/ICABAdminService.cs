@@ -9,7 +9,7 @@ namespace UKMCAB.Core.Services
         Task<Document> FindPublishedDocumentByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
-        Task<List<Document>> FindAllWorkQueueDocuments();
+        Task<List<Document>> FindAllCABManagementQueueDocuments();
         Task<Document> GetLatestDocumentAsync(string id);
 
         Task<Document> CreateDocumentAsync(UKMCABUser user, Document document, bool saveAsDraft = false);
@@ -18,5 +18,6 @@ namespace UKMCAB.Core.Services
         Task<Document> PublishDocumentAsync(UKMCABUser user, Document latestDocument);
         Task<Document> ArchiveDocumentAsync(UKMCABUser user, Document latestDocument, string archiveReason);
         IAsyncEnumerable<string> GetAllCabIds();
+        Task RecordStatsAsync();
     }
 }

@@ -7,13 +7,15 @@ namespace UKMCAB.Data.Storage
 {
     public interface IFileStorage
     {
-        Task<FileUpload> UploadCABFile(string cabId, string FileName, string DirectoryName, Stream stream, string contentType);
+        Task<FileUpload> UploadCABFile(string cabId, string label, string fileName, string directoryName, Stream stream, string contentType);
 
         Task<bool> DeleteCABSchedule(string blobName);
 
         Task<FileDownload> DownloadBlobStream(string blobPath);
 
         Task<Stream> GetLegacyBlogStream(string blobPath);
+
+        Task DropAndRebuildContainer();
     }
 
     public class FileStorageService : IFileStorage
@@ -28,6 +30,28 @@ namespace UKMCAB.Data.Storage
 
         }
 
+        public async Task DropAndRebuildContainer()
+        {
+            if (_client.Exists())
+            {
+                var blobs = await _client.GetBlobsAsync().ToListAsync();
+                foreach (var blob in blobs)
+                {
+                    var blobClient = _client.GetBlobClient(blob.Name);
+                    await blobClient.DeleteAsync();
+                }
+
+                blobs = await _client.GetBlobsAsync().ToListAsync();
+                if (blobs.Any())
+                {
+                    throw new Exception("Not all blobs deleted");
+                }
+            }
+            else
+            {
+                _client.CreateIfNotExists();
+            }
+        }
 
         public async Task<Stream> GetLegacyBlogStream(string blobPath)
         {
@@ -57,9 +81,8 @@ namespace UKMCAB.Data.Storage
             return null;
         }
 
-        public async Task<FileUpload> UploadCABFile(string cabId, string fileName, string directoryName, Stream stream, string contentType)
+        public async Task<FileUpload> UploadCABFile(string cabId, string label, string fileName, string directoryName, Stream stream, string contentType)
         {
-            fileName = MakeValidFileName(fileName);
             var blobName = $"{cabId}/{directoryName}/{fileName}";
             var blobClient = _client.GetBlobClient(blobName);
             var blobHeaders = new BlobHttpHeaders
@@ -73,6 +96,7 @@ namespace UKMCAB.Data.Storage
             {
                 return new FileUpload
                 {
+                    Label = label,
                     FileName = fileName,
                     BlobName = blobName,
                     UploadDateTime = DateTime.UtcNow

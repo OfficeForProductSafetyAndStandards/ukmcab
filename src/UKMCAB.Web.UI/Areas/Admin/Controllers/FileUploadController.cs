@@ -68,11 +68,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id, fromSummary = "true" }: new { id });
             }
 
-            var contentType = ValidateUploadFileAndGetContentType(model, SchedulesOptions.AcceptedFileExtensionsContentTypes, SchedulesOptions.AcceptedFileTypes, latestVersion);
+            var contentType = ValidateUploadFileAndGetContentType(model, SchedulesOptions.AcceptedFileExtensionsContentTypes, SchedulesOptions.AcceptedFileTypes, latestVersion.Schedules);
 
             if (ModelState.IsValid)
             {
-                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, DataConstants.Storage.Schedules,
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, model.File.FileName, DataConstants.Storage.Schedules,
                     model.File.OpenReadStream(), contentType);
                 latestVersion.Schedules.Add(result);
 
@@ -103,11 +103,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var user = await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion, true);
             }
-            TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} (CAB number {latestVersion.CABNumber})";
+            TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} <br>CAB number {latestVersion.CABNumber}";
             return RedirectToAction("Index", "Admin", new { Area = "admin" });
         }
 
-        private string ValidateUploadFileAndGetContentType(FileUploadViewModel model, Dictionary<string, string> acceptedFileExtensionsContentTypes, string acceptedFileTypes, Document document)
+        private string ValidateUploadFileAndGetContentType(FileUploadViewModel model, Dictionary<string, string> acceptedFileExtensionsContentTypes, string acceptedFileTypes, List<FileUpload> currentDocuments)
         {
             var contentType = string.Empty;
             if (model.File == null)
@@ -128,9 +128,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     ModelState.AddModelError("File", $"Files must be in {acceptedFileTypes} format to be uploaded.");
                 }
 
-                document.Schedules ??= new List<FileUpload>();
+                currentDocuments ??= new List<FileUpload>();
 
-                if (document.Schedules.Any(s => s.FileName.Equals(model.File.FileName)))
+                if (currentDocuments.Any(s => s.FileName.Equals(model.File.FileName)))
                 {
                     ModelState.AddModelError("File", "Uploaded files must have different names to those already uploaded.");
                 }
@@ -234,11 +234,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("DocumentsList", model.IsFromSummary ? new { id, fromSummary = "true" } : new { id });
             }
 
-            var contentType = ValidateUploadFileAndGetContentType(model, DocumentsOptions.AcceptedFileExtensionsContentTypes, DocumentsOptions.AcceptedFileTypes, latestVersion);
+            var contentType = ValidateUploadFileAndGetContentType(model, DocumentsOptions.AcceptedFileExtensionsContentTypes, DocumentsOptions.AcceptedFileTypes, latestVersion.Documents);
 
             if (ModelState.IsValid)
             {
-                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, DataConstants.Storage.Documents,
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, model.File.FileName, DataConstants.Storage.Documents,
                     model.File.OpenReadStream(), contentType);
                 latestVersion.Documents.Add(result);
 

@@ -18,7 +18,7 @@
       "value": true
     },
     "appServiceUseBasicAuth": {
-      "value": true
+      "value": false
     },
     "appServiceUseBasicAuthVNext": {
       "value": true

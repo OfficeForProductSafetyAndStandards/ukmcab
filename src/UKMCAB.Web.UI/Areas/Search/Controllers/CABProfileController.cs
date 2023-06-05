@@ -8,6 +8,7 @@ using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
+using Microsoft.ApplicationInsights;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -18,18 +19,21 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly ICABAdminService _cabAdminService;
         private readonly IFileStorage _fileStorage;
         private readonly UserManager<UKMCABUser> _userManager;
+        private readonly TelemetryClient _telemetryClient;
 
         public static class Routes
         {
             public const string CabDetails = "cab.detail";
         }
 
-        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, ICABAdminService cabAdminService, IFileStorage fileStorage, UserManager<UKMCABUser> userManager)
+        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, ICABAdminService cabAdminService, IFileStorage fileStorage, 
+            UserManager<UKMCABUser> userManager, TelemetryClient telemetryClient)
         {
             _cachedPublishedCabService = cachedPublishedCabService;
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
             _userManager = userManager;
+            _telemetryClient = telemetryClient;
         }
 
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
@@ -56,6 +60,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var isOPSSUer = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
 
             var cab = GetCabProfileViewModel(cabDocument, isOPSSUer, returnUrl);
+
+            _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new() 
+            { 
+                [AiTracking.Metadata.CabId] = id, 
+                [AiTracking.Metadata.CabName] = cab.Name 
+            }));
 
             return View(cab);
         }
@@ -85,10 +95,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
-                ProductSchedules = cabDocument.Schedules?.Select(pdf => new FileUpload
+                ProductSchedules = cabDocument.Schedules?.Select(s => new FileUpload
                 {
-                    BlobName = pdf.BlobName,
-                    FileName = pdf.FileName
+                    Label = s.Label ?? s.FileName,
+                    FileName = s.FileName,
+                    BlobName = s.BlobName
                 }).ToList() ?? new List<FileUpload>()
             };
             return cab;
@@ -105,6 +116,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (!string.IsNullOrWhiteSpace(ArchiveReason))
             {
                 await _cabAdminService.ArchiveDocumentAsync(user, cabDocument, ArchiveReason);
+                _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
+                {
+                    [AiTracking.Metadata.CabId] = id,
+                    [AiTracking.Metadata.CabName] = cabDocument.Name
+                }));
                 return RedirectToAction("Index", new { url = id, returnUrl });
             }
             ModelState.AddModelError("ArchiveReason", "State the reason for archiving this CAB record");

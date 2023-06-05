@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
@@ -15,13 +16,15 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         private readonly UserManager<UKMCABUser> _userManager;
         private readonly SignInManager<UKMCABUser> _signInManager;
         private readonly IAsyncNotificationClient _asyncNotificationClient;
+        private readonly TelemetryClient _telemetry;
         private readonly TemplateOptions _templateOptions;
 
-        public ManageController(UserManager<UKMCABUser> userManager, SignInManager<UKMCABUser> signInManager, IAsyncNotificationClient asyncNotificationClient, IOptions<TemplateOptions> templateOptions) 
+        public ManageController(UserManager<UKMCABUser> userManager, SignInManager<UKMCABUser> signInManager, IAsyncNotificationClient asyncNotificationClient, IOptions<TemplateOptions> templateOptions, TelemetryClient telemetry) 
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _asyncNotificationClient = asyncNotificationClient;
+            _telemetry = telemetry;
             _templateOptions = templateOptions.Value;
         }
 
@@ -49,6 +52,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     await _signInManager.RefreshSignInAsync(user);
                     await _asyncNotificationClient.SendEmailAsync(user.Email, _templateOptions.PasswordChanged);
                     model.PasswordChanged = true;
+                    _telemetry?.TrackEvent(AiTracking.Events.ChangedPassword, HttpContext.ToTrackingMetadata());
                 }
                 else
                 {

@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Infrastructure.Logging;
-using UKMCAB.Infrastructure.Logging.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Feedback;
 
 namespace UKMCAB.Web.UI.Areas.Home.Controllers
@@ -26,7 +25,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             return View(new FeedbackFormViewModel
             {
-                ReturnURL = returnURL
+                ReturnURL = returnURL ?? "/"
             });
         }
 
@@ -50,7 +49,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             var personalisation = new Dictionary<string, dynamic>
             {
-                {"return-url", model.ReturnURL},
+                {"return-url", model.ReturnURL ?? "/" },
                 {"browser-type", Request.Headers.UserAgent.ToString()},
                 {"date-time", DateTime.UtcNow.ToString("f")},
                 {"what-were-you-doing" , model.WhatWereYouDoing},

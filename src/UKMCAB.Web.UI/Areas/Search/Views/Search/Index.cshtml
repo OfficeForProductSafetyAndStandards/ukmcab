@@ -5,13 +5,13 @@
     var initialTitle = "Find a UK Market Conformity Assessment Body";
     var title = string.IsNullOrWhiteSpace(Model.Keywords) ? initialTitle : $"{initialTitle} matching &quot;{Model.Keywords}&quot;";
     var basePath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
-    if (basePath.Contains("search", StringComparison.InvariantCultureIgnoreCase))
+    if (basePath.Contains("?", StringComparison.InvariantCultureIgnoreCase))
     {
-        basePath = basePath.Replace("search", "search-feed");
+        basePath = "/search-feed" + basePath.Substring(basePath.IndexOf("?"));
     }
-    else if(basePath.StartsWith("/"))
+    else 
     {
-        basePath = $"/search-feed{basePath.Substring(1)}";
+        basePath = "/search-feed";
     }
 }
 

@@ -31,6 +31,10 @@
             &.navigation-3-rows {
                 height: 125px;
             }
+
+            &.navigation-4-rows {
+                height: 170px;
+            }
         }
 
         .navigation-mobile-underline {
@@ -39,6 +43,25 @@
 
         .navigation-mobile-no-underline {
             border-bottom: none;
+        }
+
+        .navigation-item-button {
+            font-family: "GDS Transport", arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            font-weight: 700;
+            font-size: 14px;
+            font-size: 0.875rem;
+            line-height: 1.1428571429;
+            white-space: nowrap;
+        }
+
+        @media (min-width: 40.0625em) {
+            .navigation-item-button {
+                font-size: 16px;
+                font-size: 1rem;
+                line-height: 1.25;
+            }
         }
     }
 

@@ -1,11 +1,14 @@
 using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Azure.Cosmos.Linq;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Core.Services;
+using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
@@ -15,6 +18,7 @@ using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Subscriptions.Core;
+using UKMCAB.Subscriptions.Core.Data;
 using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
@@ -41,14 +45,20 @@ var azureDataConnectionString = new AzureDataConnectionString(builder.Configurat
 var cosmosDbConnectionString = new CosmosDbConnectionString(builder.Configuration.GetValue<string>("CosmosConnectionString"));
 var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]);
 
+var redisConnectionString = builder.Configuration["RedisConnectionString"];
+if (!redisConnectionString.Contains("allowAdmin"))
+{
+    redisConnectionString = redisConnectionString + ",allowAdmin=true";
+}
+
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
-builder.Services.AddAntiforgery(x => x.Cookie.SecurePolicy = CookieSecurePolicy.Always);
+builder.Services.AddAntiforgery(x => x.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest);
 builder.Services.AddHsts(x => x.MaxAge = TimeSpan.FromDays(370));
 builder.Services.AddSingleton(new BasicAuthenticationOptions { Password = builder.Configuration["BasicAuthPassword"] });
-builder.Services.AddSingleton(new RedisConnectionString(builder.Configuration["RedisConnectionString"]));
+builder.Services.AddSingleton(new RedisConnectionString(redisConnectionString));
 builder.Services.AddSingleton(cognitiveSearchConnectionString);
 builder.Services.AddSingleton(cosmosDbConnectionString);
 builder.Services.AddSingleton(azureDataConnectionString);
@@ -63,6 +73,7 @@ builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
+builder.Services.AddSingleton<IInitialiseDataService, InitialiseDataService>();
 builder.Services.AddCustomHttpErrorHandling();
 
 AddSubscriptionCoreServices(builder, azureDataConnectionString);
@@ -76,6 +87,7 @@ builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("Go
 
 
 builder.Services.AddHostedService<RandomSortGenerator>();
+
 
 builder.Services.AddSearchService(cognitiveSearchConnectionString);
 
@@ -95,7 +107,11 @@ builder.Services.ConfigureApplicationCookie(opt =>
     opt.LoginPath = new PathString("/account/login");
     opt.LogoutPath = new PathString("/account/logout");
     opt.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+    opt.Cookie.Name = "UKMCAB_Identity";
 });
+
+builder.Services.Configure<CookieTempDataProviderOptions>(options => options.Cookie.Name = "UKMCAB_TempData");
+builder.Services.Configure<AntiforgeryOptions>(options => options.Cookie.Name = "UKMCAB_AntiForgery");
 
 
 
@@ -105,7 +121,7 @@ builder.Services.ConfigureApplicationCookie(opt =>
 
 var app = builder.Build();
 
-app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.Always });
+app.UseCookiePolicy(new CookiePolicyOptions { Secure = CookieSecurePolicy.SameAsRequest });
 
 app.Use(async (context, next) =>
 {
@@ -120,12 +136,14 @@ app.Use(async (context, next) =>
 app.MapRazorPages();
 
 var cspHeader = new CspHeader().AddDefaultCspDirectives()
-    .AddScriptNonce("VQ8uRGcAff")
-    .AddScriptNonce("uKK1n1fxoi")
+    .AddScriptNonce(Nonces.Main)
+    .AddScriptNonce(Nonces.GoogleAnalyticsScript)
+    .AddScriptNonce(Nonces.GoogleAnalyticsInlineScript)
+    .AddScriptNonce(Nonces.AppInsights)
     .AllowFontSources(CspConstants.SelfKeyword, "https://cdnjs.cloudflare.com")
-    .AllowScriptSources("https://cdnjs.cloudflare.com", "https://js.monitor.azure.com")
+    .AllowScriptSources("https://cdnjs.cloudflare.com", "https://js.monitor.azure.com", "https://region1.google-analytics.com")
     .AllowStyleSources("https://cdnjs.cloudflare.com")
-    .AllowConnectSources("https://uksouth-1.in.applicationinsights.azure.com");
+    .AllowConnectSources("https://uksouth-1.in.applicationinsights.azure.com", "https://region1.google-analytics.com");
 
 /*
  * 
@@ -183,35 +201,76 @@ await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConn
     seeds.AddRole(role: new IdentityRole(Constants.Roles.OPSSAdmin));
 });
 
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
+var telemetryClient = app.Services.GetRequiredService<TelemetryClient>();
+
 await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
 
 try
 {
-    await app.Services.GetRequiredService<ICABRepository>().InitialiseAsync();
-    await app.Services.GetRequiredService<SearchServiceManagment>().InitialiseAsync();
+    await app.Services.GetRequiredService<IInitialiseDataService>().InitialiseAsync();
 }
 catch (Exception ex)
 {
-    app.Services.GetRequiredService<TelemetryClient>().TrackException(ex);
-    await app.Services.GetRequiredService<TelemetryClient>().FlushAsync(CancellationToken.None);
+    telemetryClient.TrackException(ex);
+    await telemetryClient.FlushAsync(CancellationToken.None);
     throw;
 }
 
-// asynchronously precache
-_ = Task.Run(async () =>
+_ = Task.Run(async () => // asynchronously precache
 {
     try
     {
         await Task.Delay(5000);
         var count = await app.Services.GetRequiredService<ICachedPublishedCABService>().PreCacheAllCabsAsync();
-        app.Services.GetRequiredService<ILogger<Program>>().LogInformation($"Precached {count} CABs");
+        logger.LogInformation($"Precached {count} CABs");
     }
     catch (Exception ex)
     {
-        app.Services.GetRequiredService<TelemetryClient>().TrackException(ex);
-        await app.Services.GetRequiredService<TelemetryClient>().FlushAsync(CancellationToken.None);
+        telemetryClient.TrackException(ex);
+        await telemetryClient.FlushAsync(CancellationToken.None);
+        logger.LogError(ex, "Error precaching");
     }
 });
+
+var stats = new Timer(async state =>
+{
+    using var scope = app.Services.CreateScope();
+    try
+    {
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UKMCABUser>>();
+        telemetryClient.TrackMetric(AiTracking.Metrics.UsersCount, await userManager.Users.CountAsync());
+        await app.Services.GetRequiredService<ICABAdminService>().RecordStatsAsync();
+
+        var pages1 = await app.Services.GetRequiredService<ISubscriptionRepository>().GetAllAsync(take: 1);
+        var pages2 = await pages1.ToListAsync();
+        var subscriptions = pages2.SelectMany(x => x.Values).ToList();
+
+        var cabSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Cab);
+        var searchSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Search);
+
+        telemetryClient.GetMetric(AiTracking.Metrics.CabSubscriptionsCount).TrackValue(cabSubscriptionsCount);
+        telemetryClient.GetMetric(AiTracking.Metrics.SearchSubscriptionsCount).TrackValue(searchSubscriptionsCount);
+
+        var cabs = await app.Services.GetRequiredService<ICABRepository>().GetItemLinqQueryable().AsAsyncEnumerable().ToListAsync();
+        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count > 0));
+        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithoutSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count == 0));
+
+        logger.LogInformation($"Recorded stats successfully");
+    }
+    catch (Exception ex)
+    {
+        telemetryClient.TrackException(ex);
+        await telemetryClient.FlushAsync(CancellationToken.None);
+        logger.LogError(ex, "Error recording stats");
+    }
+}, null, TimeSpan.Zero,
+#if(DEBUG)
+    TimeSpan.FromSeconds(30)
+#else
+    TimeSpan.FromDays(1)
+#endif
+);
 
 app.Run();
 
@@ -242,6 +301,7 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
 
     builder.Services.AddSingleton<SubscriptionsBackgroundService>();
     builder.Services.AddHostedService(p => p.GetRequiredService<SubscriptionsBackgroundService>());
+    builder.Services.AddHostedService<SubscriptionsConfiguratorHostedService>();
 }
 
 static void UseSubscriptions(WebApplication app)
@@ -249,9 +309,7 @@ static void UseSubscriptions(WebApplication app)
     if (app.Environment.IsDevelopment())
     {
         app.UseSubscriptionsDiagnostics();
-
     }
-    app.UseSubscriptionsUriTemplatesConfiguratorMiddleware();
 }
 
 #endregion

@@ -8,6 +8,7 @@ using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
+using Microsoft.ApplicationInsights;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -17,7 +18,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly ICachedSearchService _cachedSearchService;
         private readonly IFeedService _feedService;
         private readonly BasicAuthenticationOptions _basicAuthOptions;
-
+        private readonly TelemetryClient _telemetry;
         private static readonly List<string> _select = new()
         {
             nameof(CABIndexItem.CABId),
@@ -36,11 +37,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.LastUpdatedDate),
         };
 
-        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions)
+        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry)
         {
             _cachedSearchService = cachedSearchService;
             _feedService = feedService;
             _basicAuthOptions = basicAuthOptions;
+            _telemetry = telemetry;
         }
 
 
@@ -62,6 +64,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ResultsPerPage = DataConstants.Search.SearchResultsPerPage,
                 ResultType = "bodies"
             };
+
+            _telemetry.TrackEvent(AiTracking.Events.CabsSearched, HttpContext.ToTrackingMetadata(new()
+            {
+                [AiTracking.Metadata.ResultsCount] = searchResults.Total.ToString(),
+                [AiTracking.Metadata.WithCriteria] = (
+                        model.Keywords.Clean() != null
+                    || (model.LegislativeAreas ?? Array.Empty<string>()).Length > 0
+                    || (model.RegisteredOfficeLocations ?? Array.Empty<string>()).Length > 0
+                    || (model.BodyTypes ?? Array.Empty<string>()).Length > 0
+                    ).ToString().ToLower(),
+            }));
 
             return View(model);
         }

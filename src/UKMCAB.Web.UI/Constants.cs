@@ -9,6 +9,9 @@ public static class Constants
     public const string NotProvided = "Not provided";
 
     public const string TempDraftKey = nameof(TempDraftKey);
+    public const string TempCookieChangeKey = nameof(TempCookieChangeKey);
+
+    public const string AnalyticsOptInCookieName = "accept_analytics_cookies";
 
     public class PageTitle
     {
@@ -18,6 +21,7 @@ public static class Constants
         public const string Help = "Help";
         public const string PrivacyNotice = "Privacy Notice";
         public const string TermsAndConditions = "Terms And Conditions";
+        public const string Updates = "Updates";
     }
     public static class Config
     {
@@ -48,5 +52,13 @@ public static class Constants
     {
         public const string InvalidLoginAttempt = "The information provided is not right, try again";
     }
+}
+
+public class Nonces
+{
+    public const string GoogleAnalyticsScript = "2490d105cb874";
+    public const string GoogleAnalyticsInlineScript = "b1b40840d8d84";
+    public const string AppInsights = "VQ8uRGcAff";
+    public const string Main = "uKK1n1fxoi";
 }
 
