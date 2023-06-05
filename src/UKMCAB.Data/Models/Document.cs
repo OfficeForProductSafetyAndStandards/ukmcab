@@ -17,7 +17,7 @@
         public string ArchivedReason { get; set; }
 
 
-        // Create/Details
+        // About
         public string CABId { get; set; }
         public string Name { get; set; }
         public string CABNumber { get; set; }
