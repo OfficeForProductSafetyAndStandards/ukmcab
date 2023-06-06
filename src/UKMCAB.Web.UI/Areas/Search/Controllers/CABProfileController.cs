@@ -40,15 +40,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(string id, string? returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
-            if (cabDocument != null && id.Equals(cabDocument.URLSlugRedirect))
+            if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
             {
                 return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl});
             }
 
-            if (cabDocument == null && User.Identity.IsAuthenticated)
+            if (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated)
             {
-                var documents = await _cabAdminService.FindAllDocumentsByCABURLAsync(id);
-                cabDocument = documents.SingleOrDefault(d => d.StatusValue == Status.Archived);
+                throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
             }
 
             if (cabDocument == null)

@@ -12,56 +12,15 @@ namespace UKMCAB.Data.Storage
         Task<bool> DeleteCABSchedule(string blobName);
 
         Task<FileDownload> DownloadBlobStream(string blobPath);
-
-        Task<Stream> GetLegacyBlogStream(string blobPath);
-
-        Task DropAndRebuildContainer();
     }
 
     public class FileStorageService : IFileStorage
     {
         private BlobContainerClient _client;
-        private BlobContainerClient _legacyClient;
         public FileStorageService(IConfiguration config)
         {
             _client = new BlobContainerClient(config["DataConnectionString"], DataConstants.Storage.Container);
             _client.CreateIfNotExists();
-            _legacyClient = new BlobContainerClient(config["DataConnectionString"], DataConstants.Storage.ImportContainer);
-
-        }
-
-        public async Task DropAndRebuildContainer()
-        {
-            if (_client.Exists())
-            {
-                var blobs = await _client.GetBlobsAsync().ToListAsync();
-                foreach (var blob in blobs)
-                {
-                    var blobClient = _client.GetBlobClient(blob.Name);
-                    await blobClient.DeleteAsync();
-                }
-
-                blobs = await _client.GetBlobsAsync().ToListAsync();
-                if (blobs.Any())
-                {
-                    throw new Exception("Not all blobs deleted");
-                }
-            }
-            else
-            {
-                _client.CreateIfNotExists();
-            }
-        }
-
-        public async Task<Stream> GetLegacyBlogStream(string blobPath)
-        {
-            var blob = _legacyClient.GetBlobClient(blobPath);
-            var blobExists = await blob.ExistsAsync();
-            if (blobExists.HasValue && blobExists.Value)
-            {
-                return await blob.OpenReadAsync();
-            }
-            return null;
         }
 
         public async Task<FileDownload> DownloadBlobStream(string blobPath)
@@ -110,15 +69,6 @@ namespace UKMCAB.Data.Storage
                 // Domain exceptions are like a fallback business error mechanism, where you want to tell the user a message, but you don't want to log the error because it's a bona fide business rule. 
                 throw new Exception("UploadCABFile::File upload failed. UploadAsync returned result.HasValue==false."); 
             }
-        }
-
-        private static string MakeValidFileName(string fileName)
-        {
-            fileName = fileName.ToLower().Replace(" ", "-");
-            // https://stackoverflow.com/a/847251/1762
-            var invalidChars = System.Text.RegularExpressions.Regex.Escape(new string(Path.GetInvalidFileNameChars()));
-            var invalidRegStr = string.Format(@"([{0}]*\.+$)|([{0}]+)", invalidChars);
-            return $"{System.Text.RegularExpressions.Regex.Replace(fileName, invalidRegStr, string.Empty)}";
         }
 
         public async Task<bool> DeleteCABSchedule(string blobName)

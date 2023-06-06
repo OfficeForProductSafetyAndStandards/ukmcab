@@ -57,7 +57,6 @@ namespace UKMCAB.Core.Services
 
         public async Task<List<Document>> FindAllCABManagementQueueDocuments()
         {
-            // TODO: Archived docs need to be included once this functionality is developed 
             var docs = await _cabRepostitory.Query<Document>(d =>
                 d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
             return docs;
@@ -175,7 +174,11 @@ namespace UKMCAB.Core.Services
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
 
-            await RefreshCaches(latestDocument.CABId, latestDocument.URLSlug);
+            var urlSlug = publishedVersion != null && !publishedVersion.URLSlug.Equals(latestDocument.URLSlug)
+                ? publishedVersion.URLSlug
+                : latestDocument.URLSlug;
+
+            await RefreshCaches(latestDocument.CABId, urlSlug);
 
             await RecordStatsAsync();
 

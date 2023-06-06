@@ -56,7 +56,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (string.IsNullOrWhiteSpace(document.URLSlug) || !document.Name.Equals(model.Name))
                 {
-                    document.URLSlugRedirect = document.URLSlug;
                     var slug = Slug.Make(model.Name);
                     var newSlug = slug;
                     var existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);

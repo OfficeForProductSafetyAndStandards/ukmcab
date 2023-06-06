@@ -14,14 +14,38 @@ namespace UKMCAB.Data.CosmosDb.Services
             _cabRepository = cabRepository;
         }
         public async Task<Document> FindPublishedDocumentByCABURLAsync(string url) => await _cache.GetOrCreateAsync(Key(url), () => GetPublishedCABByURLAsync(url));
-        private async Task<Document> GetPublishedCABByURLAsync(string url)
+        private async Task<Document?> GetPublishedCABByURLAsync(string url)
         {
-            var doc = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published && d.URLSlug.Equals(url));
-            if (doc == null)
+            // Is url a guid
+            if (Guid.TryParse(url, out var result))
             {
-                doc = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published && d.URLSlugRedirect.Equals(url));
+                var document = await GetPublishedCABByIdAsync(url);
+                if (document != null)
+                {
+                    return document;
+                }
             }
-            return doc.Any() && doc.Count == 1 ? doc.First() : null;
+            // Is url for a published or archived CAB 
+            var documents = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published || d.StatusValue == Status.Archived) && d.URLSlug.Equals(url));
+            if (documents != null && documents.Any() && documents.Count == 1)
+            {
+                return documents.First();
+            }
+
+            // Is url somewhere in a historical CAB
+            documents = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Historical && d.URLSlug.Equals(url));
+            if (documents != null && documents.Any() && documents.Count == 1)
+            {
+                var document = documents.First();
+                // Find published version
+                documents = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published && d.CABId.Equals(document.CABId));
+                if (documents != null && documents.Any() && documents.Count == 1)
+                {
+                    return documents.First();
+                }
+            }
+
+            return null;
         }
 
         public async Task<Document> FindPublishedDocumentByCABIdAsync(string id) => await _cache.GetOrCreateAsync(Key(id), () => GetPublishedCABByIdAsync(id));
