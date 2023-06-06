@@ -24,7 +24,7 @@ namespace UKMCAB.Data
 
         public async Task InitialiseAsync(bool force = false)
         {
-            await _cabRepository.InitialiseAsync(force);
+            force = await _cabRepository.InitialiseAsync(force);
             await _searchServiceManagment.InitialiseAsync(force);
             if (force)
             {

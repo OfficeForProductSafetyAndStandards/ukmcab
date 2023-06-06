@@ -26,9 +26,9 @@ namespace UKMCAB.Web.UI.Services
 
             feed.Items = items.Select(c => new SyndicationItem
             {
-                Id = $"tag:{request.Host.Value}:/search/cab-profile/{c.CABId}",
+                Id = $"tag:{request.Host.Value}:/search/cab-profile/{c.URLSlug}",
                 LastUpdatedTime = c.LastUpdatedDate.GetValueOrDefault(),
-                Links = { GetProfileSyndicationLink(c.CABId, request, url) },
+                Links = { GetProfileSyndicationLink(c.URLSlug, request, url) },
                 Title = new TextSyndicationContent(c.Name),
                 Summary = new TextSyndicationContent(StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.County, c.Postcode, c.Country), TextSyndicationContentKind.Html),
             }).ToList();
@@ -39,7 +39,7 @@ namespace UKMCAB.Web.UI.Services
 
         private SyndicationLink GetProfileSyndicationLink(string id, HttpRequest request, IUrlHelper url)
         {
-            var link = url.Action("Index", "CABProfile", new { Area = "search", id = id }, request.Scheme, request.GetOriginalHostFromHeaders());
+            var link = url.Action("Index", "CABProfile", new { Area = "search", id }, request.Scheme, request.GetOriginalHostFromHeaders());
             var returnUrl = WebUtility.UrlEncode(request.GetRequestUri().PathAndQuery.Replace("-feed", string.Empty));
             var profileLink = new SyndicationLink(new Uri($"{link}?returnUrl={returnUrl}"));
             profileLink.RelationshipType = "alternate";

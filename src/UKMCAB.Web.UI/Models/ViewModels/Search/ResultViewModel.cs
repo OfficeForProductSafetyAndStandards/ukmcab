@@ -6,8 +6,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
     {
         public ResultViewModel(CABIndexItem cab)
         {
-            CABId = cab.CABId;
             Name = cab.Name;
+            URLSlug = cab.URLSlug;
             Address = StringExt.Join(", ", cab.AddressLine1, cab.AddressLine2, cab.TownCity, cab.County, cab.Postcode, cab.Country);
             BodyType = ListToString(cab.BodyTypes);
             RegisteredOfficeLocation = cab.RegisteredOfficeLocation;
@@ -15,8 +15,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             LegislativeArea = ListToString(cab.LegislativeAreas);
         }
 
-        public string CABId { get; set; }
         public string Name { get; set; }
+        public string URLSlug { get; set; }
         public string Address { get; set; }
         public string BodyType { get; set; }
         public string RegisteredOfficeLocation { get; set; }

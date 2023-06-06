@@ -20,6 +20,7 @@
         // About
         public string CABId { get; set; }
         public string Name { get; set; }
+        public string URLSlug { get; set; }
         public string CABNumber { get; set; }
         public DateTime? AppointmentDate { get; set; }
         public DateTime? RenewalDate { get; set; }

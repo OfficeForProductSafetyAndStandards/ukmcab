@@ -1,4 +1,5 @@
-﻿using UKMCAB.Common;
+﻿using System.Resources;
+using UKMCAB.Common;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data;
@@ -47,9 +48,15 @@ namespace UKMCAB.Core.Services
             return docs;
         }
 
+        public async Task<List<Document>> FindAllDocumentsByCABURLAsync(string url)
+        {
+            var docs = await _cabRepostitory.Query<Document>(d =>
+                d.URLSlug.Equals(url, StringComparison.CurrentCultureIgnoreCase));
+            return docs;
+        }
+
         public async Task<List<Document>> FindAllCABManagementQueueDocuments()
         {
-            // TODO: Archived docs need to be included once this functionality is developed 
             var docs = await _cabRepostitory.Query<Document>(d =>
                 d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
             return docs;
@@ -167,7 +174,11 @@ namespace UKMCAB.Core.Services
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
 
-            await RefreshCaches(latestDocument.CABId);
+            var urlSlug = publishedVersion != null && !publishedVersion.URLSlug.Equals(latestDocument.URLSlug)
+                ? publishedVersion.URLSlug
+                : latestDocument.URLSlug;
+
+            await RefreshCaches(latestDocument.CABId, urlSlug);
 
             await RecordStatsAsync();
 
@@ -196,18 +207,18 @@ namespace UKMCAB.Core.Services
                 $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
 
             await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
-            await RefreshCaches(latestDocument.CABId);
+            await RefreshCaches(latestDocument.CABId, latestDocument.URLSlug);
             await RecordStatsAsync();
 
             return publishedVersion;
         }
 
-        private async Task RefreshCaches(string cabId)
+        private async Task RefreshCaches(string cabId, string slug)
         {
             await _cachedSearchService.ReIndexAsync();
             await _cachedSearchService.ClearAsync();
             await _cachedSearchService.ClearAsync(cabId);
-            await _cachedPublishedCabService.ClearAsync(cabId);
+            await _cachedPublishedCabService.ClearAsync(cabId, slug);
         }
 
         public async Task RecordStatsAsync()
