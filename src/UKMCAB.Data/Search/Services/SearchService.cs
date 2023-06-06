@@ -3,6 +3,7 @@ using Azure.Search.Documents.Indexes;
 using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
 using Microsoft.ApplicationInsights;
+using Microsoft.Azure.Cosmos.Core.Utf8;
 using Microsoft.IdentityModel.Abstractions;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
@@ -16,6 +17,7 @@ namespace UKMCAB.Data.Search.Services
         private SearchClient _indexClient;
         private readonly SearchIndexerClient _searchIndexerClient;
         private readonly TelemetryClient _telemetryClient;
+        private static readonly Regex _specialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
 
         public SearchService(SearchClient searchClient, SearchIndexerClient searchIndexerClient, TelemetryClient telemetryClient)
         {
@@ -55,20 +57,26 @@ namespace UKMCAB.Data.Search.Services
             return list;
         }
 
-        private string GetKeywordsQuery(string keywords)
+        private string GetKeywordsQuery(string? keywords)
         {
-            keywords = keywords?.Trim();
-            if (string.IsNullOrWhiteSpace(keywords))
+            keywords = (keywords != null ? _specialCharsRegex.Replace(keywords, string.Empty) : null).Clean();
+            if (keywords == null)
             {
                 return "*";
             }
-            var specialCharsRegex = new Regex("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
-            keywords = specialCharsRegex.Replace(keywords, String.Empty);
-            if (string.IsNullOrWhiteSpace(keywords))
+            else
             {
-                return string.Empty;
+                var tokens = new[]
+                {
+                    $"{nameof(CABIndexItem.Name)}:{keywords}^3",                    //any-match, boosted x3
+                    $"{nameof(CABIndexItem.TownCity)}:{keywords}",                  //any-match
+                    $"{nameof(CABIndexItem.Postcode)}:\"{keywords}\"",              //phrase-match
+                    $"{nameof(CABIndexItem.HiddenText)}:\"{keywords}\"",            //phrase-match
+                    $"{nameof(CABIndexItem.CABNumber)}:\"{keywords}\"^4",           //phrase-match, boosted x4
+                    $"{nameof(CABIndexItem.LegislativeAreas)}:\"{keywords}\"^6",    //phrase-match, boosted x6
+                };
+                return string.Join(" ", tokens);
             }
-            return $"{keywords}"; 
         }
 
         public async Task<CABResults> QueryAsync(CABSearchOptions options)
@@ -81,12 +89,6 @@ namespace UKMCAB.Data.Search.Services
             };
             
             var query = GetKeywordsQuery(options.Keywords);
-            
-            if (string.IsNullOrWhiteSpace(query))
-            {
-                return cabResults;
-            }
-
             var filter = BuildFilter(options);
             var sort = BuildSort(options);
 
@@ -97,7 +99,7 @@ namespace UKMCAB.Data.Search.Services
                 Skip = options.IgnorePaging ? null : DataConstants.Search.SearchResultsPerPage * (options.PageNumber - 1),
                 Filter = filter,
                 OrderBy = { sort },
-                QueryType = SearchQueryType.Simple
+                QueryType = SearchQueryType.Full
             };
 
             if (options.Select.Count > 0)
