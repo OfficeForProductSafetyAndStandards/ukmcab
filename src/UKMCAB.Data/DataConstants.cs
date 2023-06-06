@@ -5,21 +5,21 @@ public class DataConstants
     public static class CosmosDb
     {
         public const string Database = "main";
-        public const string Container = "andy-documents";
+        public const string Container = "cab-documents";
     }
 
     public static class Search
     {
         public const int SearchResultsPerPage = 20;
         public const int CABManagementQueueResultsPerPage = 10;
-        public const string SEARCH_INDEX = "andy-search-index";
-        public const string SEARCH_INDEXER = "andy-search-indexer";
-        public const string SEARCH_DATASOURCE = "andy-search-datasource";
+        public const string SEARCH_INDEX = "ukmcab-search-index";
+        public const string SEARCH_INDEXER = "ukmcab-search-indexer";
+        public const string SEARCH_DATASOURCE = "ukmcab-search-datasource";
     }
 
     public static class Storage
     {
-        public const string Container = "andy-documents";
+        public const string Container = "documents";
         public const string Documents = "documents";
         public const string Schedules = "schedules";
     }
