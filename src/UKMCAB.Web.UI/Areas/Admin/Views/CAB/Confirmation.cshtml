@@ -12,10 +12,10 @@
         </div>
         <h2 class="govuk-heading-m govuk-!-margin-top-9">What happens next</h2>
         <p class="govuk-body">
-            CAB <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-returnURL="confirmation">@Model.CABNumber</a> is now publicly available.
+            CAB <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.URLSlug" asp-route-returnURL="confirmation">@Model.CABNumber</a> is now publicly available.
         </p>
         <p class="govuk-body">
-            <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-returnURL="confirmation">View CAB @Model.CABNumber - @Model.Name</a>
+            <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.URLSlug" asp-route-returnURL="confirmation">View CAB @Model.CABNumber - @Model.Name</a>
         </p>
         <p class="govuk-body">
             <a class="govuk-link" asp-area="admin" asp-controller="Admin" asp-action="Index">Go to CAB management</a>

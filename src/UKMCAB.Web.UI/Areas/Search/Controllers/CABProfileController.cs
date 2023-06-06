@@ -4,7 +4,6 @@ using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.Legacy;
 using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Identity.Stores.CosmosDB;
@@ -40,16 +39,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
         public async Task<IActionResult> Index(string id, string? returnUrl)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
-            if (cabDocument == null && User.Identity.IsAuthenticated)
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
+            if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
             {
-                var documents = await _cabAdminService.FindAllDocumentsByCABIdAsync(id);
-                cabDocument = documents.SingleOrDefault(d => d.StatusValue == Status.Archived);
+                return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl});
+            }
+
+            if (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated)
+            {
+                throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
             }
 
             if (cabDocument == null)
             {
-                throw new NotFoundException($"The CAB with the following CABId cound not be found: {id}");
+                throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
             }
 
             var user = await _userManager.GetUserAsync(User);
@@ -105,8 +108,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search/cab-profile/{id}")]
         public async Task<IActionResult> Index(string id, string? returnUrl, string? ArchiveReason)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
-            Guard.IsTrue(cabDocument != null, $"No published document found for CAB Id {id}");
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
+            Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
             var user = await _userManager.GetUserAsync(User);
             var isOPSSUer = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
             if (!string.IsNullOrWhiteSpace(ArchiveReason))
@@ -117,7 +120,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     [AiTracking.Metadata.CabId] = id,
                     [AiTracking.Metadata.CabName] = cabDocument.Name
                 }));
-                return RedirectToAction("Index", new { id, returnUrl });
+                return RedirectToAction("Index", new { url = id, returnUrl });
             }
             ModelState.AddModelError("ArchiveReason", "State the reason for archiving this CAB record");
 

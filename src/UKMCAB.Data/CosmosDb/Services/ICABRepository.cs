@@ -12,7 +12,7 @@ namespace UKMCAB.Data.CosmosDb.Services
         Task<bool> Update(Document document);
         
         Task<bool> Delete(Document document);
-        Task InitialiseAsync(bool force = false);
+        Task<bool> InitialiseAsync(bool force = false);
         IQueryable<Document> GetItemLinqQueryable();
     }
 }

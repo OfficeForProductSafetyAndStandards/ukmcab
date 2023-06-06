@@ -33,6 +33,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     Id = cmi.CABId,
                     Name = cmi.Name,
+                    URLSlug = cmi.URLSlug,
                     CABNumber = cmi.CABNumber,
                     Status = cmi.Status,
                     LastUpdated = cmi.LastUpdatedDate
