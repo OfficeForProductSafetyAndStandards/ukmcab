@@ -18,21 +18,26 @@ namespace UKMCAB.Data.CosmosDb.Services
             _cosmosDbConnectionString = cosmosDbConnectionString;
         }
 
-        private string GetSlug(string cabName, List<string> slugs)
+        private string GetSlug(string cabName, string cabId, Dictionary<string, string> slugs)
         {
             var slug = Slug.Make(cabName);
-            if (slugs.Contains(slug))
+            if (slugs.ContainsKey(slug) && slugs[slug] != cabId)
             {
                 var index = 0;
                 var newSlug = $"{slug}{index}";
-                while (slugs.Contains(newSlug))
+                while (slugs.ContainsKey(newSlug))
                 {
                     newSlug = $"{slug}-{++index}";
                 }
 
                 slug = newSlug;
+                slugs.Add(slug, cabId);
             }
-            slugs.Add(slug);
+
+            if (!slugs.ContainsKey(slug))
+            {
+                slugs.Add(slug, cabId);
+            }
             return slug;
         }
 
@@ -42,12 +47,12 @@ namespace UKMCAB.Data.CosmosDb.Services
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
-            var slugList = new List<string>();
+            var slugList = new Dictionary<string, string>();
             if (string.IsNullOrWhiteSpace(items.First().URLSlug))
             {
                 foreach (var document in items)
                 {
-                    document.URLSlug = GetSlug(document.Name, slugList);
+                    document.URLSlug = GetSlug(document.Name, document.CABId, slugList);
                     await Update(document);
                 }
 
