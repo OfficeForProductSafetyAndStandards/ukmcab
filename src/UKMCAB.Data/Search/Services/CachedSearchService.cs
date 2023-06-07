@@ -49,16 +49,24 @@ internal class CachedSearchService : ICachedSearchService
 
     public async Task<CABResults> QueryAsync(CABSearchOptions options)
     {
-        var k = $"srch_{JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = false }).Md5()}";
-        var rv = await _cache.GetOrCreateAsync(k, () => _search.QueryAsync(options), TimeSpan.FromHours(5), async result =>
+        if (options.Keywords?.Contains("~noc") ?? false)
         {
-            var ids = result.CABs.Select(x => x.CABId).ToList();
-            var tasks = ids.Select(x => _cache.SetAddAsync(GetCabSearchResultSetCacheKey(x), k));
-            await Task.WhenAll(tasks);
+            options.Keywords = options.Keywords.Replace("~noc", string.Empty).Trim();
+            return await _search.QueryAsync(options);
+        }
+        else
+        {
+            var k = $"srch_{JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = false }).Md5()}";
+            var rv = await _cache.GetOrCreateAsync(k, () => _search.QueryAsync(options), TimeSpan.FromHours(5), async result =>
+            {
+                var ids = result.CABs.Select(x => x.CABId).ToList();
+                var tasks = ids.Select(x => _cache.SetAddAsync(GetCabSearchResultSetCacheKey(x), k));
+                await Task.WhenAll(tasks);
 
-            await _cache.SetAddAsync(_globalSearchesCacheKey, k);
-        });
-        return rv;
+                await _cache.SetAddAsync(_globalSearchesCacheKey, k);
+            });
+            return rv;
+        }
     }
 
     private static string GetCabSearchResultSetCacheKey(string cabId) => $"cab_res_{cabId}";
