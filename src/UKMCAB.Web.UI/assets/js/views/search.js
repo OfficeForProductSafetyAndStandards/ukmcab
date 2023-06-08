@@ -1,6 +1,8 @@
 ﻿var searchPage = (function () {
     'use strict';
 
+    var searchPage = document.getElementById("search-page");
+
     var searchResultsPage = document.getElementById("search-result-page");
     var searchResultsHeader = document.getElementById("search-result-header");
     var searchResultsForm = document.getElementById("search-results-form");
@@ -24,6 +26,7 @@
 
     function init() {
         if (searchResultsPage && searchResultsForm) {
+            searchPage.classList.add("js-enabled");
             searchResultsPage.classList.add("js-enabled");
             searchResultsHeader.classList.add("js-enabled");
             searchResultsFilterToggle.addEventListener('click', showFilter);

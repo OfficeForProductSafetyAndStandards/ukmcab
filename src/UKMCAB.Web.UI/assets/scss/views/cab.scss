@@ -1,4 +1,21 @@
-﻿.cab-tabs{
+﻿.u-until-tablet {
+    @include govuk-media-query($until: tablet) {
+        display: block;
+    }
+
+    display: none;
+}
+
+.u-from-tablet {
+    display: none;
+
+    @include govuk-media-query($from: tablet) {
+        display: block;
+    }
+}
+
+
+.cab-tabs{
     .cabs__panel {
         padding-left: 0px;
         padding-right: 0px;
