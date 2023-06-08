@@ -1,8 +1,8 @@
 ﻿var searchPage = (function () {
     'use strict';
 
-    var searchResultsPage = document.getElementById("search-result-page");
-    var searchResultsHeader = document.getElementById("search-result-header");
+    var searchPage = document.getElementById("search-page");
+
     var searchResultsForm = document.getElementById("search-results-form");
     var searchResultsFormColumn = document.getElementById("search-results-form-column");
     var searchResultsListColumn = document.getElementById("search-results-list-column");
@@ -10,8 +10,8 @@
     var govukPhaseBanner = document.getElementById("govuk-phase-banner");
     var govukHeader = document.getElementById("govuk-header");
     var govukFooter = document.getElementById("govuk-footer");
-    var bottomAtomFeed = document.getElementById("atom-feed-bottom");
     var feedbackSection = document.getElementById("feedback-form-details");
+    var bottomAtomFeed = document.getElementsByClassName("atom-feed-bottom")[0];
 
     var filterOptions = document.querySelectorAll('.search-form-filter-option');
 
@@ -23,9 +23,8 @@
     var mql;
 
     function init() {
-        if (searchResultsPage && searchResultsForm) {
-            searchResultsPage.classList.add("js-enabled");
-            searchResultsHeader.classList.add("js-enabled");
+        if (searchPage) {
+            searchPage.classList.add("js-enabled");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);
 
