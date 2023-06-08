@@ -45,12 +45,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl});
             }
 
-            if (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated)
-            {
-                throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
-            }
-
-            if (cabDocument == null)
+            if (cabDocument == null || (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated))
             {
                 throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
             }
