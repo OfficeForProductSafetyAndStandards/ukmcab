@@ -10,6 +10,8 @@ public static class AiTracking
         public const string Lockout = "app_lockout";
         public const string ChangedPassword = "app_changed_password";
 
+        public const string InternalUserCreated = "app_created_internal_user";
+
         public const string CabCreated = "app_cab_created";
         public const string CabUpdated = "app_cab_updated";
         public const string CabArchived = "app_cab_archived";
