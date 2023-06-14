@@ -17,7 +17,7 @@
             @if(Model.Flow.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
             {
                 <p class="govuk-body govuk-!-font-weight-bold">
-                    UKMCAB search results
+                    UKMCAB search results @Model.Flow.Keywords.PrependIf("for '").AppendIf("'")
                 </p>
             }
             else
@@ -43,6 +43,11 @@
                     <p>If this does not work, <a class="govuk-link" href="https://www.gov.uk/contact/govuk">contact GOV.UK</a> for help.</p>
                 </div>
             </details>
+
+            <p class="govuk-body govuk-!-margin-top-7">
+                <a class="govuk-link" href="@Model.Flow.ReturnUrl">Go to @(Model.Flow.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search?"search":$"CAB profile for '{Model.Flow.CabName}'")</a>
+            </p>
+
         </div>
     </div>
 </div>

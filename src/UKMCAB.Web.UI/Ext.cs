@@ -42,4 +42,21 @@ public static class Ext
         string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.NotProvided) : htmlHelper.Raw(text);
 
     public static string ControllerName(this string text) => text.Replace("Controller", string.Empty);
+
+    public static string Sentenceify(this IEnumerable<string>? list, string? fallback = null)
+    {
+        if (list != null && list.Any())
+        {
+            var len = list.Count();
+            if (len == 1)
+            {
+                return list.First();
+            }
+            else
+            {
+                return $"{list.First()} and {len - 1} other{(len > 2 ? "s" : string.Empty)}";
+            }
+        }
+        return fallback ?? string.Empty;
+    }
 }

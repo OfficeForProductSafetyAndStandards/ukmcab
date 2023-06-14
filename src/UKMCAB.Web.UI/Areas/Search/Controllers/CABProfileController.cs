@@ -9,6 +9,7 @@ using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using Microsoft.ApplicationInsights;
+using UKMCAB.Data;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -80,7 +81,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber = string.Empty,
-                Address = StringExt.Join(", ", cabDocument.AddressLine1, cabDocument.AddressLine2, cabDocument.TownCity, cabDocument.County, cabDocument.Postcode, cabDocument.Country),
+                Address = cabDocument.GetAddress(),
                 Website = cabDocument.Website,
                 Email = cabDocument.Email,
                 Phone = cabDocument.Phone,

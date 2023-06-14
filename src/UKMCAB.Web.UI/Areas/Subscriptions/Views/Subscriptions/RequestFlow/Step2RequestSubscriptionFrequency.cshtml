@@ -42,12 +42,26 @@
                 </fieldset>
             </div>
 
-            <button class="govuk-button" type="submit">Continue</button>
+            <div class="govuk-button-group">
+                <button class="govuk-button" type="submit">Continue</button>
+                <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.SubscriptionRequestFlowCancel)@Context.Request.QueryString.Value">Cancel</a>
+            </div>
+
 
 
             <p class="govuk-body">
-                Do you need to <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.UnsubscribeAll)">unsubscribe from UKMCAB emails</a>?
+                Do you need to <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.UnsubscribeAll)?s=1">unsubscribe from UKMCAB emails</a>?
             </p>
         </form>
     </div>
 </div>
+
+@section BackButton {
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="#!" class="govuk-back-link js-history-back">Back</a>
+            </div>
+        </div>
+    </div>
+}
