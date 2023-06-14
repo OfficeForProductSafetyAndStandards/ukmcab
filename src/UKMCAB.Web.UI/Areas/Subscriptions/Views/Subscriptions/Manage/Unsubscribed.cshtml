@@ -20,3 +20,15 @@
         </div>
     </div>
 </div>
+
+<p class="govuk-body">
+    @if (Model.Subscription.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Cab)
+    {
+        <a class="govuk-link" href="@Model.CabProfileUrl">Go to CAB profile for '@Model.CabName'</a>
+    }
+    else
+    {
+
+        <a class="govuk-link" href="@Model.SearchUrl">Go to search</a>
+    }
+</p>

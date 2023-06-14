@@ -32,6 +32,19 @@
             <a class="govuk-link" href="@Url.RouteUrl(SubscriptionsController.Routes.RequestUpdateEmailAddress, new {Model.Subscription.Id})">Change email address</a>
         </p>
 
+
+        <p class="govuk-body">
+            @if (Model.Subscription.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Cab)
+            {
+                <a class="govuk-link" href="@Model.CabProfileUrl">Go to CAB profile for '@Model.CabName'</a>
+            }
+            else
+            {
+
+                <a class="govuk-link" href="@Model.SearchUrl">Go to search</a>
+            }
+        </p>
+
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible" />
 
         <p class="govuk-body">

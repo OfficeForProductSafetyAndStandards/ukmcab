@@ -12,6 +12,14 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         /// </remarks>
         public static readonly string[] NonFilterProperties = new[] { nameof(Sort), nameof(PageNumber) };
 
+        /// <summary>
+        /// Gets the name of the property that contains the query string item for 'keywords'
+        /// </summary>
+        /// <remarks>
+        /// NOTE: This is used by the email subscriptions functionality 
+        /// </remarks>
+        public static string GetKeywordsQueryStringKey() => nameof(Keywords);
+
         public string? ReturnUrl { get; set; }
 
         // ILayout

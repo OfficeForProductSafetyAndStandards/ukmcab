@@ -75,5 +75,73 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 _ => string.Empty,
             };
         }
+
+        [HttpGet]
+        [Route("account/manage/internal-user")]
+        public async Task<IActionResult> InternalUser()
+        {
+            var user = await _userManager.GetUserAsync(User);
+            Guard.IsFalse<PermissionDeniedException>(user == null);
+
+            return View(new InternalUserViewModel());
+        }
+
+        [HttpPost]
+        [Route("account/manage/internal-user")]
+        public async Task<IActionResult> InternalUser(InternalUserViewModel model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            Guard.IsFalse<PermissionDeniedException>(user == null);
+
+            if (ModelState.IsValid)
+            {
+                var newUser = await _userManager.FindByEmailAsync(model.Email);
+                if (newUser != null)
+                {
+                    ModelState.AddModelError("Email", "This email address has already been registered on the system.");
+                }
+                else if (await CheckPassword(model.Password))
+                {
+                    var createUser = new UKMCABUser
+                    {
+                        UserName = model.Email,
+                        Email = model.Email,
+                        FirstName = model.FirstName,
+                        LastName = model.LastName,
+                        RequestReason = "Created internally by project team",
+                        EmailConfirmed = true,
+                        RequestApproved = true
+                    };
+                    var result = await _userManager.CreateAsync(createUser, model.Password);
+                    var roleResult = await _userManager.AddToRoleAsync(createUser, Constants.Roles.OPSSAdmin);
+                    if (result.Succeeded && roleResult.Succeeded)
+                    {
+                        model = new InternalUserViewModel { UserCreated = true };
+                        _telemetry?.TrackEvent(AiTracking.Events.InternalUserCreated, HttpContext.ToTrackingMetadata());
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("Email", "There has been a problem creating this user, please contact the administrator");
+                    }
+                }
+            }
+
+            return View(model);
+        }
+
+        private async Task<bool> CheckPassword(string password)
+        {
+            var success = true;
+            foreach (var userManagerPasswordValidator in _userManager.PasswordValidators)
+            {
+                var result = await userManagerPasswordValidator.ValidateAsync(_userManager, null, password);
+                if (!result.Succeeded)
+                {
+                    success = false;
+                    result.Errors.ForEach(e => ModelState.AddModelError("Password", e.Description));
+                }
+            }
+            return success;
+        }
     }
 }

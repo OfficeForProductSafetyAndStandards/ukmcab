@@ -3,6 +3,8 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+
+
         <form method="post">
             <div class="govuk-!-margin-bottom-8">
                 <h1 class="govuk-heading-xl">
@@ -17,7 +19,9 @@
             <p class="govuk-body govuk-!-margin-bottom-8">
                 @if (Model.Flow.SubscriptionType == UKMCAB.Subscriptions.Core.Domain.SubscriptionType.Search)
                 {
-                    <strong class="govuk-!-font-weight-bold">UKMCAB search results</strong>
+                    <strong class="govuk-!-font-weight-bold">
+                        UKMCAB search results @Model.Flow.Keywords.PrependIf("for '").AppendIf("'")
+                    </strong>
                 }
                 else
                 {
@@ -32,3 +36,13 @@
         </form>
     </div>
 </div>
+
+@section BackButton {
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="#!" class="govuk-back-link js-history-back">Back</a>
+            </div>
+        </div>
+    </div>
+}

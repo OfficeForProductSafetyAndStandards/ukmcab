@@ -1,0 +1,71 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Account.InternalUserViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds identity-form">
+        @if (Model.UserCreated)
+        {
+            <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__content">
+                    <p class="govuk-notification-banner__heading">
+                        You have successfully created a new user.
+                    </p>
+                </div>
+            </div>
+        }
+        <form id="interna-user" method="post">
+            <partial name="Partials/_ValidationSummary" model="Model.FieldOrder"/>
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        Create internal user
+                    </h1>
+                </legend>
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Email")">
+                    <label asp-for="Email" class="govuk-label"></label>
+                    <p class="govuk-error-message">
+                    <span asp-validation-for="Email" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="Email" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "Email")" autocomplete="user-email" aria-required="true"/>
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"FirstName")">
+                    <label asp-for="FirstName" class="govuk-label"></label>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="FirstName" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="FirstName" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "FirstName")" autocomplete="first name" aria-required="true"/>
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"LastName")">
+                    <label asp-for="LastName" class="govuk-label"></label>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="LastName" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="LastName" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "LastName")" autocomplete="last name" aria-required="true"/>
+                </div>
+                
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"Password")">
+                    <label asp-for="Password" class="govuk-label"></label>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="Password" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="Password" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "Password")" autocomplete="user-password" aria-required="true"/>
+                    <a class="govuk-button govuk-button--secondary show-password-button" href="#">Show</a>
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"ConfirmPassword")">
+                    <label asp-for="ConfirmPassword" class="govuk-label"></label>
+                    <p class="govuk-error-message">
+                    <span asp-validation-for="ConfirmPassword" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="ConfirmPassword" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ConfirmPassword")" autocomplete="confirm-password" aria-required="true"/>
+                    <a class="govuk-button govuk-button--secondary show-password-button" href="#">Show</a>
+                </div>
+
+                <div class="govuk-form-group">
+                    <button id="login-submit" type="submit" class="govuk-button">Create user</button>
+                </div>
+            </fieldset>
+        </form>
+    </div>
+</div>

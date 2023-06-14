@@ -100,19 +100,22 @@ namespace UKMCAB.Data.Search.Services
 
         public async Task ReIndexAsync()
         {
-            var attempts = 0;
             var start = DateTime.UtcNow;
+            var attempts = 0;
+            var baseline = (await GetLastIndexerResultAsync().ConfigureAwait(false))?.EndTime?.UtcDateTime ?? DateTime.MinValue;
+            
             await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER); // this invokes it asynchronously....  you then have to monitor the status to see when it completes
             await Task.Delay(1500); // wait for a bit to give it time to run
+            
+            var latest = await GetLastIndexerResultAsync().ConfigureAwait(false);
 
             var sw = Stopwatch.StartNew();
-            var latest = await GetLastIndexerResultAsync();
             while (true)
             {
-                Guard.IsTrue(sw.ElapsedMilliseconds < 30_000, "Azure Cognitive Search is taking an awfully long time to complete indexing");
+                Guard.IsTrue(sw.ElapsedMilliseconds < 120_000, "Azure Cognitive Search is taking an awfully long time to complete indexing");
 
-                var latestEndTime = latest?.EndTime ?? DateTime.MinValue;
-                if (latestEndTime > start)
+                var latestEndTime = latest?.EndTime;
+                if (latestEndTime > baseline)
                 {
                     break; // the latest indexer completion datetime is _AFTER_ the `RunIndexerAsync` method was called, so can assume it's completed.
                 }

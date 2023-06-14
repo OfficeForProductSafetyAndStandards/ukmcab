@@ -25,4 +25,6 @@ public class SubscriptionViewModel : ILayoutModel
     };
 
     public string CabName { get; internal set; }
+    public string SearchUrl { get; internal set; }
+    public string? CabProfileUrl { get; internal set; }
 }
