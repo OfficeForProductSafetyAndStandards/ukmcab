@@ -1,5 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos;
 using System.Runtime.CompilerServices;
+using UKMCAB.Common;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data;
 
@@ -24,4 +26,6 @@ public static class ExtensionMethods
             }
         }
     }
+
+    public static string? GetAddress(this Document cab) => StringExt.Join(", ", cab.AddressLine1, cab.AddressLine2, cab.TownCity, cab.County, cab.Postcode, cab.Country);
 }

@@ -6,6 +6,7 @@ using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Services;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Areas.Subscriptions.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Search;
 
 namespace UKMCAB.Web.UI.Areas.Subscriptions.Controllers;
 
@@ -26,6 +27,7 @@ public class SubscriptionsController : Controller
         public const string Step3RequestSubscriptionEmailAddress = "subscription.request.emailaddress";
         public const string Step4RequestSubscription = "subscription.request";
         public const string Step5RequestedSubscription = "subscription.requested";
+        public const string SubscriptionRequestFlowCancel = "subscription.request.flow.cancel";
         #endregion
 
         #region Confirmation
@@ -94,11 +96,12 @@ public class SubscriptionsController : Controller
     [HttpGet("subscribe/request/search", Name = Routes.Step0RequestSearchSubscription)]
     public IActionResult Step0RequestSearchSubscription()
     {
-        var queryString = Request.QueryString.Value;
         var req = new SubscriptionRequestFlowModel
         {
             SubscriptionType = SubscriptionType.Search,
             SearchQueryString = Request.QueryString.Value,
+            Keywords = Request.Query[SearchViewModel.GetKeywordsQueryStringKey()],
+            ReturnUrl = Url.ActionLink("index", "search", new { area = "search" }) + Request.QueryString.Value
         };
         return RedirectToRoute(Routes.Step1RequestConfirmSubscription, new { tok = JsonBase64UrlToken.Serialize(req) });
     }
@@ -111,6 +114,7 @@ public class SubscriptionsController : Controller
             SubscriptionType = SubscriptionType.Cab,
             CabId = id,
             CabName = await GetCabNameAsync(id),
+            ReturnUrl = Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id }),
         };
         return RedirectToRoute(Routes.Step1RequestConfirmSubscription, new { tok = JsonBase64UrlToken.Serialize(req) });
     }
@@ -177,7 +181,7 @@ public class SubscriptionsController : Controller
             var req = JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok);
             if (req.SubscriptionType == SubscriptionType.Search)
             {
-                var result = await _subscriptions.RequestSubscriptionAsync(new SearchSubscriptionRequest(req.EmailAddress, req.SearchQueryString, req.Frequency.Value));
+                var result = await _subscriptions.RequestSubscriptionAsync(new SearchSubscriptionRequest(req.EmailAddress, req.SearchQueryString, req.Frequency.Value, req.Keywords));
                 if (result.ValidationResult == SubscriptionService.ValidationResult.AlreadySubscribed)
                 {
                     throw new DomainException("You are already subscribed to this search");
@@ -209,6 +213,13 @@ public class SubscriptionsController : Controller
     {
         var viewModel = JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok);
         return View(Views.RequestFlow.Step5RequestedSubscription, new SubscriptionRequestFlowViewModel(viewModel));
+    }
+
+    [HttpGet("subscribe/cancel", Name = Routes.SubscriptionRequestFlowCancel)]
+    public IActionResult SubscriptionRequestFlowCancel(string tok)
+    {
+        var dto = JsonBase64UrlToken.Deserialize<SubscriptionRequestFlowModel>(tok);
+        return Redirect(dto.ReturnUrl ?? "/");
     }
 
     #endregion
@@ -409,6 +420,8 @@ public class SubscriptionsController : Controller
     {
         var model = await _subscriptions.GetSubscriptionAsync(id).ConfigureAwait(false) ?? throw new DomainException("Subscription not found");
         var viewModel = new SubscriptionViewModel(model, title);
+        viewModel.SearchUrl = Url.ActionLink("index", "search", new { area = "search" }) + model.SearchQueryString;
+        viewModel.CabProfileUrl = Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = model.CabId });
         return viewModel;
     }
 

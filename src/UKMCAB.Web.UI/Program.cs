@@ -284,7 +284,7 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
     builder.Services.AddSingleton<ICabService, SubscriptionsCabService>();          // INJECT OUR OWN `ICabService` as this is slightly more efficient in that it doesn't use a json api
     var subscriptionServicesCoreOptions = new SubscriptionsCoreServicesOptions
     {
-        DataConnectionString = azureDataConnectionString,
+        DataConnectionString = builder.Configuration["subscriptions_data_connstr"] ?? azureDataConnectionString,
         SearchQueryStringRemoveKeys = SearchViewModel.NonFilterProperties,
         OutboundEmailSenderMode = OutboundEmailSenderMode.Send,
         GovUkNotifyApiKey = builder.Configuration["GovUkNotifyApiKey"],

@@ -17,9 +17,15 @@ public class SubscriptionRequestFlowModel
     [JsonPropertyName("q")]
     public string? SearchQueryString { get; set; }
 
+    [JsonPropertyName("kw")]
+    public string? Keywords { get; set; }
+
     [JsonPropertyName("e")]
     public string? EmailAddress { get; set; }
 
     [JsonPropertyName("f")]
     public Frequency? Frequency { get; set; }
+
+    [JsonPropertyName("ru")]
+    public string? ReturnUrl { get; set; }
 }

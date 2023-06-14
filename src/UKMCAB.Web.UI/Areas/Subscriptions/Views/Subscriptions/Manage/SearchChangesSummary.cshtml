@@ -1,34 +1,189 @@
-﻿@model SearchChangesSummaryViewModel
+﻿@using Microsoft.AspNetCore.Http.Extensions
+@using UKMCAB.Data.CosmosDb.Services
+@using UKMCAB.Data;
+@model SearchChangesSummaryViewModel
+@inject ICachedPublishedCABService cabs;
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">Search results changes</h1>
+<div id="search-page">
+    @if (Context.Request.QueryString.Value == "?added")
+    {
+        @* ADDITIONS *@
+        <div id="search-results" class="govuk-grid-row">
+            <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
+                <h1 class="govuk-heading-l">@Model.Changes.Added.Count additions to search results</h1>
+                @if (Model.Changes.Added.Count > 0)
+                {
+                    <div id="search-results-list-container">
+                        <ul id="search-results-list">
+                            @foreach (var item in Model.Changes.Added)
+                            {
+                                var cab = await cabs.FindPublishedDocumentByCABIdAsync(item.CabId.ToString());
+                                <li class="search-result-list-item">
+                                    <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.CABId" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @cab.Name</span></a>
+                                    <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></h3>
+                                    <ul class="search-result-list-item-details">
+                                        <li class="search-result-list-item-detail">@Html.Conditional(!string.IsNullOrWhiteSpace(cab.GetAddress()), cab.GetAddress(), @Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Body type: @cab.BodyTypes.Sentenceify(Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Registered office location: @Html.Conditional(!string.IsNullOrWhiteSpace(cab.RegisteredOfficeLocation), cab.RegisteredOfficeLocation, @Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Testing location: @cab.TestingLocations.Sentenceify(Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Legislative area: @cab.LegislativeAreas.Sentenceify(Constants.NotProvided)</li>
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div id="search-no-results-container">
+                        <p class="govuk-body">There are no items to display.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else if (Context.Request.QueryString.Value == "?removed")
+    {
+        @* DO NOT PROVIDED ACROSS ALL OTHER FIELDS AS CAB WON'T BE ACCESSIBLE FROM FindPublishedDocumentByCABIdAsync *@
+        <div id="search-results" class="govuk-grid-row">
+            <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
+                <h1 class="govuk-heading-l">@Model.Changes.Removed.Count removed from search results</h1>
+                @if (Model.Changes.Removed.Count > 0)
+                {
+                    <div id="search-results-list-container">
+                        <ul id="search-results-list">
+                            @foreach (var item in Model.Changes.Removed)
+                            {
+                                <li class="search-result-list-item">
+                                    <h3 class="govuk-heading-m search-result-list-item-link"><span class="govuk-link govuk-link--no-visited-state" style="color:black;">@item.Name</span></h3>
+                                    <ul class="search-result-list-item-details">
+                                        <li class="search-result-list-item-detail">@Constants.NotProvided</li>
+                                        <li class="search-result-list-item-detail">Body type: @Constants.NotProvided</li>
+                                        <li class="search-result-list-item-detail">Registered office location: @Constants.NotProvided</li>
+                                        <li class="search-result-list-item-detail">Testing location: @Constants.NotProvided</li>
+                                        <li class="search-result-list-item-detail">Legislative area: @Constants.NotProvided</li>
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div id="search-no-results-container">
+                        <p class="govuk-body">There are no items to display.</p>
+                    </div>
+                }
+            </div>
+        </div>
 
-        <p class="govuk-body-lead">Search results have changed</p>
+    }
+    else if (Context.Request.QueryString.Value == "?modified")
+    {
+        @* MODS  *@
+        <div id="search-results" class="govuk-grid-row">
+            <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
+                <h1 class="govuk-heading-l">@Model.Changes.Modified.Count modifications to search results</h1>
+                @if (Model.Changes.Modified.Count > 0)
+                {
+                    <div id="search-results-list-container">
+                        <ul id="search-results-list">
+                            @foreach (var item in Model.Changes.Modified)
+                            {
+                                var cab = await cabs.FindPublishedDocumentByCABIdAsync(item.CabId.ToString());
+                                <li class="search-result-list-item">
+                                    <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.CABId" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @cab.Name</span></a>
+                                    <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></h3>
+                                    <ul class="search-result-list-item-details">
+                                        <li class="search-result-list-item-detail">@Html.Conditional(!string.IsNullOrWhiteSpace(cab.GetAddress()), cab.GetAddress(), @Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Body type: @cab.BodyTypes.Sentenceify(Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Registered office location: @Html.Conditional(!string.IsNullOrWhiteSpace(cab.RegisteredOfficeLocation), cab.RegisteredOfficeLocation, @Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Testing location: @cab.TestingLocations.Sentenceify(Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Legislative area: @cab.LegislativeAreas.Sentenceify(Constants.NotProvided)</li>
+                                    </ul>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                }
+                else
+                {
+                    <div id="search-no-results-container">
+                        <p class="govuk-body">There are no items to display.</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <h1 class="govuk-heading-xl">Search results changes</h1>
 
-        <table class="govuk-table" style="max-width:400px;">
-            <caption class="govuk-table__caption govuk-table__caption--m">Summary of changes</caption>
-            <tbody class="govuk-table__body">
-                <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">Additions</th>
-                    <td class="govuk-table__cell">@Model.Changes.Added.Count</td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">Removed</th>
-                    <td class="govuk-table__cell">@Model.Changes.Removed.Count</td>
-                </tr>
-                <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">Modified</th>
-                    <td class="govuk-table__cell">@Model.Changes.Modified.Count</td>
-                </tr>
-            </tbody>
-        </table>
+                <p class="govuk-body-lead">Search results have changed</p>
 
-        <div class="govuk-button-group govuk-!-margin-top-8">
+                <table class="govuk-table" style="max-width:400px;">
+                    <caption class="govuk-table__caption govuk-table__caption--m">Summary of changes</caption>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Additions</th>
+                            <td class="govuk-table__cell">@Model.Changes.Added.Count</td>
+                            <td class="govuk-table__cell">
+                                @if (Model.Changes.Added.Count > 0)
+                                {
+                                    <a href="?added">View</a>
+                                }
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Removed</th>
+                            <td class="govuk-table__cell">@Model.Changes.Removed.Count</td>
+                            <td class="govuk-table__cell">
+                                @if (Model.Changes.Removed.Count > 0)
+                                {
+                                    <a href="?removed">View</a>
+                                }
+                            </td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Modified</th>
+                            <td class="govuk-table__cell">@Model.Changes.Modified.Count</td>
+                            <td class="govuk-table__cell">
+                                @if (Model.Changes.Modified.Count > 0)
+                                {
+                                    <a href="?modified">View</a>
+                                }
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
 
-            <a class="govuk-button" href="@Model.SearchUrl">View search results</a>
-            <a class="govuk-button govuk-button--secondary" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new { id = Model.SubscriptionId })">Manage subscription</a>
+                <div class="govuk-button-group govuk-!-margin-top-8">
 
+                    <a class="govuk-button" href="@Model.SearchUrl">View search results</a>
+                    <a class="govuk-button govuk-button--secondary" href="@Url.RouteUrl(SubscriptionsController.Routes.ManageSubscription, new { id = Model.SubscriptionId })">Manage subscription</a>
+
+                </div>
+            </div>
+        </div>
+    }
+
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="#!" class="govuk-link js-history-back">Go to summary of changes</a>
+            </div>
         </div>
     </div>
+
 </div>
+@section BackButton {
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="#!" class="govuk-back-link js-history-back">Back</a>
+            </div>
+        </div>
+    </div>
+}
