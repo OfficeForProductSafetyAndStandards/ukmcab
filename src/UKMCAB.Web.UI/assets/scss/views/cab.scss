@@ -32,11 +32,10 @@
 }
 
 .cab-detail-group {
+    display: inline-block;
     border: 2px solid #0b0c0c;
-    //padding: 20px -10px 20px 20px;
     padding: 20px;
     margin-bottom: 30px;
-    box-sizing: border-box;
 }
 .cab-detail-group-heading {
     padding-bottom: 20px;
