@@ -15,21 +15,8 @@
 }
 
 
-.cab-tabs{
-    .cabs__panel {
-        padding-left: 0px;
-        padding-right: 0px;
-        border: none;
-    }
-}
 
-.cab-detail-date-meta {
-    margin: -5px 0 30px;
-}
 
-.cab-detail-list-item {
-    display: block;
-}
 
 ul.cab-profile-file-list {
     border-top: 1px solid #b1b4b6;
@@ -41,64 +28,61 @@ ul.cab-profile-file-list {
     }
 }
 
-#cab-edit-button {
-    float: right;
 
-    @include govuk-media-query($until: tablet) {
-        float: none;
+#cab-profile-page {
+    .cab-detail-date-meta {
+        margin: -5px 0 30px;
     }
-}
 
-.js-enabled {
+    .cab-tabs {
 
-    @include govuk-media-query($from: mobile) {
-        .cab-tabs {
-            .cab-detail-section {
-                padding: 10px 0 40px;
-            }
+        .govuk-tabs__list {
+            @include govuk-clearfix;
+            margin-bottom: 0;
+            border-bottom: 1px solid $govuk-border-colour;
 
-            .govuk-summary-list {
-                border-top: 1px solid #b1b4b6;
-
-                @include govuk-media-query($until: tablet) {
-                    padding-top: 10px;
-                }
-            }
-
-            .govuk-tabs__list {
-                @include govuk-clearfix;
-                margin-bottom: 0;
+            @include govuk-media-query($until: tablet) {
                 border-bottom: none;
-
-                @include govuk-media-query($from: tablet) {
-                    border-bottom: 1px solid $govuk-border-colour;
-                }
-
-                @include govuk-media-query($until: tablet) {
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: space-between;
-                    align-items: stretch;
-                }
             }
+
 
             .govuk-tabs__list-item {
                 position: relative;
-                padding: govuk-spacing(2) 0;
-                margin: govuk-spacing(1) 0;
                 float: left;
                 background-color: govuk-colour("light-grey", $legacy: "grey-4");
                 text-align: center;
-                width: 48%;
+                width: auto;
+                padding: govuk-spacing(2) govuk-spacing(4);
+                margin: 0 govuk-spacing(1) 0 0;
 
-                @include govuk-media-query($from: tablet) {
-                    width: auto;
-                    padding: govuk-spacing(2) govuk-spacing(4);
-                    margin: 0 govuk-spacing(1) 0 0;
+
+                @include govuk-media-query($until: tablet) {
+                    padding: govuk-spacing(2) 0;
+                    margin: govuk-spacing(1) 2px;
+                    width: 48%;
+                    border-bottom: 2px solid govuk-colour("light-grey", $legacy: "grey-4");
                 }
 
                 &:before {
                     content: none;
+                }
+
+                .govuk-tabs__tab {
+                    @include govuk-link-style-text;
+                    margin-bottom: 0;
+
+                    @include govuk-media-query($until: tablet) {
+                        vertical-align: -webkit-baseline-middle;
+                    }
+
+                    &:after {
+                        content: "";
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                        bottom: 0;
+                        left: 0;
+                    }
                 }
             }
 
@@ -107,51 +91,56 @@ ul.cab-profile-file-list {
 
                 position: relative;
                 // Compensation for border (otherwise we get a shift)
-                border: $border-width solid $govuk-border-colour;
                 background-color: $govuk-body-background-colour;
+                border-bottom: 0;
+                margin-top: govuk-spacing(-1);
+                margin-bottom: -$border-width;
+                padding-top: govuk-spacing(3) - $border-width;
+                padding-right: govuk-spacing(4) - $border-width;
+                padding-bottom: govuk-spacing(3) + $border-width;
+                padding-left: govuk-spacing(4) - $border-width;
 
-                @include govuk-media-query($from: tablet) {
-                    border-bottom: 0;
-                    margin-top: govuk-spacing(-1);
-                    margin-bottom: -$border-width;
-                    padding-top: govuk-spacing(3) - $border-width;
-                    padding-right: govuk-spacing(4) - $border-width;
-                    padding-bottom: govuk-spacing(3) + $border-width;
-                    padding-left: govuk-spacing(4) - $border-width;
+                @include govuk-media-query($until: tablet) {
+                    border: $border-width solid $govuk-border-colour;
+                    padding: govuk-spacing(2) 0;
+                    margin: govuk-spacing(1) 2px;
                 }
-
 
                 .govuk-tabs__tab {
                     text-decoration: none;
                 }
             }
+        }
 
-            .govuk-tabs__tab {
-                @include govuk-link-style-text;
-                margin-bottom: 0;
-
-                @include govuk-media-query($until: tablet) {
-                    vertical-align: -webkit-baseline-middle;
-                }
-
-                &:after {
-                    content: "";
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    bottom: 0;
-                    left: 0;
-                }
+        .govuk-tabs__panel {
+            @include govuk-media-query($until: tablet) {
+                padding-top: 20px;
             }
+        }
 
-            .govuk-tabs__panel {
-                @include govuk-media-query($until: tablet) {
-                    padding-top: 20px;
+        .govuk-tabs__panel--hidden {
+            display: none;
+        }
+
+        .cabs-panel {
+            padding-left: 0px;
+            padding-right: 0px;
+            border: none;
+
+            .cab-detail-section {
+                padding: 10px 0 40px;
+
+                .govuk-summary-list {
+                    border-top: 1px solid #b1b4b6;
+
+                    @include govuk-media-query($until: tablet) {
+                        padding-top: 10px;
+                    }
+
+                    .cab-detail-list-item {
+                        display: block;
+                    }
                 }
-            }
-
-            .govuk-tabs__panel--hidden {
-                display: none;
             }
         }
     }

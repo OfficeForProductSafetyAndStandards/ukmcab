@@ -1,0 +1,22 @@
+﻿@model CABDocumentsViewModel
+
+<div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="@Model.Id">
+    <div class="cab-detail-section">
+        <h2 class="govuk-heading-l">@Model.Title</h2>
+        @if (!Model.Documents.Any())
+        {
+            <p class="govuk-body">@Constants.NotProvided</p>
+        }
+        else
+        {
+            <ul class="cab-profile-file-list">
+                @foreach (var file in Model.Documents)
+                {
+                    <li class="cab-profile-file-list-item">
+                        <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType">@file.Label</a>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
