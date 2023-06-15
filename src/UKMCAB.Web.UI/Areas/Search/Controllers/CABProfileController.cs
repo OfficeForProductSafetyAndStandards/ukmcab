@@ -90,12 +90,32 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
-                ProductSchedules = cabDocument.Schedules?.Select(s => new FileUpload
+                ProductSchedules = new CABDocumentsViewModel
                 {
-                    Label = s.Label ?? s.FileName,
-                    FileName = s.FileName,
-                    BlobName = s.BlobName
-                }).ToList() ?? new List<FileUpload>()
+                    Id = "product-schedules",
+                    Title = "Product schedules",
+                    CABId = cabDocument.CABId,
+                    Documents = cabDocument.Schedules?.Select(s => new FileUpload
+                    {
+                        Label = s.Label ?? s.FileName,
+                        FileName = s.FileName,
+                        BlobName = s.BlobName
+                    }).ToList() ?? new List<FileUpload>(),
+                    DocumentType = DataConstants.Storage.Schedules
+                },
+                SupportingDocuments = new CABDocumentsViewModel
+                {
+                    Id = "supporting-documents",
+                    Title = "Supporting documents",
+                    CABId = cabDocument.CABId,
+                    Documents = cabDocument.Documents?.Select(s => new FileUpload
+                    {
+                        Label = s.Label ?? s.FileName,
+                        FileName = s.FileName,
+                        BlobName = s.BlobName
+                    }).ToList() ?? new List<FileUpload>(),
+                    DocumentType = DataConstants.Storage.Documents
+                }
             };
             return cab;
         }

@@ -37,6 +37,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string BodyNumber { get; set; }
         public List<string> BodyTypes { get; set; }
         public List<string> LegislativeAreas { get; set; }
-        public List<FileUpload> ProductSchedules { get; set; }
+        public CABDocumentsViewModel ProductSchedules { get; set; }
+        public CABDocumentsViewModel SupportingDocuments { get; set; }
     }
 }

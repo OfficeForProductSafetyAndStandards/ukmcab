@@ -1,4 +1,5 @@
-﻿@model CABProfileViewModel
+﻿@using UKMCAB.Data;
+@model CABProfileViewModel
 @{
     ViewData["nav"] = "search";
 }
@@ -25,312 +26,300 @@
         </div>
     }
 }
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <partial name="Partials/_ValidationSummary" model="null" />
+<div id="cab-profile-page">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <partial name="Partials/_ValidationSummary" model="null" />
+        </div>
     </div>
-</div>
-@if (Model.IsArchived)
-{
-    <div class="govuk-notification-banner" role="region"
-         aria-labelledby="govuk-notification-banner-title"
-         data-module="govuk-notification-banner">
-        <div class="govuk-notification-banner__content">
+    @if (Model.IsArchived)
+    {
+        <div class="govuk-notification-banner" role="region"
+             aria-labelledby="govuk-notification-banner-title"
+             data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner__content">
         
-            <div class="govuk-warning-text">
-                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">   
-                <p class="govuk-notification-banner__heading">Archived on @Model.ArchivedDate</p>
-                </strong>
+                <div class="govuk-warning-text">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">   
+                    <p class="govuk-notification-banner__heading">Archived on @Model.ArchivedDate</p>
+                    </strong>
+                </div>
             </div>
         </div>
-    </div>
-}
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
-        <h1 class="govuk-heading-l">@Model.Name</h1>
-        <div class="cab-detail-date-meta">
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-        </div>
-    </div>
-    <div class="govuk-grid-column-one-third">
-
-        <div class="govuk-!-margin-right-3">
-
-            <div class="govuk-!-text-align-right u-from-tablet govuk-!-margin-bottom-3">
-                @{RenderGetEmailsButton();}
-            </div>
-
-            @if (Model.IsLoggedIn)
-            {
-                <div class="govuk-!-display-block govuk-!-text-align-right">
-                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Edit</a>
-                </div>
-            }
-        </div>
-
-
-        
-    </div>
-</div>
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-
-        <div class="govuk-tabs cab-tabs" data-module="govuk-tabs">
-            <ul class="govuk-tabs__list">
-                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#details">
-                        Details
-                    </a>
-                </li>
-                <li class="govuk-tabs__list-item @Html.Conditional(!Model.IsLoggedIn, "last")">
-                    <a class="govuk-tabs__tab" href="#product-schedules">
-                        Product schedules
-                    </a>
-                </li>
-            @if (Model.IsLoggedIn)
-            {
-                <li class="govuk-tabs__list-item last">
-                    <a class="govuk-tabs__tab" href="#archive">
-                        Archive
-                    </a>
-                </li>
-            }
-            </ul>
-
-            <div class="govuk-tabs__panel cabs__panel" id="details">
-                <div class="cab-detail-section">
-                    <h2 class="govuk-heading-l">About</h2>
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                CAB name
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.Name
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                UKAS reference number
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.UKASReferenceNumber), Model.UKASReferenceNumber, @Constants.NotProvided)
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-                <div class="cab-detail-section">
-                    <h2 class="govuk-heading-l">Contact details</h2>
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Address
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (!string.IsNullOrWhiteSpace(Model.Address))
-                                {
-                                    <text>@Html.Raw(Model.Address)</text>
-                                }
-                                else
-                                {
-                                    <text>@Constants.NotProvided</text>
-                                }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Website
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (!string.IsNullOrWhiteSpace(Model.Website))
-                                {
-                                    <a class="govuk-link" href="@Html.SanitiseURL(Model.Website)">@Model.Website</a>
-                                }
-                                else
-                                {
-                                    <text>@Constants.NotProvided</text>
-                                }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Email
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (!string.IsNullOrWhiteSpace(Model.Email))
-                                {
-                                    <a class="govuk-link" href="mailto: @Model.Email">@Model.Email</a>
-                                }
-                                else
-                                {
-                                    @Constants.NotProvided
-                                }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Phone
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.Phone), Model.Phone, @Constants.NotProvided)
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Registered office location
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.RegisteredOfficeLocation), Model.RegisteredOfficeLocation, @Constants.NotProvided)
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-                <div class="cab-detail-section">
-                    <h2 class="govuk-heading-l">Body details</h2>
-                    <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Registered test location
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (!Model.RegisteredTestLocations.Any())
-                                {
-                                    <text>@Constants.NotProvided</text>
-                                }
-                                else
-                                {
-                                    foreach (var testLocation in Model.RegisteredTestLocations)
-                                    {
-                                        <span class="cab-detail-list-item">@testLocation</span>
-                                    }
-                                }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Body number
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.BodyNumber), Model.BodyNumber, @Constants.NotProvided)
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Body type
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (!Model.BodyTypes.Any())
-                                {
-                                    <text>@Constants.NotProvided</text>
-                                }
-                                else
-                                {
-                                    @foreach (var bodyType in Model.BodyTypes)
-                                    {
-                                        <span class="cab-detail-list-item">@bodyType</span>
-                                    }
-                                }
-                            </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Legislative area
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (!Model.LegislativeAreas.Any())
-                                {
-                                    <text>@Constants.NotProvided</text>
-                                }
-                                else
-                                {
-                                    @foreach (var legislativeArea in Model.LegislativeAreas)
-                                    {
-                                        <span class="cab-detail-list-item">@legislativeArea</span>
-                                    }
-                                }
-                            </dd>
-                        </div>
-                    </dl>
-                </div>
-            </div>
-
-            <div class="govuk-tabs__panel cabs__panel govuk-tabs__panel--hidden" id="product-schedules">
-                <div class="cab-detail-section">
-                    <h2 class="govuk-heading-l">Product schedules</h2>
-                    @if (!Model.ProductSchedules.Any())
-                    {
-                        <p class="govuk-body">@Constants.NotProvided</p>
-                    }
-                    else
-                    {
-                        <ul class="cab-profile-file-list">
-                            @foreach (var file in Model.ProductSchedules)
-                            {
-                                <li class="cab-profile-file-list-item">
-                                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="schedules">@file.Label</a>
-                                </li>
-                            }
-                        </ul>
-                    }
-                </div>
-            </div>
-            
-        @if (Model.IsLoggedIn)
-        {
-            <div class="govuk-tabs__panel cabs__panel govuk-tabs__panel--hidden" id="archive">
-                <div class="cab-detail-section">
-                    <h2 class="govuk-heading-l">Archive</h2>
-                    @if (Model.IsArchived)
-                    {
-                        <p class="govuk-body">Archived on @Model.ArchivedDate by @Model.ArchivedBy</p>
-                        <p class="govuk-body">@Model.ArchiveReason</p>
-                    }
-                    else
-                    {
-                        <form method="post">
-                            <div class="govuk-!-width-two-thirds">
-                                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))">
-                                    <div id="archive-hint" class="govuk-hint">
-                                        State the reason for archiving this CAB record.
-                                    </div>
-                                    <p class="govuk-error-message">
-                                        <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
-                                    </p>
-                                    <textarea class="govuk-textarea  @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))"  asp-for="ArchiveReason" rows="5" aria-describedby="archive-hint"></textarea>
-                                </div>
-                                <div class="govuk-warning-text">
-                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                    <strong class="govuk-warning-text__text">
-                                        <span class="govuk-warning-text__assistive">Warning</span>
-                                        Archiving this CAB record will remove it from the search results. Once archived the record can be re-published and returned to the search results by internal users.
-                                    </strong>
-                                </div>
-                                <div class="govuk-button-group">
-                                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                                        Continue
-                                    </button>
-                                    <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                                </div>
-                            </div>
-                        </form>
-                    }
-                </div>
-            </div>
-        }
-        </div>
-    </div>
-</div>
-
-<div class="govuk-!-text-align-left u-until-tablet">
-    @{
-        RenderGetEmailsButton();
     }
-</div>
 
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
+            <h1 class="govuk-heading-l">@Model.Name</h1>
+            <div class="cab-detail-date-meta">
+                <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
+                <span class="govuk-caption-m govuk-!-display-inline-block">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
+            </div>
+        </div>
+        <div class="govuk-grid-column-one-third">
+
+            <div class="govuk-!-margin-right-3">
+
+                <div class="govuk-!-text-align-right u-from-tablet govuk-!-margin-bottom-3">
+                    @{RenderGetEmailsButton();}
+                </div>
+
+                @if (Model.IsLoggedIn)
+                {
+                    <div class="govuk-!-display-block govuk-!-text-align-right">
+                        <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Edit</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+
+            <div class="govuk-tabs cab-tabs" data-module="govuk-tabs">
+                <ul class="govuk-tabs__list">
+                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                        <a class="govuk-tabs__tab" href="#details">
+                            Details
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item @Html.Conditional(!Model.IsLoggedIn, "last")">
+                        <a class="govuk-tabs__tab" href="#product-schedules">
+                            Product schedules
+                        </a>
+                    </li>
+                @if (Model.IsLoggedIn)
+                {
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#supporting-documents">
+                            Supporting documents
+                        </a>
+                    </li>
+                    <li class="govuk-tabs__list-item last">
+                        <a class="govuk-tabs__tab" href="#archive">
+                            Archive
+                        </a>
+                    </li>
+                }
+                </ul>
+
+                <div class="govuk-tabs__panel cabs-panel" id="details">
+                    <div class="cab-detail-section">
+                        <h2 class="govuk-heading-l">About</h2>
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    CAB name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.Name
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    UKAS reference number
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Html.Conditional(!string.IsNullOrWhiteSpace(Model.UKASReferenceNumber), Model.UKASReferenceNumber, @Constants.NotProvided)
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="cab-detail-section">
+                        <h2 class="govuk-heading-l">Contact details</h2>
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Address
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if (!string.IsNullOrWhiteSpace(Model.Address))
+                                    {
+                                        <text>@Html.Raw(Model.Address)</text>
+                                    }
+                                    else
+                                    {
+                                        <text>@Constants.NotProvided</text>
+                                    }
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Website
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if (!string.IsNullOrWhiteSpace(Model.Website))
+                                    {
+                                        <a class="govuk-link" href="@Html.SanitiseURL(Model.Website)">@Model.Website</a>
+                                    }
+                                    else
+                                    {
+                                        <text>@Constants.NotProvided</text>
+                                    }
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Email
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if (!string.IsNullOrWhiteSpace(Model.Email))
+                                    {
+                                        <a class="govuk-link" href="mailto: @Model.Email">@Model.Email</a>
+                                    }
+                                    else
+                                    {
+                                        @Constants.NotProvided
+                                    }
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Phone
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Html.Conditional(!string.IsNullOrWhiteSpace(Model.Phone), Model.Phone, @Constants.NotProvided)
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Registered office location
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Html.Conditional(!string.IsNullOrWhiteSpace(Model.RegisteredOfficeLocation), Model.RegisteredOfficeLocation, @Constants.NotProvided)
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                    <div class="cab-detail-section">
+                        <h2 class="govuk-heading-l">Body details</h2>
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Registered test location
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if (!Model.RegisteredTestLocations.Any())
+                                    {
+                                        <text>@Constants.NotProvided</text>
+                                    }
+                                    else
+                                    {
+                                        foreach (var testLocation in Model.RegisteredTestLocations)
+                                        {
+                                            <span class="cab-detail-list-item">@testLocation</span>
+                                        }
+                                    }
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Body number
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Html.Conditional(!string.IsNullOrWhiteSpace(Model.BodyNumber), Model.BodyNumber, @Constants.NotProvided)
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Body type
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if (!Model.BodyTypes.Any())
+                                    {
+                                        <text>@Constants.NotProvided</text>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var bodyType in Model.BodyTypes)
+                                        {
+                                            <span class="cab-detail-list-item">@bodyType</span>
+                                        }
+                                    }
+                                </dd>
+                            </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Legislative area
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if (!Model.LegislativeAreas.Any())
+                                    {
+                                        <text>@Constants.NotProvided</text>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var legislativeArea in Model.LegislativeAreas)
+                                        {
+                                            <span class="cab-detail-list-item">@legislativeArea</span>
+                                        }
+                                    }
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
+                </div>
+
+                <partial name="Partials/_Documents" model="Model.ProductSchedules" />
+
+            
+            @if (Model.IsLoggedIn)
+            {
+                <partial name="Partials/_Documents" model="Model.SupportingDocuments" />
+
+                <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="archive">
+                    <div class="cab-detail-section">
+                        <h2 class="govuk-heading-l">Archive</h2>
+                        @if (Model.IsArchived)
+                        {
+                            <p class="govuk-body">Archived on @Model.ArchivedDate by @Model.ArchivedBy</p>
+                            <p class="govuk-body">@Model.ArchiveReason</p>
+                        }
+                        else
+                        {
+                            <form method="post">
+                                <div class="govuk-!-width-two-thirds">
+                                    <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))">
+                                        <div id="archive-hint" class="govuk-hint">
+                                            State the reason for archiving this CAB record.
+                                        </div>
+                                        <p class="govuk-error-message">
+                                            <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
+                                        </p>
+                                        <textarea class="govuk-textarea  @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))"  asp-for="ArchiveReason" rows="5" aria-describedby="archive-hint"></textarea>
+                                    </div>
+                                    <div class="govuk-warning-text">
+                                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                        <strong class="govuk-warning-text__text">
+                                            <span class="govuk-warning-text__assistive">Warning</span>
+                                            Archiving this CAB record will remove it from the search results. Once archived the record can be re-published and returned to the search results by internal users.
+                                        </strong>
+                                    </div>
+                                    <div class="govuk-button-group">
+                                        <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                                            Continue
+                                        </button>
+                                        <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-!-text-align-left u-until-tablet">
+        @{
+            RenderGetEmailsButton();
+        }
+    </div>
+</div>
 
 @functions{
 
