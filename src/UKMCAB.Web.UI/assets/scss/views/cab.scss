@@ -137,6 +137,17 @@ ul.cab-profile-file-list {
                     .cab-detail-list-item {
                         display: block;
                     }
+
+                    .govuk-summary-list__key {
+                        font-weight: 400;
+                    } 
+                    
+                    .govuk-summary-list__actions {
+                        @include govuk-media-query($until: tablet) {
+                            display: inline-block;
+                            margin-right: 30px;
+                        }
+                    }
                 }
             }
         }
