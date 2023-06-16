@@ -200,5 +200,18 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             return Ok("File does not exist");
         }
+
+        [HttpGet("search/cab-schedule-view/{id}")]
+        public async Task<IActionResult> View(string id, string file, string filetype)
+        {
+            var fileStream = await _fileStorage.DownloadBlobStream($"{id}/{filetype}/{file}");
+            if (fileStream != null)
+            {
+                return File(fileStream.FileStream, fileStream.ContentType);
+            }
+
+            return Ok("File does not exist");
+        }
+
     }
 }
