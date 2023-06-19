@@ -30,6 +30,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string Website { get; set; }
         public string Email { get; set; }
         public string Phone { get; set; }
+        public string? PointOfContactName { get; set; }
+        public string? PointOfContactEmail { get; set; }
+        public string? PointOfContactPhone { get; set; }
+        public bool IsPointOfContactPublicDisplay { get; set; }
 
         public string RegisteredOfficeLocation { get; set; }
         // Body details

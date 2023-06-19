@@ -153,7 +153,7 @@
                                 <dd class="govuk-summary-list__value">
                                     @if (!string.IsNullOrWhiteSpace(Model.Website))
                                     {
-                                        <a class="govuk-link" href="@Html.SanitiseURL(Model.Website)">@Model.Website</a>
+                                        <a class="govuk-link" href="@Html.SanitiseURL(Model.Website)" target="_blank">@Model.Website</a>
                                     }
                                     else
                                     {
@@ -184,6 +184,46 @@
                                     @Html.Conditional(!string.IsNullOrWhiteSpace(Model.Phone), Model.Phone, @Constants.NotProvided)
                                 </dd>
                             </div>
+
+                            @if (Model.IsPointOfContactPublicDisplay || Model.IsLoggedIn)
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Point of contact name
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @Html.Conditional(!string.IsNullOrWhiteSpace(Model.PointOfContactName), Model.PointOfContactName, @Constants.NotProvided)
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Point of contact email
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @if (!string.IsNullOrWhiteSpace(Model.PointOfContactEmail))
+                                        {
+                                            <a class="govuk-link" href="mailto: @Model.PointOfContactEmail">@Model.PointOfContactEmail</a>
+                                        }
+                                        else
+                                        {
+                                            @Constants.NotProvided
+                                        }                                        
+                                    </dd>
+                                </div>
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Point of contact phone
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @Html.Conditional(!string.IsNullOrWhiteSpace(Model.PointOfContactPhone), Model.PointOfContactPhone, @Constants.NotProvided)
+                                    </dd>
+                                </div>
+                            }
+
+                            
+
+
+
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Registered office location
