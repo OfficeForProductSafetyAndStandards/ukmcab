@@ -65,8 +65,8 @@
                 <div class="govuk-!-text-align-right u-from-tablet govuk-!-margin-bottom-3">
                     @{RenderGetEmailsButton();}
                 </div>
-
-                @if (Model.IsLoggedIn)
+                
+                @if (Model.IsLoggedIn && !Model.IsArchived)
                 {
                     <div class="govuk-!-display-block govuk-!-text-align-right">
                         <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Edit</a>
