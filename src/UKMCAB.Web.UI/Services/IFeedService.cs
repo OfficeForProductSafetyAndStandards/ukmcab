@@ -5,6 +5,6 @@ namespace UKMCAB.Web.UI.Services
 {
     public interface IFeedService
     {
-        SyndicationFeed GetSyndicationFeed(HttpRequest request, IEnumerable<CABIndexItem> items, IUrlHelper url);
+        SyndicationFeed GetSyndicationFeed(string feedName, HttpRequest request, IEnumerable<CABIndexItem> items, IUrlHelper url);
     }
 }

@@ -126,13 +126,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Select = _select,
             });
 
-            var feed = _feedService.GetSyndicationFeed(Request, searchResult.CABs, Url);
+
+
+            var feed = _feedService.GetSyndicationFeed(GetFeedName(model), Request, searchResult.CABs, Url);
 
             var settings = new XmlWriterSettings
             {
                 Encoding = Encoding.UTF8,
                 NewLineHandling = NewLineHandling.Entitize,
-                //NewLineOnAttributes = true,
                 Indent = true,
                 ConformanceLevel = ConformanceLevel.Document
             };
@@ -143,8 +144,38 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     feed.GetAtom10Formatter().WriteTo(xmlWriter);
                     xmlWriter.Flush();
                 }
-                return File(stream.ToArray(), "application/atom+xml;charset=utf-8");
+                stream.Position = 0;
+                var content = new StreamReader(stream).ReadToEnd();
+                return Content(content, "application/atom+xml;charset=utf-8");
             }
+        }
+
+        private string GetFeedName(SearchViewModel model)
+        {
+            var sb = new StringBuilder("UKMCAB search results for");
+            var filtersAdded = false;
+            if (!string.IsNullOrEmpty(model.Keywords))
+            {
+                sb.AppendFormat(" Keywords: {0};", model.Keywords);
+                filtersAdded = true;
+            }
+            if (model.BodyTypes != null && model.BodyTypes.Any())
+            {
+                sb.AppendFormat(" Body types: {0};", string.Join(", ", model.BodyTypes));
+                filtersAdded = true;
+            }
+            if (model.RegisteredOfficeLocations != null && model.RegisteredOfficeLocations.Any())
+            {
+                sb.AppendFormat(" Registered office locations: {0};", string.Join(", ", model.RegisteredOfficeLocations));
+                filtersAdded = true;
+            }
+            if (model.LegislativeAreas != null && model.LegislativeAreas.Any())
+            {
+                sb.AppendFormat(" Registered office locations: {0};", string.Join(", ", model.RegisteredOfficeLocations));
+                filtersAdded = true;
+            }
+
+            return filtersAdded ? sb.ToString() : "UKMCAB search results";
         }
 
         private async Task SetFacetOptions(SearchViewModel model)
