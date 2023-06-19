@@ -33,7 +33,7 @@ namespace UKMCAB.Web.UI.Services
             var syndicationItems = new List<SyndicationItem>();
             foreach (var cabIndexItem in items)
             {
-                var summaryText = GetAddress(cabIndexItem) + GetLegislativeAreas(cabIndexItem.LegislativeAreas);
+                var summaryText = $"<div>{GetAddress(cabIndexItem)}{GetLegislativeAreas(cabIndexItem.LegislativeAreas)}</div>";
                 var item = new SyndicationItem
                 {
                     Id = $"tag:www.gov.uk,2005:/search/cab-profile/{cabIndexItem.URLSlug}",
@@ -52,7 +52,7 @@ namespace UKMCAB.Web.UI.Services
 
         private string GetAddress(CABIndexItem item)
         {
-            var sb = new StringBuilder("<h2>Address</h2>");
+            var sb = new StringBuilder("<h2>Address:</h2>");
             sb.AppendFormat("<div>{0}</div>",
                 StringExt.Join("<br />", item.AddressLine1, item.AddressLine2, item.TownCity, item.County,
                     item.Postcode, item.Country));
@@ -61,7 +61,7 @@ namespace UKMCAB.Web.UI.Services
 
         private string GetLegislativeAreas(string[] legislativeAreas)
         {
-            var sb = new StringBuilder("<h2>Legislative areas</h2>");
+            var sb = new StringBuilder("<h2>Legislative areas:</h2>");
             sb.Append("<div><ul>");
             if (!legislativeAreas.Any())
             {
@@ -74,7 +74,7 @@ namespace UKMCAB.Web.UI.Services
                     sb.AppendFormat("<li>{0}</li>", legislativeArea);
                 }
             }
-            sb.Append("</ul><div>");
+            sb.Append("</ul></div>");
             return sb.ToString();
         }
 
