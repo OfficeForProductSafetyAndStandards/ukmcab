@@ -30,24 +30,39 @@ namespace UKMCAB.Web.UI.Services
             alternateLink.RelationshipType = "alternate";
             alternateLink.MediaType = "text/html";
             feed.Links.Add(alternateLink);
-
-            feed.Items = items.Select(c => new SyndicationItem
+            var syndicationItems = new List<SyndicationItem>();
+            foreach (var cabIndexItem in items)
             {
-                Id = $"tag:www.gov.uk,2005:/search/cab-profile/{c.URLSlug}",
-                LastUpdatedTime = c.LastUpdatedDate.GetValueOrDefault(),
-                Links = { GetProfileSyndicationLink(c.URLSlug, request, url) },
-                Title = new TextSyndicationContent(c.Name),
-                Summary = new TextSyndicationContent(StringExt.Join(", ", c.AddressLine1, c.AddressLine2, c.TownCity, c.County, c.Postcode, c.Country), TextSyndicationContentKind.Html),
-                Content = new TextSyndicationContent(GetLegislativeAreas(c.LegislativeAreas), TextSyndicationContentKind.Html)
-            }).ToList();
+                var summaryText = GetAddress(cabIndexItem) + GetLegislativeAreas(cabIndexItem.LegislativeAreas);
+                var item = new SyndicationItem
+                {
+                    Id = $"tag:www.gov.uk,2005:/search/cab-profile/{cabIndexItem.URLSlug}",
+                    LastUpdatedTime = cabIndexItem.LastUpdatedDate.GetValueOrDefault(),
+                    Links = { GetProfileSyndicationLink(cabIndexItem.URLSlug, request, url) },
+                    Title = new TextSyndicationContent(cabIndexItem.Name),
+                    Summary = new TextSyndicationContent(summaryText, TextSyndicationContentKind.Html),
+                    Content = new TextSyndicationContent(summaryText, TextSyndicationContentKind.Html),
+                };
+                syndicationItems.Add(item);
+            }
+            feed.Items = syndicationItems;
             feed.LastUpdatedTime = feed.Items.Any() ? feed.Items.Max(f => f.LastUpdatedTime).DateTime : DateTime.UtcNow;
             return feed;
+        }
+
+        private string GetAddress(CABIndexItem item)
+        {
+            var sb = new StringBuilder("<h2>Address</h2>");
+            sb.AppendFormat("<div>{0}</div>",
+                StringExt.Join("<br />", item.AddressLine1, item.AddressLine2, item.TownCity, item.County,
+                    item.Postcode, item.Country));
+            return sb.ToString();
         }
 
         private string GetLegislativeAreas(string[] legislativeAreas)
         {
             var sb = new StringBuilder("<h2>Legislative areas</h2>");
-            sb.Append("<ul>");
+            sb.Append("<div><ul>");
             if (!legislativeAreas.Any())
             {
                 sb.Append("<li>Not provided</li>");
@@ -59,7 +74,7 @@ namespace UKMCAB.Web.UI.Services
                     sb.AppendFormat("<li>{0}</li>", legislativeArea);
                 }
             }
-            sb.Append("</ul>");
+            sb.Append("</ul><div>");
             return sb.ToString();
         }
 
