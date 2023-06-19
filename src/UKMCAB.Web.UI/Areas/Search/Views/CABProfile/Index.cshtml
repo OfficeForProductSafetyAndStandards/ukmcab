@@ -100,7 +100,7 @@
                     </li>
                     <li class="govuk-tabs__list-item last">
                         <a class="govuk-tabs__tab" href="#archive">
-                            Archive
+                                @Html.Conditional(Model.IsArchived, "Archived", "Archive")
                         </a>
                     </li>
                 }
@@ -312,7 +312,7 @@
 
                 <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="archive">
                     <div class="cab-detail-section">
-                        <h2 class="govuk-heading-l">Archive</h2>
+                            <h2 class="govuk-heading-l">@Html.Conditional(Model.IsArchived, "Archived", "Archive")</h2>
                         @if (Model.IsArchived)
                         {
                             <p class="govuk-body">Archived on @Model.ArchivedDate by @Model.ArchivedBy</p>
