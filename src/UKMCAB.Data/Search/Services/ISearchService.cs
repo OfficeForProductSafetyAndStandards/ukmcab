@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Search.Models;
+﻿using UKMCAB.Data.Models;
+using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
@@ -13,7 +14,7 @@ namespace UKMCAB.Data.Search.Services
         /// Should the system ever have 1000s of records we'll need another approach.
         /// </summary>
         /// <returns></returns>
-        Task ReIndexAsync();
+        Task ReIndexAsync(Document doc);
         Task RemoveFromIndexAsync(string cabId);
     }
 }

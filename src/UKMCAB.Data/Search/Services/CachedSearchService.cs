@@ -1,6 +1,7 @@
 ﻿using MoreLinq;
 using System.Text.Json;
 using UKMCAB.Common;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Infrastructure.Cache;
 
@@ -71,10 +72,11 @@ internal class CachedSearchService : ICachedSearchService
 
     private static string GetCabSearchResultSetCacheKey(string cabId) => $"cab_res_{cabId}";
 
-    public async Task ReIndexAsync()
+    public async Task ReIndexAsync(Document doc)
     {
-        await _search.ReIndexAsync();
+        await _search.ReIndexAsync(doc);
     }
+
     public async Task RemoveFromIndexAsync(string id)
     {
         await _search.RemoveFromIndexAsync(id);

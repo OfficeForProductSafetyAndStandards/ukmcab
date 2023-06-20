@@ -178,7 +178,9 @@ namespace UKMCAB.Core.Services
                 ? publishedVersion.URLSlug
                 : latestDocument.URLSlug;
 
-            await RefreshCaches(latestDocument.CABId, urlSlug);
+            await _cachedSearchService.ReIndexAsync(latestDocument);
+
+            await RefreshCaches(latestDocument, urlSlug);
 
             await RecordStatsAsync();
 
@@ -207,18 +209,17 @@ namespace UKMCAB.Core.Services
                 $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
 
             await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
-            await RefreshCaches(latestDocument.CABId, latestDocument.URLSlug);
+            await RefreshCaches(latestDocument, latestDocument.URLSlug);
             await RecordStatsAsync();
 
             return publishedVersion;
         }
 
-        private async Task RefreshCaches(string cabId, string slug)
+        private async Task RefreshCaches(Document latestDocument, string slug)
         {
-            await _cachedSearchService.ReIndexAsync();
             await _cachedSearchService.ClearAsync();
-            await _cachedSearchService.ClearAsync(cabId);
-            await _cachedPublishedCabService.ClearAsync(cabId, slug);
+            await _cachedSearchService.ClearAsync(latestDocument.CABId);
+            await _cachedPublishedCabService.ClearAsync(latestDocument.CABId, slug);
         }
 
         public async Task RecordStatsAsync()

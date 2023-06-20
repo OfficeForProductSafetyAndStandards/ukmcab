@@ -6,6 +6,7 @@ using Microsoft.ApplicationInsights;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using UKMCAB.Common;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
@@ -98,52 +99,34 @@ namespace UKMCAB.Data.Search.Services
             return cabResults;
         }
 
-        public async Task ReIndexAsync()
+
+        public async Task ReIndexAsync(Document doc)
         {
-            var start = DateTime.UtcNow;
-            var attempts = 0;
-            var baseline = (await GetLastIndexerResultAsync().ConfigureAwait(false))?.EndTime?.UtcDateTime ?? DateTime.MinValue;
-            
-            await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER); // this invokes it asynchronously....  you then have to monitor the status to see when it completes
-            await Task.Delay(1500); // wait for a bit to give it time to run
-            
-            var latest = await GetLastIndexerResultAsync().ConfigureAwait(false);
-
-            var sw = Stopwatch.StartNew();
-            while (true)
+            var response = await _indexClient.MergeOrUploadDocumentsAsync<CABIndexItem>(new List<CABIndexItem> {new CABIndexItem
             {
-                Guard.IsTrue(sw.ElapsedMilliseconds < 120_000, "Azure Cognitive Search is taking an awfully long time to complete indexing");
+                id = doc.id,
+                Name = doc.Name,
+                CABId = doc.CABId,
+                CABNumber = doc.CABNumber,
+                AddressLine1 = doc.AddressLine1,
+                AddressLine2 = doc.AddressLine1,
+                TownCity = doc.TownCity,
+                County = doc.County,
+                Postcode = doc.Postcode,
+                Country = doc.Country,
+                Email = doc.Email,
+                Phone = doc.Phone,
+                Website = doc.Website,
+                BodyTypes = doc.BodyTypes.ToArray(),
+                TestingLocations = doc.TestingLocations.ToArray(),
+                LegislativeAreas = doc.LegislativeAreas.ToArray(),
+                RegisteredOfficeLocation = doc.RegisteredOfficeLocation,
+                URLSlug = doc.URLSlug,
+                LastUpdatedDate = doc.LastUpdatedDate,
+                RandomSort = doc.RandomSort,
+            }} );
 
-                var latestEndTime = latest?.EndTime;
-                if (latestEndTime > baseline)
-                {
-                    break; // the latest indexer completion datetime is _AFTER_ the `RunIndexerAsync` method was called, so can assume it's completed.
-                }
-                // else - no indexer has completed successfully since this method was first invoked
-
-                latest = await GetLastIndexerResultAsync();
-                await Task.Delay(400);
-            }
-            sw.Stop();
-            var completed = DateTime.UtcNow;
-
-            var props = new Dictionary<string, string>
-            {
-                ["attempts"] = attempts.ToString(),
-                ["status"] = latest?.Status.ToString() ?? string.Empty,
-                ["elapsed_ms"] = sw.ElapsedMilliseconds.ToString(),
-                ["started"] = start.ToString("O"),
-                ["completed"] = completed.ToString("O"),
-                ["indexer_execution_result"] = latest?.Serialize() ?? string.Empty
-            };
-            _telemetryClient.TrackEvent("AZCS_REINDEX_COMPLETED", props);
-
-            async Task<IndexerExecutionResult?> GetLastIndexerResultAsync()
-            {
-                attempts++;
-                var status = await _searchIndexerClient.GetIndexerStatusAsync(DataConstants.Search.SEARCH_INDEXER);
-                return status.HasValue ? (status?.Value?.LastResult) : null;
-            };
+            Guard.IsTrue(response.HasValue && response.Value.Results.First().Succeeded, $"Failed to update index for {doc.CABId}");
         }
 
         public async Task RemoveFromIndexAsync(string id)
