@@ -1,27 +1,16 @@
 ﻿using Azure.Search.Documents;
-using Azure.Search.Documents.Indexes;
-using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
-using Microsoft.ApplicationInsights;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 using UKMCAB.Common;
-using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
     public class SearchService : ISearchService
     {
-        private static readonly Regex _specialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
-        private readonly SearchIndexerClient _searchIndexerClient;
-        private readonly TelemetryClient _telemetryClient;
         private SearchClient _indexClient;
-        public SearchService(SearchClient searchClient, SearchIndexerClient searchIndexerClient, TelemetryClient telemetryClient)
+        public SearchService(SearchClient searchClient)
         {
             _indexClient = searchClient;
-            _searchIndexerClient = searchIndexerClient;
-            _telemetryClient = telemetryClient;
         }
 
         public async Task<SearchFacets> GetFacetsAsync()
@@ -99,34 +88,10 @@ namespace UKMCAB.Data.Search.Services
             return cabResults;
         }
 
-
-        public async Task ReIndexAsync(Document doc)
+        public async Task ReIndexAsync(CABIndexItem cabIndexItem)
         {
-            var response = await _indexClient.MergeOrUploadDocumentsAsync<CABIndexItem>(new List<CABIndexItem> {new CABIndexItem
-            {
-                id = doc.id,
-                Name = doc.Name,
-                CABId = doc.CABId,
-                CABNumber = doc.CABNumber,
-                AddressLine1 = doc.AddressLine1,
-                AddressLine2 = doc.AddressLine1,
-                TownCity = doc.TownCity,
-                County = doc.County,
-                Postcode = doc.Postcode,
-                Country = doc.Country,
-                Email = doc.Email,
-                Phone = doc.Phone,
-                Website = doc.Website,
-                BodyTypes = doc.BodyTypes.ToArray(),
-                TestingLocations = doc.TestingLocations.ToArray(),
-                LegislativeAreas = doc.LegislativeAreas.ToArray(),
-                RegisteredOfficeLocation = doc.RegisteredOfficeLocation,
-                URLSlug = doc.URLSlug,
-                LastUpdatedDate = doc.LastUpdatedDate,
-                RandomSort = doc.RandomSort,
-            }} );
-
-            Guard.IsTrue(response.HasValue && response.Value.Results.First().Succeeded, $"Failed to update index for {doc.CABId}");
+            var response = await _indexClient.MergeOrUploadDocumentsAsync(new List<CABIndexItem> { cabIndexItem} );
+            Guard.IsTrue(response.HasValue && response.Value.Results.First().Succeeded, $"Failed to update index for {cabIndexItem.CABId}");
         }
 
         public async Task RemoveFromIndexAsync(string id)
