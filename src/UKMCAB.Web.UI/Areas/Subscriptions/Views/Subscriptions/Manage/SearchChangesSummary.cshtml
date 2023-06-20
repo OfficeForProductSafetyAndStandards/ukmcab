@@ -169,13 +169,16 @@
         </div>
     }
 
-    <div class="govuk-width-container ">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <a href="#!" class="govuk-link js-history-back">Go to summary of changes</a>
+    @if (Context.Request.QueryString.Value.IsNotNullOrEmpty())
+    {
+        <div class="govuk-width-container ">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <a href="#!" class="govuk-link js-history-back">Go to summary of changes</a>
+                </div>
             </div>
         </div>
-    </div>
+    }
 
 </div>
 @section BackButton {
