@@ -1,5 +1,4 @@
-﻿using System.Resources;
-using UKMCAB.Common;
+﻿using UKMCAB.Common;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data;
@@ -7,6 +6,7 @@ using UKMCAB.Data.Search.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
+using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Core.Services
 {
@@ -178,6 +178,30 @@ namespace UKMCAB.Core.Services
                 ? publishedVersion.URLSlug
                 : latestDocument.URLSlug;
 
+            await _cachedSearchService.ReIndexAsync(new CABIndexItem
+            {
+                id = latestDocument.id,
+                Name = latestDocument.Name,
+                CABId = latestDocument.CABId,
+                CABNumber = latestDocument.CABNumber,
+                AddressLine1 = latestDocument.AddressLine1,
+                AddressLine2 = latestDocument.AddressLine1,
+                TownCity = latestDocument.TownCity,
+                County = latestDocument.County,
+                Postcode = latestDocument.Postcode,
+                Country = latestDocument.Country,
+                Email = latestDocument.Email,
+                Phone = latestDocument.Phone,
+                Website = latestDocument.Website,
+                BodyTypes = latestDocument.BodyTypes.ToArray(),
+                TestingLocations = latestDocument.TestingLocations.ToArray(),
+                LegislativeAreas = latestDocument.LegislativeAreas.ToArray(),
+                RegisteredOfficeLocation = latestDocument.RegisteredOfficeLocation,
+                URLSlug = latestDocument.URLSlug,
+                LastUpdatedDate = latestDocument.LastUpdatedDate,
+                RandomSort = latestDocument.RandomSort,
+            });
+
             await RefreshCaches(latestDocument.CABId, urlSlug);
 
             await RecordStatsAsync();
@@ -215,7 +239,6 @@ namespace UKMCAB.Core.Services
 
         private async Task RefreshCaches(string cabId, string slug)
         {
-            await _cachedSearchService.ReIndexAsync();
             await _cachedSearchService.ClearAsync();
             await _cachedSearchService.ClearAsync(cabId);
             await _cachedPublishedCabService.ClearAsync(cabId, slug);
