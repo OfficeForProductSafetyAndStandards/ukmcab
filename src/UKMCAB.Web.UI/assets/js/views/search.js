@@ -25,12 +25,14 @@
     function init() {
         if (searchPage) {
             searchPage.classList.add("js-enabled");
-            searchResultsFilterToggle.addEventListener('click', showFilter);
-            searchResultsListToggle.addEventListener('click', showList);
+            if (searchResultsFilterToggle && searchResultsListToggle) {
+                searchResultsFilterToggle.addEventListener('click', showFilter);
+                searchResultsListToggle.addEventListener('click', showList);
 
-            mql = window.matchMedia('(min-width: 40.0625em)');
-            mql.addListener(checkMode.bind(this));
-            checkMode();
+                mql = window.matchMedia('(min-width: 40.0625em)');
+                mql.addListener(checkMode.bind(this));
+                checkMode();
+            }
         }
     }
 
