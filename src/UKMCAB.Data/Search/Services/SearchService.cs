@@ -1,10 +1,5 @@
 ﻿using Azure.Search.Documents;
-using Azure.Search.Documents.Indexes;
-using Azure.Search.Documents.Indexes.Models;
 using Azure.Search.Documents.Models;
-using Microsoft.ApplicationInsights;
-using System.Diagnostics;
-using System.Text.RegularExpressions;
 using UKMCAB.Common;
 using UKMCAB.Data.Search.Models;
 
@@ -12,15 +7,10 @@ namespace UKMCAB.Data.Search.Services
 {
     public class SearchService : ISearchService
     {
-        private static readonly Regex _specialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
-        private readonly SearchIndexerClient _searchIndexerClient;
-        private readonly TelemetryClient _telemetryClient;
         private SearchClient _indexClient;
-        public SearchService(SearchClient searchClient, SearchIndexerClient searchIndexerClient, TelemetryClient telemetryClient)
+        public SearchService(SearchClient searchClient)
         {
             _indexClient = searchClient;
-            _searchIndexerClient = searchIndexerClient;
-            _telemetryClient = telemetryClient;
         }
 
         public async Task<SearchFacets> GetFacetsAsync()
@@ -98,52 +88,10 @@ namespace UKMCAB.Data.Search.Services
             return cabResults;
         }
 
-        public async Task ReIndexAsync()
+        public async Task ReIndexAsync(CABIndexItem cabIndexItem)
         {
-            var start = DateTime.UtcNow;
-            var attempts = 0;
-            var baseline = (await GetLastIndexerResultAsync().ConfigureAwait(false))?.EndTime?.UtcDateTime ?? DateTime.MinValue;
-            
-            await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER); // this invokes it asynchronously....  you then have to monitor the status to see when it completes
-            await Task.Delay(1500); // wait for a bit to give it time to run
-            
-            var latest = await GetLastIndexerResultAsync().ConfigureAwait(false);
-
-            var sw = Stopwatch.StartNew();
-            while (true)
-            {
-                Guard.IsTrue(sw.ElapsedMilliseconds < 120_000, "Azure Cognitive Search is taking an awfully long time to complete indexing");
-
-                var latestEndTime = latest?.EndTime;
-                if (latestEndTime > baseline)
-                {
-                    break; // the latest indexer completion datetime is _AFTER_ the `RunIndexerAsync` method was called, so can assume it's completed.
-                }
-                // else - no indexer has completed successfully since this method was first invoked
-
-                latest = await GetLastIndexerResultAsync();
-                await Task.Delay(400);
-            }
-            sw.Stop();
-            var completed = DateTime.UtcNow;
-
-            var props = new Dictionary<string, string>
-            {
-                ["attempts"] = attempts.ToString(),
-                ["status"] = latest?.Status.ToString() ?? string.Empty,
-                ["elapsed_ms"] = sw.ElapsedMilliseconds.ToString(),
-                ["started"] = start.ToString("O"),
-                ["completed"] = completed.ToString("O"),
-                ["indexer_execution_result"] = latest?.Serialize() ?? string.Empty
-            };
-            _telemetryClient.TrackEvent("AZCS_REINDEX_COMPLETED", props);
-
-            async Task<IndexerExecutionResult?> GetLastIndexerResultAsync()
-            {
-                attempts++;
-                var status = await _searchIndexerClient.GetIndexerStatusAsync(DataConstants.Search.SEARCH_INDEXER);
-                return status.HasValue ? (status?.Value?.LastResult) : null;
-            };
+            var response = await _indexClient.MergeOrUploadDocumentsAsync(new List<CABIndexItem> { cabIndexItem} );
+            Guard.IsTrue(response.HasValue && response.Value.Results.First().Succeeded, $"Failed to update index for {cabIndexItem.CABId}");
         }
 
         public async Task RemoveFromIndexAsync(string id)

@@ -71,10 +71,11 @@ internal class CachedSearchService : ICachedSearchService
 
     private static string GetCabSearchResultSetCacheKey(string cabId) => $"cab_res_{cabId}";
 
-    public async Task ReIndexAsync()
+    public async Task ReIndexAsync(CABIndexItem cabIndexItem)
     {
-        await _search.ReIndexAsync();
+        await _search.ReIndexAsync(cabIndexItem);
     }
+
     public async Task RemoveFromIndexAsync(string id)
     {
         await _search.RemoveFromIndexAsync(id);

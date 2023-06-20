@@ -17,9 +17,12 @@
                             @file.Label
                         </dt>
                         <dd class="govuk-summary-list__actions">
+                            @if (file.FileName.EndsWith("pdf", StringComparison.CurrentCultureIgnoreCase))
+                            {
                             <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="View" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType" target="_blank">
                                 View<span class="govuk-visually-hidden"> file (opens in a new window)</span>
                             </a>
+                            }
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType">

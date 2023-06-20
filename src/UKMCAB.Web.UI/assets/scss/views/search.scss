@@ -239,7 +239,8 @@
                         }
 
                         .search-result-list-item-link {
-                            margin: 0;
+                            margin: 0 25px 0 0;
+                            overflow-wrap:break-word;
                         }
 
                         .search-result-list-item-details {

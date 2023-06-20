@@ -137,6 +137,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Indent = true,
                 ConformanceLevel = ConformanceLevel.Document
             };
+
             using (var stream = new MemoryStream())
             {
                 using (var xmlWriter = XmlWriter.Create(stream, settings))
