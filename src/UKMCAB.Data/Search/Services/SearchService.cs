@@ -12,7 +12,6 @@ namespace UKMCAB.Data.Search.Services
 {
     public class SearchService : ISearchService
     {
-        private static readonly Regex _specialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
         private readonly SearchIndexerClient _searchIndexerClient;
         private readonly TelemetryClient _telemetryClient;
         private SearchClient _indexClient;
@@ -216,13 +215,13 @@ namespace UKMCAB.Data.Search.Services
             }
             else
             {
+                input = SpecialCharsRegex.Replace(input, " ");
                 if (input.Clean() == null)
                 {
                     retVal = "*";
                 }
                 else
                 {
-                    input = SpecialCharsRegex.Replace(input, " ");
                     var tokens = new[]
                     {
                         $"{nameof(CABIndexItem.Name)}:({input})^3",                    //any-match, boosted x3
