@@ -20,44 +20,42 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form method="post" enctype="multipart/form-data">
+        <form method="post" enctype="multipart/form-data" novalidate>
             <input type="hidden" asp-for="IsFromSummary" />
             <partial name="Partials/_ValidationSummary" model="null"/>
             <span class="govuk-caption-m">Create a CAB</span>
-            <fieldset class="govuk-fieldset">
                 <h1 class="govuk-heading-l">Schedule of Accreditation uploaded</h1>
                 <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 5 pdf documents.</p>
 
-                <div>
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
+            <div>
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header" colspan="3">Files you have uploaded</th>
+                    </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                    @if (!Model.UploadedFiles.Any())
+                    {
                         <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header" colspan="3">Files you have uploaded</th>
+                            <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
                         </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                        @if (!Model.UploadedFiles.Any())
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var uploadedFile in Model.UploadedFiles)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
+                                <td class="govuk-table__cell">@(index++).</td>
+                                <td class="govuk-table__cell">@uploadedFile</td>
+                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="fileName" value="@uploadedFile">Remove</button></td>
                             </tr>
                         }
-                        else
-                        {
-                            var index = 1;
-                            foreach (var uploadedFile in Model.UploadedFiles)
-                            {
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">@(index++).</td>
-                                    <td class="govuk-table__cell">@uploadedFile</td>
-                                    <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="fileName" value="@uploadedFile">Remove</button></td>
-                                </tr>
-                            }
-                        }
-                        </tbody>
-                    </table>
-                </div>
-            </fieldset>
+                    }
+                    </tbody>
+                </table>
+            </div>
         </form>
     </div>
 </div>

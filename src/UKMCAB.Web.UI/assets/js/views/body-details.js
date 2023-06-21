@@ -5,7 +5,7 @@
     var testLocations = document.querySelectorAll(".test-location");
 
     var clonedTestLocation;
-    var addTestLocationButton = document.getElementById("add-test-location-button");
+    var addTestLocationLink = document.getElementById("add-test-location-link");
 
     function init() {
         if (testLocationsContainer && testLocations) {
@@ -22,7 +22,7 @@
                     showHideRemoveLink(tl, true);
                 });
             }
-            addTestLocationButton.addEventListener('click', addTestLocation);
+            addTestLocationLink.addEventListener('click', addTestLocation);
         }
     }
 
