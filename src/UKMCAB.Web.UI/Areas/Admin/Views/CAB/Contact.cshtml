@@ -33,189 +33,186 @@
 </div>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form id="cabcontactform" method="post">
+        <form id="cabcontactform" method="post" novalidate>
             <input type="hidden" asp-for="IsFromSummary"/>
-            <fieldset class="govuk-fieldset">
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AddressLine1))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="AddressLine1">
-                            Address line 1
-                        </label>
-                    </h1>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="AddressLine1" class="govuk-error-message"></span>
-                    </p>
-                    <input asp-for="AddressLine1" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.AddressLine1))" autocomplete="addressline1" aria-required="true"/>
-                </div>
-                <div class="govuk-form-group">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="AddressLine2">
-                            Address line 2 (optional)
-                        </label>
-                    </h1>
-                    <input asp-for="AddressLine2" class="govuk-input govuk-!-width-two-thirds" autocomplete="addressline2" />
-                </div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.TownCity))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="TownCity">
-                            Town or city
-                        </label>
-                    </h1>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="TownCity" class="govuk-error-message"></span>
-                    </p>
-                    <input asp-for="TownCity" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.TownCity))" autocomplete="towncity" aria-required="true"/>
-                </div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Postcode))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="Postcode">
-                            Postcode
-                        </label>
-                    </h1>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="Postcode" class="govuk-error-message"></span>
-                    </p>
-                    <input asp-for="Postcode" class="govuk-input govuk-input--width-10 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Postcode))" autocomplete="postcode" aria-required="true"/>
-                </div>
-                <div class="govuk-form-group">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="County">
-                            County/State (optional)
-                        </label>
-                    </h1>
-                    <input asp-for="County" class="govuk-input govuk-!-width-two-thirds" autocomplete="county" aria-required="true"/>
-                </div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Country))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="Country">
-                            Country
-                        </label>
-                    </h1>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="Country" class="govuk-error-message"></span>
-                    </p>
-                    <select class="govuk-select @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Country))" asp-for="Country"
-                            asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(Model.Country)))">
-                        <option value="">Choose location</option>
-                    </select>
-                </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AddressLine1))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="AddressLine1">
+                        Address line 1
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="AddressLine1" class="govuk-error-message"></span>
+                </p>
+                <input asp-for="AddressLine1" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.AddressLine1))" autocomplete="addressline1" aria-required="true"/>
+            </div>
+            <div class="govuk-form-group">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="AddressLine2">
+                        Address line 2 (optional)
+                    </label>
+                </h3>
+                <input asp-for="AddressLine2" class="govuk-input govuk-!-width-two-thirds" autocomplete="addressline2" />
+            </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.TownCity))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="TownCity">
+                        Town or city
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="TownCity" class="govuk-error-message"></span>
+                </p>
+                <input asp-for="TownCity" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.TownCity))" autocomplete="towncity" aria-required="true"/>
+            </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Postcode))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="Postcode">
+                        Postcode
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="Postcode" class="govuk-error-message"></span>
+                </p>
+                <input asp-for="Postcode" class="govuk-input govuk-input--width-10 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Postcode))" autocomplete="postcode" aria-required="true"/>
+            </div>
+            <div class="govuk-form-group">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="County">
+                        County/State (optional)
+                    </label>
+                </h3>
+                <input asp-for="County" class="govuk-input govuk-!-width-two-thirds" autocomplete="county" aria-required="true"/>
+            </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Country))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="Country">
+                        Country
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="Country" class="govuk-error-message"></span>
+                </p>
+                <select class="govuk-select @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Country))" asp-for="Country"
+                        asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(Model.Country)))">
+                    <option value="">Choose location</option>
+                </select>
+            </div>
 
+            <div class="govuk-form-group">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="Website">
+                        Website (optional)
+                    </label>
+                </h3>
+                <input asp-for="Website" class="govuk-input govuk-!-width-two-thirds" autocomplete="website" />
+            </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--m" asp-for="Email">
+                        Email
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="Email" class="govuk-error-message"></span>
+                </p>
+                <input asp-for="Email" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="email" />
+            </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="Phone">
+                        Telephone
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="Email" class="govuk-error-message"></span>
+                </p>
+                <input asp-for="Phone" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="phone" />
+            </div>
+                
+            <div class="cab-detail-group">
+                <h2 class="govuk-heading-s cab-detail-group-heading">
+                    Point of contact                     
+                </h2>
                 <div class="govuk-form-group">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="Website">
-                            Website (optional)
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="PointOfContactName">
+                            Point of contact name (optional)
                         </label>
-                    </h1>
-                    <input asp-for="Website" class="govuk-input govuk-!-width-two-thirds" autocomplete="website" />
+                    </h3>
+                    <input asp-for="PointOfContactName" class="govuk-input govuk-!-width-two-thirds" autocomplete="pointofcontactname" />
                 </div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="Email">
-                            Email
+                <div class="govuk-form-group">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="PointOfContactEmail">
+                            Point of contact email (optional)
                         </label>
-                    </h1>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="Email" class="govuk-error-message"></span>
-                    </p>
-                    <input asp-for="Email" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="email" />
+                    </h3>
+                    <input asp-for="PointOfContactEmail" class="govuk-input govuk-!-width-two-thirds" autocomplete="pointofcontactemail" />
                 </div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="Phone">
-                            Phone
+                <div class="govuk-form-group">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="PointOfContactPhone">
+                            Point of contact phone (optional)
                         </label>
-                    </h1>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="Email" class="govuk-error-message"></span>
-                    </p>
-                    <input asp-for="Phone" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="phone" />
+                    </h3>
+                    <input asp-for="PointOfContactPhone" class="govuk-input govuk-!-width-two-thirds" autocomplete="pointofcontactphone" />
                 </div>
                 
-                <div class="cab-detail-group">
-                    <h1 class="govuk-heading-s cab-detail-group-heading">
-                        Point of contact                     
-                    </h1>
-                    <div class="govuk-form-group">
-                        <h1 class="govuk-label-wrapper">
-                            <label class=" govuk-heading-s" asp-for="PointOfContactName">
-                                Point of contact name (optional)
+                <div class="govuk-form-group">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="IsPointOfContactPublicDisplay">
+                            Select an option for display of point of contact details
+                        </label>
+                    </h3>
+                    <div class="govuk-radios" data-module="govuk-radios">
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="PublicDisplay" asp-for="IsPointOfContactPublicDisplay" type="radio" value="true">
+                            <label class="govuk-label govuk-radios__label" for="PublicDisplay">
+                                Display publicly for all users
                             </label>
-                        </h1>
-                        <input asp-for="PointOfContactName" class="govuk-input govuk-!-width-two-thirds" autocomplete="pointofcontactname" />
-                    </div>
-                    <div class="govuk-form-group">
-                        <h1 class="govuk-label-wrapper">
-                            <label class=" govuk-heading-s" asp-for="PointOfContactEmail">
-                                Point of contact email (optional)
+                        </div>
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="InternalDisplay" asp-for="IsPointOfContactPublicDisplay" type="radio" value="false">
+                            <label class="govuk-label govuk-radios__label" for="InternalDisplay">
+                                Restrict and display only for internal users
                             </label>
-                        </h1>
-                        <input asp-for="PointOfContactEmail" class="govuk-input govuk-!-width-two-thirds" autocomplete="pointofcontactemail" />
-                    </div>
-                    <div class="govuk-form-group">
-                        <h1 class="govuk-label-wrapper">
-                            <label class=" govuk-heading-s" asp-for="PointOfContactPhone">
-                                Point of contact phone (optional)
-                            </label>
-                        </h1>
-                        <input asp-for="PointOfContactPhone" class="govuk-input govuk-!-width-two-thirds" autocomplete="pointofcontactphone" />
-                    </div>
-                
-                    <div class="govuk-form-group">
-                        <h1 class="govuk-label-wrapper">
-                            <label class=" govuk-heading-s" asp-for="IsPointOfContactPublicDisplay">
-                                Select an option for display of point of contact details
-                            </label>
-                        </h1>
-                        <div class="govuk-radios" data-module="govuk-radios">
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="PublicDisplay" asp-for="IsPointOfContactPublicDisplay" type="radio" value="true">
-                                <label class="govuk-label govuk-radios__label" for="PublicDisplay">
-                                    Display publicly for all users
-                                </label>
-                            </div>
-                            <div class="govuk-radios__item">
-                                <input class="govuk-radios__input" id="InternalDisplay" asp-for="IsPointOfContactPublicDisplay" type="radio" value="false">
-                                <label class="govuk-label govuk-radios__label" for="InternalDisplay">
-                                    Restrict and display only for internal users
-                                </label>
-                            </div>
                         </div>
                     </div>
                 </div>
+            </div>
 
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.RegisteredOfficeLocation))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="RegisteredOfficeLocation">
-                            Registered office location
-                        </label>
-                    </h1>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="RegisteredOfficeLocation" class="govuk-error-message"></span>
-                    </p>
-                    <select class="govuk-select @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.RegisteredOfficeLocation))" asp-for="RegisteredOfficeLocation"
-                            asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(Model.RegisteredOfficeLocation)))">
-                        <option value="">Choose location</option>
-                    </select>
-                </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.RegisteredOfficeLocation))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="RegisteredOfficeLocation">
+                        Registered office location
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="RegisteredOfficeLocation" class="govuk-error-message"></span>
+                </p>
+                <select class="govuk-select @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.RegisteredOfficeLocation))" asp-for="RegisteredOfficeLocation"
+                        asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(Model.RegisteredOfficeLocation)))">
+                    <option value="">Choose location</option>
+                </select>
+            </div>
                 
-                <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                        Continue
-                    </button>
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
-                        Save as draft
-                    </button>
-                    @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
-                    {
-                        <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                    }
-                    else
-                    {
-                        <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                    }
-                </div>
-
-            </fieldset>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                    Continue
+                </button>
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
+                    Save as draft
+                </button>
+                @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                {
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+                else
+                {
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+            </div>
         </form>
     </div>
 </div>

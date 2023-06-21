@@ -11,11 +11,11 @@
             <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL"/>
             <fieldset class="govuk-fieldset">
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"WhatWereYouDoing")">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-m" asp-for="WhatWereYouDoing">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--m" asp-for="WhatWereYouDoing">
                             What you were doing
                         </label>
-                    </h1>
+                    </h3>
                     <div id="doing-hint" class="govuk-hint">
                         Please explain, step by step, what you did. If we can reproduce a problem, we can try and fix it.
                     </div>
@@ -25,11 +25,11 @@
                     <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState,"WhatWereYouDoing")" rows="5" aria-describedby="doing-hint" asp-for="WhatWereYouDoing"></textarea>
                 </div>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"WhatWentWrong")">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-m" asp-for="WhatWentWrong">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--m" asp-for="WhatWentWrong">
                             What went wrong
                         </label>
-                    </h1>
+                    </h3>
                     <div id="wrong-hint" class="govuk-hint">
                         Please explain what you expected to happen, and what actually happened. A clear explanation will help us fix the problem.
                     </div>

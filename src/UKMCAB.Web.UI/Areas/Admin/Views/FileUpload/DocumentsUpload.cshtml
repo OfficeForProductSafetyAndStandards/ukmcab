@@ -22,83 +22,80 @@
     <div class="govuk-grid-column-two-thirds">
         <partial name="Partials/_ValidationSummary" model="null"/>
         <span class="govuk-caption-m">Create a CAB</span>
-        <fieldset class="govuk-fieldset">
-            <h1 class="govuk-heading-l">Upload the supporting documents</h1>
-            <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 10 Word, Excel, or PDF documents.</p>
+        <h1 class="govuk-heading-l">Upload the supporting documents</h1>
+        <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 10 Word, Excel, or PDF documents.</p>
             
-            <div>
-                @using (Html.BeginForm("DocumentsList", "FileUpload", Model.IsFromSummary ? new { area="admin", id = @Model.CABId, fromSummary="true" }: new { area="admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype="multipart/form-data" }))
-                {
-                    <table class="govuk-table">
-                        <thead class="govuk-table__head">
+        <div>
+            @using (Html.BeginForm("DocumentsList", "FileUpload", Model.IsFromSummary ? new { area="admin", id = @Model.CABId, fromSummary="true" }: new { area="admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype="multipart/form-data", novalidate="true" }))
+            {
+                <table class="govuk-table">
+                    <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header" colspan="3">Files you have uploaded</th>
+                    </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                    @if (!Model.UploadedFiles.Any())
+                    {
                         <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header" colspan="3">Files you have uploaded</th>
+                            <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
                         </tr>
-                        </thead>
-                        <tbody class="govuk-table__body">
-                        @if (!Model.UploadedFiles.Any())
+                    }
+                    else
+                    {
+                        var index = 1;
+                        foreach (var uploadedFile in Model.UploadedFiles)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
+                                <td class="govuk-table__cell">@(index++).</td>
+                                <td class="govuk-table__cell">@uploadedFile</td>
+                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state app-button-link" name="fileName" value="@uploadedFile">Remove</button></td>
                             </tr>
                         }
-                        else
-                        {
-                            var index = 1;
-                            foreach (var uploadedFile in Model.UploadedFiles)
-                            {
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">@(index++).</td>
-                                    <td class="govuk-table__cell">@uploadedFile</td>
-                                    <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state app-button-link" name="fileName" value="@uploadedFile">Remove</button></td>
-                                </tr>
-                            }
-                        }
-                        </tbody>
-                    </table>
-                }
-            </div>
-        </fieldset>
+                    }
+                    </tbody>
+                </table>
+            }
+        </div>
+        
     </div>
 </div>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <fieldset class="govuk-fieldset">
-            <form method="post" enctype="multipart/form-data">
-                <input type="hidden" asp-for="IsFromSummary" />
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"File")">
-                    <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
-                        Select a file
-                    </label>
-                    <span asp-validation-for="File" class="govuk-error-message"></span>
-                    <input class="govuk-file-upload schedules-upload" asp-for="File" accept=".doc,.docx,.xls,.xlsx,.pdf" type="file">
-                </div>
+        <form method="post" enctype="multipart/form-data" novalidate>
+            <input type="hidden" asp-for="IsFromSummary" />
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"File")">
+                <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
+                    Select a file
+                </label>
+                <span asp-validation-for="File" class="govuk-error-message"></span>
+                <input class="govuk-file-upload schedules-upload" asp-for="File" accept=".doc,.docx,.xls,.xlsx,.pdf" type="file">
+            </div>
                 
-                <div class="govuk-grid-row">
-                    <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
-                        <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Skip this step</a></p>
-                    </div>
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
+                    <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Skip this step</a></p>
                 </div>
-                <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
-                        Upload
-                    </button>
-                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">
-                        Save as draft
-                    </a>
-                    @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
-                    {
-                        <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                    }
-                    else
-                    {
-                        <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                    }
-                </div>
+            </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
+                    Upload
+                </button>
+                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">
+                    Save as draft
+                </a>
+                @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                {
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+                else
+                {
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+            </div>
                 
-            </form>
-        </fieldset>
+        </form>
     </div>
 </div>    
 
