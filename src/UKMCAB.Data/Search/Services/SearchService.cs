@@ -165,6 +165,7 @@ namespace UKMCAB.Data.Search.Services
             }
             else
             {
+                input = SpecialCharsRegex.Replace(input, " ");
                 if (input.Clean() == null)
                 {
                     retVal = "*";
