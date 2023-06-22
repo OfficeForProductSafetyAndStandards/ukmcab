@@ -55,10 +55,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             switch (model.Sort.ToLower())
             {
                 case "status-desc":
-                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.Status).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
                 case "status":
-                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Status).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
                 case "number-desc":
                     model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.CABNumber).ToList();
