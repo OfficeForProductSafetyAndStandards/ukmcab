@@ -222,14 +222,27 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
 
+            var user = await _userManager.GetUserAsync(User);
             model.TestingLocations = model.TestingLocations != null ? model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList() : new List<string>();
-
-            if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
+            if (submitType == "Add" && model.TestingLocations.Any())
+            {
+                latestDocument.TestingLocations = model.TestingLocations;
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
+                model.TestingLocations.Add(string.Empty);
+                ModelState.Clear();
+            }
+            else if (submitType.StartsWith("Remove") && model.TestingLocations.Any())
+            {
+                var locationToRemove = submitType.Replace("Remove-", string.Empty);
+                model.TestingLocations.Remove(locationToRemove);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
+                ModelState.Clear();
+            }
+            else if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
             {
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
                 latestDocument.LegislativeAreas = model.LegislativeAreas;
-                var user = await _userManager.GetUserAsync(User);
 
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)

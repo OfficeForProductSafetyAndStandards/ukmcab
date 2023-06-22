@@ -15,33 +15,33 @@
             <input type="hidden" id="ReturnUrl" name="ReturnUrl" value="@Model.ReturnUrl"/>
             <fieldset class="govuk-fieldset">
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Name))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="Name">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Name">
                             Name
                         </label>
-                    </h1>
+                    </h3>
                     <p class="govuk-error-message">
                         <span asp-validation-for="Name" class="govuk-error-message"></span>
                     </p>
                     <input asp-for="Name" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Name))" autocomplete="name" aria-required="true" maxlength="50"/>
                 </div>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class=" govuk-heading-s" asp-for="Email">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Email">
                             Email address
                         </label>
-                    </h1>
+                    </h3>
                     <p class="govuk-error-message">
                         <span asp-validation-for="Email" class="govuk-error-message"></span>
                     </p>
                     <input asp-for="Email" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="eamil" aria-required="true" maxlength="50"/>
                 </div>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Subject))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class="govuk-heading-s" asp-for="Subject">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Subject">
                             Subject
                         </label>
-                    </h1>
+                    </h3>
                     <p class="govuk-error-message">
                         <span asp-validation-for="Subject" class="govuk-error-message"></span>
                     </p>
@@ -50,11 +50,11 @@
 
                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
                     <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Message))">
-                        <h1 class="govuk-label-wrapper">
-                            <label class="govuk-heading-s" asp-for="Message">
+                        <h3 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--s" asp-for="Message">
                                 Message
                             </label>
-                        </h1>
+                        </h3>
                         <div id="Message-hint" class="govuk-hint">
                             Do not include personal or financial information like your National Insurance number or credit card details.
                         </div>

@@ -1,5 +1,6 @@
 ﻿using Azure.Search.Documents;
 using Azure.Search.Documents.Models;
+using System.Text.RegularExpressions;
 using UKMCAB.Common;
 using UKMCAB.Data.Search.Models;
 
@@ -152,6 +153,8 @@ namespace UKMCAB.Data.Search.Services
             return list;
         }
 
+        private static readonly Regex SpecialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
+
         private string GetKeywordsQuery(string? keywords)
         {
             string retVal;
@@ -162,20 +165,22 @@ namespace UKMCAB.Data.Search.Services
             }
             else
             {
+                input = SpecialCharsRegex.Replace(input, " ");
                 if (input.Clean() == null)
                 {
                     retVal = "*";
                 }
                 else
                 {
+                    input = SpecialCharsRegex.Replace(input, " ");
                     var tokens = new[]
                     {
-                        $"{nameof(CABIndexItem.Name)}:({keywords})^3",                    //any-match, boosted x3
-                        $"{nameof(CABIndexItem.TownCity)}:({keywords})",                  //any-match
-                        $"{nameof(CABIndexItem.Postcode)}:(\"{keywords}\")",              //phrase-match
-                        $"{nameof(CABIndexItem.HiddenText)}:(\"{keywords}\")",            //phrase-match
-                        $"{nameof(CABIndexItem.CABNumber)}:(\"{keywords}\")^4",           //phrase-match, boosted x4
-                        $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{keywords}\")^6",    //phrase-match, boosted x6
+                        $"{nameof(CABIndexItem.Name)}:({input})^3",                    //any-match, boosted x3
+                        $"{nameof(CABIndexItem.TownCity)}:({input})",                  //any-match
+                        $"{nameof(CABIndexItem.Postcode)}:(\"{input}\")",              //phrase-match
+                        $"{nameof(CABIndexItem.HiddenText)}:(\"{input}\")",            //phrase-match
+                        $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4",           //phrase-match, boosted x4
+                        $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6",    //phrase-match, boosted x6
                     };
                     retVal = string.Join(" ", tokens);
                 }

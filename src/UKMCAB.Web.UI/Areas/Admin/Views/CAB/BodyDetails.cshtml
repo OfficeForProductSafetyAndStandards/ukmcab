@@ -34,106 +34,113 @@
     <div class="govuk-grid-column-two-thirds">
         <form id="cab-body-details-form" method="post">
             <input type="hidden" asp-for="IsFromSummary"/>
-            <fieldset class="govuk-fieldset">
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.TestingLocations))">
-                    <h1 class="govuk-label-wrapper">
-                        <label class="govuk-heading-s" for="TestingLocations1" id="TestingLocations">
-                            Registered test location
-                        </label>
-                    </h1>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="TestingLocations" class="govuk-error-message"></span>
-                    </p>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.TestingLocations))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" for="TestingLocations1" id="TestingLocations">
+                        Registered test location
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="TestingLocations" class="govuk-error-message"></span>
+                </p>
 
-                    <div id="test-locations-container">
-                        @foreach (var testingLocation in Model.TestingLocations)
+                <div id="test-locations-container">
+                    @foreach (var testingLocation in Model.TestingLocations)
+                    {
+                        <div class="test-location">
+                            <select class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.TestingLocations))" name="TestingLocations"
+                                    asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(testingLocation)))">
+                                <option value="">Choose location</option>
+                            </select>
+                            <a href="#" class="test-location-remove-link govuk-link govuk-link--no-visited-state govuk-visually-hidden">Remove</a>
+                            @if (!string.IsNullOrEmpty(testingLocation))
+                            {
+                                <button class="govuk-button govuk-button--secondary remove-test-location-button" data-module="govuk-button" name="submitType" value="Remove-@testingLocation">
+                                    Remove
+                                </button>
+                            }
+                        </div>
+                    }
+                </div>
+
+            </div>
+            <div id="add-test-location-button-container">
+                <a id="add-test-location-link" href="#" class="govuk-link govuk-link--no-visited-state">Add another registered test location</a>
+                <button id="add-test-location-button" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="Add">
+                    Add another registered test location
+                </button>
+            </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"BodyTypes")">
+                <fieldset class="govuk-fieldset" aria-describedby="body-types-hint">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="BodyTypes" id="BodyTypes">
+                            Body type
+                        </label>
+                    </h3>
+                    <div id="body-types-hint" class="govuk-hint">
+                        Select all that apply
+                    </div>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="BodyTypes" class="govuk-error-message"></span>
+                    </p>
+                    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        @foreach (var bodyType in DataConstants.Lists.BodyTypes)
                         {
-                            <div class="test-location">
-                                <select class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.TestingLocations))" name="TestingLocations"
-                                        asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(testingLocation)))">
-                                    <option value="">Choose location</option>
-                                </select>
-                                <a href="#" class="test-location-remove-link govuk-link govuk-link--no-visited-state govuk-visually-hidden">Remove</a>
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@bodyType" name="BodyTypes" type="checkbox" value="@bodyType" checked="@(Model?.BodyTypes!= null && Model.BodyTypes.Any(bt => bt.Equals(bodyType, StringComparison.InvariantCultureIgnoreCase)))">
+                                <label class="govuk-label govuk-checkboxes__label" for="@bodyType">
+                                    @bodyType
+                                </label>
                             </div>
                         }
                     </div>
+                </fieldset>
+            </div>
 
-                </div>
-                <div id="add-test-location-button-container">
-                    <a id="add-test-location-button" href="#" class="govuk-link govuk-link--no-visited-state">Add another registered test location</a>
-                </div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"BodyTypes")">
-                    <fieldset class="govuk-fieldset" aria-describedby="body-types-hint">
-                        <h1 class="govuk-label-wrapper">
-                            <label class=" govuk-heading-s" asp-for="BodyTypes" id="BodyTypes">
-                                Body type
-                            </label>
-                        </h1>
-                        <div id="body-types-hint" class="govuk-hint">
-                            Select all that apply
-                        </div>
-                        <p class="govuk-error-message">
-                            <span asp-validation-for="BodyTypes" class="govuk-error-message"></span>
-                        </p>
-                        <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                            @foreach (var bodyType in DataConstants.Lists.BodyTypes)
-                            {
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="@bodyType" name="BodyTypes" type="checkbox" value="@bodyType" checked="@(Model?.BodyTypes!= null && Model.BodyTypes.Any(bt => bt.Equals(bodyType, StringComparison.InvariantCultureIgnoreCase)))">
-                                    <label class="govuk-label govuk-checkboxes__label" for="@bodyType">
-                                        @bodyType
-                                    </label>
-                                </div>
-                            }
-                        </div>
-                    </fieldset>
-                </div>
-
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "LegislativeAreas")">
-                    <fieldset class="govuk-fieldset" aria-describedby="legislative-area-hint">
-                        <h1 class="govuk-label-wrapper">
-                            <label class=" govuk-heading-s" asp-for="LegislativeAreas" id="LegislativeAreas">
-                                Legislative area
-                            </label>
-                        </h1>
-                        <div id="legislative-area-hint" class="govuk-hint">
-                            Select all that apply
-                        </div>
-                        <p class="govuk-error-message">
-                            <span asp-validation-for="LegislativeAreas" class="govuk-error-message"></span>
-                        </p>
-                        <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                            @foreach (var legislativeArea in DataConstants.Lists.LegislativeAreas)
-                            {
-                                <div class="govuk-checkboxes__item">
-                                    <input class="govuk-checkboxes__input" id="@legislativeArea" name="LegislativeAreas" type="checkbox" value="@legislativeArea" checked="@(Model?.LegislativeAreas != null && Model.LegislativeAreas.Any(la => la.Equals(legislativeArea, StringComparison.InvariantCultureIgnoreCase)))">
-                                    <label class="govuk-label govuk-checkboxes__label" for="@legislativeArea">
-                                        @legislativeArea
-                                    </label>
-                                </div>
-                            }
-                        </div>
-                    </fieldset>
-                </div>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "LegislativeAreas")">
+                <fieldset class="govuk-fieldset" aria-describedby="legislative-area-hint">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="LegislativeAreas" id="LegislativeAreas">
+                            Legislative area
+                        </label>
+                    </h3>
+                    <div id="legislative-area-hint" class="govuk-hint">
+                        Select all that apply
+                    </div>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="LegislativeAreas" class="govuk-error-message"></span>
+                    </p>
+                    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        @foreach (var legislativeArea in DataConstants.Lists.LegislativeAreas)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@legislativeArea" name="LegislativeAreas" type="checkbox" value="@legislativeArea" checked="@(Model?.LegislativeAreas != null && Model.LegislativeAreas.Any(la => la.Equals(legislativeArea, StringComparison.InvariantCultureIgnoreCase)))">
+                                <label class="govuk-label govuk-checkboxes__label" for="@legislativeArea">
+                                    @legislativeArea
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+            </div>
                 
-                <div class="govuk-button-group">
-                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                        Continue
-                    </button>
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
-                        Save as draft
-                    </button>
-                    @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
-                    {
-                        <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                    }
-                    else
-                    {
-                        <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                    }
-                </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                    Continue
+                </button>
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
+                    Save as draft
+                </button>
+                @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                {
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+                else
+                {
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+            </div>
 
-            </fieldset>
         </form>
     </div>
 </div>
