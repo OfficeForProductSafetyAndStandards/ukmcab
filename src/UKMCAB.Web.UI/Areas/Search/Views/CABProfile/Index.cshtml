@@ -148,7 +148,7 @@
                             <dd class="govuk-summary-list__value">
                                 @if (!string.IsNullOrWhiteSpace(Model.Website))
                                 {
-                                    <a class="govuk-link" href="@Html.SanitiseURL(Model.Website)">@Model.Website</a>
+                                    <a class="govuk-link" href="@Html.SanitiseURL(Model.Website)" target="_blank">@Model.Website</a>
                                 }
                                 else
                                 {
