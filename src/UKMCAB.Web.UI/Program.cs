@@ -171,7 +171,18 @@ app.UseCsp(cspHeader); // content-security-policy
 app.UseMiddleware<BasicAuthenticationMiddleware>();
 app.UseCustomHttpErrorHandling(builder.Configuration);
 app.UseRouting();
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = (ctx) =>
+    {
+        if (ctx.File.Name.ToLower().EndsWith(".css", StringComparison.OrdinalIgnoreCase) || ctx.File.Name.ToLower().EndsWith(".js", StringComparison.OrdinalIgnoreCase))
+        {
+            ctx.Context.Response.Headers.CacheControl = "no-cache, no-store";
+            ctx.Context.Response.Headers.Pragma = "no-cache";
+            ctx.Context.Response.Headers.Expires = "-1";
+        }
+    }
+});
 
 
 var supportedCultures = new[] { new System.Globalization.CultureInfo("en-GB") };
