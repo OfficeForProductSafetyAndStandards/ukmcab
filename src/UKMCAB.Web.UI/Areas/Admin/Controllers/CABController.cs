@@ -109,6 +109,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (DateTime.TryParse(date, out DateTime dateTime))
             {
+                // Validate date 
                 return dateTime;
             }
             if(!date.Equals("//"))
