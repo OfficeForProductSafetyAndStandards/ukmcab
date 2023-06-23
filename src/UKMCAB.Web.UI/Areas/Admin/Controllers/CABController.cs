@@ -4,6 +4,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Core.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -44,8 +45,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/about/{id}")]
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
-            var appointmentDate = CheckDate(model.AppointmentDate, nameof(model.AppointmentDate), "appointment");
-            var renewalDate = CheckDate(model.RenewalDate, nameof(model.RenewalDate), "renewal");
+            //var appointmentDate = CheckDate(model.AppointmentDate, nameof(model.AppointmentDate), "appointment");
+            var appointmentDate = CheckDateValidity(model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
+            var renewalDate = CheckDateValidity(model.RenewalDateDay, model.RenewalDateMonth, model.RenewalDateYear, nameof(model.RenewalDate), "renewal");
+
+            if (renewalDate < appointmentDate)
+            {
+                ModelState.AddModelError(nameof(model.RenewalDate), $"The Renewal Date cannot be before the Appointment Date. Please select a valid renewal date.");
+            }
+            //var renewalDate = CheckDate(model.RenewalDate, nameof(model.RenewalDate), "renewal");
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
             if (ModelState.IsValid)
             {
@@ -105,15 +113,73 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(model);
         }
 
+        private DateTime? CheckDateValidity(string day, string month, string year, string modelKey, string errorMessagePart)
+        {
+            var date = $"{day}/{month}/{year}";
+
+            if (int.TryParse(day, out int dayNum) && int.TryParse(month, out int monthNum) && int.TryParse(year, out int yearNum))
+            {
+                if(!DateValidator.IsValidDay(dayNum, monthNum, yearNum))
+                {
+                    int maxDay = DateValidator.GetMaxDaysInMonth(monthNum, yearNum);
+                    ModelState.AddModelError(modelKey, $"Please enter a valid day between 1 and {maxDay}.");
+
+                    return null;
+                }
+
+                if (!DateValidator.IsValidMonth(monthNum))
+                {                    
+                    ModelState.AddModelError(modelKey, $"Please enter a valid month between 1 and 12.");
+
+                    return null;
+                }
+
+                if(!DateValidator.DateIsWithinFiveYearInFuture(dayNum, monthNum, yearNum) && modelKey == "RenewalDate")
+                {
+                    ModelState.AddModelError(modelKey, $"The renewal date cannot exceed 5 years in the future from the CAB creation date. Please select a valid renewal date within the specified range.");
+                    //return null;
+                }               
+                
+                if(!DateValidator.DateIsWithinFiveYearInThePast(dayNum, monthNum, yearNum) && modelKey == "AppointmentDate")
+                {
+                    ModelState.AddModelError(modelKey, $"The appointment date cannot exceed 5 years in the past from the CAB creation date and can not be in the future. Please select a valid appointment date within the specified range.");
+                    //return null;
+                }
+
+
+                if(ModelState.ErrorCount > 0)
+                    return null;
+
+                if (DateTime.TryParse(date, out DateTime dateTime))
+                    return dateTime;   
+
+            }
+
+            //if(string.IsNullOrEmpty(day) )
+            if (!date.Equals("//"))
+            {
+                // Check if day or month or year is invalid or missing and throw relevant error
+
+                ModelState.AddModelError(modelKey, $"The {errorMessagePart} date is not in a valid date format");
+            }
+            return null;
+        }
+
         private DateTime? CheckDate(string date, string modelKey, string errorMessagePart)
         {
+
             if (DateTime.TryParse(date, out DateTime dateTime))
             {
-                // Validate date 
+                // Validate date - Appointment Date: No future date
+                // Validate date - Renewal Date: No past date
+                // Validate date - Appointment Date: Not more than 5yrs in the future
                 return dateTime;
             }
             if(!date.Equals("//"))
             {
+                // Check if day or month or year is invalid or missing and throw relevant error
+
+
                 ModelState.AddModelError(modelKey, $"The {errorMessagePart} date is not in a valid date format");
             }
             return null;
