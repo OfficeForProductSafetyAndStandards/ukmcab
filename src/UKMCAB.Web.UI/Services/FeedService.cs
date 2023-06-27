@@ -17,7 +17,7 @@ namespace UKMCAB.Web.UI.Services
                 GetFeedElement("Telephone", document.Phone),
                 GetFeedElement("Email address", document.Email),
                 GetFeedElement("Website", document.Website),
-                GetList("BodyTypes", document.BodyTypes),
+                GetList("Body types", document.BodyTypes),
                 GetList("Legislative areas", document.LegislativeAreas)
                 );
 
@@ -91,7 +91,7 @@ namespace UKMCAB.Web.UI.Services
         {
             var sb = new StringBuilder($"<h2>{title}:</h2>");
             sb.AppendFormat("<div>{0}</div>",
-                string.Join("<br />", content));
+                content != null && content.Any() ? string.Join("<br />", content) : "Not provided");
             return sb.ToString();
         }
 
@@ -99,7 +99,7 @@ namespace UKMCAB.Web.UI.Services
         {
             var sb = new StringBuilder($"<h2>{title}:</h2>");
             sb.Append("<div><ul>");
-            if (!list.Any())
+            if (list == null || !list.Any())
             {
                 sb.Append("<li>Not provided</li>");
             }
