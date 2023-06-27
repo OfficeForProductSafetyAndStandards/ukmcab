@@ -9,6 +9,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using Microsoft.ApplicationInsights;
+using UKMCAB.Web.UI.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -64,6 +65,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ResultsPerPage = DataConstants.Search.SearchResultsPerPage,
                 ResultType = "bodies"
             };
+            model.FeedLinksViewModel = new FeedLinksViewModel
+            {
+                FeedUrl = "/search-feed",
+                EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes
+                    .Step0RequestSearchSubscription)
+            };
+            if (Request.QueryString.HasValue)
+            {
+                model.FeedLinksViewModel.FeedUrl +=
+                    "?" + Request.QueryString.Value.RemoveQueryParameters("pagenumber", "sort");
+                model.FeedLinksViewModel.EmailUrl += "?" + Request.QueryString.Value;
+            }
+
 
             _telemetry.TrackEvent(AiTracking.Events.CabsSearched, HttpContext.ToTrackingMetadata(new()
             {
@@ -125,8 +139,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 IgnorePaging = true,
                 Select = _select,
             });
-
-
 
             var feed = _feedService.GetSyndicationFeed(GetFeedName(model), Request, searchResult.CABs, Url);
 
