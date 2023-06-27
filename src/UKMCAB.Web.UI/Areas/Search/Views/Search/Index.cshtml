@@ -20,18 +20,7 @@
             <h1 class="govuk-heading-l">@Html.Raw(title)</h1>
         </div>
         <div class="atom-feed atom-feed-top govuk-grid-column-one-third">
-            <a href="@basePath" class="govuk-link govuk-link--no-visited-state govuk-!-display-inline-block govuk-!-margin-right-1 govuk-!-margin-left-1 govuk-!-margin-bottom-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" class="atom-feed__icon" focusable="false" fill="currentColor" aria-hidden="true"><path d="M1.996 11A2 2 0 0 0 0 12.993c0 1.101.895 1.99 1.996 1.99 1.106 0 2-.889 2-1.99a2 2 0 0 0-2-1.993zM.002 5.097V7.97c1.872 0 3.632.733 4.958 2.059A6.984 6.984 0 0 1 7.015 15h2.888c0-5.461-4.443-9.903-9.9-9.903zM.006 0v2.876c6.676 0 12.11 5.44 12.11 12.124H15C15 6.731 8.273 0 .006 0z"></path>
-                </svg>
-            <u>Subscribe to feed</u>
-            </a>
-
-            <a href="@Url.RouteUrl(UKMCAB.Web.UI.Areas.Subscriptions.Controllers.SubscriptionsController.Routes.Step0RequestSearchSubscription)@Context.Request.QueryString" class="govuk-link govuk-link--no-visited-state govuk-!-display-inline-block govuk-!-margin-right-1 govuk-!-margin-left-1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="15.75" class="atom-feed__icon" focusable="false" fill="currentColor" aria-hidden="true">
-                    <path d="M19.687 0H1.312C.589 0 0 .587 0 1.313v13.124c0 .726.588 1.313 1.313 1.313h18.374c.725 0 1.313-.587 1.313-1.313V1.313C21 .587 20.412 0 19.687 0zm-2.625 2.625L10.5 7.875l-6.563-5.25h13.126zm1.313 10.5H2.625V3.937L10.5 10.5l7.875-6.563v9.188z"></path>
-                </svg>
-            <u>Get emails</u>
-            </a>
+            <partial name="Partials/_FeedLinks" model="Model.FeedLinksViewModel" />
         </div>
     </div>
 
@@ -42,20 +31,7 @@
         <partial name="Partials/_SearchResults" model="Model"/>
 
         <div class="atom-feed atom-feed-bottom govuk-grid-column-two-thirds">
-            <a href="@basePath" class="govuk-link govuk-link--no-visited-state govuk-!-display-block govuk-!-margin-bottom-2">
-                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" class="atom-feed__icon" focusable="false" fill="currentColor" aria-hidden="true"><path d="M1.996 11A2 2 0 0 0 0 12.993c0 1.101.895 1.99 1.996 1.99 1.106 0 2-.889 2-1.99a2 2 0 0 0-2-1.993zM.002 5.097V7.97c1.872 0 3.632.733 4.958 2.059A6.984 6.984 0 0 1 7.015 15h2.888c0-5.461-4.443-9.903-9.9-9.903zM.006 0v2.876c6.676 0 12.11 5.44 12.11 12.124H15C15 6.731 8.273 0 .006 0z"></path>
-                </svg>
-            <u>Subscribe to feed</u>
-            </a>
-
-            <a href="@Url.RouteUrl(UKMCAB.Web.UI.Areas.Subscriptions.Controllers.SubscriptionsController.Routes.Step0RequestSearchSubscription)@Context.Request.QueryString" class="govuk-link govuk-link--no-visited-state govuk-!-display-block">
-                <svg xmlns="http://www.w3.org/2000/svg" width="21" height="15.75" class="atom-feed__icon" focusable="false" fill="currentColor" aria-hidden="true">
-                    <path d="M19.687 0H1.312C.589 0 0 .587 0 1.313v13.124c0 .726.588 1.313 1.313 1.313h18.374c.725 0 1.313-.587 1.313-1.313V1.313C21 .587 20.412 0 19.687 0zm-2.625 2.625L10.5 7.875l-6.563-5.25h13.126zm1.313 10.5H2.625V3.937L10.5 10.5l7.875-6.563v9.188z"></path>
-                </svg>
-            <u>Get emails</u>
-            </a>
-
-            
+            <partial name="Partials/_FeedLinks" model="Model.FeedLinksViewModel" />
         </div>
 
     </div>

@@ -351,33 +351,8 @@
     }
 
     .atom-feed {
-        a {
-            text-decoration: none;
 
-            .atom-feed__icon {
-                color: #0b0c0c;
-                margin-right: 5px;
-            }
-        }
-
-        &.atom-feed-top {
-            a {
-                float: right;
-            }
-
-            @include govuk-media-query($until: tablet) {
-                display: none;
-            }
-        }
-
-        &.atom-feed-bottom {
-            display: none;
-
-            @include govuk-media-query($until: tablet) {
-                display: block;
-                order: 3;
-            }
-        }
+        
     }
 
     &.js-enabled {
