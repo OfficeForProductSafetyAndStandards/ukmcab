@@ -2,9 +2,18 @@
 .cab-detail-group {
     display: inline-block;
     border: 2px solid #0b0c0c;
-    padding: 20px 30px 20px 30px;
+    padding: 20px 30px;
     margin-top: 40px;
     margin-bottom: 40px;
+    width: calc(100% - 100px);
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .cab-detail-group {
+        width: 100%;
+        padding: 20px;
+    }
 }
 
 .cab-detail-group-heading {
