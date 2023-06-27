@@ -48,6 +48,28 @@ namespace UKMCAB.Web.UI.Services
 
             }
 
+            if (int.TryParse(day, out int dayNum1) || int.TryParse(month, out int monthNum1) || int.TryParse(year, out int yearNum1))
+            {
+                var missingField = "";
+
+                if (string.IsNullOrWhiteSpace(day))
+                    missingField += "day and ";
+
+                if (string.IsNullOrWhiteSpace(month))
+                    missingField += "month and ";
+
+                if (string.IsNullOrWhiteSpace(year))
+                    missingField += "year";
+
+                missingField =  missingField.TrimEnd(' ', 'a', 'n', 'd', ' ');
+                if (!string.IsNullOrEmpty(missingField))
+                {
+                    modelState.AddModelError(modelKey, $"The date must include a {missingField}.");
+                    return null;
+                }
+                
+            }
+
             if (!date.Equals("//"))
             {
                 modelState.AddModelError(modelKey, $"The {errorMessagePart} date is not in a valid date format");
