@@ -50,5 +50,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         // Results
         public List<ResultViewModel> SearchResults { get; set; }
         public PaginationViewModel Pagination { get; set; }
+        public FeedLinksViewModel FeedLinksViewModel { get; set; }
     }
 }
