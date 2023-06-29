@@ -1,17 +1,16 @@
-﻿using System.Net;
-using System.Security.Policy;
+﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Identity;
+using System.Net;
+using System.Xml;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services;
+using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
-using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Identity.Stores.CosmosDB;
+using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
-using Microsoft.ApplicationInsights;
-using UKMCAB.Data;
-using System.Xml;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 
@@ -30,10 +29,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public static class Routes
         {
             public const string CabDetails = "cab.detail";
+            public const string TrackInboundLinkCabDetails = "cab.details.inbound-email-link";
             public const string CabFeed = "cab.feed";
         }
 
-        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, ICABAdminService cabAdminService, IFileStorage fileStorage, 
+        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, ICABAdminService cabAdminService, IFileStorage fileStorage,
             UserManager<UKMCABUser> userManager, TelemetryClient telemetryClient, IFeedService feedService)
         {
             _cachedPublishedCabService = cachedPublishedCabService;
@@ -44,13 +44,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             _feedService = feedService;
         }
 
+        [HttpGet("~/__subscriptions/__inbound/cab/{id}", Name = Routes.TrackInboundLinkCabDetails)]
+        public IActionResult TrackInboundLinkCabDetails(string id)
+        {
+            _telemetryClient.TrackEvent(AiTracking.Events.CabViewedViaSubscriptionsEmail, HttpContext.ToTrackingMetadata());
+            return RedirectToRoute(Routes.CabDetails, new { id });
+        }
+
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
         public async Task<IActionResult> Index(string id, string? returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
             if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
             {
-                return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl});
+                return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl });
             }
 
             if (cabDocument == null || (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated))
@@ -63,10 +70,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var cab = GetCabProfileViewModel(cabDocument, isOPSSUer, returnUrl);
 
-            _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new() 
-            { 
-                [AiTracking.Metadata.CabId] = id, 
-                [AiTracking.Metadata.CabName] = cab.Name 
+            _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
+            {
+                [AiTracking.Metadata.CabId] = id,
+                [AiTracking.Metadata.CabName] = cab.Name
             }));
 
             return View(cab);
@@ -161,7 +168,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 },
                 FeedLinksViewModel = new FeedLinksViewModel
                 {
-                    FeedUrl = Url.RouteUrl(Routes.CabFeed, new {id = cabDocument.CABId}),
+                    FeedUrl = Url.RouteUrl(Routes.CabFeed, new { id = cabDocument.CABId }),
                     EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes.Step0RequestCabSubscription, new { id = cabDocument.CABId })
                 }
             };
