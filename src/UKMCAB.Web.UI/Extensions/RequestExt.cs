@@ -21,7 +21,7 @@ namespace UKMCAB.Web.UI.Extensions
             {
                 collection.Remove(queryKey);
             }
-            return collection.HasKeys() ? collection.ToString() : string.Empty;
+            return collection.HasKeys() ? "?" + collection.ToString() : string.Empty;
         }
     }
 }
