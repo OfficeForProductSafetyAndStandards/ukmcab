@@ -9,10 +9,19 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             Name = cab.Name;
             URLSlug = cab.URLSlug;
             Address = StringExt.Join(", ", cab.AddressLine1, cab.AddressLine2, cab.TownCity, cab.County, cab.Postcode, cab.Country);
-            BodyType = cab.BodyTypes.Sentenceify();
+            BodyType = ListItems(cab.BodyTypes);
             RegisteredOfficeLocation = cab.RegisteredOfficeLocation;
-            RegisteredTestLocation = cab.TestingLocations.Sentenceify();
-            LegislativeArea = cab.LegislativeAreas.Sentenceify();
+            RegisteredTestLocation = ListItems(cab.TestingLocations);
+            LegislativeArea = ListItems(cab.LegislativeAreas);
+        }
+
+        private string ListItems(IEnumerable<string> list)
+        {
+            if (list != null && list.Any())
+            {
+                return string.Join("; ", list.Select(l => l.Trim()));
+            }
+            return string.Empty;
         }
 
         public string Name { get; set; }
