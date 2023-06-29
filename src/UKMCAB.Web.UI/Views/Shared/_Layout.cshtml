@@ -1,8 +1,10 @@
 ﻿@inject IConfiguration config
+@using System.Net
 @model ILayoutModel
 @{
     var showCookieHeader = !Context.Request.Cookies.ContainsKey(Constants.AnalyticsOptInCookieName);
     var loadAnalytics = !showCookieHeader && Context.Request.Cookies[Constants.AnalyticsOptInCookieName] == "accept";
+    var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
 }
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
@@ -60,7 +62,7 @@
                     beta
                 </strong>
                 <span class="govuk-phase-banner__text">
-                    How could we improve this service? Your <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="ContactUs">feedback</a> will help.
+                    How could we improve this service? Your <a class="govuk-link" asp-area="Home" asp-controller="Footer" asp-action="ContactUs" asp-route-returnUrl="@returnUrl">feedback</a> will help.
                 </span>
             </p>
         </div>
