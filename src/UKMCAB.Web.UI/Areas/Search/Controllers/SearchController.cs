@@ -165,30 +165,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private string GetFeedName(SearchViewModel model)
         {
-            var sb = new StringBuilder("UKMCAB search results for");
-            var filtersAdded = false;
-            if (!string.IsNullOrEmpty(model.Keywords))
-            {
-                sb.AppendFormat(" Keywords: {0};", model.Keywords);
-                filtersAdded = true;
-            }
-            if (model.BodyTypes != null && model.BodyTypes.Any())
-            {
-                sb.AppendFormat(" Body types: {0};", string.Join(", ", model.BodyTypes));
-                filtersAdded = true;
-            }
-            if (model.RegisteredOfficeLocations != null && model.RegisteredOfficeLocations.Any())
-            {
-                sb.AppendFormat(" Registered office locations: {0};", string.Join(", ", model.RegisteredOfficeLocations));
-                filtersAdded = true;
-            }
-            if (model.LegislativeAreas != null && model.LegislativeAreas.Any())
-            {
-                sb.AppendFormat(" Registered office locations: {0};", string.Join(", ", model.RegisteredOfficeLocations));
-                filtersAdded = true;
-            }
-
-            return filtersAdded ? sb.ToString() : "UKMCAB search results";
+            return string.IsNullOrEmpty(model.Keywords) ? "UKMCAB search results" : $"UKMCAB search results for \"{model.Keywords.Trim()}\"";
         }
 
         private async Task SetFacetOptions(SearchViewModel model)
