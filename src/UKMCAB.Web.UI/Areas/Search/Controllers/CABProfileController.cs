@@ -126,7 +126,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 PublishedDate = cabDocument.Published.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
-                UKASReferenceNumber = string.Empty,
+                UKASReferenceNumber = cabDocument.UKASReference,
                 Address = cabDocument.GetAddress(),
                 Website = cabDocument.Website,
                 Email = cabDocument.Email,
