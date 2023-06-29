@@ -73,9 +73,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
             if (Request.QueryString.HasValue)
             {
-                model.FeedLinksViewModel.FeedUrl +=
-                    "?" + Request.QueryString.Value.RemoveQueryParameters("pagenumber", "sort");
-                model.FeedLinksViewModel.EmailUrl += "?" + Request.QueryString.Value;
+                model.FeedLinksViewModel.FeedUrl += Request.QueryString.Value.EnsureStartsWith("?").RemoveQueryParameters("pagenumber", "sort");
+                model.FeedLinksViewModel.EmailUrl += Request.QueryString.Value.EnsureStartsWith("?");
             }
 
 
