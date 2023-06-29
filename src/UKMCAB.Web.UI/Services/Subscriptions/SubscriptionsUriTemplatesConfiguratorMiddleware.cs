@@ -1,7 +1,6 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 using UKMCAB.Subscriptions.Core.Domain.Emails;
 using UKMCAB.Subscriptions.Core.Domain.Emails.Uris;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
@@ -55,6 +54,7 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
         {
             _telemetry.TrackException(ex);
             _telemetry.TrackEvent(AiTracking.Events.SubscriptionsInitialise+"_FAIL");
+            _logger.LogError(ex, ex.Message);
         }
     }
 
@@ -79,7 +79,7 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
         {
             BaseUri = @base,
 
-            CabDetails = new("@cabid", _linkGenerator.GetPathByRouteValues(CABProfileController.Routes.CabDetails, new { id = "@cabid" })
+            CabDetails = new("@cabid", _linkGenerator.GetPathByRouteValues(CABProfileController.Routes.TrackInboundLinkCabDetails, new { id = "@cabid" })
                                 ?? throw new Exception("Cab details route not found")),
 
             Search = new(_linkGenerator.GetPathByAction(nameof(SearchController.Index), nameof(SearchController).ControllerName())

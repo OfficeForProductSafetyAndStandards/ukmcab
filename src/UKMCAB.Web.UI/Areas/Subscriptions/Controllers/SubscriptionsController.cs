@@ -193,7 +193,7 @@ public class SubscriptionsController : Controller
             }
             else
             {
-                var result = await _subscriptions.RequestSubscriptionAsync(new CabSubscriptionRequest(req.EmailAddress, req.CabId ?? throw new Exception("CAB id should not be null"), req.Frequency.Value));
+                var result = await _subscriptions.RequestSubscriptionAsync(new CabSubscriptionRequest(req.EmailAddress, req.CabId ?? throw new Exception("CAB id should not be null"), req.Frequency.Value, req.CabName));
                 if (result.ValidationResult == SubscriptionService.ValidationResult.AlreadySubscribed)
                 {
                     throw new DomainException("You are already subscribed to this CAB");
