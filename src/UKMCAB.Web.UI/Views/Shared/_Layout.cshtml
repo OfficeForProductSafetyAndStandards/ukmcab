@@ -1,5 +1,6 @@
 ﻿@inject IConfiguration config
 @using System.Net
+@using Microsoft.AspNetCore.Mvc.ModelBinding
 @model ILayoutModel
 @{
     var showCookieHeader = !Context.Request.Cookies.ContainsKey(Constants.AnalyticsOptInCookieName);
@@ -23,7 +24,7 @@
             gtag('config', '@(config.GetValue<string>("GoogleAnalyticsId"))');
         </script>
     }
-    <title>@((Model?.Title).IsNotNullOrEmpty() ? string.Concat(Model?.Title, " - ") : null)@Constants.SiteName</title>
+    <title>@Model.Title.FormatTitle(ViewData.ModelState.IsValid)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta name="theme-color" content="#0b0c0c"/>
 
