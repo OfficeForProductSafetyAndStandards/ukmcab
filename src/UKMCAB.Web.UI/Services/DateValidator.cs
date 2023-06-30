@@ -10,36 +10,44 @@ namespace UKMCAB.Web.UI.Services
 
             if (int.TryParse(day, out int dayNum) && int.TryParse(month, out int monthNum) && int.TryParse(year, out int yearNum))
             {
-                if (!DateService.IsAValidMonth(monthNum))
-                {
-                    modelState.AddModelError(modelKey, $"Please enter a valid month between 1 and 12.");
+                //if (!DateService.IsAValidMonth(monthNum))
+                //{
+                //    modelState.AddModelError(modelKey, $"Please enter a valid month between 1 and 12.");
 
-                    return null;
-                }
+                //    return null;
+                //}
 
-                if (!DateService.IsAValidDay(dayNum, monthNum, yearNum))
+                //if (!DateService.IsAValidDay(dayNum, monthNum, yearNum))
+                //{
+                //    int maxDay = DateService.GetMaxDaysInMonth(monthNum, yearNum);
+                //    modelState.AddModelError(modelKey, $"Please enter a valid day between 1 and {maxDay}.");
+
+                //    return null;
+                //}
+
+                if (!DateService.IsAValidDay(dayNum, monthNum, yearNum) || !DateService.IsAValidMonth(monthNum))
                 {
                     int maxDay = DateService.GetMaxDaysInMonth(monthNum, yearNum);
-                    modelState.AddModelError(modelKey, $"Please enter a valid day between 1 and {maxDay}.");
+                    modelState.AddModelError(modelKey, $"{errorMessagePart.ToSentenceCase()} date must be a real date.");
 
                     return null;
                 }
 
                 if (!DateService.IsTodayOrInPast(dayNum, monthNum, yearNum) && modelKey == "AppointmentDate")
                 {
-                    modelState.AddModelError(modelKey, $"The {errorMessagePart} date cannot be in the future. Please enter a valid {errorMessagePart} date.");
+                    modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be in the past.");
                     return null;
                 }
 
                 if (!DateService.IsTodayOrFuture(dayNum, monthNum, yearNum) && modelKey == "RenewalDate")
                 {
-                    modelState.AddModelError(modelKey, $"The {errorMessagePart} date cannot be in the past. Please enter a valid {errorMessagePart} date.");
+                    modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be in the future.");
                     return null;
                 }
 
                 if (!DateService.IsWithinFiveYearAndNotInPast(dayNum, monthNum, yearNum) && modelKey == "RenewalDate")
                 {
-                    modelState.AddModelError(modelKey, $"The {errorMessagePart} date cannot exceed 5 years in the future from the CAB creation date. Please select a valid {errorMessagePart} date within the specified range.");
+                    modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be within 5 years of the appointment date.");
                     return null;
                 }
 
@@ -64,7 +72,7 @@ namespace UKMCAB.Web.UI.Services
                 missingField =  missingField.TrimEnd(' ', 'a', 'n', 'd', ' ');
                 if (!string.IsNullOrEmpty(missingField))
                 {
-                    modelState.AddModelError(modelKey, $"The date must include a {missingField}.");
+                    modelState.AddModelError(modelKey, $"{errorMessagePart.ToSentenceCase()} date must include a {missingField}.");
                     return null;
                 }
                 
