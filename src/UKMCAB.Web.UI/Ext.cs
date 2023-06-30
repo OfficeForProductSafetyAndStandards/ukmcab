@@ -36,7 +36,7 @@ public static class Ext
     }
 
     public static IHtmlContent OpensInNewWindow(this IHtmlHelper htmlHelper) =>
-        htmlHelper.Raw("<span class=\"govuk-visually-hidden\">(opens in a new window)</span>");
+        htmlHelper.Raw("<span class=\"govuk-visually-hidden\">(opens in a new tab)</span>");
 
     public static IHtmlContent ValueOrNotProvided(this IHtmlHelper htmlHelper, string text) =>
         string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.NotProvided) : htmlHelper.Raw(text);
