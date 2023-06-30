@@ -59,4 +59,20 @@ public static class Ext
         }
         return fallback ?? string.Empty;
     }
+
+    public static string FormatTitle(this string title, bool IsValidModelState)
+    {
+        var titleComponents = new List<string>();
+        if (!IsValidModelState)
+        {
+            titleComponents.Add("Error");
+        }
+
+        if (title != null && !string.IsNullOrWhiteSpace(title))
+        {
+            titleComponents.Add(title);
+        }
+        titleComponents.Add(Constants.SiteName);
+        return string.Join(" - ", titleComponents);
+    }
 }
