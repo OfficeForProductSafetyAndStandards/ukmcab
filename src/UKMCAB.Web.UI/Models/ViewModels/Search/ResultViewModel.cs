@@ -19,7 +19,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         {
             if (list != null && list.Any())
             {
-                return string.Join("; ", list.Select(l => l.Trim()));
+                return string.Join(", ", list.Select(l => l.Trim()));
             }
             return string.Empty;
         }
