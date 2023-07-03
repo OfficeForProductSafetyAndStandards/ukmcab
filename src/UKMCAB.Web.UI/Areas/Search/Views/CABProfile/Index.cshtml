@@ -1,6 +1,8 @@
-﻿@model CABProfileViewModel
+﻿@using System.Net
+@model CABProfileViewModel
 @{
     ViewData["nav"] = "search";
+    var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
 }
 
 @section BackButton
