@@ -47,7 +47,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
 
-        [Route("search")]
         [Route("/")]
         public async Task<IActionResult> Index(SearchViewModel model)
         {
