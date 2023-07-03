@@ -4,6 +4,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Core.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using System.Net;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -59,7 +60,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var slug = Slug.Make(model.Name);
                     var newSlug = slug;
                     var existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
-                    var index = 0; 
+                    var index = 0;
                     while (existingDocs.Any(d => !d.CABId.Equals(document.CABId)))
                     {
                         newSlug = $"{slug}-{index++}";
@@ -91,8 +92,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     else if (submitType == Constants.SubmitType.Continue)
                     {
                         return model.IsFromSummary ?
-                            RedirectToAction("Summary", "CAB", new { Area = "admin", id= createdDocument.CABId }):
-                            RedirectToAction("Contact", "CAB", new { Area = "admin", id= createdDocument.CABId });
+                            RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId }) :
+                            RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
                     }
                     else
                     {
@@ -111,7 +112,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return dateTime;
             }
-            if(!date.Equals("//"))
+            if (!date.Equals("//"))
             {
                 ModelState.AddModelError(modelKey, $"The {errorMessagePart} date is not in a valid date format");
             }
@@ -178,7 +179,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary ?
-                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }):
+                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
                         RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
                 }
                 return SaveDraft(latestDocument);
@@ -199,7 +200,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
-            
+
             // Pre-populate model for edit
             var model = new CABBodyDetailsViewModel(latest);
             if (!model.TestingLocations.Any())
@@ -246,9 +247,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
-                { 
+                {
                     return model.IsFromSummary ?
-                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) : 
+                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
                         RedirectToAction("SchedulesUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
                 }
                 return SaveDraft(latestDocument);
@@ -266,7 +267,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/summary/{id}")]
-        public async Task<IActionResult> Summary(string id)
+        public async Task<IActionResult> Summary(string id, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -285,10 +286,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabContactViewModel = cabContact,
                 CabBodyDetailsViewModel = cabBody,
                 Schedules = latest.Schedules ?? new List<FileUpload>(),
-                Documents = latest.Documents ?? new List<FileUpload>()
+                Documents = latest.Documents ?? new List<FileUpload>(),
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl)
+
             };
 
-            model.ValidCAB = latest.StatusValue != Status.Published 
+            model.ValidCAB = latest.StatusValue != Status.Published
                              && TryValidateModel(cabDetails)
                              && TryValidateModel(cabContact)
                              && TryValidateModel(cabBody);
@@ -342,7 +345,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> Confirmation(string id)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
-            if (latest == null || latest.StatusValue != Status.Published) 
+            if (latest == null || latest.StatusValue != Status.Published)
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
@@ -357,7 +360,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpGet]
         [Route("admin/cab/cancel/{id}")]
         public async Task<IActionResult> Cancel(string id)
-        { 
+        {
             await _cabAdminService.DeleteDraftDocumentAsync(id);
             return RedirectToAction("Index", "Admin", new { Area = "admin" });
         }

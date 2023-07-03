@@ -20,5 +20,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public bool ValidCAB { get; set; }
         public bool ShowError { get; set; }
         public string? Title => "Check details before publishing";
+        public string? ReturnUrl { get; set; }
     }
 }
