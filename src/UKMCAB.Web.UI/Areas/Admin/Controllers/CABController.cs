@@ -46,12 +46,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
             var appointmentDate = DateValidator.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
-            var renewalDate = DateValidator.CheckDate(ModelState, model.RenewalDateDay, model.RenewalDateMonth, model.RenewalDateYear, nameof(model.RenewalDate), "renewal");
+            var renewalDate = DateValidator.CheckDate(ModelState, model.RenewalDateDay, model.RenewalDateMonth, model.RenewalDateYear, nameof(model.RenewalDate), "review", appointmentDate);
 
-            if (renewalDate < appointmentDate)
-            {
-                ModelState.AddModelError(nameof(model.RenewalDate), $"The Renewal Date cannot be before the Appointment Date. Please enter a valid renewal date.");
-            }
+            //if (renewalDate < appointmentDate)
+            //{
+            //    ModelState.AddModelError(nameof(model.RenewalDate), $"The Renewal Date cannot be before the Appointment Date. Please enter a valid renewal date.");
+            //}
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
             if (ModelState.IsValid)
             {

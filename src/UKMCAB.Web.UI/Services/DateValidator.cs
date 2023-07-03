@@ -4,7 +4,7 @@ namespace UKMCAB.Web.UI.Services
 {
     public class DateValidator
     {
-        public static DateTime? CheckDate(ModelStateDictionary modelState, string day, string month, string year, string modelKey, string errorMessagePart)
+        public static DateTime? CheckDate(ModelStateDictionary modelState, string day, string month, string year, string modelKey, string errorMessagePart, DateTime? aptDate = null)
         {
             var date = $"{day}/{month}/{year}";
 
@@ -45,7 +45,7 @@ namespace UKMCAB.Web.UI.Services
                     return null;
                 }
 
-                if (!DateService.IsWithinFiveYearAndNotInPast(dayNum, monthNum, yearNum) && modelKey == "RenewalDate")
+                if (!DateService.IsWithinFiveYearAndNotInPast(dayNum, monthNum, yearNum, aptDate) && modelKey == "RenewalDate")
                 {
                     modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be within 5 years of the appointment date.");
                     return null;
@@ -64,7 +64,7 @@ namespace UKMCAB.Web.UI.Services
                     missingField += "day and ";
 
                 if (string.IsNullOrWhiteSpace(month))
-                    missingField += "month and ";
+                    missingField += "month and "; 
 
                 if (string.IsNullOrWhiteSpace(year))
                     missingField += "year";

@@ -40,9 +40,9 @@
             return false;
         }
 
-        public static bool IsWithinFiveYearAndNotInPast(int day, int month, int year)
+        public static bool IsWithinFiveYearAndNotInPast(int day, int month, int year, DateTime? aptDate)
         {
-            var currentDate = DateTime.Today;
+            DateTime currentDate = aptDate ?? DateTime.Today;   
 
             if (DateTime.TryParse($"{year}/{month}/{day}", out DateTime inputDate))
                 return inputDate <= currentDate.AddYears(5) && inputDate >= currentDate;
