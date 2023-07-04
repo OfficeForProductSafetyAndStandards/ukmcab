@@ -13,14 +13,16 @@
     {
         basePath = "/search-feed";
     }
+    var resultsAnchor = Model.SearchResults.Any() ? Model.SearchResults.First().Name : "no-results";
 }
 <div id="search-page">
+    <a href="#@resultsAnchor" class="govuk-skip-link" data-module="govuk-skip-link">Skip to results</a>
     <div id="search-header" class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <h1 class="govuk-heading-l">@Html.Raw(title)</h1>
         </div>
         <div class="atom-feed atom-feed-top govuk-grid-column-one-third">
-            <partial name="Partials/_FeedLinks" model="Model.FeedLinksViewModel" />
+            <partial name="Partials/_FeedLinks" model="Model.FeedLinksViewModel"/>
         </div>
     </div>
 
@@ -31,7 +33,7 @@
         <partial name="Partials/_SearchResults" model="Model"/>
 
         <div class="atom-feed atom-feed-bottom govuk-grid-column-two-thirds">
-            <partial name="Partials/_FeedLinks" model="Model.FeedLinksViewModel" />
+            <partial name="Partials/_FeedLinks" model="Model.FeedLinksViewModel"/>
         </div>
 
     </div>

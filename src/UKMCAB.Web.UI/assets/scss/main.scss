@@ -1,4 +1,4 @@
-﻿@import "./node_modules/govuk-frontend/govuk/all";
+﻿@import "./node_modules/govuk-frontend/govuk/all.scss";
 @import "./_reset";
 @import "./views/cab.scss";
 @import "./views/cab-body-details.scss";
@@ -14,3 +14,7 @@
 @import "./shared/header.scss";
 @import "./shared/identity.scss";
 @import "./shared/pagination.scss";
+
+.govuk-link:hover {
+    text-decoration-thickness: max(3px, .1875rem, .12em);
+}
