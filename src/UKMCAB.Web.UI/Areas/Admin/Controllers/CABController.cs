@@ -287,7 +287,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabBodyDetailsViewModel = cabBody,
                 Schedules = latest.Schedules ?? new List<FileUpload>(),
                 Documents = latest.Documents ?? new List<FileUpload>(),
-                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl)
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode(string.Empty) : WebUtility.UrlDecode(returnUrl)
 
             };
 
