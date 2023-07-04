@@ -24,7 +24,7 @@
             gtag('config', '@(config.GetValue<string>("GoogleAnalyticsId"))');
         </script>
     }
-    <title>@Model.Title.FormatTitle(ViewData.ModelState.IsValid)</title>
+    <title>@(Model?.Title.FormatTitle(ViewData.ModelState.IsValid) ?? Constants.SiteName)</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta name="theme-color" content="#0b0c0c"/>
 
