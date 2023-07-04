@@ -44,7 +44,7 @@ namespace UKMCAB.Web.UI.Services
 
             if (int.TryParse(day, out int dayNum1) || int.TryParse(month, out int monthNum1) || int.TryParse(year, out int yearNum1))
             {
-                var missingField = "";
+                var missingField = string.Empty;
                 string modelKeyLocal = string.Empty;
               
 
@@ -52,7 +52,7 @@ namespace UKMCAB.Web.UI.Services
                 {
                     missingField += "day and ";
                     modelKeyLocal = $"{modelKey}Day";
-                    modelState.AddModelError(modelKeyLocal, "");
+                    modelState.AddModelError(modelKeyLocal, string.Empty);
                 }
                     
 
@@ -60,7 +60,7 @@ namespace UKMCAB.Web.UI.Services
                 {
                     missingField += "month and ";
                     modelKeyLocal = $"{modelKey}Month";
-                    modelState.AddModelError(modelKeyLocal, "");
+                    modelState.AddModelError(modelKeyLocal, string.Empty);
                 }
                     
 
@@ -68,7 +68,7 @@ namespace UKMCAB.Web.UI.Services
                 {
                     missingField += "year";
                     modelKeyLocal = $"{modelKey}Year";
-                    modelState.AddModelError(modelKeyLocal, "");
+                    modelState.AddModelError(modelKeyLocal, string.Empty);
                 }
                     
 
