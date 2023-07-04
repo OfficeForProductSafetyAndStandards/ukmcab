@@ -121,7 +121,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ArchivedBy = isArchived ? cabDocument.Archived.UserName : string.Empty,
                 ArchivedDate = isArchived ? cabDocument.Archived.DateTime.ToString("dd MMM yyyy") : string.Empty,
                 ArchiveReason = cabDocument.ArchivedReason,
-                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/search" : WebUtility.UrlDecode(returnUrl),
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/" : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
                 PublishedDate = cabDocument.Published.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,

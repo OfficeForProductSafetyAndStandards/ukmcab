@@ -84,10 +84,9 @@
                             clear: both;
                             border: #bfc1c3 1px solid;
                             margin-bottom: 20px;
+                            width: 100%;
+                            margin-left: 0;
 
-                            fieldset {
-                                width: 100%;
-                                margin-left: 0;
 
                                 .search-filter-option-item {
                                     position: relative;
@@ -160,7 +159,6 @@
                                         outline: #ffbf47 2px solid
                                     }
                                 }
-                            }
                         }
                     }
 
@@ -240,7 +238,7 @@
 
                         .search-result-list-item-link {
                             margin: 0 25px 0 0;
-                            overflow-wrap:break-word;
+                            overflow-wrap: break-word;
                         }
 
                         .search-result-list-item-details {
@@ -284,7 +282,6 @@
                             .search-filter-option-list {
                                 max-height: none;
                             }
-
                         }
                     }
                 }
@@ -351,8 +348,6 @@
     }
 
     .atom-feed {
-
-        
     }
 
     &.js-enabled {
