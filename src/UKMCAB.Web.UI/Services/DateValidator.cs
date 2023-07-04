@@ -10,21 +10,7 @@ namespace UKMCAB.Web.UI.Services
 
             if (int.TryParse(day, out int dayNum) && int.TryParse(month, out int monthNum) && int.TryParse(year, out int yearNum))
             {
-                //if (!DateService.IsAValidMonth(monthNum))
-                //{
-                //    modelState.AddModelError(modelKey, $"Please enter a valid month between 1 and 12.");
-
-                //    return null;
-                //}
-
-                //if (!DateService.IsAValidDay(dayNum, monthNum, yearNum))
-                //{
-                //    int maxDay = DateService.GetMaxDaysInMonth(monthNum, yearNum);
-                //    modelState.AddModelError(modelKey, $"Please enter a valid day between 1 and {maxDay}.");
-
-                //    return null;
-                //}
-
+               
                 if (!DateService.IsAValidDay(dayNum, monthNum, yearNum) || !DateService.IsAValidMonth(monthNum))
                 {
                     int maxDay = DateService.GetMaxDaysInMonth(monthNum, yearNum);
