@@ -1,6 +1,6 @@
 ﻿
 .atom-feed {
-    a {
+    .feed-link-item {
         display: inline-block !important;
 
         .atom-feed__icon {
@@ -27,9 +27,8 @@
             order: 3;
         }
 
-        a {
+        .feed-link-item {
             margin-right: 5px;
-
             .atom-feed__icon {
                 margin-left: 0;
             }

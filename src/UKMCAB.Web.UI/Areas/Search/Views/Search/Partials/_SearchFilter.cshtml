@@ -1,15 +1,15 @@
 ﻿@model FilterViewModel
 <div class="search-filter-option govuk-checkboxes--small">
-    <h3 class="govuk-heading-s">@Model.Label</h3>
-    <div class="search-filter-option-list">
-        <fieldset>
-            @foreach (var filterOption in Model.FilterOptions)
-            {
-                <div class="search-filter-option-item">
-                    <input type="checkbox" name="@Model.Id" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" checked="@filterOption.Selected">
-                    <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Label</label>
-                </div>
-            }
-        </fieldset>
-    </div>
+    <fieldset aria-describe="Filter the conformity assessment body results by @Model.Label">
+        <h3 class="govuk-heading-s">@Model.Label</h3>
+        <div class="search-filter-option-list">
+                @foreach (var filterOption in Model.FilterOptions)
+                {
+                    <div class="search-filter-option-item">
+                        <input type="checkbox" name="@Model.Id" id="@filterOption.Id" value="@filterOption.Value" class="search-form-filter-option" checked="@filterOption.Selected">
+                        <label class="search-filter-option-item-label" for="@filterOption.Id">@filterOption.Label</label>
+                    </div>
+                }
+        </div>
+    </fieldset>
 </div>

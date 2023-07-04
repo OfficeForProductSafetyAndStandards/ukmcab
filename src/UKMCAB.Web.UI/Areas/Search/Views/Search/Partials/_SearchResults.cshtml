@@ -21,21 +21,21 @@
                 {
                     if (string.IsNullOrWhiteSpace(Model.Sort) || Model.Sort.Equals(sortOption.Value, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        <label>@sortOption.Key</label>
+                        <label aria-pressed aria-describe="Results sorted by @sortOption.Label">@sortOption.Label</label>
                     }
                     else
                     {
-                        <a href="@(baseSortPath + sortOption.Value)"  class="govuk-link govuk-link--no-visited-state">@sortOption.Key</a>
+                        <a href="@(baseSortPath + sortOption.Value)" class="govuk-link govuk-link--no-visited-state" aria-sort="@sortOption.AriaSort" aria-describe="Sort results by @sortOption.Label">@sortOption.Label</a>
                     }
                 }
             </fieldset>
         </div>
-        <div id="search-results-list-container">
+        <div id="search-results-list-container" aria-describe="Results of search of conformity assessment bodies">
             <ul id="search-results-list">
                 @foreach (var searchResult in Model.SearchResults)
                 {
                     <li class="search-result-list-item">
-                        <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
+                        <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" class="search-result-list-item-arrow" name="@searchResult.Name"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
                         <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
                         <ul class="search-result-list-item-details">
                             <li class="search-result-list-item-detail">Address: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.Address), searchResult.Address, @Constants.NotProvided)</li>
@@ -51,8 +51,8 @@
     }
     else
     {
-        <div id="search-no-results-container">
-            <p class="govuk-body">There are no matching results.</p>
+        <div id="search-no-results-container" aria-describe="Results of search of conformity assessment bodies returned no results">
+            <p class="govuk-body"><a name="no-results">There are no matching results.</a></p>
             <p class="govuk-body">Please try:</p>
             <ul class="govuk-list govuk-list--bullet">
                 <li>removing filters</li>
