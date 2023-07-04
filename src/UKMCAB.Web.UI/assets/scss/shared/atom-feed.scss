@@ -1,0 +1,38 @@
+﻿
+.atom-feed {
+    a {
+        display: inline-block !important;
+
+        .atom-feed__icon {
+            color: #0b0c0c;
+            margin: 0 5px;
+        }
+    }
+
+    &.atom-feed-top {
+        float: right;
+        text-align: right;
+
+        @include govuk-media-query($until: tablet) {
+            display: none;
+        }
+    }
+
+    &.atom-feed-bottom {
+        float: left;
+        display: none;
+
+        @include govuk-media-query($until: tablet) {
+            display: block;
+            order: 3;
+        }
+
+        a {
+            margin-right: 5px;
+
+            .atom-feed__icon {
+                margin-left: 0;
+            }
+        }
+    }
+}

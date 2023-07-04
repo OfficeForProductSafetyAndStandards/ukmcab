@@ -36,7 +36,7 @@ public static class Ext
     }
 
     public static IHtmlContent OpensInNewWindow(this IHtmlHelper htmlHelper) =>
-        htmlHelper.Raw("<span class=\"govuk-visually-hidden\">(opens in a new window)</span>");
+        htmlHelper.Raw("<span class=\"govuk-visually-hidden\">(opens in a new tab)</span>");
 
     public static IHtmlContent ValueOrNotProvided(this IHtmlHelper htmlHelper, string text) =>
         string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.NotProvided) : htmlHelper.Raw(text);
@@ -58,5 +58,21 @@ public static class Ext
             }
         }
         return fallback ?? string.Empty;
+    }
+
+    public static string FormatTitle(this string title, bool IsValidModelState)
+    {
+        var titleComponents = new List<string>();
+        if (!IsValidModelState)
+        {
+            titleComponents.Add("Error");
+        }
+
+        if (title != null && !string.IsNullOrWhiteSpace(title))
+        {
+            titleComponents.Add(title);
+        }
+        titleComponents.Add(Constants.SiteName);
+        return string.Join(" - ", titleComponents);
     }
 }

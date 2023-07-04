@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
@@ -43,5 +44,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public List<string> LegislativeAreas { get; set; }
         public CABDocumentsViewModel ProductSchedules { get; set; }
         public CABDocumentsViewModel SupportingDocuments { get; set; }
+        public FeedLinksViewModel FeedLinksViewModel { get; set; }
+
     }
 }

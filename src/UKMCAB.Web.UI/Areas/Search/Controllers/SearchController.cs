@@ -9,6 +9,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using Microsoft.ApplicationInsights;
+using UKMCAB.Web.UI.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -64,6 +65,18 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ResultsPerPage = DataConstants.Search.SearchResultsPerPage,
                 ResultType = "bodies"
             };
+            model.FeedLinksViewModel = new FeedLinksViewModel
+            {
+                FeedUrl = "/search-feed",
+                EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes
+                    .Step0RequestSearchSubscription)
+            };
+            if (Request.QueryString.HasValue)
+            {
+                model.FeedLinksViewModel.FeedUrl += Request.QueryString.Value.EnsureStartsWith("?").RemoveQueryParameters("pagenumber", "sort");
+                model.FeedLinksViewModel.EmailUrl += Request.QueryString.Value.EnsureStartsWith("?");
+            }
+
 
             _telemetry.TrackEvent(AiTracking.Events.CabsSearched, HttpContext.ToTrackingMetadata(new()
             {
@@ -126,8 +139,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Select = _select,
             });
 
-
-
             var feed = _feedService.GetSyndicationFeed(GetFeedName(model), Request, searchResult.CABs, Url);
 
             var settings = new XmlWriterSettings
@@ -153,30 +164,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private string GetFeedName(SearchViewModel model)
         {
-            var sb = new StringBuilder("UKMCAB search results for");
-            var filtersAdded = false;
-            if (!string.IsNullOrEmpty(model.Keywords))
-            {
-                sb.AppendFormat(" Keywords: {0};", model.Keywords);
-                filtersAdded = true;
-            }
-            if (model.BodyTypes != null && model.BodyTypes.Any())
-            {
-                sb.AppendFormat(" Body types: {0};", string.Join(", ", model.BodyTypes));
-                filtersAdded = true;
-            }
-            if (model.RegisteredOfficeLocations != null && model.RegisteredOfficeLocations.Any())
-            {
-                sb.AppendFormat(" Registered office locations: {0};", string.Join(", ", model.RegisteredOfficeLocations));
-                filtersAdded = true;
-            }
-            if (model.LegislativeAreas != null && model.LegislativeAreas.Any())
-            {
-                sb.AppendFormat(" Registered office locations: {0};", string.Join(", ", model.RegisteredOfficeLocations));
-                filtersAdded = true;
-            }
-
-            return filtersAdded ? sb.ToString() : "UKMCAB search results";
+            return string.IsNullOrEmpty(model.Keywords) ? "UKMCAB search results" : $"UKMCAB search results for \"{model.Keywords.Trim()}\"";
         }
 
         private async Task SetFacetOptions(SearchViewModel model)

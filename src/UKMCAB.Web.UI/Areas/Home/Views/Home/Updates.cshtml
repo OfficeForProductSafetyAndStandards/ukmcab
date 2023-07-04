@@ -1,4 +1,5 @@
-﻿@{
+﻿@inject IConfiguration _configuration
+@{
     ViewData["nav"] = "updates";
 }
 
@@ -28,27 +29,23 @@
     <div class="govuk-grid-column-two-thirds">
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
-                <h2 class="govuk-heading-m">Release 1.1 - Search improvements and MVP issues</h2>
+                <h2 class="govuk-heading-m">Release 1.2 - Improvements to existing functionality</h2>
                 <p class="govuk-body">
-                    23 June 2023
+                    @_configuration.GetSection("ReleaseDates")["1.2"]
+
                 </p>
                 <p class="govuk-body">
-                    The focus of this release is to improve the ability to search and find information in the service, as well as address some outstanding issues from the Minimum Viable Product (MVP) release. 
-                    The search system has been heavily refined to deliver more accurate results in a more relevant order, prioritising certain fields over others. 
-                    The web addresses of Conformity Assessment Bodies (CAB) profile pages are now user friendly, meaning that they contain the name of the CAB rather than a string of unique numbers. 
-                    Also, the titles for all CAB product schedule files have been updated from simple filenames to the full name of the product schedule, making them more meaningful to users.
+                    This release includes improvements to the web feed from the UKMCAB service, functionality for internal users and accessibility.
                 </p>
                 <p class="govuk-body">
                     Included in this release are:
                 </p>        
 
                 <ul class="govuk-list govuk-list--bullet">
-                    <li>Improvements to the accuracy of search results</li>
-                    <li>User friendly links for CAB profile pages</li>
-                    <li>Changes to the product schedule filename to show its full name</li>
-                    <li>A summary page for email subscriptions to search results</li>
-                    <li>Changes to the feedback form at the top of all pages</li>
-                    <li>Links that leave the UKMCAB site will open in a new tab or window</li>
+                    <li>Enhancements to the web feed so that updates to search results and Conformity Assessment Bodies (CAB) profiles include more information and are easy to read</li>
+                    <li>Additional functionality for internal users to view CAB supporting documents</li>
+                    <li>The option to view or download documents attached to CAB profiles</li>
+                    <li>Accessibility updates across the service</li>
                 </ul>                
             </div>                
         </dl>
@@ -60,9 +57,41 @@
     <div class="govuk-grid-column-two-thirds">
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
+                <h2 class="govuk-heading-m">Release 1.1 - Search improvements and MVP issues</h2>
+                <p class="govuk-body">
+                    @_configuration.GetSection("ReleaseDates")["1.1"]
+                </p>
+                <p class="govuk-body">
+                    The focus of this release is to improve the ability to search and find information in the service, as well as address some outstanding issues from the Minimum Viable Product (MVP) release.
+                    The search system has been heavily refined to deliver more accurate results in a more relevant order, prioritising certain fields over others.
+                    The web addresses of Conformity Assessment Bodies (CAB) profile pages are now user friendly, meaning that they contain the name of the CAB rather than a string of unique numbers.
+                    Also, the titles for all CAB product schedule files have been updated from simple filenames to the full name of the product schedule, making them more meaningful to users.
+                </p>
+                <p class="govuk-body">
+                    Included in this release are:
+                </p>
+
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Improvements to the accuracy of search results</li>
+                    <li>User friendly links for CAB profile pages</li>
+                    <li>Changes to the product schedule filename to show its full name</li>
+                    <li>A summary page for email subscriptions to search results</li>
+                    <li>Changes to the feedback form at the top of all pages</li>
+                    <li>Links that leave the UKMCAB site will open in a new tab or window</li>
+                </ul>
+            </div>
+        </dl>
+    </div>
+</div>
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
                 <h2 class="govuk-heading-m">Release 1.0 - UKMCAB service refresh</h2>
                 <p class="govuk-body">
-                    30 May 2023
+                    @_configuration.GetSection("ReleaseDates")["1.0"]
                 </p>
                 <p class="govuk-body">
                     The release of the revised service as a Minimum Viable Product (MVP). This means the service continues to deliver the functionality of the

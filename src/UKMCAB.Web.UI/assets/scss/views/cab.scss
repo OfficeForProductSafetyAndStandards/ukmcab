@@ -1,21 +1,4 @@
-﻿.u-until-tablet {
-    @include govuk-media-query($until: tablet) {
-        display: block;
-    }
-
-    display: none;
-}
-
-.u-from-tablet {
-    display: none;
-
-    @include govuk-media-query($from: tablet) {
-        display: block;
-    }
-}
-
-
-ul.cab-profile-file-list {
+﻿ul.cab-profile-file-list {
     border-top: 1px solid #b1b4b6;
 
     li.cab-profile-file-list-item {
