@@ -45,15 +45,32 @@ namespace UKMCAB.Web.UI.Services
             if (int.TryParse(day, out int dayNum1) || int.TryParse(month, out int monthNum1) || int.TryParse(year, out int yearNum1))
             {
                 var missingField = "";
+                string modelKeyLocal = string.Empty;
+              
 
                 if (string.IsNullOrWhiteSpace(day))
+                {
                     missingField += "day and ";
+                    modelKeyLocal = $"{modelKey}Day";
+                    modelState.AddModelError(modelKeyLocal, "");
+                }
+                    
 
                 if (string.IsNullOrWhiteSpace(month))
-                    missingField += "month and "; 
+                {
+                    missingField += "month and ";
+                    modelKeyLocal = $"{modelKey}Month";
+                    modelState.AddModelError(modelKeyLocal, "");
+                }
+                    
 
                 if (string.IsNullOrWhiteSpace(year))
+                {
                     missingField += "year";
+                    modelKeyLocal = $"{modelKey}Year";
+                    modelState.AddModelError(modelKeyLocal, "");
+                }
+                    
 
                 missingField =  missingField.TrimEnd(' ', 'a', 'n', 'd', ' ');
                 if (!string.IsNullOrEmpty(missingField))
