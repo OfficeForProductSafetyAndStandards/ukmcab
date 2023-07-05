@@ -39,17 +39,46 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FilterViewModel? LegislativeAreaOptions { get; set; }
 
         public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0);
-        public Dictionary<string, string> SortOptions => new()
+
+        public List<SortOption> SortOptions => new List<SortOption>
         {
-            { string.IsNullOrWhiteSpace(Keywords) ? "Random" : "Relevant" , DataConstants.SortOptions.Default},
-            {"Last updated", DataConstants.SortOptions.LastUpdated},
-            {"A to Z", DataConstants.SortOptions.A2ZSort},
-            {"Z to A", DataConstants.SortOptions.Z2ASort}
+            new SortOption
+            {
+                Label = string.IsNullOrWhiteSpace(Keywords) ? "Random" : "Relevant",
+                Value = DataConstants.SortOptions.Default,
+                AriaSort = "other"
+            },
+            new SortOption
+            {
+                Label = "Last updated",
+                Value = DataConstants.SortOptions.LastUpdated,
+                AriaSort = "descending"
+            },
+            new SortOption
+            {
+                Label = "A to Z",
+                Value = DataConstants.SortOptions.A2ZSort,
+                AriaSort = "ascending"
+            },
+            new SortOption
+            {
+                Label = "Z to A",
+                Value = DataConstants.SortOptions.Z2ASort,
+                AriaSort = "descending"
+            }
         };
-            
+
+
         // Results
         public List<ResultViewModel>? SearchResults { get; set; }
         public PaginationViewModel? Pagination { get; set; }
         public FeedLinksViewModel? FeedLinksViewModel { get; set; }
+    }
+
+    public class SortOption
+    {
+        public string? Label { get; set; }
+        public string? Value { get; set; }
+        public string? AriaSort { get; set; }
     }
 }
