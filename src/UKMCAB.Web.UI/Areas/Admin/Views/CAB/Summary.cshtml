@@ -274,7 +274,7 @@
                     <span class="govuk-warning-text__assistive">Warning</span>
                     @if (Model.ValidCAB)
                     {
-                        <text>Once published this record will be visible to the public.</text> 
+                        <text>Once published this record will be visible to the public.</text>
                     }
                     else
                     {
@@ -285,7 +285,7 @@
 
             <div>
                 <form method="post">
-                    <input type="hidden" asp-for="CABId"/>
+                    <input type="hidden" asp-for="CABId" />
                     <div class="govuk-button-group">
                         <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
                             Publish
@@ -299,7 +299,18 @@
                         }
                         else
                         {
-                            <a asp-area="admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
+                            {
+                                <a asp-area="admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            }
+                            else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                            {
+                                <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId"  class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            }
+                            else
+                            {
+                                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            }                            
                         }
                     </div>
                 </form>
