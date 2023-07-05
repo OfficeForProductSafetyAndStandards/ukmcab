@@ -50,7 +50,7 @@ public static class Constants
 
     public class ErrorMessages
     {
-        public const string InvalidLoginAttempt = "The information provided is not right, try again";
+        public const string InvalidLoginAttempt = "Enter a valid email address and password";
     }
 }
 

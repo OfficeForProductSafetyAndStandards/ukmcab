@@ -7,11 +7,18 @@
     <div class="govuk-grid-column-two-thirds identity-form">
         @if (Model.FromSignOut)
         {
-            <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+            <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+                 aria-labelledby="govuk-notification-banner-title"
+                 data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                        Success
+                    </h2>
+                </div>
                 <div class="govuk-notification-banner__content">
-                    <p class="govuk-notification-banner__heading">
+                    <h3 class="govuk-notification-banner__heading">
                         You have successfully signed out.
-                    </p>
+                    </h3>
                 </div>
             </div>
         }
@@ -27,7 +34,7 @@
                 </div>
             </div>
         }
-        <form id="sign-in" method="post">
+        <form id="sign-in" method="post" novalidate>
             <partial name="Partials/_ValidationSummary" model="null"/>
 
             <fieldset class="govuk-fieldset">
@@ -39,18 +46,26 @@
 
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "Email")">
-                    <label asp-for="Email" class="govuk-label">Email address</label>
-                    <p class="govuk-error-message">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Email">
+                            Email address
+                        </label>
+                    </h3>
+                    <p error-id="@nameof(Model.Email)" class="govuk-error-message">
                         <span asp-validation-for="Email" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="Email" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "Email")" autocomplete="username" aria-required="true"/>
+                    <input asp-for="Email" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "Email")" autocomplete="username" aria-required="true" error-describedby="@nameof(Model.Email)" />
                 </div>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "Password")">
-                    <label asp-for="Password" class="govuk-label"></label>
-                    <p class="govuk-error-message">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Password">
+                            Password
+                        </label>
+                    </h3>
+                    <p error-id="@nameof(Model.Password)" class="govuk-error-message">
                         <span asp-validation-for="Password" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="Password" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "Password")" autocomplete="current-password" aria-required="true"/>
+                    <input asp-for="Password" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "Password")" autocomplete="current-password" aria-required="true" error-describedby="@nameof(Model.Password)" />
                     <a class="govuk-button govuk-button--secondary show-password-button" href="#">Show</a>
                 </div>
                 <div class="govuk-inset-text">
