@@ -31,5 +31,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
             return new HtmlString(sortName);
         }
+
+        public HtmlString GetSortDescription(string sortName, string sortLabel)
+        {
+            if (Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
+            {
+                return Sort.EndsWith("desc") ? new HtmlString($"{sortLabel}<span class=\"govuk-visually-hidden\">sort the results by {sortLabel} ascending</span>") : new HtmlString($"{sortLabel}<span class=\"govuk-visually-hidden\">sort the results by {sortLabel} descending</span>");
+            }
+
+            return new HtmlString($"{sortLabel}<span class=\"govuk-visually-hidden\">sort the results by {sortLabel} ascending</span>");
+
+        }
     }
 }
