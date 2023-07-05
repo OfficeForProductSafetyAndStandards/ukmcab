@@ -47,7 +47,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
             var appointmentDate = DateValidator.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
-            var renewalDate = DateValidator.CheckDate(ModelState, model.RenewalDateDay, model.RenewalDateMonth, model.RenewalDateYear, nameof(model.RenewalDate), "review", appointmentDate);
+            var reviewDate = DateValidator.CheckDate(ModelState, model.ReviewDateDay, model.ReviewDateMonth, model.ReviewDateYear, nameof(model.ReviewDate), "review", appointmentDate);
 
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
             if (ModelState.IsValid)
@@ -74,7 +74,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 document.Name = model.Name;
                 document.CABNumber = model.CABNumber;
                 document.AppointmentDate = appointmentDate;
-                document.RenewalDate = renewalDate;
+                document.RenewalDate = reviewDate;
                 document.UKASReference = model.UKASReference;
 
                 if (await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document))

@@ -19,9 +19,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
             AppointmentDateDay = document.AppointmentDate?.Day.ToString("00") ?? string.Empty;
             AppointmentDateMonth = document.AppointmentDate?.Month.ToString("00") ?? string.Empty;
             AppointmentDateYear = document.AppointmentDate?.Year.ToString("0000") ?? string.Empty;
-            RenewalDateDay = document.RenewalDate?.Day.ToString("00") ?? string.Empty;
-            RenewalDateMonth = document.RenewalDate?.Month.ToString("00") ?? string.Empty;
-            RenewalDateYear = document.RenewalDate?.Year.ToString("0000") ?? string.Empty;
+            ReviewDateDay = document.RenewalDate?.Day.ToString("00") ?? string.Empty;
+            ReviewDateMonth = document.RenewalDate?.Month.ToString("00") ?? string.Empty;
+            ReviewDateYear = document.RenewalDate?.Year.ToString("0000") ?? string.Empty;
             UKASReference = document.UKASReference;
             DocumentStatus = document.StatusValue;
         }
@@ -38,10 +38,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string? AppointmentDateYear { get; set; }
         public string AppointmentDate => $"{AppointmentDateDay}/{AppointmentDateMonth}/{AppointmentDateYear}";
 
-        public string? RenewalDateDay { get; set; }
-        public string? RenewalDateMonth { get; set; }
-        public string? RenewalDateYear { get; set; }
-        public string RenewalDate => $"{RenewalDateDay}/{RenewalDateMonth}/{RenewalDateYear}";
+        public string? ReviewDateDay { get; set; }
+        public string? ReviewDateMonth { get; set; }
+        public string? ReviewDateYear { get; set; }
+        public string ReviewDate => $"{ReviewDateDay}/{ReviewDateMonth}/{ReviewDateYear}";
 
         public string? UKASReference { get; set; }
 
