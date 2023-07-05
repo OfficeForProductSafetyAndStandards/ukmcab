@@ -39,7 +39,7 @@
                 </div>
                     
                 <div id="mobile-sort" class="govuk-form-group">
-                    <label class="govuk-label" asp-for="Filter">
+                    <label class="govuk-label" asp-for="Sort">
                         Sort by
                     </label>
                     <a href="@(baseSortPath + Model.GetSortQueryValue(Model.Sort.Replace("-desc", string.Empty)))" aria-sort="@(Model.Sort.EndsWith("-desc")? "descending" : "ascending")" class="cab-manage-sort" role="button"></a>
@@ -62,24 +62,26 @@
             </div>
             <div id="cab-management-list-container" class="govuk-grid-column-full govuk-body">
                 <table class="govuk-table">
-                        <thead>
-                            <tr class="govuk-table__row">
-                                @if (Model.CABManagementItems.Any())
-                                {
-                                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("name"))" aria-sort="@Model.GetAriaSort("name")">CAB name</a></th>
-                                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("number"))" aria-sort="@Model.GetAriaSort("number")">CAB number</a></th>
-                                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("lastupd"))" aria-sort="@Model.GetAriaSort("lastupd")">Last updated</a></th>
-                                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("status"))" aria-sort="@Model.GetAriaSort("status")">Status</a></th>
-                                }
-                            </tr>
-                        </thead>
+                    <caption class="govuk-visually-hidden">List of CABs in draft or archive status</caption>
+                    <thead>
+                    <tr class="govuk-table__row">
+                        @if (Model.CABManagementItems.Any())
+                        {
+                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("name"))" aria-sort="@Model.GetAriaSort("name")">@Model.GetSortDescription("name", "CAB name")</a></th>
+                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("number"))" aria-sort="@Model.GetAriaSort("number")">@Model.GetSortDescription("number", "CAB number")</a></th>
+                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("lastupd"))" aria-sort="@Model.GetAriaSort("lastupd")">@Model.GetSortDescription("lastupd", "Last updated")</a></th>
+                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("status"))" aria-sort="@Model.GetAriaSort("status")">@Model.GetSortDescription("status", "Status")</a></th>
+                        }
+                    </tr>
+                    </thead>
                     <tbody class="govuk-table__body">
                     @if (Model.CABManagementItems.Any())
                     {
                         @foreach (var cab in Model.CABManagementItems)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><label class="cab-management-item-label">Cab name</label>
+                                <td class="govuk-table__cell">
+                                    <label class="cab-management-item-label" aria-hidden="true">Cab name</label>
                                     @if (cab.Status == Status.Archived.ToString())
                                     {
                                         <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
@@ -98,7 +100,8 @@
                     else
                     {
                         <tr class="govuk-table__row">
-                            <td><p class="govuk-body">There are currently no items in your work queue</p></td>
+                            <td>
+                                <p class="govuk-body">There are currently no items in your work queue</p></td>
                         </tr>
                     }
                     </tbody>
