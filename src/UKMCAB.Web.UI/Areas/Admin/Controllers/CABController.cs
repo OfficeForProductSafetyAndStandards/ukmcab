@@ -139,12 +139,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
 
-            if (string.IsNullOrWhiteSpace(model.Email) &&
-                string.IsNullOrWhiteSpace(model.Phone))
-            {
-                ModelState.AddModelError("Email",
-                    "Enter either an email or phone");
-            }
+            //if (string.IsNullOrWhiteSpace(model.Email) &&
+            //    string.IsNullOrWhiteSpace(model.Phone))
+            //{
+            //    ModelState.AddModelError("Email",
+            //        "Enter either an email or phone");
+            //}
 
             if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
             {

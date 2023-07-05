@@ -48,7 +48,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
         public string? Website { get; set; }
         public string? Email { get; set; }
-        public string? Phone { get; set; }
+        [Required(ErrorMessage = "Enter a telephone number")]
+        public string Phone { get; set; }
         public string? PointOfContactName { get; set; }
         public string? PointOfContactEmail { get; set; }
         public string? PointOfContactPhone { get; set; }
@@ -58,6 +59,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
         public string? Title => "Contact details";
 
-        public string[] FieldOrder => new[] { nameof(AddressLine1), nameof(TownCity), nameof(Postcode), nameof(Country), nameof(Email), nameof(RegisteredOfficeLocation) };
+        public string[] FieldOrder => new[] { nameof(AddressLine1), nameof(TownCity), nameof(Postcode), nameof(Country), nameof(Email), nameof(Phone), nameof(RegisteredOfficeLocation) };
     }
 }
