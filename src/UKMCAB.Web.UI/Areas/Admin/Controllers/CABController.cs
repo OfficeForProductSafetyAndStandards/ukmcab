@@ -5,6 +5,7 @@ using UKMCAB.Core.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using System.Net;
+using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -45,8 +46,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/about/{id}")]
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
-            var appointmentDate = CheckDate(model.AppointmentDate, nameof(model.AppointmentDate), "appointment");
-            var renewalDate = CheckDate(model.RenewalDate, nameof(model.RenewalDate), "renewal");
+            var appointmentDate = DateValidator.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
+            var renewalDate = DateValidator.CheckDate(ModelState, model.RenewalDateDay, model.RenewalDateMonth, model.RenewalDateYear, nameof(model.RenewalDate), "review", appointmentDate);
+
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
             if (ModelState.IsValid)
             {
@@ -104,19 +106,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.DocumentStatus = document != null ? document.StatusValue : Status.Created;
             return View(model);
-        }
-
-        private DateTime? CheckDate(string date, string modelKey, string errorMessagePart)
-        {
-            if (DateTime.TryParse(date, out DateTime dateTime))
-            {
-                return dateTime;
-            }
-            if (!date.Equals("//"))
-            {
-                ModelState.AddModelError(modelKey, $"The {errorMessagePart} date is not in a valid date format");
-            }
-            return null;
         }
 
         private IActionResult SaveDraft(Document document)
