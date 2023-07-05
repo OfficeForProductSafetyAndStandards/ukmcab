@@ -5,12 +5,16 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <partial name="Partials/_ValidationSummary" model="null"/>
-        <h1 class="govuk-heading-l">Help us to improve GOV.UK</h1>
-        <p class="govuk-body">Don't include personal or financial information like your National Insurance number or credit card details.</p>
-        <form asp-area="Home" asp-controller="Feedback" asp-action="Submit" method="post">
-            <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL"/>
-            <fieldset class="govuk-fieldset">
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"WhatWereYouDoing")">
+        <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                <h1 class="govuk-fieldset__heading">
+                    Help us to improve GOV.UK
+                </h1>
+            </legend>
+            <p class="govuk-body">Don't include personal or financial information like your National Insurance number or credit card details.</p>
+            <form asp-area="Home" asp-controller="Feedback" asp-action="Submit" method="post">
+                <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL"/>
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "WhatWereYouDoing")">
                     <h3 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--m" asp-for="WhatWereYouDoing">
                             What you were doing
@@ -22,9 +26,9 @@
                     <p class="govuk-error-message">
                         <span asp-validation-for="WhatWereYouDoing"></span>
                     </p>
-                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState,"WhatWereYouDoing")" rows="5" aria-describedby="doing-hint" asp-for="WhatWereYouDoing"></textarea>
+                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "WhatWereYouDoing")" rows="5" aria-describedby="doing-hint" asp-for="WhatWereYouDoing"></textarea>
                 </div>
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"WhatWentWrong")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "WhatWentWrong")">
                     <h3 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--m" asp-for="WhatWentWrong">
                             What went wrong
@@ -36,15 +40,15 @@
                     <p class="govuk-error-message">
                         <span asp-validation-for="WhatWentWrong" class="govuk-error-message"></span>
                     </p>
-                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState,"WhatWentWrong")" rows="5" aria-describedby="wrong-hint" asp-for="WhatWentWrong"></textarea>
+                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "WhatWentWrong")" rows="5" aria-describedby="wrong-hint" asp-for="WhatWentWrong"></textarea>
                 </div>
-            </fieldset>
-            <div class="govuk-button-group">
-                <button class="govuk-button" name="Send" data-module="govuk-button">
-                    Send
-                </button>
-                <a class="govuk-button govuk-button--secondary" href="@Model.ReturnURL">Cancel</a>
-            </div>
-        </form>
+                <div class="govuk-button-group">
+                    <button class="govuk-button" name="Send" data-module="govuk-button">
+                        Send
+                    </button>
+                    <a class="govuk-button govuk-button--secondary" href="@Model.ReturnURL">Cancel</a>
+                </div>
+            </form>
+        </fieldset>
     </div>
 </div>
