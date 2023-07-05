@@ -10,11 +10,15 @@
                 </span>
             </summary>
             <div id="feedback-form" class="feedback-form-container">
-                <h2 class="govuk-heading-m">Help us improve GOV.UK</h2>
-                <p class="govuk-body">Don't include personal or financial information like your National Insurance number or credit card details.</p>
-                <form asp-area="Home" asp-controller="Feedback" asp-action="Submit" method="post" novalidate>
-                    <input type="hidden" id="ReturnURL" name="ReturnURL" value="@Context.Request.Path"/>
-                    <fieldset class="govuk-fieldset">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h2 class="govuk-fieldset__heading">
+                            Help us improve GOV.UK
+                        </h2>
+                    </legend>
+                    <p class="govuk-body">Don't include personal or financial information like your National Insurance number or credit card details.</p>
+                    <form asp-area="Home" asp-controller="Feedback" asp-action="Submit" method="post" novalidate>
+                        <input type="hidden" id="ReturnURL" name="ReturnURL" value="@Context.Request.Path"/>
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--m" for="WhatWereYouDoing">
@@ -37,14 +41,14 @@
                             </div>
                             <textarea class="govuk-textarea" rows="5" aria-describedby="wrong-hint" id="WhatWentWrong" name="WhatWentWrong"></textarea>
                         </div>
-                    </fieldset>
-                    <div class="govuk-button-group">
-                        <button class="govuk-button" id="feedback-sumbit-button" name="feedback-sumbit-button" data-module="govuk-button">
-                            Send
-                        </button>
-                        <a class="govuk-button govuk-button--secondary" id="details-close-button">Cancel</a>
-                    </div>
-                </form>
+                        <div class="govuk-button-group">
+                            <button class="govuk-button" id="feedback-sumbit-button" name="feedback-sumbit-button" data-module="govuk-button">
+                                Send
+                            </button>
+                            <a class="govuk-button govuk-button--secondary" id="details-close-button">Cancel</a>
+                        </div>
+                    </form>
+                </fieldset>
             </div>
             <div id="feedback-success" class="govuk-visually-hidden feedback-success-container">
                 <h2 class="govuk-heading-m">Thank you for your help</h2>
