@@ -25,13 +25,13 @@ namespace UKMCAB.Web.UI.Services
                     return null;
                 }
 
-                if (!DateService.IsTodayOrFuture(dayNum, monthNum, yearNum) && modelKey == "RenewalDate")
+                if (!DateService.IsTodayOrFuture(dayNum, monthNum, yearNum) && modelKey == "ReviewDate")
                 {
                     modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be in the future.");
                     return null;
                 }
 
-                if (!DateService.IsWithinFiveYearAndNotInPast(dayNum, monthNum, yearNum, aptDate) && modelKey == "RenewalDate")
+                if (!DateService.IsWithinFiveYearAndNotInPast(dayNum, monthNum, yearNum, aptDate) && modelKey == "ReviewDate")
                 {
                     modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be within 5 years of the appointment date.");
                     return null;
