@@ -17,7 +17,7 @@
         var basePath = Context.Request.RemoveQueryParameters("pagenumber");
         basePath += basePath.Contains("?") ? "&pagenumber=" : "?pagenumber=";
         var pageRange = Model.PageRange();
-        <div class="pagination-links-container">
+        <nav class="pagination-links-container">
             <ul class="pagination-links">
                 @if (Model.ShowPrevious)
                 {
@@ -27,11 +27,15 @@
                 {
                     if (pageNumber == Model.PageNumber)
                     {
-                        <li class="pagination-link-item pagination-page-link"><span>@Model.PageNumber</span></li>
+                        <li class="pagination-link-item pagination-page-link" aria-current="page"><span>@Model.PageNumber</span></li>
                     }
                     else
                     {
                         <li class="pagination-link-item pagination-page-link"><a href="@(basePath + pageNumber)" class="govuk-link govuk-link--no-visited-state"><span>@pageNumber</span></a></li>
+                    }
+                    if (pageNumber == 1 && !pageRange.Contains(2))
+                    {
+                        <li class="pagination-link-item pagination-page-link" aria-hidden="true"><span>&hellip;</span></li>
                     }
                 }
                 @if (Model.ShowNext)
@@ -39,6 +43,6 @@
                     <li class="pagination-link-item"><a href="@(basePath + (Model.PageNumber + 1))" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
                 }
             </ul>
-        </div>
+        </nav>
     }
 </div>
