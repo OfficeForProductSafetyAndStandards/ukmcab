@@ -24,11 +24,27 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 
         public List<int> PageRange()
         {
-            if (Total == 0) return new List<int>();
+            var pageList = new List<int>();
+            if (Total == 0) return pageList;
             if (TotalPages < 6) return Enumerable.Range(1, TotalPages).ToList();
             if (PageNumber < 4) return Enumerable.Range(1, 5).ToList();
-            if (PageNumber > TotalPages - 2) return Enumerable.Range(TotalPages - 4, 5).ToList();
-            return Enumerable.Range(PageNumber - 2, 5).ToList();
+
+
+            if (PageNumber > TotalPages - 2)
+            {
+                pageList = Enumerable.Range(TotalPages - 4, 5).ToList();
+            }
+            else
+            {
+                pageList = Enumerable.Range(PageNumber - 2, 5).ToList();
+            }
+
+            if (!pageList.Contains(1))
+            {
+                pageList.Insert(0, 1);
+            }
+
+            return pageList;
         }
     }
 }
