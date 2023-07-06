@@ -47,7 +47,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
             var appointmentDate = DateValidator.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
-            var renewalDate = DateValidator.CheckDate(ModelState, model.RenewalDateDay, model.RenewalDateMonth, model.RenewalDateYear, nameof(model.RenewalDate), "review", appointmentDate);
+            var reviewDate = DateValidator.CheckDate(ModelState, model.ReviewDateDay, model.ReviewDateMonth, model.ReviewDateYear, nameof(model.ReviewDate), "review", appointmentDate);
 
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
             if (ModelState.IsValid)
@@ -74,12 +74,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 document.Name = model.Name;
                 document.CABNumber = model.CABNumber;
                 document.AppointmentDate = appointmentDate;
-                document.RenewalDate = renewalDate;
+                document.RenewalDate = reviewDate;
                 document.UKASReference = model.UKASReference;
 
-                if (await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document))
+                var duplicateDocuments = await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document);
+                if (duplicateDocuments.Any())
                 {
-                    ModelState.AddModelError(nameof(model.Name), "A document already exists for this CAB name, number or UKAS reference");
+                    if (duplicateDocuments.Any(d => d.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        ModelState.AddModelError(nameof(model.Name), "This CAB name already exists");
+                    }
+                    if (duplicateDocuments.Any(d => d.CABNumber.Equals(model.CABNumber, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
+                    }
+                    if (duplicateDocuments.Any(d => d.UKASReference != null && d.UKASReference.Equals(model.UKASReference, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        ModelState.AddModelError(nameof(model.UKASReference), "This UKAS reference number already exists");
+                    }
                 }
                 else
                 {

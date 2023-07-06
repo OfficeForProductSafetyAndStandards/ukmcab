@@ -25,14 +25,14 @@ namespace UKMCAB.Core.Services
             _telemetryClient = telemetryClient;
         }
 
-        public async Task<bool> DocumentWithKeyIdentifiersExistsAsync(Document document)
+        public async Task<List<Document>> DocumentWithKeyIdentifiersExistsAsync(Document document)
         {
             var documents = await _cabRepostitory.Query<Document>(d =>
                 d.Name.Equals(document.Name, StringComparison.InvariantCultureIgnoreCase) ||
                 d.CABNumber.Equals(document.CABNumber) ||
                 (!string.IsNullOrWhiteSpace(document.UKASReference) && d.UKASReference.Equals(document.UKASReference))
             );
-            return documents.Any(d => !d.CABId.Equals(document.CABId));
+            return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList();
         }
 
         public async Task<Document> FindPublishedDocumentByCABIdAsync(string id)
@@ -88,7 +88,7 @@ namespace UKMCAB.Core.Services
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
-            Guard.IsFalse(documentExists, "CAB name or number already exists in database");
+            Guard.IsFalse(documentExists.Any(), "CAB name or number already exists in database");
             
             var auditItem = new Audit(user);
             document.CABId = Guid.NewGuid().ToString();
