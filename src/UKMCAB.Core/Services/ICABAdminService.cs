@@ -5,7 +5,7 @@ namespace UKMCAB.Core.Services
 {
     public interface ICABAdminService
     {
-        Task<bool> DocumentWithKeyIdentifiersExistsAsync(Document document);
+        Task<List<Document>> DocumentWithKeyIdentifiersExistsAsync(Document document);
         Task<Document> FindPublishedDocumentByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);

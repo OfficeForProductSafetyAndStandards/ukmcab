@@ -77,9 +77,21 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 document.RenewalDate = renewalDate;
                 document.UKASReference = model.UKASReference;
 
-                if (await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document))
+                var duplicateDocuments = await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document);
+                if (duplicateDocuments.Any())
                 {
-                    ModelState.AddModelError(nameof(model.Name), "A document already exists for this CAB name, number or UKAS reference");
+                    if (duplicateDocuments.Any(d => d.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        ModelState.AddModelError(nameof(model.Name), "This CAB name already exists");
+                    }
+                    if (duplicateDocuments.Any(d => d.CABNumber.Equals(model.CABNumber, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
+                    }
+                    if (duplicateDocuments.Any(d => d.UKASReference != null && d.UKASReference.Equals(model.UKASReference, StringComparison.CurrentCultureIgnoreCase)))
+                    {
+                        ModelState.AddModelError(nameof(model.UKASReference), "This UKAS reference number already exists");
+                    }
                 }
                 else
                 {
