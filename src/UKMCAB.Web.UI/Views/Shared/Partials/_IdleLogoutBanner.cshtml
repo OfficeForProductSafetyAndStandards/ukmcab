@@ -1,0 +1,32 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using UKMCAB.Identity.Stores.CosmosDB
+@inject SignInManager<UKMCABUser> SignInManager
+@{
+    var signedInUser = SignInManager.IsSignedIn(User);
+
+    if(signedInUser)
+    {
+        <span style="display: none;" id="new-sign-in"></span>
+    }
+}
+
+<div class="govuk-width-container" id="login-session-expired" style="display: none;">
+    <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+         aria-labelledby="govuk-notification-banner-title"
+         data-module="govuk-notification-banner">
+        <div class="govuk-notification-banner__header">
+            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+            
+            </h2>
+        </div>
+        <div class="govuk-notification-banner__content">
+            <h3 class="govuk-notification-banner__heading">
+                You have been loggged out.
+            </h3>
+        </div>
+    </div>
+
+    <div>
+        <p id="timer"></p>
+    </div>
+</div>
