@@ -11,7 +11,7 @@
                 return day >= 1 && day <= maxDay;
             }
             
-            return false;
+            return day <= 31;
         }        
         
         public static bool IsAValidMonth(int month)
