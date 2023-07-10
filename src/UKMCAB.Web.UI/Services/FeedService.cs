@@ -118,7 +118,7 @@ namespace UKMCAB.Web.UI.Services
         private SyndicationLink GetProfileSyndicationLink(string id, HttpRequest request, IUrlHelper url)
         {
             var link = url.Action("Index", "CABProfile", new { Area = "search", id }, request.Scheme, request.GetOriginalHostFromHeaders());
-            var returnUrl = WebUtility.UrlEncode(request.GetRequestUri().PathAndQuery.Replace("searchmai-feed", string.Empty));
+            var returnUrl = WebUtility.UrlEncode(request.GetRequestUri().PathAndQuery.Replace("search-feed", string.Empty));
             var profileLink = new SyndicationLink(new Uri($"{link}?returnUrl={returnUrl}"));
             profileLink.RelationshipType = "alternate";
             profileLink.MediaType = "text/html";

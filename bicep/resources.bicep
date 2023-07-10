@@ -26,10 +26,12 @@ param dataProtectionX509CertBase64 string = ''
 @secure()
 param govukNotifyApiKey string = ''
 
+
 param aspNetCoreEnvironment string = 'Development'
 
 @secure()
 param encryptionKey string
+
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: 'stor${project}${env}'
@@ -692,7 +694,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ]
-    
 
     sslCertificates: concat([ 
       {
