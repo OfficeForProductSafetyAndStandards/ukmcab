@@ -10,3 +10,68 @@
     text-align: left;
     color: $govuk-link-colour;
 }
+
+
+#file-upload-list-container {
+    table {
+        caption {
+            @include govuk-media-query($until: tablet) {
+                border-bottom: 1px solid #b1b4b6;
+                padding-bottom: 10px;
+            }
+        }
+
+        thead {
+            @include govuk-media-query($until: tablet) {
+                display: none;
+            }
+        }
+
+        tbody {
+            tr {
+                @include govuk-media-query($until: tablet) {
+                    border-bottom: 1px solid #b1b4b6;
+                    display: block;
+                    padding: 10px 0;
+                }
+
+                td {
+                    padding: 20px 0;
+
+                    @include govuk-media-query($until: tablet) {
+                        display: block;
+                        border-bottom: none;
+                        padding: 0;
+                    }
+
+                    p {
+                        @include govuk-media-query($until: tablet) {
+                            padding: 0;
+                        }
+                    }
+
+                    .file-label {
+                        padding-left: 20px;
+
+                        @include govuk-media-query($until: tablet) {
+                            padding-left: 0;
+                        }
+                    }
+
+                    .file-number {
+                        width: 20px;
+                        display: inline-block;
+                    }
+
+                    label {
+                        display: none;
+
+                        @include govuk-media-query($until: tablet) {
+                            display: block;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -44,7 +44,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new FileUploadViewModel
             {
                 Title = SchedulesOptions.UploadTitle,
-                UploadedFiles = latestVersion.Schedules?.Select(s => s.FileName).ToList() ?? new List<string>(),
+                UploadedFiles = latestVersion.Schedules ?? new List<FileUpload>(),
                 CABId = id
             };
             model.IsFromSummary = fromSummary;
@@ -82,7 +82,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             model.Title = SchedulesOptions.UploadTitle;
-            model.UploadedFiles = latestVersion.Schedules.Select(s => s.FileName).ToList();
+            model.UploadedFiles = latestVersion.Schedules ?? new List<FileUpload>();
             model.CABId = id;
             model.IsFromSummary = fromSummary;
             model.DocumentStatus = latestVersion.StatusValue;
@@ -211,7 +211,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new FileUploadViewModel()
             {
                 Title = DocumentsOptions.UploadTitle,
-                UploadedFiles = latestVersion.Documents.Select(s => s.FileName).ToList(),
+                UploadedFiles = latestVersion.Documents ?? new List<FileUpload>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
@@ -248,7 +248,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             model.Title = DocumentsOptions.UploadTitle;
-            model.UploadedFiles = latestVersion.Documents.Select(s => s.FileName).ToList();
+            model.UploadedFiles = latestVersion.Documents ?? new List<FileUpload>();
             model.CABId = id;
             model.IsFromSummary = fromSummary;
             model.DocumentStatus = latestVersion.StatusValue;
