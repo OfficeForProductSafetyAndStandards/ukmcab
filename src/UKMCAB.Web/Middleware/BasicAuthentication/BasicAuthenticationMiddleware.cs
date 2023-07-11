@@ -20,40 +20,46 @@ public class BasicAuthenticationMiddleware
     {
         if (_basicAuthOptions.IsEnabled)
         {
-            if (AuthenticationHeaderValue.TryParse(context.Request.Headers.Authorization, out var authHeader))
+            if (!_basicAuthOptions.ExclusionPaths.Any(x => context.Request.Path.StartsWithSegments(x)))
             {
-                if (authHeader.Scheme == "Basic")
-                {
-                    var (userName, password) = GetCredentials(authHeader);
-                    if (userName == BasicAuthenticationOptions.UserName && password == _basicAuthOptions.Password)
-                    {
-                        await _next(context);
-                    }
-                    else
-                    {
-                        Challenge(context);
-                    }
-                }
-                else if (authHeader.Scheme.StartsWith("apikey"))
-                {
-                    if (!context.Request.Path.StartsWithSegments("/api"))
-                    {
-                        Challenge(context);
-                    }
-                    else
-                    {
-                        await _next(context);
-                    }
-                }
+                await Authenticate(context);
             }
             else
             {
-                Challenge(context);
+                await _next(context);
             }
         }
         else
         {
             await _next(context);
+        }
+    }
+
+    private async Task Authenticate(HttpContext context)
+    {
+        if (AuthenticationHeaderValue.TryParse(context.Request.Headers.Authorization, out var authHeader))
+        {
+            if (authHeader.Scheme == "Basic")
+            {
+                var (userName, password) = GetCredentials(authHeader);
+                if (userName == BasicAuthenticationOptions.UserName && password == _basicAuthOptions.Password)
+                {
+                    await _next(context);
+                }
+                else
+                {
+                    Challenge(context);
+                }
+            }
+            else
+            {
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync($"Unsupported auth scheme ({authHeader.Scheme})");
+            }
+        }
+        else
+        {
+            Challenge(context);
         }
     }
 
