@@ -1,11 +1,21 @@
-﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 {
     public class FileUploadViewModel : CreateEditCABViewModel, ILayoutModel 
     {
         public string? Title { get; set; }
         public string? CABId { get; set; }
-        public List<string>? UploadedFiles { get; set; }
+        public List<FileViewModel>? UploadedFiles { get; set; }
         public IFormFile? File { get; set; }
+    }
+
+    public class FileViewModel
+    {
+        public string FileName { get; set; }
+
+        [Required(ErrorMessage = "Enter a title for the file")]
+        public string? Label { get; set; }
     }
 
     public static class SchedulesOptions
