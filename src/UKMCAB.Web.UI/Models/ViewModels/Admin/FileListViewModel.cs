@@ -6,6 +6,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
     {
         public string? Title { get; set; }
         public string? CABId { get; set; }
-        public List<FileUpload>? UploadedFiles { get; set; }
+        public List<FileViewModel>? UploadedFiles { get; set; }
     }
 }

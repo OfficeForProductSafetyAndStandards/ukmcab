@@ -1,4 +1,4 @@
-﻿using UKMCAB.Data.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 {
@@ -6,8 +6,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
     {
         public string? Title { get; set; }
         public string? CABId { get; set; }
-        public List<FileUpload>? UploadedFiles { get; set; }
+        public List<FileViewModel>? UploadedFiles { get; set; }
         public IFormFile? File { get; set; }
+    }
+
+    public class FileViewModel
+    {
+        public string FileName { get; set; }
+
+        [Required(ErrorMessage = "Enter a title for the file")]
+        public string? Label { get; set; }
     }
 
     public static class SchedulesOptions

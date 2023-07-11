@@ -23,11 +23,11 @@
     <div class="govuk-grid-column-full">
         <partial name="Partials/_ValidationSummary" model="null"/>
         <span class="govuk-caption-m">Create a CAB</span>
-        <h1 class="govuk-heading-l">Upload the Schedule of Accreditation</h1>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
         <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 5 PDF documents.</p>
             
         <div id="file-upload-list-container">
-            @using (Html.BeginForm("SchedulesList", "FileUpload", Model.IsFromSummary ? new { area="admin", id = @Model.CABId, fromSummary="true" }: new { area="admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype="multipart/form-data", novalidate="true" }))
+            @using (Html.BeginForm("SchedulesList", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
             {
                 <table class="govuk-table">
                     <caption class="govuk-table__caption govuk-table__caption--s">Files you have uploaded</caption>

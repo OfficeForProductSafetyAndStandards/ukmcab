@@ -1,5 +1,6 @@
 ﻿@using UKMCAB.Data.Models
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.FileUploadViewModel
+
 @section BackButton
 {
     <div class="govuk-width-container ">
@@ -19,14 +20,14 @@
 }
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
         <partial name="Partials/_ValidationSummary" model="null"/>
         <span class="govuk-caption-m">Create a CAB</span>
-        <h1 class="govuk-heading-l">Upload the supporting documents</h1>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
         <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 10 Word, Excel, or PDF documents.</p>
             
-        <div>
-            @using (Html.BeginForm("DocumentsList", "FileUpload", Model.IsFromSummary ? new { area="admin", id = @Model.CABId, fromSummary="true" }: new { area="admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype="multipart/form-data", novalidate="true" }))
+        <div id="file-upload-list-container">
+            @using (Html.BeginForm("DocumentsList", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
             {
                 <table class="govuk-table">
                     <thead class="govuk-table__head">
