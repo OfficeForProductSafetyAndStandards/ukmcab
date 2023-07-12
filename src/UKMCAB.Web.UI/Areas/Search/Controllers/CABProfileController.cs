@@ -149,7 +149,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     {
                         Label = s.Label ?? s.FileName,
                         FileName = s.FileName,
-                        BlobName = s.BlobName
+                        BlobName = s.BlobName,
+                        LegislativeArea = s.LegislativeArea
                     }).ToList() ?? new List<FileUpload>(),
                     DocumentType = DataConstants.Storage.Schedules
                 },
