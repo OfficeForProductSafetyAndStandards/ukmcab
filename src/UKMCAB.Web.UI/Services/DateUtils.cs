@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace UKMCAB.Web.UI.Services;
 
-public class DateValidator
+public class DateUtils
 {
     public static DateTime? CheckDate(ModelStateDictionary modelState, string day, string month, string year, string modelKey, string errorMessagePart, DateTime? aptDate = null)
     {
