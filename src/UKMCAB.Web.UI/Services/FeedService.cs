@@ -78,7 +78,7 @@ namespace UKMCAB.Web.UI.Services
             feed.Links.Add(selfLink);
 
             var feedAbsoluteUri = feedUrl.AbsoluteUri;
-            var alternateUrl = new Uri(feedAbsoluteUri.Replace("search-feed", string.Empty));
+            var alternateUrl = new Uri(feedAbsoluteUri.Replace("search-feed", string.Empty).Replace("-feed", string.Empty));
             var alternateLink = new SyndicationLink(alternateUrl);
             alternateLink.RelationshipType = "alternate";
             alternateLink.MediaType = "text/html";
@@ -118,8 +118,11 @@ namespace UKMCAB.Web.UI.Services
         private SyndicationLink GetProfileSyndicationLink(string id, HttpRequest request, IUrlHelper url)
         {
             var link = url.Action("Index", "CABProfile", new { Area = "search", id }, request.Scheme, request.GetOriginalHostFromHeaders());
-            var returnUrl = WebUtility.UrlEncode(request.GetRequestUri().PathAndQuery.Replace("search-feed", string.Empty));
-            var profileLink = new SyndicationLink(new Uri($"{link}?returnUrl={returnUrl}"));
+            var requestUri = request.GetRequestUri();
+            var returnUrl = requestUri.AbsolutePath.Contains("cab-profile", StringComparison.InvariantCultureIgnoreCase) ?
+                requestUri.Query :
+                "?returnUrl=" +  WebUtility.UrlEncode(requestUri.PathAndQuery.Replace("search-feed", string.Empty));
+            var profileLink = new SyndicationLink(new Uri($"{link}{returnUrl}"));
             profileLink.RelationshipType = "alternate";
             profileLink.MediaType = "text/html";
             return profileLink;

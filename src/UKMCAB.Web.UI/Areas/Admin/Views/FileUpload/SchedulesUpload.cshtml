@@ -1,4 +1,5 @@
 ﻿@using UKMCAB.Data.Models
+@using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.FileUploadViewModel
 @section BackButton
 {
@@ -19,20 +20,23 @@
 }
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
         <partial name="Partials/_ValidationSummary" model="null"/>
         <span class="govuk-caption-m">Create a CAB</span>
-        <h1 class="govuk-heading-l">Upload the Schedule of Accreditation</h1>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
         <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 5 PDF documents.</p>
             
-        <div>
-            @using (Html.BeginForm("SchedulesList", "FileUpload", Model.IsFromSummary ? new { area="admin", id = @Model.CABId, fromSummary="true" }: new { area="admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype="multipart/form-data", novalidate="true" }))
+        <div id="file-upload-list-container">
+            @using (Html.BeginForm("SchedulesList", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
             {
                 <table class="govuk-table">
+                    <caption class="govuk-table__caption govuk-table__caption--s">Files you have uploaded</caption>
                     <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header" colspan="3">Files you have uploaded</th>
-                    </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">File</th>
+                            <th scope="col" class="govuk-table__header">Legislative area</th>
+                            <th scope="col" class="govuk-table__header">Action</th>
+                        </tr>
                     </thead>
                     <tbody class="govuk-table__body">
                     @if (!Model.UploadedFiles.Any())
@@ -46,11 +50,20 @@
                         var index = 1;
                         foreach (var uploadedFile in Model.UploadedFiles)
                         {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@(index++).</td>
-                                <td class="govuk-table__cell">@uploadedFile</td>
-                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="fileName" value="@uploadedFile">Remove</button></td>
-                            </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">
+                                <p class="govuk-body"><span class="file-number">@(index++).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a></p>
+                                <label class="govuk-label govuk-label--s">File</label>
+                                <p class="govuk-body file-label">@uploadedFile.Label</p>
+                            </td>
+                            <td class="govuk-table__cell"><p class="govuk-body">
+                                <label class="govuk-label govuk-label--s">Legislative area</label>
+                                <p class="govuk-body file-label">
+                                    @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
+                                </p>
+                            </td>
+                            <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="fileName" value="@uploadedFile.FileName">Remove</button></td>
+                        </tr>
                         }
                     }
                     </tbody>
