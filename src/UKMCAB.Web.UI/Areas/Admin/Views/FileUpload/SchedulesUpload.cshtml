@@ -58,7 +58,9 @@
                             </td>
                             <td class="govuk-table__cell"><p class="govuk-body">
                                 <label class="govuk-label govuk-label--s">Legislative area</label>
-                                <p class="govuk-body file-label">TBD</p>
+                                <p class="govuk-body file-label">
+                                    @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
+                                </p>
                             </td>
                             <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="fileName" value="@uploadedFile.FileName">Remove</button></td>
                         </tr>

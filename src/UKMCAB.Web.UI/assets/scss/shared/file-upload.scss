@@ -36,7 +36,16 @@
                 }
 
                 td {
-                    padding: 20px 0;
+                    padding: 20px 10px 20px 0;
+                    vertical-align: bottom;
+
+                    &:first-child {
+                        width: 70%;
+
+                        @include govuk-media-query($until: tablet) {
+                            width: 100%;
+                        }
+                    }
 
                     @include govuk-media-query($until: tablet) {
                         display: block;
@@ -52,6 +61,7 @@
 
                     .file-label {
                         padding-left: 20px;
+                        margin-bottom: 0;
 
                         @include govuk-media-query($until: tablet) {
                             padding-left: 0;
@@ -61,6 +71,10 @@
                     .file-number {
                         width: 20px;
                         display: inline-block;
+                    }
+
+                    .govuk-form-group {
+                        margin-bottom: 0;
                     }
 
                     label {

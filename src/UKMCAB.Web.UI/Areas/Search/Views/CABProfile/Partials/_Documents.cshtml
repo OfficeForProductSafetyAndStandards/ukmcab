@@ -9,29 +9,37 @@
         }
         else
         {
-            <dl class="govuk-summary-list">
-                @foreach (var file in Model.Documents)
+            var groupedSchedules = Model.Documents.GroupBy(s => s.LegislativeArea);
+            foreach (var groupedSchedule in groupedSchedules)
+            {
+                if (!string.IsNullOrWhiteSpace(groupedSchedule.Key))
                 {
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            @file.Label
-                        </dt>
-                        <dd class="govuk-summary-list__actions">
-                            @if (file.FileName.EndsWith("pdf", StringComparison.CurrentCultureIgnoreCase))
-                            {
-                            <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="View" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType" target="_blank">
-                                View<span class="govuk-visually-hidden"> file (opens in a new window)</span>
-                            </a>
-                            }
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType">
-                                Download<span class="govuk-visually-hidden"> file</span>
-                            </a>
-                        </dd>
-                    </div>
+                    <h3 class="govuk-heading-m">@groupedSchedule.Key</h3>
                 }
-            </dl>
+                <dl class="govuk-summary-list">
+                    @foreach (var file in groupedSchedule)
+                    {
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                @file.Label
+                            </dt>
+                            <dd class="govuk-summary-list__actions">
+                                @if (file.FileName.EndsWith("pdf", StringComparison.CurrentCultureIgnoreCase))
+                                {
+                                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="View" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType" target="_blank">
+                                        View<span class="govuk-visually-hidden"> file (opens in a new window)</span>
+                                    </a>
+                                }
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType">
+                                    Download<span class="govuk-visually-hidden"> file</span>
+                                </a>
+                            </dd>
+                        </div>
+                    }
+                </dl>
+            }
         }
     </div>
 </div>
