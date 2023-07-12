@@ -78,7 +78,7 @@ namespace UKMCAB.Web.UI.Services
             feed.Links.Add(selfLink);
 
             var feedAbsoluteUri = feedUrl.AbsoluteUri;
-            var alternateUrl = new Uri(feedAbsoluteUri.Replace("search-feed", string.Empty));
+            var alternateUrl = new Uri(feedAbsoluteUri.Replace("search-feed", string.Empty).Replace("-feed", string.Empty));
             var alternateLink = new SyndicationLink(alternateUrl);
             alternateLink.RelationshipType = "alternate";
             alternateLink.MediaType = "text/html";
