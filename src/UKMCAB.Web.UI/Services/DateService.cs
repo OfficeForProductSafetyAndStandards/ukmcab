@@ -52,16 +52,12 @@ public class DateService
 
     public static bool IsWithinFiveYearOfAppointmentDateAndInFuture(int day, int month, int year, DateTime? aptDate)
     {
-        if(aptDate == null)
-        {
-            return true;
-        }
-
-        DateTime appointmentDate = (DateTime)aptDate;            
+        
+        var appointmentDateOrYesterday = aptDate != null ? (DateTime)aptDate: DateTime.Today.AddDays(-1);            
         var tomorrow = DateTime.Today.AddDays(1);
 
         if (DateTime.TryParse($"{year}/{month}/{day}", out DateTime inputDate))
-            return inputDate <= appointmentDate.AddYears(5) && inputDate >= tomorrow;
+            return inputDate <= appointmentDateOrYesterday.AddYears(5) && inputDate >= tomorrow;
 
         return false;
     }
