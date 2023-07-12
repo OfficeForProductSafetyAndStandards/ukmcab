@@ -16,6 +16,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
         [Required(ErrorMessage = "Enter a title for the file")]
         public string? Label { get; set; }
+        public string? LegislativeArea { get; set; }
     }
 
     public static class SchedulesOptions

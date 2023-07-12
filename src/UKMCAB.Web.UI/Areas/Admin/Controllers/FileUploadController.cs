@@ -44,7 +44,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new FileUploadViewModel
             {
                 Title = SchedulesOptions.UploadTitle,
-                UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel{FileName = s.FileName, Label = s.Label}).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel{FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea}).ToList() ?? new List<FileViewModel>(),
                 CABId = id
             };
             model.IsFromSummary = fromSummary;
@@ -83,7 +83,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.Title = SchedulesOptions.UploadTitle;
             model.UploadedFiles =
-                latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label })
+                latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea})
                     .ToList() ?? new List<FileViewModel>();
             model.CABId = id;
             model.IsFromSummary = fromSummary;
@@ -196,6 +196,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 });
             }
 
+            if (model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
+            {
+                var index = 0;
+                foreach (var uploadedFile in model.UploadedFiles)
+                {
+                    if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
+                    {
+                        ModelState.AddModelError($"UploadedFiles[{index}].LegislativeArea", "Enter a legislative area");
+                    }
+
+                    index++;
+                }
+            }
+
             if (ModelState.IsValid)
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -226,6 +240,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var fileViewModel = fileViewModels.Single(fv => fv.FileName.Equals(fileUpload.FileName));
                 fileUpload.Label = fileViewModel.Label;
+                fileUpload.LegislativeArea = fileViewModel.LegislativeArea;
             }
 
             return fileUploads;

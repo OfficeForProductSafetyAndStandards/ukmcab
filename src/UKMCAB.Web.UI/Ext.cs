@@ -28,6 +28,11 @@ public static class Ext
     {
         return ShowErrorClass(htmlHelper, modelState, modelStateKey, "govuk-input--error");
     }
+    public static IHtmlContent ShowModelStateSelectErrorClass(this IHtmlHelper htmlHelper, ModelStateDictionary modelState, string modelStateKey)
+    {
+        return ShowErrorClass(htmlHelper, modelState, modelStateKey, "govuk-select--error");
+    }
+
     public static IHtmlContent ShowErrorClass(this IHtmlHelper htmlHelper, ModelStateDictionary modelState, string modelStateKey, string errorClass)
     {
         return modelState.Keys.Any(k => k.Equals(modelStateKey)) && modelState[modelStateKey].ValidationState == ModelValidationState.Invalid ?
