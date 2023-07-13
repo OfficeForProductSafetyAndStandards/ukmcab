@@ -24,8 +24,8 @@ public class DateUtilsShould
         var year = "2020";
         var modelKey = "AppointmentDate";
         var errorMessagePart = "appointment";
-        var date = $"{day}/{month}/{year}";
-        var dateParsed = DateTime.TryParse(date, out DateTime dateTime);
+        var date = $"{year}/{month}/{day}";
+        DateTime.TryParse(date, out DateTime dateTime);
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -46,8 +46,8 @@ public class DateUtilsShould
         var year = "2024";
         var modelKey = "ReviewDate";
         var errorMessagePart = "review";
-        var date = $"{day}/{month}/{year}";
-        var aptDate = "12/12/2019";
+        var date = $"{year}/{month}/{day}";
+        var aptDate = "2019/12/12";
         DateTime.TryParse(aptDate, out DateTime appointmentDate);
         DateTime.TryParse(date, out DateTime dateTime);
 
@@ -70,7 +70,7 @@ public class DateUtilsShould
         var year = "2028";
         var modelKey = "ReviewDate";
         var errorMessagePart = "review";
-        var date = $"{day}/{month}/{year}";
+        var date = $"{year}/{month}/{day}";
         DateTime.TryParse(date, out DateTime dateTime);
 
         //Act

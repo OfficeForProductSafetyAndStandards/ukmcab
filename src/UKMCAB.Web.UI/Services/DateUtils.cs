@@ -7,7 +7,7 @@ public class DateUtils
 {
     public static DateTime? CheckDate(ModelStateDictionary modelState, string day, string month, string year, string modelKey, string errorMessagePart, DateTime? aptDate = null)
     {
-        var date = $"{day}/{month}/{year}";
+        var date = $"{year}/{month}/{day}";
         var dayParsed = int.TryParse(day, out int parsedDay);
         var monthParsed = int.TryParse(month, out int parsedMonth);
         var yearParsed = int.TryParse(year, out int parsedYear);
