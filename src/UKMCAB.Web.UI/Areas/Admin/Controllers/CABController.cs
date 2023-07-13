@@ -46,8 +46,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/about/{id}")]
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
-            var appointmentDate = DateValidator.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
-            var reviewDate = DateValidator.CheckDate(ModelState, model.ReviewDateDay, model.ReviewDateMonth, model.ReviewDateYear, nameof(model.ReviewDate), "review", appointmentDate);
+            var appointmentDate = DateUtils.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
+            var reviewDate = DateUtils.CheckDate(ModelState, model.ReviewDateDay, model.ReviewDateMonth, model.ReviewDateYear, nameof(model.ReviewDate), "review", appointmentDate);
 
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
             if (ModelState.IsValid)
