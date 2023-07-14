@@ -23,7 +23,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("admin/cab/about/{id}")]
+        [Route("admin/cab/cabdetails/{id}")]
         public async Task<IActionResult> About(string id, bool fromSummary)
         {
             var model = new CABDetailsViewModel();
@@ -43,7 +43,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Route("admin/cab/about/{id}")]
+        [Route("admin/cab/cabdetails/{id}")]
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
             var appointmentDate = DateUtils.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
