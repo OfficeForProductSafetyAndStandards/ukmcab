@@ -30,14 +30,21 @@
             <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 5 pdf documents.</p>
 
             <div id="file-upload-list-container">
-                <table class="govuk-table">
-                    <caption class="govuk-table__caption govuk-table__caption--s">Files you have uploaded</caption>
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" for="files-uploaded-table">
+                        Files you have uploaded
+                    </label>
+                </h3>
+                <div class="govuk-hint" id="files-uploaded-table-hint">
+                    Enter a clear and relevant title for the file. This will be shown to the public.
+                </div>
+                <table class="govuk-table" id="files-uploaded-table" aria-describedby="files-uploaded-table-hint">
                     <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">File</th>
-                            <th scope="col" class="govuk-table__header">Legislative area</th>
-                            <th scope="col" class="govuk-table__header">Action</th>
-                        </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">File</th>
+                        <th scope="col" class="govuk-table__header">Legislative area</th>
+                        <th scope="col" class="govuk-table__header">Action</th>
+                    </tr>
                     </thead>
                     <tbody class="govuk-table__body">
                     @if (!Model.UploadedFiles.Any())
@@ -59,27 +66,28 @@
                                     <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
                                         <label class="govuk-label govuk-label--s" asp-for="UploadedFiles[i].Label">File</label>
                                         <p class="govuk-error-message">
-                                                <span asp-validation-for="UploadedFiles[i].Label" class="govuk-error-message"></span>
+                                            <span asp-validation-for="UploadedFiles[i].Label" class="govuk-error-message"></span>
                                         </p>
                                         <input asp-for="UploadedFiles[i].Label" type="text" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true">
                                         <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
                                     </div>
                                 </td>
-                                <td class="govuk-table__cell"><p class="govuk-body">
+                                <td class="govuk-table__cell">
+                                    <p class="govuk-body">
                                     <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
                                         <label class="govuk-label govuk-label--s" asp-for="UploadedFiles[i].LegislativeArea">Legislative area</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles[i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
-                                        <select asp-for="UploadedFiles[i].LegislativeArea" class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")" 
+                                        <select asp-for="UploadedFiles[i].LegislativeArea" class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")"
                                                 asp-items="@DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea)))">
                                             <option value="">Not assigned</option>
                                         </select>
                                     </div>
                                 </td>
-                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="submitType" value="@("Remove" + uploadedFile.FileName)">Remove</button></td>
+                                    <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link remove-file-button-list-link" name="submitType" value="@("Remove" + uploadedFile.FileName)">Remove</button></td>
                             </tr>
-                       }
+                        }
                     }
                     </tbody>
                 </table>
