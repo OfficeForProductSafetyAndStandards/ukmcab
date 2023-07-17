@@ -49,8 +49,8 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">@(index++).</td>
-                                <td class="govuk-table__cell">@uploadedFile</td>
-                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state app-button-link" name="fileName" value="@uploadedFile">Remove</button></td>
+                                <td class="govuk-table__cell">@uploadedFile.FileName</td>
+                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state app-button-link" name="fileName" value="@uploadedFile.FileName">Remove</button></td>
                             </tr>
                         }
                     }
