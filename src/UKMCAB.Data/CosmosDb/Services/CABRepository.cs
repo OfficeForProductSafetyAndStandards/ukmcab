@@ -1,8 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Net;
-using UKMCAB.Common;
+using CsvHelper;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 
@@ -18,27 +19,14 @@ namespace UKMCAB.Data.CosmosDb.Services
             _cosmosDbConnectionString = cosmosDbConnectionString;
         }
 
-        private string GetSlug(string cabName, string cabId, Dictionary<string, string> slugs)
+        private class FileMap
         {
-            var slug = Slug.Make(cabName);
-            if (slugs.ContainsKey(slug) && slugs[slug] != cabId)
-            {
-                var index = 0;
-                var newSlug = $"{slug}{index}";
-                while (slugs.ContainsKey(newSlug))
-                {
-                    newSlug = $"{slug}-{++index}";
-                }
+            public string Name { get; set; }
+            public string CABNumber { get; set; }
+            public string FileName { get; set; }
+            public string Label { get; set; }
+            public string LegislativeArea { get; set; }
 
-                slug = newSlug;
-                slugs.Add(slug, cabId);
-            }
-
-            if (!slugs.ContainsKey(slug))
-            {
-                slugs.Add(slug, cabId);
-            }
-            return slug;
         }
 
         public async Task<bool> InitialiseAsync(bool force = false)
@@ -47,17 +35,56 @@ namespace UKMCAB.Data.CosmosDb.Services
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
-            var slugList = new Dictionary<string, string>();
-            if (string.IsNullOrWhiteSpace(items.First().URLSlug))
+
+            var itemToCheck = items.First(i => i.Schedules != null && i.Schedules.Any());
+            if (true || string.IsNullOrWhiteSpace(itemToCheck.Schedules.First().LegislativeArea))
             {
-                foreach (var document in items)
+                List<FileMap> fileMapList;
+                using (var reader = new StreamReader("legislative-file-lookup.csv"))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
                 {
-                    document.URLSlug = GetSlug(document.Name, document.CABId, slugList);
-                    await Update(document);
+                    fileMapList = csv.GetRecords<FileMap>().ToList();
                 }
 
-                force = true;
+                foreach (var document in items)
+                {
+                    if (document.Schedules == null || !document.Schedules.Any())
+                    {
+                        continue;
+                    }
+                    var maps = new List<FileMap>();
+                    if (!string.IsNullOrWhiteSpace(document.CABNumber))
+                    {
+                        var cabNumber = document.CABNumber.TrimStart('0');
+                        maps = fileMapList.Where(f => f.CABNumber.Equals(cabNumber)).ToList();
+                    }
+                    if (!maps.Any())
+                    {
+                        maps = fileMapList.Where(f => f.Name.Equals(document.Name, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                    }
+
+                    if (!maps.Any())
+                    {
+                        continue;
+                    }
+                    var documentChanged = false;
+                    foreach (var documentSchedule in document.Schedules)
+                    {
+                        var map = maps.SingleOrDefault(m => m.Label == documentSchedule.Label && m.FileName == documentSchedule.FileName);
+                        if (map != null)
+                        {
+                            documentSchedule.LegislativeArea = map.LegislativeArea;
+                            documentChanged = true;
+                        }
+                    }
+
+                    if (documentChanged)
+                    {
+                        await Update(document);
+                    }
+                }
             }
+
             return force;
         }
 
