@@ -37,7 +37,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             var items = await Query<Document>(_container, document => true);
 
             var itemToCheck = items.First(i => i.Schedules != null && i.Schedules.Any());
-            if (true || string.IsNullOrWhiteSpace(itemToCheck.Schedules.First().LegislativeArea))
+            if (string.IsNullOrWhiteSpace(itemToCheck.Schedules.First().LegislativeArea))
             {
                 List<FileMap> fileMapList;
                 using (var reader = new StreamReader("legislative-file-lookup.csv"))
