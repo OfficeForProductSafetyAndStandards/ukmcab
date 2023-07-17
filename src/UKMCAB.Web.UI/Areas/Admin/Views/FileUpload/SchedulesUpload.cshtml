@@ -52,7 +52,7 @@
                         {
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">
-                                <p class="govuk-body"><span class="file-number">@(index++).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a></p>
+                                <p class="govuk-body file-name"><span class="file-number">@(index++).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a></p>
                                 <label class="govuk-label govuk-label--s">File</label>
                                 <p class="govuk-body file-label">@uploadedFile.Label</p>
                             </td>
