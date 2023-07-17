@@ -61,6 +61,12 @@
                         }
                     }
 
+                    .file-name {
+                        @include govuk-media-query($until: tablet) {
+                            padding-bottom: 5px;
+                        }
+                    }
+
                     .file-label {
                         padding-left: 20px;
                         margin-bottom: 0;
