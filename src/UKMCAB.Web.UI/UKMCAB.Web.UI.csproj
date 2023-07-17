@@ -73,4 +73,10 @@
     <None Include="Pages\_ViewStart.cshtml" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="legislative-file-lookup.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
