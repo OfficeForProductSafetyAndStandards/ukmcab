@@ -1,5 +1,6 @@
 ﻿@using UKMCAB.Web.UI.Extensions
-@using NuGet.Packaging
+@using System.Net
+@using UKMCAB.Data
 @model SearchViewModel
 
 <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
@@ -11,19 +12,20 @@
             <a href="#search-filter-container" id="search-results-filter-toggle" class="govuk-link govuk-link--no-visited-state">Filters (@Model.FilterCount applied)</a>
         </div>
     </div>
-    
-    <div id="search-results-filter-list">
-        @if (Model.FilterCount > 0)
-        {
-            var baseFilterPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
-
-            foreach (var filter in Model.SelectedFilters)
+    @if (Model.FilterCount > 0)
+    {
+        var baseFilterPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
+        <div id="search-results-filter-list">
+            @foreach (var filterOption in Model.SelectedFilters)
             {
-                <a href="@baseFilterPath" class="search-result-filter-link">@filter</a>
+                var filterSection = DataConstants.Lists.BodyTypes.Any(bt => bt.Equals(filterOption, StringComparison.CurrentCultureIgnoreCase)) ? "BodyTypes" :
+                    DataConstants.Lists.Countries.Any(ct => ct.Equals(filterOption, StringComparison.CurrentCultureIgnoreCase)) ? "RegisteredOfficeLocations" : "LegislativeAreas";
+                var fitlerTerm = $"&{filterSection}={WebUtility.UrlEncode(filterOption)}";
+                var filterPath = baseFilterPath.Replace(fitlerTerm, string.Empty);
+                <a href="@filterPath" class="search-result-filter-link">@filterOption&nbsp;&nbsp;x</a>
             }
-        }
-    </div>
-
+        </div>
+    }
     @if (Model.Pagination.Total > 0)
     {
         var baseSortPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
