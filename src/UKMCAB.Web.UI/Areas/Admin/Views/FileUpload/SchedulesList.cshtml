@@ -55,7 +55,6 @@
                     }
                     else
                     {
-                        var index = 0;
                         for (int i = 0; i < Model.UploadedFiles.Count; i++)
                         {
                             var uploadedFile = Model.UploadedFiles[i];
@@ -85,7 +84,7 @@
                                         </select>
                                     </div>
                                 </td>
-                                    <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link remove-file-button-list-link" name="submitType" value="@("Remove" + uploadedFile.FileName)">Remove</button></td>
+                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link remove-file-button-list-link" name="submitType" value="@("Remove-" + i)">Remove</button></td>
                             </tr>
                         }
                     }
