@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data;
+﻿using NuGet.Packaging;
+using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
@@ -39,6 +40,18 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FilterViewModel? LegislativeAreaOptions { get; set; }
 
         public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0);
+
+        public List<string> SelectedFilters
+        {
+            get
+            {
+                var filters = new List<string>();
+                filters.AddRange(BodyTypes ?? Array.Empty<string>());
+                filters.AddRange(RegisteredOfficeLocations ?? Array.Empty<string>());
+                filters.AddRange(LegislativeAreas ?? Array.Empty<string>());
+                return filters;
+            }
+        }
 
         public List<SortOption> SortOptions => new List<SortOption>
         {
