@@ -35,4 +35,8 @@
     <ProjectReference Include="..\UKMCAB.Web.UI\UKMCAB.Web.UI.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Controllers\Accounts\" />
+  </ItemGroup>
+
 </Project>

@@ -1,5 +1,4 @@
 ﻿using Microsoft.ApplicationInsights;
-using Microsoft.AspNetCore.Identity;
 using System.Net;
 using System.Xml;
 using UKMCAB.Common.Exceptions;
@@ -8,7 +7,6 @@ using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
-using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
@@ -22,7 +20,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
         private readonly ICABAdminService _cabAdminService;
         private readonly IFileStorage _fileStorage;
-        private readonly UserManager<UKMCABUser> _userManager;
         private readonly TelemetryClient _telemetryClient;
         private readonly IFeedService _feedService;
 
@@ -33,13 +30,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             public const string CabFeed = "cab.feed";
         }
 
-        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, ICABAdminService cabAdminService, IFileStorage fileStorage,
-            UserManager<UKMCABUser> userManager, TelemetryClient telemetryClient, IFeedService feedService)
+        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, ICABAdminService cabAdminService, IFileStorage fileStorage, TelemetryClient telemetryClient, IFeedService feedService)
         {
             _cachedPublishedCabService = cachedPublishedCabService;
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
-            _userManager = userManager;
             _telemetryClient = telemetryClient;
             _feedService = feedService;
         }
@@ -65,10 +60,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
             }
 
-            var user = await _userManager.GetUserAsync(User);
-            var isOPSSUer = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
-
-            var cab = GetCabProfileViewModel(cabDocument, isOPSSUer, returnUrl);
+            var cab = GetCabProfileViewModel(cabDocument, returnUrl);
 
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
             {
@@ -111,12 +103,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         }
 
-        private CABProfileViewModel GetCabProfileViewModel(Document cabDocument, bool isOPSSUer, string returnUrl)
+        private CABProfileViewModel GetCabProfileViewModel(Document cabDocument, string returnUrl)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var cab = new CABProfileViewModel
             {
-                IsLoggedIn = isOPSSUer,
                 IsArchived = isArchived,
                 ArchivedBy = isArchived ? cabDocument.Archived.UserName : string.Empty,
                 ArchivedDate = isArchived ? cabDocument.Archived.DateTime.ToString("dd MMM yyyy") : string.Empty,
@@ -182,11 +173,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
-            var user = await _userManager.GetUserAsync(User);
-            var isOPSSUer = user != null && await _userManager.IsInRoleAsync(user, Constants.Roles.OPSSAdmin);
             if (!string.IsNullOrWhiteSpace(ArchiveReason))
             {
-                await _cabAdminService.ArchiveDocumentAsync(user, cabDocument, ArchiveReason);
+                await _cabAdminService.ArchiveDocumentAsync(new UKMCABUser() /*todo: use userid claim*/, cabDocument, ArchiveReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
@@ -196,7 +185,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
             ModelState.AddModelError("ArchiveReason", "State the reason for archiving this CAB record");
 
-            var cab = GetCabProfileViewModel(cabDocument, isOPSSUer, returnUrl);
+            var cab = GetCabProfileViewModel(cabDocument, returnUrl);
 
             return View(cab);
         }

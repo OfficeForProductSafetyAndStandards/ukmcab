@@ -56,7 +56,6 @@
     <ProjectReference Include="..\UKMCAB.Common\UKMCAB.Common.csproj" />
     <ProjectReference Include="..\UKMCAB.Core\UKMCAB.Core.csproj" />
     <ProjectReference Include="..\UKMCAB.Data\UKMCAB.Data.csproj" />
-    <ProjectReference Include="..\UKMCAB.Identity.Stores.CosmosDB\UKMCAB.Identity.Stores.CosmosDB.csproj" />
     <ProjectReference Include="..\UKMCAB.Infrastructure\UKMCAB.Infrastructure.csproj" />
     <ProjectReference Include="..\UKMCAB.Web\UKMCAB.Web.csproj" />
   </ItemGroup>

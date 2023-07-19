@@ -12,9 +12,6 @@ using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
-using UKMCAB.Identity.Stores.CosmosDB;
-using UKMCAB.Identity.Stores.CosmosDB.Extensions;
-using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Subscriptions.Core;
@@ -68,7 +65,6 @@ builder.Services.AddSingleton(cosmosDbConnectionString);
 builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 
-builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<ICABRepository, CABRepository>(); 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
@@ -95,16 +91,7 @@ builder.Services.AddHostedService<RandomSortGenerator>();
 
 builder.Services.AddSearchService(cognitiveSearchConnectionString);
 
-builder.Services.Configure<IdentityStoresOptions>(options =>
-    options.UseAzureCosmosDB(cosmosDbConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));
 
-builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
-{
-    options.Password.RequiredLength = 8;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(2);
-})
-    .AddRoles<IdentityRole>()
-    .AddAzureCosmosDbStores();
 
 builder.Services.ConfigureApplicationCookie(opt =>
 {
@@ -211,11 +198,6 @@ app.MapControllerRoute(
 
 UseSubscriptions(app);
 
-await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, seeds =>
-{
-    seeds.AddRole(role: new IdentityRole(Constants.Roles.OPSSAdmin));
-});
-
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 var telemetryClient = app.Services.GetRequiredService<TelemetryClient>();
 
@@ -253,8 +235,6 @@ var stats = new Timer(async state =>
     using var scope = app.Services.CreateScope();
     try
     {
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UKMCABUser>>();
-        telemetryClient.TrackMetric(AiTracking.Metrics.UsersCount, await userManager.Users.CountAsync());
         await app.Services.GetRequiredService<ICABAdminService>().RecordStatsAsync();
 
         var pages1 = await app.Services.GetRequiredService<ISubscriptionRepository>().GetAllAsync(take: 1);

@@ -35,20 +35,6 @@ public static class Constants
         public const string Save = nameof(Save);
     }
 
-    public class Roles
-    {
-        public const string OPSSAdmin = nameof(OPSSAdmin);
-        public const string UKASUser = nameof(UKASUser);
-        public const string OGDUser = nameof(OGDUser);
-
-        public static readonly List<string> AuthRoles = new List<string>
-        {
-            nameof(OPSSAdmin),
-            nameof(UKASUser),
-            nameof(OGDUser),
-        };
-    }
-
     public class ErrorMessages
     {
         public const string InvalidLoginAttempt = "Enter a valid email address and password";

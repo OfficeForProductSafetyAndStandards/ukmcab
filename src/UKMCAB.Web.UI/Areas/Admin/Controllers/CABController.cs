@@ -1,25 +1,22 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using UKMCAB.Data.Models;
-using UKMCAB.Core.Services;
-using UKMCAB.Identity.Stores.CosmosDB;
-using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using System.Net;
+using UKMCAB.Core.Security;
+using UKMCAB.Core.Services;
+using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
-    [Area("admin")]
-    [Authorize(Roles = $"{Constants.Roles.OPSSAdmin}")]
+    [Area("admin"), Authorize(Policy = Policies.CabManagement)]
     public class CABController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
-        private readonly UserManager<UKMCABUser> _userManager;
 
-        public CABController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager)
+        public CABController(ICABAdminService cabAdminService)
         {
             _cabAdminService = cabAdminService;
-            _userManager = userManager;
         }
 
         [HttpGet]
@@ -95,7 +92,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    var user = await _userManager.GetUserAsync(User);
+                    var user = new Data.UKMCABUser();//TODO //await _userManager.GetUserAsync(User);
                     var createdDocument = model.IsFromSummary ?
                         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, document, submitType == Constants.SubmitType.Save) :
                         await _cabAdminService.CreateDocumentAsync(user, document, submitType == Constants.SubmitType.Save);
@@ -168,7 +165,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.IsPointOfContactPublicDisplay = model.IsPointOfContactPublicDisplay;
                 latestDocument.RegisteredOfficeLocation = model.RegisteredOfficeLocation;
 
-                var user = await _userManager.GetUserAsync(User);
+                var user = new Data.UKMCABUser();//todo //await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
                 {
@@ -217,7 +214,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
 
-            var user = await _userManager.GetUserAsync(User);
+            var user = new Data.UKMCABUser();//todo await _userManager.GetUserAsync(User);
             model.TestingLocations = model.TestingLocations != null ? model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList() : new List<string>();
             if (submitType == "Add" && model.TestingLocations.Any())
             {
@@ -304,7 +301,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType == Constants.SubmitType.Save)
             {
-                var user = await _userManager.GetUserAsync(User);
+                var user = new Data.UKMCABUser();//todo await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latest, submitType == Constants.SubmitType.Save);
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
@@ -324,7 +321,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             publishModel.ValidCAB = TryValidateModel(publishModel);
             if (publishModel.ValidCAB && submitType == Constants.SubmitType.Continue)
             {
-                var user = await _userManager.GetUserAsync(User);
+                var user = new Data.UKMCABUser();//todo await _userManager.GetUserAsync(User);
                 var pubishedDoc = await _cabAdminService.PublishDocumentAsync(user, latest);
                 TempData["Confirmation"] = true;
                 return RedirectToAction("Confirmation", "CAB", new { Area = "admin", id = latest.CABId });

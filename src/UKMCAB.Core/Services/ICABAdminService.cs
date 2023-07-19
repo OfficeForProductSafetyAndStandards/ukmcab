@@ -1,5 +1,5 @@
-﻿using UKMCAB.Data.Models;
-using UKMCAB.Identity.Stores.CosmosDB;
+﻿using UKMCAB.Data;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Core.Services
 {

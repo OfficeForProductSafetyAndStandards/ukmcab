@@ -1,4 +1,5 @@
 ﻿@using System.Net
+@using System.Security.Claims;
 @model CABProfileViewModel
 @{
     ViewData["nav"] = "search";
@@ -81,7 +82,7 @@
                     }
                 </div>
 
-                @if (Model.IsLoggedIn && !Model.IsArchived)
+                @if (User.HasClaim(UKMCAB.Core.Security.Claims.EditAllCabs, string.Empty) && !Model.IsArchived) // TODO:  purposefully disabled; need to figure out permissions first
                 {
                     <div class="govuk-!-display-block govuk-!-text-align-right">
                         <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
@@ -101,12 +102,12 @@
                             Details
                         </a>
                     </li>
-                    <li class="govuk-tabs__list-item @Html.Conditional(!Model.IsLoggedIn, "last")">
+                    <li class="govuk-tabs__list-item @Html.Conditional(!User.Identity.IsAuthenticated, "last")">
                         <a class="govuk-tabs__tab" href="#product-schedules">
                             Product schedules
                         </a>
                     </li>
-                    @if (Model.IsLoggedIn)
+                    @if (User.Identity.IsAuthenticated /*todo*/)
                     {
                         <li class="govuk-tabs__list-item">
                             <a class="govuk-tabs__tab" href="#supporting-documents">
@@ -200,7 +201,7 @@
                                 </dd>
                             </div>
 
-                            @if (Model.IsPointOfContactPublicDisplay || Model.IsLoggedIn)
+                            @if (Model.IsPointOfContactPublicDisplay || User.Identity.IsAuthenticated /*TODO; what role/claim?*/)
                             {
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">
@@ -321,7 +322,7 @@
                 <partial name="Partials/_Documents" model="Model.ProductSchedules" />
 
 
-                @if (Model.IsLoggedIn)
+                @if (User.Identity.IsAuthenticated /*todo: what claim?*/)
                 {
                     <partial name="Partials/_Documents" model="Model.SupportingDocuments" />
 
