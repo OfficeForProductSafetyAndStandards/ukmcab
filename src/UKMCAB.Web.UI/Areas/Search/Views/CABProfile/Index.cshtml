@@ -133,17 +133,17 @@
                                     @Model.Name
                                 </dd>
                             </div>                            
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @Html.Conditional(Model.IsLoggedIn, "CAB number", "Body number")
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.BodyNumber
+                                </dd>
+                            </div>
 
                             @if (Model.IsLoggedIn)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        CAB number
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @Model.BodyNumber
-                                    </dd>
-                                </div>
+                            {                               
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">
                                         Appointment date
@@ -298,18 +298,7 @@
                                         }
                                     }
                                 </dd>
-                            </div>
-                            @if (!Model.IsLoggedIn)
-                            {
-                                <div class="govuk-summary-list__row">
-                                    <dt class="govuk-summary-list__key">
-                                        Body number
-                                    </dt>
-                                    <dd class="govuk-summary-list__value">
-                                        @Html.Conditional(!string.IsNullOrWhiteSpace(Model.BodyNumber), Model.BodyNumber, @Constants.NotProvided)
-                                    </dd>
-                                </div>
-                            }                            
+                            </div>                        
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Body type
