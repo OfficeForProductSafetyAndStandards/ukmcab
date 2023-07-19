@@ -1,5 +1,5 @@
 ﻿namespace UKMCAB.Core.Security;
 public class Claims
 {
-    public const string EditAllCabs = "cab.edit.*";
+    public const string CabEdit = "cab.edit";
 }

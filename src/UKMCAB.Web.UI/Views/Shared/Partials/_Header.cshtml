@@ -45,19 +45,14 @@
                         <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "admin", "govuk-header__navigation-item--active")">
                             <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-header__link">Admin</a>
                         </li>
-                        <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "changepassword", "govuk-header__navigation-item--active")">
-                            <a asp-area="Account" asp-controller="Manage" asp-action="ChangePassword" class="govuk-header__link">Change password</a>
-                        </li>
                         <li class="govuk-header__navigation-item navigation-mobile-underline">
-                            <form id="logoutForm" class="form-inline" asp-area="Account" asp-controller="Home" asp-action="Logout" method="post">
-                                <button id="logout-link" class="navigation-item-button" type="submit">Sign out</button>
-                            </form>
+                            <a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.Logout" class="govuk-header__link">Sign out</a>
                         </li>
                     }
                     else
                     {
                         <li class="govuk-header__navigation-item navigation-mobile-underline navigation-auth-link @Html.Conditional(ViewData["nav"] == "signin", "govuk-header__navigation-item--active")">
-                            <a asp-area="Account" asp-controller="Home" asp-action="Login" class="govuk-header__link">Sign in</a>
+                            <a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.Login" class="govuk-header__link">Sign in</a>
                         </li>
                     }
 

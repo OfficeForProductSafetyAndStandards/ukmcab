@@ -1,12 +1,11 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Azure.Cosmos.Linq;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
@@ -22,6 +21,7 @@ using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
+using UKMCAB.Web.Security;
 using UKMCAB.Web.UI;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
@@ -49,6 +49,15 @@ if (!redisConnectionString.Contains("allowAdmin"))
 }
 
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
+builder.Services.AddGovukOneLogin(builder.Configuration);
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(Policies.CabManagement, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.CabEdit, "*");
+    });
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -308,3 +317,7 @@ static void UseSubscriptions(WebApplication app)
 }
 
 #endregion
+
+
+
+
