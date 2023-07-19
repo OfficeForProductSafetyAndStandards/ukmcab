@@ -173,19 +173,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             latestDocument.Schedules ??= new List<FileUpload>();
 
-            if (submitType.StartsWith("Remove"))
+            if (submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
             {
-                var fileName = submitType.Replace("Remove", String.Empty);
-                var fileToRemove = latestDocument.Schedules.SingleOrDefault(s =>
-                    s.FileName.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
-                if (fileToRemove != null)
-                {
-                    var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
-                    // Even if this returns false because the file wasn't found we still want to remove it from the document
-                    latestDocument.Schedules.Remove(fileToRemove);
-                    var user = await _userManager.GetUserAsync(User);
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument);
-                }
+                var fileToRemove = latestDocument.Schedules[fileIndex];
+                //var linkedFiles = latestDocument.Schedules.Where(f => f.FileName.Equals(fileToRemove.FileName));
+                //if (linkedFiles.Count() == 1)
+                //{
+                //    await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
+                //}
+                latestDocument.Schedules.Remove(fileToRemove);
+                var user = await _userManager.GetUserAsync(User);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument);
                 return View(new FileListViewModel
                 {
                     Title = SchedulesOptions.ListTitle,
@@ -354,7 +352,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 s.FileName.Equals(fileName, StringComparison.InvariantCultureIgnoreCase));
             if (fileToRemove != null)
             {
-                var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
+                //var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
                 latestVersion.Documents.Remove(fileToRemove);
                 var user = await _userManager.GetUserAsync(User);
