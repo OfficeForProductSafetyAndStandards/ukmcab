@@ -331,7 +331,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             publishModel.ShowError = true;
-            return View(model);
+            return View(publishModel);
         }
 
         [HttpGet]

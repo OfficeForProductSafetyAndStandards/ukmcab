@@ -1,4 +1,5 @@
-﻿.cab-summary-header {
+﻿
+.cab-summary-header {
     position: relative;
 
     h3 {
@@ -15,4 +16,10 @@
 }
 .cab-confirmation-banner {
     word-wrap: break-word;
+}
+
+.cab-summary-schedule-item {
+    @include govuk-media-query($until: tablet) {
+        padding: 0 0 12px 0;
+    }
 }
