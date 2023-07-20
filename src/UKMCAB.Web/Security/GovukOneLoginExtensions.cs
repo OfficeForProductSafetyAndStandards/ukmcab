@@ -59,6 +59,9 @@ public static class GovukOneLoginExtensions
                 identity.AddClaim(new Claim(ClaimTypes.Email, userInfo.GetValueOrDefault("email")?.ToString() ?? string.Empty));
                 //identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userInfo.GetValueOrDefault("sub")?.ToString()??string.Empty));
                 //TODO: this is where to set more claims RE permissions
+
+
+
             };
             options.Events.OnRedirectToIdentityProviderForSignOut = async (context) =>
             {
