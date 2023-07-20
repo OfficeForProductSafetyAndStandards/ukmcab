@@ -5,33 +5,12 @@
 }
 
 #search-page {
-
     #search-results {
         #search-results-form-column {
 
-            #search-filter-container {
-
-                h3 {
-                    margin-bottom: 10px;
-                }
-
-                #search-filter-header {
-                    position: relative;
-                    margin-bottom: 20px;
-
-                    #search-results-list-toggle {
-                        display: none;
-                    }
-
-                    #clear-filters-link {
-                        position: absolute;
-                        top: 0;
-                        right: 0;
-                    }
-                }
-
+            #search-keyword-container {
                 #search-filter-keywords {
-                    margin-bottom: 35px;
+                    margin-bottom: 20px;
 
                     #search-filter-keywords-input-container {
                         position: relative;
@@ -57,9 +36,37 @@
                             right: 0;
                             text-indent: -5000px;
                             width: 40px;
+
+                            &:focus {
+                                outline: 3px solid #ffdd00;
+                                outline-offset: 0;
+                            }
                         }
                     }
                 }
+            }
+
+            #search-filter-container {
+
+                h3 {
+                    margin-bottom: 10px;
+                }
+
+                #search-filter-header {
+                    position: relative;
+                    margin-bottom: 20px;
+
+                    #search-results-list-toggle {
+                        display: none;
+                    }
+
+                    #clear-filters-link {
+                        position: absolute;
+                        top: 0;
+                        right: 0;
+                    }
+                }
+
 
                 #search-filter-options {
 
@@ -362,11 +369,12 @@
             }
         }
     }
+}
 
-    .atom-feed {
-    }
+.js-enabled {
 
-    &.js-enabled {
+    #search-page {
+
         #search-header {
             @include govuk-media-query($until: tablet) {
                 display: none;
@@ -374,7 +382,10 @@
         }
 
         #search-results {
+
             #search-results-form-column {
+
+                
 
                 #search-filter-container {
                     #search-filter-options {
@@ -385,7 +396,13 @@
                 }
 
                 @include govuk-media-query($until: tablet) {
-                    margin-top: 30px;
+                    order: 1;
+
+                    #search-keyword-container {
+                        #search-filter-keywords {
+                            margin-bottom: 0;
+                        }
+                    }
 
                     #search-filter-container {
                         #search-filter-header {
@@ -438,6 +455,12 @@
                             }
                         }
                     }
+                }
+            }
+
+            #search-results-list-column {
+                @include govuk-media-query($until: tablet) {
+                    order: 2;
                 }
             }
         }
