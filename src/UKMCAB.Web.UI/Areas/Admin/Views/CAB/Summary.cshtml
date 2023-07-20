@@ -2,6 +2,21 @@
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CABSummaryViewModel
+@{
+    string appointmentDate = Constants.NotProvided;
+    string reviewDate = Constants.NotProvided;
+
+    if (DateOnly.TryParse(Model.CabDetailsViewModel.AppointmentDate, out var aptDate))
+    {
+        appointmentDate = aptDate.ToString("d MMM yyyy");
+    }
+
+    if (DateOnly.TryParse(Model.CabDetailsViewModel.ReviewDate, out var revwDate))
+    {
+        reviewDate = revwDate.ToString("d MMM yyyy");
+    }
+    
+}
 @if (Model.ShowError)
 {
     <div class="govuk-grid-row">
@@ -56,7 +71,7 @@
                             Appointment date (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabDetailsViewModel.AppointmentDate.Equals("//") ? string.Empty : Model.CabDetailsViewModel.AppointmentDate)
+                            @appointmentDate
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -64,7 +79,7 @@
                             Review date (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabDetailsViewModel.ReviewDate.Equals("//") ? string.Empty : Model.CabDetailsViewModel.ReviewDate)
+                            @reviewDate
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
