@@ -194,7 +194,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 });
             }
 
-            if (model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
+            if (model.UploadedFiles != null && model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
             {
                 var index = 0;
                 foreach (var uploadedFile in model.UploadedFiles)
