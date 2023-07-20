@@ -123,7 +123,7 @@
 
                 <div class="govuk-tabs__panel cabs-panel" id="details">
                     <div class="cab-detail-section">
-                        <h2 class="govuk-heading-l">About</h2>
+                        <h2 class="govuk-heading-l">@Constants.Heading.CabDetails</h2>
                         <dl class="govuk-summary-list">
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
@@ -132,7 +132,36 @@
                                 <dd class="govuk-summary-list__value">
                                     @Model.Name
                                 </dd>
+                            </div>                            
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @Html.Conditional(Model.IsLoggedIn, "CAB number", "Body number")
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.BodyNumber
+                                </dd>
                             </div>
+
+                            @if (Model.IsLoggedIn)
+                            {                               
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Appointment date
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @Html.Conditional(Model.AppointmentDate != null, Model.AppointmentDate?.ToString("dd/MM/yyyy"), @Constants.NotProvided)
+                                    </dd>
+                                </div>
+
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Review date
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @Html.Conditional(Model.ReviewDate != null, Model.ReviewDate?.ToString("dd/MM/yyyy"), @Constants.NotProvided)
+                                    </dd>
+                                </div>
+                            }                        
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     UKAS reference number
@@ -269,15 +298,7 @@
                                         }
                                     }
                                 </dd>
-                            </div>
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Body number
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @Html.Conditional(!string.IsNullOrWhiteSpace(Model.BodyNumber), Model.BodyNumber, @Constants.NotProvided)
-                                </dd>
-                            </div>
+                            </div>                        
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Body type

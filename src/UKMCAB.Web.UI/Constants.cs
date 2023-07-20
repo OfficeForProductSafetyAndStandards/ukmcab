@@ -24,6 +24,12 @@ public static class Constants
         public const string TermsAndConditions = "Terms And Conditions";
         public const string Updates = "Updates";
     }
+
+    public class Heading
+    {
+        public const string CabDetails = "CAB details";
+       
+    }
     public static class Config
     {
         public const string ContainerNameDataProtectionKeys = "dataprotectionkeys";
