@@ -88,7 +88,7 @@ namespace UKMCAB.Core.Services
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
-            Guard.IsFalse(documentExists.Any(), "CAB name or number already exists in database");
+            //Guard.IsFalse(documentExists.Any(), "CAB name or number already exists in database");
             
             var auditItem = new Audit(user);
             document.CABId = Guid.NewGuid().ToString();
