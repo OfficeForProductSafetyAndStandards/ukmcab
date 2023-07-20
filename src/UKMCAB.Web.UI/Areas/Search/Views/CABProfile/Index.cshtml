@@ -3,8 +3,8 @@
 @{
     ViewData["nav"] = "search";
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
-}
-
+    }
+    
 @section BackButton
     {
     @if (Model.IsArchived)
