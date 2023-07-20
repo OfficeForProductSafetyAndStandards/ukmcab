@@ -149,7 +149,7 @@
                                         Appointment date
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @Html.Conditional(Model.AppointmentDate != null, Model.AppointmentDate?.ToString("dd/MM/yyyy"), @Constants.NotProvided)
+                                        @Html.Conditional(Model.AppointmentDate != null, Model.AppointmentDate?.ToString("d MMM yyyy"), @Constants.NotProvided)
                                     </dd>
                                 </div>
 
@@ -158,7 +158,7 @@
                                         Review date
                                     </dt>
                                     <dd class="govuk-summary-list__value">
-                                        @Html.Conditional(Model.ReviewDate != null, Model.ReviewDate?.ToString("dd/MM/yyyy"), @Constants.NotProvided)
+                                        @Html.Conditional(Model.ReviewDate != null, Model.ReviewDate?.ToString("d MMM yyyy"), @Constants.NotProvided)
                                     </dd>
                                 </div>
                             }                        
