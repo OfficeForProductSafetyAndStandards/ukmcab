@@ -2,6 +2,10 @@
 
 <div id="search-results-form-column" class="govuk-grid-column-one-third govuk-body">
     <form id="search-results-form" method="get" novalidate>
+        <div id="search-results-pagination-container-mobile" class="search-results-pagination-container">
+            <partial name="Partials/_Pagination" model="Model.Pagination"/>
+        </div>
+
         <div id="search-keyword-container">
             <div id="search-filter-keywords">
                 <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">
@@ -11,7 +15,7 @@
                         </label>
                     </h3>
                     <div id="search-filter-keywords-input-container">
-                        <input type="search" asp-for="Keywords" class="govuk-input" />
+                        <input type="search" asp-for="Keywords" class="govuk-input"/>
                         <button type="submit">Search</button>
                     </div>
                 </fieldset>

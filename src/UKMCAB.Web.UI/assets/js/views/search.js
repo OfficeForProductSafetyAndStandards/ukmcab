@@ -7,6 +7,7 @@
     var searchFilterContainer = document.getElementById("search-filter-container");
     var searchKeywordContainer = document.getElementById("search-keyword-container");
     var searchResultsListColumn = document.getElementById("search-results-list-column");
+    var searchResultsPaginationMobile = document.getElementById("search-results-pagination-container-mobile");
 
     var govukPhaseBanner = document.getElementById("govuk-phase-banner");
     var govukHeader = document.getElementById("govuk-header");
@@ -87,6 +88,7 @@
             bottomAtomFeed.classList.add("search-result-mobile-hidden");
             feedbackSection.classList.add("search-result-mobile-hidden");
             searchKeywordContainer.classList.add("search-result-mobile-hidden");
+            searchResultsPaginationMobile.classList.add("search-result-mobile-hidden");
 
             searchFilterContainer.classList.remove("search-result-mobile-hidden");
         } else {
@@ -97,6 +99,7 @@
             bottomAtomFeed.classList.remove("search-result-mobile-hidden");
             feedbackSection.classList.remove("search-result-mobile-hidden");
             searchKeywordContainer.classList.remove("search-result-mobile-hidden");
+            searchResultsPaginationMobile.classList.remove("search-result-mobile-hidden");
 
             searchFilterContainer.classList.add("search-result-mobile-hidden");
         }
