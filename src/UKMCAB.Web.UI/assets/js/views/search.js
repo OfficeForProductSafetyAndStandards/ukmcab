@@ -21,6 +21,7 @@
     var searchResultsListToggle = document.getElementById('search-results-list-toggle');
     var clearFiltersLink = document.getElementById('clear-filters-link');
     var keywordsInput = document.getElementById('Keywords');
+    var keywordsButton = document.getElementById('search-keyword-button');
 
     var mql;
 
@@ -29,6 +30,10 @@
             searchFilterContainer.classList.add("search-result-mobile-hidden");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);
+
+            keywordsButton.addEventListener('click', function () {
+                keywordsButton.focus();
+            });
 
             mql = window.matchMedia('(min-width: 40.0625em)');
             mql.addListener(checkMode.bind(this));
