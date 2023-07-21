@@ -4,8 +4,10 @@
     var searchPage = document.getElementById("search-page");
 
     var searchResultsForm = document.getElementById("search-results-form");
-    var searchResultsFormColumn = document.getElementById("search-results-form-column");
+    var searchFilterContainer = document.getElementById("search-filter-container");
+    var searchKeywordContainer = document.getElementById("search-keyword-container");
     var searchResultsListColumn = document.getElementById("search-results-list-column");
+    var searchResultsPaginationMobile = document.getElementById("search-results-pagination-container-mobile");
 
     var govukPhaseBanner = document.getElementById("govuk-phase-banner");
     var govukHeader = document.getElementById("govuk-header");
@@ -19,20 +21,23 @@
     var searchResultsListToggle = document.getElementById('search-results-list-toggle');
     var clearFiltersLink = document.getElementById('clear-filters-link');
     var keywordsInput = document.getElementById('Keywords');
+    var keywordsButton = document.getElementById('search-keyword-button');
 
     var mql;
 
     function init() {
         if (searchPage) {
-            searchPage.classList.add("js-enabled");
-            if (searchResultsFilterToggle && searchResultsListToggle) {
-                searchResultsFilterToggle.addEventListener('click', showFilter);
-                searchResultsListToggle.addEventListener('click', showList);
+            searchFilterContainer.classList.add("search-result-mobile-hidden");
+            searchResultsFilterToggle.addEventListener('click', showFilter);
+            searchResultsListToggle.addEventListener('click', showList);
 
-                mql = window.matchMedia('(min-width: 40.0625em)');
-                mql.addListener(checkMode.bind(this));
-                checkMode();
-            }
+            keywordsButton.addEventListener('click', function () {
+                keywordsButton.focus();
+            });
+
+            mql = window.matchMedia('(min-width: 40.0625em)');
+            mql.addListener(checkMode.bind(this));
+            checkMode();
         }
     }
 
@@ -87,8 +92,10 @@
             govukFooter.classList.add("search-result-mobile-hidden");
             bottomAtomFeed.classList.add("search-result-mobile-hidden");
             feedbackSection.classList.add("search-result-mobile-hidden");
+            searchKeywordContainer.classList.add("search-result-mobile-hidden");
+            searchResultsPaginationMobile.classList.add("search-result-mobile-hidden");
 
-            searchResultsFormColumn.classList.remove("search-result-mobile-hidden");
+            searchFilterContainer.classList.remove("search-result-mobile-hidden");
         } else {
             searchResultsListColumn.classList.remove("search-result-mobile-hidden");
             govukPhaseBanner.classList.remove("search-result-mobile-hidden");
@@ -96,8 +103,10 @@
             govukFooter.classList.remove("search-result-mobile-hidden");
             bottomAtomFeed.classList.remove("search-result-mobile-hidden");
             feedbackSection.classList.remove("search-result-mobile-hidden");
+            searchKeywordContainer.classList.remove("search-result-mobile-hidden");
+            searchResultsPaginationMobile.classList.remove("search-result-mobile-hidden");
 
-            searchResultsFormColumn.classList.add("search-result-mobile-hidden");
+            searchFilterContainer.classList.add("search-result-mobile-hidden");
         }
     }
 

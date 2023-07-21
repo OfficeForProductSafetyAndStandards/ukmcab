@@ -117,6 +117,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 PublishedDate = cabDocument.Published.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
+                AppointmentDate = cabDocument.AppointmentDate,
+                ReviewDate = cabDocument.RenewalDate,
                 UKASReferenceNumber = cabDocument.UKASReference,
                 Address = cabDocument.GetAddress(),
                 Website = cabDocument.Website,
