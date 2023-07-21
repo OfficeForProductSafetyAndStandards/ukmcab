@@ -5,13 +5,19 @@
 
 <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
 
-    <div class="search-results-pagination-container">
+    <div class="search-results-pagination-container search-results-pagination-container-top">
         <partial name="Partials/_Pagination" model="Model.Pagination"/>
-     
+    </div>
+    
+    <div id="search-results-mobile-filters">
         <div id="search-results-filters-link-container">
             <a href="#search-filter-container" id="search-results-filter-toggle" class="govuk-link govuk-link--no-visited-state">Filters (@Model.FilterCount applied)</a>
         </div>
+        <div id="search-results-clear-link-container">
+            <a id="clear-filters-link" asp-area="Search" asp-controller="Search" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Remove all filters</a>
+        </div>
     </div>
+
     @if (Model.FilterCount > 0)
     {
         var baseFilterPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
