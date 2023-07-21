@@ -136,14 +136,14 @@
                             </div>                            
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    @Html.Conditional(Model.IsLoggedIn, "CAB number", "Body number")
+                                    @Html.Conditional(User.Identity.IsAuthenticated /*TODO*/, "CAB number", "Body number")
                                 </dt>
                                 <dd class="govuk-summary-list__value">
                                     @Model.BodyNumber
                                 </dd>
                             </div>
 
-                            @if (Model.IsLoggedIn)
+                            @if (User.Identity.IsAuthenticated /*TODO*/)
                             {                               
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">
