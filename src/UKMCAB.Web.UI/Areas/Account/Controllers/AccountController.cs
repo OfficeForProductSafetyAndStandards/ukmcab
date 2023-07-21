@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
-using UKMCAB.Core.Services;
-using UKMCAB.Data.CosmosDb.Services.User;
+using UKMCAB.Core.Services.Users;
+using UKMCAB.Core.Services.Users.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
@@ -39,9 +40,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         public async Task<IActionResult> LoginAsync()
         {
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-
-
-
             var envelope = await _users.GetUserAccountStatusAsync(id);
 
             if (envelope.Status != UserAccountStatus.Active)
@@ -57,8 +55,10 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 case UserAccountStatus.PendingUserAccountRequest:
                     throw new DomainException("You have already requested an account. You will receive an email when your request has been reviewed.");
                 case UserAccountStatus.UserAccountLocked:
-                    throw new DomainException($"Your user account has been {(envelope.UserAccountLockReason == Data.CosmosDb.Services.User.UserAccountLockReason.Archived ? "archived" : "locked")}. Please contact support for assistance.");
+                    throw new DomainException($"Your user account has been {(envelope.UserAccountLockReason == UserAccountLockReason.Archived ? "archived" : "locked")}. Please contact support for assistance.");
                 case UserAccountStatus.Active:
+                    await _users.UpdateLastLogonDate(id);
+                    _telemetry.TrackEvent(AiTracking.Events.LoginSuccess, HttpContext.ToTrackingMetadata());
                     return Redirect("/");
                 default:
                     throw new NotSupportedException($"The user account status '{envelope.Status}' is not supported.");
@@ -75,7 +75,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [AllowAnonymous, HttpPost("request-account", Name = Routes.RequestAccount)]
         public async Task<IActionResult> RequestAccountAsync(RequestAccountViewModel model)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid) // todo: model validation
             {
                 var descriptor = _secureTokenProcessor.Disclose<RequestAccountTokenDescriptor>(model.Token) ?? throw new DomainException("The token did not deserialize successfully");
                 await _users.SubmitRequestAccountAsync(new RequestAccountModel
@@ -105,5 +105,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
             return Redirect("/");
         }
+
+
+
     }
 }

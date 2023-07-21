@@ -8,6 +8,7 @@ using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.CosmosDb.Services.User;

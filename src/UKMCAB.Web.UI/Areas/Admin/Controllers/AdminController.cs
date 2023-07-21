@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
@@ -11,10 +12,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     public class AdminController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
+        private readonly IUserService _users;
 
-        public AdminController(ICABAdminService cabAdminService)
+        public static class Routes
+        {
+            public const string UserList = "admin.user.list";
+        }
+
+        public AdminController(ICABAdminService cabAdminService, IUserService users)
         {
             _cabAdminService = cabAdminService;
+            _users = users;
         }
 
         [Route("")]
@@ -93,5 +101,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 model.CABManagementItems = model.CABManagementItems.Skip(skip).Take(10).ToList();
             }
         }
+
+
+        #region User management
+
+        [HttpGet("users", Name = Routes.UserList)]
+        public async Task<IActionResult> UserListAsync(int skip = 0)
+        {
+            var accounts = await _users.ListAsync(false, skip).ConfigureAwait(false);
+            return View(accounts);
+        }
+
+        #endregion
     }
 }

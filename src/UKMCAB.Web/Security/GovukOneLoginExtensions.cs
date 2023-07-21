@@ -6,6 +6,8 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.Users;
 
 namespace UKMCAB.Web.Security;
 
@@ -48,21 +50,34 @@ public static class GovukOneLoginExtensions
             };
             options.Events.OnTokenValidated = async context =>
             {
-                var identity = context.Principal.Identity as ClaimsIdentity;
-                var accessToken = context.TokenEndpointResponse.AccessToken;
+                var identity = context.Principal?.Identity as ClaimsIdentity ?? throw new Exception("Identity did not cast to ClaimsIdentity as expected");
+                var accessToken = context.TokenEndpointResponse?.AccessToken ?? throw new Exception("The access token is null");
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
                 var response = await client.GetAsync("https://oidc.integration.account.gov.uk/userinfo");
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 var userInfo = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
-                identity.AddClaim(new Claim(ClaimTypes.Email, userInfo.GetValueOrDefault("email")?.ToString() ?? string.Empty));
-                //identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userInfo.GetValueOrDefault("sub")?.ToString()??string.Empty));
-                //TODO: this is where to set more claims RE permissions
 
+                ////identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userInfo.GetValueOrDefault("sub")?.ToString()??string.Empty));
+                ////TODO: this is where to set more claims RE permissions
+                //identity.AddClaim(new Claim(ClaimTypes.Email, userInfo.GetValueOrDefault("email")?.ToString() ?? string.Empty));
 
-
+                var users = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
+                var account = await users.GetAsync(context.Principal.FindFirstValue(ClaimTypes.NameIdentifier));
+                if(account != null)
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Email, account.ContactEmailAddress ?? account.EmailAddress ?? string.Empty));
+                    identity.AddClaim(new Claim(ClaimTypes.GivenName, account.FirstName ?? string.Empty));
+                    identity.AddClaim(new Claim(ClaimTypes.Surname, account.Surname ?? string.Empty));
+                    identity.AddClaim(new Claim(Claims.Organisation, account.OrganisationName ?? string.Empty));
+                }
+                else
+                {
+                    identity.AddClaim(new Claim(ClaimTypes.Email, userInfo.GetValueOrDefault("email")?.ToString() ?? string.Empty));
+                }
             };
+
             options.Events.OnRedirectToIdentityProviderForSignOut = async (context) =>
             {
                 context.ProtocolMessage.PostLogoutRedirectUri = "https://find-a-conformity-assessment-body.service.gov.uk/"; //todo: add localhost, dev, stage, preprod and vnext urls to onelogin config

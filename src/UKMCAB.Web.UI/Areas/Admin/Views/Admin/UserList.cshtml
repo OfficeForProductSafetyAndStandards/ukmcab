@@ -1,0 +1,30 @@
+﻿@using UKMCAB.Data.Models.Users;
+@model IEnumerable<UserAccount>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <table class="govuk-table">
+            <caption class="govuk-table__caption govuk-table__caption--m">Users</caption>
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header">First name</th>
+                    <th scope="col" class="govuk-table__header">Surname</th>
+                    <th scope="col" class="govuk-table__header">Email address</th>
+                    <th scope="col" class="govuk-table__header">Last logon date</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach(var account in Model)
+                {
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header">@account.FirstName</th>
+                        <td class="govuk-table__cell">@account.Surname</td>
+                        <td class="govuk-table__cell">@account.ContactEmailAddress</td>
+                        <td class="govuk-table__cell">@account.LastLogonUtc?.ToString("dd/MM/yy HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
