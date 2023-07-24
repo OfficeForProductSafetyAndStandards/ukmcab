@@ -80,10 +80,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var duplicateDocuments = await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document);
                 if (duplicateDocuments.Any())
                 {
-                    if (duplicateDocuments.Any(d => d.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase)))
-                    {
-                        ModelState.AddModelError(nameof(model.Name), "This CAB name already exists");
-                    }
                     if (duplicateDocuments.Any(d => d.CABNumber.Equals(model.CABNumber, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
@@ -281,7 +277,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabBodyDetailsViewModel = cabBody,
                 Schedules = latest.Schedules ?? new List<FileUpload>(),
                 Documents = latest.Documents ?? new List<FileUpload>(),
-                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode(string.Empty) : WebUtility.UrlDecode(returnUrl)
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode(string.Empty) : WebUtility.UrlDecode(returnUrl),
+                CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) && latest.StatusValue != Status.Published
 
             };
 
