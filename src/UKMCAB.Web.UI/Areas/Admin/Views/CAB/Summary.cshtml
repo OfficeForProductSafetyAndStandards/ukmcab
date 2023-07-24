@@ -56,6 +56,18 @@
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.CabDetailsViewModel.Name
+
+                            @if (Model.CABNameAlreadyExists)
+                            {
+                                <br>
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        <span class="govuk-warning-text__assistive">Warning</span>
+                                        This CAB name already exists. Only create this CAB if you have contacted OPSS for approval.
+                                    </strong>
+                                </div>
+                            }
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">

@@ -21,5 +21,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public bool ShowError { get; set; }
         public string? Title => "Check details before publishing";
         public string? ReturnUrl { get; set; }
+        public bool CABNameAlreadyExists { get; set; }
     }
 }
