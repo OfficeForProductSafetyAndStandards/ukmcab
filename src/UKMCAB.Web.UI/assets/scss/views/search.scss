@@ -400,12 +400,6 @@
 
     #search-page {
 
-        #search-header {
-            @include govuk-media-query($until: tablet) {
-                display: none;
-            }
-        }
-
         #search-results {
 
             #search-results-form-column {
