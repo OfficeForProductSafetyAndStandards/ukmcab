@@ -43,3 +43,22 @@
     }
 }
 
+#review-date {
+    float: left;
+
+    @include govuk-media-query($until: tablet) {
+        float: none;
+    }
+}
+
+#add-18-button {
+    button {
+        margin-top: 30px;
+
+        @include govuk-media-query($until: tablet) {
+            margin-top: 10px;
+        }
+    }
+
+}
+

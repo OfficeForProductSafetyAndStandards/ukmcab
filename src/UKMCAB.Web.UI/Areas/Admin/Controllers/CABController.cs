@@ -50,7 +50,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var reviewDate = DateUtils.CheckDate(ModelState, model.ReviewDateDay, model.ReviewDateMonth, model.ReviewDateYear, nameof(model.ReviewDate), "review", appointmentDate);
 
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
-            if (ModelState.IsValid)
+
+            if (submitType == Constants.SubmitType.Add18)
+            {
+                var autoRenewDate = document != null && document.Created != null && document.Published == null ? document.Created.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
+
+                model.ReviewDateDay = autoRenewDate.Day.ToString();
+                model.ReviewDateMonth = autoRenewDate.Month.ToString();
+                model.ReviewDateYear = autoRenewDate.Year.ToString();
+                ModelState.Clear();
+            }
+            else if (ModelState.IsValid)
             {
                 if (document == null)
                 {
