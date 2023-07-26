@@ -107,6 +107,12 @@
                     <div id="legislative-area-hint" class="govuk-hint">
                         Select all that apply
                     </div>
+                    @if (Model.ProductScheduleLegislativeAreas != null && Model.ProductScheduleLegislativeAreas.Any())
+                    {
+                    <div id="legislative-area-product-schedules-hint" class="govuk-hint">
+                        Pre-selected areas are linked to the product schedule and cannot be removed here
+                    </div>
+                    }
                     <p class="govuk-error-message">
                         <span asp-validation-for="LegislativeAreas" class="govuk-error-message"></span>
                     </p>
@@ -114,11 +120,15 @@
                         @foreach (var legislativeArea in DataConstants.Lists.LegislativeAreas)
                         {
                             <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="@legislativeArea" name="LegislativeAreas" type="checkbox" value="@legislativeArea" checked="@(Model?.LegislativeAreas != null && Model.LegislativeAreas.Any(la => la.Equals(legislativeArea, StringComparison.InvariantCultureIgnoreCase)))">
+                                <input class="govuk-checkboxes__input" id="@legislativeArea" name="LegislativeAreas" type="checkbox" value="@legislativeArea" disabled="@(Model.ProductScheduleLegislativeAreas !=null && Model.ProductScheduleLegislativeAreas.Any(psch => psch.Equals(legislativeArea, StringComparison.CurrentCultureIgnoreCase)))" checked="@(Model?.LegislativeAreas != null && Model.LegislativeAreas.Any(la => la.Equals(legislativeArea, StringComparison.InvariantCultureIgnoreCase)))">
                                 <label class="govuk-label govuk-checkboxes__label" for="@legislativeArea">
                                     @legislativeArea
                                 </label>
                             </div>
+                        }
+                        @foreach (var productScheduleLegislativeAreas in Model.ProductScheduleLegislativeAreas)
+                        {
+                            <input type="hidden" id="@productScheduleLegislativeAreas" name="ProductScheduleLegislativeAreas" value="@productScheduleLegislativeAreas" />
                         }
                     </div>
                 </fieldset>
