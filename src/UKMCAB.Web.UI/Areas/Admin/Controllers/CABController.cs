@@ -6,6 +6,7 @@ using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using System.Net;
 using UKMCAB.Web.UI.Services;
+using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -203,6 +204,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             // Pre-populate model for edit
             var model = new CABBodyDetailsViewModel(latest);
+
+            // Ensure legislative areas are full covered
+            if (model.ProductScheduleLegislativeAreas.Except(model.LegislativeAreas).Any())
+            {
+                var user = await _userManager.GetUserAsync(User);
+                latest.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latest, false);
+                model.LegislativeAreas = latest.LegislativeAreas;
+            }
+
             if (!model.TestingLocations.Any())
             {
                 model.TestingLocations.Add(string.Empty);
@@ -211,6 +222,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.DocumentStatus = latest.StatusValue;
             model.IsFromSummary = fromSummary;
             return View(model);
+        }
+
+        private List<string> GetLAUnion(List<string> las, List<string> pschLAs)
+        {
+            var union = (las ?? new List<string>()).Union(pschLAs).ToList();
+            return union;
         }
 
         [HttpPost]
@@ -243,7 +260,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
-                latestDocument.LegislativeAreas = model.LegislativeAreas;
+                latestDocument.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas);
 
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
@@ -262,6 +279,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.DocumentStatus = latestDocument.StatusValue;
             model.IsFromSummary = fromSummary;
+            model.ProductScheduleLegislativeAreas =
+                latestDocument.Schedules?.Select(sch => sch.LegislativeArea).Distinct().ToList() ?? new List<string>();
             return View(model);
         }
 

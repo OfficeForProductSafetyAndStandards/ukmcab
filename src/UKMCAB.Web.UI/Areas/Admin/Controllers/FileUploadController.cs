@@ -252,6 +252,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 });
             }
 
+            if (newSchedules.Any())
+            {
+                var legislativeAreasFromDocs = newSchedules.Select(sch => sch.LegislativeArea).ToList(); 
+                if (legislativeAreasFromDocs.Except(latestDocument.LegislativeAreas).Any())
+                {
+                    var newLAList = legislativeAreasFromDocs.Union(latestDocument.LegislativeAreas).OrderBy(la => la).ToList();
+                    latestDocument.LegislativeAreas = newLAList;
+                }
+            }
+
             var fileUploadComparer = new FileUploadComparer();
             var newNotOld = newSchedules.Except(latestDocument.Schedules, fileUploadComparer);
             var oldNotNew = latestDocument.Schedules.Except(newSchedules, fileUploadComparer);

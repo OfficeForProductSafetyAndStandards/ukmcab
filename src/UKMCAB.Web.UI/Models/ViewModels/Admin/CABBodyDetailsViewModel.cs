@@ -13,6 +13,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
             TestingLocations = document.TestingLocations ?? new List<string>();
             BodyTypes = document.BodyTypes ?? new List<string>();
             LegislativeAreas = document.LegislativeAreas ?? new List<string>();
+            ProductScheduleLegislativeAreas = document.Schedules?.Select(sch => sch.LegislativeArea).Distinct().ToList() ?? new List<string>();
         }
 
         public string? CABId { get; set; }
@@ -24,8 +25,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         [CannotBeEmpty(ErrorMessage = "Select a legislative area")]
         public List<string> LegislativeAreas { get; set; }
 
+        public List<string>? ProductScheduleLegislativeAreas { get; set; }
         public string? Title => "Body details";
-
         public string[] FieldOrder => new[] { nameof(TestingLocations), nameof(BodyTypes), nameof(LegislativeAreas) };
     }
 }
