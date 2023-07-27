@@ -26,7 +26,7 @@
     var mql;
 
     function init() {
-        if (searchPage) {
+        if (searchPage && searchResultsForm) {
             searchFilterContainer.classList.add("search-result-mobile-hidden");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);

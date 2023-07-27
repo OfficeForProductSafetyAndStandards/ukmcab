@@ -39,6 +39,8 @@ public static class Constants
     {
         public const string Continue = nameof(Continue);
         public const string Save = nameof(Save);
+        public const string Add18 = nameof(Add18);
+        public const string UploadAnother = nameof(UploadAnother);
     }
 
     public class ErrorMessages

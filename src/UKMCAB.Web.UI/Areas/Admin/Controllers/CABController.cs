@@ -6,6 +6,7 @@ using UKMCAB.Core.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Services;
+using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -47,7 +48,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var reviewDate = DateUtils.CheckDate(ModelState, model.ReviewDateDay, model.ReviewDateMonth, model.ReviewDateYear, nameof(model.ReviewDate), "review", appointmentDate);
 
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
-            if (ModelState.IsValid)
+
+            if (submitType == Constants.SubmitType.Add18)
+            {
+                var autoRenewDate = document != null && document.Created != null && document.Published == null ? document.Created.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
+
+                model.ReviewDateDay = autoRenewDate.Day.ToString();
+                model.ReviewDateMonth = autoRenewDate.Month.ToString();
+                model.ReviewDateYear = autoRenewDate.Year.ToString();
+                ModelState.Clear();
+            }
+            else if (ModelState.IsValid)
             {
                 if (document == null)
                 {
@@ -77,10 +88,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var duplicateDocuments = await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document);
                 if (duplicateDocuments.Any())
                 {
-                    if (duplicateDocuments.Any(d => d.Name.Equals(model.Name, StringComparison.CurrentCultureIgnoreCase)))
-                    {
-                        ModelState.AddModelError(nameof(model.Name), "This CAB name already exists");
-                    }
                     if (duplicateDocuments.Any(d => d.CABNumber.Equals(model.CABNumber, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
@@ -194,6 +201,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             // Pre-populate model for edit
             var model = new CABBodyDetailsViewModel(latest);
+
+            // Ensure legislative areas are full covered
+            if (model.ProductScheduleLegislativeAreas.Except(model.LegislativeAreas).Any())
+            {
+                var user = new Data.UKMCABUser();//todo await _userManager.GetUserAsync(User);
+                latest.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latest, false);
+                model.LegislativeAreas = latest.LegislativeAreas;
+            }
+
             if (!model.TestingLocations.Any())
             {
                 model.TestingLocations.Add(string.Empty);
@@ -202,6 +219,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.DocumentStatus = latest.StatusValue;
             model.IsFromSummary = fromSummary;
             return View(model);
+        }
+
+        private List<string> GetLAUnion(List<string> las, List<string> pschLAs)
+        {
+
+            var union = (las ?? new List<string>()).Union(pschLAs).ToList();
+            return union;
         }
 
         [HttpPost]
@@ -234,7 +258,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
-                latestDocument.LegislativeAreas = model.LegislativeAreas;
+                latestDocument.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas ?? new List<string>());
 
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
@@ -253,6 +277,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.DocumentStatus = latestDocument.StatusValue;
             model.IsFromSummary = fromSummary;
+            model.ProductScheduleLegislativeAreas =
+                latestDocument.Schedules?.Select(sch => sch.LegislativeArea).Distinct().ToList() ?? new List<string>();
             return View(model);
         }
 
@@ -278,7 +304,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabBodyDetailsViewModel = cabBody,
                 Schedules = latest.Schedules ?? new List<FileUpload>(),
                 Documents = latest.Documents ?? new List<FileUpload>(),
-                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode(string.Empty) : WebUtility.UrlDecode(returnUrl)
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode(string.Empty) : WebUtility.UrlDecode(returnUrl),
+                CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) && latest.StatusValue != Status.Published
 
             };
 

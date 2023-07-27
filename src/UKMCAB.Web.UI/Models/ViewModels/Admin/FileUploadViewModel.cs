@@ -21,8 +21,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
     public static class SchedulesOptions
     {
-        public const string UploadTitle = "Upload the Schedule of Accreditation";
-        public const string ListTitle = "Schedules of Accreditation uploaded";
+        public const string UploadTitle = "Product schedules upload";
+        public const string ListTitle = "Product schedules uploaded";
         public static readonly string[] AcceptedFileExtensions = new[] { ".pdf" };
         public static readonly Dictionary<string, string> AcceptedFileExtensionsContentTypes = new()
         {

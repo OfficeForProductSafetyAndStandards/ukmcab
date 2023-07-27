@@ -27,13 +27,18 @@ namespace UKMCAB.Core.Services
         public async Task<List<Document>> DocumentWithKeyIdentifiersExistsAsync(Document document)
         {
             var documents = await _cabRepostitory.Query<Document>(d =>
-                d.Name.Equals(document.Name, StringComparison.InvariantCultureIgnoreCase) ||
                 d.CABNumber.Equals(document.CABNumber) ||
                 (!string.IsNullOrWhiteSpace(document.UKASReference) && d.UKASReference.Equals(document.UKASReference))
             );
             return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList();
         }
-
+        public async Task<bool> DocumentWithSameNameExistsAsync(Document document)
+        {
+            var documents = await _cabRepostitory.Query<Document>(d =>
+                d.Name.Equals(document.Name, StringComparison.InvariantCultureIgnoreCase)
+            );
+            return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList().Count > 0;
+        }
         public async Task<Document> FindPublishedDocumentByCABIdAsync(string id)
         {
             var doc = await _cabRepostitory.Query<Document>(d => d.StatusValue == Status.Published && d.CABId.Equals(id));
@@ -87,7 +92,7 @@ namespace UKMCAB.Core.Services
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
-            Guard.IsFalse(documentExists.Any(), "CAB name or number already exists in database");
+            Guard.IsFalse(documentExists.Any(), "CAB number already exists in database");
             
             var auditItem = new Audit(user);
             document.CABId = Guid.NewGuid().ToString();

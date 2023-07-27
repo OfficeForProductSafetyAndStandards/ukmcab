@@ -150,7 +150,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
-                UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea}).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim()}).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
@@ -171,11 +171,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
             {
                 var fileToRemove = latestDocument.Schedules[fileIndex];
-                //var linkedFiles = latestDocument.Schedules.Where(f => f.FileName.Equals(fileToRemove.FileName));
-                //if (linkedFiles.Count() == 1)
-                //{
-                //    await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
-                //}
+
                 latestDocument.Schedules.Remove(fileToRemove);
                 var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument);
@@ -196,7 +192,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
                     {
-                        ModelState.AddModelError($"UploadedFiles[{index}].LegislativeArea", "Enter a legislative area");
+                        ModelState.AddModelError($"UploadedFiles[{index}].LegislativeArea", "Select a legislative area");
                     }
 
                     index++;
@@ -206,8 +202,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
-                latestDocument.Schedules = UpdateFiles(latestDocument.Schedules, model.UploadedFiles);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
+                if (UpdateFiles(latestDocument, model.UploadedFiles))
+                {
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
+                }
+                if (submitType == Constants.SubmitType.UploadAnother)
+                {
+                    return model.IsFromSummary ?
+                        RedirectToAction("SchedulesUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId, fromSummary = true }) :
+                        RedirectToAction("SchedulesUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
+                }
+                
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary ?
@@ -227,16 +232,42 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             });
         }
 
-        private List<FileUpload> UpdateFiles(List<FileUpload> fileUploads, List<FileViewModel> fileViewModels)
+        private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
-            foreach (var fileUpload in fileUploads)
+            var newSchedules = new List<FileUpload>();
+            foreach (var fileViewModel in fileViewModels)
             {
-                var fileViewModel = fileViewModels.Single(fv => fv.FileName.Equals(fileUpload.FileName));
-                fileUpload.Label = fileViewModel.Label;
-                fileUpload.LegislativeArea = fileViewModel.LegislativeArea;
+                var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
+                newSchedules.Add(new FileUpload
+                {
+                    FileName = fileViewModel.FileName,
+                    BlobName = current.BlobName,
+                    Label = fileViewModel.Label, 
+                    LegislativeArea = fileViewModel.LegislativeArea,
+                    UploadDateTime = current.UploadDateTime
+                });
             }
 
-            return fileUploads;
+            if (newSchedules.Any())
+            {
+                var legislativeAreasFromDocs = newSchedules.Select(sch => sch.LegislativeArea).ToList(); 
+                if (legislativeAreasFromDocs.Except(latestDocument.LegislativeAreas).Any())
+                {
+                    var newLAList = legislativeAreasFromDocs.Union(latestDocument.LegislativeAreas).OrderBy(la => la).ToList();
+                    latestDocument.LegislativeAreas = newLAList;
+                }
+            }
+
+            var fileUploadComparer = new FileUploadComparer();
+            var newNotOld = newSchedules.Except(latestDocument.Schedules, fileUploadComparer);
+            var oldNotNew = latestDocument.Schedules.Except(newSchedules, fileUploadComparer);
+            if (newNotOld.Any() || oldNotNew.Any())
+            {
+                latestDocument.Schedules = newSchedules;
+                return true;
+            }
+
+            return false;
         }
 
         private IActionResult SaveDraft(Document document)
@@ -349,7 +380,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 //var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
-                latestVersion.Documents.Remove(fileToRemove);
+                //latestVersion.Documents.Remove(fileToRemove);
                 var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
             }
