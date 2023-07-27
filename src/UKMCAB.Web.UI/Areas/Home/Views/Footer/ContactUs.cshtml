@@ -20,10 +20,10 @@
                             Name
                         </label>
                     </h3>
-                    <p error-id="@nameof(Model.Name)" class="govuk-error-message">
+                    <p error-id-for="Name" class="govuk-error-message">
                         <span asp-validation-for="Name" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="Name" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Name))" autocomplete="name" aria-required="true" maxlength="50" error-describedby="@nameof(Model.Name)" />
+                    <input asp-for="Name" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Name))" autocomplete="name" aria-required="true" maxlength="50" error-describedby-for="Name" />
                 </div>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
                     <h3 class="govuk-label-wrapper">
@@ -31,10 +31,10 @@
                             Email address
                         </label>
                     </h3>
-                    <p error-id="@nameof(Model.Email)" class="govuk-error-message">
+                    <p error-id-for="Email" class="govuk-error-message">
                         <span asp-validation-for="Email" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="Email" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="eamil" aria-required="true" maxlength="50" error-describedby="@nameof(Model.Email)" />
+                    <input asp-for="Email" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="eamil" aria-required="true" maxlength="50" error-describedby-for="Email" />
                 </div>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Subject))">
                     <h3 class="govuk-label-wrapper">
@@ -42,10 +42,10 @@
                             Subject
                         </label>
                     </h3>
-                    <p error-id="@nameof(Model.Subject)" class="govuk-error-message">
+                    <p error-id-for="Subject" class="govuk-error-message">
                         <span asp-validation-for="Subject" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="Subject" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Subject))" autocomplete="subject" aria-required="true" maxlength="100" error-describedby="@nameof(Model.Subject)" />
+                    <input asp-for="Subject" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Subject))" autocomplete="subject" aria-required="true" maxlength="100" error-describedby-for="Subject" />
                 </div>
 
                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
@@ -58,10 +58,10 @@
                         <div id="Message-hint" class="govuk-hint">
                             Do not include personal or financial information like your National Insurance number or credit card details.
                         </div>
-                        <p error-id="@nameof(Model.Message)" class="govuk-error-message">
+                        <p error-id-for="Message" class="govuk-error-message">
                             <span asp-validation-for="Message" class="govuk-error-message"></span>
                         </p>
-                        <textarea asp-for="Message" class="govuk-textarea govuk-js-character-count  @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Message))" rows="5" aria-describedby="Message-info Message-hint" error-describedby="@nameof(Model.Message)" autocomplete="message" aria-required="true"></textarea>
+                        <textarea asp-for="Message" class="govuk-textarea govuk-js-character-count  @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Message))" rows="5" aria-describedby="Message-info Message-hint" error-describedby-for="Message" autocomplete="message" aria-required="true"></textarea>
                     </div>
                     <div id="Message-info" class="govuk-hint govuk-character-count__message">
                         You can enter up to 1000 characters
