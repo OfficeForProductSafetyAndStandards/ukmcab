@@ -66,8 +66,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         }
 
         [AllowAnonymous, HttpGet("request-account", Name = Routes.RequestAccount)]
-        public IActionResult RequestAccount(string tok)
-        {
+        public async Task<IActionResult> RequestAccount(string tok)
+        { 
             var descriptor = _secureTokenProcessor.Disclose<RequestAccountTokenDescriptor>(tok) ?? throw new DomainException("The token did not deserialize successfully");
             return View(new RequestAccountViewModel { ContactEmailAddress = descriptor.EmailAddress, Token = tok });
         }
@@ -85,7 +85,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     EmailAddress = descriptor.EmailAddress,
                     FirstName = model.FirstName,
                     Organisation = model.Organisation,
-                    Surname = model.Surname,
+                    Surname = model.LastName,
                     Comments = model.Comments,
                 });
                 return RedirectToRoute(Routes.RequestAccountSuccess);
