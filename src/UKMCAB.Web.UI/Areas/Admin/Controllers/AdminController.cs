@@ -4,6 +4,7 @@ using UKMCAB.Core.Services;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
@@ -17,6 +18,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public static class Routes
         {
             public const string UserList = "admin.user.list";
+            public const string UserAccountRequestsList = "admin.user-account-requests.list";
         }
 
         public AdminController(ICABAdminService cabAdminService, IUserService users)
@@ -112,6 +114,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(accounts);
         }
 
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpGet("user-account-requests", Name = Routes.UserAccountRequestsList)]
+        public async Task<IActionResult> UserAccountRequestList()
+        {
+            var pendingAccounts = await _users.ListPendingAccountRequestsAsync();
+            return View(new UserAccountRequestListViewModel
+            {
+                UserAccountRequests = pendingAccounts.OrderByDescending(pa => pa.CreatedUtc).ToList()
+            });
+        }
         #endregion
     }
 }
