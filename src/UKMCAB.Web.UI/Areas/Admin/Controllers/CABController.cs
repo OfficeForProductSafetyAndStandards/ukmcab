@@ -313,6 +313,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                              && TryValidateModel(cabDetails)
                              && TryValidateModel(cabContact)
                              && TryValidateModel(cabBody);
+            ModelState.Clear(); // TODO: clear this to fix error in title but may need to do something else when we highlight publish blocking errors
             return View(model);
         }
 
