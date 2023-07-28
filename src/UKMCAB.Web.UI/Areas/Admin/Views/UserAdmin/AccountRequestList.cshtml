@@ -1,4 +1,4 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountRequestListViewModel
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.AccountRequestListViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Pending user account requests</h1>
@@ -8,7 +8,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <table class="govuk-table">
-            <caption class="govuk-table__caption govuk-table__caption--m">Users</caption>
+            <caption class="govuk-table__caption govuk-table__caption--m">Pending requests</caption>
             <thead class="govuk-table__head">
             <tr class="govuk-table__row">
                 @if (Model.UserAccountRequests.Any())
