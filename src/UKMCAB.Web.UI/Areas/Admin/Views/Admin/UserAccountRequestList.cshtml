@@ -1,0 +1,45 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountRequestListViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Pending user account requests</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <table class="govuk-table">
+            <caption class="govuk-table__caption govuk-table__caption--m">Users</caption>
+            <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+                @if (Model.UserAccountRequests.Any())
+                {
+                    <th scope="col" class="govuk-table__header">First name</th>
+                    <th scope="col" class="govuk-table__header">Surname</th>
+                    <th scope="col" class="govuk-table__header">Email address</th>
+                }
+            </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @if (Model.UserAccountRequests.Any())
+                {
+                    @foreach (var account in Model.UserAccountRequests)
+                    {
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">@account.FirstName</th>
+                            <td class="govuk-table__cell">@account.Surname</td>
+                            <td class="govuk-table__cell">@account.ContactEmailAddress</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="govuk-table__row">
+                        <td>
+                            <p class="govuk-body">There are no pending user account requests</p></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
