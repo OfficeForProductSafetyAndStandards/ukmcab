@@ -29,7 +29,7 @@ public class UserAccountRequestRepository : IUserAccountRequestRepository
 
     public async Task<UserAccountRequest?> GetAsync(string id)
     {
-        var retVal = await _getUserAccountRequestPolicy.ExecuteAsync(async () => await _container.ReadItemAsync<UserAccountRequest>(id, PartitionKey.None).ConfigureAwait(false)).ConfigureAwait(false);
+        var retVal = await _getUserAccountRequestPolicy.ExecuteAsync(async () => await _container.ReadItemAsync<UserAccountRequest>(id, new PartitionKey(id)).ConfigureAwait(false)).ConfigureAwait(false);
         return retVal;
     }
 

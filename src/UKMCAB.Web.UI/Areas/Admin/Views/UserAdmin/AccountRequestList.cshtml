@@ -25,7 +25,7 @@
                     @foreach (var account in Model.UserAccountRequests)
                     {
                         <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">@account.FirstName</th>
+                            <th scope="row" class="govuk-table__header"><a asp-area="admin" asp-controller="UserAdmin" asp-action="ReviewAccountRequest" asp-route-id="@account.Id">@account.FirstName</a></th>
                             <td class="govuk-table__cell">@account.Surname</td>
                             <td class="govuk-table__cell">@account.ContactEmailAddress</td>
                         </tr>
