@@ -14,6 +14,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             public const string UserList = "user-admin.list";
             public const string UserAccountRequestsList = "user-admin.account-requests.list";
+            public const string ReviewAccountRequest = "user-admin.review-account-request";
         }
 
         public UserAdminController(IUserService userService)
@@ -61,6 +62,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             return list;
+        }
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpGet("review-account-request/{id}", Name = Routes.ReviewAccountRequest)]
+        public async Task<IActionResult> ReviewAccountRequest(string id)
+        {
+            var account = await _userService.GetAccountRequestAsync(id);
+            return View(new ReviewAccountRequestViewModel
+            {
+                UserAccountRequest = account
+            });
         }
     }
 }
