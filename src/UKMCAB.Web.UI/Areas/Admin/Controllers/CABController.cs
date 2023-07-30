@@ -226,6 +226,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private List<string> GetLAUnion(List<string> las, List<string> pschLAs)
         {
+
             var union = (las ?? new List<string>()).Union(pschLAs).ToList();
             return union;
         }
@@ -260,7 +261,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
-                latestDocument.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas);
+                latestDocument.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas ?? new List<string>());
 
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
@@ -315,6 +316,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                              && TryValidateModel(cabDetails)
                              && TryValidateModel(cabContact)
                              && TryValidateModel(cabBody);
+            ModelState.Clear(); // TODO: clear this to fix error in title but may need to do something else when we highlight publish blocking errors
             return View(model);
         }
 
