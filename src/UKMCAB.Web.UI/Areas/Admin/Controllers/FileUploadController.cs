@@ -239,17 +239,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
             var newSchedules = new List<FileUpload>();
-            foreach (var fileViewModel in fileViewModels)
+            if (fileViewModels != null)
             {
-                var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
-                newSchedules.Add(new FileUpload
+                foreach (var fileViewModel in fileViewModels)
                 {
-                    FileName = fileViewModel.FileName,
-                    BlobName = current.BlobName,
-                    Label = fileViewModel.Label, 
-                    LegislativeArea = fileViewModel.LegislativeArea,
-                    UploadDateTime = current.UploadDateTime
-                });
+                    var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
+                    newSchedules.Add(new FileUpload
+                    {
+                        FileName = fileViewModel.FileName,
+                        BlobName = current.BlobName,
+                        Label = fileViewModel.Label, 
+                        LegislativeArea = fileViewModel.LegislativeArea,
+                        UploadDateTime = current.UploadDateTime
+                    });
+                }
             }
 
             if (newSchedules.Any())
