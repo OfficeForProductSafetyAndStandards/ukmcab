@@ -384,7 +384,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 //var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
-                //latestVersion.Documents.Remove(fileToRemove);
+                latestVersion.Documents.Remove(fileToRemove);
                 var user = await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
             }
