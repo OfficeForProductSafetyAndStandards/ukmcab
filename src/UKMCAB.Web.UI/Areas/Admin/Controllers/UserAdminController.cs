@@ -15,6 +15,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string UserList = "user-admin.list";
             public const string UserAccountRequestsList = "user-admin.account-requests.list";
             public const string ReviewAccountRequest = "user-admin.review-account-request";
+            public const string RequestApproved = "user-admin.request-approved";
+            public const string RequestRejected = "user-admin.request-rejected";
         }
 
         public UserAdminController(IUserService userService)
@@ -69,10 +71,48 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> ReviewAccountRequest(string id)
         {
             var account = await _userService.GetAccountRequestAsync(id);
+            if (account == null)
+            {
+                return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            }
+
             return View(new ReviewAccountRequestViewModel
             {
                 UserAccountRequest = account
             });
+        }
+
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpPost("review-account-request/{id}", Name = Routes.ReviewAccountRequest)]
+        public async Task<IActionResult> ReviewAccountRequest(string id, string submitType)
+        {
+            var account = await _userService.GetAccountRequestAsync(id);
+            if (account == null)
+            {
+                return RedirectToAction("Index", "UserAdmin", new { Area="admin"});
+            }
+
+            if (submitType == Constants.SubmitType.Approve)
+            {
+                await _userService.ApproveAsync(account.Id);
+                return RedirectToAction("RequestApproved", "UserAdmin", new { Area = "admin", id=account.Id });
+            }
+            return RedirectToAction("RequestRejected", "UserAdmin", new { Area = "admin", id = account.Id });
+        }
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpGet("request-approved/{id}", Name = Routes.RequestApproved)]
+        public async Task<IActionResult> RequestApproved(string id)
+        {
+            return View();
+        }
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpGet("request-rejected/{id}", Name = Routes.RequestRejected)]
+        public async Task<IActionResult> RequestRejected(string id)
+        {
+            return View();
         }
     }
 }
