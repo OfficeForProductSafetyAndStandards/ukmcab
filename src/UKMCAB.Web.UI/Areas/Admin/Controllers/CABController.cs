@@ -5,6 +5,7 @@ using UKMCAB.Core.Services;
 using UKMCAB.Identity.Stores.CosmosDB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using System.Net;
+using Microsoft.EntityFrameworkCore;
 using UKMCAB.Web.UI.Services;
 using static UKMCAB.Web.UI.Constants;
 
@@ -240,6 +241,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
+            model.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas ?? new List<string>());
+            ModelState.Clear();
+            TryValidateModel(model);
 
             var user = await _userManager.GetUserAsync(User);
             model.TestingLocations = model.TestingLocations != null ? model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList() : new List<string>();
@@ -261,7 +265,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
-                latestDocument.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas ?? new List<string>());
+                latestDocument.LegislativeAreas = model.LegislativeAreas;
 
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
