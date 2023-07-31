@@ -77,6 +77,9 @@ public class UserService : IUserService
     /// <inheritdoc />
     public async Task<UserAccount?> GetAsync(string id) => await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
 
+    public async Task<UserAccountRequest?> GetAccountRequestAsync(string id) => await _userAccountRequestRepository.GetAsync(id).ConfigureAwait(false);
+
+
     /// <inheritdoc />
     public async Task ApproveAsync(string id) => await ApproveRejectAsync(id, UserAccountRequestStatus.Approved).ConfigureAwait(false);
 

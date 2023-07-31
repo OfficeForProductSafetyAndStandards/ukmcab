@@ -1,0 +1,53 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.ReviewAccountRequestViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Review account request</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    First name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.UserAccountRequest.FirstName
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Last name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.UserAccountRequest.Surname
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Email
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.UserAccountRequest.EmailAddress
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Date request created
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.UserAccountRequest.CreatedUtc.ToString("dd/MM/yy HH:mm")
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Comments
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.UserAccountRequest.Comments
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>

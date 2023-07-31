@@ -13,6 +13,8 @@ public interface IUserService
     Task ApproveAsync(string id);
     Task<UserAccount?> GetAsync(string id);
 
+    Task<UserAccountRequest?> GetAccountRequestAsync(string id);
+
     /// <summary>
     /// Gets the status of a user account / user account request
     /// </summary>
