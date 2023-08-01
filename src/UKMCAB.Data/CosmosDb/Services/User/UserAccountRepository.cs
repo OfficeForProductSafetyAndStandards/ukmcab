@@ -21,9 +21,10 @@ public class UserAccountRepository : IUserAccountRepository
 
     public async Task InitialiseAsync() => await _container.Database.CreateContainerIfNotExistsAsync(ContainerId, "/id");
 
+
     public async Task<UserAccount?> GetAsync(string id)
     {
-        var retVal = await _getUserAccountPolicy.ExecuteAsync(async () => await _container.ReadItemAsync<UserAccount>(id, PartitionKey.None).ConfigureAwait(false)).ConfigureAwait(false);
+        var retVal = await _getUserAccountPolicy.ExecuteAsync(async () => await _container.ReadItemAsync<UserAccount>(id, new PartitionKey(id)).ConfigureAwait(false)).ConfigureAwait(false);
         return retVal;
     }
 

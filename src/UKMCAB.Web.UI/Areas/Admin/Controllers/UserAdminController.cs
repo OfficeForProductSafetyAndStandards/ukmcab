@@ -4,7 +4,6 @@ using Notify.Interfaces;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models.Users;
-using UKMCAB.Web.UI.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 
@@ -33,7 +32,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _templateOptions = templateOptions.Value;
         }
 
-        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
         [Route("")]
         [HttpGet("list", Name = Routes.UserList)]
         public async Task<IActionResult> Index(int skip = 0)
@@ -48,7 +46,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             });
         }
 
-        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
         [HttpGet("account-requests", Name = Routes.UserAccountRequestsList)]
         public async Task<IActionResult> AccountRequestList()
         {
@@ -75,7 +72,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return list;
         }
 
-        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
         [HttpGet("review-account-request/{id}", Name = Routes.ReviewAccountRequest)]
         public async Task<IActionResult> ReviewAccountRequest(string id)
         {
@@ -92,7 +88,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
 
-        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
         [HttpPost("review-account-request/{id}", Name = Routes.ReviewAccountRequest)]
         public async Task<IActionResult> ReviewAccountRequest(string id, string submitType)
         {
@@ -112,7 +107,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return RedirectToAction("RejectRequest", "UserAdmin", new { Area = "admin", id = account.Id });
         }
 
-        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
         [HttpGet("request-approved/{id}", Name = Routes.RequestApproved)]
         public async Task<IActionResult> RequestApproved(string id)
         {
@@ -123,7 +117,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(model);
         }
 
-        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
         [HttpGet("reject-request/{id}", Name = Routes.RejectRequest)]
         public async Task<IActionResult> RejectRequest(string id)
         {
@@ -138,7 +131,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 });
         }
 
-        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
         [HttpPost("reject-request/{id}", Name = Routes.RejectRequest)]
         public async Task<IActionResult> RejectRequest(string id, RejectRequestViewModel model)
         {
@@ -164,7 +156,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(model);
         }
 
-        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
         [HttpGet("request-rejected/{id}", Name = Routes.RequestRejected)]
         public async Task<IActionResult> RequestRejected(string id)
         {
