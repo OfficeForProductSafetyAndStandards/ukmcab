@@ -1,7 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using Notify.Interfaces;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
@@ -10,16 +14,23 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     public class UserAdminController : Controller
     {
         private readonly IUserService _userService;
+        private readonly IAsyncNotificationClient _notificationClient;
+        private readonly TemplateOptions _templateOptions;
         public static class Routes
         {
             public const string UserList = "user-admin.list";
             public const string UserAccountRequestsList = "user-admin.account-requests.list";
             public const string ReviewAccountRequest = "user-admin.review-account-request";
+            public const string RequestApproved = "user-admin.request-approved";
+            public const string RequestRejected = "user-admin.request-rejected";
+            public const string RejectRequest = "user-admin.reject-request";
         }
 
-        public UserAdminController(IUserService userService)
+        public UserAdminController(IUserService userService, IAsyncNotificationClient notificationClient, IOptions<TemplateOptions> templateOptions)
         {
             _userService = userService;
+            _notificationClient = notificationClient;
+            _templateOptions = templateOptions.Value;
         }
 
         [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
@@ -69,10 +80,99 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> ReviewAccountRequest(string id)
         {
             var account = await _userService.GetAccountRequestAsync(id);
+            if (account == null)
+            {
+                return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            }
+
             return View(new ReviewAccountRequestViewModel
             {
                 UserAccountRequest = account
             });
+        }
+
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpPost("review-account-request/{id}", Name = Routes.ReviewAccountRequest)]
+        public async Task<IActionResult> ReviewAccountRequest(string id, string submitType)
+        {
+            var account = await _userService.GetAccountRequestAsync(id);
+            if (account == null)
+            {
+                return RedirectToAction("Index", "UserAdmin", new { Area="admin"});
+            }
+
+            if (submitType == Constants.SubmitType.Approve)
+            {
+                await _userService.ApproveAsync(account.Id);
+                await _notificationClient.SendEmailAsync(account.EmailAddress, _templateOptions.AccountRequestApproved);
+
+                return RedirectToAction("RequestApproved", "UserAdmin", new { Area = "admin", id=account.Id });
+            }
+            return RedirectToAction("RejectRequest", "UserAdmin", new { Area = "admin", id = account.Id });
+        }
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpGet("request-approved/{id}", Name = Routes.RequestApproved)]
+        public async Task<IActionResult> RequestApproved(string id)
+        {
+            var model = new BasicPageModel
+            {
+                Title = "Request approved"
+            }; 
+            return View(model);
+        }
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpGet("reject-request/{id}", Name = Routes.RejectRequest)]
+        public async Task<IActionResult> RejectRequest(string id)
+        {
+            var account = await _userService.GetAccountRequestAsync(id);
+            if (account == null)
+            {
+                return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            }
+            return View(new RejectRequestViewModel
+                {
+                    AccountId = account.Id
+                });
+        }
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpPost("reject-request/{id}", Name = Routes.RejectRequest)]
+        public async Task<IActionResult> RejectRequest(string id, RejectRequestViewModel model)
+        {
+            var account = await _userService.GetAccountRequestAsync(id);
+            if (account == null)
+            {
+                return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            }
+
+            if (ModelState.IsValid)
+            {
+                await _userService.RejectAsync(account.Id);
+                var personalisation = new Dictionary<string, dynamic>
+                {
+                    {"rejection-reason", model.Reason }
+                };
+                await _notificationClient.SendEmailAsync(account.EmailAddress, _templateOptions.AccountRequestRejected, personalisation);
+
+                return RedirectToAction("RequestRejected", "UserAdmin", new { Area = "admin", id = account.Id });
+            }
+
+            model.AccountId = id;
+            return View(model);
+        }
+
+        [AllowAnonymous] // TODO: added to allow dev testing, needs to be removed
+        [HttpGet("request-rejected/{id}", Name = Routes.RequestRejected)]
+        public async Task<IActionResult> RequestRejected(string id)
+        {
+            var model = new BasicPageModel
+            {
+                Title = "Request rejected"
+            };
+            return View(model);
         }
     }
 }

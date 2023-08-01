@@ -38,13 +38,29 @@
 
                 td {
                     padding: 20px 10px 20px 0;
-                    vertical-align: bottom;
+                    vertical-align: top;
 
                     &:first-child {
                         width: 60%;
 
                         @include govuk-media-query($until: tablet) {
                             width: 100%;
+                        }
+                    }
+
+                    &:nth-child(2) {
+                        padding: 45px 10px 20px 0;
+
+                        @include govuk-media-query($until: tablet) {
+                            padding: 5px 0;
+                        }
+                    }
+
+                    &:nth-child(3) {
+                        padding: 65px 10px 20px 0;
+
+                        @include govuk-media-query($until: tablet) {
+                            padding: 5px 0;
                         }
                     }
 

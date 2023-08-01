@@ -235,17 +235,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
             var newSchedules = new List<FileUpload>();
-            foreach (var fileViewModel in fileViewModels)
+            if (fileViewModels != null)
             {
-                var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
-                newSchedules.Add(new FileUpload
+                foreach (var fileViewModel in fileViewModels)
                 {
-                    FileName = fileViewModel.FileName,
-                    BlobName = current.BlobName,
-                    Label = fileViewModel.Label, 
-                    LegislativeArea = fileViewModel.LegislativeArea,
-                    UploadDateTime = current.UploadDateTime
-                });
+                    var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
+                    newSchedules.Add(new FileUpload
+                    {
+                        FileName = fileViewModel.FileName,
+                        BlobName = current.BlobName,
+                        Label = fileViewModel.Label, 
+                        LegislativeArea = fileViewModel.LegislativeArea,
+                        UploadDateTime = current.UploadDateTime
+                    });
+                }
             }
 
             if (newSchedules.Any())
@@ -380,7 +383,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 //var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
-                //latestVersion.Documents.Remove(fileToRemove);
+                latestVersion.Documents.Remove(fileToRemove);
                 var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
             }

@@ -16,5 +16,9 @@
         public string ContactUsUser { get; set; }
         public string ContactUsOPSS { get; set; }
         public string ContactUsOPSSEmail { get; set; }
+
+        public string AccountRequestApproved { get; set; }
+        public string AccountRequestRejected { get; set; }
+
     }
 }

@@ -1,6 +1,4 @@
-﻿using System.Security.Policy;
-
-namespace UKMCAB.Web.UI;
+﻿namespace UKMCAB.Web.UI;
 
 public static class Constants
 {
@@ -41,6 +39,8 @@ public static class Constants
         public const string Save = nameof(Save);
         public const string Add18 = nameof(Add18);
         public const string UploadAnother = nameof(UploadAnother);
+        public const string Approve = nameof(Approve);
+        public const string Reject = nameof(Reject);
     }
 
     public class ErrorMessages
