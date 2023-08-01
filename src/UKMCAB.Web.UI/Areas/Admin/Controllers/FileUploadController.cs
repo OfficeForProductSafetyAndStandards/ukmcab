@@ -257,7 +257,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (newSchedules.Any())
             {
-                var legislativeAreasFromDocs = newSchedules.Select(sch => sch.LegislativeArea).ToList(); 
+                if (latestDocument.LegislativeAreas == null)
+                {
+                    latestDocument.LegislativeAreas = new List<string>();
+                }
+                var legislativeAreasFromDocs = newSchedules.Select(sch => sch.LegislativeArea).ToList();
+                
                 if (legislativeAreasFromDocs.Except(latestDocument.LegislativeAreas).Any())
                 {
                     var newLAList = legislativeAreasFromDocs.Union(latestDocument.LegislativeAreas).OrderBy(la => la).ToList();
