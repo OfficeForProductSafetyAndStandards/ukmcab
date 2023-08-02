@@ -29,4 +29,6 @@ jobs:
           dataProtectionX509CertBase64=${{ secrets.PP_DATA_PROTECTION_X509_CERT }} 
           govukNotifyApiKey=${{ secrets.PP_GOVUK_NOTIFY_API_KEY }}
           encryptionKey=${{ secrets.PP_ENCRYPTION_KEY }}
+          oneLoginClientId=${{ secrets.PP_ONELOGINCLIENTID }}
+          oneLoginKeyPairBase64=${{ secrets.PP_ONELOGINKEYPAIRBASE64 }}
         failOnStdErr: false
