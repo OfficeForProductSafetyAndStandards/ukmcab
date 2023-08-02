@@ -1,17 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using System.Net;
-using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
-using Microsoft.EntityFrameworkCore;
 using UKMCAB.Web.UI.Services;
-using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
-    [Area("admin"), Authorize(Policy = Policies.CabManagement)]
+    [Area("admin"), Authorize]
     public class CABController : Controller
     {
         private readonly ICABAdminService _cabAdminService;

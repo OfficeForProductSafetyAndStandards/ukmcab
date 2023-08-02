@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
-using UKMCAB.Data.Models;
 using UKMCAB.Data;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using Document = UKMCAB.Data.Models.Document;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
-    [Area("admin"), Authorize(Policy = Policies.CabManagement)]
+    [Area("admin"), Authorize]
     public class FileUploadController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
