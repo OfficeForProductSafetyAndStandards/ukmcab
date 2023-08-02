@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
 using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
@@ -7,7 +6,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
-    [Area("admin"), Route("admin"), Authorize(Policy = Policies.CabManagement)]
+    [Area("admin"), Route("admin"), Authorize]
     public class AdminController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
