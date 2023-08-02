@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using Microsoft.ApplicationInsights;
+﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -24,6 +23,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         {
             public const string Login = "account.login";
             public const string Logout = "account.logout";
+            public const string Locked = "account.locked";
             public const string RequestAccount = "account.request";
             public const string RequestAccountSuccess = "account.request.success";
         }
@@ -55,7 +55,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 case UserAccountStatus.PendingUserAccountRequest:
                     throw new DomainException("You have already requested an account. You will receive an email when your request has been reviewed.");
                 case UserAccountStatus.UserAccountLocked:
-                    throw new DomainException($"Your user account has been {(envelope.UserAccountLockReason == UserAccountLockReason.Archived ? "archived" : "locked")}. Please contact support for assistance.");
+                    return RedirectToRoute("AccountLocked", new { id = id });
+                    //throw new DomainException($"Your user account has been {(envelope.UserAccountLockReason == UserAccountLockReason.Archived ? "archived" : "locked")}. Please contact support for assistance.");
                 case UserAccountStatus.Active:
                     await _users.UpdateLastLogonDate(id);
                     _telemetry.TrackEvent(AiTracking.Events.LoginSuccess, HttpContext.ToTrackingMetadata());
@@ -63,6 +64,16 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 default:
                     throw new NotSupportedException($"The user account status '{envelope.Status}' is not supported.");
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("locked/{id}", Name = Routes.Locked)]
+        public async Task<IActionResult> AccountLocked(string id)
+        {
+            return View(new BasicPageModel
+            {
+                Title = "Account locked"
+            });
         }
 
         [AllowAnonymous, HttpGet("request-account", Name = Routes.RequestAccount)]
