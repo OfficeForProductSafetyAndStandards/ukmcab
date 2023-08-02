@@ -75,7 +75,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [AllowAnonymous, HttpPost("request-account", Name = Routes.RequestAccount)]
         public async Task<IActionResult> RequestAccountAsync(RequestAccountViewModel model)
         {
-            if (ModelState.IsValid) // todo: model validation
+            if (ModelState.IsValid)
             {
                 var descriptor = _secureTokenProcessor.Disclose<RequestAccountTokenDescriptor>(model.Token) ?? throw new DomainException("The token did not deserialize successfully");
                 await _users.SubmitRequestAccountAsync(new RequestAccountModel
