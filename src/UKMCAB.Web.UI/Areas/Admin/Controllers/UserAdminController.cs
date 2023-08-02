@@ -9,7 +9,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
-    [Area("admin"), Route("user-admin"), Authorize(Policy = Policies.CabManagement)]
+    [Area("admin"), Route("user-admin"), Authorize]
     public class UserAdminController : Controller
     {
         private readonly IUserService _userService;

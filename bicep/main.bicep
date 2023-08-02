@@ -32,6 +32,12 @@ param sslCertPfxBase64VNextSlot string
 @secure()
 param encryptionKey string
 
+@secure()
+param oneLoginClientId string
+
+@secure()
+param oneLoginKeyPairBase64 string
+
 targetScope = 'subscription'
 
 var project = 'ukmcab'
@@ -64,5 +70,7 @@ module resourceSet './resources.bicep' = {
     searchReplicaCount: searchReplicaCount
     appServiceUseAutoScale: appServiceUseAutoScale
     encryptionKey: encryptionKey
+    oneLoginClientId: oneLoginClientId
+    oneLoginKeyPairBase64: oneLoginKeyPairBase64
   }
 }

@@ -30,7 +30,7 @@ public class UserAccountRepository : IUserAccountRepository
 
     public async Task CreateAsync(UserAccount userAccount) => await _container.CreateItemAsync(userAccount).ConfigureAwait(false);
 
-    public async Task UpdateAsync(UserAccount userAccount) => await _container.ReplaceItemAsync(userAccount, userAccount.Id).ConfigureAwait(false);
+    public async Task UpdateAsync(UserAccount userAccount) => await _container.ReplaceItemAsync(userAccount, userAccount.Id, new PartitionKey(userAccount.Id)).ConfigureAwait(false);
 
     public async Task<IEnumerable<UserAccount>> ListAsync(bool? isLocked = false, int skip = 0, int take = 20)
     {
@@ -53,7 +53,7 @@ public class UserAccountRepository : IUserAccountRepository
 
     public async Task PatchAsync<T>(string id, string fieldName, T value)
     {
-        await _container.PatchItemAsync<UserAccount>(id, PartitionKey.None, new[]
+        await _container.PatchItemAsync<UserAccount>(id, new PartitionKey(id), new[]
         {
             PatchOperation.Set($"/{fieldName}", value)
         });
