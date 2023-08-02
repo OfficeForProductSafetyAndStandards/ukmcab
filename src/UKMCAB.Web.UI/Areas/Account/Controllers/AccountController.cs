@@ -55,8 +55,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 case UserAccountStatus.PendingUserAccountRequest:
                     throw new DomainException("You have already requested an account. You will receive an email when your request has been reviewed.");
                 case UserAccountStatus.UserAccountLocked:
-                    return RedirectToRoute("AccountLocked", new { id = id });
-                    //throw new DomainException($"Your user account has been {(envelope.UserAccountLockReason == UserAccountLockReason.Archived ? "archived" : "locked")}. Please contact support for assistance.");
+                    return RedirectToRoute(Routes.Locked, new { id });
                 case UserAccountStatus.Active:
                     await _users.UpdateLastLogonDate(id);
                     _telemetry.TrackEvent(AiTracking.Events.LoginSuccess, HttpContext.ToTrackingMetadata());
@@ -70,10 +69,15 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [HttpGet("locked/{id}", Name = Routes.Locked)]
         public async Task<IActionResult> AccountLocked(string id)
         {
-            return View(new BasicPageModel
+            var envelope = await _users.GetUserAccountStatusAsync(id);
+            if (envelope.Status == UserAccountStatus.UserAccountLocked)
             {
-                Title = "Account locked"
-            });
+                return View(new BasicPageModel
+                {
+                    Title = "Account locked"
+                });
+            }
+            return Redirect("/");
         }
 
         [AllowAnonymous, HttpGet("request-account", Name = Routes.RequestAccount)]
