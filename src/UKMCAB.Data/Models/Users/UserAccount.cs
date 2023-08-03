@@ -15,4 +15,6 @@ public class UserAccount
 
     public const string LastLogonUtcFieldName = "lastLogonUtc";
     public DateTime? LastLogonUtc { get; set; }
+    public string? LockReasonDescription { get; set; }
+    public string? LockInternalNotes { get; set; }
 }

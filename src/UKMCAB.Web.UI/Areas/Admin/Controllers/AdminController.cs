@@ -27,7 +27,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             return View(new BasicPageModel
             {
-                Title = "Account locked"
+                Title = "Admin dashboard"
             });
         }
 
