@@ -1,118 +1,30 @@
-﻿@using UKMCAB.Web.UI.Extensions
-@using UKMCAB.Data.Models
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABManagementViewModel
+﻿@using UKMCAB.Web.UI.Areas.Admin.Controllers;
+@model BasicPageModel
 @{
     ViewData["nav"] = "admin";
-    var baseSortPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
-    baseSortPath += baseSortPath.Contains("?") ?  "&sort=" : "?sort=";
 }
-
-@if (TempData[Constants.TempDraftKey] != null)
-{
-    <div class="govuk-notification-banner govuk-grid-row" role="region"
-         aria-labelledby="govuk-notification-banner-title"
-         data-module="govuk-notification-banner">
-        <div class="govuk-notification-banner__content justify-content--center">
-            <p class="govuk-notification-banner__heading">@Html.Raw(@TempData[Constants.TempDraftKey].ToString())</p>
-        </div>
-    </div>
-}
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">CAB management</h1>
+        <h1 class="govuk-heading-l">Admin</h1>
     </div>
 </div>
 <div class="govuk-grid-row">
-    <form id="cab-management-form" method="get">
-        <div id="admin-cab-management">
-            <div id="cab-management-filter-container" class="govuk-grid-column-one-half">
-                <div id="cab-management-filter" class="govuk-form-group">
-                    <label class="govuk-label" asp-for="Filter">
-                        Showing
-                    </label>
-                    <select class="govuk-select cab-management-options" asp-for="Filter">
-                        <option value="">All</option>
-                        <option value="draft">Draft</option>
-                        <option value="archived">Archived</option>
-                    </select>
-                </div>
-                    
-                <div id="mobile-sort" class="govuk-form-group">
-                    <label class="govuk-label" asp-for="Sort">
-                        Sort by
-                    </label>
-                    <a href="@(baseSortPath + Model.GetSortQueryValue(Model.Sort.Replace("-desc", string.Empty)))" aria-sort="@(Model.Sort.EndsWith("-desc")? "descending" : "ascending")" class="cab-manage-sort" role="button"></a>
-                    <select class="govuk-select cab-management-options" asp-for="Sort">
-                        <option value="name">CAB name</option>
-                        <option value="number">CAB number</option>
-                        <option value="lastupd-desc">Last updated</option>
-                        <option value="status">Status</option>
-                    </select>
-                </div>
-                
-                <div id="cab-management-filters-submit" class="govuk-form-group">
-                    <button class="govuk-button" type="submit">Apply</button>
-                </div>
-            </div>
-            <div id="cab-management-create-container" class="govuk-grid-column-one-half">
-                <a class="govuk-button" asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="create" data-module="govuk-button">
-                    Create a CAB
-                </a>
-            </div>
-            <div id="cab-management-list-container" class="govuk-grid-column-full govuk-body">
-                <table class="govuk-table">
-                    <caption class="govuk-visually-hidden">List of CABs in draft or archive status</caption>
-                    <thead>
-                    <tr class="govuk-table__row">
-                        @if (Model.CABManagementItems.Any())
-                        {
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("name"))" aria-sort="@Model.GetAriaSort("name")">@Model.GetSortDescription("name", "CAB name")</a></th>
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("number"))" aria-sort="@Model.GetAriaSort("number")">@Model.GetSortDescription("number", "CAB number")</a></th>
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("lastupd"))" aria-sort="@Model.GetAriaSort("lastupd")">@Model.GetSortDescription("lastupd", "Last updated")</a></th>
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("status"))" aria-sort="@Model.GetAriaSort("status")">@Model.GetSortDescription("status", "Status")</a></th>
-                        }
-                    </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                    @if (Model.CABManagementItems.Any())
-                    {
-                        @foreach (var cab in Model.CABManagementItems)
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">
-                                    <label class="cab-management-item-label" aria-hidden="true">Cab name</label>
-                                    @if (cab.Status == Status.Archived.ToString())
-                                    {
-                                        <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
-                                    }
-                                    else
-                                    {
-                                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
-                                    }
-                                </td>
-                                <td class="govuk-table__cell"><label class="cab-management-item-label">Cab reference</label>@Html.Conditional(!string.IsNullOrWhiteSpace(cab.CABNumber), cab.CABNumber, @Constants.NotProvided)</td>
-                                <td class="govuk-table__cell"><label class="cab-management-item-label">Last updated</label>@cab.LastUpdated.ToString("dd/MM/yyyy")</td>
-                                <td class="govuk-table__cell"><label class="cab-management-item-label">Status</label>@cab.Status</td>
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr class="govuk-table__row">
-                            <td>
-                                <p class="govuk-body">There are currently no items in your work queue</p></td>
-                        </tr>
-                    }
-                    </tbody>
-                </table>
-                @if (Model.CABManagementItems.Any())
-                {
-                    <div id="cab-management-pagination-container">
-                        <partial name="Partials/_Pagination" model="Model.Pagination"/>
-                    </div>
-                }
-            </div>
+    <div class="govuk-grid-column-one-half">
+        <div class="govuk-form-group">
+            <a asp-route="@AdminController.Routes.CABManagement" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+                CAB management
+                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                </svg>
+            </a>        
         </div>
-    </form>
+        <div class="govuk-form-group">
+            <a asp-route="@UserAdminController.Routes.UserList" role="button" draggable="false" class="govuk-button govuk-button--start" data-module="govuk-button">
+                User management
+                <svg class="govuk-button__start-icon" xmlns="http://www.w3.org/2000/svg" width="17.5" height="19" viewBox="0 0 33 40" aria-hidden="true" focusable="false">
+                    <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z" />
+                </svg>
+            </a>
+        </div>
+    </div>
 </div>

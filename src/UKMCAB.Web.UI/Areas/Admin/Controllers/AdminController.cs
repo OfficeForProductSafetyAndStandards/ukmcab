@@ -11,15 +11,28 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     {
         private readonly ICABAdminService _cabAdminService;
 
+        public static class Routes
+        {
+            public const string Index = "admin.index";
+            public const string CABManagement = "admin.cab-management";
+        }
 
         public AdminController(ICABAdminService cabAdminService)
         {
             _cabAdminService = cabAdminService;
         }
 
-        [Route("")]
-        [Route("cab-management")]
-        public async Task<IActionResult> Index(CABManagementViewModel model)
+        [HttpGet, Route("", Name = Routes.Index)]
+        public async Task<IActionResult> Index()
+        {
+            return View(new BasicPageModel
+            {
+                Title = "Account locked"
+            });
+        }
+
+        [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
+        public async Task<IActionResult> CABManagement(CABManagementViewModel model)
         {
             if (string.IsNullOrEmpty(model.Sort))
             {
