@@ -1,0 +1,35 @@
+﻿@model UserAccountLockUnlockViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">@Model.VerbBaseForm.ToTitleCase() user account</h1>
+    </div>
+</div>
+
+<form method="post" class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="reason">Reason</label>
+            <div id="reason-hint" class="govuk-hint">This will be included in user notifications and the account history viewable by all users</div>
+            <textarea class="govuk-textarea" id="reason" name="reason" rows="5" aria-describedby="reason-hint"></textarea>
+        </div>
+
+        <div class="govuk-form-group">
+            <label class="govuk-label" for="internal-notes">Admin notes</label>
+            <div id="internal-notes-hint" class="govuk-hint">The comments will only be viewable by administrators in the account history.</div>
+            <textarea class="govuk-textarea" id="internal-notes" name="internal-notes" rows="5" aria-describedby="internal-notes-hint"></textarea>
+        </div>
+
+        <div class="govuk-button-group govuk-!-text-align-right">
+            <button class="govuk-button @(Html.Conditional(Model.Mode.EqualsAny(UserAccountLockToggleUIMode.Archive,UserAccountLockToggleUIMode.Lock),"govuk-button--warning"))" data-module="govuk-button">
+                @Model.VerbBaseForm.ToTitleCase() account
+            </button>
+            <a class="govuk-link" asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@Url.ActionContext.RouteData.Values["id"]">
+                Cancel
+            </a>
+        </div>
+
+    </div>
+</form>
+
