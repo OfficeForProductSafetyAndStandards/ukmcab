@@ -190,4 +190,6 @@ public class UserService : IUserService
             throw new DomainException("The account is already locked");
         }
     }
+    
+    public async Task UpdateUser(UserAccount user) => await _userAccountRepository.UpdateAsync(user).ConfigureAwait(false);
 }

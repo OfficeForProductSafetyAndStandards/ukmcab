@@ -9,6 +9,7 @@ public static class AiTracking
         public const string Logout = "app_login";
         public const string Lockout = "app_lockout";
         public const string ChangedPassword = "app_changed_password";
+        public const string UserEditedProfile = "app_user_edited_profile";
 
         public const string InternalUserCreated = "app_created_internal_user";
 
