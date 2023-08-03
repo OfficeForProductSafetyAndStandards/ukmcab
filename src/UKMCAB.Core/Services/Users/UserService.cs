@@ -126,4 +126,6 @@ public class UserService : IUserService
 
     /// <inheritdoc />
     public async Task UpdateLastLogonDate(string id) => await _userAccountRepository.PatchAsync(id, UserAccount.LastLogonUtcFieldName, DateTime.UtcNow).ConfigureAwait(false);
+
+    public async Task UpdateUser(UserAccount user) => await _userAccountRepository.UpdateAsync(user).ConfigureAwait(false);
 }
