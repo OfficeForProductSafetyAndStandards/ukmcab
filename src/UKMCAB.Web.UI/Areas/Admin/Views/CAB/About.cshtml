@@ -11,7 +11,7 @@
             }
             else
             {
-                <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-back-link">Back</a>
+                <a asp-area="Admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-back-link">Back</a>
             }
         </div>
     </div>
@@ -171,7 +171,7 @@
                     }
                     else if(string.IsNullOrWhiteSpace(Model.CABId))
                     {
-                        <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }
                     else
                     {

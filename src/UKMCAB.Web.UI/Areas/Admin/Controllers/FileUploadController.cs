@@ -27,7 +27,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
             if (latestVersion.Schedules != null && latestVersion.Schedules.Count >= 5)
@@ -53,7 +53,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
             latestVersion.Schedules ??= new List<FileUpload>();
@@ -92,7 +92,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             if (latestVersion.StatusValue == Status.Created)
             {
@@ -100,7 +100,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion, true);
             }
             TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} <br>CAB number {latestVersion.CABNumber}";
-            return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
 
         private string ValidateUploadFileAndGetContentType(FileUploadViewModel model, Dictionary<string, string> acceptedFileExtensionsContentTypes, string acceptedFileTypes, List<FileUpload> currentDocuments)
@@ -142,7 +142,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
 
@@ -163,7 +163,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             latestDocument.Schedules ??= new List<FileUpload>();
 
@@ -280,7 +280,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private IActionResult SaveDraft(Document document)
         {
             TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
-            return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
 
 
@@ -291,7 +291,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
             latestVersion.Documents ??= new List<FileUpload>();
@@ -318,7 +318,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             latestVersion.Documents ??= new List<FileUpload>();
             if (latestVersion.Documents.Count >= 10)
@@ -356,7 +356,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             latestVersion.Documents ??= new List<FileUpload>();
 
@@ -377,7 +377,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             latestVersion.Documents ??= new List<FileUpload>();
 
