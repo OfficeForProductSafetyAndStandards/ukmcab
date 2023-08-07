@@ -39,13 +39,13 @@ namespace UKMCAB.Web.UI.Services
             {
                 if (DateTime.UtcNow > nextSchedulesRun)
                 {
-                    nextSchedulesRun = nextSchedulesRun.AddDays(1);
                     try
                     {
                         var got = await _distCache.LockTakeAsync(lockName, lockOwner, TimeSpan.FromMinutes(1));
                         if (got)
                         {
                             await RegenerateRandomSortValues();
+                            _telemetryClient.TrackEvent(AiTracking.Events.RandomSortGeneratorRun, new Dictionary<string, string>{ {AiTracking.Metrics.RandomSortGeneratorRunDateTime, nextSchedulesRun.ToLongDateString()} });
                         }
                     }
                     catch (Exception ex)
@@ -56,6 +56,7 @@ namespace UKMCAB.Web.UI.Services
                     finally
                     {
                         await _distCache.LockReleaseAsync(lockName, lockOwner);
+                        nextSchedulesRun = nextSchedulesRun.AddDays(1);
                     }
                 }
                 else
