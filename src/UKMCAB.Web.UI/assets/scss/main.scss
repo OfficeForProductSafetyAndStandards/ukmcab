@@ -15,6 +15,7 @@
 @import "./shared/header.scss";
 @import "./shared/identity.scss";
 @import "./shared/pagination.scss";
+@import "./shared/social-media-share.scss";
 
 /* The below style shoulb be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */
 .govuk-link:hover {
