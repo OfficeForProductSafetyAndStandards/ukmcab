@@ -31,33 +31,36 @@ namespace UKMCAB.Web.UI.Services
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            var nextSchedulesRun = DateTime.UtcNow.Hour < 3 ? DateTime.UtcNow.Date.Add(new TimeSpan(3, 0, 0)) : DateTime.UtcNow.Date.Add(new TimeSpan(1, 3, 0, 0));
+            var lockName = StringExt.Keyify(nameof(RandomSortGenerator), nameof(ExecuteAsync));
+            var lockOwner = LockOwner.Create();
+
             while (!stoppingToken.IsCancellationRequested)
             {
-                var lockName = StringExt.Keyify(nameof(RandomSortGenerator), nameof(ExecuteAsync));
-                var lockOwner = LockOwner.Create();
-                try
+                if (DateTime.UtcNow > nextSchedulesRun)
                 {
-                    // Wait unit next 3 a.m.
-                    var now = DateTime.UtcNow;
-                    var nextRun = now.Hour < 3 ? now : now.AddDays(1);
-                    var schedule = new DateTime(nextRun.Year, nextRun.Month, nextRun.Day, 3, 0, 0);
-                    var difference = schedule - now;
-                    await Task.Delay(difference);
-
-                    var got = await _distCache.LockTakeAsync(lockName, lockOwner, TimeSpan.FromMinutes(1));
-                    if (got)
+                    nextSchedulesRun = nextSchedulesRun.AddDays(1);
+                    try
                     {
-                        await RegenerateRandomSortValues();
+                        var got = await _distCache.LockTakeAsync(lockName, lockOwner, TimeSpan.FromMinutes(1));
+                        if (got)
+                        {
+                            await RegenerateRandomSortValues();
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _telemetryClient.TrackException(ex);
+                        _loggingService.Log(new LogEntry(ex));
+                    }
+                    finally
+                    {
+                        await _distCache.LockReleaseAsync(lockName, lockOwner);
                     }
                 }
-                catch (Exception ex)
+                else
                 {
-                    _telemetryClient.TrackException(ex);
-                    _loggingService.Log(new LogEntry(ex));
-                }
-                finally
-                {
-                    await _distCache.LockReleaseAsync(lockName, lockOwner);
+                    await Task.Delay(new TimeSpan(0, 0, 1), stoppingToken);
                 }
             }
         }
