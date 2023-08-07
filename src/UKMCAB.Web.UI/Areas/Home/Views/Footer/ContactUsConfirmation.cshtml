@@ -1,4 +1,20 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Footer.ContactUsConfirmationViewModel
+﻿@using System.Net;
+@model UKMCAB.Web.UI.Models.ViewModels.Footer.ContactUsConfirmationViewModel
+@{
+    var returnUrl = WebUtility.UrlDecode(Model.ReturnUrl);
+}
+@section BackButton
+    {
+        <div class="govuk-width-container">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    <a href=@returnUrl class="govuk-back-link">Back</a>
+                </div>
+            </div>
+        </div>
+    }
+
+<div class="govuk-width-container">
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Your message has been submitted</h1>
@@ -9,4 +25,5 @@
         <p>We'll get back to you as soon as possible.</p>
         <p class="govuk-!-margin-top-6"><a asp-area="Home" asp-controller="Footer" asp-action="ContactUs" asp-route-returnUrl="@Model.ReturnUrl">Submit another message</a></p>
     </div>
+</div>
 </div>

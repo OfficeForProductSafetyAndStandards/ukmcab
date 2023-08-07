@@ -1,6 +1,4 @@
-﻿using System.Security.Policy;
-
-namespace UKMCAB.Web.UI;
+﻿namespace UKMCAB.Web.UI;
 
 public static class Constants
 {
@@ -41,20 +39,8 @@ public static class Constants
         public const string Save = nameof(Save);
         public const string Add18 = nameof(Add18);
         public const string UploadAnother = nameof(UploadAnother);
-    }
-
-    public class Roles
-    {
-        public const string OPSSAdmin = nameof(OPSSAdmin);
-        public const string UKASUser = nameof(UKASUser);
-        public const string OGDUser = nameof(OGDUser);
-
-        public static readonly List<string> AuthRoles = new List<string>
-        {
-            nameof(OPSSAdmin),
-            nameof(UKASUser),
-            nameof(OGDUser),
-        };
+        public const string Approve = nameof(Approve);
+        public const string Reject = nameof(Reject);
     }
 
     public class ErrorMessages

@@ -24,14 +24,9 @@ public class SecureTokenProcessor : ISecureTokenProcessor
         var retVal = null as string;
         if (obj != null)
         {
-            // convert to json
-            var json = JsonSerializer.Serialize(obj);
-
-            // encrypt
-            var bytes = CryptoHelper.Encrypt(json, _keyiv);
-
-            // url token encoding
-            retVal = Base64UrlEncoder.Encode(bytes);
+            var text = obj is string ? (obj as string ?? throw new Exception("obj should not cast to null")) : (JsonSerializer.Serialize(obj) ?? throw new Exception("obj should not serialise to null"));
+            var bytes = CryptoHelper.Encrypt(text, _keyiv); // encrypt
+            retVal = Base64UrlEncoder.Encode(bytes); // url token encoding
         }
         return retVal;
     }
@@ -44,10 +39,16 @@ public class SecureTokenProcessor : ISecureTokenProcessor
             try
             {
                 var bytes = Base64UrlEncoder.DecodeBytes(token);
-                var json = CryptoHelper.Decrypt(bytes, _keyiv);
-                var obj = JsonSerializer.Deserialize<T>(json);
-                return obj;
-
+                var text = CryptoHelper.Decrypt(bytes, _keyiv);
+                if (typeof(T) == typeof(string))
+                {
+                    return (T) (object) text;
+                }
+                else
+                {
+                    var obj = JsonSerializer.Deserialize<T>(text);
+                    return obj;
+                }
             }
             catch (Exception) { } // ignore
         }

@@ -1,12 +1,11 @@
-﻿using UKMCAB.Common;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.Azure.Cosmos.Linq;
+using UKMCAB.Common;
+using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
-using UKMCAB.Data;
-using UKMCAB.Data.Search.Services;
-using UKMCAB.Identity.Stores.CosmosDB;
-using Microsoft.ApplicationInsights;
-using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Data.Search.Models;
+using UKMCAB.Data.Search.Services;
 
 namespace UKMCAB.Core.Services
 {

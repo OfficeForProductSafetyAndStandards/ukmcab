@@ -32,6 +32,12 @@ param aspNetCoreEnvironment string = 'Development'
 @secure()
 param encryptionKey string
 
+@secure()
+param oneLoginClientId string
+
+@secure()
+param oneLoginKeyPairBase64 string
+
 
 resource storage 'Microsoft.Storage/storageAccounts@2021-02-01' = {
   name: 'stor${project}${env}'
@@ -275,6 +281,22 @@ resource encryptionKeySecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
   name: 'encryptionKey'
   properties: {
     value: encryptionKey
+  }
+}
+
+resource oneLoginClientIdSecret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'oneLoginClientId'
+  properties: {
+    value: oneLoginClientId
+  }
+}
+
+resource oneLoginKeyPairBase64Secret 'Microsoft.KeyVault/vaults/secrets@2022-07-01' = {
+  parent: kv
+  name: 'oneLoginKeyPairBase64'
+  properties: {
+    value: oneLoginKeyPairBase64
   }
 }
 
@@ -1066,6 +1088,17 @@ var appSettings = [
     name: 'ASPNETCORE_ENVIRONMENT'
     value: aspNetCoreEnvironment
   }
+
+  // One Login settings
+  {
+    name: 'OneLoginClientId'
+    value: '@Microsoft.KeyVault(SecretUri=${oneLoginClientIdSecret.properties.secretUri})'
+  }
+  {
+    name: 'OneLoginKeyPairBase64'
+    value: '@Microsoft.KeyVault(SecretUri=${oneLoginKeyPairBase64Secret.properties.secretUri})'
+  }
+  
 ]
 
 var appSettingBasicAuth = {

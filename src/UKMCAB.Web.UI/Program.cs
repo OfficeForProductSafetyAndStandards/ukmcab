@@ -1,20 +1,19 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.DataProtection;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Azure.Cosmos.Linq;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
-using UKMCAB.Identity.Stores.CosmosDB;
-using UKMCAB.Identity.Stores.CosmosDB.Extensions;
-using UKMCAB.Identity.Stores.CosmosDB.Stores;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Subscriptions.Core;
@@ -25,6 +24,7 @@ using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
 using UKMCAB.Web.CSP;
 using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
+using UKMCAB.Web.Security;
 using UKMCAB.Web.UI;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
@@ -52,6 +52,15 @@ if (!redisConnectionString.Contains("allowAdmin"))
 }
 
 builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
+builder.Services.AddGovukOneLogin(builder.Configuration);
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(Policies.CabManagement, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.CabEdit, "*");
+    });
+});
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
@@ -68,7 +77,6 @@ builder.Services.AddSingleton(cosmosDbConnectionString);
 builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 
-builder.Services.AddTransient<IAdminService, AdminService>();
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<ICABRepository, CABRepository>(); 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
@@ -78,6 +86,10 @@ builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
 builder.Services.AddSingleton<IInitialiseDataService, InitialiseDataService>();
+builder.Services.AddSingleton<IUserAccountRepository, UserAccountRepository>();
+builder.Services.AddSingleton<IUserAccountRequestRepository, UserAccountRequestRepository>();
+builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
 builder.Services.AddCustomHttpErrorHandling();
 
 AddSubscriptionCoreServices(builder, azureDataConnectionString);
@@ -95,16 +107,7 @@ builder.Services.AddHostedService<RandomSortGenerator>();
 
 builder.Services.AddSearchService(cognitiveSearchConnectionString);
 
-builder.Services.Configure<IdentityStoresOptions>(options =>
-    options.UseAzureCosmosDB(cosmosDbConnectionString, databaseId: "UKMCABIdentity", containerId: "AppIdentity"));
 
-builder.Services.AddDefaultIdentity<UKMCABUser>(options =>
-{
-    options.Password.RequiredLength = 8;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromHours(2);
-})
-    .AddRoles<IdentityRole>()
-    .AddAzureCosmosDbStores();
 
 builder.Services.ConfigureApplicationCookie(opt =>
 {
@@ -211,11 +214,6 @@ app.MapControllerRoute(
 
 UseSubscriptions(app);
 
-await app.InitialiseIdentitySeedingAsync<UKMCABUser, IdentityRole>(azureDataConnectionString, Constants.Config.ContainerNameDataProtectionKeys, seeds =>
-{
-    seeds.AddRole(role: new IdentityRole(Constants.Roles.OPSSAdmin));
-});
-
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 var telemetryClient = app.Services.GetRequiredService<TelemetryClient>();
 
@@ -253,8 +251,6 @@ var stats = new Timer(async state =>
     using var scope = app.Services.CreateScope();
     try
     {
-        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UKMCABUser>>();
-        telemetryClient.TrackMetric(AiTracking.Metrics.UsersCount, await userManager.Users.CountAsync());
         await app.Services.GetRequiredService<ICABAdminService>().RecordStatsAsync();
 
         var pages1 = await app.Services.GetRequiredService<ISubscriptionRepository>().GetAllAsync(take: 1);
@@ -328,3 +324,7 @@ static void UseSubscriptions(WebApplication app)
 }
 
 #endregion
+
+
+
+

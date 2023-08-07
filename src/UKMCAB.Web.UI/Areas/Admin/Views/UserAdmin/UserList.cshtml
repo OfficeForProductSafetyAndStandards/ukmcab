@@ -1,0 +1,77 @@
+﻿@using Microsoft.IdentityModel.Tokens;
+@using UKMCAB.Web.UI.Areas.Admin.Controllers
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountListViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">@Model.Title</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <p class="govuk-body govuk-!-font-size-14">
+            @if (Model.PendingAccountsCount > 0)
+            {
+                <a asp-route="@UKMCAB.Web.UI.Areas.Admin.Controllers.UserAdminController.Routes.UserAccountRequestsList" class="govuk-link">Pending account request@(Model.PendingAccountsCount > 1 ? "s" : string.Empty) (@Model.PendingAccountsCount)</a>
+            }
+            else
+            {
+                @:There are currently no pending account requests
+            }
+        </p>
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    @if (Model.UserAccounts.Any())
+                    {
+                        <th scope="col" class="govuk-table__header">First name</th>
+                        <th scope="col" class="govuk-table__header">Surname</th>
+                        <th scope="col" class="govuk-table__header">Email address</th>
+                        <th scope="col" class="govuk-table__header">Last logon date</th>
+                        <th scope="col" class="govuk-table__header">&nbsp;</th>
+                    }
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @if (Model.UserAccounts.Any())
+                {
+                    @foreach (var account in Model.UserAccounts)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@account.FirstName</td>
+                            <td class="govuk-table__cell">@account.Surname</td>
+                            <td class="govuk-table__cell">@account.ContactEmailAddress</td>
+                            <td class="govuk-table__cell">@account.LastLogonUtc?.ToString("dd/MM/yy HH:mm")</td>
+                            <td class="govuk-table__cell">
+                                <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View&nbsp;details</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr class="govuk-table__row">
+                        <td>
+                            <p class="govuk-body">There are no users to display</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        @if (!Model.LockedOnly)
+        {
+            <p class="govuk-body-s govuk-!-text-align-right">
+                <a asp-route="@UserAdminController.Routes.UserListLocked">View locked/archived accounts</a>
+            </p>
+        }
+        else
+        {
+            <p class="govuk-body-s govuk-!-text-align-right">
+                <a asp-route="@UserAdminController.Routes.UserList">View active accounts</a>
+            </p>
+        }
+    </div>
+</div>
+

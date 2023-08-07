@@ -1,0 +1,92 @@
+﻿@model RequestAccountViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="Model.FieldOrder" />
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+
+        <form method="post">
+            <input asp-for="Token" type="hidden" />
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading">
+                        Request user account
+                    </h1>
+                </legend>
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.FirstName))">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="FirstName">
+                            First name
+                        </label>
+                    </h3>
+                    <p error-id-for="FirstName" class="govuk-error-message">
+                        <span asp-validation-for="FirstName" class="govuk-error-message"></span>
+                    </p>
+                    <input class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.FirstName))" asp-for="FirstName" type="text" autocomplete="firstname" aria-required="true" error-describedby-for="FirstName">
+                </div>
+                
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.LastName))">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="LastName">
+                            Last name
+                        </label>
+                    </h3>
+                    <p error-id-for="LastName" class="govuk-error-message">
+                        <span asp-validation-for="LastName" class="govuk-error-message"></span>
+                    </p>
+                    <input class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.LastName))" asp-for="LastName" type="text" autocomplete="lastname" aria-required="true" error-describedby-for="LastName">
+                </div>
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ContactEmailAddress))">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="ContactEmailAddress">
+                            Email address
+                        </label>
+                    </h3>
+                    <p error-id-for="ContactEmailAddress" class="govuk-error-message">
+                        <span asp-validation-for="ContactEmailAddress" class="govuk-error-message"></span>
+                    </p>
+                    <input class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ContactEmailAddress))" asp-for="ContactEmailAddress" type="text" autocomplete="email" aria-required="true" error-describedby-for="ContactEmailAddress">
+                </div>
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Organisation))">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Organisation">
+                            Organisation
+                        </label>
+                    </h3>
+                    <p error-id-for="Organisation" class="govuk-error-message">
+                        <span asp-validation-for="Organisation" class="govuk-error-message"></span>
+                    </p>
+                    <input class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Organisation))" asp-for="Organisation" type="text" autocomplete="organisation" aria-required="true" error-describedby-for="Organisation">
+                </div>
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Comments))">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Comments">
+                            Can you provide more detail?
+                        </label>
+                    </h3>
+                    <div id="more-detail-hint" class="govuk-hint">
+                        Please tell us why you need an account.
+                    </div>
+                    <p error-id-for="Comments" class="govuk-error-message">
+                        <span asp-validation-for="Comments" class="govuk-error-message"></span>
+                    </p>
+                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Comments))" asp-for="Comments" rows="5" autocomplete="comments" aria-required="true" aria-describedby="more-detail-hint" error-describedby-for="FirstName"></textarea>
+                </div>
+
+            </fieldset>
+            <button class="govuk-button" data-module="govuk-button">
+                Submit
+            </button>
+        </form>
+
+
+    </div>
+</div>
+
+

@@ -34,4 +34,6 @@ jobs:
           dataProtectionX509CertBase64=${{ secrets.DATA_PROTECTION_X509_CERT_STAGE }} 
           govukNotifyApiKey=${{ secrets.GOVUK_NOTIFY_API_KEY_STAGE }}
           encryptionKey=${{ secrets.STAGE_ENCRYPTION_KEY }}
+          oneLoginClientId=${{ secrets.STAGE_ONELOGINCLIENTID }}
+          oneLoginKeyPairBase64=${{ secrets.STAGE_ONELOGINKEYPAIRBASE64 }}
         failOnStdErr: false

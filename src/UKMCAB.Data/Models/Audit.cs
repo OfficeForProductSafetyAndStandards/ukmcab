@@ -1,6 +1,4 @@
-﻿using UKMCAB.Identity.Stores.CosmosDB;
-
-namespace UKMCAB.Data.Models
+﻿namespace UKMCAB.Data.Models
 {
     public class Audit
     {

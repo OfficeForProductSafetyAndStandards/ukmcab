@@ -1,27 +1,20 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using UKMCAB.Data.Models;
-using UKMCAB.Core.Services;
-using UKMCAB.Identity.Stores.CosmosDB;
-using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using System.Net;
-using Microsoft.EntityFrameworkCore;
+using UKMCAB.Core.Services;
+using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Services;
-using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
-    [Area("admin")]
-    [Authorize(Roles = $"{Constants.Roles.OPSSAdmin}")]
+    [Area("admin"), Authorize]
     public class CABController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
-        private readonly UserManager<UKMCABUser> _userManager;
 
-        public CABController(ICABAdminService cabAdminService, UserManager<UKMCABUser> userManager)
+        public CABController(ICABAdminService cabAdminService)
         {
             _cabAdminService = cabAdminService;
-            _userManager = userManager;
         }
 
         [HttpGet]
@@ -34,7 +27,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
                 if (latestDocument == null) // Implies no document or archived
                 {
-                    return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                    return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
                 }
 
                 model = new CABDetailsViewModel(latestDocument);
@@ -103,7 +96,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    var user = await _userManager.GetUserAsync(User);
+                    var user = new Data.UKMCABUser();//TODO //await _userManager.GetUserAsync(User);
                     var createdDocument = model.IsFromSummary ?
                         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, document, submitType == Constants.SubmitType.Save) :
                         await _cabAdminService.CreateDocumentAsync(user, document, submitType == Constants.SubmitType.Save);
@@ -131,7 +124,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private IActionResult SaveDraft(Document document)
         {
             TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
-            return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
 
         [HttpGet]
@@ -141,7 +134,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
             var model = new CABContactViewModel(latest);
@@ -156,7 +149,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
 
             if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
@@ -176,7 +169,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.IsPointOfContactPublicDisplay = model.IsPointOfContactPublicDisplay;
                 latestDocument.RegisteredOfficeLocation = model.RegisteredOfficeLocation;
 
-                var user = await _userManager.GetUserAsync(User);
+                var user = new Data.UKMCABUser();//todo //await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
                 {
@@ -200,7 +193,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
 
             // Pre-populate model for edit
@@ -209,7 +202,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             // Ensure legislative areas are full covered
             if (model.ProductScheduleLegislativeAreas.Except(model.LegislativeAreas).Any())
             {
-                var user = await _userManager.GetUserAsync(User);
+                var user = new Data.UKMCABUser();//todo await _userManager.GetUserAsync(User);
                 latest.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latest, false);
                 model.LegislativeAreas = latest.LegislativeAreas;
@@ -239,13 +232,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             model.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas ?? new List<string>());
             ModelState.Clear();
             TryValidateModel(model);
 
-            var user = await _userManager.GetUserAsync(User);
+            var user = new Data.UKMCABUser();//todo await _userManager.GetUserAsync(User);
             model.TestingLocations = model.TestingLocations != null ? model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList() : new List<string>();
             if (submitType == "Add" && model.TestingLocations.Any())
             {
@@ -296,7 +289,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
 
             // Pre-populate model for edit
@@ -331,14 +324,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(model.CABId);
             if (latest == null) // Implies no document or archived
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
 
             if (submitType == Constants.SubmitType.Save)
             {
-                var user = await _userManager.GetUserAsync(User);
+                var user = new Data.UKMCABUser();//todo await _userManager.GetUserAsync(User);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latest, submitType == Constants.SubmitType.Save);
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
 
             // Pre-populate model for edit
@@ -356,7 +349,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             publishModel.ValidCAB = TryValidateModel(publishModel);
             if (publishModel.ValidCAB && submitType == Constants.SubmitType.Continue)
             {
-                var user = await _userManager.GetUserAsync(User);
+                var user = new Data.UKMCABUser();//todo await _userManager.GetUserAsync(User);
                 var pubishedDoc = await _cabAdminService.PublishDocumentAsync(user, latest);
                 TempData["Confirmation"] = true;
                 return RedirectToAction("Confirmation", "CAB", new { Area = "admin", id = latest.CABId });
@@ -373,7 +366,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null || latest.StatusValue != Status.Published)
             {
-                return RedirectToAction("Index", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             return View(new CABConfirmationViewModel
             {
@@ -388,7 +381,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> Cancel(string id)
         {
             await _cabAdminService.DeleteDraftDocumentAsync(id);
-            return RedirectToAction("Index", "Admin", new { Area = "admin" });
+            return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
     }
 }

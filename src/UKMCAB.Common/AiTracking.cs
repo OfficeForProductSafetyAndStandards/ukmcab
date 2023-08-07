@@ -9,6 +9,7 @@ public static class AiTracking
         public const string Logout = "app_login";
         public const string Lockout = "app_lockout";
         public const string ChangedPassword = "app_changed_password";
+        public const string UserEditedProfile = "app_user_edited_profile";
 
         public const string InternalUserCreated = "app_created_internal_user";
 
@@ -28,7 +29,6 @@ public static class AiTracking
     public static class Metrics
     {
         public const string CabsByStatusFormat = "app_cabs_count_by_status_{0}";
-        public const string UsersCount = "app_users_count";
         public const string CabSubscriptionsCount = "app_subscriptions_cab_count";
         public const string SearchSubscriptionsCount = "app_subscriptions_search_count";
         public const string CabsWithSchedules = "app_cabs_with_schedules";
