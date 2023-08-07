@@ -71,6 +71,7 @@ public static class GovukOneLoginExtensions
                     identity.AddClaim(new Claim(ClaimTypes.GivenName, account.FirstName ?? string.Empty));
                     identity.AddClaim(new Claim(ClaimTypes.Surname, account.Surname ?? string.Empty));
                     identity.AddClaim(new Claim(Claims.Organisation, account.OrganisationName ?? string.Empty));
+                    identity.AddClaim(new Claim(Claims.CabEdit, string.Empty)); //todo: added by default at the moment but needs to be applied based on role/organisation when claims is looked at
                 }
                 else
                 {
