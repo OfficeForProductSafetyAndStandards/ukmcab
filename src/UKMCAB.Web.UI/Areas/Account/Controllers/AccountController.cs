@@ -1,5 +1,4 @@
-﻿using Humanizer;
-using Microsoft.ApplicationInsights;
+﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
@@ -24,8 +23,11 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         {
             public const string Login = "account.login";
             public const string Logout = "account.logout";
+            public const string Locked = "account.locked";
             public const string RequestAccount = "account.request";
             public const string RequestAccountSuccess = "account.request.success";
+            public const string UserProfile = "account.user.profile";
+            public const string EditProfile = "account.edit.profile";
         }
 
         public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor)
@@ -55,7 +57,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 case UserAccountStatus.PendingUserAccountRequest:
                     throw new DomainException("You have already requested an account. You will receive an email when your request has been reviewed.");
                 case UserAccountStatus.UserAccountLocked:
-                    throw new DomainException($"Your user account has been {(envelope.UserAccountLockReason == UserAccountLockReason.Archived ? "archived" : "locked")}. Please contact support for assistance.");
+                    return RedirectToRoute(Routes.Locked, new { id });
                 case UserAccountStatus.Active:
                     await _users.UpdateLastLogonDate(id);
                     _telemetry.TrackEvent(AiTracking.Events.LoginSuccess, HttpContext.ToTrackingMetadata());
@@ -63,6 +65,21 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 default:
                     throw new NotSupportedException($"The user account status '{envelope.Status}' is not supported.");
             }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("locked/{id}", Name = Routes.Locked)]
+        public async Task<IActionResult> AccountLocked(string id)
+        {
+            var envelope = await _users.GetUserAccountStatusAsync(id);
+            if (envelope.Status == UserAccountStatus.UserAccountLocked)
+            {
+                return View(new BasicPageModel
+                {
+                    Title = "Account locked"
+                });
+            }
+            return Redirect("/");
         }
 
         [AllowAnonymous, HttpGet("request-account", Name = Routes.RequestAccount)]
@@ -75,17 +92,17 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [AllowAnonymous, HttpPost("request-account", Name = Routes.RequestAccount)]
         public async Task<IActionResult> RequestAccountAsync(RequestAccountViewModel model)
         {
-            if (ModelState.IsValid) // todo: model validation
+            if (ModelState.IsValid)
             {
                 var descriptor = _secureTokenProcessor.Disclose<RequestAccountTokenDescriptor>(model.Token) ?? throw new DomainException("The token did not deserialize successfully");
                 await _users.SubmitRequestAccountAsync(new RequestAccountModel
                 {
                     SubjectId = descriptor.SubjectId,
-                    ContactEmailAddress = model.ContactEmailAddress,
                     EmailAddress = descriptor.EmailAddress,
+                    ContactEmailAddress = model.ContactEmailAddress,
                     FirstName = model.FirstName,
-                    Organisation = model.Organisation,
                     Surname = model.LastName,
+                    Organisation = model.Organisation,
                     Comments = model.Comments,
                 });
                 return RedirectToRoute(Routes.RequestAccountSuccess);
@@ -106,7 +123,108 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             return Redirect("/");
         }
 
+        [HttpGet("user-profile", Name = Routes.UserProfile)]
+        public async Task<IActionResult> UserProfile()
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userAccount = await _users.GetAsync(id);
+            if (userAccount == null)
+            {
+                return RedirectToRoute(Routes.Login);
+            }
+            if (userAccount.IsLocked)
+            {
+                return RedirectToRoute(Routes.Locked, new { id });
+            }
 
+            return View(new UserProfileViewModel
+            {
+                FirstName = userAccount.FirstName,
+                LastName = userAccount.Surname,
+                PhoneNumber = userAccount.PhoneNumber,
+                ContactEmailAddress = userAccount.ContactEmailAddress,
+                IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
+            });
+        }
 
+        [HttpGet("edit-profile", Name = Routes.EditProfile)]
+        public async Task<IActionResult> EditProfile()
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userAccount = await _users.GetAsync(id);
+            if (userAccount == null)
+            {
+                return RedirectToRoute(Routes.Login);
+            }
+            if (userAccount.IsLocked)
+            {
+                return RedirectToRoute(Routes.Locked, new { id });
+            }
+
+            return View(new EditProfileViewModel
+            {
+                FirstName = userAccount.FirstName,
+                LastName = userAccount.Surname,
+                PhoneNumber = userAccount.PhoneNumber,
+                ContactEmailAddress = userAccount.ContactEmailAddress
+            });
+        }
+
+        [HttpPost("edit-profile", Name = Routes.EditProfile)]
+        public async Task<IActionResult> EditProfile(EditProfileViewModel model)
+        {
+            var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userAccount = await _users.GetAsync(id);
+            if (userAccount == null)
+            {
+                return RedirectToRoute(Routes.Login);
+            }
+            if (userAccount.IsLocked)
+            {
+                return RedirectToRoute(Routes.Locked, new { id });
+            }
+
+            if (ModelState.IsValid)
+            {
+                if(!new UserAccountComparer().Equals(userAccount, model.GetUserAccount()))
+                {
+                    var newUserAccount = userAccount;
+                    newUserAccount.FirstName = model.FirstName;
+                    newUserAccount.Surname = model.LastName;
+                    newUserAccount.PhoneNumber = model.PhoneNumber;
+                    newUserAccount.ContactEmailAddress = model.ContactEmailAddress;
+
+                    await _users.UpdateUser(newUserAccount);
+                    _telemetry.TrackEvent(AiTracking.Events.UserEditedProfile, HttpContext.ToTrackingMetadata(new Dictionary<string, string>
+                    {
+                        {"Original user account values", $"FirstName: {userAccount.FirstName}, Surname: {userAccount.Surname}, Phone: {userAccount.PhoneNumber}, ContactEmail: {userAccount.ContactEmailAddress}"},
+                        {"New user account values", $"FirstName: {newUserAccount.FirstName}, Surname: {newUserAccount.Surname}, Phone: {newUserAccount.PhoneNumber}, ContactEmail: {newUserAccount.ContactEmailAddress}"},
+                    }));
+
+                    TempData.Add("Edit", true);
+                }
+
+                return RedirectToRoute(Routes.UserProfile);
+            }
+
+            return View(model);
+        }
+    }
+
+    public class UserAccountComparer : IEqualityComparer<UserAccount>
+    {
+        public bool Equals(UserAccount x, UserAccount y)
+        {
+            if (ReferenceEquals(x, y)) return true;
+            if (ReferenceEquals(x, null)) return false;
+            if (ReferenceEquals(y, null)) return false;
+            if (x.GetType() != y.GetType()) return false;
+            return x.FirstName == y.FirstName && x.Surname == y.Surname && x.ContactEmailAddress == y.ContactEmailAddress && x.PhoneNumber == y.PhoneNumber;
+        }
+
+        public int GetHashCode(UserAccount obj)
+        {
+            return HashCode.Combine(obj.FirstName, obj.Surname, obj.ContactEmailAddress, obj.PhoneNumber);
+        }
     }
 }

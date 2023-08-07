@@ -48,6 +48,9 @@
                         <li class="govuk-header__navigation-item navigation-mobile-underline">
                             <a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.Logout" class="govuk-header__link">Sign out</a>
                         </li>
+                        <li class="govuk-header__navigation-item navigation-mobile-underline navigation-auth-link @Html.Conditional(ViewData["nav"] == "profile", "govuk-header__navigation-item--active")">
+                            <a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.UserProfile" class="govuk-header__link">Profile</a>
+                        </li>
                     }
                     else
                     {

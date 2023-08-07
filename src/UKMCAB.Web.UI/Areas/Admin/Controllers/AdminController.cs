@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
 using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
@@ -7,20 +6,33 @@ using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
-    [Area("admin"), Route("admin"), Authorize(Policy = Policies.CabManagement)]
+    [Area("admin"), Route("admin"), Authorize]
     public class AdminController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
 
+        public static class Routes
+        {
+            public const string Index = "admin.index";
+            public const string CABManagement = "admin.cab-management";
+        }
 
         public AdminController(ICABAdminService cabAdminService)
         {
             _cabAdminService = cabAdminService;
         }
 
-        [Route("")]
-        [Route("cab-management")]
-        public async Task<IActionResult> Index(CABManagementViewModel model)
+        [HttpGet, Route("", Name = Routes.Index)]
+        public async Task<IActionResult> Index()
+        {
+            return View(new BasicPageModel
+            {
+                Title = "Admin dashboard"
+            });
+        }
+
+        [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
+        public async Task<IActionResult> CABManagement(CABManagementViewModel model)
         {
             if (string.IsNullOrEmpty(model.Sort))
             {

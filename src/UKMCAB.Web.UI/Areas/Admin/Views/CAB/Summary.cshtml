@@ -338,7 +338,7 @@
                         {
                             if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
                             {
-                                <a asp-area="admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                                <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                             }
                             else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
                             {

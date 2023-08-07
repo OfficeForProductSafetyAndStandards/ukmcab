@@ -1,4 +1,6 @@
-﻿using UKMCAB.Common;
+﻿using Azure.Core;
+using System.Drawing;
+using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.CosmosDb.Services.User;
@@ -126,4 +128,68 @@ public class UserService : IUserService
 
     /// <inheritdoc />
     public async Task UpdateLastLogonDate(string id) => await _userAccountRepository.PatchAsync(id, UserAccount.LastLogonUtcFieldName, DateTime.UtcNow).ConfigureAwait(false);
+
+    public async Task LockAccountAsync(string id, UserAccountLockReason reason, string? reasonDescription, string? internalNotes)
+    {
+        var account = await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
+        if (account != null) 
+        {
+            LockAccount(account, reason, reasonDescription, internalNotes);
+            await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
+            //todo: send email
+            //todo: record audit trail
+        }
+        else
+        {
+            throw new NotFoundException($"User account for id '{id}' was not found");
+        }
+    }
+
+    public async Task UnlockAccountAsync(string id, string? reasonDescription, string? internalNotes)
+    {
+        var account = await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
+        if (account != null)
+        {
+            UnlockAccount(account);
+            await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
+            //todo: send email
+            //todo: record audit trail
+        }
+        else
+        {
+            throw new NotFoundException($"User account for id '{id}' was not found");
+        }
+    }
+
+    private void LockAccount(UserAccount account, UserAccountLockReason reason, string? reasonDescription, string? internalNotes)
+    {
+        if (!account.IsLocked)
+        {
+            account.IsLocked = true;
+            account.LockReason = reason;
+            account.LockReasonDescription = reasonDescription;
+            account.LockInternalNotes = internalNotes;
+        }
+        else
+        {
+            throw new DomainException("The account is already locked");
+        }
+    }
+
+    private void UnlockAccount(UserAccount account)
+    {
+        if (account.IsLocked)
+        {
+            account.IsLocked = false;
+            account.LockReason = null;
+            account.LockReasonDescription = null;
+            account.LockInternalNotes = null;
+        }
+        else
+        {
+            throw new DomainException("The account is already locked");
+        }
+    }
+    
+    public async Task UpdateUser(UserAccount user) => await _userAccountRepository.UpdateAsync(user).ConfigureAwait(false);
 }

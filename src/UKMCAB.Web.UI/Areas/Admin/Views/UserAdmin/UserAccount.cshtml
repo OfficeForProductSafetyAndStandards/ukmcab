@@ -1,0 +1,84 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <a href="@Url.RouteUrl(UserAdminController.Routes.UserList)" class="govuk-back-link">Back</a>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">User account</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-form-group">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        First name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.UserAccount.FirstName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last name
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.UserAccount.Surname
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Email
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.UserAccount.ContactEmailAddress
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last logon date
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.UserAccount.LastLogonUtc?.ToString("dd/MM/yy HH:mm")
+                    </dd>
+                </div>
+            </dl>
+        </div>
+
+        @if (!Model.UserAccount.IsLocked)
+        {
+            <div class="govuk-button-group">
+                <a class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountArchive" asp-route-id="@Model.UserAccount.Id">
+                    Archive
+                </a>
+                <a class="govuk-button data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountLock" asp-route-id="@Model.UserAccount.Id">
+                    Lock
+                </a>
+            </div>
+        }
+        else
+        {
+            <div>
+                @if(Model.UserAccount.LockReason == UKMCAB.Data.Models.Users.UserAccountLockReason.Archived)
+                {
+                    <p class="govuk-body-s">This account is archived</p>
+                    <a class="govuk-button data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnarchive" asp-route-id="@Model.UserAccount.Id">
+                        Unarchive
+                    </a>
+                }
+                else
+                {
+                    <p class="govuk-body-s">This account is locked</p>
+                    <a class="govuk-button data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnlock" asp-route-id="@Model.UserAccount.Id">
+                        Unlock
+                    </a>
+                }
+            </div>
+        }
+    </div>
+</div>

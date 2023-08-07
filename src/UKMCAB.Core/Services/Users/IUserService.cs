@@ -59,4 +59,14 @@ public interface IUserService
     /// <param name="id"></param>
     /// <returns></returns>
     Task UpdateLastLogonDate(string id);
+    Task LockAccountAsync(string id, UserAccountLockReason reason, string? reasonDescription, string? internalNotes);
+    Task UnlockAccountAsync(string id, string? reasonDescription, string? internalNotes);
+
+    /// <summary>
+    /// Updates the user account with the one supplied
+    /// </summary>
+    /// <param name="user"></param>
+    /// <returns></returns>
+
+    Task UpdateUser(UserAccount user);
 }
