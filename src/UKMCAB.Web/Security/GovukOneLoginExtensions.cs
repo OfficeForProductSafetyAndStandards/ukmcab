@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
@@ -22,7 +23,13 @@ public static class GovukOneLoginExtensions
             opt.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
             opt.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         })
-        .AddCookie()
+        .AddCookie(opt =>
+        {
+            opt.LoginPath = new PathString("/account/login");
+            opt.LogoutPath = new PathString("/account/logout");
+            opt.Cookie.Name = "UKMCAB_Identity";
+            opt.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+        })
         .AddOpenIdConnect(options =>
         {
             options.Scope.Clear();

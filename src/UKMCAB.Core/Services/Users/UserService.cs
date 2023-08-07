@@ -1,5 +1,5 @@
-﻿using Azure.Core;
-using System.Drawing;
+﻿using Microsoft.Extensions.Options;
+using Notify.Interfaces;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services.Users.Models;
@@ -12,11 +12,16 @@ public class UserService : IUserService
 {
     private readonly IUserAccountRepository _userAccountRepository;
     private readonly IUserAccountRequestRepository _userAccountRequestRepository;
+    private readonly IAsyncNotificationClient _notificationClient;
+    private readonly IOptions<CoreEmailTemplateOptions> _templateOptions;
 
-    public UserService(IUserAccountRepository userAccountRepository, IUserAccountRequestRepository userAccountRequestRepository)
+    public UserService(IUserAccountRepository userAccountRepository, IUserAccountRequestRepository userAccountRequestRepository, 
+        IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions)
     {
         _userAccountRepository = userAccountRepository;
         _userAccountRequestRepository = userAccountRequestRepository;
+        _notificationClient = notificationClient;
+        _templateOptions = templateOptions;
     }
 
     public record UserStatus(UserAccountStatus Status, UserAccountLockReason? UserAccountLockReason = null);
@@ -65,40 +70,40 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc />
-    public Task<IEnumerable<UserAccount>> ListAsync(bool? isLocked = false, int skip = 0, int take = 20)
-    {
-        return _userAccountRepository.ListAsync(isLocked, skip, take);
-    }
+    public Task<IEnumerable<UserAccount>> ListAsync(bool? isLocked = false, int skip = 0, int take = 20) 
+        => _userAccountRepository.ListAsync(isLocked, skip, take);
 
     /// <inheritdoc />
-    public async Task<IEnumerable<UserAccountRequest>> ListPendingAccountRequestsAsync(int skip = 0, int take = 20)
-    {
-        return await _userAccountRequestRepository.ListAsync(UserAccountRequestStatus.Pending, skip, take);
-    }
+    public async Task<IEnumerable<UserAccountRequest>> ListPendingAccountRequestsAsync(int skip = 0, int take = 20) 
+        => await _userAccountRequestRepository.ListAsync(UserAccountRequestStatus.Pending, skip, take);
 
     /// <inheritdoc />
-    public async Task<UserAccount?> GetAsync(string id) => await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
+    public async Task<UserAccount?> GetAsync(string id) 
+        => await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
 
-    public async Task<UserAccountRequest?> GetAccountRequestAsync(string id) => await _userAccountRequestRepository.GetAsync(id).ConfigureAwait(false);
+    public async Task<UserAccountRequest?> GetAccountRequestAsync(string id) 
+        => await _userAccountRequestRepository.GetAsync(id).ConfigureAwait(false);
 
 
     /// <inheritdoc />
     public async Task ApproveAsync(string id) => await ApproveRejectAsync(id, UserAccountRequestStatus.Approved).ConfigureAwait(false);
 
     /// <inheritdoc />
-    public async Task RejectAsync(string id) => await ApproveRejectAsync(id, UserAccountRequestStatus.Rejected).ConfigureAwait(false);
+    public async Task RejectAsync(string id, string reason) => await ApproveRejectAsync(id, UserAccountRequestStatus.Rejected, reason).ConfigureAwait(false);
     
-    private async Task ApproveRejectAsync(string id, UserAccountRequestStatus status)
+    private async Task ApproveRejectAsync(string id, UserAccountRequestStatus status, string? reviewComments = null)
     {
         Guard.IsFalse(status == UserAccountRequestStatus.Pending, "You cannot assign a status of Pending");
         var request = await _userAccountRequestRepository.GetAsync(id).ConfigureAwait(false) ?? throw new NotFoundException("The user account request could not be found");
         Rule.IsTrue(request.Status == UserAccountRequestStatus.Pending, $"The request has already been reviewed ({request.Status})");
         request.Status = status;
+        request.ReviewComments = reviewComments;
         await _userAccountRequestRepository.UpdateAsync(request).ConfigureAwait(false);
 
+        var account = await _userAccountRepository.GetAsync(request.SubjectId).ConfigureAwait(false);
+        
         if (status == UserAccountRequestStatus.Approved)
         {
-            var account = await _userAccountRepository.GetAsync(request.SubjectId).ConfigureAwait(false);
             if (account != null) // there's already an account for this fella
             {
                 if (account.IsLocked)
@@ -120,9 +125,18 @@ public class UserService : IUserService
                     Surname = request.Surname,
                 };
                 await _userAccountRepository.CreateAsync(account).ConfigureAwait(false);
-
-                //todo: email the person using 'ContactEmailAddress'
             }
+
+            await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestApproved);
+        }
+        else
+        {
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                {"rejection-reason", reviewComments ?? "" }
+            };
+            await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestRejected, personalisation);
+
         }
     }
 
@@ -136,7 +150,15 @@ public class UserService : IUserService
         {
             LockAccount(account, reason, reasonDescription, internalNotes);
             await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
-            //todo: send email
+
+            if(reason == UserAccountLockReason.Archived)
+            {
+                await _notificationClient.SendEmailAsync(account.EmailAddress, _templateOptions.Value.AccountArchived);
+            }
+            else
+            {
+                await _notificationClient.SendEmailAsync(account.EmailAddress, _templateOptions.Value.AccountLocked);
+            }
             //todo: record audit trail
         }
         else
@@ -150,9 +172,17 @@ public class UserService : IUserService
         var account = await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
         if (account != null)
         {
-            UnlockAccount(account);
+            var oldReason = UnlockAccount(account);
             await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
-            //todo: send email
+
+            if (oldReason == UserAccountLockReason.Archived)
+            {
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnarchived);
+            }
+            else
+            {
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnlocked);
+            }
             //todo: record audit trail
         }
         else
@@ -176,14 +206,16 @@ public class UserService : IUserService
         }
     }
 
-    private void UnlockAccount(UserAccount account)
+    private UserAccountLockReason UnlockAccount(UserAccount account)
     {
         if (account.IsLocked)
         {
+            var rv = account.LockReason ?? throw new Exception("There must always be a lock reason if the account is locked");
             account.IsLocked = false;
             account.LockReason = null;
             account.LockReasonDescription = null;
             account.LockInternalNotes = null;
+            return rv;
         }
         else
         {
