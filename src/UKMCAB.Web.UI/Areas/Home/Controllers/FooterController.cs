@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
+using UKMCAB.Core;
 using UKMCAB.Web.UI.Models.ViewModels.Footer;
 
 namespace UKMCAB.Web.UI.Areas.Home.Controllers
@@ -9,8 +10,8 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
     public class FooterController : Controller
     {
         private readonly IAsyncNotificationClient _asyncNotificationClient;
-        private readonly TemplateOptions _templateOptions;
-        public FooterController(IAsyncNotificationClient asyncNotificationClient, IOptions<TemplateOptions> templateOptions)
+        private readonly CoreEmailTemplateOptions _templateOptions;
+        public FooterController(IAsyncNotificationClient asyncNotificationClient, IOptions<CoreEmailTemplateOptions> templateOptions)
         {
             _asyncNotificationClient = asyncNotificationClient;
             _templateOptions = templateOptions.Value;
