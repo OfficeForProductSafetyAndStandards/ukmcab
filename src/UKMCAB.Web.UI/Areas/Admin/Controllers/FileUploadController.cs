@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
@@ -13,11 +15,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     {
         private readonly ICABAdminService _cabAdminService;
         private readonly IFileStorage _fileStorage;
+        private readonly IUserService _userService;
 
-        public FileUploadController(ICABAdminService cabAdminService, IFileStorage fileStorage)
+        public FileUploadController(ICABAdminService cabAdminService, IFileStorage fileStorage, IUserService userService)
         {
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
+            _userService = userService;
         }
 
         [HttpGet]
@@ -70,8 +74,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     model.File.OpenReadStream(), contentType);
                 latestVersion.Schedules.Add(result);
 
-                var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
                 return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
             }
 
@@ -96,8 +100,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             if (latestVersion.StatusValue == Status.Created)
             {
-                var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion, true);
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion, true);
             }
             TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} <br>CAB number {latestVersion.CABNumber}";
             return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
@@ -172,8 +176,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var fileToRemove = latestDocument.Schedules[fileIndex];
 
                 latestDocument.Schedules.Remove(fileToRemove);
-                var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument);
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 return View(new FileListViewModel
                 {
                     Title = SchedulesOptions.ListTitle,
@@ -200,10 +204,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 if (UpdateFiles(latestDocument, model.UploadedFiles))
                 {
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestDocument, submitType == Constants.SubmitType.Save);
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, submitType == Constants.SubmitType.Save);
                 }
                 if (submitType == Constants.SubmitType.UploadAnother)
                 {
@@ -334,8 +338,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     model.File.OpenReadStream(), contentType);
                 latestVersion.Documents.Add(result);
 
-                var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
                 return RedirectToAction("DocumentsList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
             }
 
@@ -388,8 +392,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 //var result = await _fileStorage.DeleteCABSchedule(fileToRemove.BlobName);
                 // Even if this returns false because the file wasn't found we still want to remove it from the document
                 latestVersion.Documents.Remove(fileToRemove);
-                var user = new Data.UKMCABUser();//TODO await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, latestVersion);
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
             }
 
             return View(new FileListViewModel
