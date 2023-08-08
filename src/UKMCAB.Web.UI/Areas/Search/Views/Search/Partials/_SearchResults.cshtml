@@ -6,9 +6,9 @@
 <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
 
     <div class="search-results-pagination-container search-results-pagination-container-top">
-        <partial name="Partials/_Pagination" model="Model.Pagination"/>
+        <partial name="Partials/_Pagination" model="Model.Pagination" />
     </div>
-    
+
     <div id="search-results-mobile-filters">
         <div id="search-results-filters-link-container">
             <a href="#search-filter-container" id="search-results-filter-toggle" class="govuk-link govuk-link--no-visited-state">Filters (@Model.FilterCount applied)</a>
@@ -25,8 +25,8 @@
             @foreach (var filterOption in Model.SelectedFilters)
             {
                 var filterSection = DataConstants.Lists.BodyTypes.Any(bt => bt.Equals(filterOption, StringComparison.CurrentCultureIgnoreCase)) ? "BodyTypes" :
-                    DataConstants.Lists.Countries.Any(ct => ct.Equals(filterOption, StringComparison.CurrentCultureIgnoreCase)) ? "RegisteredOfficeLocations" : "LegislativeAreas";
-                var fitlerTerm = $"&{filterSection}={WebUtility.UrlEncode(filterOption)}";
+                DataConstants.Lists.Countries.Any(ct => ct.Equals(filterOption, StringComparison.CurrentCultureIgnoreCase)) ? "RegisteredOfficeLocations" : "LegislativeAreas";
+                var fitlerTerm = $"&{filterSection}={WebUtility.UrlEncode(filterOption).Replace("%3A", "%3a")}";
                 var filterPath = baseFilterPath.Replace(fitlerTerm, string.Empty);
                 <a href="@filterPath" class="search-result-filter-link">@filterOption&nbsp;&nbsp;x</a>
             }
@@ -35,7 +35,7 @@
     @if (Model.Pagination.Total > 0)
     {
         var baseSortPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
-        baseSortPath += baseSortPath.Contains("?") ?  "&sort=" : "?sort=";
+        baseSortPath += baseSortPath.Contains("?") ? "&sort=" : "?sort=";
         <div id="search-results-sort-container">
             <fieldset>
                 <legend>Sort view</legend>
@@ -82,11 +82,11 @@
                 <li>use fewer keywords</li>
                 <li>searching for something less specific</li>
             </ul>
-        </div>        
+        </div>
     }
 
     <div class="search-results-pagination-container">
-        <partial name="Partials/_Pagination" model="Model.Pagination"/>
+        <partial name="Partials/_Pagination" model="Model.Pagination" />
     </div>
 
 </div>
