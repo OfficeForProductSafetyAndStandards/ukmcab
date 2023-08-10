@@ -172,7 +172,7 @@ public class UserAdminController : Controller
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
-            return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            return RedirectToRoute(Routes.UserList);
         }
 
         return View(new ReviewAccountRequestViewModel
@@ -188,15 +188,15 @@ public class UserAdminController : Controller
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
-            return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            return RedirectToRoute(Routes.UserAccountRequestsList);
         }
 
         if (submitType == Constants.SubmitType.Approve)
         {
             await _userService.ApproveAsync(account.Id);
-            return RedirectToAction("RequestApproved", "UserAdmin", new { Area = "admin", id = account.Id });
+            return RedirectToRoute(Routes.RequestApproved, new { account.Id });
         }
-        return RedirectToAction("RejectRequest", "UserAdmin", new { Area = "admin", id = account.Id });
+        return RedirectToRoute(Routes.RejectRequest, new { account.Id });
     }
 
     [HttpGet("request-approved/{id}", Name = Routes.RequestApproved)]
@@ -215,7 +215,7 @@ public class UserAdminController : Controller
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
-            return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            return RedirectToRoute(Routes.UserList);
         }
         return View(new RejectRequestViewModel
         {
@@ -229,13 +229,13 @@ public class UserAdminController : Controller
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
-            return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            return RedirectToRoute(Routes.UserList);
         }
 
         if (ModelState.IsValid)
         {
             await _userService.RejectAsync(account.Id, model.Reason ?? string.Empty);
-            return RedirectToAction("RequestRejected", "UserAdmin", new { Area = "admin", id = account.Id });
+            return RedirectToRoute(Routes.RequestRejected);
         }
 
         model.AccountId = id;
