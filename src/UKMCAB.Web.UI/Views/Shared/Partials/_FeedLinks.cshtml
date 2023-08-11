@@ -2,8 +2,9 @@
 @model FeedLinksViewModel
 @{
     var requestPath = Context.Request.Path.ToString();
-    var encodedUrlWithQueryStrings = WebUtility.UrlEncode("https://find-a-conformity-assessment-body.service.gov.uk" + Context.Request.GetRequestUri().PathAndQuery);
-    var encodedUrlNoQueryStrings = WebUtility.UrlEncode("https://find-a-conformity-assessment-body.service.gov.uk" + requestPath);
+    var requestSchemeHost = $"{Context.Request.Scheme}://{Context.Request.Host}";
+    var encodedUrlWithQueryStrings = WebUtility.UrlEncode(requestSchemeHost + Context.Request.GetRequestUri().PathAndQuery);
+    var encodedUrlNoQueryStrings = WebUtility.UrlEncode(requestSchemeHost + requestPath);
     var shareUrl = string.Empty;
     var title = Constants.SiteName;
     var emailSubject = $"I'm sharing this from UKMCAB.";
@@ -55,7 +56,7 @@
 
 
 <div id="" class="dropup">
-    <a href="" role="button" draggable="false" class="share-button govuk-link govuk-link--no-visited-state govuk-!-display-block" data-module="govuk-button">
+    <a href="#!" role="button" draggable="false" class="share-button govuk-link govuk-link--no-visited-state govuk-!-display-block" data-module="govuk-button">
         <svg viewBox="0 0 32 32" width="1em" height="1em" class="ssrcss-xi5oyi-StyledIcon e161cein1" focusable="false" aria-hidden="true" fill="#ffffff">
             <path d="M7.8 17 25.3 7l-1.2-2.3L6.6 15l1.2 2zm-1.2 0 17.5 10.3 1.2-2.3L7.8 15l-1.2 2zm5.6-1c0-2.7-2.2-5-5-5-2.7 0-4.9 2.2-4.9 5 0 2.7 2.2 4.9 4.9 4.9 2.8 0 5-2.2 5-4.9zM29.7 5.9c0-2.7-2.2-5-5-5-2.7 0-4.9 2.2-4.9 5 0 2.7 2.2 4.9 4.9 4.9 2.8 0 5-2.2 5-4.9zm0 20.2c0-2.7-2.2-5-5-5-2.7 0-4.9 2.2-4.9 5 0 2.7 2.2 4.9 4.9 4.9 2.8.1 5-2.2 5-4.9z"></path>
         </svg>        
@@ -100,8 +101,8 @@
             </a>
         </div>
 
-        <div class="feed-link-item">
-            <a id="copy-link" href="" class="govuk-link govuk-link--no-visited-state govuk-!-display-block govuk-!-margin-bottom-2" rel="noopener noreferrer nofollow">
+        <div class="feed-link-item popup">
+            <a id="copy-link" href="#!" class="govuk-link govuk-link--no-visited-state govuk-!-display-block govuk-!-margin-bottom-2" rel="noopener noreferrer nofollow">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="-2 -2 26 24" role="img" aria-labelledby="_copy-link" class="atom-feed__icon" style="width: 21px; height: 21px;" fill="#f1f1f1">
                     <title id="_copy-link">Copy Link</title>
                     <path stroke="currentColor" d="M19 15l2.5-2.5c1-1 1.5-3.5-.5-5.5s-4.5-1.5-5.5-.5L13 9M10 12l-2.5 2.5c-1 1-1.5 3.5.5 5.5s4.5 1.5 5.5.5L16 18M17 11l-5 5"></path>
@@ -109,6 +110,7 @@
                 Copy Link
             </a>
             <span id="share-url" hidden>@WebUtility.UrlDecode(shareUrl)</span>
+            <span class="copied-popup-text govuk-body-xs" id="copyPopup">Link copied to clipboard</span>
         </div>
     </div>
 </div>
