@@ -8,7 +8,6 @@
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
     var fullUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri();
     var pageTitle = Model?.Title.FormatTitle(ViewData.ModelState.IsValid) ?? Constants.SiteName;
-    ViewData["pageTitle"] = pageTitle;
 }
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">

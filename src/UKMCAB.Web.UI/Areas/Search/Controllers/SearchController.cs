@@ -68,7 +68,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 FeedUrl = "/search-feed",
                 EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes
-                    .Step0RequestSearchSubscription)
+                    .Step0RequestSearchSubscription),
+                SearchKeyword = model.Keywords ?? string.Empty
             };
             if (Request.QueryString.HasValue)
             {

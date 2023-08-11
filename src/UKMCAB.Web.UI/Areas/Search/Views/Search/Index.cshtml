@@ -4,6 +4,7 @@
     ViewData["nav"] = "search";
     var initialTitle = "Find a UK Market Conformity Assessment Body";
     var title = string.IsNullOrWhiteSpace(Model.Keywords) ? initialTitle : $"{initialTitle} matching &quot;{Model.Keywords}&quot;";
+    ViewData["pageTitle"] = title;
     var basePath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
     if (basePath.Contains("?", StringComparison.InvariantCultureIgnoreCase))
     {
