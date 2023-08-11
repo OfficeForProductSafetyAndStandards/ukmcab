@@ -6,6 +6,7 @@ using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Core;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
 using UKMCAB.Core.Services.Users;
@@ -99,7 +100,7 @@ builder.Services.AddDataProtection().ProtectKeysWithCertificate(new X509Certific
     .SetApplicationName("UKMCAB")
     .SetDefaultKeyLifetime(TimeSpan.FromDays(365 * 2));
 
-builder.Services.Configure<TemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateOptions"));
+builder.Services.Configure<CoreEmailTemplateOptions>(builder.Configuration.GetSection("GovUkNotifyTemplateOptions"));
 
 
 builder.Services.AddHostedService<RandomSortGenerator>();

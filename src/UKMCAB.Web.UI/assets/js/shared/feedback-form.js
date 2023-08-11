@@ -96,7 +96,8 @@
         feedbackErrorMessage.innerText = errorMessage + ".";
     }
 
-    function reset() {
+    function reset(e) {
+        e.preventDefault();
         // Show form
         feedbackForm.classList.remove("govuk-visually-hidden");
         // Remove errors

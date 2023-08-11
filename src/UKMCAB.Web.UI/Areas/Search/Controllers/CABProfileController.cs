@@ -1,8 +1,10 @@
 ﻿using Microsoft.ApplicationInsights;
 using System.Net;
+using System.Security.Claims;
 using System.Xml;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
@@ -22,6 +24,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly IFileStorage _fileStorage;
         private readonly TelemetryClient _telemetryClient;
         private readonly IFeedService _feedService;
+        private readonly IUserService _userService;
 
         public static class Routes
         {
@@ -30,13 +33,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             public const string CabFeed = "cab.feed";
         }
 
-        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, ICABAdminService cabAdminService, IFileStorage fileStorage, TelemetryClient telemetryClient, IFeedService feedService)
+        public CABProfileController(ICachedPublishedCABService cachedPublishedCabService, ICABAdminService cabAdminService, IFileStorage fileStorage, TelemetryClient telemetryClient, IFeedService feedService, IUserService userService)
         {
             _cachedPublishedCabService = cachedPublishedCabService;
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
             _telemetryClient = telemetryClient;
             _feedService = feedService;
+            _userService = userService;
         }
 
         [HttpGet("~/__subscriptions/__inbound/cab/{id}", Name = Routes.TrackInboundLinkCabDetails)]
@@ -178,7 +182,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
             if (!string.IsNullOrWhiteSpace(ArchiveReason))
             {
-                await _cabAdminService.ArchiveDocumentAsync(new UKMCABUser() /*todo: use userid claim*/, cabDocument, ArchiveReason);
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument, ArchiveReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,

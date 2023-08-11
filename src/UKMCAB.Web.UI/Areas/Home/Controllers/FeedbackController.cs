@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using Notify.Interfaces;
+using UKMCAB.Core;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Web.UI.Models.ViewModels.Feedback;
 
@@ -9,10 +10,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
     public class FeedbackController : Controller
     {
         private readonly IAsyncNotificationClient _notificationClient;
-        private readonly TemplateOptions _templateOptions;
+        private readonly CoreEmailTemplateOptions _templateOptions;
         private readonly ILoggingService _loggingService;
 
-        public FeedbackController(IAsyncNotificationClient notificationClient, IOptions<TemplateOptions> templateOptions, ILoggingService loggingService)
+        public FeedbackController(IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, ILoggingService loggingService)
         {
             _notificationClient = notificationClient;
             _templateOptions = templateOptions.Value;

@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Data.Models
+﻿using UKMCAB.Data.Models.Users;
+
+namespace UKMCAB.Data.Models
 {
     public class Audit
     {
@@ -12,7 +14,7 @@
             DateTime = date;
         }
 
-        public Audit(UKMCABUser user) : this(user.Id, $"{user.FirstName} {user.LastName}", DateTime.UtcNow) { }
+        public Audit(UserAccount userAccount) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", DateTime.UtcNow) { }
 
         public string UserId { get; set; }
         public string UserName { get; set; }

@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Core;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
@@ -20,7 +19,7 @@ public class UserAdminController : Controller
     private readonly IUserService _userService;
     private readonly IAsyncNotificationClient _notificationClient;
     private readonly ISecureTokenProcessor _secureTokenProcessor;
-    private readonly TemplateOptions _templateOptions;
+    private readonly CoreEmailTemplateOptions _templateOptions;
     public static class Routes
     {
         public const string UserList = "user-admin.list";
@@ -37,7 +36,7 @@ public class UserAdminController : Controller
         public const string RejectRequest = "user-admin.reject-request";
     }
 
-    public UserAdminController(IUserService userService, IAsyncNotificationClient notificationClient, IOptions<TemplateOptions> templateOptions, ISecureTokenProcessor secureTokenProcessor)
+    public UserAdminController(IUserService userService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, ISecureTokenProcessor secureTokenProcessor)
     {
         _userService = userService;
         _notificationClient = notificationClient;
@@ -173,7 +172,7 @@ public class UserAdminController : Controller
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
-            return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            return RedirectToRoute(Routes.UserList);
         }
 
         return View(new ReviewAccountRequestViewModel
@@ -189,17 +188,15 @@ public class UserAdminController : Controller
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
-            return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            return RedirectToRoute(Routes.UserAccountRequestsList);
         }
 
         if (submitType == Constants.SubmitType.Approve)
         {
             await _userService.ApproveAsync(account.Id);
-            await _notificationClient.SendEmailAsync(account.EmailAddress, _templateOptions.AccountRequestApproved);
-
-            return RedirectToAction("RequestApproved", "UserAdmin", new { Area = "admin", id = account.Id });
+            return RedirectToRoute(Routes.RequestApproved, new { account.Id });
         }
-        return RedirectToAction("RejectRequest", "UserAdmin", new { Area = "admin", id = account.Id });
+        return RedirectToRoute(Routes.RejectRequest, new { account.Id });
     }
 
     [HttpGet("request-approved/{id}", Name = Routes.RequestApproved)]
@@ -218,7 +215,7 @@ public class UserAdminController : Controller
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
-            return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            return RedirectToRoute(Routes.UserList);
         }
         return View(new RejectRequestViewModel
         {
@@ -232,19 +229,13 @@ public class UserAdminController : Controller
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
-            return RedirectToAction("Index", "UserAdmin", new { Area = "admin" });
+            return RedirectToRoute(Routes.UserList);
         }
 
         if (ModelState.IsValid)
         {
-            await _userService.RejectAsync(account.Id);
-            var personalisation = new Dictionary<string, dynamic>
-            {
-                {"rejection-reason", model.Reason }
-            };
-            await _notificationClient.SendEmailAsync(account.EmailAddress, _templateOptions.AccountRequestRejected, personalisation);
-
-            return RedirectToAction("RequestRejected", "UserAdmin", new { Area = "admin", id = account.Id });
+            await _userService.RejectAsync(account.Id, model.Reason ?? string.Empty);
+            return RedirectToRoute(Routes.RequestRejected);
         }
 
         model.AccountId = id;

@@ -23,6 +23,7 @@ public static class AiTracking
         public const string UsersCount = "app_users_count";
 
         public const string SubscriptionsInitialise = "app_subscriptions_initialise";
+        public const string RandomSortGeneratorRun = "app_randomsortgenerator_run";
     }
 
     public static class Metrics
@@ -32,6 +33,7 @@ public static class AiTracking
         public const string SearchSubscriptionsCount = "app_subscriptions_search_count";
         public const string CabsWithSchedules = "app_cabs_with_schedules";
         public const string CabsWithoutSchedules = "app_cabs_without_schedules";
+        public const string RandomSortGeneratorRunDateTime = "app_randomsortgenerator_run_datetime";
     }
 
     public static class Metadata

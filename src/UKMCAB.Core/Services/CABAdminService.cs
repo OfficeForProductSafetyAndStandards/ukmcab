@@ -1,9 +1,11 @@
-﻿using Microsoft.ApplicationInsights;
+﻿using System.Security.Claims;
+using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
 
@@ -88,13 +90,13 @@ namespace UKMCAB.Core.Services
             return _cabRepostitory.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
         }
 
-        public async Task<Document> CreateDocumentAsync(UKMCABUser user, Document document, bool saveAsDraft = false)
+        public async Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document, bool saveAsDraft = false)
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
             Guard.IsFalse(documentExists.Any(), "CAB number already exists in database");
             
-            var auditItem = new Audit(user);
+            var auditItem = new Audit(userAccount);
             document.CABId = Guid.NewGuid().ToString();
             document.Created = auditItem;
             document.LastUpdated = auditItem;
@@ -106,9 +108,9 @@ namespace UKMCAB.Core.Services
             return rv;
         }
 
-        public async Task<Document> UpdateOrCreateDraftDocumentAsync(UKMCABUser user, Document draft, bool saveAsDraft = false)
+        public async Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft, bool saveAsDraft = false)
         {
-            var audit = new Audit(user);
+            var audit = new Audit(userAccount);
             if (draft.StatusValue == Status.Published)
             {
                 draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
@@ -149,7 +151,7 @@ namespace UKMCAB.Core.Services
             return true;
         }
 
-        public async Task<Document> PublishDocumentAsync(UKMCABUser user, Document latestDocument)
+        public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)
         {
             if (latestDocument.StatusValue == Status.Published)
             {
@@ -158,7 +160,7 @@ namespace UKMCAB.Core.Services
             }
             Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
-            var audit = new Audit(user);
+            var audit = new Audit(userAccount);
             if (publishedVersion == null)
             {
                 // If there is no published version then we set the published date
@@ -213,7 +215,7 @@ namespace UKMCAB.Core.Services
             return latestDocument;
         }
 
-        public async Task<Document> ArchiveDocumentAsync(UKMCABUser user, Document latestDocument, string archiveReason)
+        public async Task<Document> ArchiveDocumentAsync(UserAccount userAccount, Document latestDocument, string archiveReason)
         {
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             if (publishedVersion == null)
@@ -226,7 +228,7 @@ namespace UKMCAB.Core.Services
                 }
             }
             Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
-            var audit = new Audit(user);
+            var audit = new Audit(userAccount);
             publishedVersion.StatusValue = Status.Archived;
             publishedVersion.Archived = audit;
             publishedVersion.LastUpdated = audit;

@@ -44,7 +44,7 @@ public interface IUserService
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task RejectAsync(string id);
+    Task RejectAsync(string id, string reason);
 
     /// <summary>
     /// Submits a user account request
