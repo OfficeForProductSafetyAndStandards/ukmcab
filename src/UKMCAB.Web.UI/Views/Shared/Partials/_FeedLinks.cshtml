@@ -1,4 +1,6 @@
 ﻿@using System.Net;
+@using UKMCAB.Web.UI.Areas.Home.Controllers;
+@using UKMCAB.Web.UI.Areas.Search.Controllers;
 @model FeedLinksViewModel
 @{
     var requestPath = Context.Request.Path.ToString();
@@ -9,23 +11,24 @@
     var title = Constants.SiteName;
     var emailSubject = $"I'm sharing this from UKMCAB.";
     var emailBody = $"{title}. {encodedUrlWithQueryStrings}";
-    var endPoint = Context.GetEndpoint().DisplayName;
+    var endPoint = Context?.GetEndpoint()?.Metadata?.GetMetadata<IRouteNameMetadata>()?.RouteName ?? string.Empty;
 
-    if (requestPath.StartsWith("/search/cab-profile"))
+
+    if (endPoint.Equals(CABProfileController.Routes.CabDetails))
     {
         title = $"{Model.CABName} on {Constants.SiteName}.";
         emailSubject = $"I am sharing {Model.CABName} profile from {Constants.SiteName}.";
         emailBody = $"{title} {encodedUrlNoQueryStrings}";
         shareUrl = encodedUrlNoQueryStrings;
     }
-    else if (requestPath.Equals("/"))
+    else if (endPoint.Equals(SearchController.Routes.Search))
     {
         title = string.IsNullOrEmpty(Model.SearchKeyword) ? $"Search results for CABs on {Constants.SiteName}." : $"Search results for {Model.SearchKeyword} on {Constants.SiteName}.";
         emailSubject = $"I am sharing these search results from {Constants.SiteName}.";
         emailBody = $"{title} {encodedUrlWithQueryStrings}";
         shareUrl = encodedUrlWithQueryStrings;
     }
-    else if (requestPath.Equals("/updates"))
+    else if (endPoint.Equals(HomeController.Routes.Updates))
     {
         title = $"Service updates and releases page on {Constants.SiteName}.";
         emailSubject = $"I am sharing the service updates and releases page from {Constants.SiteName}.";
@@ -35,7 +38,7 @@
 }
 
 
-@if (!Context.Request.Path.ToString().Equals("/updates"))
+@if (!endPoint.Equals(HomeController.Routes.Updates))
 {
     <div class="feed-link-item">
         <a href="@Model.EmailUrl" class="govuk-link govuk-link--no-visited-state govuk-!-display-block">
