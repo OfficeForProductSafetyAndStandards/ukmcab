@@ -1,5 +1,6 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using UKMCAB.Common.Exceptions;
@@ -18,10 +19,12 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         private readonly TelemetryClient _telemetry;
         private readonly IUserService _users;
         private readonly ISecureTokenProcessor _secureTokenProcessor;
+        private readonly IWebHostEnvironment _environment;
 
         public static class Routes
         {
             public const string Login = "account.login";
+            public const string QaLogin = "account.qalogin";
             public const string Logout = "account.logout";
             public const string Locked = "account.locked";
             public const string RequestAccount = "account.request";
@@ -30,12 +33,48 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             public const string EditProfile = "account.edit.profile";
         }
 
-        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor)
+        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor, IWebHostEnvironment environment)
         {
             _logger = logger;
             _telemetry = telemetry;
             _users = users;
             _secureTokenProcessor = secureTokenProcessor;
+            _environment = environment;
+        }
+
+        [AllowAnonymous, Route("qalogin", Name = Routes.QaLogin)]
+        public async Task<IActionResult> QaLogin([FromForm] string userId)
+        {
+            if (_environment.IsDevelopment())
+            {
+                if (Request.Method == HttpMethod.Get.Method)
+                {
+                    return Content(@"
+                    <html><body><h1>QA fake login</h1>
+                    <form method=post>
+                        User ID: <input name=userid>
+                        <input type=submit />
+                        <p>If a user id is unrecognised, you'll go through the user account request flow.  If it's recognised, then great, you'll be logged on as that account.</p>
+                    </form>
+                    </html></body>", "text/html");
+                }
+                else if (Request.Method == HttpMethod.Post.Method)
+                {
+                    var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userId) };
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties { IsPersistent = false, };
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                    return RedirectToRoute(Routes.Login);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("login", Name = Routes.Login)]
@@ -65,6 +104,15 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 default:
                     throw new NotSupportedException($"The user account status '{envelope.Status}' is not supported.");
             }
+        }
+
+        [HttpGet("logout", Name = Routes.Logout)]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync();
+            _logger.LogInformation("User logged out.");
+            _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
+            return Redirect("/");
         }
 
         [AllowAnonymous]
@@ -113,15 +161,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [AllowAnonymous, HttpGet("request-account/success", Name = Routes.RequestAccountSuccess)]
         public IActionResult RequestAccountSuccess() => View();
 
-
-        [HttpGet("logout", Name = Routes.Logout)]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync();
-            _logger.LogInformation("User logged out.");
-            _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
-            return Redirect("/");
-        }
 
         [HttpGet("user-profile", Name = Routes.UserProfile)]
         public async Task<IActionResult> UserProfile()
