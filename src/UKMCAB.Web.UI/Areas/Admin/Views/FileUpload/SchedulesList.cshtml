@@ -1,6 +1,7 @@
 ﻿@using UKMCAB.Data.Models
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using UKMCAB.Data
+@using UKMCAB.Web.UI.Models.ViewModels.Admin
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.FileListViewModel
 @section BackButton
 {
@@ -27,7 +28,7 @@
             <partial name="Partials/_ValidationSummary" model="null"/>
             <span class="govuk-caption-m">Create a CAB</span>
             <h1 class="govuk-heading-l">@Model.Title</h1>
-            <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 5 PDF documents.</p>
+            <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to @SchedulesOptions.MaxFileCount PDF documents.</p>
 
             <div id="file-upload-list-container">
                 <h3 class="govuk-label-wrapper">
@@ -93,7 +94,7 @@
             </div>
         </div>
 
-        @if (Model.UploadedFiles.Count < 5)
+        @if (Model.UploadedFiles.Count < SchedulesOptions.MaxFileCount)
         {
         var label = Model.UploadedFiles.Any() ? "Save and upload another file" : "Upload a file";
         <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">

@@ -35,7 +35,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("Index", "Admin", new { Area = "admin" });
             }
             // Pre-populate model for edit
-            if (latestVersion.Schedules != null && latestVersion.Schedules.Count >= 5)
+            if (latestVersion.Schedules != null && latestVersion.Schedules.Count >= SchedulesOptions.MaxFileCount)
             {
                 return RedirectToAction("SchedulesList", fromSummary ? new {id, fromSummary = "true"} : new { id });
             }
@@ -62,7 +62,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             // Pre-populate model for edit
             latestVersion.Schedules ??= new List<FileUpload>();
-            if (latestVersion.Schedules.Count >= 5)
+            if (latestVersion.Schedules.Count >= SchedulesOptions.MaxFileCount)
             {
                 return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id, fromSummary = "true" }: new { id });
             }
