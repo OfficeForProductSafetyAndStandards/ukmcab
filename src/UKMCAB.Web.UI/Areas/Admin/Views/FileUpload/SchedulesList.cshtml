@@ -95,20 +95,18 @@
 
         @if (Model.UploadedFiles.Count < 5)
         {
-        var label = Model.UploadedFiles.Any() ? "Save and upload another file" : "Upload a file";
         <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
             <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
-                @label
+                @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file" , "Upload a file")
             </button>
         </div>
         }
 
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-button-group">
-                
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                    Continue
-                </button>
+                        @Html.Conditional(Model.UploadedFiles.Any(), "Save and Continue", "Save")
+                </button>                
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft
                 </button>
