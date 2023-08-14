@@ -54,6 +54,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var autoRenewDate = document != null && document.Created != null && document.Published == null ? document.Created.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
 
+                autoRenewDate = autoRenewDate.Date < DateTime.Today ? DateTime.UtcNow.AddMonths(1) : autoRenewDate;
+
                 model.ReviewDateDay = autoRenewDate.Day.ToString();
                 model.ReviewDateMonth = autoRenewDate.Month.ToString();
                 model.ReviewDateYear = autoRenewDate.Year.ToString();
