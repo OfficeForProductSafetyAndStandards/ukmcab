@@ -13,6 +13,7 @@ using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
+using static UKMCAB.Web.UI.Areas.Home.Controllers.FeedbackController;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -195,6 +196,56 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var cab = GetCabProfileViewModel(cabDocument, returnUrl);
 
             return View(cab);
+        }
+
+        [HttpPost]
+        [Route("search/cab-profile/archive/submit-js")]
+        public async Task<IActionResult> ArchiveJs(string CABId, string ArchiveReason)
+        {
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(CABId);
+            if (cabDocument == null)
+            {
+                return Json(new JsonSubmitResult
+                {
+                    Submitted = false,
+                    ErrorMessage = "No published CAB document was found."
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(ArchiveReason))
+            {
+                try
+                {
+                    var userAccount =
+                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                            .Value);
+                    await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument, ArchiveReason);
+                    _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
+                    {
+                        [AiTracking.Metadata.CabId] = CABId,
+                        [AiTracking.Metadata.CabName] = cabDocument.Name
+                    }));
+                    return Json(new JsonSubmitResult
+                    {
+                        Submitted = true,
+                        ErrorMessage = string.Empty
+                    });
+                }
+                catch
+                {
+                    return Json(new JsonSubmitResult
+                    {
+                        Submitted = false,
+                        ErrorMessage = "There was a problem submitting your archive request, please try again later."
+                    });
+                }
+            }
+
+            return Json(new JsonSubmitResult
+            {
+                Submitted = false,
+                ErrorMessage = "There was a problem submitting your archive request, please try again later."
+            });
         }
 
 
