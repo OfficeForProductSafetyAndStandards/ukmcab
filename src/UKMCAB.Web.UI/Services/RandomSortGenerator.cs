@@ -45,7 +45,7 @@ namespace UKMCAB.Web.UI.Services
                         if (got)
                         {
                             await RegenerateRandomSortValues();
-                            _telemetryClient.TrackEvent(AiTracking.Events.RandomSortGeneratorRun, new Dictionary<string, string>{ {AiTracking.Metrics.RandomSortGeneratorRunDateTime, nextSchedulesRun.ToLongDateString()} });
+                            _telemetryClient.TrackEvent(AiTracking.Events.RandomSortGeneratorRun, new Dictionary<string, string> { { AiTracking.Metrics.RandomSortGeneratorRunDateTime, nextSchedulesRun.ToLongDateString() } });
                         }
                     }
                     catch (Exception ex)
