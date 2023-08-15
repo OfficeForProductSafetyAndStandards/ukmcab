@@ -56,6 +56,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var publishedAudit = document.AuditLog.FirstOrDefault(al => al.Status == AuditStatus.Published);
                 var autoRenewDate = document != null && createdAudit != null && publishedAudit == null ? createdAudit.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
 
+                autoRenewDate = autoRenewDate.Date < DateTime.Today ? DateTime.UtcNow.AddMonths(1) : autoRenewDate;
+
                 model.ReviewDateDay = autoRenewDate.Day.ToString();
                 model.ReviewDateMonth = autoRenewDate.Month.ToString();
                 model.ReviewDateYear = autoRenewDate.Year.ToString();
