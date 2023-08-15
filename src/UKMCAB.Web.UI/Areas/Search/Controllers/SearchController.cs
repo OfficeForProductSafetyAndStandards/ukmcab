@@ -38,6 +38,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.LastUpdatedDate),
         };
 
+        public static class Routes
+        {
+            public const string Search = "search.index";
+        }
         public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry)
         {
             _cachedSearchService = cachedSearchService;
@@ -47,7 +51,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
 
-        [Route("/")]
+        [Route("/", Name = Routes.Search)]
         public async Task<IActionResult> Index(SearchViewModel model)
         {
             var searchResults = await SearchInternalAsync(_cachedSearchService, model);
@@ -68,7 +72,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 FeedUrl = "/search-feed",
                 EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes
-                    .Step0RequestSearchSubscription)
+                    .Step0RequestSearchSubscription),
+                SearchKeyword = model.Keywords ?? string.Empty
             };
             if (Request.QueryString.HasValue)
             {

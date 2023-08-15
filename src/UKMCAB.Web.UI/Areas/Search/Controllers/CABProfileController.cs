@@ -169,7 +169,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 FeedLinksViewModel = new FeedLinksViewModel
                 {
                     FeedUrl = Url.RouteUrl(Routes.CabFeed, new { id = cabDocument.CABId }),
-                    EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes.Step0RequestCabSubscription, new { id = cabDocument.CABId })
+                    EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes.Step0RequestCabSubscription, new { id = cabDocument.CABId }),
+                    CABName = cabDocument.Name
                 }
             };
             return cab;

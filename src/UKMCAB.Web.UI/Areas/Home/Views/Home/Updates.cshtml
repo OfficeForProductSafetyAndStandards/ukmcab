@@ -1,11 +1,17 @@
 ﻿@inject IConfiguration _configuration
+@model ILayoutModel
 @{
     ViewData["nav"] = "updates";
+    ViewData["pageTitle"] = Model?.Title.FormatTitle(ViewData.ModelState.IsValid) ?? Constants.SiteName;
+    var feedLinksVM = new FeedLinksViewModel();
 }
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Service updates and releases</h1>
+    </div>
+    <div class="atom-feed atom-feed-top govuk-grid-column-one-third">
+        <partial name="Partials/_FeedLinks" model= "feedLinksVM" />        
     </div>
 </div>
 

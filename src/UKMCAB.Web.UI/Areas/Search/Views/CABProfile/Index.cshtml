@@ -2,6 +2,7 @@
 @model CABProfileViewModel
 @{
     ViewData["nav"] = "search";
+    ViewData["pageTitle"] = Model.Title;
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
 }
     

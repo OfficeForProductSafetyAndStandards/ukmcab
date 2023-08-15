@@ -1,4 +1,5 @@
-﻿using UKMCAB.Common.Exceptions;
+﻿using CsvHelper.Configuration.Attributes;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Web.UI.Models.ViewModels;
 
@@ -12,6 +13,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         public static class Routes
         {
             public const string Message = "home.message";
+            public const string Updates = "home.update";
         }
 
         public HomeController(ISecureTokenProcessor secureTokenProcessor)
@@ -39,7 +41,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             return View(model);
         }
 
-        [Route("/updates")]
+        [Route("/updates", Name = Routes.Updates)]
         public IActionResult Updates()
         {
             var model = new BasicPageModel()
