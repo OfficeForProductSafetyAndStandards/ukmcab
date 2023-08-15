@@ -110,15 +110,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private CABProfileViewModel GetCabProfileViewModel(Document cabDocument, string returnUrl)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
+            var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Archived) : null;
+            var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
             var cab = new CABProfileViewModel
             {
                 IsArchived = isArchived,
-                ArchivedBy = isArchived ? cabDocument.Archived.UserName : string.Empty,
-                ArchivedDate = isArchived ? cabDocument.Archived.DateTime.ToString("dd MMM yyyy") : string.Empty,
-                ArchiveReason = cabDocument.ArchivedReason,
+                ArchivedBy = isArchived ? archiveAudit.UserName : string.Empty,
+                ArchivedDate = isArchived ? archiveAudit.DateTime.ToString("dd MMM yyyy") : string.Empty,
+                ArchiveReason =  isArchived ? archiveAudit.Comment : string.Empty,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/" : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
-                PublishedDate = cabDocument.Published.DateTime,
+                PublishedDate = publishedAudit.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 AppointmentDate = cabDocument.AppointmentDate,
@@ -277,10 +279,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument != null)
             {
+                var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
                 var cab = new SubscriptionsCoreCabModel
                 {
                     CABId = cabDocument.CABId,
-                    PublishedDate = cabDocument.Published.DateTime,
+                    PublishedDate = publishedAudit.DateTime,
                     LastModifiedDate = cabDocument.LastUpdatedDate,
                     Name = cabDocument.Name,
                     UKASReferenceNumber = string.Empty,

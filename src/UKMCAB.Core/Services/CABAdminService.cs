@@ -96,10 +96,9 @@ namespace UKMCAB.Core.Services
 
             Guard.IsFalse(documentExists.Any(), "CAB number already exists in database");
             
-            var auditItem = new Audit(userAccount);
+            var auditItem = new Audit(userAccount, AuditStatus.Created);
             document.CABId = Guid.NewGuid().ToString();
-            document.Created = auditItem;
-            document.LastUpdated = auditItem;
+            document.AuditLog.Add(auditItem);
             document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
             var rv = await _cabRepostitory.CreateAsync(document);
 
@@ -110,13 +109,11 @@ namespace UKMCAB.Core.Services
 
         public async Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft, bool saveAsDraft = false)
         {
-            var audit = new Audit(userAccount);
             if (draft.StatusValue == Status.Published)
             {
                 draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
                 draft.id = string.Empty;
-                draft.Created = audit;
-                draft.LastUpdated = audit;
+                draft.AuditLog = new List<Audit> { new Audit(userAccount, AuditStatus.Created) };
                 var newdraft = await _cabRepostitory.CreateAsync(draft);
                 Guard.IsFalse(newdraft == null,
                     $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
@@ -129,7 +126,8 @@ namespace UKMCAB.Core.Services
             }
             if (draft.StatusValue == Status.Created || draft.StatusValue == Status.Draft)
             {
-                draft.LastUpdated = audit;
+                var audit = new Audit(userAccount, AuditStatus.Saved);
+                draft.AuditLog.Add(audit);
                 Guard.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
 
                 await RecordStatsAsync();
@@ -160,13 +158,7 @@ namespace UKMCAB.Core.Services
             }
             Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
             var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
-            var audit = new Audit(userAccount);
-            if (publishedVersion == null)
-            {
-                // If there is no published version then we set the published date
-                latestDocument.Published = audit;
-            }
-            else
+            if (publishedVersion != null)
             {
                 publishedVersion.StatusValue = Status.Historical;
                 Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
@@ -174,7 +166,8 @@ namespace UKMCAB.Core.Services
                 await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
             }
 
-            latestDocument.LastUpdated = audit;
+            var audit = new Audit(userAccount, AuditStatus.Published);
+            latestDocument.AuditLog.Add(audit);
             latestDocument.StatusValue = Status.Published;
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
@@ -228,11 +221,9 @@ namespace UKMCAB.Core.Services
                 }
             }
             Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
-            var audit = new Audit(userAccount);
             publishedVersion.StatusValue = Status.Archived;
-            publishedVersion.Archived = audit;
-            publishedVersion.LastUpdated = audit;
-            publishedVersion.ArchivedReason = archiveReason;
+            var audit = new Audit(userAccount, AuditStatus.Archived, archiveReason);
+            publishedVersion.AuditLog.Add(audit);
             Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                 $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
 
