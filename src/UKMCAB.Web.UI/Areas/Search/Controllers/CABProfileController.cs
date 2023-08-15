@@ -110,15 +110,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private CABProfileViewModel GetCabProfileViewModel(Document cabDocument, string returnUrl)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
+            var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Archived) : null;
+            var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
             var cab = new CABProfileViewModel
             {
                 IsArchived = isArchived,
-                ArchivedBy = isArchived ? cabDocument.Archived.UserName : string.Empty,
-                ArchivedDate = isArchived ? cabDocument.Archived.DateTime.ToString("dd MMM yyyy") : string.Empty,
-                ArchiveReason = cabDocument.ArchivedReason,
+                ArchivedBy = isArchived ? archiveAudit.UserName : string.Empty,
+                ArchivedDate = isArchived ? archiveAudit.DateTime.ToString("dd MMM yyyy") : string.Empty,
+                ArchiveReason =  isArchived ? archiveAudit.Comment : string.Empty,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/" : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
-                PublishedDate = cabDocument.Published.DateTime,
+                PublishedDate = publishedAudit.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 AppointmentDate = cabDocument.AppointmentDate,
@@ -173,28 +175,94 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return cab;
         }
 
-        [HttpPost]
-        [Route("search/cab-profile/{id}")]
-        public async Task<IActionResult> Index(string id, string? returnUrl, string? ArchiveReason)
+        [HttpGet]
+        [Route("search/archive-cab/{id}")]
+        public async Task<IActionResult> ArchiveCAB(string id, string? returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
-            if (!string.IsNullOrWhiteSpace(ArchiveReason))
+            if (cabDocument.StatusValue != Status.Published)
+            {
+                return RedirectToAction("Index", new { url = id, returnUrl });
+            }
+            return View(new ArchiveCABViewModel
+            {
+                CABId = id,
+                ReturnURL = returnUrl
+            });
+        }
+
+
+        [HttpPost]
+        [Route("search/archive-cab/{id}")]
+        public async Task<IActionResult> ArchiveCAB(string id, ArchiveCABViewModel model)
+        {
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
+            Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
+            if (ModelState.IsValid)
             {
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument, ArchiveReason);
+                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument, model.ArchiveReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
                     [AiTracking.Metadata.CabName] = cabDocument.Name
                 }));
-                return RedirectToAction("Index", new { url = id, returnUrl });
+                return RedirectToAction("Index", new { url = id, returnUrl = model.ReturnURL });
             }
-            ModelState.AddModelError("ArchiveReason", "State the reason for archiving this CAB record");
 
-            var cab = GetCabProfileViewModel(cabDocument, returnUrl);
+            return View(model);
+        }
 
-            return View(cab);
+
+        [HttpPost]
+        [Route("search/cab-profile/archive/submit-js")]
+        public async Task<IActionResult> ArchiveJs(string CABId, string ArchiveReason)
+        {
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(CABId);
+            if (cabDocument == null)
+            {
+                return Json(new JsonSubmitResult
+                {
+                    Submitted = false,
+                    ErrorMessage = "No published CAB document was found."
+                });
+            }
+
+            if (!string.IsNullOrWhiteSpace(ArchiveReason))
+            {
+                try
+                {
+                    var userAccount =
+                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                            .Value);
+                    await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument, ArchiveReason);
+                    _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
+                    {
+                        [AiTracking.Metadata.CabId] = CABId,
+                        [AiTracking.Metadata.CabName] = cabDocument.Name
+                    }));
+                    return Json(new JsonSubmitResult
+                    {
+                        Submitted = true,
+                        ErrorMessage = string.Empty
+                    });
+                }
+                catch
+                {
+                    return Json(new JsonSubmitResult
+                    {
+                        Submitted = false,
+                        ErrorMessage = "There was a problem submitting your archive request, please try again later."
+                    });
+                }
+            }
+
+            return Json(new JsonSubmitResult
+            {
+                Submitted = false,
+                ErrorMessage = "There was a problem submitting your archive request, please try again later."
+            });
         }
 
 
@@ -211,10 +279,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument != null)
             {
+                var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
                 var cab = new SubscriptionsCoreCabModel
                 {
                     CABId = cabDocument.CABId,
-                    PublishedDate = cabDocument.Published.DateTime,
+                    PublishedDate = publishedAudit.DateTime,
                     LastModifiedDate = cabDocument.LastUpdatedDate,
                     Name = cabDocument.Name,
                     UKASReferenceNumber = string.Empty,

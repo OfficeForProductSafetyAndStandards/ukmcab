@@ -1,9 +1,9 @@
 ﻿@import "./node_modules/govuk-frontend/govuk/all";
 @import "./_reset";
-@import "./views/cab.scss";
 @import "./views/cab-body-details.scss";
 @import "./views/cab-contact.scss";
 @import "./views/cab-management.scss";
+@import "./views/cab-profile.scss";
 @import "./views/notification-banner.scss";
 @import "./views/search.scss";
 @import "./views/sub-list.scss";
@@ -14,6 +14,7 @@
 @import "./shared/general.scss";
 @import "./shared/header.scss";
 @import "./shared/identity.scss";
+@import "./shared/modal.scss";
 @import "./shared/pagination.scss";
 
 /* The below style shoulb be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */

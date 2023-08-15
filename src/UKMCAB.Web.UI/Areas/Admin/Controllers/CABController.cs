@@ -52,7 +52,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType == Constants.SubmitType.Add18)
             {
-                var autoRenewDate = document != null && document.Created != null && document.Published == null ? document.Created.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
+                var createdAudit = document.AuditLog.FirstOrDefault(al => al.Status == AuditStatus.Created);
+                var publishedAudit = document.AuditLog.FirstOrDefault(al => al.Status == AuditStatus.Published);
+                var autoRenewDate = document != null && createdAudit != null && publishedAudit == null ? createdAudit.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
 
                 model.ReviewDateDay = autoRenewDate.Day.ToString();
                 model.ReviewDateMonth = autoRenewDate.Month.ToString();
@@ -63,7 +65,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 if (document == null)
                 {
-                    document = new Document();
+                    document = new Document()
+                    {
+                        AuditLog = new List<Audit>()
+                    };
                 }
 
                 if (string.IsNullOrWhiteSpace(document.URLSlug) || !document.Name.Equals(model.Name))

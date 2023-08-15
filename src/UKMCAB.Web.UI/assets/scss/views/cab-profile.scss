@@ -10,6 +10,14 @@
 
 
 #cab-profile-page {
+    #archive-button {
+        margin-left: 10px;
+
+        @include govuk-media-query($until: tablet) {
+            margin-left: 0;
+        }
+    }
+
     .cab-detail-date-meta {
         margin: -5px 0 30px;
     }
@@ -123,8 +131,8 @@
 
                     .govuk-summary-list__key {
                         font-weight: 400;
-                    } 
-                    
+                    }
+
                     .govuk-summary-list__actions {
                         @include govuk-media-query($until: tablet) {
                             display: inline-block;

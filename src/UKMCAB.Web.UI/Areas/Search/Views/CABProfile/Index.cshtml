@@ -1,13 +1,12 @@
 ﻿@using System.Net
-@using System.Security.Claims;
 @model CABProfileViewModel
 @{
     ViewData["nav"] = "search";
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
-    }
+}
     
 @section BackButton
-    {
+{
     @if (Model.IsArchived)
     {
         <div class="govuk-width-container ">
@@ -85,7 +84,12 @@
                 @if (User.HasClaim(UKMCAB.Core.Security.Claims.CabEdit, string.Empty) && !Model.IsArchived) // TODO:  purposefully disabled; need to figure out permissions first
                 {
                     <div class="govuk-!-display-block govuk-!-text-align-right">
-                        <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
+                        <span>
+                            <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
+                        </span>
+                        <span>
+                            <a id="archive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="archive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="ArchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Archive</a>
+                        </span>
                     </div>
                 }
             </div>
@@ -94,7 +98,6 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-full">
-
             <div class="govuk-tabs cab-tabs" data-module="govuk-tabs">
                 <ul class="govuk-tabs__list">
                     <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
@@ -112,11 +115,6 @@
                         <li class="govuk-tabs__list-item">
                             <a class="govuk-tabs__tab" href="#supporting-documents">
                                 Supporting documents
-                            </a>
-                        </li>
-                        <li class="govuk-tabs__list-item last">
-                            <a class="govuk-tabs__tab" href="#archive">
-                                @Html.Conditional(Model.IsArchived, "Archived", "Archive")
                             </a>
                         </li>
                     }
@@ -265,10 +263,6 @@
                                 </div>
                             }
 
-
-
-
-
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Registered office location
@@ -342,50 +336,9 @@
 
                 <partial name="Partials/_Documents" model="Model.ProductSchedules" />
 
-
                 @if (User.Identity.IsAuthenticated /*todo: what claim?*/)
                 {
                     <partial name="Partials/_Documents" model="Model.SupportingDocuments" />
-
-                    <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="archive">
-                        <div class="cab-detail-section">
-                            <h2 class="govuk-heading-l">@Html.Conditional(Model.IsArchived, "Archived", "Archive")</h2>
-                            @if (Model.IsArchived)
-                            {
-                                <p class="govuk-body">Archived on @Model.ArchivedDate by @Model.ArchivedBy</p>
-                                <p class="govuk-body">@Model.ArchiveReason</p>
-                            }
-                            else
-                            {
-                                <form method="post">
-                                    <div class="govuk-!-width-two-thirds">
-                                        <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))">
-                                            <div id="archive-hint" class="govuk-hint">
-                                                State the reason for archiving this CAB record.
-                                            </div>
-                                            <p class="govuk-error-message">
-                                                <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
-                                            </p>
-                                            <textarea class="govuk-textarea  @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ArchiveReason))" asp-for="ArchiveReason" rows="5" aria-describedby="archive-hint"></textarea>
-                                        </div>
-                                        <div class="govuk-warning-text">
-                                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                            <strong class="govuk-warning-text__text">
-                                                <span class="govuk-warning-text__assistive">Warning</span>
-                                                Archiving this CAB record will remove it from the search results. Once archived the record can be re-published and returned to the search results by internal users.
-                                            </strong>
-                                        </div>
-                                        <div class="govuk-button-group">
-                                            <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                                                Continue
-                                            </button>
-                                            <a asp-area="Admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                                        </div>
-                                    </div>
-                                </form>
-                            }
-                        </div>
-                    </div>
                 }
             </div>
         </div>
@@ -398,4 +351,45 @@
             }
         </div>
     </div>
+</div>
+
+<div id="archive-modal" class="modal">
+    <!-- Modal content -->
+    <div class="govuk-grid-row">
+        <div class="modal-content">
+            <div class="govuk-!-width-full">
+                <div id="close-container"><a href="#" class="modal-close govuk-link">Close</a>
+                </div>
+            </div>
+            <form method="post">
+                <div class="govuk-!-width-full">
+                    <h2 class="govuk-heading-l">Archive CAB profile</h2>
+                    <input type="hidden" asp-for="CABId" value="@Model.CABId"/>
+                    <div id="archive-reason-formgroup" class="govuk-form-group">
+                        <div id="archive-hint" class="govuk-hint">
+                            Enter the reason for archiving this CAB profile.
+                        </div>
+                        <p id="archive-reason-error" class="govuk-error-message govuk-visually-hidden">
+                            <span id="archive-error-message" class="govuk-error-message">Enter the reason for archiving this CAB profile</span>
+                        </p>
+                        <textarea id="archive-reason" class="govuk-textarea" asp-for="ArchiveReason" rows="5" aria-describedby="archive-hint"></textarea>
+                    </div>
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            Archived CAB profiles cannot be edited and users cannot view them in the search results.
+                        </strong>
+                    </div>
+                    <div class="govuk-button-group">
+                        <button id="archive-submit-button" class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                            Archive
+                        </button>
+                        <a href="#" class="modal-close govuk-link">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 </div>

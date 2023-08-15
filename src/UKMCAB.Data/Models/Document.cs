@@ -8,14 +8,10 @@
         public string Status => StatusValue.ToString();
 
         // Audit
-        public Audit Created { get; set; }
-        public Audit LastUpdated { get; set; }
+        public List<Audit> AuditLog { get; set; }
         // Used by the search index, saves a lot of effort to flatten the model in the data source
-        public DateTime LastUpdatedDate => LastUpdated.DateTime;
-        public Audit Published { get; set; }
-        public Audit Archived { get; set; }
-        public string ArchivedReason { get; set; }
-
+        public DateTime LastUpdatedDate => AuditLog != null && AuditLog.Any() ? AuditLog.Max(al => al.DateTime) : DateTime.MinValue;
+    
 
         // About
         public string CABId { get; set; }
