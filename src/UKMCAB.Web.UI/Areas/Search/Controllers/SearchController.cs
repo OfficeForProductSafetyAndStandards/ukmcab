@@ -10,6 +10,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using Microsoft.ApplicationInsights;
 using UKMCAB.Web.UI.Extensions;
+using UKMCAB.Web.UI.Helpers;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {

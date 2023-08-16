@@ -1,35 +1,35 @@
-﻿namespace UKMCAB.Web.UI.Services;
+﻿namespace UKMCAB.Web.UI.Helpers;
 
 public class DateService
 {
     public static bool IsAValidDayOfMonthAndYear(int day, int month, int year)
     {
-        if (IsAValidMonth(month)) 
+        if (IsAValidMonth(month))
         {
             int maxDay = GetMaxDaysInMonth(month, year);
 
             return day >= 1 && day <= maxDay;
         }
-        
+
         return IsAValidDay(day);
-    }        
-    
+    }
+
     public static bool IsAValidDay(int day)
     {
         return day >= 1 && day <= 31;
     }
     public static bool IsAValidMonth(int month)
     {
-        return month >= 1 && month <= 12;          
+        return month >= 1 && month <= 12;
 
-    }     
-    
+    }
+
     public static bool IsAValidYear(int year)
     {
-        return year >= 1;       
+        return year >= 1;
 
-    }       
-   
+    }
+
     public static bool IsFutureDate(int day, int month, int year)
     {
         var today = DateTime.Today;
@@ -52,8 +52,8 @@ public class DateService
 
     public static bool IsWithinFiveYearOfAppointmentDateAndInFuture(int day, int month, int year, DateTime? aptDate)
     {
-        
-        var appointmentDateOrYesterday = aptDate != null ? (DateTime)aptDate: DateTime.Today.AddDays(-1);            
+
+        var appointmentDateOrYesterday = aptDate != null ? (DateTime)aptDate : DateTime.Today.AddDays(-1);
         var tomorrow = DateTime.Today.AddDays(1);
 
         if (DateTime.TryParse($"{year}/{month}/{day}", out DateTime inputDate))
@@ -88,6 +88,6 @@ public class DateService
 
     private static bool IsLeapYear(int year)
     {
-        return (year % 4 == 0 && year % 100 != 0) || year % 400 == 0;
+        return year % 4 == 0 && year % 100 != 0 || year % 400 == 0;
     }
 }

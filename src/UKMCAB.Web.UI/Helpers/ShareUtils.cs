@@ -3,19 +3,20 @@ using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
-namespace UKMCAB.Web.UI.Services
+namespace UKMCAB.Web.UI.Helpers
 {
     public class ShareUtils
     {
         public static void AddDetails(HttpContext context, FeedLinksViewModel feedLinksViewModel)
         {
-            if (context != null) {
+            if (context != null)
+            {
                 var requestPath = context.Request.Path.ToString();
                 var requestSchemeHost = $"{context.Request.Scheme}://{context.Request.Host}";
                 var encodedUrlWithQueryStrings = WebUtility.UrlEncode(requestSchemeHost + context.Request.GetRequestUri().PathAndQuery);
                 var encodedUrlNoQueryStrings = WebUtility.UrlEncode(requestSchemeHost + requestPath);
 
-                
+
                 var title = Constants.SiteName;
                 var emailSubject = $"I'm sharing this from UKMCAB.";
                 var emailBody = $"{title}. {encodedUrlWithQueryStrings}";
@@ -44,14 +45,14 @@ namespace UKMCAB.Web.UI.Services
                     shareUrl = encodedUrlNoQueryStrings;
                 }
 
-                feedLinksViewModel.Title = title ;
-                feedLinksViewModel.EmailSubject = emailSubject ;
-                feedLinksViewModel.EmailBody = emailBody ;
-                feedLinksViewModel.ShareUrl = shareUrl ;
+                feedLinksViewModel.Title = title;
+                feedLinksViewModel.EmailSubject = emailSubject;
+                feedLinksViewModel.EmailBody = emailBody;
+                feedLinksViewModel.ShareUrl = shareUrl;
                 feedLinksViewModel.Endpoint = endPoint;
             }
 
-            
+
         }
     }
 }
