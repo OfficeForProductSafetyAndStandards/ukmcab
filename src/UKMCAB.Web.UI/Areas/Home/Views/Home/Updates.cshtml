@@ -1,9 +1,8 @@
 ﻿@inject IConfiguration _configuration
-@model ILayoutModel
+@model UKMCAB.Web.UI.Models.ViewModels.Home.UpdatesViewModel
 @{
     ViewData["nav"] = "updates";
     ViewData["pageTitle"] = Model?.Title.FormatTitle(ViewData.ModelState.IsValid) ?? Constants.SiteName;
-    var feedLinksVM = new FeedLinksViewModel();
 }
 
 <div class="govuk-grid-row">
@@ -11,7 +10,8 @@
         <h1 class="govuk-heading-l">Service updates and releases</h1>
     </div>
     <div class="atom-feed atom-feed-top govuk-grid-column-one-third">
-        <partial name="Partials/_FeedLinks" model= "feedLinksVM" />        
+
+        <partial name="Partials/_FeedLinks" model="Model?.FeedLinksViewModel" />
     </div>
 </div>
 
