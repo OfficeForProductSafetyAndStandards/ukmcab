@@ -12,9 +12,9 @@ public class DataConstants
     {
         public const int SearchResultsPerPage = 20;
         public const int CABManagementQueueResultsPerPage = 10;
-        public const string SEARCH_INDEX = "ukmcab-search-index-v1-1";
-        public const string SEARCH_INDEXER = "ukmcab-search-indexer-v1-1";
-        public const string SEARCH_DATASOURCE = "ukmcab-search-datasource-v1-1";
+        public const string SEARCH_INDEX = "ukmcab-search-index-v2-0";
+        public const string SEARCH_INDEXER = "ukmcab-search-indexer-v2-0";
+        public const string SEARCH_DATASOURCE = "ukmcab-search-datasource-v2-0";
     }
 
     public static class Storage

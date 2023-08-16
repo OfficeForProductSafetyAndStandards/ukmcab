@@ -12,6 +12,7 @@
         public string[] RegisteredOfficeLocationsFilter { get; set; }
 
         public bool IgnorePaging { get; set; }
+        public bool InternalSearch { get; set; }
 
         public List<string> Select { get; set; } = new List<string>();
     }

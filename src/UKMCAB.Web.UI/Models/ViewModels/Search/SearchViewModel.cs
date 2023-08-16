@@ -20,18 +20,19 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         /// NOTE: This is used by the email subscriptions functionality 
         /// </remarks>
         public static string GetKeywordsQueryStringKey() => nameof(Keywords);
-
         public string? ReturnUrl { get; set; }
+        public bool InternalSearch { get; set; }
 
         // ILayout
         public string? Title => Keywords.IsNotNullOrEmpty()? Keywords: "Search";
+
 
         // Form fields
         public string? Keywords { get; set; }
         public string[]? BodyTypes { get; set; }
         public string[]? RegisteredOfficeLocations { get; set; }
         public string[]? LegislativeAreas { get; set; }
-        public string? Sort { get; set; } = DataConstants.SortOptions.Default;
+        public string? Sort { get; set; }
         public int PageNumber { get; set; } = 1;
 
         // Form elements
