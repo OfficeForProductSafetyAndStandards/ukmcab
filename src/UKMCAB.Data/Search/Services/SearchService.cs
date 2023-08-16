@@ -2,6 +2,7 @@
 using Azure.Search.Documents.Models;
 using System.Text.RegularExpressions;
 using UKMCAB.Common;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
@@ -118,6 +119,10 @@ namespace UKMCAB.Data.Search.Services
                 var registeredOfficeLocations = string.Join(" or ", options.RegisteredOfficeLocationsFilter.Select(bt => $"RegisteredOfficeLocation eq '{bt}'"));
                 filters.Add($"({registeredOfficeLocations})");
             }
+            if (!options.InternalSearch)
+            {
+                filters.Add($"(StatusValue eq '{(int)Status.Published}')");
+            }
 
             return filters.Count > 1 ? $"({string.Join(" and ", filters)})" : filters.FirstOrDefault() ?? string.Empty;
         }
@@ -137,7 +142,8 @@ namespace UKMCAB.Data.Search.Services
 
                 case DataConstants.SortOptions.Default:
                 default:
-                    return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : string.Empty;
+                    return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : 
+                        string.Empty;
             }
         }
 

@@ -25,6 +25,20 @@ namespace UKMCAB.Data.CosmosDb.Services
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<LegacyDocument>(_container, document => true);
+            var yesterday = DateTime.UtcNow.AddDays(-1);
+            foreach (var legacyDocument in items)
+            {
+                if (legacyDocument.StatusValue == Status.Created)
+                {
+                    var createdDate = legacyDocument.AuditLog.Single(al => al.Status == AuditStatus.Created).DateTime;
+                    if (createdDate < yesterday)
+                    {
+                        await Delete(legacyDocument);
+                    }
+                }
+            }
+
+            items = await Query<LegacyDocument>(_container, document => true);
 
             if (items[1].Created != null)
             {

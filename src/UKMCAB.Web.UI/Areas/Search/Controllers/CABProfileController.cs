@@ -203,7 +203,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (ModelState.IsValid)
             {
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument, model.ArchiveReason);
+                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
@@ -237,7 +237,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     var userAccount =
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                             .Value);
-                    await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument, ArchiveReason);
+                    await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, ArchiveReason);
                     _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                     {
                         [AiTracking.Metadata.CabId] = CABId,

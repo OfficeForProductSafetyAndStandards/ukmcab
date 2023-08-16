@@ -7,6 +7,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public ResultViewModel(CABIndexItem cab)
         {
             Name = cab.Name;
+            Status = cab.Status;
+            CABId = cab.CABId;
             URLSlug = cab.URLSlug;
             Address = StringExt.Join(", ", cab.AddressLine1, cab.AddressLine2, cab.TownCity, cab.County, cab.Postcode, cab.Country);
             BodyType = ListItems(cab.BodyTypes);
@@ -25,6 +27,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         }
 
         public string Name { get; set; }
+        public string Status { get; set; }
+        public string CABId { get; set; }
         public string URLSlug { get; set; }
         public string Address { get; set; }
         public string BodyType { get; set; }
