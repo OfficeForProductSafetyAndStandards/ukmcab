@@ -173,6 +173,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     CABName = cabDocument.Name
                 }
             };
+
+            ShareUtils.AddDetails(HttpContext, cab.FeedLinksViewModel);
+
             return cab;
         }
 
