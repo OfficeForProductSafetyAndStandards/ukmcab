@@ -40,7 +40,7 @@ namespace UKMCAB.Data.CosmosDb.Services
 
             items = await Query<Document>(_container, document => true);
 
-            if (true || items[0].AuditLog == null)
+            if (items[0].AuditLog == null)
             {
                 foreach (var document in items)
                 {

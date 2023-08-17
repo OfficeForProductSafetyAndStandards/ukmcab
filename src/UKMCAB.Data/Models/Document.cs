@@ -56,19 +56,12 @@ namespace UKMCAB.Data.Models
         // Schedules of accreditation
         public List<FileUpload>? Schedules { get; set; }
 
+        public string ScheduleLabels => string.Join(", ", Schedules?.Select(sch => sch.Label) ?? new List<string>());
+
         // Supporting documents
         public List<FileUpload>? Documents { get; set; }
 
-        public string DocumentList {
-            get
-            {
-                var scheduleLabels = Schedules?.Select(s => s.Label).ToList() ?? new List<string>();
-                var documentLabels = Documents?.Select(s => s.Label).ToList() ?? new List<string>();
-                scheduleLabels.AddRange(documentLabels);
-                return string.Join(", ", scheduleLabels);
-            }
-        }
-
+        public string DocumentLabels => string.Join(", ", Documents?.Select(doc => doc.Label) ?? new List<string>());
 
         public string HiddenText { get; set; }
         public string RandomSort { get; set; }
