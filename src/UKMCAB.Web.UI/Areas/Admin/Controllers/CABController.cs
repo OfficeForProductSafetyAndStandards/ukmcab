@@ -4,8 +4,8 @@ using System.Security.Claims;
 using UKMCAB.Core.Services;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
-using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {

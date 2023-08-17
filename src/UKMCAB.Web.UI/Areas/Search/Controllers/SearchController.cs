@@ -10,6 +10,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using Microsoft.ApplicationInsights;
 using UKMCAB.Web.UI.Extensions;
+using UKMCAB.Web.UI.Helpers;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -79,6 +80,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     .Step0RequestSearchSubscription),
                 SearchKeyword = model.Keywords ?? string.Empty
             };
+
+            ShareUtils.AddDetails(HttpContext, model.FeedLinksViewModel);
+
             if (Request.QueryString.HasValue)
             {
                 model.FeedLinksViewModel.FeedUrl += Request.QueryString.Value.EnsureStartsWith("?").RemoveQueryParameters("pagenumber", "sort");

@@ -10,6 +10,7 @@ using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
+using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
@@ -173,6 +174,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     CABName = cabDocument.Name
                 }
             };
+
+            ShareUtils.AddDetails(HttpContext, cab.FeedLinksViewModel);
+
             return cab;
         }
 

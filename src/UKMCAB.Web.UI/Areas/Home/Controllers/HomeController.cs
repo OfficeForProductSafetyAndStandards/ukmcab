@@ -1,7 +1,10 @@
 ﻿using CsvHelper.Configuration.Attributes;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels;
+using UKMCAB.Web.UI.Models.ViewModels.Home;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Home.Controllers
 {
@@ -44,10 +47,12 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         [Route("/updates", Name = Routes.Updates)]
         public IActionResult Updates()
         {
-            var model = new BasicPageModel()
-            {
-                Title = Constants.PageTitle.Updates
+            var model = new UpdatesViewModel { 
+                FeedLinksViewModel = new FeedLinksViewModel()
             };
+
+            ShareUtils.AddDetails(HttpContext, model.FeedLinksViewModel);
+
             return View(model);
         }
 
