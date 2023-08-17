@@ -32,14 +32,14 @@ namespace UKMCAB.Data.CosmosDb.Services
                 return documents.First();
             }
 
-            // Is url somewhere in a historical CAB
+            // Is url somewhere in a historical CAB which was last updated in the last two months
             documents = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Historical && d.URLSlug.Equals(url));
-            if (documents != null && documents.Any() && documents.Count == 1)
+            if (documents != null && documents.Any() && documents.Count == 1 && documents.First().LastUpdatedDate > DateTime.UtcNow.AddMonths(-2))
             {
                 var document = documents.First();
                 // Find published version
                 documents = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published && d.CABId.Equals(document.CABId));
-                if (documents != null && documents.Any() && documents.Count == 1)
+                if (documents != null && documents.Any() && documents.Count == 1 )
                 {
                     return documents.First();
                 }
