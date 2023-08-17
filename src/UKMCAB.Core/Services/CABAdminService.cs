@@ -190,24 +190,24 @@ namespace UKMCAB.Core.Services
                 return latestDocument;
             }
             Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
-            var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
-            if (publishedVersion != null)
+            var publishedDocument = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
+            if (publishedDocument != null)
             {
-                publishedVersion.StatusValue = Status.Historical;
-                Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
+                publishedDocument.StatusValue = Status.Historical;
+                publishedDocument.AuditLog.Add(new Audit(userAccount, AuditStatus.NewVersion));
+                Guard.IsTrue(await _cabRepostitory.Update(publishedDocument),
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
-                await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
+                await _cachedSearchService.RemoveFromIndexAsync(publishedDocument.id);
             }
 
-            var audit = new Audit(userAccount, AuditStatus.Published);
-            latestDocument.AuditLog.Add(audit);
             latestDocument.StatusValue = Status.Published;
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditStatus.Published));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
 
-            var urlSlug = publishedVersion != null && !publishedVersion.URLSlug.Equals(latestDocument.URLSlug)
-                ? publishedVersion.URLSlug
+            var urlSlug = publishedDocument != null && !publishedDocument.URLSlug.Equals(latestDocument.URLSlug)
+                ? publishedDocument.URLSlug
                 : latestDocument.URLSlug;
 
             await UpdateSearchIndex(latestDocument);
