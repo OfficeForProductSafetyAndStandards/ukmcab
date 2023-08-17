@@ -194,7 +194,7 @@ namespace UKMCAB.Core.Services
             if (publishedDocument != null)
             {
                 publishedDocument.StatusValue = Status.Historical;
-                publishedDocument.AuditLog.Add(new Audit(userAccount, AuditStatus.NewVersion));
+                publishedDocument.AuditLog.Add(new Audit(userAccount, AuditStatus.RePublished));
                 Guard.IsTrue(await _cabRepostitory.Update(publishedDocument),
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
                 await _cachedSearchService.RemoveFromIndexAsync(publishedDocument.id);
