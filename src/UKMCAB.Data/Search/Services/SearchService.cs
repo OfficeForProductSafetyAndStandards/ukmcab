@@ -43,7 +43,7 @@ namespace UKMCAB.Data.Search.Services
                 CABs = new List<CABIndexItem>()
             };
 
-            var query = GetKeywordsQuery(options.Keywords);
+            var query = GetKeywordsQuery(options.Keywords, options.InternalSearch);
             var filter = BuildFilter(options);
             var sort = BuildSort(options);
 
@@ -161,7 +161,7 @@ namespace UKMCAB.Data.Search.Services
 
         private static readonly Regex SpecialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
 
-        private string GetKeywordsQuery(string? keywords)
+        private string GetKeywordsQuery(string? keywords, bool internalSearch)
         {
             string retVal;
             var input = (keywords ?? string.Empty).Trim();
@@ -179,15 +179,20 @@ namespace UKMCAB.Data.Search.Services
                 else
                 {
                     input = SpecialCharsRegex.Replace(input, " ");
-                    var tokens = new[]
+                    var tokens = new List<string>
                     {
                         $"{nameof(CABIndexItem.Name)}:({input})^3",                    //any-match, boosted x3
                         $"{nameof(CABIndexItem.TownCity)}:({input})",                  //any-match
                         $"{nameof(CABIndexItem.Postcode)}:(\"{input}\")",              //phrase-match
                         $"{nameof(CABIndexItem.HiddenText)}:(\"{input}\")",            //phrase-match
+                        $"{nameof(CABIndexItem.ScheduleLabels)}:(\"{input}\")",        //phrase-match
                         $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4",           //phrase-match, boosted x4
                         $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6",    //phrase-match, boosted x6
                     };
+                    if (internalSearch)
+                    {
+                        tokens.Add($"{nameof(CABIndexItem.DocumentLabels)}:(\"{input}\")"); //phrase-match
+                    }
                     retVal = string.Join(" ", tokens);
                 }
             }
