@@ -63,6 +63,8 @@ namespace UKMCAB.Data.Search.Models
 
         [SimpleField(IsSortable = true)]
         public DateTime? LastUpdatedDate { get; set; }
+        [SearchableField]
+        public string DocumentList { get; set; }
 
 
         [SimpleField(IsSortable = true)]

@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Data.Models
+﻿using System.Security.Policy;
+
+namespace UKMCAB.Data.Models
 {
     public class Document
     {
@@ -8,6 +10,14 @@
         public string Status => StatusValue.ToString();
 
         // Audit
+        // Legacy audit
+        public Audit Created { get; set; }
+        public Audit LastUpdated { get; set; }
+        // Used by the search index, saves a lot of effort to flatten the model in the data source
+        public Audit Published { get; set; }
+        public Audit Archived { get; set; }
+        public string ArchivedReason { get; set; }
+        // New audit
         public List<Audit> AuditLog { get; set; }
         // Used by the search index, saves a lot of effort to flatten the model in the data source
         public DateTime LastUpdatedDate => AuditLog != null && AuditLog.Any() ? AuditLog.Max(al => al.DateTime) : DateTime.MinValue;
@@ -48,6 +58,16 @@
 
         // Supporting documents
         public List<FileUpload>? Documents { get; set; }
+
+        public string DocumentList {
+            get
+            {
+                var scheduleLabels = Schedules?.Select(s => s.Label).ToList() ?? new List<string>();
+                var documentLabels = Documents?.Select(s => s.Label).ToList() ?? new List<string>();
+                scheduleLabels.AddRange(documentLabels);
+                return string.Join(", ", scheduleLabels);
+            }
+        }
 
 
         public string HiddenText { get; set; }

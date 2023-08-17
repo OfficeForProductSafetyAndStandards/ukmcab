@@ -185,6 +185,7 @@ namespace UKMCAB.Data.Search.Services
                         $"{nameof(CABIndexItem.TownCity)}:({input})",                  //any-match
                         $"{nameof(CABIndexItem.Postcode)}:(\"{input}\")",              //phrase-match
                         $"{nameof(CABIndexItem.HiddenText)}:(\"{input}\")",            //phrase-match
+                        $"{nameof(CABIndexItem.DocumentList)}:(\"{input}\")",          //phrase-match
                         $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4",           //phrase-match, boosted x4
                         $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6",    //phrase-match, boosted x6
                     };

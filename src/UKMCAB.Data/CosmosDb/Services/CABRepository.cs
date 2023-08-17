@@ -24,7 +24,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             var client = new CosmosClient(_cosmosDbConnectionString);
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
-            var items = await Query<LegacyDocument>(_container, document => true);
+            var items = await Query<Document>(_container, document => true);
             var yesterday = DateTime.UtcNow.AddDays(-1);
             foreach (var legacyDocument in items)
             {
@@ -38,14 +38,12 @@ namespace UKMCAB.Data.CosmosDb.Services
                 }
             }
 
-            items = await Query<LegacyDocument>(_container, document => true);
+            items = await Query<Document>(_container, document => true);
 
-            if (items[1].Created != null)
+            if (true || items[0].AuditLog == null)
             {
                 foreach (var document in items)
                 {
-                    var newDoc = JsonConvert.DeserializeObject<Document>(JsonConvert.SerializeObject(document));
-                    
                     var auditLog = new List<Audit>();
                     if (document.Created != null)
                     {
@@ -70,8 +68,9 @@ namespace UKMCAB.Data.CosmosDb.Services
                         auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.DateTime, AuditStatus.Archived, document.ArchivedReason));
                     }
 
-                    newDoc.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();
-                    await Update(newDoc);
+                    document.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();
+
+                    await Update(document);
                 }
             }
 
