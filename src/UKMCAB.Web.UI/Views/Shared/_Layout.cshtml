@@ -8,6 +8,7 @@
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
     var fullUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri();
     var pageTitle = Model?.Title.FormatTitle(ViewData.ModelState.IsValid) ?? Constants.SiteName;
+    var ogTitle = pageTitle.Replace("UKMCAB", "UK Market Conformity Assessment Bodies");
 }
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
@@ -44,7 +45,7 @@
     <meta property="og:image" content="/assets/images/govuk-opengraph-image.png"/>
 
     <meta property="og:image:alt" content="">
-    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:title" content="@ogTitle" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="@fullUrl" />
     <meta property="og:description" content="The UK Market Conformity Assessment Bodies (UKMCAB) service is the definitive source and a register of UK Government appointed Conformity Assessment Bodies (CABs) who can certify goods for both the GB and NI markets." />

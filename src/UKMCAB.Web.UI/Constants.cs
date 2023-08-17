@@ -3,7 +3,7 @@
 public static class Constants
 {
     public const string MainLayoutPath = "~/Views/Shared/_Layout.cshtml";
-    public const string SiteName = "UK Market Conformity Assessment Bodies";
+    public const string SiteName = "UKMCAB";
     public const string NotProvided = "Not provided";
     public const string NotAssigned = "Not assigned";
 
