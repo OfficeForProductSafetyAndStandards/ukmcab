@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.Models.Users;
@@ -60,7 +61,14 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 }
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
-                    var claims = new List<Claim> { new Claim(ClaimTypes.NameIdentifier, userId) };
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, userId), 
+                        new Claim(ClaimTypes.Email, "qa_email@beis.gov.uk"), 
+                        new Claim(ClaimTypes.GivenName, "QA"), 
+                        new Claim(ClaimTypes.Surname, "User"), 
+                        new Claim(Claims.CabEdit, string.Empty)
+                    };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties { IsPersistent = false, };
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);

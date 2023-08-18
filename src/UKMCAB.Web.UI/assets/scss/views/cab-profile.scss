@@ -10,6 +10,11 @@
 
 
 #cab-profile-page {
+
+    .atom-feed-top {
+        margin-bottom: 10px;
+    }
+
     #archive-button {
         margin-left: 10px;
 
@@ -17,6 +22,7 @@
             margin-left: 0;
         }
     }
+
 
     .cab-detail-date-meta {
         margin: -5px 0 30px;

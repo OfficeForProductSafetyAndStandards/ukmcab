@@ -2,7 +2,6 @@
 using Microsoft.Azure.Cosmos.Linq;
 using System.Linq.Expressions;
 using System.Net;
-using Newtonsoft.Json;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 

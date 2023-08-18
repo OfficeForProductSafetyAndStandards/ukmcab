@@ -84,7 +84,7 @@
 
                 @if (User.HasClaim(UKMCAB.Core.Security.Claims.CabEdit, string.Empty) && !Model.IsArchived) // TODO:  purposefully disabled; need to figure out permissions first
                 {
-                    <div class="govuk-!-display-block govuk-!-text-align-right">
+                    <div id="admin-buttons-container" class="govuk-!-display-block govuk-!-text-align-right">
                         <span>
                             <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
                         </span>
