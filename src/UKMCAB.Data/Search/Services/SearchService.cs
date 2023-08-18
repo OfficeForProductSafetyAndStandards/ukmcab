@@ -20,7 +20,7 @@ namespace UKMCAB.Data.Search.Services
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
-                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0" }
+                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0" }
             });
             if (search.HasValue)
             {
@@ -29,6 +29,7 @@ namespace UKMCAB.Data.Search.Services
                 result.BodyTypes = GetFacetList(facets[nameof(result.BodyTypes)]);
                 result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)]).Select(x => x.ToSentenceCase()).ToList()!;
                 result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
+                result.StatusValue = GetFacetList(facets[nameof(result.StatusValue)]);
             }
 
             return result;
@@ -119,7 +120,12 @@ namespace UKMCAB.Data.Search.Services
                 var registeredOfficeLocations = string.Join(" or ", options.RegisteredOfficeLocationsFilter.Select(bt => $"RegisteredOfficeLocation eq '{bt}'"));
                 filters.Add($"({registeredOfficeLocations})");
             }
-            if (!options.InternalSearch)
+            if (options.InternalSearch && options.StatusesFilter != null && options.StatusesFilter.Any())
+            {
+                var statuses = string.Join(" or ", options.StatusesFilter.Select(st => $"StatusValue eq '{st}'"));
+                filters.Add($"({statuses})");
+            }
+            else if (!options.InternalSearch)
             {
                 filters.Add($"(StatusValue eq '{(int)Status.Published}')");
             }

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
@@ -9,7 +10,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             Id = $"{prefix}-{SanitiseIdString(filterValue)}";
             Value = filterValue;
             Selected = isSelected;
-            Label = prefix.Equals("bodytypes", StringComparison.CurrentCultureIgnoreCase) ? SanitiseLabel(filterValue) : filterValue;
+            Label = SanitiseLabel(prefix, filterValue);
         }
         private static string SanitiseIdString(string id)
         {
@@ -19,17 +20,26 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                 .Replace(" ", string.Empty);
         }
 
-        private static string SanitiseLabel(string label)
+        private static string SanitiseLabel(string prefix, string label)
         {
-            switch (label)
+            if (prefix.Equals("bodytypes", StringComparison.CurrentCultureIgnoreCase))
             {
-                case "third-country-body":
-                    return "Third country body";
-                case "Overseas Body":
-                    return "Overseas body";
-                default:
-                    return label;
+                switch (label)
+                {
+                    case "third-country-body":
+                        return "Third country body";
+                    case "Overseas Body":
+                        return "Overseas body";
+                    default:
+                        return label;
+                }
             }
+            if (prefix.Equals("statuses", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var statusInt = int.Parse(label);
+                return ((Status)statusInt).ToString();
+            }
+            return label;
         }
 
 

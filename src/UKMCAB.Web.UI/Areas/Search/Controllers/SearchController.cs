@@ -59,10 +59,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var internalSearch = User != null && User.Identity.IsAuthenticated;
             model.Sort ??= internalSearch ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
+            model.InternalSearch = internalSearch;
 
             await SetFacetOptions(model);
 
-            model.InternalSearch = internalSearch;
             model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
 
             model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
@@ -130,6 +130,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 BodyTypesFilter = model.BodyTypes,
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
+                StatusesFilter = model.Statuses,
                 Select = _select,
                 InternalSearch = internalSearch
             };
@@ -190,6 +191,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
             model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
+            if (model.InternalSearch)
+            {
+                model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "Status", facets.StatusValue, model.Statuses);
+            }
         }
 
         private FilterViewModel GetFilterOptions(string facetName, string facetLabel, IEnumerable<string> facets, IEnumerable<string> selectedFacets)
