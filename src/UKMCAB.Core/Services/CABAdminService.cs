@@ -112,7 +112,7 @@ namespace UKMCAB.Core.Services
             {
                 id = document.id,
                 Status = document.Status,
-                StatusValue = document.StatusValue.ToString(),
+                StatusValue = ((int)document.StatusValue).ToString(),
                 Name = document.Name,
                 CABId = document.CABId,
                 CABNumber = document.CABNumber,
