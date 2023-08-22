@@ -226,7 +226,7 @@ namespace UKMCAB.Core.Services
             {
                 // An accidental double sumbmit might cause this action to be repeated so just return the already archived doc.
                 var latest = await GetLatestDocumentAsync(CABId);
-                if (latest.StatusValue == Status.Archived)
+                if (latest == null || latest.StatusValue == Status.Archived)
                 {
                     return latest;
                 }
