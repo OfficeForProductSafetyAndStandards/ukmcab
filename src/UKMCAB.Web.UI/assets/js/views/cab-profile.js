@@ -8,10 +8,14 @@
     var archiveReasonFormGroup = document.getElementById("archive-reason-formgroup");
     var submitButton = document.getElementById("archive-submit-button");
     var cabId = document.getElementById("CABId");
+    var archiveModalCloseButtons = document.querySelectorAll("#archive-modal .modal-close");
 
     function init() {
         if (archiveModal) {
             submitButton.addEventListener("click", submitDetails);
+            archiveModalCloseButtons.forEach(function (e) {
+                e.addEventListener('click', removeError);
+            });
         }
     }
 
@@ -56,6 +60,13 @@
         archiveReasonFormGroup.classList.add("govuk-form-group--error");
         archiveReasonError.classList.remove("govuk-visually-hidden");
         archiveErrorMessage.innerText = message;
+    }
+
+    function removeError() {
+        archiveReason.classList.remove("govuk-input--error");
+        archiveReasonFormGroup.classList.remove("govuk-form-group--error");
+        archiveReasonError.classList.add("govuk-visually-hidden");
+        archiveErrorMessage.innerText = "";
     }
 
     return {
