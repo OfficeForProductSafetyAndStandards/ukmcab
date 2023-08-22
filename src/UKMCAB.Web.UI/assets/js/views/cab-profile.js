@@ -36,10 +36,10 @@
                     if (result.submitted) {
                         location.reload();
                     } else {
-                        displayErrors(result.errorMessage);
+                        displayError(result.errorMessage);
                     }
                 }).catch((error) => {
-                    displayErrors(error);
+                    displayError(error);
                 });
 
         } else {
