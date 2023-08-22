@@ -29,7 +29,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             {
                 if (legacyDocument.StatusValue == Status.Created)
                 {
-                    var a = legacyDocument.AuditLog.SingleOrDefault(al => al.Status == AuditStatus.Created);
+                    var a = legacyDocument.AuditLog?.SingleOrDefault(al => al.Status == AuditStatus.Created);
                     if (a != null)
                     {
                         var createdDate = a.DateTime;
