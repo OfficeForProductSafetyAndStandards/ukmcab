@@ -4,6 +4,73 @@
     }
 }
 
+.clear-icon {
+    display: none;
+    position: absolute;
+    top: 50%;
+    right: 48px;
+    transform: translateY(-50%);
+    cursor: pointer;
+    border: 1px solid transparent;
+    background-color: transparent;
+    display: inline-block;
+    vertical-align: middle;
+    outline: 0;
+}
+
+.clear-icon:after {
+    content: "X";
+    display: block;
+    width: 15px;
+    height: 15px;
+    position: absolute;
+    //background-color: #FA9595;
+    border: 1px solid black;
+    z-index: 1;
+    right: 1px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    padding: 2px;
+    border-radius: 50%;
+    text-align: center;
+    vertical-align:middle;
+    color: black;
+    font-weight: normal;
+    font-size: 11px;
+    //box-shadow: 0 0 2px #E50F0F;
+    cursor: pointer;
+}
+
+//.clear-icon:hover {
+//    color: darkred;
+//}
+
+
+#search-keyword-button {
+    background-color: #1d70b8;
+    background-image: url('../finder/images/search/search-button.png');
+    background-position: 2px 50%;
+    background-repeat: no-repeat;
+    bottom: 0;
+    border: 2px solid #0b0c0c;
+    border-left: none;
+    color: #fff;
+    cursor: pointer;
+    height: 100%;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    right: 0;
+    text-indent: -5000px;
+    width: 40px;
+
+    &:focus {
+        outline: 3px solid #ffdd00;
+        outline-offset: 0;
+    }
+}
+
 #search-page {
     #search-results {
         #search-results-form-column {
@@ -18,34 +85,35 @@
 
                     #search-filter-keywords-input-container {
                         position: relative;
+                        display: inline-block;
 
                         input {
                             width: calc(100% - 40px);
                         }
 
-                        button {
-                            background-color: #1d70b8;
-                            background-image: url('../finder/images/search/search-button.png');
-                            background-position: 2px 50%;
-                            background-repeat: no-repeat;
-                            bottom: 0;
-                            border: 2px solid #0b0c0c;
-                            border-left: none;
-                            color: #fff;
-                            cursor: pointer;
-                            height: 100%;
-                            overflow: hidden;
-                            padding: 0;
-                            position: absolute;
-                            right: 0;
-                            text-indent: -5000px;
-                            width: 40px;
+                        //button {
+                        //    background-color: #1d70b8;
+                        //    background-image: url('../finder/images/search/search-button.png');
+                        //    background-position: 2px 50%;
+                        //    background-repeat: no-repeat;
+                        //    bottom: 0;
+                        //    border: 2px solid #0b0c0c;
+                        //    border-left: none;
+                        //    color: #fff;
+                        //    cursor: pointer;
+                        //    height: 100%;
+                        //    overflow: hidden;
+                        //    padding: 0;
+                        //    position: absolute;
+                        //    right: 0;
+                        //    text-indent: -5000px;
+                        //    width: 40px;
 
-                            &:focus {
-                                outline: 3px solid #ffdd00;
-                                outline-offset: 0;
-                            }
-                        }
+                        //    &:focus {
+                        //        outline: 3px solid #ffdd00;
+                        //        outline-offset: 0;
+                        //    }
+                        //}
                     }
                 }
             }
