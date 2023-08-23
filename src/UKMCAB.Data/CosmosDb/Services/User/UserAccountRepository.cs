@@ -1,7 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Polly;
 using Polly.Fallback;
+using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Common.Domain;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
@@ -32,18 +34,24 @@ public class UserAccountRepository : IUserAccountRepository
 
     public async Task UpdateAsync(UserAccount userAccount) => await _container.ReplaceItemAsync(userAccount, userAccount.Id, new PartitionKey(userAccount.Id)).ConfigureAwait(false);
 
-    public async Task<IEnumerable<UserAccount>> ListAsync(bool? isLocked = false, int skip = 0, int take = 20)
+
+    public async Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options)
     {
         var q = _container.GetItemLinqQueryable<UserAccount>().AsQueryable();
 
-        if (isLocked.HasValue)
+        if (options.ExcludeId.IsNotNullOrEmpty())
         {
-            q = q.Where(x => x.IsLocked == isLocked);
+            q = q.Where(x => x.Id != options.ExcludeId);
+        }
+
+        if (options.IsLocked.HasValue)
+        {
+            q = q.Where(x => x.IsLocked == options.IsLocked);
         }
 
         var data = await q.OrderBy(x => x.Surname)
-            .Skip(skip)
-            .Take(take)
+            .Skip(options.Skip)
+            .Take(options.Take)
             .AsAsyncEnumerable()
             .ToListAsync()
             .ConfigureAwait(false);

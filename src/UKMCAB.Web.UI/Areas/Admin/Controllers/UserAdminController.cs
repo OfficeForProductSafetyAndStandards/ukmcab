@@ -1,9 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
-using Notify.Interfaces;
+using System.Security.Claims;
+using UKMCAB.Common.Domain;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
-using UKMCAB.Core;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
@@ -17,9 +16,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 public class UserAdminController : Controller
 {
     private readonly IUserService _userService;
-    private readonly IAsyncNotificationClient _notificationClient;
     private readonly ISecureTokenProcessor _secureTokenProcessor;
-    private readonly CoreEmailTemplateOptions _templateOptions;
     public static class Routes
     {
         public const string UserList = "user-admin.list";
@@ -36,12 +33,10 @@ public class UserAdminController : Controller
         public const string RejectRequest = "user-admin.reject-request";
     }
 
-    public UserAdminController(IUserService userService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, ISecureTokenProcessor secureTokenProcessor)
+    public UserAdminController(IUserService userService, ISecureTokenProcessor secureTokenProcessor)
     {
         _userService = userService;
-        _notificationClient = notificationClient;
         _secureTokenProcessor = secureTokenProcessor;
-        _templateOptions = templateOptions.Value;
     }
 
     [HttpGet("list", Name = Routes.UserList)]
@@ -52,7 +47,7 @@ public class UserAdminController : Controller
 
     private async Task<IActionResult> UserListAsync(int skip, bool isLocked, string title)
     {
-        var accounts = await _userService.ListAsync(isLocked, skip);
+        var accounts = await _userService.ListAsync(new UserAccountListOptions(Skip: skip, IsLocked: isLocked, ExcludeId: User.FindFirstValue(ClaimTypes.NameIdentifier)));
         var pendingAccounts = await GetAllPendingRequests();
         return View("UserList", new UserAccountListViewModel
         {
@@ -66,6 +61,7 @@ public class UserAdminController : Controller
     [HttpGet("{id}", Name = Routes.UserAccount)]
     public async Task<IActionResult> UserAccountAsync(string id)
     {
+        Rule.IsTrue(id != User.FindFirstValue(ClaimTypes.NameIdentifier), "One cannot manage one's own profile");
         var account = await _userService.GetAsync(id);
         if (account == null)
         {
