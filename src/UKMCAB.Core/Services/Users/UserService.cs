@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common;
+using UKMCAB.Common.Domain;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.CosmosDb.Services.User;
@@ -70,8 +71,8 @@ public class UserService : IUserService
     }
 
     /// <inheritdoc />
-    public Task<IEnumerable<UserAccount>> ListAsync(bool? isLocked = false, int skip = 0, int take = 20) 
-        => _userAccountRepository.ListAsync(isLocked, skip, take);
+    public Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options) 
+        => _userAccountRepository.ListAsync(options);
 
     /// <inheritdoc />
     public async Task<IEnumerable<UserAccountRequest>> ListPendingAccountRequestsAsync(int skip = 0, int take = 20) 
@@ -153,11 +154,11 @@ public class UserService : IUserService
 
             if(reason == UserAccountLockReason.Archived)
             {
-                await _notificationClient.SendEmailAsync(account.EmailAddress, _templateOptions.Value.AccountArchived);
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountArchived);
             }
             else
             {
-                await _notificationClient.SendEmailAsync(account.EmailAddress, _templateOptions.Value.AccountLocked);
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountLocked);
             }
             //todo: record audit trail
         }
