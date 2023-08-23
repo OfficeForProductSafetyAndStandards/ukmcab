@@ -36,7 +36,10 @@
                 <partial name="Partials/_SearchFilter" model="Model.BodyTypeOptions"/>
                 <partial name="Partials/_SearchFilter" model="Model.RegisteredOfficeLocationOptions"/>
                 <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaOptions"/>
-
+                @if (Model.InternalSearch)
+                {
+                    <partial name="Partials/_SearchFilter" model="Model.StatusOptions"/>
+                }
                 <div id="search-filter-button-wrapper">
                     <button class="govuk-button">Apply filters</button>
                 </div>
