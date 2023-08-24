@@ -15,7 +15,8 @@
                         </label>
                     </h3>
                     <div id="search-filter-keywords-input-container">
-                        <input type="search" asp-for="Keywords" class="govuk-input"/>
+                        <input type="text" asp-for="Keywords" class="govuk-input search-box" />
+                        <button class="clear-icon" type="submit"></button>
                         <button id="search-keyword-button" type="submit">Search</button>
                     </div>
                 </fieldset>
