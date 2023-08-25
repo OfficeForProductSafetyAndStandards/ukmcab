@@ -61,6 +61,11 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireClaim(Claims.CabEdit, "*");
     });
+    options.AddPolicy(Policies.UserManagement, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.UserMgt);
+    });
 });
 
 builder.Services.AddControllersWithViews();

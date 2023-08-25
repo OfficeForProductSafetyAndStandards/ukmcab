@@ -10,7 +10,7 @@
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading">
-                        Edit profile
+                        Edit my details
                     </h1>
                 </legend>
 
@@ -38,15 +38,6 @@
                     <input class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.LastName))" asp-for="LastName" type="text" autocomplete="lastname" aria-required="true" error-describedby-for="LastName">
                 </div>
 
-                <div class="govuk-form-group">
-                    <h3 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--s" asp-for="PhoneNumber">
-                            Phone number
-                        </label>
-                    </h3>
-                    <input class="govuk-input" asp-for="PhoneNumber" type="text" autocomplete="phone">
-                </div>
-
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ContactEmailAddress))">
                     <h3 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--s" asp-for="ContactEmailAddress">
@@ -57,6 +48,15 @@
                         <span asp-validation-for="ContactEmailAddress" class="govuk-error-message"></span>
                     </p>
                     <input class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ContactEmailAddress))" asp-for="ContactEmailAddress" type="text" autocomplete="email" aria-required="true" error-describedby-for="ContactEmailAddress">
+                </div>
+
+                <div class="govuk-form-group">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="PhoneNumber">
+                            Phone number (optional)
+                        </label>
+                    </h3>
+                    <input class="govuk-input" asp-for="PhoneNumber" type="text" autocomplete="phone">
                 </div>
 
             </fieldset>

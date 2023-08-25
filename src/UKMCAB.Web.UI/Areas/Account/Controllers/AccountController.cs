@@ -227,6 +227,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 LastName = userAccount.Surname,
                 PhoneNumber = userAccount.PhoneNumber,
                 ContactEmailAddress = userAccount.ContactEmailAddress,
+                Role = userAccount.Role,
                 IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
             });
         }
