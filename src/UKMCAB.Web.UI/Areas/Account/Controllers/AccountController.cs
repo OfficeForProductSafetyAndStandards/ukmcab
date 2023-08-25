@@ -8,7 +8,9 @@ using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Users.Models;
+using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.Security;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
@@ -21,6 +23,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         private readonly IUserService _users;
         private readonly ISecureTokenProcessor _secureTokenProcessor;
         private readonly IWebHostEnvironment _environment;
+        private readonly IUserAccountRepository _userAccounts;
 
         public static class Routes
         {
@@ -35,13 +38,14 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             public const string EditProfile = "account.edit.profile";
         }
 
-        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor, IWebHostEnvironment environment)
+        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor, IWebHostEnvironment environment, IUserAccountRepository userAccounts)
         {
             _logger = logger;
             _telemetry = telemetry;
             _users = users;
             _secureTokenProcessor = secureTokenProcessor;
             _environment = environment;
+            _userAccounts = userAccounts;
         }
 
         [AllowAnonymous, Route("qalogin", Name = Routes.QaLogin)]
@@ -62,15 +66,13 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 }
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
-                    var claims = new List<Claim>
+                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },CookieAuthenticationDefaults.AuthenticationScheme);
+                    var acc=await _userAccounts.GetAsync(userId);
+                    if (acc != null)
                     {
-                        new Claim(ClaimTypes.NameIdentifier, userId), 
-                        new Claim(ClaimTypes.Email, "qa_email@beis.gov.uk"), 
-                        new Claim(ClaimTypes.GivenName, "QA"), 
-                        new Claim(ClaimTypes.Surname, "User"), 
-                        new Claim(Claims.CabEdit, string.Empty)
-                    };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                        SignInHelper.AddClaims(acc, claimsIdentity);
+                    }
+
                     var authProperties = new AuthenticationProperties { IsPersistent = false, };
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
                     return RedirectToRoute(Routes.Login);

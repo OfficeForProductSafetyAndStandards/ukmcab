@@ -70,12 +70,7 @@ public static class GovukOneLoginExtensions
                 var account = await users.GetAsync(context.Principal.FindFirstValue(ClaimTypes.NameIdentifier));
                 if(account != null)
                 {
-                    identity.AddClaim(new Claim(ClaimTypes.Email, account.ContactEmailAddress ?? account.EmailAddress ?? string.Empty));
-                    identity.AddClaim(new Claim(ClaimTypes.GivenName, account.FirstName ?? string.Empty));
-                    identity.AddClaim(new Claim(ClaimTypes.Surname, account.Surname ?? string.Empty));
-                    identity.AddClaim(new Claim(Claims.Organisation, account.OrganisationName ?? string.Empty));
-                    identity.AddClaim(new Claim(ClaimTypes.Role, account.Role ?? string.Empty));
-                    identity.AddClaims(ClaimsIssuer.Get(account.Role));
+                    SignInHelper.AddClaims(account, identity);
                 }
                 else
                 {
