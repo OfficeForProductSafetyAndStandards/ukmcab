@@ -31,6 +31,7 @@ public class UserAdminController : Controller
         public const string RequestApproved = "user-admin.request-approved";
         public const string RequestRejected = "user-admin.request-rejected";
         public const string RejectRequest = "user-admin.reject-request";
+        public const string ApproveRequest = "user-admin.approve-request";
     }
 
     public UserAdminController(IUserService userService, ISecureTokenProcessor secureTokenProcessor)
@@ -100,7 +101,7 @@ public class UserAdminController : Controller
             model.Pipe(x => x.Mode = mode);
             if (ModelState.IsValid)
             {
-                if(mode.EqualsAny(UserAccountLockToggleUIMode.Lock, UserAccountLockToggleUIMode.Archive))
+                if (mode.EqualsAny(UserAccountLockToggleUIMode.Lock, UserAccountLockToggleUIMode.Archive))
                 {
                     var reason = mode == UserAccountLockToggleUIMode.Archive ? UserAccountLockReason.Archived : UserAccountLockReason.None;
                     await _userService.LockAccountAsync(id, reason, model.Reason, model.Notes).ConfigureAwait(false);
@@ -179,7 +180,7 @@ public class UserAdminController : Controller
 
 
     [HttpPost("review-account-request/{id}", Name = Routes.ReviewAccountRequest)]
-    public async Task<IActionResult> ReviewAccountRequest(string id, string submitType)
+    public async Task<IActionResult> ReviewAccountRequest(string id, string submitType, [FromForm] string? role = null)
     {
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
@@ -189,10 +190,48 @@ public class UserAdminController : Controller
 
         if (submitType == Constants.SubmitType.Approve)
         {
-            await _userService.ApproveAsync(account.Id);
-            return RedirectToRoute(Routes.RequestApproved, new { account.Id });
+            if (role.IsNullOrEmpty())
+            {
+                ModelState.AddModelError("", "Choose a user group");
+                return await ReviewAccountRequest(id);
+            }
+            else
+            {
+                return RedirectToRoute(Routes.ApproveRequest, new { account.Id, role });
+            }
         }
         return RedirectToRoute(Routes.RejectRequest, new { account.Id });
+    }
+
+    [HttpGet("approve-request/{id}", Name = Routes.ApproveRequest)]
+    public async Task<IActionResult> ApproveRequest(string id, [FromQuery] string role)
+    {
+        var account = await _userService.GetAccountRequestAsync(id);
+        if (account == null)
+        {
+            return RedirectToRoute(Routes.UserList);
+        }
+        return View(new ApproveRequestViewModel
+        {
+            AccountId = account.Id,
+            Role = role,
+            FirstName = account.FirstName,
+            LastName = account.Surname,
+        });
+    }
+
+    [HttpPost("approve-request/{id}", Name = Routes.ApproveRequest)]
+    public async Task<IActionResult> ApproveRequestPost(string id, [FromQuery] string role)
+    {
+        var account = await _userService.GetAccountRequestAsync(id);
+        if (account == null)
+        {
+            return RedirectToRoute(Routes.UserList);
+        }
+
+        await _userService.ApproveAsync(account.Id, role); // todo!!!!!!!!!!!!!! add role in service
+
+        return RedirectToRoute(Routes.UserAccountRequestsList); //RedirectToRoute(Routes.RequestApproved, new { account.Id });
     }
 
     [HttpGet("request-approved/{id}", Name = Routes.RequestApproved)]
@@ -205,22 +244,22 @@ public class UserAdminController : Controller
         return View(model);
     }
 
-    [HttpGet("reject-request/{id}", Name = Routes.RejectRequest)]
-    public async Task<IActionResult> RejectRequest(string id)
+    [HttpGet("decline-request/{id}", Name = Routes.RejectRequest)]
+    public async Task<IActionResult> DeclineRequest(string id)
     {
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
         {
             return RedirectToRoute(Routes.UserList);
         }
-        return View(new RejectRequestViewModel
+        return View(new DeclineRequestViewModel
         {
             AccountId = account.Id
         });
     }
 
-    [HttpPost("reject-request/{id}", Name = Routes.RejectRequest)]
-    public async Task<IActionResult> RejectRequest(string id, RejectRequestViewModel model)
+    [HttpPost("decline-request/{id}", Name = Routes.RejectRequest)]
+    public async Task<IActionResult> DeclineRequest(string id, DeclineRequestViewModel model)
     {
         var account = await _userService.GetAccountRequestAsync(id);
         if (account == null)
@@ -231,7 +270,7 @@ public class UserAdminController : Controller
         if (ModelState.IsValid)
         {
             await _userService.RejectAsync(account.Id, model.Reason ?? string.Empty);
-            return RedirectToRoute(Routes.RequestRejected);
+            return RedirectToRoute(Routes.UserAccountRequestsList);
         }
 
         model.AccountId = id;

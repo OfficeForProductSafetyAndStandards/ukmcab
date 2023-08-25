@@ -26,6 +26,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         {
             public const string Login = "account.login";
             public const string QaLogin = "account.qalogin";
+            public const string FakeLogin = "account.fakelogin";
             public const string Logout = "account.logout";
             public const string Locked = "account.locked";
             public const string RequestAccount = "account.request";
@@ -73,6 +74,42 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     var authProperties = new AuthenticationProperties { IsPersistent = false, };
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
                     return RedirectToRoute(Routes.Login);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [AllowAnonymous, Route("fakelogin", Name = Routes.FakeLogin)]
+        public async Task<IActionResult> FakeLogin([FromForm] string role)
+        {
+            if (_environment.IsDevelopment())
+            {
+                if (Request.Method == HttpMethod.Get.Method)
+                {
+                    return View();
+                }
+                else if (Request.Method == HttpMethod.Post.Method)
+                {
+                    var claims = new List<Claim>
+                    {
+                        new Claim(ClaimTypes.NameIdentifier, Guid.Empty.ToString()),
+                        new Claim(ClaimTypes.Email, "fake.ukmcab.user@beis.gov.uk"),
+                        new Claim(ClaimTypes.GivenName, "Fake"),
+                        new Claim(ClaimTypes.Surname, $"Persona ({role})"),
+                        new Claim(ClaimTypes.Role, role),
+                        new Claim(Claims.CabEdit, string.Empty)
+                    };
+                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var authProperties = new AuthenticationProperties { IsPersistent = false, };
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                    return Redirect("/");
                 }
                 else
                 {
