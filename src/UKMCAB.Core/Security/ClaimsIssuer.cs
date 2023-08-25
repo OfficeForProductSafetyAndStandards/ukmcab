@@ -18,7 +18,8 @@ public static class ClaimsIssuer
             {
                 new(Claims.CabEdit, "*"), // can edit any cab
                 new(Claims.CabCanApprove, "*"), // can edit any cab
-                new(Claims.UserMgt, string.Empty), // can manage users
+                new(Claims.CabManagement, string.Empty), // can manage all cabs
+                new(Claims.UserManagement, string.Empty), // can manage users
             };
         }
         else if (role == Roles.UKAS.Id)
