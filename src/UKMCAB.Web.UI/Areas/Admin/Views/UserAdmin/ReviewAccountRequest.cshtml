@@ -1,9 +1,25 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.ReviewAccountRequestViewModel
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="govuk-back-link">Back</a>
+            </div>
+        </div>
+    </div>
+}
+
+
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Review account request</h1>
+        <h1 class="govuk-heading-l">Account request</h1>
     </div>
 </div>
+
+<partial name="Partials/_ValidationSummary" model="null" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -28,7 +44,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Email
+                            Email address
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.UserAccountRequest.GetEmailAddress()
@@ -45,7 +61,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Date request created
+                            Requested on
                         </dt>
                         <dd class="govuk-summary-list__value">
                             @Model.UserAccountRequest.CreatedUtc.ToString("dd/MM/yy HH:mm")
@@ -61,12 +77,35 @@
                     </div>
                 </dl>
             </div>
+
+            <div class="govuk-form-group @Html.Conditional(!ViewData.ModelState.IsValid,"govuk-form-group--error")">
+                <label class="govuk-label govuk-!-font-weight-bold" for="role">
+                    Select a user group
+                </label>
+                <div id="role-hint" class="govuk-hint">
+                    The user will be added to this user group
+                </div>
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <p id="role-error" class="govuk-error-message govuk-!-margin-bottom-0">
+                        <span class="govuk-visually-hidden">Error:</span> Choose a user group
+                    </p>
+                }
+                <select class="govuk-select govuk-!-margin-top-2 govuk-!-margin-bottom-2" id="role" name="role">
+                    <option value="">Select a user group</option>
+                    @foreach (var role in UKMCAB.Core.Security.Roles.List)
+                    {
+                        <option value="@role.Id">@role.Label</option>
+                    }
+                </select>
+            </div>
+
             <div class="govuk-button-group">
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Approve">
                     Approve
                 </button>
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Reject">
-                    Reject
+                    Decline
                 </button>
             </div>
         </form>

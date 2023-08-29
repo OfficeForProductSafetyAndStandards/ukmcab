@@ -11,7 +11,7 @@ public interface IUserService
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task ApproveAsync(string id);
+    Task ApproveAsync(string id, string role);
 
     Task<UserAccount?> GetAsync(string id);
 

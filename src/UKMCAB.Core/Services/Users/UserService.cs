@@ -3,6 +3,7 @@ using Notify.Interfaces;
 using UKMCAB.Common;
 using UKMCAB.Common.Domain;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Models.Users;
@@ -87,12 +88,12 @@ public class UserService : IUserService
 
 
     /// <inheritdoc />
-    public async Task ApproveAsync(string id) => await ApproveRejectAsync(id, UserAccountRequestStatus.Approved).ConfigureAwait(false);
+    public async Task ApproveAsync(string id, string role) => await ApproveRejectAsync(id, UserAccountRequestStatus.Approved, role: role).ConfigureAwait(false);
 
     /// <inheritdoc />
     public async Task RejectAsync(string id, string reason) => await ApproveRejectAsync(id, UserAccountRequestStatus.Rejected, reason).ConfigureAwait(false);
     
-    private async Task ApproveRejectAsync(string id, UserAccountRequestStatus status, string? reviewComments = null)
+    private async Task ApproveRejectAsync(string id, UserAccountRequestStatus status, string? reviewComments = null, string? role = null)
     {
         Guard.IsFalse(status == UserAccountRequestStatus.Pending, "You cannot assign a status of Pending");
         var request = await _userAccountRequestRepository.GetAsync(id).ConfigureAwait(false) ?? throw new NotFoundException("The user account request could not be found");
@@ -105,12 +106,16 @@ public class UserService : IUserService
         
         if (status == UserAccountRequestStatus.Approved)
         {
+            Rule.IsTrue(role.EqualsAny(Roles.List.Select(x => x.Id).ToArray()), $"The supplied role id ('{role}') does not match any of the configured roles");
+
             if (account != null) // there's already an account for this fella
             {
                 if (account.IsLocked)
                 {
                     account.IsLocked = false;
                     account.LockReason = null;
+                    account.Role = role;
+                    await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
                 }
                 // else: //noop - they already have an unlocked account anywayz.... 
             }
@@ -124,6 +129,7 @@ public class UserService : IUserService
                     FirstName = request.FirstName,
                     OrganisationName = request.OrganisationName,
                     Surname = request.Surname,
+                    Role = role,
                 };
                 await _userAccountRepository.CreateAsync(account).ConfigureAwait(false);
             }
@@ -136,8 +142,7 @@ public class UserService : IUserService
             {
                 {"rejection-reason", reviewComments ?? "" }
             };
-            await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestRejected, personalisation);
-
+            await _notificationClient.SendEmailAsync(request.GetEmailAddress(), _templateOptions.Value.AccountRequestRejected, personalisation);
         }
     }
 

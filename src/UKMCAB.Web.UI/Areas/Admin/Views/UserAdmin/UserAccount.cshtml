@@ -1,9 +1,15 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountViewModel
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <a href="@Url.RouteUrl(UserAdminController.Routes.UserList)" class="govuk-back-link">Back</a>
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="@Url.RouteUrl(UserAdminController.Routes.UserList)" class="govuk-back-link">Back</a>
+            </div>
+        </div>
     </div>
-</div>
+}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">

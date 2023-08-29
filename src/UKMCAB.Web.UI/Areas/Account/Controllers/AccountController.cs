@@ -8,7 +8,9 @@ using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Users.Models;
+using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.Security;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
@@ -21,11 +23,13 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         private readonly IUserService _users;
         private readonly ISecureTokenProcessor _secureTokenProcessor;
         private readonly IWebHostEnvironment _environment;
+        private readonly IUserAccountRepository _userAccounts;
 
         public static class Routes
         {
             public const string Login = "account.login";
             public const string QaLogin = "account.qalogin";
+            public const string FakeLogin = "account.fakelogin";
             public const string Logout = "account.logout";
             public const string Locked = "account.locked";
             public const string RequestAccount = "account.request";
@@ -34,13 +38,14 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             public const string EditProfile = "account.edit.profile";
         }
 
-        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor, IWebHostEnvironment environment)
+        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor, IWebHostEnvironment environment, IUserAccountRepository userAccounts)
         {
             _logger = logger;
             _telemetry = telemetry;
             _users = users;
             _secureTokenProcessor = secureTokenProcessor;
             _environment = environment;
+            _userAccounts = userAccounts;
         }
 
         [AllowAnonymous, Route("qalogin", Name = Routes.QaLogin)]
@@ -61,18 +66,52 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 }
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
+                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },CookieAuthenticationDefaults.AuthenticationScheme);
+                    var acc=await _userAccounts.GetAsync(userId);
+                    if (acc != null)
+                    {
+                        SignInHelper.AddClaims(acc, claimsIdentity);
+                    }
+
+                    var authProperties = new AuthenticationProperties { IsPersistent = false, };
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                    return RedirectToRoute(Routes.Login);
+                }
+                else
+                {
+                    throw new NotSupportedException();
+                }
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
+
+        [AllowAnonymous, Route("fakelogin", Name = Routes.FakeLogin)]
+        public async Task<IActionResult> FakeLogin([FromForm] string role)
+        {
+            if (_environment.IsDevelopment())
+            {
+                if (Request.Method == HttpMethod.Get.Method)
+                {
+                    return View();
+                }
+                else if (Request.Method == HttpMethod.Post.Method)
+                {
                     var claims = new List<Claim>
                     {
-                        new Claim(ClaimTypes.NameIdentifier, userId), 
-                        new Claim(ClaimTypes.Email, "qa_email@beis.gov.uk"), 
-                        new Claim(ClaimTypes.GivenName, "QA"), 
-                        new Claim(ClaimTypes.Surname, "User"), 
+                        new Claim(ClaimTypes.NameIdentifier, Guid.Empty.ToString()),
+                        new Claim(ClaimTypes.Email, "fake.ukmcab.user@beis.gov.uk"),
+                        new Claim(ClaimTypes.GivenName, "Fake"),
+                        new Claim(ClaimTypes.Surname, $"Persona ({role})"),
+                        new Claim(ClaimTypes.Role, role),
                         new Claim(Claims.CabEdit, string.Empty)
                     };
                     var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                     var authProperties = new AuthenticationProperties { IsPersistent = false, };
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-                    return RedirectToRoute(Routes.Login);
+                    return Redirect("/");
                 }
                 else
                 {
@@ -190,6 +229,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 LastName = userAccount.Surname,
                 PhoneNumber = userAccount.PhoneNumber,
                 ContactEmailAddress = userAccount.ContactEmailAddress,
+                Role = userAccount.Role,
                 IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
             });
         }
