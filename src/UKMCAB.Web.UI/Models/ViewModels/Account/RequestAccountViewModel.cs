@@ -24,6 +24,6 @@ public class RequestAccountViewModel : ILayoutModel
 
     public string? Title => "Request user account";
 
-    public string[] FieldOrder => new[] { nameof(FirstName), nameof(LastName), nameof(Organisation), nameof(ContactEmailAddress), nameof(Comments) };
+    public string[] FieldOrder => new[] { nameof(FirstName), nameof(LastName), nameof(ContactEmailAddress), nameof(Organisation), nameof(Comments) };
 
 }
