@@ -66,19 +66,11 @@ public static class GovukOneLoginExtensions
                 var content = await response.Content.ReadAsStringAsync();
                 var userInfo = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
 
-                ////identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, userInfo.GetValueOrDefault("sub")?.ToString()??string.Empty));
-                ////TODO: this is where to set more claims RE permissions
-                //identity.AddClaim(new Claim(ClaimTypes.Email, userInfo.GetValueOrDefault("email")?.ToString() ?? string.Empty));
-
                 var users = context.HttpContext.RequestServices.GetRequiredService<IUserService>();
                 var account = await users.GetAsync(context.Principal.FindFirstValue(ClaimTypes.NameIdentifier));
                 if(account != null)
                 {
-                    identity.AddClaim(new Claim(ClaimTypes.Email, account.ContactEmailAddress ?? account.EmailAddress ?? string.Empty));
-                    identity.AddClaim(new Claim(ClaimTypes.GivenName, account.FirstName ?? string.Empty));
-                    identity.AddClaim(new Claim(ClaimTypes.Surname, account.Surname ?? string.Empty));
-                    identity.AddClaim(new Claim(Claims.Organisation, account.OrganisationName ?? string.Empty));
-                    identity.AddClaim(new Claim(Claims.CabEdit, string.Empty)); //todo: added by default at the moment but needs to be applied based on role/organisation when claims is looked at
+                    SignInHelper.AddClaims(account, identity);
                 }
                 else
                 {

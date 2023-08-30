@@ -3,14 +3,13 @@
 
 @if (Model.IsEdited)
 {
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-notification-banner govuk-grid-row" role="region"
                  aria-labelledby="govuk-notification-banner-title"
                  data-module="govuk-notification-banner">
                 <div class="govuk-notification-banner__content justify-content--center">
-                    <p class="govuk-notification-banner__heading">User profile has been updated</p>
+                    <p class="govuk-notification-banner__heading">Your details have been updated</p>
                 </div>
             </div>
         </div>
@@ -20,7 +19,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">User profile</h1>
+        <h1 class="govuk-heading-l">My details</h1>
     </div>
 </div>
 
@@ -54,10 +53,18 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Phone number
+                        Telephone
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.PhoneNumber
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        User group
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @UKMCAB.Core.Security.Roles.NameFor(Model.Role)
                     </dd>
                 </div>
             </dl>

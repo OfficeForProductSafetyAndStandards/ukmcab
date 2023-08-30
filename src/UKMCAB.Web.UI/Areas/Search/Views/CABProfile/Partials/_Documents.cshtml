@@ -4,17 +4,18 @@
     <div class="cab-detail-section">
         <h2 class="govuk-heading-l">@Model.Title</h2>
         @if (!Model.Documents.Any())
-        {
+        { 
             <p class="govuk-body">@Constants.NotProvided</p>
         }
         else
         {
-            var groupedSchedules = Model.Documents.GroupBy(s => s.LegislativeArea);
+            var groupedSchedules = Model.Documents.OrderBy(s => s.LegislativeArea).ThenBy(s => s.Label).GroupBy(s => s.LegislativeArea);
+
             foreach (var groupedSchedule in groupedSchedules)
             {
                 if (!string.IsNullOrWhiteSpace(groupedSchedule.Key))
                 {
-                    <h3 class="govuk-heading-m">@groupedSchedule.Key</h3>
+                    <h3 class="govuk-heading-m">@groupedSchedule.Key</h3>                    
                 }
                 <dl class="govuk-summary-list">
                     @foreach (var file in groupedSchedule)

@@ -5,7 +5,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Account
 {
     public class EditProfileViewModel : ILayoutModel
     {
-        public string? Title => "Edit profile";
+        public string? Title => "Edit my details";
         
         [Required(ErrorMessage = "Enter a first name")]
         public string? FirstName { get; set; }
