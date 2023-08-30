@@ -59,7 +59,12 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy(Policies.CabManagement, policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.RequireClaim(Claims.CabEdit, "*");
+        policy.RequireClaim(Claims.CabManagement);
+    });
+    options.AddPolicy(Policies.UserManagement, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.UserManagement);
     });
 });
 

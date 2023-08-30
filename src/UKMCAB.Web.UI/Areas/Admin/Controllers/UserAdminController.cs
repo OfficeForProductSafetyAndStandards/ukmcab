@@ -3,6 +3,7 @@ using System.Security.Claims;
 using UKMCAB.Common.Domain;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
@@ -12,7 +13,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
-[Area("admin"), Route("user-admin"), Authorize]
+[Area("admin"), Route("user-admin"), Authorize(Policy = Policies.UserManagement)]
 public class UserAdminController : Controller
 {
     private readonly IUserService _userService;

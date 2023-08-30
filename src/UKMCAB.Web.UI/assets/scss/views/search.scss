@@ -54,34 +54,9 @@
 
                     #search-filter-keywords-input-container {
                         position: relative;
-                        display: inline-block;
 
                         input {
                             width: calc(100% - 40px);
-                        }
-
-                        #search-keyword-button {
-                            background-color: #1d70b8;
-                            background-image: url('../finder/images/search/search-button.png');
-                            background-position: 2px 50%;
-                            background-repeat: no-repeat;
-                            bottom: 0;
-                            border: 2px solid #0b0c0c;
-                            border-left: none;
-                            color: #fff;
-                            cursor: pointer;
-                            height: 100%;
-                            overflow: hidden;
-                            padding: 0;
-                            position: absolute;
-                            right: 0;
-                            text-indent: -5000px;
-                            width: 40px;
-
-                            &:focus {
-                                outline: 3px solid #ffdd00;
-                                outline-offset: 0;
-                            }
                         }
 
                         #search-keyword-button {
