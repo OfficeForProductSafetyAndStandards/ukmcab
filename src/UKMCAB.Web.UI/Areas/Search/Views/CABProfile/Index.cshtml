@@ -82,15 +82,27 @@
                     }
                 </div>
 
-                @if (User.HasClaim(UKMCAB.Core.Security.Claims.CabEdit, string.Empty) && !Model.IsArchived) // TODO:  purposefully disabled; need to figure out permissions first
+                @if (User.HasClaim(UKMCAB.Core.Security.Claims.CabEdit, "*")) // TODO:  purposefully disabled; need to figure out permissions first
                 {
                     <div id="admin-buttons-container" class="govuk-!-display-block govuk-!-text-align-right">
-                        <span>
-                            <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
-                        </span>
-                        <span>
-                            <a id="archive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="archive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="ArchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Archive</a>
-                        </span>
+                        @if (Model.IsArchived)
+                        {
+                            <span>
+                                <a id="unarchive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="unarchive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="UnarchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Unarchive</a>
+                            </span>
+                        }
+                        else
+                        {
+                            <span>
+                                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
+                            </span>
+                        }
+                        @if(Model.IsPublished)
+                        {
+                            <span>
+                                <a id="archive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="archive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="ArchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Archive</a>
+                            </span>
+                        }
                     </div>
                 }
             </div>
@@ -371,7 +383,7 @@
                             Enter the reason for archiving this CAB profile.
                         </div>
                         <p id="archive-reason-error" class="govuk-error-message govuk-visually-hidden">
-                            <span id="archive-error-message" class="govuk-error-message">Enter the reason for archiving this CAB profile</span>
+                            <span id="archive-error-message" class="govuk-error-message"></span>
                         </p>
                         <textarea id="archive-reason" class="govuk-textarea" asp-for="ArchiveReason" rows="5" aria-describedby="archive-hint"></textarea>
                     </div>
@@ -392,5 +404,44 @@
             </form>
         </div>
     </div>
+</div>
 
+<div id="unarchive-modal" class="modal">
+    <!-- Modal content -->
+    <div class="govuk-grid-row">
+        <div class="modal-content">
+            <div class="govuk-!-width-full">
+                <div id="close-container">
+                    <a href="#" class="modal-close govuk-link">Close</a>
+                </div>
+            </div>
+            <form method="post">
+                <div class="govuk-!-width-full">
+                    <h2 class="govuk-heading-l">Unarchive @Model.Name</h2>
+                    <div id="unarchive-reason-formgroup" class="govuk-form-group">
+                        <div id="unarchive-hint" class="govuk-hint">
+                            Enter the reason for unarchiving this CAB profile.
+                        </div>
+                        <p id="unarchive-reason-error" class="govuk-error-message govuk-visually-hidden">
+                            <span id="unarchive-error-message" class="govuk-error-message"></span>
+                        </p>
+                        <textarea id="unarchive-reason" class="govuk-textarea" name="UnarchiveReason" rows="5" aria-describedby="unarchive-hint"></textarea>
+                    </div>
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            Unarchived CAB profiles will be saved as draft.
+                        </strong>
+                    </div>
+                    <div class="govuk-button-group">
+                        <button id="unarchive-submit-button" class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                            Unarchive
+                        </button>
+                        <a href="#" class="modal-close govuk-link">Cancel</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
