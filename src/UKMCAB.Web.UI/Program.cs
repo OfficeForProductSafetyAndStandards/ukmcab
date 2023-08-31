@@ -1,6 +1,8 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.CodeAnalysis.Formatting;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
@@ -51,8 +53,13 @@ if (!redisConnectionString.Contains("allowAdmin"))
 {
     redisConnectionString = redisConnectionString + ",allowAdmin=true";
 }
+builder.Services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = 367001600);
 
-builder.WebHost.ConfigureKestrel(x => x.AddServerHeader = false);
+builder.WebHost.ConfigureKestrel(x =>
+{
+    x.AddServerHeader = false;
+    x.Limits.MaxRequestBodySize = 367001600;
+    });
 builder.Services.AddGovukOneLogin(builder.Configuration);
 builder.Services.AddAuthorization(options =>
 {
