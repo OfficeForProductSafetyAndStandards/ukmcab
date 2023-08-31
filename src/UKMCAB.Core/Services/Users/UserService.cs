@@ -97,7 +97,7 @@ public class UserService : IUserService
     {
         Guard.IsFalse(status == UserAccountRequestStatus.Pending, "You cannot assign a status of Pending");
         var request = await _userAccountRequestRepository.GetAsync(id).ConfigureAwait(false) ?? throw new NotFoundException("The user account request could not be found");
-        Rule.IsTrue(request.Status == UserAccountRequestStatus.Pending, $"The request has already been reviewed ({request.Status})");
+        Rule.IsTrue(request.Status == UserAccountRequestStatus.Pending, $"The request has already been reviewed and was {request.Status.ToString().ToLower()}");
         request.Status = status;
         request.ReviewComments = reviewComments;
         await _userAccountRequestRepository.UpdateAsync(request).ConfigureAwait(false);

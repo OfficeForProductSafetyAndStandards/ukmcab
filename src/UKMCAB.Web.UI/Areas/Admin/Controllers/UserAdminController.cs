@@ -255,7 +255,9 @@ public class UserAdminController : Controller
         }
         return View(new DeclineRequestViewModel
         {
-            AccountId = account.Id
+            AccountId = account.Id,
+            FirstName = account.FirstName,
+            LastName = account.Surname
         });
     }
 
@@ -275,6 +277,8 @@ public class UserAdminController : Controller
         }
 
         model.AccountId = id;
+        model.FirstName = account.FirstName;
+        model.LastName = account.Surname;
         return View(model);
     }
 
