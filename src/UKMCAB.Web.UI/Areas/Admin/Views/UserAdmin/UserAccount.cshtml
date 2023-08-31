@@ -13,7 +13,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">User account</h1>
+        <h1 class="govuk-heading-l">User profile</h1>
     </div>
 </div>
 
@@ -39,20 +39,41 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Email
+                        Email address
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.UserAccount.ContactEmailAddress
                     </dd>
                 </div>
+                
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Last logon date
+                        Organisation
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.UserAccount.OrganisationName
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last login
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Model.UserAccount.LastLogonUtc?.ToString("dd/MM/yy HH:mm")
                     </dd>
                 </div>
+                
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        User group
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.UserAccount.Role
+                    </dd>
+                </div>
+
+
             </dl>
         </div>
 
