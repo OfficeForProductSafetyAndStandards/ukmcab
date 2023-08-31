@@ -125,9 +125,9 @@ namespace UKMCAB.Core.Services
                 Email = document.Email,
                 Phone = document.Phone,
                 Website = document.Website,
-                BodyTypes = document.BodyTypes.ToArray(),
-                TestingLocations = document.TestingLocations.ToArray(),
-                LegislativeAreas = document.LegislativeAreas.ToArray(),
+                BodyTypes = document.BodyTypes?.ToArray() ?? Array.Empty<string>(),
+                TestingLocations = document.TestingLocations?.ToArray() ?? Array.Empty<string>(),
+                LegislativeAreas = document.LegislativeAreas?.ToArray() ?? Array.Empty<string>(),
                 RegisteredOfficeLocation = document.RegisteredOfficeLocation,
                 URLSlug = document.URLSlug,
                 LastUpdatedDate = document.LastUpdatedDate,
@@ -217,6 +217,44 @@ namespace UKMCAB.Core.Services
             await RecordStatsAsync();
 
             return latestDocument;
+        }
+
+        public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId, string unarchiveReason)
+        {
+            var documents = await FindAllDocumentsByCABIdAsync(cabId);
+            var latest = documents != null && documents.Any() ? documents.OrderBy(d => d.LastUpdated).Last() : null;
+
+            if (latest == null)
+            {
+                // An accidental double sumbmit might cause this action to be repeated so just return the already unarchived doc.
+                latest = await GetLatestDocumentAsync(cabId);
+                if (latest == null || latest.StatusValue == Status.Draft)
+                {
+                    return latest;
+                }
+            }
+
+            var unarchivedAudit = new Audit(userAccount, AuditStatus.Unarchived, unarchiveReason);
+            // Flag latest as historical with unarchive audit entry
+            latest.StatusValue = Status.Historical;
+            latest.AuditLog.Add(unarchivedAudit);
+            Guard.IsTrue(await _cabRepostitory.Update(latest),
+                $"Failed to update published version during draft publish, CAB Id: {latest.CABId}");
+            await _cachedSearchService.RemoveFromIndexAsync(latest.id);
+
+            // Create new draft from latest with unarchive entry
+            latest.StatusValue = Status.Draft;
+            latest.id = string.Empty;
+            latest = await _cabRepostitory.CreateAsync(latest);
+            Guard.IsFalse(latest == null,
+                $"Failed to create draft version during unarchive action, CAB Id: {latest.CABId}");
+            await UpdateSearchIndex(latest);
+
+            await RefreshCaches(latest.CABId, latest.URLSlug);
+
+            await RecordStatsAsync();
+
+            return latest;
         }
 
         public async Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveReason)
