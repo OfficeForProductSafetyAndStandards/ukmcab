@@ -59,7 +59,7 @@ builder.WebHost.ConfigureKestrel(x =>
 {
     x.AddServerHeader = false;
     x.Limits.MaxRequestBodySize = 367001600;
-    });
+});
 builder.Services.AddGovukOneLogin(builder.Configuration);
 builder.Services.AddAuthorization(options =>
 {

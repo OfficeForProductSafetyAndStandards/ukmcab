@@ -100,8 +100,15 @@
                 </div>
             </div>
 
+            <div class="govuk-grid-row" id="upload-progress" style="display:none">
+                <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
+                    <progress id="progress-bar" max="100" value="0"></progress>
+                    <span id="progress-text">0%</span>
+                </div>
+            </div>
+
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
+                <button id="schedule-upload-button" class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
                     Upload
                 </button>
                 <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">
