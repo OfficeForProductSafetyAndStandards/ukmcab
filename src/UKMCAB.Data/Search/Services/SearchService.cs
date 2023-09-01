@@ -15,13 +15,15 @@ namespace UKMCAB.Data.Search.Services
             _indexClient = searchClient;
         }
 
-        public async Task<SearchFacets> GetFacetsAsync()
+        public async Task<SearchFacets> GetFacetsAsync(bool internalSearch)
         {
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
-                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0" }
+                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0" },
+                Filter = internalSearch ? "" : "StatusValue eq '30'"
             });
+
             if (search.HasValue)
             {
                 var facets = search.Value.Facets;

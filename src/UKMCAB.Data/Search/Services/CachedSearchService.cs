@@ -12,6 +12,8 @@ internal class CachedSearchService : ICachedSearchService
     private readonly ISearchService _search;
 
     private const string _globalSearchesCacheKey = "__searches";
+    private const string _facetsInternalCacheKey = "ukmcab-facets-internal";
+    private const string _facetsCacheKey = "ukmcab-facets";
 
     public CachedSearchService(IDistCache cache, ISearchService search) 
     {
@@ -42,10 +44,12 @@ internal class CachedSearchService : ICachedSearchService
             await Task.WhenAll(tasks);
         }
         await _cache.RemoveAsync(_globalSearchesCacheKey);
+        await _cache.RemoveAsync(_facetsInternalCacheKey);
+        await _cache.RemoveAsync(_facetsCacheKey);
     }
 
-    public async Task<SearchFacets> GetFacetsAsync() 
-        => await _cache.GetOrCreateAsync("ukmcab-facets", _search.GetFacetsAsync, TimeSpan.FromHours(1));
+    public async Task<SearchFacets> GetFacetsAsync(bool internalSearch) 
+        => await _cache.GetOrCreateAsync(internalSearch ? _facetsInternalCacheKey : _facetsCacheKey, () => _search.GetFacetsAsync(internalSearch), TimeSpan.FromHours(1));
 
     public async Task<CABResults> QueryAsync(CABSearchOptions options)
     {
