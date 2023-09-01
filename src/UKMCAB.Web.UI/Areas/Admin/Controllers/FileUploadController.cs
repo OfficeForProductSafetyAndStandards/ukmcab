@@ -182,7 +182,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View(new FileListViewModel
                 {
                     Title = SchedulesOptions.ListTitle,
-                    UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label }).ToList() ?? new List<FileViewModel>(),
+                    UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea }).ToList() ?? new List<FileViewModel>(),
                     CABId = id,
                     IsFromSummary = fromSummary,
                     DocumentStatus = latestDocument.StatusValue
