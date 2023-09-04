@@ -98,11 +98,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
-            if (latestVersion.StatusValue == Status.Created)
-            {
-                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion, true);
-            }
+            var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion, true);
             TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} <br>CAB number {latestVersion.CABNumber}";
             return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
