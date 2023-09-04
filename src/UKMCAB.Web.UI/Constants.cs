@@ -12,6 +12,8 @@ public static class Constants
 
     public const string AnalyticsOptInCookieName = "accept_analytics_cookies";
 
+    public const string DateTimeFormat = "dd/MM/yyyy HH:mm";
+
     public class PageTitle
     {
         public const string About = "About";

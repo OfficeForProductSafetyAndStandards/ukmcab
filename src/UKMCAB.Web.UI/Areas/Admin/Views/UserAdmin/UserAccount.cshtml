@@ -26,7 +26,7 @@
                         First name
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.UserAccount.FirstName
+                        @Html.ValueOrNotProvided(Model.UserAccount.FirstName)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -34,15 +34,15 @@
                         Last name
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.UserAccount.Surname
+                        @Html.ValueOrNotProvided(Model.UserAccount.Surname)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Email address
+                        Email
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.UserAccount.ContactEmailAddress
+                        @Html.ValueOrNotProvided(Model.UserAccount.ContactEmailAddress)
                     </dd>
                 </div>
                 
@@ -51,16 +51,7 @@
                         Organisation
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.UserAccount.OrganisationName
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Last login
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.UserAccount.LastLogonUtc?.ToString("dd/MM/yy HH:mm")
+                        @Html.ValueOrNotProvided(Model.UserAccount.OrganisationName)
                     </dd>
                 </div>
                 
@@ -69,7 +60,16 @@
                         User group
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.UserAccount.Role
+                        @Html.ValueOrNotProvided(UKMCAB.Core.Security.Roles.NameFor(Model.UserAccount.Role))
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last log in
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @(Model.UserAccount.LastLogonUtc?.ToString(Constants.DateTimeFormat)??"N/A")
                     </dd>
                 </div>
 

@@ -50,15 +50,6 @@
                     <input class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ContactEmailAddress))" asp-for="ContactEmailAddress" type="text" autocomplete="email" aria-required="true" error-describedby-for="ContactEmailAddress">
                 </div>
 
-                <div class="govuk-form-group">
-                    <h3 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--s" asp-for="PhoneNumber">
-                            Telephone (optional)
-                        </label>
-                    </h3>
-                    <input class="govuk-input" asp-for="PhoneNumber" type="text" autocomplete="phone">
-                </div>
-
             </fieldset>
             <button class="govuk-button" data-module="govuk-button">
                 Submit
