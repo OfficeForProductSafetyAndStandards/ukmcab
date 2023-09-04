@@ -216,17 +216,20 @@ namespace UKMCAB.Core.Services
                 }
             }
 
-            var unarchivedAudit = new Audit(userAccount, AuditActions.Unarchived, unarchiveReason);
             // Flag latest as historical with unarchive audit entry
             latest.StatusValue = Status.Historical;
-            latest.AuditLog.Add(unarchivedAudit);
+            latest.AuditLog.Add(new Audit(userAccount, AuditActions.UnarchiveRequest, unarchiveReason));
             Guard.IsTrue(await _cabRepostitory.Update(latest),
                 $"Failed to update published version during draft publish, CAB Id: {latest.CABId}");
             await _cachedSearchService.RemoveFromIndexAsync(latest.id);
 
-            // Create new draft from latest with unarchive entry
+            // Create new draft from latest with unarchive entry and reset audit
             latest.StatusValue = Status.Draft;
             latest.id = string.Empty;
+            latest.AuditLog = new List<Audit>
+            {
+                new Audit(userAccount, AuditActions.Unarchived)
+            };
             latest = await _cabRepostitory.CreateAsync(latest);
             Guard.IsFalse(latest == null,
                 $"Failed to create draft version during unarchive action, CAB Id: {latest.CABId}");

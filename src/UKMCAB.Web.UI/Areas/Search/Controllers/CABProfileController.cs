@@ -113,7 +113,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Action == AuditActions.Archived) : null;
-            var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditActions.Published);
+            var publishedAudit = cabDocument.AuditLog.SingleOrDefault(al => al.Action == AuditActions.Published);
             var cab = new CABProfileViewModel
             {
                 IsArchived = isArchived,
@@ -123,7 +123,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ArchiveReason =  isArchived ? archiveAudit.Comment : string.Empty,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/" : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
-                PublishedDate = publishedAudit.DateTime,
+                PublishedDate = publishedAudit?.DateTime ?? null,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 AppointmentDate = cabDocument.AppointmentDate,

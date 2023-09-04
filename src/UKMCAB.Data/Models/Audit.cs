@@ -35,6 +35,7 @@ namespace UKMCAB.Data.Models
         public const string RePublished = nameof(RePublished);
         public const string Archived = nameof(Archived);
         public const string Unarchived = nameof(Unarchived);
+        public const string UnarchiveRequest = nameof(UnarchiveRequest);
     }
 
 }

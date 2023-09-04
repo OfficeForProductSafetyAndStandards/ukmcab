@@ -39,7 +39,7 @@
                         First name
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.FirstName
+                        @Html.ValueOrNotProvided(Model.FirstName)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -47,7 +47,7 @@
                         Last name
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.LastName
+                        @Html.ValueOrNotProvided(Model.LastName)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -55,15 +55,15 @@
                         Email
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.ContactEmailAddress
+                        @Html.ValueOrNotProvided(Model.ContactEmailAddress)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Telephone
+                        Organisation
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.PhoneNumber
+                        @Html.ValueOrNotProvided(Model.Organisation)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -71,7 +71,15 @@
                         User group
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @UKMCAB.Core.Security.Roles.NameFor(Model.Role)
+                        @Html.ValueOrNotProvided(UKMCAB.Core.Security.Roles.NameFor(Model.Role))
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last log in
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @(Model.LastLogonUtc?.ToString(Constants.DateTimeFormat) ?? "N/A")
                     </dd>
                 </div>
             </dl>

@@ -8,7 +8,6 @@ public class UserAccount
     public string? OrganisationName { get; set; }
     public string? EmailAddress { get; set; }
     public string? ContactEmailAddress { get; set; }
-    public string? PhoneNumber { get; set; }
     public bool IsLocked { get; set; }
     public UserAccountLockReason? LockReason { get; set; }
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
