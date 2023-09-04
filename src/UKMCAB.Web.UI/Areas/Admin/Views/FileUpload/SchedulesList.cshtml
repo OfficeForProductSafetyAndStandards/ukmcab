@@ -59,7 +59,7 @@
                         for (int i = 0; i < Model.UploadedFiles.Count; i++)
                         {
                             var uploadedFile = Model.UploadedFiles[i];
-                            var items = DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea.Trim()))).ToList();
+                            var items = DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea?.Trim() ?? string.Empty))).ToList();
                             <span asp-validation-for="UploadedFiles[i].Label"></span>
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">
