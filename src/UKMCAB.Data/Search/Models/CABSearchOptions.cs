@@ -10,8 +10,10 @@
         public string[] BodyTypesFilter { get; set; }
         public string[] LegislativeAreasFilter { get; set; }
         public string[] RegisteredOfficeLocationsFilter { get; set; }
+        public string[] StatusesFilter { get; set; }
 
         public bool IgnorePaging { get; set; }
+        public bool InternalSearch { get; set; }
 
         public List<string> Select { get; set; } = new List<string>();
     }

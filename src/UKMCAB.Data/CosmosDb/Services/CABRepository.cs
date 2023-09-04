@@ -2,7 +2,6 @@
 using Microsoft.Azure.Cosmos.Linq;
 using System.Linq.Expressions;
 using System.Net;
-using Newtonsoft.Json;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 
@@ -24,14 +23,30 @@ namespace UKMCAB.Data.CosmosDb.Services
             var client = new CosmosClient(_cosmosDbConnectionString);
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
-            var items = await Query<LegacyDocument>(_container, document => true);
+            var items = await Query<Document>(_container, document => true);
+            var yesterday = DateTime.UtcNow.AddDays(-1);
+            foreach (var legacyDocument in items)
+            {
+                if (legacyDocument.StatusValue == Status.Created)
+                {
+                    var a = legacyDocument.AuditLog?.SingleOrDefault(al => al.Status == AuditStatus.Created);
+                    if (a != null)
+                    {
+                        var createdDate = a.DateTime;
+                        if (createdDate < yesterday)
+                        {
+                            await Delete(legacyDocument);
+                        }
+                    }
+                }
+            }
 
-            if (items[1].Created != null)
+            items = await Query<Document>(_container, document => true);
+
+            if (items[0].AuditLog == null)
             {
                 foreach (var document in items)
                 {
-                    var newDoc = JsonConvert.DeserializeObject<Document>(JsonConvert.SerializeObject(document));
-                    
                     var auditLog = new List<Audit>();
                     if (document.Created != null)
                     {
@@ -56,8 +71,9 @@ namespace UKMCAB.Data.CosmosDb.Services
                         auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.DateTime, AuditStatus.Archived, document.ArchivedReason));
                     }
 
-                    newDoc.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();
-                    await Update(newDoc);
+                    document.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();
+
+                    await Update(document);
                 }
             }
 

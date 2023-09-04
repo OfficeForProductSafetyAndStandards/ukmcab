@@ -1,64 +1,72 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.AccountRequestListViewModel
 
-<div class="govuk-breadcrumbs govuk-!-margin-bottom-5">
-    <ol class="govuk-breadcrumbs__list">
-        <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="/">Home</a>
-        </li>
-        <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" asp-route="@UserAdminController.Routes.UserList">User account list</a>
-        </li>
-        <li class="govuk-breadcrumbs__list-item">
-            <a class="govuk-breadcrumbs__link" href="#!">Pending account requests</a>
-        </li>
-    </ol>
-</div>
-
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Pending user account requests</h1>
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">User accounts</h1>
     </div>
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
 
-        <table class="govuk-table">
-            <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                @if (Model.UserAccountRequests.Any())
-                {
-                    <th scope="col" class="govuk-table__header">First name</th>
-                    <th scope="col" class="govuk-table__header">Surname</th>
-                    <th scope="col" class="govuk-table__header">Email address</th>
-                }
-            </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                @if (Model.UserAccountRequests.Any())
-                {
-                    @foreach (var account in Model.UserAccountRequests)
-                    {
+        <div class="govuk-tabs" data-module="govuk-tabs">
+            <h2 class="govuk-tabs__title">
+                Contents
+            </h2>
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item">
+                    <a class="" asp-route="@UserAdminController.Routes.UserList" style="color:#0b0c0c;">Active</a>
+                </li>
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#requests">Requests (@Model.UserAccountRequests.Count)</a>
+                </li>
+            </ul>
+            <div class="govuk-tabs__panel" id="requests">
+
+                <table class="govuk-table govuk-!-font-size-16">
+                    <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header"><a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="UserAdmin" asp-action="ReviewAccountRequest" asp-route-id="@account.Id">@account.FirstName</a></th>
-                            <td class="govuk-table__cell">@account.Surname</td>
-                            <td class="govuk-table__cell">@account.ContactEmailAddress</td>
+                            @if (Model.UserAccountRequests.Any())
+                            {
+                                <th scope="col" class="govuk-table__header">First name</th>
+                                <th scope="col" class="govuk-table__header">Last name</th>
+                                <th scope="col" class="govuk-table__header">Email address</th>
+                                <th scope="col" class="govuk-table__header">Requested on</th>
+                                <th scope="col" class="govuk-table__header">Action</th>
+                            }
                         </tr>
-                    }
-                }
-                else
-                {
-                    <tr class="govuk-table__row">
-                        <td>
-                            <p class="govuk-body">There are no pending user account requests</p></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @if (Model.UserAccountRequests.Any())
+                        {
+                            @foreach (var account in Model.UserAccountRequests)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">@account.FirstName</td>
+                                    <td class="govuk-table__cell">@account.Surname</td>
+                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap" title="@account.GetEmailAddress()">@account.GetEmailAddress().Ellipsis(135)</td>
+                                    <td class="govuk-table__cell">@account.CreatedUtc.ToString("dd/MM/yy HH:mm")</td>
+                                    <td class="govuk-table__cell">
+                                        <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="UserAdmin" asp-action="ReviewAccountRequest" asp-route-id="@account.Id">Review&nbsp;request</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="govuk-table__row">
+                                <td>
+                                    <p class="govuk-body">There are no account requests.</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
 
-        <a class="govuk-back-link" asp-route="@UserAdminController.Routes.UserList">Back to user list</a>
+
+            </div>
+        </div>
 
     </div>
 </div>
-

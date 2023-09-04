@@ -1,4 +1,5 @@
-﻿using UKMCAB.Core.Services.Users.Models;
+﻿using UKMCAB.Common.Domain;
+using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Services.Users;
@@ -10,7 +11,8 @@ public interface IUserService
     /// </summary>
     /// <param name="id"></param>
     /// <returns></returns>
-    Task ApproveAsync(string id);
+    Task ApproveAsync(string id, string role);
+
     Task<UserAccount?> GetAsync(string id);
 
     Task<UserAccountRequest?> GetAccountRequestAsync(string id);
@@ -29,7 +31,7 @@ public interface IUserService
     /// <param name="skip"></param>
     /// <param name="take"></param>
     /// <returns></returns>
-    Task<IEnumerable<UserAccount>> ListAsync(bool? isLocked = false, int skip = 0, int take = 20);
+    Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options);
 
     /// <summary>
     /// Lists user account requests

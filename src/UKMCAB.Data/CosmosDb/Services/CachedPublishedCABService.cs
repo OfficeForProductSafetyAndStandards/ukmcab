@@ -26,20 +26,20 @@ namespace UKMCAB.Data.CosmosDb.Services
                 }
             }
             // Is url for a published or archived CAB 
-            var documents = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published || d.StatusValue == Status.Archived) && d.URLSlug.Equals(url));
+            var documents = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published || d.StatusValue == Status.Archived || d.StatusValue == Status.Draft) && d.URLSlug.Equals(url));
             if (documents != null && documents.Any() && documents.Count == 1)
             {
                 return documents.First();
             }
 
-            // Is url somewhere in a historical CAB
+            // Is url somewhere in a historical CAB which was last updated in the last two months
             documents = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Historical && d.URLSlug.Equals(url));
-            if (documents != null && documents.Any() && documents.Count == 1)
+            if (documents != null && documents.Any() && documents.Count == 1 && documents.First().LastUpdatedDate > DateTime.UtcNow.AddMonths(-2))
             {
                 var document = documents.First();
                 // Find published version
                 documents = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published && d.CABId.Equals(document.CABId));
-                if (documents != null && documents.Any() && documents.Count == 1)
+                if (documents != null && documents.Any() && documents.Count == 1 )
                 {
                     return documents.First();
                 }
@@ -52,7 +52,7 @@ namespace UKMCAB.Data.CosmosDb.Services
 
         private async Task<Document> GetPublishedCABByIdAsync(string id)
         {
-            var doc = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published && d.CABId.Equals(id));
+            var doc = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published || d.StatusValue == Status.Archived) && d.CABId.Equals(id));
             return doc.Any() && doc.Count == 1 ? doc.First() : null;
         }
 

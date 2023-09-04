@@ -2,6 +2,7 @@
 using Azure.Search.Documents.Models;
 using System.Text.RegularExpressions;
 using UKMCAB.Common;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
@@ -14,13 +15,15 @@ namespace UKMCAB.Data.Search.Services
             _indexClient = searchClient;
         }
 
-        public async Task<SearchFacets> GetFacetsAsync()
+        public async Task<SearchFacets> GetFacetsAsync(bool internalSearch)
         {
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
-                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0" }
+                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0" },
+                Filter = internalSearch ? "" : "StatusValue eq '30'"
             });
+
             if (search.HasValue)
             {
                 var facets = search.Value.Facets;
@@ -28,6 +31,7 @@ namespace UKMCAB.Data.Search.Services
                 result.BodyTypes = GetFacetList(facets[nameof(result.BodyTypes)]);
                 result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)]).Select(x => x.ToSentenceCase()).ToList()!;
                 result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
+                result.StatusValue = GetFacetList(facets[nameof(result.StatusValue)]);
             }
 
             return result;
@@ -42,7 +46,7 @@ namespace UKMCAB.Data.Search.Services
                 CABs = new List<CABIndexItem>()
             };
 
-            var query = GetKeywordsQuery(options.Keywords);
+            var query = GetKeywordsQuery(options.Keywords, options.InternalSearch);
             var filter = BuildFilter(options);
             var sort = BuildSort(options);
 
@@ -118,6 +122,15 @@ namespace UKMCAB.Data.Search.Services
                 var registeredOfficeLocations = string.Join(" or ", options.RegisteredOfficeLocationsFilter.Select(bt => $"RegisteredOfficeLocation eq '{bt}'"));
                 filters.Add($"({registeredOfficeLocations})");
             }
+            if (options.InternalSearch && options.StatusesFilter != null && options.StatusesFilter.Any())
+            {
+                var statuses = string.Join(" or ", options.StatusesFilter.Select(st => $"StatusValue eq '{st}'"));
+                filters.Add($"({statuses})");
+            }
+            else if (!options.InternalSearch)
+            {
+                filters.Add($"(StatusValue eq '{(int)Status.Published}')");
+            }
 
             return filters.Count > 1 ? $"({string.Join(" and ", filters)})" : filters.FirstOrDefault() ?? string.Empty;
         }
@@ -137,7 +150,8 @@ namespace UKMCAB.Data.Search.Services
 
                 case DataConstants.SortOptions.Default:
                 default:
-                    return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : string.Empty;
+                    return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : 
+                        string.Empty;
             }
         }
 
@@ -155,7 +169,7 @@ namespace UKMCAB.Data.Search.Services
 
         private static readonly Regex SpecialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
 
-        private string GetKeywordsQuery(string? keywords)
+        private string GetKeywordsQuery(string? keywords, bool internalSearch)
         {
             string retVal;
             var input = (keywords ?? string.Empty).Trim();
@@ -173,15 +187,20 @@ namespace UKMCAB.Data.Search.Services
                 else
                 {
                     input = SpecialCharsRegex.Replace(input, " ");
-                    var tokens = new[]
+                    var tokens = new List<string>
                     {
                         $"{nameof(CABIndexItem.Name)}:({input})^3",                    //any-match, boosted x3
                         $"{nameof(CABIndexItem.TownCity)}:({input})",                  //any-match
                         $"{nameof(CABIndexItem.Postcode)}:(\"{input}\")",              //phrase-match
                         $"{nameof(CABIndexItem.HiddenText)}:(\"{input}\")",            //phrase-match
+                        $"{nameof(CABIndexItem.ScheduleLabels)}:(\"{input}\")",        //phrase-match
                         $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4",           //phrase-match, boosted x4
                         $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6",    //phrase-match, boosted x6
                     };
+                    if (internalSearch)
+                    {
+                        tokens.Add($"{nameof(CABIndexItem.DocumentLabels)}:(\"{input}\")"); //phrase-match
+                    }
                     retVal = string.Join(" ", tokens);
                 }
             }

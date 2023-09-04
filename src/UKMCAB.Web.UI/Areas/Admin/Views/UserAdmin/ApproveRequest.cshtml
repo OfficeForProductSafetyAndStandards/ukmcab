@@ -1,0 +1,33 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Account.ApproveRequestViewModel
+
+
+@section BackButton
+    {
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a asp-route="@UserAdminController.Routes.ReviewAccountRequest" asp-route-id="@Model.AccountId" class="govuk-back-link">Back</a>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Approve account request</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <p class="govuk-body govuk-!-margin-bottom-9">
+            Confirm that the account request for @Model.FirstName @Model.LastName should be approved. If confirmed, they will be added to the @Model.Role.ToUpper() user group and given the permissions associated with this group.
+        </p>
+        <form method="post">
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button">Confirm</button>
+                <a asp-route="@UserAdminController.Routes.ReviewAccountRequest" asp-route-id="@Model.AccountId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

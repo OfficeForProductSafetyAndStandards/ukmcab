@@ -88,8 +88,13 @@
         }
 
         #cab-management-list-container {
+            table {
+                table-layout: fixed;
+            }
+
             td {
-                padding: 20px 0;
+                padding: 20px 10px 20px 0;
+                overflow-wrap: break-word;
 
                 label {
                     display: none;
@@ -117,6 +122,10 @@
         #cab-management-list-container {
             order: 3;
 
+            table {
+                table-layout: fixed;
+            }
+
             thead {
                 display: none;
             }
@@ -124,6 +133,7 @@
             td {
                 display: block;
                 border-bottom: none;
+                overflow-wrap: break-word;
 
                 label {
                     display: block;

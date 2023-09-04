@@ -1,6 +1,7 @@
 ﻿@using UKMCAB.Web.UI.Extensions
 @using System.Net
 @using UKMCAB.Data
+@using UKMCAB.Data.Models
 @model SearchViewModel
 
 <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
@@ -24,11 +25,13 @@
         <div id="search-results-filter-list">
             @foreach (var filterOption in Model.SelectedFilters)
             {
-                var filterSection = DataConstants.Lists.BodyTypes.Any(bt => bt.Equals(filterOption, StringComparison.CurrentCultureIgnoreCase)) ? "BodyTypes" :
-                DataConstants.Lists.Countries.Any(ct => ct.Equals(filterOption, StringComparison.CurrentCultureIgnoreCase)) ? "RegisteredOfficeLocations" : "LegislativeAreas";
-                var fitlerTerm = $"&{filterSection}={WebUtility.UrlEncode(filterOption).Replace("%3A", "%3a")}";
-                var filterPath = baseFilterPath.Replace(fitlerTerm, string.Empty);
-                <a href="@filterPath" class="search-result-filter-link">@filterOption&nbsp;&nbsp;x</a>
+                foreach (var filter in filterOption.Value)
+                {
+                    var term = $"&{filterOption.Key}={WebUtility.UrlEncode(filter).Replace("%3A", "%3a")}";
+                    var filterPath = baseFilterPath.Replace(term, string.Empty);
+                    var label = filterOption.Key == "Statuses" ? Model.StatusLabel(filter) : filter;
+                    <a href="@filterPath" class="search-result-filter-link">@label&nbsp;&nbsp;x</a>
+               }
             }
         </div>
     }
@@ -57,9 +60,22 @@
                 @foreach (var searchResult in Model.SearchResults)
                 {
                     <li class="search-result-list-item">
-                        <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" class="search-result-list-item-arrow" name="@searchResult.Name"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
-                        <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
+                        @if (Model.InternalSearch && searchResult.Status == Status.Draft.ToString())
+                        {
+                            <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@searchResult.CABId" asp-route-returnUrl="@Model.ReturnUrl" class="search-result-list-item-arrow" name="@searchResult.Name"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
+                            <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@searchResult.CABId" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
+                        }
+                        else
+                        {
+                            <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="search-result-list-item-arrow" name="@searchResult.Name"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
+                            <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
+                        }
                         <ul class="search-result-list-item-details">
+                            @if (Model.InternalSearch)
+                            {
+                                <li class="search-result-list-item-detail">Status: <span class="search-result-@searchResult.Status.ToLower()">@searchResult.Status</span></li>
+
+                            }
                             <li class="search-result-list-item-detail">Address: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.Address), searchResult.Address, @Constants.NotProvided)</li>
                             <li class="search-result-list-item-detail">Body type: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.BodyType), searchResult.BodyType, @Constants.NotProvided)</li>
                             <li class="search-result-list-item-detail">Registered office location: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.RegisteredOfficeLocation), searchResult.RegisteredOfficeLocation, @Constants.NotProvided)</li>

@@ -3,7 +3,7 @@
 public static class Constants
 {
     public const string MainLayoutPath = "~/Views/Shared/_Layout.cshtml";
-    public const string SiteName = "UKMCAB";
+    public const string SiteName = "UK Market Conformity Assessment Bodies";
     public const string NotProvided = "Not provided";
     public const string NotAssigned = "Not assigned";
 
@@ -11,6 +11,8 @@ public static class Constants
     public const string TempCookieChangeKey = nameof(TempCookieChangeKey);
 
     public const string AnalyticsOptInCookieName = "accept_analytics_cookies";
+
+    public const string DateTimeFormat = "dd/MM/yyyy HH:mm";
 
     public class PageTitle
     {

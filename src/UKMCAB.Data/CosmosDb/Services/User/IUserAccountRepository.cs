@@ -1,4 +1,6 @@
-﻿using UKMCAB.Data.Models.Users;
+﻿using UKMCAB.Common.Domain;
+using UKMCAB.Data.Models.Users;
+using static UKMCAB.Data.CosmosDb.Services.User.UserAccountRepository;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
 
@@ -7,7 +9,7 @@ public interface IUserAccountRepository
     Task CreateAsync(UserAccount userAccount);
     Task<UserAccount?> GetAsync(string id);
     Task InitialiseAsync();
-    Task<IEnumerable<UserAccount>> ListAsync(bool? isLocked = false, int skip = 0, int take = 20);
+    Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options);
     Task PatchAsync<T>(string id, string fieldName, T value);
     Task UpdateAsync(UserAccount userAccount);
 }

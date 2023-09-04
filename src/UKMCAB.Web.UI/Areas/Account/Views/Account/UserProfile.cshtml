@@ -3,14 +3,20 @@
 
 @if (Model.IsEdited)
 {
-
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-notification-banner govuk-grid-row" role="region"
+            <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
                  aria-labelledby="govuk-notification-banner-title"
                  data-module="govuk-notification-banner">
-                <div class="govuk-notification-banner__content justify-content--center">
-                    <p class="govuk-notification-banner__heading">User profile has been updated</p>
+                <div class="govuk-notification-banner__header">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                        Success
+                    </h2>
+                </div>
+                <div class="govuk-notification-banner__content">
+                    <h3 class="govuk-notification-banner__heading">
+                        Your details have been updated
+                    </h3>
                 </div>
             </div>
         </div>
@@ -20,7 +26,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">User profile</h1>
+        <h1 class="govuk-heading-l">My details</h1>
     </div>
 </div>
 
@@ -33,7 +39,7 @@
                         First name
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.FirstName
+                        @Html.ValueOrNotProvided(Model.FirstName)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -41,7 +47,7 @@
                         Last name
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.LastName
+                        @Html.ValueOrNotProvided(Model.LastName)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -49,15 +55,31 @@
                         Email
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.ContactEmailAddress
+                        @Html.ValueOrNotProvided(Model.ContactEmailAddress)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Phone number
+                        Organisation
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Model.PhoneNumber
+                        @Html.ValueOrNotProvided(Model.Organisation)
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        User group
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.ValueOrNotProvided(UKMCAB.Core.Security.Roles.NameFor(Model.Role))
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Last log in
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @(Model.LastLogonUtc?.ToString(Constants.DateTimeFormat) ?? "N/A")
                     </dd>
                 </div>
             </dl>

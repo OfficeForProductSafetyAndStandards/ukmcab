@@ -1,4 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using UKMCAB.Core.Security;
+@using UKMCAB.Web.UI.Areas.Admin.Controllers;
+@using System.Security;
 
 <header id="govuk-header" class="govuk-header " role="banner" data-module="govuk-header">
     <div class="govuk-header__container govuk-width-container">
@@ -42,14 +45,26 @@
                     </li>
                     @if (User.Identity.IsAuthenticated)
                     {
+
                         <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "admin", "govuk-header__navigation-item--active")">
-                            <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-header__link">Admin</a>
+                            @if (User.HasClaim(Claims.UserManagement, string.Empty) && User.HasClaim(Claims.CabManagement, string.Empty))
+                            {
+                                <a asp-route="@AdminController.Routes.Index" class="govuk-header__link">Admin</a>
+                            }
+                            else if (User.HasClaim(Claims.UserManagement, string.Empty) && !User.HasClaim(Claims.CabManagement, string.Empty))
+                            {
+                                <a asp-route="@UserAdminController.Routes.UserList" class="govuk-header__link">Admin</a>
+                            }
+                            else if (!User.HasClaim(Claims.UserManagement, string.Empty) && User.HasClaim(Claims.CabManagement, string.Empty))
+                            {
+                                <a asp-route="@AdminController.Routes.CABManagement" class="govuk-header__link">Admin</a>
+                            }
                         </li>
                         <li class="govuk-header__navigation-item navigation-mobile-underline">
                             <a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.Logout" class="govuk-header__link">Sign out</a>
                         </li>
                         <li class="govuk-header__navigation-item navigation-mobile-underline navigation-auth-link @Html.Conditional(ViewData["nav"] == "profile", "govuk-header__navigation-item--active")">
-                            <a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.UserProfile" class="govuk-header__link">Profile</a>
+                            <a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.UserProfile" class="govuk-header__link">My details</a>
                         </li>
                     }
                     else
