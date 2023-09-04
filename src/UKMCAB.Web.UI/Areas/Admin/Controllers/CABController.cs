@@ -128,7 +128,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            model.DocumentStatus = document != null ? document.StatusValue : Status.Created;
+            model.DocumentStatus = document != null ? document.StatusValue : Status.Draft;
             return View(model);
         }
 
@@ -385,14 +385,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 URLSlug = latest.URLSlug,
                 CABNumber = latest.CABNumber
             });
-        }
-
-        [HttpGet]
-        [Route("admin/cab/cancel/{id}")]
-        public async Task<IActionResult> Cancel(string id)
-        {
-            await _cabAdminService.DeleteDraftDocumentAsync(id);
-            return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
     }
 }

@@ -107,7 +107,7 @@
                 <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">
                     Save as draft
                 </a>
-                @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                @if (Model.IsFromSummary)
                 {
                     <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }

@@ -71,9 +71,9 @@ namespace UKMCAB.Core.Services
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             // if a newly create cab or a draft version exists this will be the latest version, there should be no more than one
-            if (documents.Any(d => d.StatusValue == Status.Created || d.StatusValue == Status.Draft))
+            if (documents.Any(d => d.StatusValue == Status.Draft))
             {
-                return documents.Single(d => d.StatusValue == Status.Created || d.StatusValue == Status.Draft);
+                return documents.Single(d => d.StatusValue == Status.Draft);
             }
             // if no draft or created version exists then see if a published version exists, again should only ever be one
             if (documents.Any(d => d.StatusValue == Status.Published))
@@ -98,7 +98,7 @@ namespace UKMCAB.Core.Services
             var auditItem = new Audit(userAccount, AuditActions.Created);
             document.CABId = Guid.NewGuid().ToString();
             document.AuditLog.Add(auditItem);
-            document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
+            document.StatusValue = Status.Draft;
             var rv = await _cabRepostitory.CreateAsync(document);
 
             await RecordStatsAsync();
@@ -141,45 +141,27 @@ namespace UKMCAB.Core.Services
             if (draft.StatusValue == Status.Published)
             {
                 // Need to create new version
-                draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
+                draft.StatusValue = Status.Draft;
                 draft.id = string.Empty;
                 draft.AuditLog = new List<Audit> { new Audit(userAccount, AuditActions.Created) };
                 draft = await _cabRepostitory.CreateAsync(draft);
                 Guard.IsFalse(draft == null,
                     $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
             }
-            else if (draft.StatusValue == Status.Created || draft.StatusValue == Status.Draft)
+            else if (draft.StatusValue == Status.Draft)
             {
-                if (draft.StatusValue == Status.Created && saveAsDraft)
-                {
-                    draft.StatusValue = Status.Draft;
-                }
                 var audit = new Audit(userAccount, AuditActions.Saved);
                 draft.AuditLog.Add(audit);
                 Guard.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
             }
 
-            if (draft.StatusValue == Status.Draft)
-            {
-                await UpdateSearchIndex(draft);
-            }
+            await UpdateSearchIndex(draft);
 
             await RefreshCaches(draft.CABId, draft.URLSlug);
 
             await RecordStatsAsync();
 
             return draft;
-        }
-
-        public async Task<bool> DeleteDraftDocumentAsync(string cabId)
-        {
-            var documents = await FindAllDocumentsByCABIdAsync(cabId);
-            // currently we only delete newly created docs that haven't been saved as draft
-            var createdDoc = documents.SingleOrDefault(d => d.StatusValue == Status.Created);
-            Guard.IsTrue(createdDoc != null, $"Error finding the document to delete, CAB Id: {cabId}");
-            Guard.IsTrue(await _cabRepostitory.Delete(createdDoc), $"Failed to delete draft version, CAB Id: {cabId}");
-            await RecordStatsAsync();
-            return true;
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)
@@ -189,7 +171,7 @@ namespace UKMCAB.Core.Services
                 // An accidental double sumbmit might cause this action to be repeated so just return the already published doc.
                 return latestDocument;
             }
-            Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
+            Guard.IsTrue(latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
             var publishedDocument = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             if (publishedDocument != null)
             {
@@ -222,7 +204,7 @@ namespace UKMCAB.Core.Services
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId, string unarchiveReason)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
-            var latest = documents != null && documents.Any() ? documents.OrderBy(d => d.LastUpdated).Last() : null;
+            var latest = documents != null && documents.Any() ? documents.OrderBy(d => d.LastUpdatedDate).Last() : null;
 
             if (latest == null)
             {
@@ -297,13 +279,10 @@ namespace UKMCAB.Core.Services
                 await _cabRepostitory.GetItemLinqQueryable().Where(x => x.StatusValue == status).CountAsync());
 
             await RecordStatAsync(Status.Unknown);
-            await RecordStatAsync(Status.Created);
             await RecordStatAsync(Status.Draft);
             await RecordStatAsync(Status.Published);
             await RecordStatAsync(Status.Archived);
             await RecordStatAsync(Status.Historical);
         }
     }
-
-
 }
