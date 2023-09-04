@@ -112,8 +112,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var isPublished = cabDocument.StatusValue == Status.Published;
-            var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Archived) : null;
-            var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
+            var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Action == AuditActions.Archived) : null;
+            var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditActions.Published);
             var cab = new CABProfileViewModel
             {
                 IsArchived = isArchived,
@@ -372,7 +372,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument != null)
             {
-                var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
+                var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditActions.Published);
                 var cab = new SubscriptionsCoreCabModel
                 {
                     CABId = cabDocument.CABId,

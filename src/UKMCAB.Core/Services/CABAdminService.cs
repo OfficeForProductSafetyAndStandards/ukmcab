@@ -95,7 +95,7 @@ namespace UKMCAB.Core.Services
 
             Guard.IsFalse(documentExists.Any(), "CAB number already exists in database");
             
-            var auditItem = new Audit(userAccount, AuditStatus.Created);
+            var auditItem = new Audit(userAccount, AuditActions.Created);
             document.CABId = Guid.NewGuid().ToString();
             document.AuditLog.Add(auditItem);
             document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
@@ -143,7 +143,7 @@ namespace UKMCAB.Core.Services
                 // Need to create new version
                 draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
                 draft.id = string.Empty;
-                draft.AuditLog = new List<Audit> { new Audit(userAccount, AuditStatus.Created) };
+                draft.AuditLog = new List<Audit> { new Audit(userAccount, AuditActions.Created) };
                 draft = await _cabRepostitory.CreateAsync(draft);
                 Guard.IsFalse(draft == null,
                     $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
@@ -154,7 +154,7 @@ namespace UKMCAB.Core.Services
                 {
                     draft.StatusValue = Status.Draft;
                 }
-                var audit = new Audit(userAccount, AuditStatus.Saved);
+                var audit = new Audit(userAccount, AuditActions.Saved);
                 draft.AuditLog.Add(audit);
                 Guard.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
             }
@@ -194,14 +194,14 @@ namespace UKMCAB.Core.Services
             if (publishedDocument != null)
             {
                 publishedDocument.StatusValue = Status.Historical;
-                publishedDocument.AuditLog.Add(new Audit(userAccount, AuditStatus.RePublished));
+                publishedDocument.AuditLog.Add(new Audit(userAccount, AuditActions.RePublished));
                 Guard.IsTrue(await _cabRepostitory.Update(publishedDocument),
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
                 await _cachedSearchService.RemoveFromIndexAsync(publishedDocument.id);
             }
 
             latestDocument.StatusValue = Status.Published;
-            latestDocument.AuditLog.Add(new Audit(userAccount, AuditStatus.Published));
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditActions.Published));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
@@ -234,7 +234,7 @@ namespace UKMCAB.Core.Services
                 }
             }
 
-            var unarchivedAudit = new Audit(userAccount, AuditStatus.Unarchived, unarchiveReason);
+            var unarchivedAudit = new Audit(userAccount, AuditActions.Unarchived, unarchiveReason);
             // Flag latest as historical with unarchive audit entry
             latest.StatusValue = Status.Historical;
             latest.AuditLog.Add(unarchivedAudit);
@@ -272,7 +272,7 @@ namespace UKMCAB.Core.Services
             Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {CABId}");
 
             publishedVersion.StatusValue = Status.Archived;
-            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditStatus.Archived, archiveReason));
+            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditActions.Archived, archiveReason));
             Guard.IsTrue(await _cabRepostitory.Update(publishedVersion), $"Failed to archive published version, CAB Id: {CABId}");
 
             await UpdateSearchIndex(publishedVersion);
