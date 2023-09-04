@@ -10,8 +10,8 @@ var scheduleUploadPage = (function () {
     var uploadButton = document.getElementById('schedule-upload-button');
 
 
-    function uploadProgressUpdate() {
-        //e.preventDefault();        
+    function uploadProgressUpdate(e) {
+        e.preventDefault();        
 
         var xhr = new XMLHttpRequest();
         xhr.open('POST', form.action, true);
@@ -25,8 +25,9 @@ var scheduleUploadPage = (function () {
         };
 
         xhr.onreadystatechange = function () {
+            //if (xhr.readyState === XMLHttpRequest.DONE && xhr.status == 200) {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                uploadProgress.style.display = 'none';
+                uploadProgress.style.display = 'none';                
             }
         };
 
@@ -35,12 +36,12 @@ var scheduleUploadPage = (function () {
                                                                   
     }
     function init() {
-        uploadButton.addEventListener('click', uploadProgressUpdate)
-    };
+        uploadButton.addEventListener('click', uploadProgressUpdate);
+    }
 
     return {
         init: init
-    }
+    };
 
 })();
 

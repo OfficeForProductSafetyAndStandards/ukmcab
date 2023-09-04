@@ -84,7 +84,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         latestVersion.Schedules.Add(result);
 
                         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);                        
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
+                        Thread.Sleep(2000);
                     }
 
                     errorCount = ModelState.ErrorCount;
@@ -194,7 +195,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             latestDocument.Schedules ??= new List<FileUpload>();
 
-            if (submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
+            if (submitType != null && submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
             {
                 var fileToRemove = latestDocument.Schedules[fileIndex];
 
