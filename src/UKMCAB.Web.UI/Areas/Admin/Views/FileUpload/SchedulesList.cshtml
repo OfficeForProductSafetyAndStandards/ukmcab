@@ -80,7 +80,7 @@
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles[i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
-                                        <select asp-for="UploadedFiles[i].LegislativeArea" class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
+                                                <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
                                             <option value="">Not assigned</option>
                                             @foreach (var la in items)
                                             {
