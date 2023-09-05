@@ -223,7 +223,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
                         RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
                 }
-                return SaveDraft(latestDocument);
+                return await SaveDraft(latestDocument);
             }
 
             return View(new FileListViewModel
@@ -282,8 +282,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return false;
         }
 
-        private IActionResult SaveDraft(Document document)
+        private async Task<IActionResult> SaveDraft(Document document)
         {
+            if (document.StatusValue == Status.Created)
+            {
+                var user = await _userManager.GetUserAsync(User);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, document, true);
+            }
             TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
             return RedirectToAction("Index", "Admin", new { Area = "admin" });
         }
