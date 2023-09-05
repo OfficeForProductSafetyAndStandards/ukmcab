@@ -51,7 +51,7 @@ public class UserAccountRepository : IUserAccountRepository
             q = q.Where(x => x.IsLocked == options.IsLocked);
         }
 
-        var data = await q.OrderBy(x => x.Surname)
+        var data = await q.OrderBy(x => x.SurnameNormalized)
             .Skip(options.Skip)
             .Take(options.Take)
             .AsAsyncEnumerable()

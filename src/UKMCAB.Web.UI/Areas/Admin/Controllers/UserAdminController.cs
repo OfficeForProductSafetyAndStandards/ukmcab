@@ -50,7 +50,11 @@ public class UserAdminController : Controller
 
     private async Task<IActionResult> UserListAsync(int page, bool isLocked, string title)
     {
-        var accounts = await _userService.ListAsync(new UserAccountListOptions(Skip: page - 1, IsLocked: isLocked, ExcludeId: User.FindFirstValue(ClaimTypes.NameIdentifier)));
+        const int take = 20;
+        var pageIndex = page - 1;
+        var skip = pageIndex * take;
+
+        var accounts = await _userService.ListAsync(new UserAccountListOptions(Skip: skip, Take: take, IsLocked: isLocked, ExcludeId: User.FindFirstValue(ClaimTypes.NameIdentifier)));
         var pendingAccounts = await GetAllPendingRequests();
         return View("UserList", new UserAccountListViewModel
         {

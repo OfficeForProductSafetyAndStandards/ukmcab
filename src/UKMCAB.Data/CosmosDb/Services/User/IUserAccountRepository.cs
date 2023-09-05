@@ -1,6 +1,5 @@
 ﻿using UKMCAB.Common.Domain;
 using UKMCAB.Data.Models.Users;
-using static UKMCAB.Data.CosmosDb.Services.User.UserAccountRepository;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
 
