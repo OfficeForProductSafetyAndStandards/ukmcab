@@ -46,7 +46,7 @@
                                     <td class="govuk-table__cell">@account.FirstName</td>
                                     <td class="govuk-table__cell">@account.Surname</td>
                                     <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap" title="@account.GetEmailAddress()">@account.GetEmailAddress().Ellipsis(135)</td>
-                                    <td class="govuk-table__cell">@account.CreatedUtc.ToString("dd/MM/yy HH:mm")</td>
+                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap">@account.CreatedUtc.ToString("dd/MM/yyyy HH:mm")</td>
                                     <td class="govuk-table__cell">
                                         <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="UserAdmin" asp-action="ReviewAccountRequest" asp-route-id="@account.Id">Review&nbsp;request</a>
                                     </td>
@@ -63,8 +63,12 @@
                         }
                     </tbody>
                 </table>
-
-
+                @if (Model.UserAccountRequests.Any())
+                {
+                    <div id="user-management-pagination-container govuk-body">
+                        <partial name="Partials/_Pagination" model="Model.Pagination" />
+                    </div>
+                }
             </div>
         </div>
 
