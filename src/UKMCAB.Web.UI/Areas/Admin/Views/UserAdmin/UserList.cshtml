@@ -1,6 +1,4 @@
-﻿@using Microsoft.IdentityModel.Tokens;
-@using UKMCAB.Web.UI.Areas.Admin.Controllers
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountListViewModel
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountListViewModel
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -20,10 +18,10 @@
                     <a class="govuk-tabs__tab" href="#active-user-list">Active</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UKMCAB.Web.UI.Areas.Admin.Controllers.UserAdminController.Routes.UserAccountRequestsList" style="color:#0b0c0c;">Requests (@Model.PendingAccountsCount)</a>
+                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" style="color:#0b0c0c;">Requests (@Model.PendingAccountsCount)</a>
                 </li>
             </ul>
-            <div class="govuk-tabs__panel" id="active-user-list">
+            <div class="govuk-tabs__panel govuk-body" id="active-user-list">
                 
                 <table class="govuk-table govuk-!-font-size-16">
                     <thead class="govuk-table__head">
@@ -49,7 +47,7 @@
                                     <td class="govuk-table__cell">@account.Surname</td>
                                     <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap" title="@account.GetEmailAddress()">@account.GetEmailAddress().Ellipsis(135)</td>
                                     <td class="govuk-table__cell">@UKMCAB.Core.Security.Roles.NameFor(account.Role)</td>
-                                    <td class="govuk-table__cell">@account.LastLogonUtc?.ToString("dd/MM/yy HH:mm")</td>
+                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap">@(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")</td>
                                     <td class="govuk-table__cell">
                                         <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View&nbsp;profile</a>
                                     </td>
@@ -66,6 +64,12 @@
                         }
                     </tbody>
                 </table>
+                @if (Model.UserAccounts.Any())
+                {
+                    <div id="user-management-pagination-container">
+                        <partial name="Partials/_Pagination" model="Model.Pagination" />
+                    </div>
+                }
 
                 @if (!Model.LockedOnly)
                 {
