@@ -11,7 +11,7 @@ var scheduleUploadPage = (function () {
 
 
     function uploadProgressUpdate(e) {
-        e.preventDefault();        
+        //e.preventDefault();        
 
         var xhr = new XMLHttpRequest();
         xhr.open('POST', form.action, true);
