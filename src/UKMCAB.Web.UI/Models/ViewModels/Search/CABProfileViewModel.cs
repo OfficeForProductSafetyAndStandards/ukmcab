@@ -12,6 +12,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? ArchivedDate { get; set; }
         public string? ArchiveReason { get; set; }
         public bool IsArchived { get; set; }
+        public bool IsPublished { get; set; }
 
         public string CABId { get; set; }
 

@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User
 {
@@ -6,5 +7,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User
     {
         public List<UserAccountRequest> UserAccountRequests { get; set; }
         public string? Title => "Pending user account requests";
+        public PaginationViewModel Pagination { get; set; }
     }
 }

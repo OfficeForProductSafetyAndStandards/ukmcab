@@ -10,6 +10,7 @@ using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.User;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
@@ -42,14 +43,18 @@ public class UserAdminController : Controller
     }
 
     [HttpGet("list", Name = Routes.UserList)]
-    public async Task<IActionResult> UserListAsync(int skip = 0) => await UserListAsync(skip, false, "User accounts");
+    public async Task<IActionResult> UserListAsync(int pageNumber = 1) => await UserListAsync(pageNumber, false, "User accounts");
 
     [HttpGet("list/locked", Name = Routes.UserListLocked)]
-    public async Task<IActionResult> UserListLockedAsync(int skip = 0) => await UserListAsync(skip, true, "Locked/archived user accounts");
+    public async Task<IActionResult> UserListLockedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, "Locked/archived user accounts");
 
-    private async Task<IActionResult> UserListAsync(int skip, bool isLocked, string title)
+    private async Task<IActionResult> UserListAsync(int page, bool isLocked, string title)
     {
-        var accounts = await _userService.ListAsync(new UserAccountListOptions(Skip: skip, IsLocked: isLocked, ExcludeId: User.FindFirstValue(ClaimTypes.NameIdentifier)));
+        const int take = 20;
+        var pageIndex = page - 1;
+        var skip = pageIndex * take;
+
+        var accounts = await _userService.ListAsync(new UserAccountListOptions(Skip: skip, Take: take, IsLocked: isLocked, ExcludeId: User.FindFirstValue(ClaimTypes.NameIdentifier)));
         var pendingAccounts = await GetAllPendingRequests();
         return View("UserList", new UserAccountListViewModel
         {
@@ -57,6 +62,13 @@ public class UserAdminController : Controller
             PendingAccountsCount = pendingAccounts.Count,
             Title = title,
             LockedOnly = isLocked,
+            Pagination = new PaginationViewModel
+            {
+                PageNumber = page,
+                ResultsPerPage = 20,
+                ResultType = string.Empty,
+                Total = await _userService.UserCountAsync(isLocked)
+            }
         });
     }
 
@@ -139,12 +151,28 @@ public class UserAdminController : Controller
 
 
     [HttpGet("account-requests", Name = Routes.UserAccountRequestsList)]
-    public async Task<IActionResult> AccountRequestList()
+    public async Task<IActionResult> AccountRequestList(int pageNumber = 1)
     {
         var pendingAccounts = await GetAllPendingRequests();
+        var total = pendingAccounts.Count;
+        var skip = pageNumber - 1;
+        if (skip * 20 >= total)
+        {
+            skip = 0;
+        }
+
+        pendingAccounts = pendingAccounts.OrderByDescending(pa => pa.CreatedUtc).Skip(skip).Take(20).ToList();
+
         return View(new AccountRequestListViewModel
         {
-            UserAccountRequests = pendingAccounts.OrderByDescending(pa => pa.CreatedUtc).ToList()
+            UserAccountRequests = pendingAccounts,
+            Pagination = new PaginationViewModel
+            {
+                Total = total,
+                PageNumber = pageNumber,
+                ResultType = string.Empty,
+                ResultsPerPage = 20
+            }
         });
     }
 
@@ -255,7 +283,9 @@ public class UserAdminController : Controller
         }
         return View(new DeclineRequestViewModel
         {
-            AccountId = account.Id
+            AccountId = account.Id,
+            FirstName = account.FirstName,
+            LastName = account.Surname
         });
     }
 
@@ -275,6 +305,8 @@ public class UserAdminController : Controller
         }
 
         model.AccountId = id;
+        model.FirstName = account.FirstName;
+        model.LastName = account.Surname;
         return View(model);
     }
 

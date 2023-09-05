@@ -22,7 +22,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public List<string> TestingLocations { get; set; }
         [CannotBeEmpty(ErrorMessage = "Select a body type")]
         public List<string> BodyTypes { get; set; }
-        [CannotBeEmpty(ErrorMessage = "Select a legislative area")]
         public List<string> LegislativeAreas { get; set; }
 
         public List<string>? ProductScheduleLegislativeAreas { get; set; }

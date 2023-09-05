@@ -52,8 +52,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType == Constants.SubmitType.Add18)
             {
-                var createdAudit = document?.AuditLog?.FirstOrDefault(al => al.Status == AuditStatus.Created);
-                var publishedAudit = document?.AuditLog?.FirstOrDefault(al => al.Status == AuditStatus.Published);
+                var createdAudit = document?.AuditLog?.FirstOrDefault(al => al.Action == AuditActions.Created);
+                var publishedAudit = document?.AuditLog?.FirstOrDefault(al => al.Action == AuditActions.Published);
                 var autoRenewDate = document != null && createdAudit != null && publishedAudit == null ? createdAudit.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
 
                 autoRenewDate = autoRenewDate.Date < DateTime.Today ? DateTime.UtcNow.AddMonths(1) : autoRenewDate;
@@ -128,7 +128,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            model.DocumentStatus = document != null ? document.StatusValue : Status.Created;
+            model.DocumentStatus = document != null ? document.StatusValue : Status.Draft;
             return View(model);
         }
 
@@ -385,14 +385,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 URLSlug = latest.URLSlug,
                 CABNumber = latest.CABNumber
             });
-        }
-
-        [HttpGet]
-        [Route("admin/cab/cancel/{id}")]
-        public async Task<IActionResult> Cancel(string id)
-        {
-            await _cabAdminService.DeleteDraftDocumentAsync(id);
-            return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
     }
 }

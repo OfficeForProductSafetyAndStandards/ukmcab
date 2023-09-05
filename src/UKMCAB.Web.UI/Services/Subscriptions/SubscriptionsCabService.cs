@@ -32,7 +32,7 @@ public class SubscriptionsCabService : ICabService
         var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id.ToString());
         if (cabDocument != null)
         {
-            var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
+            var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditActions.Published);
             var cab = new SubscriptionsCoreCabModel
             {
                 CABId = cabDocument.CABId,

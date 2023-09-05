@@ -1,4 +1,5 @@
 ﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 using Polly;
 using Polly.Fallback;
 using UKMCAB.Common;
@@ -34,6 +35,7 @@ public class UserAccountRepository : IUserAccountRepository
 
     public async Task UpdateAsync(UserAccount userAccount) => await _container.ReplaceItemAsync(userAccount, userAccount.Id, new PartitionKey(userAccount.Id)).ConfigureAwait(false);
 
+    public async Task<int> UserCountAsync(bool locked = false) => await _container.GetItemLinqQueryable<UserAccount>().AsQueryable().Where(x => x.IsLocked == locked).CountAsync();
 
     public async Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options)
     {
@@ -49,7 +51,7 @@ public class UserAccountRepository : IUserAccountRepository
             q = q.Where(x => x.IsLocked == options.IsLocked);
         }
 
-        var data = await q.OrderBy(x => x.Surname)
+        var data = await q.OrderBy(x => x.SurnameNormalized)
             .Skip(options.Skip)
             .Take(options.Take)
             .AsAsyncEnumerable()

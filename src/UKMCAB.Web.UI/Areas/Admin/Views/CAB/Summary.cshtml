@@ -234,6 +234,14 @@
                             else
                             {
                                 <text>@Constants.NotProvided</text>
+                                <br>
+                                <div class="govuk-warning-text">
+                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                                    <strong class="govuk-warning-text__text">
+                                        <span class="govuk-warning-text__assistive">Warning</span>
+                                        No legislative area has been selected.
+                                    </strong>
+                                </div>
                             }
                         </dd>
                     </div>
@@ -330,25 +338,18 @@
                         <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                             Save as draft
                         </button>
-                        @if (Model.CabDetailsViewModel.DocumentStatus == Status.Created)
+                        @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
                         {
-                            <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        }
+                        else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                        {
+                            <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId"  class="govuk-link govuk-link--no-visited-state">Cancel</a>
                         }
                         else
                         {
-                            if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
-                            {
-                                <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                            }
-                            else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
-                            {
-                                <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId"  class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                            }
-                            else
-                            {
-                                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                            }                            
-                        }
+                            <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        }                            
                     </div>
                 </form>
             </div>

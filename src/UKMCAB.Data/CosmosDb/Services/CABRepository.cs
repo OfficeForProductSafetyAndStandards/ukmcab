@@ -24,20 +24,11 @@ namespace UKMCAB.Data.CosmosDb.Services
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
-            var yesterday = DateTime.UtcNow.AddDays(-1);
             foreach (var legacyDocument in items)
             {
                 if (legacyDocument.StatusValue == Status.Created)
                 {
-                    var a = legacyDocument.AuditLog?.SingleOrDefault(al => al.Status == AuditStatus.Created);
-                    if (a != null)
-                    {
-                        var createdDate = a.DateTime;
-                        if (createdDate < yesterday)
-                        {
-                            await Delete(legacyDocument);
-                        }
-                    }
+                    await Delete(legacyDocument);
                 }
             }
 
@@ -51,24 +42,24 @@ namespace UKMCAB.Data.CosmosDb.Services
                     if (document.Created != null)
                     {
                         var audit = document.Created;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.DateTime, AuditStatus.Created));
+                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Created));
                     }
                     if (document.LastUpdated != null && document.StatusValue == Status.Draft)
                     {
                         var audit = document.LastUpdated;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.DateTime, AuditStatus.Saved));
+                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Saved));
                     }
 
                     if (document.Published != null)
                     {
                         var audit = document.Published;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.DateTime, AuditStatus.Published));
+                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Published));
                     }
 
                     if (document.Archived != null)
                     {
                         var audit = document.Archived;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.DateTime, AuditStatus.Archived, document.ArchivedReason));
+                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Archived, document.ArchivedReason));
                     }
 
                     document.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();

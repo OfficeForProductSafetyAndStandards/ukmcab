@@ -59,6 +59,7 @@
                         for (int i = 0; i < Model.UploadedFiles.Count; i++)
                         {
                             var uploadedFile = Model.UploadedFiles[i];
+                            var items = DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea?.Trim() ?? string.Empty))).ToList();
                             <span asp-validation-for="UploadedFiles[i].Label"></span>
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">
@@ -79,9 +80,19 @@
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles[i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
-                                        <select asp-for="UploadedFiles[i].LegislativeArea" class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")"
-                                                asp-items="@DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea)))">
+                                                <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
                                             <option value="">Not assigned</option>
+                                            @foreach (var la in items)
+                                            {
+                                                if (la.Selected)
+                                                {
+                                                    <option value="@la.Value" selected="selected">@la.Text</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@la.Value">@la.Text</option>
+                                                }
+                                            }
                                         </select>
                                     </div>
                                 </td>
@@ -112,7 +123,7 @@
                     Save as draft
                 </button>
 
-                @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                @if (Model.IsFromSummary)
                 {
                     <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }

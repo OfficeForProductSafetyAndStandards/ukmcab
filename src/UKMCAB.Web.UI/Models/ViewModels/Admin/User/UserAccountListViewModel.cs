@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User
 {
@@ -10,5 +11,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User
         public int PendingAccountsCount { get; set; }
 
         public bool LockedOnly { get; set; }
+
+        public PaginationViewModel Pagination { get; set; }
     }
 }

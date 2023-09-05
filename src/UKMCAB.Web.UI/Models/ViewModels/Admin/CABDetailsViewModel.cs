@@ -8,7 +8,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
     {
         public CABDetailsViewModel()
         {
-            DocumentStatus = Status.Created;
+            DocumentStatus = Status.Draft;
         }
 
         public CABDetailsViewModel(Document document)
