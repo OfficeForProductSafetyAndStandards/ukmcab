@@ -40,6 +40,32 @@
     cursor: pointer;
 }
 
+.search-grid-column-two-fifth {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 15px;
+}
+
+@media (min-width: 40.0625em) {
+    .search-grid-column-two-fifth {
+        width: 40%;
+        float: left;
+    }
+}
+
+.search-grid-column-three-fifth {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0 15px;
+}
+
+@media (min-width: 40.0625em) {
+    .search-grid-column-three-fifth {
+        width: 60%;
+        float: left;
+    }
+}
+
 #search-page {
     #search-results {
         #search-results-form-column {
