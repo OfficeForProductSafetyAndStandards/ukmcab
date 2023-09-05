@@ -22,7 +22,7 @@
                     <a class="govuk-tabs__tab" href="#requests">Requests (@Model.UserAccountRequests.Count)</a>
                 </li>
             </ul>
-            <div class="govuk-tabs__panel" id="requests">
+            <div class="govuk-tabs__panel  govuk-body" id="requests">
 
                 <table class="govuk-table govuk-!-font-size-16">
                     <thead class="govuk-table__head">
@@ -65,7 +65,7 @@
                 </table>
                 @if (Model.UserAccountRequests.Any())
                 {
-                    <div id="user-management-pagination-container govuk-body">
+                    <div id="user-management-pagination-container">
                         <partial name="Partials/_Pagination" model="Model.Pagination" />
                     </div>
                 }
