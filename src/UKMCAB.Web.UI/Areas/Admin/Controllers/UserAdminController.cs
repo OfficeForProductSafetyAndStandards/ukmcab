@@ -151,12 +151,28 @@ public class UserAdminController : Controller
 
 
     [HttpGet("account-requests", Name = Routes.UserAccountRequestsList)]
-    public async Task<IActionResult> AccountRequestList()
+    public async Task<IActionResult> AccountRequestList(int pageNumber = 1)
     {
         var pendingAccounts = await GetAllPendingRequests();
+        var total = pendingAccounts.Count;
+        var skip = pageNumber - 1;
+        if (skip * 20 >= total)
+        {
+            skip = 0;
+        }
+
+        pendingAccounts = pendingAccounts.OrderByDescending(pa => pa.CreatedUtc).Skip(skip).Take(20).ToList();
+
         return View(new AccountRequestListViewModel
         {
-            UserAccountRequests = pendingAccounts.OrderByDescending(pa => pa.CreatedUtc).ToList()
+            UserAccountRequests = pendingAccounts,
+            Pagination = new PaginationViewModel
+            {
+                Total = total,
+                PageNumber = pageNumber,
+                ResultType = string.Empty,
+                ResultsPerPage = 20
+            }
         });
     }
 
