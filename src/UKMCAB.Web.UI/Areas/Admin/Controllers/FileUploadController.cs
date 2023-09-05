@@ -85,7 +85,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
-                        Thread.Sleep(2000);
+                        //Thread.Sleep(2000);
                     }
 
                     errorCount = ModelState.ErrorCount;
@@ -96,6 +96,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
                 }
                 
+            }
+            else if (model.File != null && ModelState.IsValid)
+            {
+                var file = model.File;
+                var contentType = ValidateUploadFileAndGetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes, SchedulesOptions.AcceptedFileTypes, latestVersion.Schedules);
+                
+                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, file.FileName, file.FileName, DataConstants.Storage.Schedules,
+                            file.OpenReadStream(), contentType);
+                latestVersion.Schedules.Add(result);
+
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
+                Thread.Sleep(2000);
             }
             else if(model.Files != null && model.Files.Count > allowableNoOfFiles)
             {
