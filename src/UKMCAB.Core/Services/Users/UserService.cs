@@ -136,7 +136,11 @@ public class UserService : IUserService
                 await _userAccountRepository.CreateAsync(account).ConfigureAwait(false);
             }
 
-            await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestApproved);
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { "user-group", role}
+            };
+            await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestApproved, personalisation);
         }
         else
         {
