@@ -138,7 +138,7 @@ public class UserService : IUserService
 
             var personalisation = new Dictionary<string, dynamic>
             {
-                { "user-group", role}
+                { "user-group", role?.ToUpper() ?? string.Empty}
             };
             await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestApproved, personalisation);
         }
