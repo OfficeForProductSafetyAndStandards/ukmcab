@@ -9,6 +9,8 @@
     var unarchiveSubmitButton = document.getElementById("unarchive-submit-button");
     var unarchiveModalCloseButtons = document.querySelectorAll("#unarchive-modal .modal-close");
 
+    var cabId = document.getElementById("CABId");
+
     var archiveModalGroup = {
         reason: document.getElementById("archive-reason"),
         reasonError: document.getElementById("archive-reason-error"),
@@ -16,7 +18,8 @@
         errorMessage: document.getElementById("archive-error-message"),
         reasonFormGroup: document.getElementById("archive-reason-formgroup"),
         reasonId: "ArchiveReason",
-        url: "/search/cab-profile/archive/submit-js"
+        url: "/search/cab-profile/archive/submit-js",
+        redirect: ""
     };
 
     var unarchiveModalGroup = {
@@ -26,10 +29,10 @@
         errorMessage: document.getElementById("unarchive-error-message"),
         reasonFormGroup: document.getElementById("unarchive-reason-formgroup"),
         reasonId: "UnarchiveReason",
-        url: "/search/cab-profile/unarchive/submit-js"
+        url: "/search/cab-profile/unarchive/submit-js",
+        redirect: "/admin/cab/summary/" + cabId.value
     };
 
-    var cabId = document.getElementById("CABId");
 
     function init() {
         if (archiveModal) {
@@ -74,7 +77,12 @@
                     }
                 }).then((result) => {
                     if (result.submitted) {
-                        location.reload();
+                        if (modalGroup.redirect) {
+                            location.href = modalGroup.redirect;
+                        }
+                        else {
+                            location.reload();
+                        }
                     } else {
                         displayError(modalGroup, result.errorMessage);
                     }

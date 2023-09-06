@@ -302,7 +302,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     [AiTracking.Metadata.CabId] = id,
                     [AiTracking.Metadata.CabName] = cabDocument.Name
                 }));
-                return RedirectToAction("Index", new { id = cabDocument.URLSlug, returnUrl = model.ReturnURL });
+                return RedirectToAction("Summary", "CAB", new { area="Admin", id = cabDocument.CABId });
             }
 
             return View(model);
