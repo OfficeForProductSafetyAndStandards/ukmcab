@@ -221,7 +221,7 @@ public class UserAdminController : Controller
         {
             if (role.IsNullOrEmpty())
             {
-                ModelState.AddModelError("", "Choose a user group");
+                ModelState.AddModelError("", "Select a user group");
                 return await ReviewAccountRequest(id);
             }
             else
