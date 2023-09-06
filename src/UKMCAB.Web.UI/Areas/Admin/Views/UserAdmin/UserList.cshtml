@@ -47,7 +47,7 @@
                                     <td class="govuk-table__cell" title="@account.Surname" style="overflow:hidden; white-space:nowrap">@account.Surname.Ellipsis(15)</td>
                                     <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap" title="@account.GetEmailAddress()">@account.GetEmailAddress().Ellipsis(40)</td>
                                     <td class="govuk-table__cell">@UKMCAB.Core.Security.Roles.NameFor(account.Role)</td>
-                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap">@(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")</td>
+                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap">@(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "N/A")</td>
                                     <td class="govuk-table__cell">
                                         <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View&nbsp;profile</a>
                                     </td>
