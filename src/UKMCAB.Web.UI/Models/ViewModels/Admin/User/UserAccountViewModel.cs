@@ -51,10 +51,10 @@ public class UserAccountLockUnlockViewModel : ILayoutModel
         _ => throw new NotImplementedException(),
     };
 
-    [Required(ErrorMessage = "Please enter a reason")]
+    [Required(ErrorMessage = "Enter a reason")]
     public string? Reason { get; set; }
 
-    [Required(ErrorMessage = "Please enter notes")]
+    [Required(ErrorMessage = "Enter notes")]
     public string? Notes { get; set; }
 }
 
