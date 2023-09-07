@@ -24,7 +24,7 @@
     <div class="govuk-grid-column-two-thirds">
 
         <div class="@Html.CssFor(x=>x.Reason, "govuk-form-group")">
-            <label class="govuk-label" for="reason">Reason</label>
+            <label class="govuk-label govuk-!-font-weight-bold" for="reason">Reason</label>
             @if (Model.Mode == UserAccountLockToggleUIMode.Lock)
             {
                 <div id="reason-hint" class="govuk-hint">
@@ -44,7 +44,7 @@
         </div>
 
         <div class="@Html.CssFor(x=>x.Notes, "govuk-form-group")">
-            <label class="govuk-label" for="internal-notes">Internal notes</label>
+            <label class="govuk-label govuk-!-font-weight-bold" for="internal-notes">Internal notes</label>
             <div id="internal-notes-hint" class="govuk-hint">These notes will only be seen by OPSS administrators.</div>
             <p error-id-for="Notes" class="govuk-error-message">
                 <span asp-validation-for="Notes" class="govuk-error-message"></span>
