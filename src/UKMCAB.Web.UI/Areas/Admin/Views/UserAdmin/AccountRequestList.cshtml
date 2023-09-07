@@ -19,10 +19,10 @@
                     <a class="" asp-route="@UserAdminController.Routes.UserList" style="color:#0b0c0c;">Active</a>
                 </li>
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#requests">Requests (@Model.UserAccountRequests.Count)</a>
+                    <a class="govuk-tabs__tab" href="#requests">Requests (@Model.Pagination.Total)</a>
                 </li>
             </ul>
-            <div class="govuk-tabs__panel" id="requests">
+            <div class="govuk-tabs__panel  govuk-body" id="requests">
 
                 <table class="govuk-table govuk-!-font-size-16">
                     <thead class="govuk-table__head">
@@ -31,7 +31,7 @@
                             {
                                 <th scope="col" class="govuk-table__header">First name</th>
                                 <th scope="col" class="govuk-table__header">Last name</th>
-                                <th scope="col" class="govuk-table__header">Email address</th>
+                                <th scope="col" class="govuk-table__header">Email</th>
                                 <th scope="col" class="govuk-table__header">Requested on</th>
                                 <th scope="col" class="govuk-table__header">Action</th>
                             }
@@ -43,10 +43,10 @@
                             @foreach (var account in Model.UserAccountRequests)
                             {
                                 <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">@account.FirstName</td>
-                                    <td class="govuk-table__cell">@account.Surname</td>
-                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap" title="@account.GetEmailAddress()">@account.GetEmailAddress().Ellipsis(135)</td>
-                                    <td class="govuk-table__cell">@account.CreatedUtc.ToString("dd/MM/yy HH:mm")</td>
+                                    <td class="govuk-table__cell" title="@account.FirstName" style="overflow:hidden; white-space:nowrap">@account.FirstName.Ellipsis(15)</td>
+                                    <td class="govuk-table__cell" title="@account.Surname" style="overflow:hidden; white-space:nowrap">@account.Surname.Ellipsis(15)</td>
+                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap" title="@account.GetEmailAddress()">@account.GetEmailAddress().Ellipsis(40)</td>
+                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap">@account.CreatedUtc.ToString("dd/MM/yyyy HH:mm")</td>
                                     <td class="govuk-table__cell">
                                         <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="UserAdmin" asp-action="ReviewAccountRequest" asp-route-id="@account.Id">Review&nbsp;request</a>
                                     </td>
@@ -57,14 +57,18 @@
                         {
                             <tr class="govuk-table__row">
                                 <td>
-                                    <p class="govuk-body">There are no account requests.</p>
+                                    <p class="govuk-body">There are no pending user account requests to review.</p>
                                 </td>
                             </tr>
                         }
                     </tbody>
                 </table>
-
-
+                @if (Model.UserAccountRequests.Any())
+                {
+                    <div id="user-management-pagination-container">
+                        <partial name="Partials/_Pagination" model="Model.Pagination" />
+                    </div>
+                }
             </div>
         </div>
 

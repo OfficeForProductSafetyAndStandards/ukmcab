@@ -11,9 +11,30 @@ namespace UKMCAB.Data.Models
 
         // Audit
         // Legacy audit
+        // This is to support back compatibility during the 2.0 release, all legacy audit fields can ben removed in future release
         public Audit Created { get; set; }
-        public Audit LastUpdated { get; set; }
-        // Used by the search index, saves a lot of effort to flatten the model in the data source
+
+        private Audit lastUpdated;
+        public Audit LastUpdated
+        {
+            get
+            {
+                if (lastUpdated != null)
+                {
+                    return lastUpdated;
+                }
+                else if (AuditLog != null && AuditLog.Any())
+                {
+                    return AuditLog.Last();
+                }
+                else
+                {
+                    return default(Audit);
+                }
+            }
+            set => lastUpdated = value;
+        }
+
         public Audit Published { get; set; }
         public Audit Archived { get; set; }
         public string ArchivedReason { get; set; }

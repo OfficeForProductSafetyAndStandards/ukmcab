@@ -62,7 +62,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument == null || (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated))
             {
-                throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
+                return NotFound();
             }
 
             var cab = GetCabProfileViewModel(cabDocument, returnUrl);
@@ -112,8 +112,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var isPublished = cabDocument.StatusValue == Status.Published;
-            var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Archived) : null;
-            var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
+            var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Action == AuditActions.Archived) : null;
+            var publishedAudit = cabDocument.AuditLog.SingleOrDefault(al => al.Action == AuditActions.Published);
             var cab = new CABProfileViewModel
             {
                 IsArchived = isArchived,
@@ -123,7 +123,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ArchiveReason =  isArchived ? archiveAudit.Comment : string.Empty,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/" : WebUtility.UrlDecode(returnUrl),
                 CABId = cabDocument.CABId,
-                PublishedDate = publishedAudit.DateTime,
+                PublishedDate = publishedAudit?.DateTime ?? null,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 AppointmentDate = cabDocument.AppointmentDate,
@@ -302,7 +302,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     [AiTracking.Metadata.CabId] = id,
                     [AiTracking.Metadata.CabName] = cabDocument.Name
                 }));
-                return RedirectToAction("Index", new { id = cabDocument.URLSlug, returnUrl = model.ReturnURL });
+                return RedirectToAction("Summary", "CAB", new { area="Admin", id = cabDocument.CABId });
             }
 
             return View(model);
@@ -372,7 +372,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument != null)
             {
-                var publishedAudit = cabDocument.AuditLog.Single(al => al.Status == AuditStatus.Published);
+                var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditActions.Published);
                 var cab = new SubscriptionsCoreCabModel
                 {
                     CABId = cabDocument.CABId,

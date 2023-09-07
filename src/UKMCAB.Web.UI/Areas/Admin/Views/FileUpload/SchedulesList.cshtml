@@ -123,13 +123,13 @@
                     Save as draft
                 </button>
 
-                @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                @if (Model.IsFromSummary)
                 {
                     <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
         </div>
