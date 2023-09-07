@@ -11,10 +11,6 @@
     color: $govuk-link-colour;
     vertical-align: top;
 
-    &.remove-file-button-list-link {
-        //padding: 12px 0 12px 0;
-    }
-
     @include govuk-media-query($until: tablet) {
         padding: 12px 0 12px 0;
     }
@@ -35,7 +31,7 @@
             }
 
             th:nth-child(2) {
-                width: 25%;
+                width: 30%;
             }
         }
 
@@ -47,99 +43,86 @@
                     padding: 10px 0;
                 }
 
+                #uploaded-file-name-td {
+                    padding-top: 20px;
+                }
 
+                #uploaded-file-label-td {
+                    padding-top: 0px;
+                    padding-bottom: 20px;
+                }
+
+                #uploaded-file-legislative-area-td {
+                    padding-top: 0px;
+                    padding-bottom: 20px;
+                }
+
+                #uploaded-file-remove-td {
+                    padding-top: 0px;
+                    padding-bottom: 20px;
+                }
 
                 td {
-                    //padding: 20px 10px 20px 0;
-                    //vertical-align: top;
                     overflow-wrap: break-word;
-                    vertical-align: bottom; // see if it aligns td1 & td2 when error pops up
+                    vertical-align: bottom;
 
-                    &:first-child {
-                        //border: 1px solid red;
-                        padding: 15px 10px 5px 5px;
-                        vertical-align: bottom; // see if it aligns td1 & td2 when error pops up
-                        @include govuk-media-query($until: tablet) {
-                            width: 100%;
-                        }
-                    }
-
-                    &:nth-child(2) {
-                        //padding: 45px 10px 20px 0;
-
-                        //border: 1px solid blue;
-                        vertical-align: bottom; // see if it aligns td1 & td2 when error pops up
-                        @include govuk-media-query($until: tablet) {
-                            //padding: 5px 0;
-                            width: 100%;
-                        }
-                    }
-
-                    &:nth-child(3) {
-                        //padding: 65px 10px 20px 0;
-
-                        //border: 1px solid green;
-                        //padding-top: 30px;
+                    select {
+                        width: 90%;
 
                         @include govuk-media-query($until: tablet) {
-                            //padding: 5px 0;
-                            width: 100%;
+                            width:100%;
                         }
                     }
-                    //#schedule-filename {
-                    //    width: 100%;
-                    //}
-
-                    @include govuk-media-query($until: tablet) {
-                        display: block;
-                        border-bottom: none;
-                        padding: 5px 0;
-                    }
-
-                    p {
-                        @include govuk-media-query($until: tablet) {
-                            padding: 0;
-                            margin-bottom: 5px;
-                        }
-                    }
-
-                    .file-name {
-                        @include govuk-media-query($until: tablet) {
-                            padding-bottom: 5px;
-                        }
-                    }
-
-                    .file-label {
-                        padding-left: 20px;
-                        margin-bottom: 0;
-
-                        @include govuk-media-query($until: tablet) {
-                            padding-left: 0;
-                        }
-                    }
-
-                    .file-legislative-area {
-                        margin-bottom: 0;
-                    }
-
-                    .file-number {
-                        //width: 20px;
-                        display: inline-block;
-                    }
-
-                    .govuk-form-group {
-                        margin-bottom: 0;
-                    }
-
-                    label {
-                        display: none;
 
                         @include govuk-media-query($until: tablet) {
                             display: block;
+                            border-bottom: none;
+                            padding: 5px 0;
+                        }
+
+                        p {
+                            @include govuk-media-query($until: tablet) {
+                                padding: 0;
+                                margin-bottom: 5px;
+                            }
+                        }
+
+                        .file-name {
+                            @include govuk-media-query($until: tablet) {
+                                padding-bottom: 5px;
+                            }
+                        }
+
+                        .file-label {
+                            padding-left: 20px;
+                            margin-bottom: 0;
+
+                            @include govuk-media-query($until: tablet) {
+                                padding-left: 0;
+                            }
+                        }
+
+                        .file-legislative-area {
+                            margin-bottom: 0;
+                        }
+
+                        .file-number {                            
+                            display: inline-block;
+                        }
+
+                        .govuk-form-group {
+                            margin-bottom: 0;
+                        }
+
+                        label {
+                            display: none;
+
+                            @include govuk-media-query($until: tablet) {
+                                display: block;
+                            }
                         }
                     }
                 }
             }
         }
     }
-}
