@@ -1,6 +1,7 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using UKMCAB.Common.Exceptions;
@@ -154,12 +155,12 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         }
 
         [HttpGet("logout", Name = Routes.Logout)]
-        public async Task<IActionResult> Logout()
+        public async Task Logout()
         {
-            await HttpContext.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
             _logger.LogInformation("User logged out.");
             _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
-            return Redirect("/");
         }
 
         [AllowAnonymous]
