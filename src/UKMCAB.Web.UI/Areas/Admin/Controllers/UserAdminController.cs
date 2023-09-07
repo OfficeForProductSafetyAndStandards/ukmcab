@@ -107,6 +107,7 @@ public class UserAdminController : Controller
         const string ViewName = "UserAccountLockUnlock";
         if (Request.Method == HttpMethod.Get.Method)
         {
+            ModelState.Clear();
             return View(ViewName, new UserAccountLockUnlockViewModel() { Mode = mode });
         }
         else if (Request.Method == HttpMethod.Post.Method && model != null)

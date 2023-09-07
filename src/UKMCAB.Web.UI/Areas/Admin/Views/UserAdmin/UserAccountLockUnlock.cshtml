@@ -3,22 +3,53 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">@Model.VerbBaseForm.ToTitleCase() user account</h1>
+        @if (Model.Mode == UserAccountLockToggleUIMode.Lock)
+        {
+            <p class="govuk-body">Locking an account means that the user will not be able to log in to the UKMCAB service. This should be used when you need to temporarily lock access to the account.</p>
+        }
+        else if (Model.Mode == UserAccountLockToggleUIMode.Unlock)
+        {
+            <p class="govuk-body">Unlocking an account means that the user will be able to log in to the UKMCAB service.</p>
+        }
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="new[]{nameof(Model.Reason),nameof(Model.Notes)}" />
     </div>
 </div>
 
 <form method="post" class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <div class="govuk-form-group">
+        <div class="@Html.CssFor(x=>x.Reason, "govuk-form-group")">
             <label class="govuk-label" for="reason">Reason</label>
-            <div id="reason-hint" class="govuk-hint">This will be included in user notifications and the account history viewable by all users</div>
-            <textarea class="govuk-textarea" id="reason" name="reason" rows="5" aria-describedby="reason-hint"></textarea>
+            @if (Model.Mode == UserAccountLockToggleUIMode.Lock)
+            {
+                <div id="reason-hint" class="govuk-hint">
+                    Enter the reason for locking this user account. The user will be notified that their account has been locked and the reason will be included.
+                </div>
+            }
+            else if (Model.Mode == UserAccountLockToggleUIMode.Unlock)
+            {
+                <div id="reason-hint" class="govuk-hint">
+                    Enter the reason for unlocking this user account. The user will be notified that their account has been unlocked and the reason will be included.
+                </div>
+            }
+            <p error-id-for="Reason" class="govuk-error-message">
+                <span asp-validation-for="Reason" class="govuk-error-message"></span>
+            </p>
+            <textarea class="@Html.CssFor(x=>x.Reason, "govuk-textarea")" asp-for="Reason" rows="5" aria-describedby="reason-hint"></textarea>
         </div>
 
-        <div class="govuk-form-group">
-            <label class="govuk-label" for="internal-notes">Admin notes</label>
-            <div id="internal-notes-hint" class="govuk-hint">The comments will only be viewable by administrators in the account history.</div>
-            <textarea class="govuk-textarea" id="internal-notes" name="internal-notes" rows="5" aria-describedby="internal-notes-hint"></textarea>
+        <div class="@Html.CssFor(x=>x.Notes, "govuk-form-group")">
+            <label class="govuk-label" for="internal-notes">Internal notes</label>
+            <div id="internal-notes-hint" class="govuk-hint">These notes will only be seen by OPSS administrators.</div>
+            <p error-id-for="Notes" class="govuk-error-message">
+                <span asp-validation-for="Notes" class="govuk-error-message"></span>
+            </p>
+            <textarea class="@Html.CssFor(x=>x.Notes, "govuk-textarea")" asp-for="Notes" rows="5" aria-describedby="internal-notes-hint"></textarea>
         </div>
 
         <div class="govuk-button-group govuk-!-text-align-right">

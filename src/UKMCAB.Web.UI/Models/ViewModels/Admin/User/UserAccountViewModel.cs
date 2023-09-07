@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models.Users;
+﻿using System.ComponentModel.DataAnnotations;
+using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 
@@ -41,8 +42,19 @@ public class UserAccountLockUnlockViewModel : ILayoutModel
         _ => throw new NotImplementedException(),
     };
 
+    public string VerbPresentParticiple => Mode switch
+    {
+        UserAccountLockToggleUIMode.Lock => "locking",
+        UserAccountLockToggleUIMode.Unlock => "unlocking",
+        UserAccountLockToggleUIMode.Archive => "archiving",
+        UserAccountLockToggleUIMode.Unarchive => "unarchiving",
+        _ => throw new NotImplementedException(),
+    };
 
+    [Required(ErrorMessage = "Please enter a reason")]
     public string? Reason { get; set; }
+
+    [Required(ErrorMessage = "Please enter notes")]
     public string? Notes { get; set; }
 }
 

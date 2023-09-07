@@ -62,7 +62,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument == null || (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated))
             {
-                throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
+                return NotFound();
             }
 
             var cab = GetCabProfileViewModel(cabDocument, returnUrl);

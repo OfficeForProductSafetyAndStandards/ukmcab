@@ -138,7 +138,7 @@ public class UserService : IUserService
 
             var personalisation = new Dictionary<string, dynamic>
             {
-                { "user-group", role?.ToUpper() ?? string.Empty}
+                { "user-group", Roles.NameFor(role) ?? string.Empty}
             };
             await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestApproved, personalisation);
         }
@@ -169,9 +169,8 @@ public class UserService : IUserService
             }
             else
             {
-                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountLocked);
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountLocked, new() { ["reason"] = reasonDescription });
             }
-            //todo: record audit trail
         }
         else
         {
@@ -193,7 +192,7 @@ public class UserService : IUserService
             }
             else
             {
-                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnlocked);
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnlocked, new() { ["reason"] = reasonDescription });
             }
             //todo: record audit trail
         }
