@@ -60,7 +60,7 @@ public class DomainExceptionHandlerMiddleware : BaseExceptionHandlerMiddleware
         }
         catch (DomainException dex)
         {
-            context.Response.StatusCode = StatusCodes.Status400BadRequest;
+            context.Response.StatusCode = dex is NotFoundException ? StatusCodes.Status404NotFound : StatusCodes.Status400BadRequest;
             if (DoesRequireJsonResponse(context))
             {
                 context.Response.ContentType = "application/json; charset=utf-8";
@@ -86,8 +86,7 @@ public class DomainExceptionHandlerMiddleware : BaseExceptionHandlerMiddleware
                 });
                 context.Request.Method = "GET";
                 context.SetInternalRewrite(true);
-                context.Request.Path = _httpErrorOptions.Error400Path;
-                context.Response.StatusCode = StatusCodes.Status400BadRequest;
+                context.Request.Path = dex is NotFoundException ? _httpErrorOptions.Error404Path : _httpErrorOptions.Error400Path;
 
                 await _next(context);
             }
