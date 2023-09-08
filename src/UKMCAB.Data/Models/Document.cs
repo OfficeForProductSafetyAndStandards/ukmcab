@@ -5,6 +5,7 @@ namespace UKMCAB.Data.Models
     public class Document
     {
         public string id { get; set; }
+        public string Version { get; set; }
 
         public Status StatusValue { get; set; }
         public string Status => StatusValue.ToString();
