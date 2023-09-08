@@ -11,9 +11,11 @@ internal class CachedSearchService : ICachedSearchService
     private readonly IDistCache _cache;
     private readonly ISearchService _search;
 
-    private const string _globalSearchesCacheKey = "__searches";
-    private const string _facetsInternalCacheKey = "ukmcab-facets-internal";
-    private const string _facetsCacheKey = "ukmcab-facets";
+    private const string _globalSearchesCacheKey = $"__{DataConstants.Version.Number}_searches";
+    private const string _searchCacheKeyPrefix = $"{DataConstants.Version.Number}_srch_";
+    private const string _cabSearchResultCacheKeyPrefix = $"{DataConstants.Version.Number}_cab_res_";
+    private const string _facetsCacheKey = $"{DataConstants.Version.Number}_ukmcab-facets";
+    private const string _facetsInternalCacheKey = $"{_facetsCacheKey}-internal";
 
     public CachedSearchService(IDistCache cache, ISearchService search) 
     {
@@ -60,7 +62,7 @@ internal class CachedSearchService : ICachedSearchService
         }
         else
         {
-            var k = $"srch_{JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = false }).Md5()}";
+            var k = $"{_searchCacheKeyPrefix}{JsonSerializer.Serialize(options, new JsonSerializerOptions { WriteIndented = false }).Md5()}";
             var rv = await _cache.GetOrCreateAsync(k, () => _search.QueryAsync(options), TimeSpan.FromHours(5), async result =>
             {
                 var ids = result.CABs.Select(x => x.CABId).ToList();
@@ -73,7 +75,7 @@ internal class CachedSearchService : ICachedSearchService
         }
     }
 
-    private static string GetCabSearchResultSetCacheKey(string cabId) => $"cab_res_{cabId}";
+    private static string GetCabSearchResultSetCacheKey(string cabId) => $"{_cabSearchResultCacheKeyPrefix}{cabId}";
 
     public async Task ReIndexAsync(CABIndexItem cabIndexItem)
     {
