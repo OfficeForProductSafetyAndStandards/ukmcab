@@ -18,6 +18,7 @@ public class PageNotFoundMiddleware
         await _next(context);
         if (context.Response.StatusCode == StatusCodes.Status404NotFound)
         {
+            context.SetEndpoint(endpoint: null);
             context.SetInternalRewrite(true);
             context.Items["originalPath"] = context.Request.Path.Value;
             context.Request.Path = _httpErrorOptions.Error404Path;

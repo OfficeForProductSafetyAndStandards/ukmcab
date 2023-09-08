@@ -136,7 +136,11 @@ public class UserService : IUserService
                 await _userAccountRepository.CreateAsync(account).ConfigureAwait(false);
             }
 
-            await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestApproved);
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { "user-group", Roles.NameFor(role) ?? string.Empty}
+            };
+            await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountRequestApproved, personalisation);
         }
         else
         {
@@ -165,9 +169,8 @@ public class UserService : IUserService
             }
             else
             {
-                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountLocked);
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountLocked, new() { ["reason"] = reasonDescription });
             }
-            //todo: record audit trail
         }
         else
         {
@@ -189,7 +192,7 @@ public class UserService : IUserService
             }
             else
             {
-                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnlocked);
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnlocked, new() { ["reason"] = reasonDescription });
             }
             //todo: record audit trail
         }

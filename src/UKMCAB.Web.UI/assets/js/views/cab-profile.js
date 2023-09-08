@@ -9,30 +9,23 @@
     var unarchiveSubmitButton = document.getElementById("unarchive-submit-button");
     var unarchiveModalCloseButtons = document.querySelectorAll("#unarchive-modal .modal-close");
 
-    var archiveModalGroup = {
-        reason: document.getElementById("archive-reason"),
-        reasonError: document.getElementById("archive-reason-error"),
-        reasonErrorMessage: "Enter the reason for archiving this CAB profile",
-        errorMessage: document.getElementById("archive-error-message"),
-        reasonFormGroup: document.getElementById("archive-reason-formgroup"),
-        reasonId: "ArchiveReason",
-        url: "/search/cab-profile/archive/submit-js"
-    };
-
-    var unarchiveModalGroup = {
-        reason: document.getElementById("unarchive-reason"),
-        reasonError: document.getElementById("unarchive-reason-error"),
-        reasonErrorMessage: "Enter the reason for unarchiving this CAB profile",
-        errorMessage: document.getElementById("unarchive-error-message"),
-        reasonFormGroup: document.getElementById("unarchive-reason-formgroup"),
-        reasonId: "UnarchiveReason",
-        url: "/search/cab-profile/unarchive/submit-js"
-    };
-
     var cabId = document.getElementById("CABId");
+
+
+
 
     function init() {
         if (archiveModal) {
+            var archiveModalGroup = {
+                reason: document.getElementById("archive-reason"),
+                reasonError: document.getElementById("archive-reason-error"),
+                reasonErrorMessage: "Enter the reason for archiving this CAB profile",
+                errorMessage: document.getElementById("archive-error-message"),
+                reasonFormGroup: document.getElementById("archive-reason-formgroup"),
+                reasonId: "ArchiveReason",
+                url: "/search/cab-profile/archive/submit-js",
+                redirect: ""
+            };
             archiveSubmitButton.addEventListener("click", (e) => {
                e.preventDefault();
                submitDetails(archiveModalGroup);
@@ -44,6 +37,16 @@
             });
         }
         if (unarchiveModal) {
+            var unarchiveModalGroup = {
+                reason: document.getElementById("unarchive-reason"),
+                reasonError: document.getElementById("unarchive-reason-error"),
+                reasonErrorMessage: "Enter the reason for unarchiving this CAB profile",
+                errorMessage: document.getElementById("unarchive-error-message"),
+                reasonFormGroup: document.getElementById("unarchive-reason-formgroup"),
+                reasonId: "UnarchiveReason",
+                url: "/search/cab-profile/unarchive/submit-js",
+                redirect: "/admin/cab/summary/" + cabId.value
+            };
             unarchiveSubmitButton.addEventListener("click", (e) => {
                 e.preventDefault();
                 submitDetails(unarchiveModalGroup);
@@ -74,7 +77,12 @@
                     }
                 }).then((result) => {
                     if (result.submitted) {
-                        location.reload();
+                        if (modalGroup.redirect) {
+                            location.href = modalGroup.redirect;
+                        }
+                        else {
+                            location.reload();
+                        }
                     } else {
                         displayError(modalGroup, result.errorMessage);
                     }

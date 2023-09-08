@@ -84,7 +84,7 @@
 
                 @if (User.HasClaim(UKMCAB.Core.Security.Claims.CabEdit, "*")) // TODO:  purposefully disabled; need to figure out permissions first
                 {
-                    <div id="admin-buttons-container" class="govuk-!-display-block govuk-!-text-align-right">
+                    <div id="admin-buttons-container">
                         @if (Model.IsArchived)
                         {
                             <span>

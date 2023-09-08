@@ -107,6 +107,7 @@ public class UserAdminController : Controller
         const string ViewName = "UserAccountLockUnlock";
         if (Request.Method == HttpMethod.Get.Method)
         {
+            ModelState.Clear();
             return View(ViewName, new UserAccountLockUnlockViewModel() { Mode = mode });
         }
         else if (Request.Method == HttpMethod.Post.Method && model != null)
@@ -155,8 +156,8 @@ public class UserAdminController : Controller
     {
         var pendingAccounts = await GetAllPendingRequests();
         var total = pendingAccounts.Count;
-        var skip = pageNumber - 1;
-        if (skip * 20 >= total)
+        var skip = (pageNumber - 1) * 20;
+        if (skip >= total)
         {
             skip = 0;
         }
@@ -221,7 +222,7 @@ public class UserAdminController : Controller
         {
             if (role.IsNullOrEmpty())
             {
-                ModelState.AddModelError("", "Choose a user group");
+                ModelState.AddModelError("", "Select a user group");
                 return await ReviewAccountRequest(id);
             }
             else
