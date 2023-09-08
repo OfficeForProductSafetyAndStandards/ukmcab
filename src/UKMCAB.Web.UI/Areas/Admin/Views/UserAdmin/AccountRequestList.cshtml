@@ -19,7 +19,7 @@
                     <a class="" asp-route="@UserAdminController.Routes.UserList" style="color:#0b0c0c;">Active</a>
                 </li>
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#requests">Requests (@Model.UserAccountRequests.Count)</a>
+                    <a class="govuk-tabs__tab" href="#requests">Requests (@Model.Pagination.Total)</a>
                 </li>
             </ul>
             <div class="govuk-tabs__panel  govuk-body" id="requests">

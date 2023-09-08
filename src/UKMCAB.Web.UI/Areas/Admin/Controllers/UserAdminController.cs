@@ -156,8 +156,8 @@ public class UserAdminController : Controller
     {
         var pendingAccounts = await GetAllPendingRequests();
         var total = pendingAccounts.Count;
-        var skip = pageNumber - 1;
-        if (skip * 20 >= total)
+        var skip = (pageNumber - 1) * 20;
+        if (skip >= total)
         {
             skip = 0;
         }
