@@ -37,6 +37,12 @@
                     Enter the reason for unlocking this user account. The user will be notified that their account has been unlocked and the reason will be included.
                 </div>
             }
+            else
+            {
+                <div id="reason-hint" class="govuk-hint">
+                    This will be included in user notifications and the account history viewable by all users.
+                </div>
+            }
             <p error-id-for="Reason" class="govuk-error-message">
                 <span asp-validation-for="Reason" class="govuk-error-message"></span>
             </p>
