@@ -69,7 +69,7 @@
                         Last log in
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @(Model.UserAccount.LastLogonUtc?.ToString(Constants.DateTimeFormat)??"N/A")
+                        @Html.ValueOrNone(Model.UserAccount.LastLogonUtc?.ToString(Constants.DateTimeFormat))
                     </dd>
                 </div>
 
@@ -80,11 +80,11 @@
         @if (!Model.UserAccount.IsLocked)
         {
             <div class="govuk-button-group">
+                <a class="govuk-button govuk-button--warning" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountLock" asp-route-id="@Model.UserAccount.Id">
+                    Lock
+                </a>
                 <a class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountArchive" asp-route-id="@Model.UserAccount.Id">
                     Archive
-                </a>
-                <a class="govuk-button data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountLock" asp-route-id="@Model.UserAccount.Id">
-                    Lock
                 </a>
             </div>
         }
@@ -93,15 +93,15 @@
             <div>
                 @if(Model.UserAccount.LockReason == UKMCAB.Data.Models.Users.UserAccountLockReason.Archived)
                 {
-                    <p class="govuk-body-s">This account is archived</p>
-                    <a class="govuk-button data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnarchive" asp-route-id="@Model.UserAccount.Id">
+                    <p class="govuk-body">This account is archived</p>
+                    <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnarchive" asp-route-id="@Model.UserAccount.Id">
                         Unarchive
                     </a>
                 }
                 else
                 {
-                    <p class="govuk-body-s">This account is locked</p>
-                    <a class="govuk-button data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnlock" asp-route-id="@Model.UserAccount.Id">
+                    <p class="govuk-body">This account is locked</p>
+                    <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnlock" asp-route-id="@Model.UserAccount.Id">
                         Unlock
                     </a>
                 }

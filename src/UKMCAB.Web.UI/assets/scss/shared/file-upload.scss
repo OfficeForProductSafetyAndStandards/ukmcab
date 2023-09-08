@@ -98,8 +98,12 @@
 
                     .file-number {
                         display: inline-block;
+                        padding-right: 5px;
                     }
-
+                    
+                    .file-link{
+                        padding-left: 5px;
+                    }
                     .govuk-form-group {
                         margin-bottom: 0;
                     }

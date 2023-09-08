@@ -95,6 +95,7 @@ builder.Services.AddSingleton<IInitialiseDataService, InitialiseDataService>();
 builder.Services.AddSingleton<IUserAccountRepository, UserAccountRepository>();
 builder.Services.AddSingleton<IUserAccountRequestRepository, UserAccountRequestRepository>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
 builder.Services.AddCustomHttpErrorHandling();
 

@@ -15,6 +15,15 @@
         margin-bottom: 10px;
     }
 
+    #admin-buttons-container {
+        display: block;
+        float: right;
+
+        @include govuk-media-query($until: tablet) {
+            float: none;
+        }
+    }
+
     #archive-button {
         margin-left: 10px;
 
