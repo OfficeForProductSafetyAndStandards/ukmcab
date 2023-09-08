@@ -69,7 +69,7 @@
                         Last log in
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @(Model.UserAccount.LastLogonUtc?.ToString(Constants.DateTimeFormat)??"N/A")
+                        @Html.ValueOrNone(Model.UserAccount.LastLogonUtc?.ToString(Constants.DateTimeFormat))
                     </dd>
                 </div>
 
