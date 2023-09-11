@@ -25,23 +25,23 @@ namespace UKMCAB.Web.UI.Helpers
 
                 if (endPoint.Equals(CABProfileController.Routes.CabDetails))
                 {
-                    title = $"{feedLinksViewModel.CABName} on {Constants.SiteName}.";
-                    emailSubject = $"I am sharing {feedLinksViewModel.CABName} profile from {Constants.SiteName}.";
+                    title = $"{feedLinksViewModel.CABName} on the {Constants.SiteName} service.";
+                    emailSubject = $"I am sharing {feedLinksViewModel.CABName} profile from the {Constants.SiteName} service";
                     emailBody = $"{title} {encodedUrlNoQueryStrings}";
                     shareUrl = encodedUrlNoQueryStrings;
                 }
                 else if (endPoint.Equals(SearchController.Routes.Search))
                 {
-                    title = string.IsNullOrEmpty(feedLinksViewModel.SearchKeyword) ? $"Search results for CABs on {Constants.SiteName}." : $"Search results for {feedLinksViewModel.SearchKeyword} on {Constants.SiteName}.";
-                    emailSubject = $"I am sharing these search results from {Constants.SiteName}.";
+                    title = string.IsNullOrEmpty(feedLinksViewModel.SearchKeyword) ? $"Search results for CABs on the {Constants.SiteName} service." : $"Search results for \"{feedLinksViewModel.SearchKeyword}\" on the {Constants.SiteName} service.";
+                    emailSubject = $"I am sharing these search results from the {Constants.SiteName} service";
                     emailBody = $"{title} {encodedUrlWithQueryStrings}";
                     shareUrl = encodedUrlWithQueryStrings;
                 }
                 else if (endPoint.Equals(HomeController.Routes.Updates))
                 {
-                    title = $"Service updates and releases page on {Constants.SiteName}.";
-                    emailSubject = $"I am sharing the service updates and releases page from {Constants.SiteName}.";
-                    emailBody = $"The service updates and releases page on {Constants.SiteName}. {encodedUrlNoQueryStrings}";
+                    title = $"Service updates and releases page on the {Constants.SiteName} service.";
+                    emailSubject = $"I am sharing the service updates and releases page from the {Constants.SiteName} service";
+                    emailBody = $"The service updates and releases page on the {Constants.SiteName} service. {encodedUrlNoQueryStrings}";
                     shareUrl = encodedUrlNoQueryStrings;
                 }
 

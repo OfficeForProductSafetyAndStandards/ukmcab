@@ -7,6 +7,7 @@ namespace UKMCAB.Data.CosmosDb.Services
     {
         private readonly IDistCache _cache;
         private readonly ICABRepository _cabRepository;
+        private const string KeyPrefix = $"{DataConstants.Version.Number}_cab_";
 
         public CachedPublishedCABService(IDistCache cache, ICABRepository cabRepository)
         {
@@ -56,7 +57,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             return doc.Any() ? doc.OrderByDescending(d => d.LastUpdatedDate).First() : null;
         }
 
-        private static string Key(string id) => $"cab_{id}";
+        private static string Key(string id) => $"{KeyPrefix}{id}";
 
         public async Task<int> PreCacheAllCabsAsync()
         {
