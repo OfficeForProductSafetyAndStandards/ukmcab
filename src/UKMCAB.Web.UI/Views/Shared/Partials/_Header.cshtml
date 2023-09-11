@@ -47,17 +47,9 @@
                     {
 
                         <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "admin", "govuk-header__navigation-item--active")">
-                            @if (User.HasClaim(Claims.UserManagement, string.Empty) && User.HasClaim(Claims.CabManagement, string.Empty))
+                            @if (User.HasClaim(Claims.UserManagement, string.Empty) || User.HasClaim(Claims.CabManagement, string.Empty))
                             {
                                 <a asp-route="@AdminController.Routes.Index" class="govuk-header__link">Admin</a>
-                            }
-                            else if (User.HasClaim(Claims.UserManagement, string.Empty) && !User.HasClaim(Claims.CabManagement, string.Empty))
-                            {
-                                <a asp-route="@UserAdminController.Routes.UserList" class="govuk-header__link">Admin</a>
-                            }
-                            else if (!User.HasClaim(Claims.UserManagement, string.Empty) && User.HasClaim(Claims.CabManagement, string.Empty))
-                            {
-                                <a asp-route="@AdminController.Routes.CABManagement" class="govuk-header__link">Admin</a>
                             }
                         </li>
                         <li class="govuk-header__navigation-item navigation-mobile-underline">

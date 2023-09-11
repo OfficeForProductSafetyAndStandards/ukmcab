@@ -69,6 +69,7 @@ public static class GovukOneLoginExtensions
                 var account = await users.GetAsync(context.Principal.FindFirstValue(ClaimTypes.NameIdentifier));
                 if(account != null)
                 {
+                    identity.AddClaim(new Claim(Claims.IsOneLoginUser, string.Empty));
                     SignInHelper.AddClaims(account, identity);
                 }
                 else
