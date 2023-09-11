@@ -85,7 +85,7 @@
                 @if (User.HasClaim(UKMCAB.Core.Security.Claims.CabEdit, "*")) // TODO:  purposefully disabled; need to figure out permissions first
                 {
                     <div id="admin-buttons-container">
-                        @if (Model.IsArchived)
+                        @if (Model.IsArchived && !Model.IsUnarchivedRequest)
                         {
                             <span>
                                 <a id="unarchive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="unarchive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="UnarchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Unarchive</a>
