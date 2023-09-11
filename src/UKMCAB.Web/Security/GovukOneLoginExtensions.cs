@@ -21,7 +21,6 @@ public static class GovukOneLoginExtensions
         {
             opt.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             opt.DefaultChallengeScheme = OpenIdConnectDefaults.AuthenticationScheme;
-            opt.DefaultSignOutScheme = CookieAuthenticationDefaults.AuthenticationScheme;
         })
         .AddCookie(opt =>
         {
@@ -70,6 +69,7 @@ public static class GovukOneLoginExtensions
                 var account = await users.GetAsync(context.Principal.FindFirstValue(ClaimTypes.NameIdentifier));
                 if(account != null)
                 {
+                    identity.AddClaim(new Claim(Claims.IsOneLoginUser, string.Empty));
                     SignInHelper.AddClaims(account, identity);
                 }
                 else
@@ -80,7 +80,8 @@ public static class GovukOneLoginExtensions
 
             options.Events.OnRedirectToIdentityProviderForSignOut = async (context) =>
             {
-                context.ProtocolMessage.PostLogoutRedirectUri = "https://find-a-conformity-assessment-body.service.gov.uk/"; //todo: add localhost, dev, stage, preprod and vnext urls to onelogin config
+                var uri = context.HttpContext.RequestServices.GetRequiredService<IAppHost>().GetBaseUri();
+                context.ProtocolMessage.PostLogoutRedirectUri = uri.ToString(); //"https://find-a-conformity-assessment-body.service.gov.uk/"; //todo: add localhost, dev, stage, preprod and vnext urls to onelogin config
             };
         });
         return services;

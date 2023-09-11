@@ -2,6 +2,11 @@
 
 public class DataConstants
 {
+    public static class Version
+    {
+        public const string Number = "v2-0";
+    }
+
     public static class CosmosDb
     {
         public const string Database = "main";
@@ -12,9 +17,9 @@ public class DataConstants
     {
         public const int SearchResultsPerPage = 20;
         public const int CABManagementQueueResultsPerPage = 10;
-        public const string SEARCH_INDEX = "ukmcab-search-index-v2-0";
-        public const string SEARCH_INDEXER = "ukmcab-search-indexer-v2-0";
-        public const string SEARCH_DATASOURCE = "ukmcab-search-datasource-v2-0";
+        public const string SEARCH_INDEX = "ukmcab-search-index-" + Version.Number ;
+        public const string SEARCH_INDEXER = "ukmcab-search-indexer-" + Version.Number;
+        public const string SEARCH_DATASOURCE = "ukmcab-search-datasource-" + Version.Number;
     }
 
     public static class Storage

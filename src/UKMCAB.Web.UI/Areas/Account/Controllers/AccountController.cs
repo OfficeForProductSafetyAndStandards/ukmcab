@@ -1,6 +1,7 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using UKMCAB.Common.Exceptions;
@@ -67,7 +68,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
                     var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },CookieAuthenticationDefaults.AuthenticationScheme);
-                    var acc=await _userAccounts.GetAsync(userId);
+                    var acc = await _userAccounts.GetAsync(userId);
                     if (acc != null)
                     {
                         SignInHelper.AddClaims(acc, claimsIdentity);
@@ -99,18 +100,19 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 }
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
-                    var claims = new List<Claim>
+                    var claimsIdentity = new ClaimsIdentity(Enumerable.Empty<Claim>(), CookieAuthenticationDefaults.AuthenticationScheme);
+                    var acc = new UserAccount
                     {
-                        new Claim(ClaimTypes.NameIdentifier, Guid.Empty.ToString()),
-                        new Claim(ClaimTypes.Email, "fake.ukmcab.user@beis.gov.uk"),
-                        new Claim(ClaimTypes.GivenName, "Fake"),
-                        new Claim(ClaimTypes.Surname, $"Persona ({role})"),
-                        new Claim(ClaimTypes.Role, role),
-                        new Claim(Claims.CabEdit, string.Empty)
+                        FirstName = "Fake",
+                        Surname = $"Persona ({Roles.NameFor(role)})",
+                        Role = role,
+                        Id = $"fake_{Guid.NewGuid()}" 
                     };
-                    var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                    var authProperties = new AuthenticationProperties { IsPersistent = false, };
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
+                    SignInHelper.AddClaims(acc, claimsIdentity);
+                    
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties { IsPersistent = false, });
+                    
                     return Redirect("/");
                 }
                 else
@@ -156,10 +158,25 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [HttpGet("logout", Name = Routes.Logout)]
         public async Task<IActionResult> Logout()
         {
-            await HttpContext.SignOutAsync();
-            _logger.LogInformation("User logged out.");
-            _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
-            return Redirect("/");
+            void Track()
+            {
+                _logger.LogInformation("User logged out.");
+                _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
+            }
+
+            if (User.HasClaim(x => x.Type == Claims.IsOneLoginUser))
+            {
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
+                Track();
+                return new EmptyResult();
+            }
+            else
+            {
+                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+                Track();
+                return Redirect("/");
+            }
         }
 
         [AllowAnonymous]

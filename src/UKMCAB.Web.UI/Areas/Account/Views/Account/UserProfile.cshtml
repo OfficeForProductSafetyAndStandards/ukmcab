@@ -63,7 +63,7 @@
                         Organisation
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @Html.ValueOrNotProvided(Model.Organisation)
+                        @Html.ValueOrNotProvided(Model.OrganisationName)
                     </dd>
                 </div>
                 <div class="govuk-summary-list__row">
@@ -79,7 +79,7 @@
                         Last log in
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @(Model.LastLogonUtc?.ToString(Constants.DateTimeFormat) ?? "N/A")
+                        @Html.ValueOrNone(Model.LastLogonUtc?.ToString(Constants.DateTimeFormat))
                     </dd>
                 </div>
             </dl>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace UKMCAB.Web.UI;
 
@@ -68,6 +69,8 @@ public static class Ext
 
     public static IHtmlContent ValueOrNotProvided(this IHtmlHelper htmlHelper, string? text) =>
         string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.NotProvided) : htmlHelper.Raw(text);
+    public static IHtmlContent ValueOrNone(this IHtmlHelper htmlHelper, string? text) =>
+        string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.None) : htmlHelper.Raw(text);
 
     public static string ControllerName(this string text) => text.Replace("Controller", string.Empty);
 
@@ -103,4 +106,6 @@ public static class Ext
         titleComponents.Add(Constants.SiteName);
         return string.Join(" - ", titleComponents);
     }
+
+    public static bool HasClaim(this ClaimsPrincipal principal, string type) => principal.HasClaim(x => x.Type == type);
 }
