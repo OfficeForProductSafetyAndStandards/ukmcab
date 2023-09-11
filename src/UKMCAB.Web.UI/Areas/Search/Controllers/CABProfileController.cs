@@ -111,12 +111,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private CABProfileViewModel GetCabProfileViewModel(Document cabDocument, string returnUrl)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
+            var isUnarchivedRequest =  cabDocument.AuditLog.Any(al => al.Action == AuditActions.UnarchiveRequest);
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Action == AuditActions.Archived) : null;
             var publishedAudit = cabDocument.AuditLog.SingleOrDefault(al => al.Action == AuditActions.Published);
             var cab = new CABProfileViewModel
             {
                 IsArchived = isArchived,
+                IsUnarchivedRequest = isUnarchivedRequest,
                 IsPublished = isPublished,
                 ArchivedBy = isArchived ? archiveAudit.UserName : string.Empty,
                 ArchivedDate = isArchived ? archiveAudit.DateTime.ToString("dd MMM yyyy") : string.Empty,
