@@ -1,10 +1,27 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@model BasicPageModel
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Account locked</h1>
-        <p class="govuk-body">
-            Your account is locked. If you need support, use the <a class="govuk-link govuk-link--no-visited-state" asp-area="Home" asp-controller="Footer" asp-action="ContactUs">UKMCAB contact page</a>.
-        </p>
+@model AccountLockedViewModel
+
+@if (Model.Reason == UKMCAB.Data.Models.Users.UserAccountLockReason.None)
+{
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Account locked</h1>
+            <p class="govuk-body">
+                Your account is locked. 
+                If you need support, use the <a class="govuk-link govuk-link--no-visited-state" asp-area="Home" asp-controller="Footer" asp-action="ContactUs">UKMCAB contact page</a>.
+            </p>
+        </div>
     </div>
-</div>
+}
+else
+{
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <h1 class="govuk-heading-l">Account archived</h1>
+            <p class="govuk-body">
+                Your account has been archived. 
+                If you need support, use the <a class="govuk-link govuk-link--no-visited-state" asp-area="Home" asp-controller="Footer" asp-action="ContactUs">UKMCAB contact page</a>.
+            </p>
+        </div>
+    </div>
+}
