@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Common;
+using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 
 namespace UKMCAB.Data.CosmosDb.Services
@@ -8,6 +9,7 @@ namespace UKMCAB.Data.CosmosDb.Services
         private readonly IDistCache _cache;
         private readonly ICABRepository _cabRepository;
         private const string KeyPrefix = $"{DataConstants.Version.Number}_cab_";
+        private const string DraftKeyPrefix = $"{DataConstants.Version.Number}_draft_cab_";
 
         public CachedPublishedCABService(IDistCache cache, ICABRepository cabRepository)
         {
@@ -57,6 +59,20 @@ namespace UKMCAB.Data.CosmosDb.Services
             return doc.Any() ? doc.OrderByDescending(d => d.LastUpdatedDate).First() : null;
         }
 
+        public async Task<Document> FindDraftDocumentByCABIdAsync(string id) => await _cache.GetOrCreateAsync(DraftKey(id), () => GetDraftCABByIdAsync(id));
+
+        private async Task<Document> GetDraftCABByIdAsync(string id)
+        {
+            var doc = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft && d.CABId.Equals(id));
+            if (doc != null && doc.Any())
+            {
+                Guard.IsTrue(doc.Count == 1, $"Multiple drafts found for CABId: {id}");
+                return doc.First();
+            }
+            return null;
+        }
+
+        private static string DraftKey(string id) => $"{KeyPrefix}{id}";
         private static string Key(string id) => $"{KeyPrefix}{id}";
 
         public async Task<int> PreCacheAllCabsAsync()
@@ -75,6 +91,7 @@ namespace UKMCAB.Data.CosmosDb.Services
         public async Task ClearAsync(string id, string slug)
         { 
             await _cache.RemoveAsync(Key(id));
+            await _cache.RemoveAsync(DraftKey(id));
             await _cache.RemoveAsync(Key(slug));
         } 
     }

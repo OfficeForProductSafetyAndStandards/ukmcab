@@ -14,6 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public bool IsArchived { get; set; }
         public bool IsUnarchivedRequest { get; set; }
         public bool IsPublished { get; set; }
+        public bool HasDraft { get; set; }
 
         public string CABId { get; set; }
 
