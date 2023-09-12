@@ -72,7 +72,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             return null;
         }
 
-        private static string DraftKey(string id) => $"{KeyPrefix}{id}";
+        private static string DraftKey(string id) => $"{DraftKeyPrefix}{id}";
         private static string Key(string id) => $"{KeyPrefix}{id}";
 
         public async Task<int> PreCacheAllCabsAsync()
