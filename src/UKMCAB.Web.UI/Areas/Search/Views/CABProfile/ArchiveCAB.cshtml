@@ -42,6 +42,12 @@
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-warning-text__assistive">Warning</span>
                             Archived CAB profiles cannot be edited and users cannot view them in the search results.
+                        @if (Model.HasDraft)
+                        {
+                            <br />
+                            <br />
+                            <text>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted</text>
+                        }
                         </strong>
                     </div>
                 <div class="govuk-button-group">
