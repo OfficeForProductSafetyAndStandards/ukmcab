@@ -7,4 +7,5 @@ public class Claims
     public const string CabManagement = "cab.manage.all";
     public const string Organisation = "org";
     public const string UserManagement = "user-mgt";
+    public const string IsOneLoginUser = "one.login.gov.uk";
 }
