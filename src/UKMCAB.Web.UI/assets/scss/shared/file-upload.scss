@@ -9,10 +9,7 @@
     cursor: pointer;
     text-align: left;
     color: $govuk-link-colour;
-
-    &.remove-file-button-list-link {
-        padding: 12px 0 12px 0;
-    }
+    vertical-align: top;
 
     @include govuk-media-query($until: tablet) {
         padding: 12px 0 12px 0;
@@ -22,9 +19,19 @@
 
 #file-upload-list-container {
     table {
+        table-layout: fixed;
+
         thead {
             @include govuk-media-query($until: tablet) {
                 display: none;
+            }
+
+            th:first-child {
+                width: 60%;
+            }
+
+            th:nth-child(2) {
+                width: 30%;
             }
         }
 
@@ -36,31 +43,24 @@
                     padding: 10px 0;
                 }
 
-                td {
-                    padding: 20px 10px 20px 0;
-                    vertical-align: top;
+                #uploaded-file-name-td {
+                    padding-top: 20px;
+                }
 
-                    &:first-child {
-                        width: 60%;
+                .uploaded-file-atttribute {
+                    padding-top: 0px;
+                    padding-bottom: 20px;
+                }
+
+                td {
+                    overflow-wrap: break-word;
+                    vertical-align: bottom;
+
+                    select {
+                        width: 90%;
 
                         @include govuk-media-query($until: tablet) {
                             width: 100%;
-                        }
-                    }
-
-                    &:nth-child(2) {
-                        padding: 45px 10px 20px 0;
-
-                        @include govuk-media-query($until: tablet) {
-                            padding: 5px 0;
-                        }
-                    }
-
-                    &:nth-child(3) {
-                        padding: 65px 10px 20px 0;
-
-                        @include govuk-media-query($until: tablet) {
-                            padding: 5px 0;
                         }
                     }
 
@@ -97,7 +97,6 @@
                     }
 
                     .file-number {
-                        width: 20px;
                         display: inline-block;
                         padding-right: 5px;
                     }
