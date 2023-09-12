@@ -9,6 +9,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
         [Required(ErrorMessage = "State the reason for archiving this CAB record")]
         public string? ArchiveReason { get; set; }
+        public bool HasDraft { get; set; }
 
         public string? Title => "Archive CAB profile";
     }
