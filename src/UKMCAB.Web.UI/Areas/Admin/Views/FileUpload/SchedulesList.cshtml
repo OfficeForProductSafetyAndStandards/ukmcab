@@ -69,7 +69,7 @@
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles[i].Label" class="govuk-error-message"></span>
                                         </p>
-                                        <input asp-for="UploadedFiles[i].Label" type="text" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
+                                            <input asp-for="UploadedFiles[i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
                                         <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
                                     </div>
                                 </td>
@@ -80,7 +80,7 @@
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles[i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
-                                                <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
+                                        <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
                                             <option value="">Not assigned</option>
                                             @foreach (var la in items)
                                             {
