@@ -8,7 +8,7 @@
     display: none;
     position: absolute;
     top: 50%;
-    right: 48px;
+    right: 44px; 
     transform: translateY(-50%);
     cursor: pointer;
     border: 1px solid transparent;
@@ -30,13 +30,13 @@
     top: 0;
     bottom: 0;
     margin: auto;
-    padding: 4px 2px 0;
+    padding: 3px 2px 1px;
     border-radius: 50%;
     text-align: center;
     vertical-align:middle;
     color: black;
-    font-weight: normal;
-    font-size: 10px;
+    font-weight: normal; 
+    font-size: 12px;
     cursor: pointer;
 }
 
@@ -83,6 +83,7 @@
 
                         input {
                             width: calc(100% - 40px);
+                            padding-right: 28px;
                         }
 
                         #search-keyword-button {
