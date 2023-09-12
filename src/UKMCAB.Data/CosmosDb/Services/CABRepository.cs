@@ -25,7 +25,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
 
-            if (items != null && items.Any() && items.All(doc => doc.Version.Equals(DataConstants.Version.Number)))
+            if (items != null && items.Any() && items.All(doc => doc.Version != null && doc.Version.Equals(DataConstants.Version.Number)))
             {
                 foreach (var document in items)
                 {
