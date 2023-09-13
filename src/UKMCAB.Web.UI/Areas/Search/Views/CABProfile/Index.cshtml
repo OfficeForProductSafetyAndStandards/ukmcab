@@ -91,14 +91,11 @@
                                 <a id="unarchive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="unarchive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="UnarchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Unarchive</a>
                             </span>
                         }
-                        else
+                        @if(Model.IsPublished)
                         {
                             <span>
                                 <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
                             </span>
-                        }
-                        @if(Model.IsPublished)
-                        {
                             <span>
                                 <a id="archive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="archive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="ArchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Archive</a>
                             </span>
