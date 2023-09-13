@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace UKMCAB.Web.UI;
 
@@ -105,4 +106,6 @@ public static class Ext
         titleComponents.Add(Constants.SiteName);
         return string.Join(" - ", titleComponents);
     }
+
+    public static bool HasClaim(this ClaimsPrincipal principal, string type) => principal.HasClaim(x => x.Type == type);
 }

@@ -27,6 +27,7 @@ public static class ClaimsIssuer
             return new Claim[]
             {
                 new(Claims.CabCreateDraft, string.Empty), // can create drafts of CABs
+                new(Claims.CabManagement, string.Empty), // can manage all cabs
             };
         }
         else
