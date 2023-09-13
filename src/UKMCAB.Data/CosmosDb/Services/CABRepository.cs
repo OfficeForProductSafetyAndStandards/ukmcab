@@ -25,13 +25,14 @@ namespace UKMCAB.Data.CosmosDb.Services
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
 
-            //if (items != null && items.Any() && items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
-            //{
-            //    foreach (var document in items)
-            //    {
-            //        await Update(document);
-            //    }
-            //}
+            if (items != null && items.Any() && items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
+            {
+                foreach (var document in items)
+                {
+                    document.Version = DataConstants.Version.Number;
+                    await Update(document);
+                }
+            }
 
             return force;
         }
