@@ -113,6 +113,7 @@ namespace UKMCAB.Core.Services
                 id = document.id,
                 Status = document.Status,
                 StatusValue = ((int)document.StatusValue).ToString(),
+                LastUserGroup = document.LastUserGroup,
                 Name = document.Name,
                 CABId = document.CABId,
                 CABNumber = document.CABNumber,
