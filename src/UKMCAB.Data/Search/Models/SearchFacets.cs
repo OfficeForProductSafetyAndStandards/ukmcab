@@ -6,5 +6,6 @@
         public List<string> LegislativeAreas { get; set; }
         public List<string> RegisteredOfficeLocation { get; set; }
         public List<string> StatusValue { get; set; }
+        public List<string> LastUserGroup { get; set; }
     }
 }

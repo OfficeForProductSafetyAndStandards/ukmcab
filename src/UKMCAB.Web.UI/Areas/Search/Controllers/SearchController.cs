@@ -131,6 +131,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
                 StatusesFilter = model.Statuses,
+                UserGroupsFilter = model.UserGroups,
                 Select = _select,
                 InternalSearch = internalSearch
             };
@@ -194,6 +195,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (model.InternalSearch)
             {
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "Status", facets.StatusValue, model.Statuses);
+                model.LastUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User groups", facets.LastUserGroup, model.UserGroups);
             }
         }
 

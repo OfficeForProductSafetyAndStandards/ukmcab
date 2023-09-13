@@ -20,7 +20,7 @@ namespace UKMCAB.Data.Search.Services
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
-                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0" },
+                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0", $"{nameof(result.LastUserGroup)},count:0" },
                 Filter = internalSearch ? "" : "StatusValue eq '30'"
             });
 
@@ -32,6 +32,7 @@ namespace UKMCAB.Data.Search.Services
                 result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)]).Select(x => x.ToSentenceCase()).ToList()!;
                 result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
                 result.StatusValue = GetFacetList(facets[nameof(result.StatusValue)]);
+                result.LastUserGroup = GetFacetList(facets[nameof(result.LastUserGroup)]);
             }
 
             return result;
@@ -130,6 +131,11 @@ namespace UKMCAB.Data.Search.Services
             else if (!options.InternalSearch)
             {
                 filters.Add($"(StatusValue eq '{(int)Status.Published}')");
+            }
+            if (options.InternalSearch && options.UserGroupsFilter != null && options.UserGroupsFilter.Any())
+            {
+                var userGroups = string.Join(" or ", options.UserGroupsFilter.Select(ug => $"LastUserGroup eq '{ug}'"));
+                filters.Add($"({userGroups})");
             }
 
             return filters.Count > 1 ? $"({string.Join(" and ", filters)})" : filters.FirstOrDefault() ?? string.Empty;
