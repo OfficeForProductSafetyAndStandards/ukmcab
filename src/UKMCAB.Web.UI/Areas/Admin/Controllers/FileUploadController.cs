@@ -66,17 +66,38 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id, fromSummary = "true" }: new { id });
             }
 
-            var contentType = ValidateUploadFileAndGetContentType(model, SchedulesOptions.AcceptedFileExtensionsContentTypes, SchedulesOptions.AcceptedFileTypes, latestVersion.Schedules);
+            var allowableNoOfFiles = SchedulesOptions.MaxFileCount - latestVersion.Schedules.Count;
 
-            if (ModelState.IsValid)
+            if (model.Files != null && model.Files.Count <= allowableNoOfFiles)
             {
-                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, model.File.FileName, DataConstants.Storage.Schedules,
-                    model.File.OpenReadStream(), contentType);
-                latestVersion.Schedules.Add(result);
+                var errorCount = 0;
 
-                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
-                return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
+                foreach (var file in model.Files)
+                {
+                    var contentType = ValidateUploadFileAndGetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes, SchedulesOptions.AcceptedFileTypes, latestVersion.Schedules);
+
+                    if (ModelState.ErrorCount == errorCount)
+                    {
+                        var result = await _fileStorage.UploadCABFile(latestVersion.CABId, file.FileName, file.FileName, DataConstants.Storage.Schedules,
+                            file.OpenReadStream(), contentType);
+                        latestVersion.Schedules.Add(result);
+
+                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
+                    }
+
+                    errorCount = ModelState.ErrorCount;
+                }
+
+                if (ModelState.IsValid)
+                {
+                    return RedirectToAction("SchedulesList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
+                }
+                
+            }
+            else if(model.Files != null && model.Files.Count > allowableNoOfFiles)
+            {
+                ModelState.AddModelError("File", $"Max upload is 35. You can only upload {allowableNoOfFiles} file(s) more.");
             }
 
             model.Title = SchedulesOptions.UploadTitle;
@@ -104,33 +125,34 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
 
-        private string ValidateUploadFileAndGetContentType(FileUploadViewModel model, Dictionary<string, string> acceptedFileExtensionsContentTypes, string acceptedFileTypes, List<FileUpload> currentDocuments)
+        private string ValidateUploadFileAndGetContentType(IFormFile? file, Dictionary<string, string> acceptedFileExtensionsContentTypes, string acceptedFileTypes, List<FileUpload> currentDocuments)
         {
             var contentType = string.Empty;
-            if (model.File == null)
+            if (file == null)
             {
-                ModelState.AddModelError("File", $"Select a {acceptedFileTypes} file 10 megabytes or less.");
+                ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Select a {acceptedFileTypes} file 10 megabytes or less.");
             }
             else
             {
-                if (model.File.Length > 10485760)
+                if (file.Length > 10485760)
                 {
-                    ModelState.AddModelError("File", "Files must be no more that 10Mb in size.");
+                    ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Files must be no more that 10Mb in size.");
                 }
 
                 contentType = acceptedFileExtensionsContentTypes.SingleOrDefault(ct =>
-                    ct.Key.Equals(Path.GetExtension(model.File.FileName), StringComparison.InvariantCultureIgnoreCase)).Value;
+                    ct.Key.Equals(Path.GetExtension(file.FileName), StringComparison.InvariantCultureIgnoreCase)).Value;
+
                 if (string.IsNullOrWhiteSpace(contentType))
                 {
-                    ModelState.AddModelError("File", $"Files must be in {acceptedFileTypes} format to be uploaded.");
+                   ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Files must be in {acceptedFileTypes} format to be uploaded.");
                 }
 
                 currentDocuments ??= new List<FileUpload>();
 
-                if (currentDocuments.Any(s => s.FileName.Equals(model.File.FileName)))
+                if (currentDocuments.Any(s => s.FileName.Equals(file.FileName)))
                 {
-                    ModelState.AddModelError("File", "Uploaded files must have different names to those already uploaded.");
-                }
+                   ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Uploaded files must have different names to those already uploaded.");
+                }             
             }
 
             return contentType;
@@ -168,7 +190,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             latestDocument.Schedules ??= new List<FileUpload>();
 
-            if (submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
+            if (submitType != null && submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
             {
                 var fileToRemove = latestDocument.Schedules[fileIndex];
 
@@ -327,7 +349,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("DocumentsList", model.IsFromSummary ? new { id, fromSummary = "true" } : new { id });
             }
 
-            var contentType = ValidateUploadFileAndGetContentType(model, DocumentsOptions.AcceptedFileExtensionsContentTypes, DocumentsOptions.AcceptedFileTypes, latestVersion.Documents);
+            var contentType = ValidateUploadFileAndGetContentType(model.File, DocumentsOptions.AcceptedFileExtensionsContentTypes, DocumentsOptions.AcceptedFileTypes, latestVersion.Documents);
 
             if (ModelState.IsValid)
             {
