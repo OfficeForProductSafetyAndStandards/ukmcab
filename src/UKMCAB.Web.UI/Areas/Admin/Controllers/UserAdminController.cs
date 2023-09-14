@@ -22,13 +22,14 @@ public class UserAdminController : Controller
     public static class Routes
     {
         public const string UserList = "user-admin.list";
+        public const string UserListArchived = "user-admin.list.archived";
         public const string UserListLocked = "user-admin.list.locked";
         public const string UserAccount = "user-admin.user-account.view";
         public const string UserAccountLock = "user-admin.user-account.lock";
         public const string UserAccountUnlock = "user-admin.user-account.unlock";
         public const string UserAccountArchive = "user-admin.user-account.archive";
         public const string UserAccountUnarchive = "user-admin.user-account.unarchive";
-        public const string UserAccountRequestsList = "user-admin.account-requests.list";
+        public const string UserAccountRequestsList = "user-admin.account-requests.list";        
         public const string ReviewAccountRequest = "user-admin.review-account-request";
         public const string RequestApproved = "user-admin.request-approved";
         public const string RequestRejected = "user-admin.request-rejected";
@@ -43,20 +44,38 @@ public class UserAdminController : Controller
     }
 
     [HttpGet("list", Name = Routes.UserList)]
-    public async Task<IActionResult> UserListAsync(int pageNumber = 1) => await UserListAsync(pageNumber, false, "User accounts");
+    public async Task<IActionResult> UserListAsync(int pageNumber = 1) => await UserListAsync(pageNumber, false, null, "User accounts");
 
+    [HttpGet("list/archived", Name = Routes.UserListArchived)]
+    public async Task<IActionResult> UserListArchivedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, 1, "Archived user accounts");    
+    
     [HttpGet("list/locked", Name = Routes.UserListLocked)]
-    public async Task<IActionResult> UserListLockedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, "Locked/archived user accounts");
+    public async Task<IActionResult> UserListLockedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, 0, "Locked user accounts");
 
-    private async Task<IActionResult> UserListAsync(int page, bool isLocked, string title)
+    private async Task<IActionResult> UserListAsync(int page, bool isLocked, int? lockReason, string title)
     {
         const int take = 20;
         var pageIndex = page - 1;
         var skip = pageIndex * take;
 
-        var accounts = await _userService.ListAsync(new UserAccountListOptions(Skip: skip, Take: take, IsLocked: isLocked, ExcludeId: User.FindFirstValue(ClaimTypes.NameIdentifier)));
+        var accounts = await _userService.ListAsync(new UserAccountListOptions(Skip: skip, Take: take, IsLocked: isLocked, LockReason: lockReason, ExcludeId: User.FindFirstValue(ClaimTypes.NameIdentifier)));
         var pendingAccounts = await GetAllPendingRequests();
-        return View("UserList", new UserAccountListViewModel
+
+        var viewName = string.Empty;
+        if (title.Equals("User accounts"))
+        {
+            viewName = "UserList";
+        }
+        else if(title.Equals("Locked user accounts"))
+        {
+            viewName = "UserLockedList";
+        }
+        else if (title.Equals("Archived user accounts"))
+        {
+            viewName = "UserArchivedList";
+        }
+
+        return View(viewName, new UserAccountListViewModel
         {
             UserAccounts = accounts.ToList(),
             PendingAccountsCount = pendingAccounts.Count,
@@ -67,7 +86,7 @@ public class UserAdminController : Controller
                 PageNumber = page,
                 ResultsPerPage = 20,
                 ResultType = string.Empty,
-                Total = await _userService.UserCountAsync(isLocked)
+                Total = await _userService.UserCountAsync(lockReason, isLocked)
             }
         });
     }

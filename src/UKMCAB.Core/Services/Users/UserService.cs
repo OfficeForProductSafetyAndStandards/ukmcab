@@ -71,7 +71,7 @@ public class UserService : IUserService
         });
     }
 
-    public Task<int> UserCountAsync(bool locked = false) => _userAccountRepository.UserCountAsync(locked);
+    public Task<int> UserCountAsync(int? lockedReason = null, bool locked = false) => _userAccountRepository.UserCountAsync(lockedReason, locked);
 
     /// <inheritdoc />
     public Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options) 

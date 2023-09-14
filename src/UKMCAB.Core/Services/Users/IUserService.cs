@@ -24,7 +24,7 @@ public interface IUserService
     /// <returns></returns>
     Task<UserService.UserStatus> GetUserAccountStatusAsync(string id);
 
-    Task<int> UserCountAsync(bool locked = false);
+    Task<int> UserCountAsync(int? lockReason = null, bool locked = false);
 
     /// <summary>
     /// Lists user accounts
