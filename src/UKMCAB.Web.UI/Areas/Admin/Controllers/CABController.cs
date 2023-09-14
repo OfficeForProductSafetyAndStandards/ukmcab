@@ -89,6 +89,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 document.Name = model.Name;
                 document.CABNumber = model.CABNumber;
+                document.CabNumberVisibility = model.CabNumberVisibility;
                 document.AppointmentDate = appointmentDate;
                 document.RenewalDate = reviewDate;
                 document.UKASReference = model.UKASReference;

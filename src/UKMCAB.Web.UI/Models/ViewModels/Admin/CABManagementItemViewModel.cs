@@ -6,7 +6,9 @@
         public string Name { get; set; }
         public string URLSlug { get; set; }
         public string CABNumber { get; set; }
+        public string? CabNumberVisibility { get; set; }
         public string Status { get; set; }
         public DateTime LastUpdated { get; set; }
+        
     }
 }

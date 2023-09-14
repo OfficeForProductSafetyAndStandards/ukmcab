@@ -1,4 +1,5 @@
-﻿@using UKMCAB.Data.Models
+﻿@using UKMCAB.Core.Domain;
+@using UKMCAB.Data.Models
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CABDetailsViewModel
 @section BackButton
 {
@@ -45,6 +46,7 @@
                     </p>
                     <input asp-for="Name" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Name))" autocomplete="name" aria-required="true"/>
                 </div>
+
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CABNumber))">
                     <h3 class="govuk-label-wrapper">
                         <label class=" govuk-label govuk-label--s" asp-for="CABNumber">
@@ -55,6 +57,16 @@
                         <span asp-validation-for="CABNumber" class="govuk-error-message"></span>
                     </p>
                     <input asp-for="CABNumber" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.CABNumber))" autocomplete="cabnumber" aria-required="true"/>
+                </div>
+
+                <div class="govuk-form-group">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="CabNumberVisibility">Select an option for display of the CAB number</label>
+                    </h3>
+                    <p class="govuk-error-message">
+                        <span class="govuk-error-message"></span>
+                    </p>
+                    <select class="govuk-select" asp-for="CabNumberVisibility" asp-items="new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label))"></select>
                 </div>
                 
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AppointmentDate))">

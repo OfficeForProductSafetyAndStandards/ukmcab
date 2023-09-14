@@ -1,6 +1,4 @@
-﻿using System.Security.Policy;
-
-namespace UKMCAB.Data.Models
+﻿namespace UKMCAB.Data.Models
 {
     public class Document
     {
@@ -21,6 +19,7 @@ namespace UKMCAB.Data.Models
         public string Name { get; set; }
         public string URLSlug { get; set; }
         public string CABNumber { get; set; }
+        public string? CabNumberVisibility { get; set; }
         public DateTime? AppointmentDate { get; set; }
         public DateTime? RenewalDate { get; set; }
         public string UKASReference { get; set; }

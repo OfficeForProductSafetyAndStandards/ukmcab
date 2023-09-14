@@ -91,7 +91,7 @@
                                             <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
                                         }
                                     </td>
-                                    <td class="govuk-table__cell"><label class="cab-management-item-label">Cab reference</label>@Html.Conditional(!string.IsNullOrWhiteSpace(cab.CABNumber), cab.CABNumber, @Constants.NotProvided)</td>
+                                    <td class="govuk-table__cell"><label class="cab-management-item-label">Cab reference</label>@(UKMCAB.Core.Domain.CabNumberVisibility.Display(cab.CabNumberVisibility, User, cab.CABNumber) ?? Constants.NotProvided)</td>
                                     <td class="govuk-table__cell"><label class="cab-management-item-label">Last updated</label>@cab.LastUpdated.ToString("dd/MM/yyyy")</td>
                                     <td class="govuk-table__cell"><label class="cab-management-item-label">Status</label>@cab.Status</td>
                                 </tr>
