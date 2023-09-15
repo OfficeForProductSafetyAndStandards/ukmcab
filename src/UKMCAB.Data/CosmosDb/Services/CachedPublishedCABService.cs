@@ -1,5 +1,4 @@
-﻿using UKMCAB.Common;
-using UKMCAB.Data.Models;
+﻿using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 
 namespace UKMCAB.Data.CosmosDb.Services
@@ -9,7 +8,6 @@ namespace UKMCAB.Data.CosmosDb.Services
         private readonly IDistCache _cache;
         private readonly ICABRepository _cabRepository;
         private const string KeyPrefix = $"{DataConstants.Version.Number}_cab_";
-        private const string DraftKeyPrefix = $"{DataConstants.Version.Number}_draft_cab_";
 
         public CachedPublishedCABService(IDistCache cache, ICABRepository cabRepository)
         {
@@ -17,6 +15,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             _cabRepository = cabRepository;
         }
         public async Task<Document> FindPublishedDocumentByCABURLAsync(string url) => await _cache.GetOrCreateAsync(Key(url), () => GetPublishedCABByURLAsync(url));
+
         private async Task<Document?> GetPublishedCABByURLAsync(string url)
         {
             // Is url a guid
@@ -51,28 +50,25 @@ namespace UKMCAB.Data.CosmosDb.Services
             return null;
         }
 
-        public async Task<Document> FindPublishedDocumentByCABIdAsync(string id) => await _cache.GetOrCreateAsync(Key(id), () => GetPublishedCABByIdAsync(id));
+        public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string cabId) => await _cache.GetOrCreateAsync(Key(cabId), () =>  _cabRepository.Query<Document>(d => d.CABId.Equals(cabId)));
 
-        private async Task<Document> GetPublishedCABByIdAsync(string id)
+        public async Task<Document> FindPublishedDocumentByCABIdAsync(string cabId) => await GetPublishedCABByIdAsync(cabId);
+
+        public async Task<Document> FindDraftDocumentByCABIdAsync(string cabId) => await  GetDraftCABByIdAsync(cabId);
+
+
+        private async Task<Document> GetPublishedCABByIdAsync(string cabId)
         {
-            var doc = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published || d.StatusValue == Status.Archived) && d.CABId.Equals(id));
-            return doc.Any() ? doc.OrderByDescending(d => d.LastUpdatedDate).First() : null;
+            var docs = await FindAllDocumentsByCABIdAsync(cabId);
+            return  docs.SingleOrDefault(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived);
         }
 
-        public async Task<Document> FindDraftDocumentByCABIdAsync(string id) => await _cache.GetOrCreateAsync(DraftKey(id), () => GetDraftCABByIdAsync(id));
-
-        private async Task<Document> GetDraftCABByIdAsync(string id)
+        private async Task<Document> GetDraftCABByIdAsync(string cabId)
         {
-            var doc = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft && d.CABId.Equals(id));
-            if (doc != null && doc.Any())
-            {
-                Guard.IsTrue(doc.Count == 1, $"Multiple drafts found for CABId: {id}");
-                return doc.First();
-            }
-            return null;
+            var docs = await FindAllDocumentsByCABIdAsync(cabId);
+            return docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
         }
 
-        private static string DraftKey(string id) => $"{DraftKeyPrefix}{id}";
         private static string Key(string id) => $"{KeyPrefix}{id}";
 
         public async Task<int> PreCacheAllCabsAsync()
@@ -81,7 +77,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             var cabs = _cabRepository.GetItemLinqQueryable().Select(x => new {id= x.CABId, slug = x.URLSlug}).AsAsyncEnumerable();
             await foreach (var cab in cabs)
             {
-                _ = await FindPublishedDocumentByCABIdAsync(cab.id); 
+                _ = await FindAllDocumentsByCABIdAsync(cab.id); 
                 _ = await FindPublishedDocumentByCABURLAsync(cab.slug);
                 count++;
             }
@@ -91,7 +87,6 @@ namespace UKMCAB.Data.CosmosDb.Services
         public async Task ClearAsync(string id, string slug)
         { 
             await _cache.RemoveAsync(Key(id));
-            await _cache.RemoveAsync(DraftKey(id));
             await _cache.RemoveAsync(Key(slug));
         } 
     }
