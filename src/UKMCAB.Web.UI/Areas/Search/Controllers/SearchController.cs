@@ -57,7 +57,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(SearchViewModel model)
         {
             var internalSearch = User != null && User.Identity.IsAuthenticated;
-            model.Sort ??= internalSearch ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
+            model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
             model.InternalSearch = internalSearch;
 

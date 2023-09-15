@@ -16,6 +16,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
             CABId = document.CABId;
             Name = document.Name;
             CABNumber = document.CABNumber;
+            CabNumberVisibility = document.CabNumberVisibility;
             AppointmentDateDay = document.AppointmentDate?.Day.ToString("00") ?? string.Empty;
             AppointmentDateMonth = document.AppointmentDate?.Month.ToString("00") ?? string.Empty;
             AppointmentDateYear = document.AppointmentDate?.Year.ToString("0000") ?? string.Empty;
@@ -46,5 +47,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string? UKASReference { get; set; }
 
         public string? Title => "Create a CAB";
+
+        public string? CabNumberVisibility { get; set; }
     }
 }

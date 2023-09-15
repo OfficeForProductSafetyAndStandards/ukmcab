@@ -1,4 +1,4 @@
-﻿using UKMCAB.Common.Domain;
+﻿using UKMCAB.Data.Domain;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.Models.Users;
 
@@ -24,7 +24,7 @@ public interface IUserService
     /// <returns></returns>
     Task<UserService.UserStatus> GetUserAccountStatusAsync(string id);
 
-    Task<int> UserCountAsync(bool locked = false);
+    Task<int> UserCountAsync(UserAccountLockReason? lockReason = null, bool locked = false);
 
     /// <summary>
     /// Lists user accounts

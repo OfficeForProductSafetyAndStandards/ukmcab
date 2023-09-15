@@ -48,6 +48,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     Name = cmi.Name,
                     URLSlug = cmi.URLSlug,
                     CABNumber = cmi.CABNumber,
+                    CabNumberVisibility = cmi.CabNumberVisibility,
                     Status = cmi.Status,
                     LastUpdated = cmi.LastUpdatedDate
                 }).ToList()
