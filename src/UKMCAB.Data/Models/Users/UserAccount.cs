@@ -24,6 +24,7 @@ public class UserAccount
     public string? EmailAddress { get; set; }
     public string? ContactEmailAddress { get; set; }
     public bool IsLocked { get; set; }
+    public bool IsArchived => LockReason == UserAccountLockReason.Archived;
     public UserAccountLockReason? LockReason { get; set; }
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
     public DateTime LastUpdatedUtc { get; set; } = DateTime.UtcNow;

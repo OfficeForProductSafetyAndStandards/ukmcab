@@ -14,21 +14,21 @@
                 Contents
             </h2>
             <ul class="govuk-tabs__list">
-                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#active-user-list">Active</a>
+                <li class="govuk-tabs__list-item">
+                    <a asp-route="@UserAdminController.Routes.UserList" style="color:#0b0c0c;">Active</a>
                 </li>
                 <li class="govuk-tabs__list-item">
                     <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" style="color:#0b0c0c;">Requests (@Model.PendingAccountsCount)</a>
                 </li>
-                <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListLocked" style="color:#0b0c0c;">Locked</a>
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#locked-user-list">Locked</a>
                 </li>
                 <li class="govuk-tabs__list-item">
                     <a asp-route="@UserAdminController.Routes.UserListArchived" style="color:#0b0c0c;">Archived</a>
                 </li>
             </ul>
-            <div class="govuk-tabs__panel govuk-body" id="active-user-list">
-                
+            <div class="govuk-tabs__panel govuk-body" id="locked-user-list">
+
                 <table class="govuk-table govuk-!-font-size-16">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -75,7 +75,7 @@
                     <div id="user-management-pagination-container">
                         <partial name="Partials/_Pagination" model="Model.Pagination" />
                     </div>
-                }
+                }                                                                                                                                                                                                                                 
             </div>
         </div>
 
