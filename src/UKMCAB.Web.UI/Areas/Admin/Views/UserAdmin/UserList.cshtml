@@ -1,4 +1,5 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountListViewModel
+﻿@using UKMCAB.Data.Models.Users;
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountListViewModel
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -34,11 +35,21 @@
                         <tr class="govuk-table__row">
                             @if (Model.UserAccounts.Any())
                             {
-                                <th scope="col" class="govuk-table__header">First name</th>
-                                <th scope="col" class="govuk-table__header">Last name</th>
-                                <th scope="col" class="govuk-table__header">Email</th>
-                                <th scope="col" class="govuk-table__header">User group</th>
-                                <th scope="col" class="govuk-table__header">Last log in</th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccount.FirstName)" sort="@Model.SortField" sort-direction="@Model.SortDirection">First name</sort>
+                                </th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccount.Surname)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last name</sort>
+                                </th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccount.ContactEmailAddress)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Email</sort>
+                                </th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccount.Role)" sort="@Model.SortField" sort-direction="@Model.SortDirection">User group</sort>
+                                </th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccount.LastLogonUtc)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last log in</sort>
+                                </th>
                                 <th scope="col" class="govuk-table__header">Action</th>
                             }
                         </tr>

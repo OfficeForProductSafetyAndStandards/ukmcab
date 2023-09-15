@@ -6,6 +6,7 @@ using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models.Users;
+using System.Linq.Dynamic.Core;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
 
@@ -49,7 +50,7 @@ public class UserAccountRepository : IUserAccountRepository
 
     public async Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options)
     {
-        var q = _container.GetItemLinqQueryable<UserAccount>().AsQueryable();
+        var q = (await _container.GetItemLinqQueryable<UserAccount>().AsAsyncEnumerable().ToListAsync()).AsQueryable();
 
         if (options.ExcludeId.IsNotNullOrEmpty())
         {
@@ -59,20 +60,18 @@ public class UserAccountRepository : IUserAccountRepository
         if (options.IsLocked.HasValue)
         {
             q = q.Where(x => x.IsLocked == options.IsLocked);
-
-
-            if ((bool)options.IsLocked && options.LockReason != null) 
+            if (options.IsLocked.Value && options.LockReason != null) 
             {
-                q = q.Where(x => x.LockReason == (UserAccountLockReason)options.LockReason);
+                q = q.Where(x => x.LockReason == options.LockReason);
             }
         }
 
-        var data = await q.OrderBy(x => x.SurnameNormalized)
+        var sortExpression = $"{options.SortField ?? nameof(UserAccount.Surname)} {SortDirectionHelper.Get(options.SortDirection)}";
+
+        var data = q.OrderBy(sortExpression)
             .Skip(options.Skip)
             .Take(options.Take)
-            .AsAsyncEnumerable()
-            .ToListAsync()
-            .ConfigureAwait(false);
+            .ToList();
 
         return data;
     }

@@ -13,5 +13,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User
         public bool LockedOnly { get; set; }
 
         public PaginationViewModel Pagination { get; set; }
+
+        public string? SortField { get; set; }
+
+        public string? SortDirection { get; set; }
     }
 }
