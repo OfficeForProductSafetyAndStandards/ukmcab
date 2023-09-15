@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common;
-using UKMCAB.Common.Domain;
+using UKMCAB.Data.Domain;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users.Models;
@@ -71,7 +71,7 @@ public class UserService : IUserService
         });
     }
 
-    public Task<int> UserCountAsync(int? lockedReason = null, bool locked = false) => _userAccountRepository.UserCountAsync(lockedReason, locked);
+    public Task<int> UserCountAsync(UserAccountLockReason? lockedReason = null, bool locked = false) => _userAccountRepository.UserCountAsync(lockedReason, locked);
 
     /// <inheritdoc />
     public Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options) 

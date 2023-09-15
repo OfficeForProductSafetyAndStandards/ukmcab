@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using UKMCAB.Common.Domain;
+using UKMCAB.Data.Domain;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Data.Domain;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
@@ -47,12 +48,12 @@ public class UserAdminController : Controller
     public async Task<IActionResult> UserListAsync(int pageNumber = 1) => await UserListAsync(pageNumber, false, null, "User accounts");
 
     [HttpGet("list/archived", Name = Routes.UserListArchived)]
-    public async Task<IActionResult> UserListArchivedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, 1, "Archived user accounts");    
+    public async Task<IActionResult> UserListArchivedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, UserAccountLockReason.Archived, "Archived user accounts");    
     
     [HttpGet("list/locked", Name = Routes.UserListLocked)]
-    public async Task<IActionResult> UserListLockedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, 0, "Locked user accounts");
+    public async Task<IActionResult> UserListLockedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, UserAccountLockReason.None, "Locked user accounts");
 
-    private async Task<IActionResult> UserListAsync(int page, bool isLocked, int? lockReason, string title)
+    private async Task<IActionResult> UserListAsync(int page, bool isLocked, UserAccountLockReason? lockReason, string title)
     {
         const int take = 20;
         var pageIndex = page - 1;

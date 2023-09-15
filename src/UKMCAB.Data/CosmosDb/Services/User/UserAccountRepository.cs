@@ -4,7 +4,7 @@ using Polly;
 using Polly.Fallback;
 using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
-using UKMCAB.Common.Domain;
+using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
@@ -35,7 +35,7 @@ public class UserAccountRepository : IUserAccountRepository
 
     public async Task UpdateAsync(UserAccount userAccount) => await _container.ReplaceItemAsync(userAccount, userAccount.Id, new PartitionKey(userAccount.Id)).ConfigureAwait(false);
 
-    public async Task<int> UserCountAsync(int? lockReason = null, bool locked = false) {        
+    public async Task<int> UserCountAsync(UserAccountLockReason? lockReason = null, bool locked = false) {        
 
         if (lockReason == null)
         {
