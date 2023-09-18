@@ -73,6 +73,15 @@
                     </dd>
                 </div>
 
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Status
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.ValueOrNone(Model.UserAccount.Status)
+                    </dd>
+                </div>
+
 
             </dl>
         </div>
@@ -91,16 +100,14 @@
         else
         {
             <div>
-                @if(Model.UserAccount.LockReason == UKMCAB.Data.Models.Users.UserAccountLockReason.Archived)
+                @if(Model.UserAccount.IsArchived)
                 {
-                    <p class="govuk-body">This account is archived</p>
                     <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnarchive" asp-route-id="@Model.UserAccount.Id">
                         Unarchive
                     </a>
                 }
                 else
                 {
-                    <p class="govuk-body">This account is locked</p>
                     <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnlock" asp-route-id="@Model.UserAccount.Id">
                         Unlock
                     </a>
