@@ -64,8 +64,8 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form method="post" enctype="multipart/form-data" novalidate>
-            <input type="hidden" asp-for="IsFromSummary" />
+        <form class="js-submit-once" method="post" enctype="multipart/form-data" novalidate>
+            <input type="hidden" asp-for="IsFromSummary" onsubmit="" />
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"File")">
                 <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
                     Select a file
@@ -80,7 +80,7 @@
                 </div>
             </div>
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="upload">
+                <button class="govuk-button js-submit-button" data-module="govuk-button" name="submitType" value="upload" data-submitting-text="Uploading...">
                     Upload
                 </button>
                 <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">
