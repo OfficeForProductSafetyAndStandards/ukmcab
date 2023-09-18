@@ -16,12 +16,13 @@
     {
         var basePath = Context.Request.RemoveQueryParameters("pagenumber");
         basePath += basePath.Contains("?") ? "&pagenumber=" : "?pagenumber=";
+        var tab = !string.IsNullOrWhiteSpace(Model.TabId) ? "#" + Model.TabId : string.Empty;
         var pageRange = Model.PageRange();
         <nav class="pagination-links-container">
             <ul class="pagination-links">
                 @if (Model.ShowPrevious)
                 {
-                    <li class="pagination-link-item pagination-previous"><a href="@(basePath + (Model.PageNumber - 1))" class="govuk-link govuk-link--no-visited-state"><span>Previous</span></a></li>
+                    <li class="pagination-link-item pagination-previous"><a href="@(basePath + (Model.PageNumber - 1) + tab)" class="govuk-link govuk-link--no-visited-state"><span>Previous</span></a></li>
                 }
                 @foreach (var pageNumber in pageRange)
                 {
@@ -31,7 +32,7 @@
                     }
                     else
                     {
-                        <li class="pagination-link-item pagination-page-link"><a href="@(basePath + pageNumber)" class="govuk-link govuk-link--no-visited-state"><span>@pageNumber</span></a></li>
+                        <li class="pagination-link-item pagination-page-link"><a href="@(basePath + pageNumber + tab)" class="govuk-link govuk-link--no-visited-state"><span>@pageNumber</span></a></li>
                     }
                     if (pageNumber == 1 && !pageRange.Contains(2))
                     {
@@ -40,7 +41,7 @@
                 }
                 @if (Model.ShowNext)
                 {
-                    <li class="pagination-link-item"><a href="@(basePath + (Model.PageNumber + 1))" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
+                    <li class="pagination-link-item"><a href="@(basePath + (Model.PageNumber + 1) + tab)" class="govuk-link govuk-link--no-visited-state"><span>Next</span></a></li>
                 }
             </ul>
         </nav>

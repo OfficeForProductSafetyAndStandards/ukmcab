@@ -57,7 +57,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(SearchViewModel model)
         {
             var internalSearch = User != null && User.Identity.IsAuthenticated;
-            model.Sort ??= internalSearch ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
+            model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
             model.InternalSearch = internalSearch;
 
@@ -131,6 +131,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
                 StatusesFilter = model.Statuses,
+                UserGroupsFilter = model.UserGroups,
                 Select = _select,
                 InternalSearch = internalSearch
             };
@@ -194,6 +195,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (model.InternalSearch)
             {
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "Status", facets.StatusValue, model.Statuses);
+                model.LastUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User groups", facets.LastUserGroup, model.UserGroups);
             }
         }
 

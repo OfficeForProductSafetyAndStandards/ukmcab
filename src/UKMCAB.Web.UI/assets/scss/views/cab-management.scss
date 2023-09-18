@@ -86,21 +86,6 @@
                 display: none;
             }
         }
-
-        #cab-management-list-container {
-            table {
-                table-layout: fixed;
-            }
-
-            td {
-                padding: 20px 10px 20px 0;
-                overflow-wrap: break-word;
-
-                label {
-                    display: none;
-                }
-            }
-        }
     }
 
     @include govuk-media-query($until: tablet) {
@@ -121,30 +106,6 @@
 
         #cab-management-list-container {
             order: 3;
-
-            table {
-                table-layout: fixed;
-            }
-
-            thead {
-                display: none;
-            }
-
-            td {
-                display: block;
-                border-bottom: none;
-                overflow-wrap: break-word;
-
-                label {
-                    display: block;
-                    font-weight: 600;
-                    padding-bottom: 10px;
-                }
-            }
-
-            tr {
-                border-bottom: 1px solid #b1b4b6;
-            }
         }
     }
 }

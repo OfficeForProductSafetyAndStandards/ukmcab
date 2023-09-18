@@ -1,4 +1,5 @@
-﻿@using UKMCAB.Data.Models
+﻿@using UKMCAB.Core.Domain;
+@using UKMCAB.Data.Models
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CABSummaryViewModel
@@ -70,14 +71,19 @@
                             }
                         </dd>
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            CAB number
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.CabDetailsViewModel.CABNumber
-                        </dd>
-                    </div>
+
+                    @if(CabNumberVisibility.CanDisplay(Model.CabDetailsViewModel.CabNumberVisibility, User))
+                    {                        
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                CAB number
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Model.CabDetailsViewModel.CABNumber
+                            </dd>
+                        </div>
+                    }
+
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Appointment date (optional)

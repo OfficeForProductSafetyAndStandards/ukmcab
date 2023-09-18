@@ -1,0 +1,49 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Shared.AuditLogHistoryViewModel
+<div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden  govuk-body" id="history">
+    <div class="cab-detail-section">
+        <h2 class="govuk-heading-l">History</h2>
+        @if (!Model.AuditHistoryItems.Any())
+        {
+            <p class="govuk-body">@Constants.NotProvided</p>
+        }
+        else
+        {
+            <table class="govuk-table ukmcab-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Date and time</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Action</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Reason</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var auditHistoryItem in Model.AuditHistoryItems)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
+                            <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
+                            <td class="govuk-table__cell">
+                                @if (!string.IsNullOrWhiteSpace(auditHistoryItem.Comment))
+                                {
+                                    <details class="govuk-details" data-module="govuk-details">
+                                        <summary class="govuk-details__summary">
+                                            <span class="govuk-details__summary-text">
+                                                Reason
+                                            </span>
+                                        </summary>
+                                        <div class="govuk-details__text">
+                                            @auditHistoryItem.Comment
+                                        </div>
+                                    </details>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div id="cab-management-pagination-container">
+                <partial name="Partials/_Pagination" model="Model.Pagination" />
+            </div>
+        }
+    </div>
+</div>

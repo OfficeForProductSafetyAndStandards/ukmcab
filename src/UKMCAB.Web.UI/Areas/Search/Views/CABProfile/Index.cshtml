@@ -91,14 +91,11 @@
                                 <a id="unarchive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="unarchive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="UnarchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Unarchive</a>
                             </span>
                         }
-                        else
+                        @if(Model.IsPublished)
                         {
                             <span>
                                 <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
                             </span>
-                        }
-                        @if(Model.IsPublished)
-                        {
                             <span>
                                 <a id="archive-button" class="modal-button govuk-button govuk-button--secondary" data-modal-id="archive-modal" asp-area="Search" asp-controller="CABProfile" asp-action="ArchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Archive</a>
                             </span>
@@ -113,7 +110,7 @@
         <div class="govuk-grid-column-full">
             <div class="govuk-tabs cab-tabs" data-module="govuk-tabs">
                 <ul class="govuk-tabs__list">
-                    <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <li class="govuk-tabs__list-item @Html.Conditional(!Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected")">
                         <a class="govuk-tabs__tab" href="#details">
                             Details
                         </a>
@@ -131,6 +128,11 @@
                             </a>
                         </li>
                     }
+                    <li class="govuk-tabs__list-item @Html.Conditional(Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected" )">
+                        <a class="govuk-tabs__tab" href="#history">
+                            History
+                        </a>
+                    </li>
                 </ul>
 
                 <div class="govuk-tabs__panel cabs-panel" id="details">
@@ -353,6 +355,9 @@
                 {
                     <partial name="Partials/_Documents" model="Model.SupportingDocuments" />
                 }
+            
+                <partial name="Partials/_History" model="Model.AuditLogHistory" />
+
             </div>
         </div>
     </div>
@@ -366,8 +371,8 @@
     </div>
 </div>
 
+<!-- Archive modal content -->
 <div id="archive-modal" class="modal">
-    <!-- Modal content -->
     <div class="govuk-grid-row">
         <div class="modal-content">
             <div class="govuk-!-width-full">
@@ -412,8 +417,8 @@
     </div>
 </div>
 
+<!-- Unarchive modal content -->
 <div id="unarchive-modal" class="modal">
-    <!-- Modal content -->
     <div class="govuk-grid-row">
         <div class="modal-content">
             <div class="govuk-!-width-full">

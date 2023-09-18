@@ -1,5 +1,4 @@
 ﻿using Azure.Search.Documents.Indexes;
-using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data.Search.Models
 {
@@ -12,6 +11,9 @@ namespace UKMCAB.Data.Search.Models
         public string StatusValue { get; set; }
         [SimpleField]
         public string Status { get; set; }
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
+        public string LastUserGroup { get; set; }
+
         [SimpleField]
         public string CABId { get; set; }
 

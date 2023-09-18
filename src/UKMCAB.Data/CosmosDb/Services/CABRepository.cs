@@ -24,46 +24,12 @@ namespace UKMCAB.Data.CosmosDb.Services
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
-            foreach (var legacyDocument in items)
-            {
-                if (legacyDocument.StatusValue == Status.Created)
-                {
-                    await Delete(legacyDocument);
-                }
-            }
 
-            items = await Query<Document>(_container, document => true);
-
-            if (items[0].AuditLog == null)
+            if (items != null && items.Any() && items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
             {
                 foreach (var document in items)
                 {
-                    var auditLog = new List<Audit>();
-                    if (document.Created != null)
-                    {
-                        var audit = document.Created;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Created));
-                    }
-                    if (document.LastUpdated != null && document.StatusValue == Status.Draft)
-                    {
-                        var audit = document.LastUpdated;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Saved));
-                    }
-
-                    if (document.Published != null)
-                    {
-                        var audit = document.Published;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Published));
-                    }
-
-                    if (document.Archived != null)
-                    {
-                        var audit = document.Archived;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Archived, document.ArchivedReason));
-                    }
-
-                    document.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();
-
+                    document.Version = DataConstants.Version.Number;
                     await Update(document);
                 }
             }

@@ -17,8 +17,50 @@
 @import "./shared/modal.scss";
 @import "./shared/pagination.scss";
 @import "./shared/social-media-share.scss";
+@import "./shared/table.scss";
 
 /* The below style shoulb be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */
 .govuk-link:hover {
     text-decoration-thickness: max(3px, .1875rem, .12em);
+}
+
+.sort-button {
+    position: relative;
+    text-decoration: none;
+    color: black;
+
+    &[aria-sort]:before {
+        content: " \25bc";
+        position: absolute;
+        right: -15px;
+        top: 10px;
+        font-size: 0.5em;
+    }
+
+    &[aria-sort]:after {
+        content: " \25b2";
+        position: absolute;
+        right: -15px;
+        top: 1px;
+        font-size: 0.5em;
+    }
+
+    &[aria-sort="asc"]:before,
+    &[aria-sort="desc"]:before {
+        content: none;
+    }
+
+    &[aria-sort="asc"]:after {
+        content: " \25b2";
+        font-size: 0.8em;
+        right: -18px;
+        top: 3px;
+    }
+
+    &[aria-sort="desc"]:after {
+        content: " \25bc";
+        font-size: 0.8em;
+        right: -18px;
+        top: 3px;
+    }
 }

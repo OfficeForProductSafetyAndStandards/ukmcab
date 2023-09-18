@@ -9,6 +9,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public int Total { get; set; }
         public int ResultsPerPage { get; set; } 
         public string ResultType { get; set; } 
+        public string TabId { get; set; }
 
 
         public int TotalPages => Total % ResultsPerPage == 0

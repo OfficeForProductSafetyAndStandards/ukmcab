@@ -44,21 +44,25 @@ public class UserAdminController : Controller
     }
 
     [HttpGet("list", Name = Routes.UserList)]
-    public async Task<IActionResult> UserListAsync(int pageNumber = 1) => await UserListAsync(pageNumber, false, null, "User accounts");
+    public async Task<IActionResult> UserListAsync(int pageNumber = 1, [FromQuery(Name = "sf")] string? sortField = null, [FromQuery(Name = "sd")] string? sortDirection = null) 
+        => await UserListAsync(pageNumber, false, null, "User accounts", sortField, sortDirection);
 
     [HttpGet("list/archived", Name = Routes.UserListArchived)]
-    public async Task<IActionResult> UserListArchivedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, UserAccountLockReason.Archived, "Archived user accounts");    
+    public async Task<IActionResult> UserListArchivedAsync(int pageNumber = 1, [FromQuery(Name = "sf")] string? sortField = null, [FromQuery(Name = "sd")] string? sortDirection = null)
+        => await UserListAsync(pageNumber, true, UserAccountLockReason.Archived, "Archived user accounts", sortField, sortDirection);    
     
     [HttpGet("list/locked", Name = Routes.UserListLocked)]
-    public async Task<IActionResult> UserListLockedAsync(int pageNumber = 1) => await UserListAsync(pageNumber, true, UserAccountLockReason.None, "Locked user accounts");
+    public async Task<IActionResult> UserListLockedAsync(int pageNumber = 1, [FromQuery(Name = "sf")] string? sortField = null, [FromQuery(Name = "sd")] string? sortDirection = null) 
+        => await UserListAsync(pageNumber, true, UserAccountLockReason.None, "Locked user accounts", sortField, sortDirection);
 
-    private async Task<IActionResult> UserListAsync(int page, bool isLocked, UserAccountLockReason? lockReason, string title)
+    private async Task<IActionResult> UserListAsync(int page, bool isLocked, UserAccountLockReason? lockReason, string title, string? sortField = null, string? sortDirection = null)
     {
         const int take = 20;
         var pageIndex = page - 1;
         var skip = pageIndex * take;
 
-        var accounts = await _userService.ListAsync(new UserAccountListOptions(Skip: skip, Take: take, IsLocked: isLocked, LockReason: lockReason, ExcludeId: User.FindFirstValue(ClaimTypes.NameIdentifier)));
+        var options = new UserAccountListOptions(isLocked, lockReason, skip, take, null, sortField, sortDirection);
+        var accounts = await _userService.ListAsync(options);
         var pendingAccounts = await GetAllPendingRequests();
 
         var viewName = string.Empty;
@@ -81,6 +85,8 @@ public class UserAdminController : Controller
             PendingAccountsCount = pendingAccounts.Count,
             Title = title,
             LockedOnly = isLocked,
+            SortField = sortField ?? nameof(UserAccount.Surname),
+            SortDirection = sortDirection ?? SortDirectionHelper.Ascending,
             Pagination = new PaginationViewModel
             {
                 PageNumber = page,

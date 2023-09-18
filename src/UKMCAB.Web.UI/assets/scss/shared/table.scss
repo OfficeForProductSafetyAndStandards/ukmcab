@@ -1,0 +1,36 @@
+﻿.ukmcab-table {
+    table-layout: fixed;
+
+    thead {
+        @include govuk-media-query($until: tablet) {
+            display: none;
+        }
+    }
+
+    tr {
+        @include govuk-media-query($until: tablet) {
+            border-bottom: 1px solid #b1b4b6;
+        }
+
+        td {
+            padding: 20px 10px 20px 0;
+            overflow-wrap: break-word;
+
+            @include govuk-media-query($until: tablet) {
+                display: block;
+                border-bottom: none;
+                overflow-wrap: break-word;
+            }
+
+            label {
+                display: none;
+
+                @include govuk-media-query($until: tablet) {
+                    display: block;
+                    font-weight: 600;
+                    padding-bottom: 10px;
+                }
+            }
+        }
+    }
+}
