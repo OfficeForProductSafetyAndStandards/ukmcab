@@ -10,29 +10,25 @@
         {
             <table class="govuk-table ukmcab-table">
                 <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
+                    <tr class="govuk-table__row">
                         <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Date and time</th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-three-quarters">Reason</th>
-                </tr>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Action</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Reason</th>
+                    </tr>
                 </thead>
                 <tbody class="govuk-table__body">
-                @foreach (var auditHistoryItem in Model.AuditHistoryItems)
-                {
-                    <tr class="govuk-table__row">
-                        <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
-                        <td class="govuk-table__cell">
-                                <label aria-hidden="true">Reason</label>
-                            <div class="reason-cell">
-                                @if (string.IsNullOrWhiteSpace(auditHistoryItem.Comment))
-                                {
-                                    @auditHistoryItem.Action
-                                }
-                                else
+                    @foreach (var auditHistoryItem in Model.AuditHistoryItems)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
+                            <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
+                            <td class="govuk-table__cell">
+                                @if (!string.IsNullOrWhiteSpace(auditHistoryItem.Comment))
                                 {
                                     <details class="govuk-details" data-module="govuk-details">
                                         <summary class="govuk-details__summary">
                                             <span class="govuk-details__summary-text">
-                                                @auditHistoryItem.Action
+                                                Reason
                                             </span>
                                         </summary>
                                         <div class="govuk-details__text">
@@ -40,10 +36,9 @@
                                         </div>
                                     </details>
                                 }
-                            </div>
-                        </td>
-                    </tr>
-                }
+                            </td>
+                        </tr>
+                    }
                 </tbody>
             </table>
             <div id="cab-management-pagination-container">
