@@ -22,7 +22,7 @@ public class UserAccountLockUnlockViewModel : ILayoutModel
 {
     public UserAccountLockToggleUIMode Mode { get; set; }
 
-    public string? Title => "Lock user account";
+    public string? Title => $"{VerbBaseForm.ToTitleCase()} user account";
 
     public string VerbBaseForm => Mode switch
     {
