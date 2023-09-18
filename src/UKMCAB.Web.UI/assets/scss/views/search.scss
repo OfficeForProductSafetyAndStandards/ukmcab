@@ -339,7 +339,12 @@
                             .search-result-list-item-detail {
                                 padding: 3px 0;
 
-                                span {
+                                .search-result-label {
+                                    display: inline-block;
+                                    padding-right: 15px;
+                                }
+
+                                .search-result-status-label {
                                     border: 1px solid black;
                                     padding: 5px;
                                     font-weight: 600;
@@ -467,6 +472,16 @@
                 #search-results-list-container {
                     #search-results-list {
                         .search-result-list-item {
+                            .search-result-list-item-details {
+                                .search-result-list-item-detail {
+                                    .search-result-label {
+                                        display: block;
+                                        padding-bottom: 10px;
+                                    }
+                                }
+                            }
+
+
                             .search-result-list-item-link {
                                 margin-bottom: 5px;
                             }

@@ -73,8 +73,17 @@
                         <ul class="search-result-list-item-details">
                             @if (Model.InternalSearch)
                             {
-                                <li class="search-result-list-item-detail">Status: <span class="search-result-@searchResult.Status.ToLower()">@searchResult.Status</span></li>
-
+                                <li class="search-result-list-item-detail">
+                                    <div class="search-result-label">
+                                        Status: <span class="search-result-status-label search-result-@searchResult.Status.ToLower()">@searchResult.Status</span>
+                                    </div>
+                                    @if (Model.IsOPSSUser && searchResult.Status == Status.Draft.ToString())
+                                    {
+                                        <div class="search-result-label">
+                                            <text>User group: </text><span>@searchResult.UserGroup.ToUpper()</span>
+                                        </div>
+                                    }
+                                </li>
                             }
                             <li class="search-result-list-item-detail">Address: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.Address), searchResult.Address, @Constants.NotProvided)</li>
                             <li class="search-result-list-item-detail">Body type: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.BodyType), searchResult.BodyType, @Constants.NotProvided)</li>

@@ -9,6 +9,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using Microsoft.ApplicationInsights;
+using UKMCAB.Core.Security;
 using UKMCAB.Web.UI.Extensions;
 using UKMCAB.Web.UI.Helpers;
 
@@ -38,6 +39,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.TestingLocations),
             nameof(CABIndexItem.LegislativeAreas),
             nameof(CABIndexItem.LastUpdatedDate),
+            nameof(CABIndexItem.LastUserGroup)
         };
 
         public static class Routes
@@ -57,10 +59,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public async Task<IActionResult> Index(SearchViewModel model)
         {
             var internalSearch = User != null && User.Identity.IsAuthenticated;
+
+            
+            
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
             model.InternalSearch = internalSearch;
-
+            model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
             await SetFacetOptions(model);
 
             model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);

@@ -15,6 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             RegisteredOfficeLocation = cab.RegisteredOfficeLocation;
             RegisteredTestLocation = ListItems(cab.TestingLocations);
             LegislativeArea = ListItems(cab.LegislativeAreas);
+            UserGroup = cab.LastUserGroup;
         }
 
         private string ListItems(IEnumerable<string> list)
@@ -35,5 +36,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string RegisteredOfficeLocation { get; set; }
         public string RegisteredTestLocation { get; set; }
         public string LegislativeArea { get; set; }
+        public string UserGroup { get;}
     }
 }

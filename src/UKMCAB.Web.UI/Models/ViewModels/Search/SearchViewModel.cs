@@ -22,6 +22,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public static string GetKeywordsQueryStringKey() => nameof(Keywords);
         public string? ReturnUrl { get; set; }
         public bool InternalSearch { get; set; }
+        public bool IsOPSSUser { get; set; }
 
         // ILayout
         public string? Title => Keywords.IsNotNullOrEmpty()? Keywords: "Search";
