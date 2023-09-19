@@ -4,15 +4,23 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 {
     public class AuditLogHistoryViewModel
     {
-        public readonly string[] AuditActionsToShow = { AuditActions.Published, AuditActions.Archived, AuditActions.UnarchiveRequest };
+        public readonly string[] PublicAuditActionsToShow = { AuditActions.Published, AuditActions.Archived, AuditActions.UnarchiveRequest };
+        public readonly string[] OPSSUserAuditActionsToShow = { AuditActions.Published, AuditActions.Archived, AuditActions.UnarchiveRequest, AuditActions.Saved, AuditActions.Unarchived, AuditActions.Created };
+
+
         public const int resultsPerPage = 10;
-        public AuditLogHistoryViewModel(IEnumerable<Document> documents, int pageNumber)
+        public AuditLogHistoryViewModel(IEnumerable<Document> documents, bool isOPSSUser, int pageNumber)
         {
+            IsOPSSUser = isOPSSUser;
+
+
             documents = documents
                 .Where(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived || d.StatusValue == Status.Historical)
                 .OrderBy(d => d.LastUpdatedDate);
 
-            var auditLog = documents.SelectMany(d => d.AuditLog.Where(a => AuditActionsToShow.Any(action => action.Equals(a.Action)))).ToList();
+            var auditActionsToShow = isOPSSUser ? OPSSUserAuditActionsToShow : PublicAuditActionsToShow;
+
+            var auditLog = documents.SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action)))).ToList();
 
             if ((pageNumber - 1) * resultsPerPage > auditLog.Count)
             {
@@ -25,6 +33,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 .Select(al => new AuditHistoryItem
                 {
                     Username = al.UserName, 
+                    Usergroup = al.UserRole,
                     DateAndTime = al.DateTime, 
                     Action = NormaliseAction(al.Action),
                     Comment = al.Comment
@@ -52,6 +61,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             }
         }
 
+        public bool IsOPSSUser { get; set; }
+
         public IEnumerable<AuditHistoryItem> AuditHistoryItems { get;}
 
         public PaginationViewModel Pagination { get; set; }
@@ -64,6 +75,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public string Date => DateAndTime.ToString("dd/MM/yyyy");
         public string Time => DateAndTime.ToString("hh:mm");
         public string Username { get; set; }
+        public string Usergroup { get; set; }
         public string Action { get; set; }
         public string Comment { get; set; }
     }
