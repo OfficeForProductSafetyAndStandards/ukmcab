@@ -17,6 +17,8 @@ using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.Security;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
+using UKMCAB.Web.UI.Areas.Home.Controllers;
+using UKMCAB.Web.UI.Models.ViewModels;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
 {
@@ -171,7 +173,20 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     return RedirectToRoute(Routes.RequestAccount, new { tok = token });
 
                 case UserAccountStatus.PendingUserAccountRequest:
-                    throw new DomainException("You have already requested an account. You will receive an email when your request has been reviewed.");
+
+                    var uri = Url.RouteUrl(HomeController.Routes.Message, new
+                    {
+                        token = _secureTokenProcessor.Enclose(new MessageViewModel
+                        {
+                            Title = "Account not approved",
+                            Heading = "Account not approved",
+                            Body = "You have already requested an account. You will receive an email when your request has been reviewed.",
+                            ViewName = "Message",
+                        })
+                    });
+                    return RedirectToAction(nameof(LogoutAndRedirect), new { uri });
+
+
                 case UserAccountStatus.UserAccountLocked:
                     return RedirectToRoute(Routes.Locked, new { id });
 
@@ -184,6 +199,14 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     throw new NotSupportedException($"The user account status '{envelope.Status}' is not supported.");
             }
         }
+
+        [HttpGet("logout-redirect"), AllowAnonymous]
+        public async Task<IActionResult> LogoutAndRedirect(string uri)
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return Redirect(uri);
+        }
+
 
         [HttpGet("logout", Name = Routes.Logout)]
         public async Task<IActionResult> Logout()

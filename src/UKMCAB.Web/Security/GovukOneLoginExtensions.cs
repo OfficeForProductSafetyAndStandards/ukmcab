@@ -81,7 +81,7 @@ public static class GovukOneLoginExtensions
             options.Events.OnRedirectToIdentityProviderForSignOut = async (context) =>
             {
                 var uri = context.HttpContext.RequestServices.GetRequiredService<IAppHost>().GetBaseUri();
-                context.ProtocolMessage.PostLogoutRedirectUri = uri.ToString(); //"https://find-a-conformity-assessment-body.service.gov.uk/"; //todo: add localhost, dev, stage, preprod and vnext urls to onelogin config
+                context.ProtocolMessage.PostLogoutRedirectUri = uri.ToString(); 
             };
         });
         return services;
