@@ -66,7 +66,7 @@
                                     <td class="govuk-table__cell">@UKMCAB.Core.Security.Roles.NameFor(account.Role)</td>
                                     <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap">@(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")</td>
                                     <td class="govuk-table__cell">
-                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View&nbsp;profile</a>
+                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View</a>
                                     </td>
                                 </tr>
                             }
