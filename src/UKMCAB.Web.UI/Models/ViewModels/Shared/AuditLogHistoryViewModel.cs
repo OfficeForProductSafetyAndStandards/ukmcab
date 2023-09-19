@@ -32,6 +32,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 .Take(resultsPerPage)
                 .Select(al => new AuditHistoryItem
                 {
+                    UserId = al.UserId,
                     Username = al.UserName, 
                     Usergroup = al.UserRole,
                     DateAndTime = al.DateTime, 
@@ -75,6 +76,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public string Date => DateAndTime.ToString("dd/MM/yyyy");
         public string Time => DateAndTime.ToString("hh:mm");
         public string Username { get; set; }
+        public string UserId { get; set; }
         public string Usergroup { get; set; }
         public string Action { get; set; }
         public string Comment { get; set; }
