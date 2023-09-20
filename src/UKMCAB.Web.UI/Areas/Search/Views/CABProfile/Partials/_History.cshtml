@@ -1,4 +1,5 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Shared.AuditLogHistoryViewModel
+﻿@using System.Web
+@model UKMCAB.Web.UI.Models.ViewModels.Shared.AuditLogHistoryViewModel
 <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden  govuk-body" id="history">
     <div class="cab-detail-section">
         <h2 class="govuk-heading-l">History</h2>
@@ -10,34 +11,69 @@
         {
             <table class="govuk-table ukmcab-table">
                 <thead class="govuk-table__head">
+                @if (Model.IsOPSSUser)
+                {
                     <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Date and time</th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Action</th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Reason</th>
+                        <th scope="col" class="govuk-table__header">Date and time</th>
+                        <th scope="col" class="govuk-table__header">User</th>
+                        <th scope="col" class="govuk-table__header">User group</th>
+                        <th scope="col" class="govuk-table__header ">Action</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reason</th>
                     </tr>
+
+                }
+                else
+                {
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Date and time</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Action</th>
+                    </tr>
+                }
                 </thead>
                 <tbody class="govuk-table__body">
                     @foreach (var auditHistoryItem in Model.AuditHistoryItems)
                     {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
-                            <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
-                            <td class="govuk-table__cell">
-                                @if (!string.IsNullOrWhiteSpace(auditHistoryItem.Comment))
-                                {
-                                    <details class="govuk-details" data-module="govuk-details">
-                                        <summary class="govuk-details__summary">
-                                            <span class="govuk-details__summary-text">
-                                                Reason
-                                            </span>
-                                        </summary>
-                                        <div class="govuk-details__text">
-                                            @auditHistoryItem.Comment
-                                        </div>
-                                    </details>
-                                }
-                            </td>
-                        </tr>
+                        @if (Model.IsOPSSUser)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
+                                <td class="govuk-table__cell"><label aria-hidden="true">User</label>
+                                    @if (auditHistoryItem.UserId.Equals(new Guid().ToString()) || auditHistoryItem.UserId.Equals(Model.OPSSUserId))
+                                    {
+                                        <text>@auditHistoryItem.Username</text>
+                                    }
+                                    else
+                                    {
+                                        <a asp-area="admin" asp-controller="UserAdmin" asp-action="UserAccount" asp-route-id="@auditHistoryItem.UserId" class="govuk-link">@auditHistoryItem.Username</a>
+                                    }
+                                </td>
+                                <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@auditHistoryItem.Usergroup.ToUpper()</td>
+                                <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
+                                <td class="govuk-table__cell">
+                                    @if (!string.IsNullOrWhiteSpace(auditHistoryItem.Comment))
+                                    {
+                                        <label aria-hidden="true">Reason</label>
+                                        <details class="govuk-details" data-module="govuk-details">
+                                            <summary class="govuk-details__summary">
+                                                <span class="govuk-details__summary-text">
+                                                    View more
+                                                </span>
+                                            </summary>
+                                            <div class="govuk-details__text">
+                                                @Html.Raw(HttpUtility.HtmlDecode(auditHistoryItem.Comment))
+                                            </div>
+                                        </details>
+                                    }
+                            </tr>
+
+                        }
+                        else
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
+                                <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>

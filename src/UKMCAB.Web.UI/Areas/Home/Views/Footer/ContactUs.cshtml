@@ -1,6 +1,6 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Footer.ContactUsViewModel
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
         <partial name="Partials/_ValidationSummary" model="Model.FieldOrder" />
     </div>
 </div>
@@ -36,6 +36,7 @@
                     </p>
                     <input asp-for="Email" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="eamil" aria-required="true" maxlength="50" error-describedby-for="Email" />
                 </div>
+
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Subject))">
                     <h3 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--s" asp-for="Subject">
@@ -45,7 +46,14 @@
                     <p error-id-for="Subject" class="govuk-error-message">
                         <span asp-validation-for="Subject" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="Subject" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Subject))" autocomplete="subject" aria-required="true" maxlength="100" error-describedby-for="Subject" />
+                    <select class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, nameof(Model.Subject))" asp-for="Subject" error-describedby-for="Subject">
+                        <option value="" selected>Select a subject</option>
+                        <option value="Cab details">CAB details</option>
+                        <option value="System error">System error</option>
+                        <option value="User account">User account</option>
+                        <option value="User research">User research</option>
+                        <option value="Something else">Something else</option>
+                    </select>                    
                 </div>
 
                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">

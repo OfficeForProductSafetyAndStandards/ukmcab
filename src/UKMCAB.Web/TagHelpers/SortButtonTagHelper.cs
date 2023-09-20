@@ -33,7 +33,7 @@ public class SortButtonTagHelper : TagHelper
         if(SortField == TargetField)
         {
             output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Opposite(SortDirection)}");
-            output.Attributes.EnsureAttribute("aria-sort", SortDirectionHelper.Opposite(SortDirection));
+            output.Attributes.EnsureAttribute("aria-sort", SortDirectionHelper.Get(SortDirection));
         }
         else
         {

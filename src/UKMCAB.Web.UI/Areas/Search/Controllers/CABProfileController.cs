@@ -3,6 +3,7 @@ using System.Net;
 using System.Security.Claims;
 using System.Xml;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
@@ -118,7 +119,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
             var hasDraft = fullHistory.Any(d => d.StatusValue == Status.Draft);
-            var history = new AuditLogHistoryViewModel(fullHistory, pagenumber);
+
+            var userAccount = User != null && User.Identity.IsAuthenticated ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) : null;
+            var history = new AuditLogHistoryViewModel(fullHistory, userAccount, pagenumber);
 
             var cab = new CABProfileViewModel
             {
