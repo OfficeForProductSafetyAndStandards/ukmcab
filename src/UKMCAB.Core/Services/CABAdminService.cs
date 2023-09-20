@@ -187,7 +187,7 @@ namespace UKMCAB.Core.Services
             }
 
             latestDocument.StatusValue = Status.Published;
-            latestDocument.AuditLog.Add(new Audit(userAccount, AuditActions.Published));
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditActions.Published, latestDocument, publishedOrArchivedDocument));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
