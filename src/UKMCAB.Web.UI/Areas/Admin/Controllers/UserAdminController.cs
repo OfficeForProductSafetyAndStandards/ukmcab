@@ -100,7 +100,6 @@ public class UserAdminController : Controller
     [HttpGet("{id}", Name = Routes.UserAccount)]
     public async Task<IActionResult> UserAccountAsync(string id)
     {
-        Rule.IsTrue(id != User.FindFirstValue(ClaimTypes.NameIdentifier), "One cannot manage one's own profile");
         var account = await _userService.GetAsync(id);
         if (account == null)
         {
@@ -110,7 +109,8 @@ public class UserAdminController : Controller
         {
             return View(new UserAccountViewModel
             {
-                UserAccount = account
+                UserAccount = account,
+                IsMyOwnAccount = User.FindFirstValue(ClaimTypes.NameIdentifier) == account.Id,
             });
         }
     }

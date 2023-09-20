@@ -8,6 +8,8 @@ public class UserAccountViewModel : ILayoutModel
     public string? Title => "User account";
 
     public UserAccount UserAccount { get; set; }
+
+    public bool IsMyOwnAccount { get; set; }
 }
 
 public enum UserAccountLockToggleUIMode
