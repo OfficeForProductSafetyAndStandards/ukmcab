@@ -13,7 +13,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public const int resultsPerPage = 10;
         public AuditLogHistoryViewModel(IEnumerable<Document> documents, UserAccount userAccount, int pageNumber)
         {
-            IsOPSSUser = userAccount.Role == Roles.OPSS.Id;
+            IsOPSSUser = userAccount != null && userAccount.Role == Roles.OPSS.Id;
             OPSSUserId = IsOPSSUser ? userAccount.Id : string.Empty;
 
             documents = documents
