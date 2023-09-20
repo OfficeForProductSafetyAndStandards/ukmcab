@@ -119,9 +119,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
             var hasDraft = fullHistory.Any(d => d.StatusValue == Status.Draft);
-            var isOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
 
-            var history = new AuditLogHistoryViewModel(fullHistory, isOPSSUser, pagenumber);
+            var isOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
+            var userAccount = User != null ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) : null;
+            var history = new AuditLogHistoryViewModel(fullHistory, userAccount, pagenumber);
 
             var cab = new CABProfileViewModel
             {

@@ -1,4 +1,6 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Core.Security;
+using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 {
@@ -9,16 +11,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 
 
         public const int resultsPerPage = 10;
-        public AuditLogHistoryViewModel(IEnumerable<Document> documents, bool isOPSSUser, int pageNumber)
+        public AuditLogHistoryViewModel(IEnumerable<Document> documents, UserAccount userAccount, int pageNumber)
         {
-            IsOPSSUser = isOPSSUser;
-
+            IsOPSSUser = userAccount.Role == Roles.OPSS.Id;
+            OPSSUserId = IsOPSSUser ? userAccount.Id : string.Empty;
 
             documents = documents
                 .Where(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived || d.StatusValue == Status.Historical)
                 .OrderBy(d => d.LastUpdatedDate);
 
-            var auditActionsToShow = isOPSSUser ? OPSSUserAuditActionsToShow : PublicAuditActionsToShow;
+            var auditActionsToShow = IsOPSSUser ? OPSSUserAuditActionsToShow : PublicAuditActionsToShow;
 
             var auditLog = documents.SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action)))).ToList();
 
@@ -38,7 +40,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                     DateAndTime = al.DateTime, 
                     Action = NormaliseAction(al.Action),
                     Comment = al.Comment
-                });
+                }).OrderBy(al => al.DateAndTime);
 
             Pagination = new PaginationViewModel
             {
@@ -63,6 +65,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         }
 
         public bool IsOPSSUser { get; set; }
+        public string OPSSUserId { get; set; }
 
         public IEnumerable<AuditHistoryItem> AuditHistoryItems { get;}
 
@@ -74,7 +77,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
     {
         public DateTime DateAndTime { get; set; }
         public string Date => DateAndTime.ToString("dd/MM/yyyy");
-        public string Time => DateAndTime.ToString("hh:mm");
+        public string Time => DateAndTime.ToString("HH:mm");
         public string Username { get; set; }
         public string UserId { get; set; }
         public string Usergroup { get; set; }
