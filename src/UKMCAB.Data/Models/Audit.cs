@@ -26,10 +26,7 @@ namespace UKMCAB.Data.Models
             var sb = new StringBuilder();
             if (previousDocument == null)
             {
-                if (publisheDocument.AppointmentDate.HasValue)
-                {
-                    sb.AppendFormat("<p class=\"govuk-body\">Appointment date: {0} 12:00</p>",  publisheDocument.AppointmentDate.Value.ToString("dd/MM/yyyy"));
-                }
+                sb.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>", publisheDocument.AppointmentDate.HasValue ?  publisheDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00" : "Not provided");
                 sb.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>", DateTime.UtcNow.ToString("dd/MM/yyyy"));
             }
             else
