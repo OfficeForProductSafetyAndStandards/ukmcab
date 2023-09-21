@@ -150,6 +150,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 PointOfContactPhone = cabDocument.PointOfContactPhone ?? string.Empty,
                 IsPointOfContactPublicDisplay = cabDocument.IsPointOfContactPublicDisplay,
                 BodyNumber = cabDocument.CABNumber,
+                CabNumberVisibility = cabDocument.CabNumberVisibility,
                 BodyTypes = cabDocument.BodyTypes ?? new List<string>(),
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),

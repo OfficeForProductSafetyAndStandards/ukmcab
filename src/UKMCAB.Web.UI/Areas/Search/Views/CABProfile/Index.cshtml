@@ -1,4 +1,5 @@
 ﻿@using System.Net
+@using UKMCAB.Core.Domain;
 @model CABProfileViewModel
 @{
     ViewData["nav"] = "search";
@@ -146,17 +147,21 @@
                                 <dd class="govuk-summary-list__value">
                                     @Model.Name
                                 </dd>
-                            </div>                            
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    @Html.Conditional(User.Identity.IsAuthenticated /*TODO*/, "CAB number", "Body number")
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    @Model.BodyNumber
-                                </dd>
                             </div>
+                            
+                            @if (CabNumberVisibility.CanDisplay(Model.CabNumberVisibility, User))
+                            {
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        @Html.Conditional(User.Identity.IsAuthenticated, "CAB number", "Body number")
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @Model.BodyNumber
+                                    </dd>
+                                </div>
+                            }
 
-                            @if (User.Identity.IsAuthenticated /*TODO*/)
+                            @if (User.Identity.IsAuthenticated)
                             {                               
                                 <div class="govuk-summary-list__row">
                                     <dt class="govuk-summary-list__key">
