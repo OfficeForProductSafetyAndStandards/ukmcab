@@ -30,6 +30,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             }
             
             AuditHistoryItems = auditLog
+                .OrderByDescending(al => al.DateTime)
                 .Skip((pageNumber - 1) * resultsPerPage)
                 .Take(resultsPerPage)
                 .Select(al => new AuditHistoryItem
@@ -40,7 +41,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                     DateAndTime = al.DateTime, 
                     Action = NormaliseAction(al.Action),
                     Comment = al.Comment
-                }).OrderBy(al => al.DateAndTime);
+                });
 
             Pagination = new PaginationViewModel
             {
