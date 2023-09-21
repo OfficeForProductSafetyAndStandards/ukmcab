@@ -99,7 +99,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("File", $"Max upload is 35. You can only upload {allowableNoOfFiles} file(s) more.");
             }
-
+            else if (model.Files == null && model.File == null)
+            {
+                ModelState.AddModelError("File", $"Select a {SchedulesOptions.AcceptedFileTypes} file 10 megabytes or less.");
+            }
             model.Title = SchedulesOptions.UploadTitle;
             model.UploadedFiles =
                 latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea})
