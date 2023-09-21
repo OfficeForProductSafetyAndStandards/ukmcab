@@ -45,11 +45,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         // Body details
         public List<string> RegisteredTestLocations { get; set; }
         public string BodyNumber { get; set; }
+        public string? CabNumberVisibility { get;  set; }
         public List<string> BodyTypes { get; set; }
         public List<string> LegislativeAreas { get; set; }
         public CABDocumentsViewModel ProductSchedules { get; set; }
         public CABDocumentsViewModel SupportingDocuments { get; set; }
         public FeedLinksViewModel FeedLinksViewModel { get; set; }
-
     }
 }
