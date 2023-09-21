@@ -37,4 +37,19 @@ public class UserAccount
     public string? Role { get; set; }
 
     public string? GetEmailAddress() => ContactEmailAddress ?? EmailAddress;
+    public string Status
+    {
+        get
+        {
+            if (IsArchived)
+            {
+                return "Archived";
+            }
+            else if (IsLocked)
+            {
+                return "Locked";
+            }
+            return "Active";
+        }
+    }
 }
