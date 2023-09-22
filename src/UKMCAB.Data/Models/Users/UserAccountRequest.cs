@@ -3,6 +3,7 @@
 public class UserAccountRequest
 {
     public string Id { get; set; } = Guid.NewGuid().ToString();
+    public List<Audit> AuditLog { get; set; }
     public string SubjectId { get; set; } = null!;
     public string? FirstName { get; set; }
     public string? Surname { get; set; }

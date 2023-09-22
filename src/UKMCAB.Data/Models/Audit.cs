@@ -8,7 +8,6 @@ namespace UKMCAB.Data.Models
     {
         public Audit() { }
 
-
         public Audit(string userId, string username, string userrole, DateTime date, string action, string comment = null)
         {
             UserId = userId;
@@ -19,9 +18,9 @@ namespace UKMCAB.Data.Models
             Comment = comment;
         }
 
-        public Audit(UserAccount userAccount, string status, string comment = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, status, comment) { }
+        public Audit(UserAccount userAccount, string action, string comment = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, action, comment) { }
 
-        public Audit(UserAccount userAccount, string status, Document publisheDocument, Document previousDocument = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, status)
+        public Audit(UserAccount userAccount, string action, Document publisheDocument, Document previousDocument = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, action)
         {
             var sb = new StringBuilder();
             if (previousDocument == null)
@@ -80,7 +79,7 @@ namespace UKMCAB.Data.Models
         public string? Comment { get; set; }
     }
 
-    public class AuditActions
+    public class AuditCABActions
     {
         public const string Created = nameof(Created);
         public const string Saved = nameof(Saved);
@@ -89,6 +88,11 @@ namespace UKMCAB.Data.Models
         public const string Archived = nameof(Archived);
         public const string Unarchived = nameof(Unarchived);
         public const string UnarchiveRequest = nameof(UnarchiveRequest);
+    }
+
+    public class AuditUserActions
+    {
+        public const string UserAccountRequest = nameof(UserAccountRequest);
     }
 
 }

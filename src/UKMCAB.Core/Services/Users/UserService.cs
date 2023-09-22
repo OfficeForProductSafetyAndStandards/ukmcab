@@ -6,6 +6,7 @@ using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.CosmosDb.Services.User;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Services.Users;
@@ -68,6 +69,10 @@ public class UserService : IUserService
             OrganisationName = model.Organisation,
             Surname = model.Surname,
             Comments = model.Comments,
+            AuditLog = new List<Audit>
+            {
+                new Audit(model.SubjectId, $"{model.FirstName} {model.Surname}", string.Empty, DateTime.UtcNow, AuditUserActions.UserAccountRequest, model.Comments)
+            }
         });
     }
 

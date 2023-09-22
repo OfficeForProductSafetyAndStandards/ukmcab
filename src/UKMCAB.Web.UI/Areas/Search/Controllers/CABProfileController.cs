@@ -112,10 +112,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private async Task<CABProfileViewModel> GetCabProfileViewModel(Document cabDocument, string returnUrl, int pagenumber = 1)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
-            var isUnarchivedRequest =  cabDocument.AuditLog.Any(al => al.Action == AuditActions.UnarchiveRequest);
+            var isUnarchivedRequest =  cabDocument.AuditLog.Any(al => al.Action == AuditCABActions.UnarchiveRequest);
             var isPublished = cabDocument.StatusValue == Status.Published;
-            var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Action == AuditActions.Archived) : null;
-            var publishedAudit = cabDocument.AuditLog.SingleOrDefault(al => al.Action == AuditActions.Published);
+            var archiveAudit = isArchived ? cabDocument.AuditLog.Single(al => al.Action == AuditCABActions.Archived) : null;
+            var publishedAudit = cabDocument.AuditLog.SingleOrDefault(al => al.Action == AuditCABActions.Published);
 
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
             var hasDraft = fullHistory.Any(d => d.StatusValue == Status.Draft);
@@ -387,7 +387,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument != null)
             {
-                var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditActions.Published);
+                var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditCABActions.Published);
                 var cab = new SubscriptionsCoreCabModel
                 {
                     CABId = cabDocument.CABId,
