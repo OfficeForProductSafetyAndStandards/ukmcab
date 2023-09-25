@@ -99,7 +99,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 ModelState.AddModelError("File", $"Max upload is 35. You can only upload {allowableNoOfFiles} file(s) more.");
             }
-
+            else if (model.Files == null && model.File == null)
+            {
+                ModelState.AddModelError("File", $"Select a {SchedulesOptions.AcceptedFileTypes} file 10 megabytes or less.");
+            }
             model.Title = SchedulesOptions.UploadTitle;
             model.UploadedFiles =
                 latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea})
@@ -130,13 +133,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var contentType = string.Empty;
             if (file == null)
             {
-                ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Select a {acceptedFileTypes} file 10 megabytes or less.");
+                ModelState.AddModelError("File", $"Select a {acceptedFileTypes} file 10 megabytes or less.");
             }
             else
             {
                 if (file.Length > 10485760)
                 {
-                    ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Files must be no more that 10Mb in size.");
+                    ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Select a {acceptedFileTypes} file 10 megabytes or less.");
                 }
 
                 contentType = acceptedFileExtensionsContentTypes.SingleOrDefault(ct =>
