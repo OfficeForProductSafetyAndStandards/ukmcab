@@ -33,13 +33,13 @@ namespace UKMCAB.Data.Models
             {
                 var previousSchedules = previousDocument.Schedules ?? new List<FileUpload>();
                 var currentSchedules = publisheDocument.Schedules ?? new List<FileUpload>();
-                var existingSchedules = currentSchedules.Where(sch => previousSchedules.Any(prev => prev.BlobName.Equals(sch.BlobName)));
-                var newSchedules = currentSchedules.Where(sch => previousSchedules.All(prev => !prev.BlobName.Equals(sch.BlobName)));
-                var removedSchedules = previousSchedules.Where(sch => currentSchedules.All(pub => !pub.BlobName.Equals(sch.BlobName)));
+                var existingSchedules = currentSchedules.Where(sch => previousSchedules.Any(prev => prev.UploadDateTime.Equals(sch.UploadDateTime)));
+                var newSchedules = currentSchedules.Where(sch => previousSchedules.All(prev => !prev.UploadDateTime.Equals(sch.UploadDateTime)));
+                var removedSchedules = previousSchedules.Where(sch => currentSchedules.All(pub => !pub.UploadDateTime.Equals(sch.UploadDateTime)));
                 foreach (var schedule in existingSchedules)
                 {
                     var previousSchedule =
-                        previousDocument.Schedules.Single(sch => sch.FileName.Equals(schedule.FileName));
+                        previousDocument.Schedules.Single(sch => sch.UploadDateTime.Equals(schedule.UploadDateTime));
                     if (!previousSchedule.LegislativeArea.Equals(schedule.LegislativeArea))
                     {
                         sb.AppendFormat("<p class=\"govuk-body\">The legislative area {0} has been changed to {1} on this product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>", previousSchedule.LegislativeArea, schedule.LegislativeArea, ScheduleLink(publisheDocument.CABId, schedule.FileName), schedule.Label);
