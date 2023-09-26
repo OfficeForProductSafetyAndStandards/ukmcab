@@ -93,6 +93,16 @@ namespace UKMCAB.Data.Models
     public class AuditUserActions
     {
         public const string UserAccountRequest = nameof(UserAccountRequest);
+        public const string ApproveAccountRequest = nameof(ApproveAccountRequest);
+        public const string DeclineAccountRequest = nameof(DeclineAccountRequest);
+        public const string LockAccountRequest = nameof(LockAccountRequest);
+        public const string UnlockAccountRequest = nameof(UnlockAccountRequest);
+        public const string ArchiveAccountRequest = nameof(ArchiveAccountRequest);
+        public const string UnarchiveAccountRequest = nameof(UnarchiveAccountRequest);
+
+
+
     }
+
 
 }

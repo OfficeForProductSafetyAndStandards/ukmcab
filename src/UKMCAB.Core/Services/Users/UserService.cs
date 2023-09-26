@@ -95,12 +95,12 @@ public class UserService : IUserService
 
 
     /// <inheritdoc />
-    public async Task ApproveAsync(string id, string role) => await ApproveRejectAsync(id, UserAccountRequestStatus.Approved, role: role).ConfigureAwait(false);
+    public async Task ApproveAsync(string id, string role, UserAccount reviewer) => await ApproveRejectAsync(id, UserAccountRequestStatus.Approved, reviewer, role: role).ConfigureAwait(false);
 
     /// <inheritdoc />
-    public async Task RejectAsync(string id, string reason) => await ApproveRejectAsync(id, UserAccountRequestStatus.Rejected, reason).ConfigureAwait(false);
+    public async Task RejectAsync(string id, string reason, UserAccount reviewer) => await ApproveRejectAsync(id, UserAccountRequestStatus.Rejected, reviewer, reason).ConfigureAwait(false);
     
-    private async Task ApproveRejectAsync(string id, UserAccountRequestStatus status, string? reviewComments = null, string? role = null)
+    private async Task ApproveRejectAsync(string id, UserAccountRequestStatus status, UserAccount reviewer, string? reviewComments = null, string? role = null)
     {
         Guard.IsFalse(status == UserAccountRequestStatus.Pending, "You cannot assign a status of Pending");
         var request = await _userAccountRequestRepository.GetAsync(id).ConfigureAwait(false) ?? throw new NotFoundException("The user account request could not be found");
@@ -110,10 +110,19 @@ public class UserService : IUserService
         await _userAccountRequestRepository.UpdateAsync(request).ConfigureAwait(false);
 
         var account = await _userAccountRepository.GetAsync(request.SubjectId).ConfigureAwait(false);
+        var audit = new Audit
+        {
+            DateTime = DateTime.UtcNow,
+            UserName = $"{reviewer.FirstName} {reviewer.Surname}",
+            UserId = reviewer.Id,
+            UserRole = reviewer.Role,
+            Comment = reviewComments
+        };
         
         if (status == UserAccountRequestStatus.Approved)
         {
             Rule.IsTrue(role.EqualsAny(Roles.List.Select(x => x.Id).ToArray()), $"The supplied role id ('{role}') does not match any of the configured roles");
+
 
             if (account != null) // there's already an account for this fella
             {
@@ -128,6 +137,7 @@ public class UserService : IUserService
             }
             else
             {
+                audit.Action = AuditUserActions.ApproveAccountRequest;
                 account = new UserAccount
                 {
                     Id = request.SubjectId,
@@ -137,7 +147,9 @@ public class UserService : IUserService
                     OrganisationName = request.OrganisationName,
                     Surname = request.Surname,
                     Role = role,
+                    AuditLog =request.AuditLog != null && request.AuditLog.Any() ? request.AuditLog : new List<Audit>(),
                 };
+                account.AuditLog.Add(audit);
                 await _userAccountRepository.CreateAsync(account).ConfigureAwait(false);
             }
 
@@ -149,6 +161,14 @@ public class UserService : IUserService
         }
         else
         {
+            audit.Action = AuditUserActions.DeclineAccountRequest;
+            if (request.AuditLog == null)
+            {
+                request.AuditLog = new List<Audit>();
+            }
+            request.AuditLog.Add(audit);
+            await _userAccountRequestRepository.UpdateAsync(request);
+
             var personalisation = new Dictionary<string, dynamic>
             {
                 {"rejection-reason", reviewComments ?? "" }
@@ -160,12 +180,25 @@ public class UserService : IUserService
     /// <inheritdoc />
     public async Task UpdateLastLogonDate(string id) => await _userAccountRepository.PatchAsync(id, UserAccount.LastLogonUtcFieldName, DateTime.UtcNow).ConfigureAwait(false);
 
-    public async Task LockAccountAsync(string id, UserAccountLockReason reason, string? reasonDescription, string? internalNotes)
+    public async Task LockAccountAsync(string id, UserAccount reviewer, UserAccountLockReason reason, string? reasonDescription, string? internalNotes)
     {
         var account = await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
         if (account != null) 
         {
             LockAccount(account, reason, reasonDescription, internalNotes);
+            if (account.AuditLog == null)
+            {
+                account.AuditLog = new List<Audit>();
+            }
+            account.AuditLog.Add(new Audit
+            {
+                DateTime = DateTime.UtcNow,
+                UserId = reviewer.Id,
+                UserName = $"{reviewer.FirstName} {reviewer.Surname}",
+                UserRole = reviewer.Role,
+                Action =reason == UserAccountLockReason.Archived ? AuditUserActions.ArchiveAccountRequest : AuditUserActions.LockAccountRequest,
+                Comment = internalNotes
+            });
             await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
 
             if(reason == UserAccountLockReason.Archived)
@@ -176,30 +209,6 @@ public class UserService : IUserService
             {
                 await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountLocked, new() { ["reason"] = reasonDescription });
             }
-        }
-        else
-        {
-            throw new NotFoundException($"User account for id '{id}' was not found");
-        }
-    }
-
-    public async Task UnlockAccountAsync(string id, string? reasonDescription, string? internalNotes)
-    {
-        var account = await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
-        if (account != null)
-        {
-            var oldReason = UnlockAccount(account);
-            await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
-
-            if (oldReason == UserAccountLockReason.Archived)
-            {
-                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnarchived);
-            }
-            else
-            {
-                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnlocked, new() { ["reason"] = reasonDescription });
-            }
-            //todo: record audit trail
         }
         else
         {
@@ -219,6 +228,43 @@ public class UserService : IUserService
         else
         {
             throw new DomainException("The account is already locked");
+        }
+    }
+
+    public async Task UnlockAccountAsync(string id, UserAccount reviewer, UserAccountUnlockReason reason, string? reasonDescription, string? internalNotes)
+    {
+        var account = await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
+        if (account != null)
+        {
+            var oldReason = UnlockAccount(account);
+            if (account.AuditLog == null)
+            {
+                account.AuditLog = new List<Audit>();
+            }
+            account.AuditLog.Add(new Audit
+            {
+                DateTime = DateTime.UtcNow,
+                UserId = reviewer.Id,
+                UserName = $"{reviewer.FirstName} {reviewer.Surname}",
+                UserRole = reviewer.Role,
+                Action = reason == UserAccountUnlockReason.Unarchived ? AuditUserActions.UnarchiveAccountRequest : AuditUserActions.UnlockAccountRequest,
+                Comment = internalNotes
+            });
+            await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
+
+            if (oldReason == UserAccountLockReason.Archived)
+            {
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnarchived);
+            }
+            else
+            {
+                await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountUnlocked, new() { ["reason"] = reasonDescription });
+            }
+            //todo: record audit trail
+        }
+        else
+        {
+            throw new NotFoundException($"User account for id '{id}' was not found");
         }
     }
 

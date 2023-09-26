@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 
@@ -10,6 +11,8 @@ public class UserAccountViewModel : ILayoutModel
     public UserAccount UserAccount { get; set; }
 
     public bool IsMyOwnAccount { get; set; }
+
+    public AuditLogHistoryViewModel AuditLogHistoryViewModel { get; set; }
 }
 
 public enum UserAccountLockToggleUIMode

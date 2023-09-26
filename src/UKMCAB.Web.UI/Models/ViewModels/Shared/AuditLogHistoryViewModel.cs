@@ -11,6 +11,37 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 
 
         public const int resultsPerPage = 10;
+
+        public AuditLogHistoryViewModel(List<Audit> audits, int pageNumber)
+        {
+            if (audits == null)
+            {
+                audits = new List<Audit>();
+            }
+            AuditHistoryItems = audits
+                .OrderByDescending(al => al.DateTime)
+                .Skip((pageNumber - 1) * resultsPerPage)
+                .Take(resultsPerPage)
+                .Select(al => new AuditHistoryItem
+                {
+                    UserId = al.UserId,
+                    Username = al.UserName,
+                    Usergroup = al.UserRole,
+                    DateAndTime = al.DateTime,
+                    Action = NormaliseAction(al.Action),
+                    Comment = al.Comment
+                });
+
+            Pagination = new PaginationViewModel
+            {
+                ResultsPerPage = resultsPerPage,
+                Total = audits.Count,
+                PageNumber = pageNumber,
+                TabId = "history"
+            };
+        }
+
+
         public AuditLogHistoryViewModel(IEnumerable<Document> documents, UserAccount userAccount, int pageNumber)
         {
             IsOPSSUser = userAccount != null && userAccount.Role == Roles.OPSS.Id;
@@ -58,8 +89,24 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         {
             switch (action)
             {
+                // CAB audit mappings
                 case AuditCABActions.UnarchiveRequest:
                     return "Unarchive request";
+                // User audit mappings
+                case AuditUserActions.UserAccountRequest:
+                    return "User access request";
+                case AuditUserActions.ApproveAccountRequest:
+                    return "User access approved";
+                case AuditUserActions.DeclineAccountRequest:
+                    return "User access declined";
+                case AuditUserActions.LockAccountRequest:
+                    return "User account locked";
+                case AuditUserActions.UnlockAccountRequest:
+                    return "User account unlocked";
+                case AuditUserActions.ArchiveAccountRequest:
+                    return "User account archived";
+                case AuditUserActions.UnarchiveAccountRequest:
+                    return "User account unarchived";
                 default:
                     return action;
             }

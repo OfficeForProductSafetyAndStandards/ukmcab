@@ -3,11 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
-using System.Linq;
-using System;
 using System.Security.Claims;
-using System.Threading.Tasks;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core.Security;
@@ -16,9 +12,9 @@ using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.Security;
-using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels;
+using UKMCAB.Web.UI.Models.ViewModels.Account;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
 {

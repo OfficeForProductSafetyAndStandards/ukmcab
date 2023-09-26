@@ -12,3 +12,16 @@ public enum UserAccountLockReason
     /// </summary>
     Archived,
 }
+
+public enum UserAccountUnlockReason
+{
+    /// <summary>
+    /// It's unlocked cos it's unlocked.
+    /// </summary>
+    None,
+
+    /// <summary>
+    /// It's unlocked cos it's unarchived.
+    /// </summary>
+    Unarchived,
+}

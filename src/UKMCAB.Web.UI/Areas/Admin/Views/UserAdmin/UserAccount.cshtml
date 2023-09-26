@@ -18,7 +18,7 @@
 </div>
 
 <div id="cab-profile-page" class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
         
         <div class="govuk-tabs cab-tabs" data-module="govuk-tabs">
             <ul class="govuk-tabs__list">
@@ -33,7 +33,7 @@
                     </a>
                 </li>
             </ul>
-            <div class="govuk-tabs__panel" id="details">
+            <div class="govuk-tabs__panel cabs-panel" id="details">
                 <div class="govuk-form-group">
                     <dl class="govuk-summary-list">
                         <div class="govuk-summary-list__row">
@@ -132,9 +132,7 @@
                     }
                 }
             </div>
-            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="history">
-                <partial name="Partials/_History" model="null" />
-            </div>
+            <partial name="Partials/_History" model="Model.AuditLogHistoryViewModel" />
         </div>
     </div>
 </div>
