@@ -23,7 +23,7 @@
         <form method="post" enctype="multipart/form-data" novalidate>
             <input type="hidden" asp-for="IsFromSummary" />
             <partial name="Partials/_ValidationSummary" model="null"/>
-            <span class="govuk-caption-m">Create a CAB</span>
+            <span class="govuk-caption-m">@Model.Title</span>
             <h1 class="govuk-heading-l">@Model.Title</h1>
             <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to 10 Word, Excel or PDF documents.</p>
                 

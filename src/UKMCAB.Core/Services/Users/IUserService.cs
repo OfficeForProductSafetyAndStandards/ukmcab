@@ -30,15 +30,6 @@ public interface IUserService
     Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options);
 
     /// <summary>
-    /// Lists user account requests
-    /// </summary>
-    /// <param name="skip"></param>
-    /// <param name="take"></param>
-    /// <returns></returns>
-    Task<IEnumerable<UserAccountRequest>> ListPendingAccountRequestsAsync(int skip = 0, int take = 20);
-
-
-    /// <summary>
     /// Submits a user account request
     /// </summary>
     /// <param name="model"></param>
@@ -76,4 +67,7 @@ public interface IUserService
     Task LockAccountAsync(string id, UserAccount reviewer, UserAccountLockReason reason, string? reasonDescription, string? internalNotes);
 
     Task UnlockAccountAsync(string id, UserAccount reviewer, UserAccountUnlockReason reason, string? reasonDescription, string? internalNotes);
+
+    Task<IEnumerable<UserAccountRequest>> ListRequestsAsync(UserAccountRequestListOptions options);
+    Task<int> CountRequestsAsync(UserAccountRequestStatus? status = null);
 }

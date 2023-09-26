@@ -15,7 +15,11 @@ public class OneLoginHelper
 {
     public const string ClientAssertionTypeJwtBearer = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
+    public const string LoginCallbackPath = "/oidc";
+    public const string LogoutCallbackPath = "/oidc-logout";
+
     public string ClientId { get; }
+
     private string KeyPairPem { get; }
 
     public OneLoginHelper(IConfiguration configuration)

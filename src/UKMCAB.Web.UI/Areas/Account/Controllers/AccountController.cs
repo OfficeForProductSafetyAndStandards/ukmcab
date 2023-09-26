@@ -14,6 +14,8 @@ using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.Security;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels;
+using System.Text.Encodings.Web;
+using Microsoft.IdentityModel.Tokens;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
@@ -157,74 +159,77 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             var id = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var envelope = await _users.GetUserAccountStatusAsync(id);
 
-            if (envelope.Status != UserAccountStatus.Active)
+            if (envelope.Status == UserAccountStatus.Active)
             {
-                await HttpContext.SignOutAsync();
+                await _users.UpdateLastLogonDate(id);
+                _telemetry.TrackEvent(AiTracking.Events.LoginSuccess, HttpContext.ToTrackingMetadata());
+                return Redirect("/");
             }
-
-            switch (envelope.Status)
+            else // log-out the user and redirect somewhere...
             {
-                case UserAccountStatus.Unknown:
-                    var token = _secureTokenProcessor.Enclose(new RequestAccountTokenDescriptor(id, User.FindFirstValue(ClaimTypes.Email)));
-                    return RedirectToRoute(Routes.RequestAccount, new { tok = token });
+                string? redirectUri;
+                switch (envelope.Status)
+                {
+                    case UserAccountStatus.Unknown:
+                        var token = _secureTokenProcessor.Enclose(new RequestAccountTokenDescriptor(id, User.FindFirstValue(ClaimTypes.Email)));
+                        redirectUri = Url.RouteUrl(Routes.RequestAccount, new { tok = token });
+                        break;
 
-                case UserAccountStatus.PendingUserAccountRequest:
+                    case UserAccountStatus.PendingUserAccountRequest:
 
-                    var uri = Url.RouteUrl(HomeController.Routes.Message, new
-                    {
-                        token = _secureTokenProcessor.Enclose(new MessageViewModel
+                        redirectUri = Url.RouteUrl(HomeController.Routes.Message, new
                         {
-                            Title = "Account not approved",
-                            Heading = "Account not approved",
-                            Body = "You have already requested an account. You will receive an email when your request has been reviewed.",
-                            ViewName = "Message",
-                        })
-                    });
-                    return RedirectToAction(nameof(LogoutAndRedirect), new { uri });
+                            token = _secureTokenProcessor.Enclose(new MessageViewModel
+                            {
+                                Title = "Account not approved",
+                                Heading = "Account not approved",
+                                Body = "You have already requested an account. You will receive an email when your request has been reviewed.",
+                                ViewName = "Message",
+                            })
+                        });
+                        break;
 
+                    case UserAccountStatus.UserAccountLocked:
+                        redirectUri = Url.RouteUrl(Routes.Locked, new { id });
+                        break;
 
-                case UserAccountStatus.UserAccountLocked:
-                    return RedirectToRoute(Routes.Locked, new { id });
+                    case UserAccountStatus.Active:
+                        throw new Exception("Active user accounts should not be processed by this block");
 
-                case UserAccountStatus.Active:
-                    await _users.UpdateLastLogonDate(id);
-                    _telemetry.TrackEvent(AiTracking.Events.LoginSuccess, HttpContext.ToTrackingMetadata());
-                    return Redirect("/");
+                    default:
+                        throw new NotSupportedException($"The user account status '{envelope.Status}' is not supported.");
+                }
 
-                default:
-                    throw new NotSupportedException($"The user account status '{envelope.Status}' is not supported.");
+                if (redirectUri != null)
+                {
+                    var redirectUrib64 = Base64UrlEncoder.Encode(redirectUri);
+                    return RedirectToRoute(Routes.Logout, new { redirectUrib64 });
+                }
+                else
+                {
+                    throw new Exception("Redirect uri not set");
+                }
             }
         }
 
-        [HttpGet("logout-redirect"), AllowAnonymous]
-        public async Task<IActionResult> LogoutAndRedirect(string uri)
+
+        [HttpGet("logout", Name = Routes.Logout), AllowAnonymous]
+        public async Task<IActionResult> Logout(string? redirectUrib64 = null)
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return Redirect(uri);
-        }
-
-
-        [HttpGet("logout", Name = Routes.Logout)]
-        public async Task<IActionResult> Logout()
-        {
-            void Track()
-            {
-                _logger.LogInformation("User logged out.");
-                _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
-            }
-
+            _logger.LogInformation("User logged out.");
+            _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
+            
             if (User.HasClaim(x => x.Type == Claims.IsOneLoginUser))
             {
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme);
-                Track();
+                var authProperties = new AuthenticationProperties();
+                Indeed.If(redirectUrib64 != null, () => authProperties.Items.Add("redirect", Base64UrlEncoder.Decode(redirectUrib64)));
+                await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, authProperties);
                 return new EmptyResult();
             }
             else
             {
-                await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-                Track();
-                return Redirect("/");
+                return Redirect(redirectUrib64.Map(x => Base64UrlEncoder.Decode(x)) ?? "/");
             }
         }
 

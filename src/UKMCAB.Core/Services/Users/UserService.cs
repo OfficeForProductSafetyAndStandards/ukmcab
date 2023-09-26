@@ -83,8 +83,9 @@ public class UserService : IUserService
         => _userAccountRepository.ListAsync(options);
 
     /// <inheritdoc />
-    public async Task<IEnumerable<UserAccountRequest>> ListPendingAccountRequestsAsync(int skip = 0, int take = 20) 
-        => await _userAccountRequestRepository.ListAsync(UserAccountRequestStatus.Pending, skip, take);
+    public async Task<IEnumerable<UserAccountRequest>> ListRequestsAsync(UserAccountRequestListOptions options) => await _userAccountRequestRepository.ListAsync(options);
+
+    public async Task<int> CountRequestsAsync(UserAccountRequestStatus? status = null) => await _userAccountRequestRepository.CountAsync(status);
 
     /// <inheritdoc />
     public async Task<UserAccount?> GetAsync(string id) 

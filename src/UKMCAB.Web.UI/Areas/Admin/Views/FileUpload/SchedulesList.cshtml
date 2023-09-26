@@ -26,7 +26,7 @@
         <div class="govuk-grid-column-full">
             <input type="hidden" asp-for="IsFromSummary" />
             <partial name="Partials/_ValidationSummary" model="null"/>
-            <span class="govuk-caption-m">Create a CAB</span>
+            <span class="govuk-caption-m">@Model.Title</span>
             <h1 class="govuk-heading-l">@Model.Title</h1>
             <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to @SchedulesOptions.MaxFileCount PDF documents.</p>
 
