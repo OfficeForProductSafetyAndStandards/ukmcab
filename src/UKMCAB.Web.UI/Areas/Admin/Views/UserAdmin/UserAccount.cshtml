@@ -1,11 +1,19 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountViewModel
+﻿@using System.Net
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountViewModel
 
 @section BackButton
 {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <a href="@Url.RouteUrl(UserAdminController.Routes.UserList)" class="govuk-back-link">Back</a>
+                @if (string.IsNullOrWhiteSpace(Model.ReturnURL))
+                {
+                    <a href="@Url.RouteUrl(UserAdminController.Routes.UserList)" class="govuk-back-link">Back</a>
+                }
+                else
+                {
+                    <a href="@WebUtility.UrlDecode(Model.ReturnURL)" class="govuk-back-link">Back</a>
+                }
             </div>
         </div>
     </div>

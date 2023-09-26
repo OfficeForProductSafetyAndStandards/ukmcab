@@ -12,6 +12,8 @@ public class UserAccountViewModel : ILayoutModel
 
     public bool IsMyOwnAccount { get; set; }
 
+    public string ReturnURL { get; set; }
+
     public AuditLogHistoryViewModel AuditLogHistoryViewModel { get; set; }
 }
 
