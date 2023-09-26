@@ -121,7 +121,7 @@
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-button-group">
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                        @Html.Conditional(Model.UploadedFiles.Any(), "Save and Continue", "Save")
+                        @Html.Conditional(Model.UploadedFiles.Any(), "Save and continue", "Save")
                 </button>                
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft

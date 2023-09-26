@@ -8,7 +8,6 @@ namespace UKMCAB.Data.Models
     {
         public Audit() { }
 
-
         public Audit(string userId, string username, string userrole, DateTime date, string action, string comment = null)
         {
             UserId = userId;
@@ -19,9 +18,9 @@ namespace UKMCAB.Data.Models
             Comment = comment;
         }
 
-        public Audit(UserAccount userAccount, string status, string comment = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, status, comment) { }
+        public Audit(UserAccount userAccount, string action, string comment = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, action, comment) { }
 
-        public Audit(UserAccount userAccount, string status, Document publisheDocument, Document previousDocument = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, status)
+        public Audit(UserAccount userAccount, string action, Document publisheDocument, Document previousDocument = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, action)
         {
             var sb = new StringBuilder();
             if (previousDocument == null)
@@ -33,13 +32,13 @@ namespace UKMCAB.Data.Models
             {
                 var previousSchedules = previousDocument.Schedules ?? new List<FileUpload>();
                 var currentSchedules = publisheDocument.Schedules ?? new List<FileUpload>();
-                var existingSchedules = currentSchedules.Where(sch => previousSchedules.Any(prev => prev.BlobName.Equals(sch.BlobName)));
-                var newSchedules = currentSchedules.Where(sch => previousSchedules.All(prev => !prev.BlobName.Equals(sch.BlobName)));
-                var removedSchedules = previousSchedules.Where(sch => currentSchedules.All(pub => !pub.BlobName.Equals(sch.BlobName)));
+                var existingSchedules = currentSchedules.Where(sch => previousSchedules.Any(prev => prev.UploadDateTime.Equals(sch.UploadDateTime)));
+                var newSchedules = currentSchedules.Where(sch => previousSchedules.All(prev => !prev.UploadDateTime.Equals(sch.UploadDateTime)));
+                var removedSchedules = previousSchedules.Where(sch => currentSchedules.All(pub => !pub.UploadDateTime.Equals(sch.UploadDateTime)));
                 foreach (var schedule in existingSchedules)
                 {
                     var previousSchedule =
-                        previousDocument.Schedules.Single(sch => sch.FileName.Equals(schedule.FileName));
+                        previousDocument.Schedules.Single(sch => sch.UploadDateTime.Equals(schedule.UploadDateTime));
                     if (!previousSchedule.LegislativeArea.Equals(schedule.LegislativeArea))
                     {
                         sb.AppendFormat("<p class=\"govuk-body\">The legislative area {0} has been changed to {1} on this product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>", previousSchedule.LegislativeArea, schedule.LegislativeArea, ScheduleLink(publisheDocument.CABId, schedule.FileName), schedule.Label);
@@ -80,7 +79,7 @@ namespace UKMCAB.Data.Models
         public string? Comment { get; set; }
     }
 
-    public class AuditActions
+    public class AuditCABActions
     {
         public const string Created = nameof(Created);
         public const string Saved = nameof(Saved);
@@ -90,5 +89,20 @@ namespace UKMCAB.Data.Models
         public const string Unarchived = nameof(Unarchived);
         public const string UnarchiveRequest = nameof(UnarchiveRequest);
     }
+
+    public class AuditUserActions
+    {
+        public const string UserAccountRequest = nameof(UserAccountRequest);
+        public const string ApproveAccountRequest = nameof(ApproveAccountRequest);
+        public const string DeclineAccountRequest = nameof(DeclineAccountRequest);
+        public const string LockAccountRequest = nameof(LockAccountRequest);
+        public const string UnlockAccountRequest = nameof(UnlockAccountRequest);
+        public const string ArchiveAccountRequest = nameof(ArchiveAccountRequest);
+        public const string UnarchiveAccountRequest = nameof(UnarchiveAccountRequest);
+
+
+
+    }
+
 
 }

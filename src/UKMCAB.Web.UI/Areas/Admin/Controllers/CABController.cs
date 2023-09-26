@@ -52,8 +52,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType == Constants.SubmitType.Add18)
             {
-                var createdAudit = document?.AuditLog?.FirstOrDefault(al => al.Action == AuditActions.Created);
-                var publishedAudit = document?.AuditLog?.FirstOrDefault(al => al.Action == AuditActions.Published);
+                var createdAudit = document?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Created);
+                var publishedAudit = document?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Published);
                 var autoRenewDate = document != null && createdAudit != null && publishedAudit == null ? createdAudit.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
 
                 autoRenewDate = autoRenewDate.Date < DateTime.Today ? DateTime.UtcNow.AddMonths(1) : autoRenewDate;
