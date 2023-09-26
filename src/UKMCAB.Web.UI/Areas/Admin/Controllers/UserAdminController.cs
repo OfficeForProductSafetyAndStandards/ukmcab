@@ -98,7 +98,7 @@ public class UserAdminController : Controller
     }
 
     [HttpGet("{id}", Name = Routes.UserAccount)]
-    public async Task<IActionResult> UserAccountAsync(string id)
+    public async Task<IActionResult> UserAccountAsync(string id, int pagenumber = 1)
     {
         var account = await _userService.GetAsync(id);
         if (account == null)
@@ -111,6 +111,7 @@ public class UserAdminController : Controller
             {
                 UserAccount = account,
                 IsMyOwnAccount = User.FindFirstValue(ClaimTypes.NameIdentifier) == account.Id,
+                AuditLogHistoryViewModel = new AuditLogHistoryViewModel(account.AuditLog, pagenumber)
             });
         }
     }
@@ -130,6 +131,9 @@ public class UserAdminController : Controller
     private async Task<IActionResult> UserAccountLockToggleAsync(UserAccountLockToggleUIMode mode, string id, UserAccountLockUnlockViewModel? model)
     {
         const string ViewName = "UserAccountLockUnlock";
+        var reviewerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var reviewer = await _userService.GetAsync(reviewerId);
+
         if (Request.Method == HttpMethod.Get.Method)
         {
             ModelState.Clear();
@@ -143,11 +147,13 @@ public class UserAdminController : Controller
                 if (mode.EqualsAny(UserAccountLockToggleUIMode.Lock, UserAccountLockToggleUIMode.Archive))
                 {
                     var reason = mode == UserAccountLockToggleUIMode.Archive ? UserAccountLockReason.Archived : UserAccountLockReason.None;
-                    await _userService.LockAccountAsync(id, reason, model.Reason, model.Notes).ConfigureAwait(false);
+                    await _userService.LockAccountAsync(id, reviewer, reason, model.Reason, model.Notes).ConfigureAwait(false);
                 }
                 else
                 {
-                    await _userService.UnlockAccountAsync(id, model.Reason, model.Notes).ConfigureAwait(false);
+                    var reason = mode == UserAccountLockToggleUIMode.Unarchive ? UserAccountUnlockReason.Unarchived : UserAccountUnlockReason.None;
+
+                    await _userService.UnlockAccountAsync(id, reviewer, reason, model.Reason, model.Notes).ConfigureAwait(false);
                 }
 
                 return RedirectToRoute(HomeController.Routes.Message, new
@@ -283,8 +289,10 @@ public class UserAdminController : Controller
         {
             return RedirectToRoute(Routes.UserList);
         }
+        var reviewerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var reviewer = await _userService.GetAsync(reviewerId);
 
-        await _userService.ApproveAsync(account.Id, role); // todo!!!!!!!!!!!!!! add role in service
+        await _userService.ApproveAsync(account.Id, role, reviewer); // todo!!!!!!!!!!!!!! add role in service
 
         return RedirectToRoute(Routes.UserAccountRequestsList); //RedirectToRoute(Routes.RequestApproved, new { account.Id });
     }
@@ -326,7 +334,9 @@ public class UserAdminController : Controller
 
         if (ModelState.IsValid)
         {
-            await _userService.RejectAsync(account.Id, model.Reason ?? string.Empty);
+            var reviewerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var reviewer = await _userService.GetAsync(reviewerId);
+            await _userService.RejectAsync(account.Id, model.Reason ?? string.Empty, reviewer);
             return RedirectToRoute(Routes.UserAccountRequestsList);
         }
 

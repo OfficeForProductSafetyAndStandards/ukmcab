@@ -4,6 +4,8 @@ public class UserAccount
 {
 
     public string Id { get; set; } = null!;
+    public List<Audit> AuditLog { get; set; }
+
     public string? FirstName { get; set; }
     
     private string? _surname;

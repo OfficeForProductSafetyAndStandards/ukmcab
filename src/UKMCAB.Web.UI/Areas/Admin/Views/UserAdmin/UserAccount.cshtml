@@ -17,105 +17,122 @@
     </div>
 </div>
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-form-group">
-            <dl class="govuk-summary-list">
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        First name
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Html.ValueOrNotProvided(Model.UserAccount.FirstName)
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Last name
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Html.ValueOrNotProvided(Model.UserAccount.Surname)
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Email
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Html.ValueOrNotProvided(Model.UserAccount.ContactEmailAddress)
-                    </dd>
-                </div>
-                
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Organisation
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Html.ValueOrNotProvided(Model.UserAccount.OrganisationName)
-                    </dd>
-                </div>
-                
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        User group
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Html.ValueOrNotProvided(UKMCAB.Core.Security.Roles.NameFor(Model.UserAccount.Role))
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Last log in
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Html.ValueOrNone(Model.UserAccount.LastLogonUtc?.ToString(Constants.DateTimeFormat))
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Status
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Html.ValueOrNone(Model.UserAccount.Status)
-                    </dd>
-                </div>
-
-
-            </dl>
-        </div>
-
-        @if (!Model.IsMyOwnAccount)
-        {
-            if (!Model.UserAccount.IsLocked)
-            {
-                <div class="govuk-button-group">
-                    <a class="govuk-button govuk-button--warning" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountLock" asp-route-id="@Model.UserAccount.Id">
-                        Lock
+<div id="cab-profile-page" class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        
+        <div class="govuk-tabs cab-tabs" data-module="govuk-tabs">
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#details">
+                        Details
                     </a>
-                    <a class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountArchive" asp-route-id="@Model.UserAccount.Id">
-                        Archive
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#history">
+                        User history
                     </a>
+                </li>
+            </ul>
+            <div class="govuk-tabs__panel cabs-panel" id="details">
+                <div class="govuk-form-group">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                First name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNotProvided(Model.UserAccount.FirstName)
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Last name
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNotProvided(Model.UserAccount.Surname)
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Email
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNotProvided(Model.UserAccount.ContactEmailAddress)
+                            </dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Organisation
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNotProvided(Model.UserAccount.OrganisationName)
+                            </dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                User group
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNotProvided(UKMCAB.Core.Security.Roles.NameFor(Model.UserAccount.Role))
+                            </dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Last log in
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNone(Model.UserAccount.LastLogonUtc?.ToString(Constants.DateTimeFormat))
+                            </dd>
+                        </div>
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Status
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNone(Model.UserAccount.Status)
+                            </dd>
+                        </div>
+
+
+                    </dl>
                 </div>
-            }
-            else
-            {
-                <div>
-                    @if(Model.UserAccount.LockReason == UKMCAB.Data.Models.Users.UserAccountLockReason.Archived)
+                @if (!Model.IsMyOwnAccount)
+                {
+                    if (!Model.UserAccount.IsLocked)
                     {
-                        <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnarchive" asp-route-id="@Model.UserAccount.Id">
-                            Unarchive
-                        </a>
+                        <div class="govuk-button-group">
+                            <a class="govuk-button govuk-button--warning" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountLock" asp-route-id="@Model.UserAccount.Id">
+                                Lock
+                            </a>
+                            <a class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountArchive" asp-route-id="@Model.UserAccount.Id">
+                                Archive
+                            </a>
+                        </div>
                     }
                     else
                     {
-                        <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnlock" asp-route-id="@Model.UserAccount.Id">
-                            Unlock
-                        </a>
+                        <div>
+                            @if (Model.UserAccount.LockReason == UKMCAB.Data.Models.Users.UserAccountLockReason.Archived)
+                            {
+                                <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnarchive" asp-route-id="@Model.UserAccount.Id">
+                                    Unarchive
+                                </a>
+                            }
+                            else
+                            {
+                                <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountUnlock" asp-route-id="@Model.UserAccount.Id">
+                                    Unlock
+                                </a>
+                            }
+                        </div>
                     }
-                </div>
-            }
-        }
+                }
+            </div>
+            <partial name="Partials/_History" model="Model.AuditLogHistoryViewModel" />
+        </div>
     </div>
 </div>
