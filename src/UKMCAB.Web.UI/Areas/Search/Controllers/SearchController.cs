@@ -12,6 +12,10 @@ using Microsoft.ApplicationInsights;
 using UKMCAB.Core.Security;
 using UKMCAB.Web.UI.Extensions;
 using UKMCAB.Web.UI.Helpers;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Options;
+using UKMCAB.Web.Security;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -22,6 +26,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly IFeedService _feedService;
         private readonly BasicAuthenticationOptions _basicAuthOptions;
         private readonly TelemetryClient _telemetry;
+        private readonly IOptionsMonitor<OpenIdConnectOptions> _options;
         private static readonly List<string> _select = new()
         {
             nameof(CABIndexItem.CABId),
@@ -46,8 +51,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             public const string Search = "search.index";
         }
-        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry)
+        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry, IOptionsMonitor<OpenIdConnectOptions> options)
         {
+            _options = options;
             _cachedSearchService = cachedSearchService;
             _feedService = feedService;
             _basicAuthOptions = basicAuthOptions;
@@ -56,12 +62,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
 
         [Route("/", Name = Routes.Search)]
-        public async Task<IActionResult> Index(SearchViewModel model)
+        public async Task<IActionResult> Index(SearchViewModel model, string? state = null)
         {
-            var internalSearch = User != null && User.Identity.IsAuthenticated;
+            if (state != null)
+            {
+                return Redirect(OneLoginHelper.LogoutCallbackPath + "?state=" + state);
+            }
 
-            
-            
+            var internalSearch = User != null && User.Identity.IsAuthenticated;
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
             model.InternalSearch = internalSearch;

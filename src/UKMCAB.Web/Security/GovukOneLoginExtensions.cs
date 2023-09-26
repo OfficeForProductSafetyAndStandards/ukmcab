@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using System.Text.Json;
+using UKMCAB.Common;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 
@@ -39,7 +40,8 @@ public static class GovukOneLoginExtensions
             options.ResponseType = OpenIdConnectResponseType.Code;
             options.MetadataAddress = "https://oidc.integration.account.gov.uk/.well-known/openid-configuration";
             options.ClientId = govukOneLogin.ClientId;
-            options.CallbackPath = "/oidc";
+            options.CallbackPath = OneLoginHelper.LoginCallbackPath;
+            options.SignedOutCallbackPath = OneLoginHelper.LogoutCallbackPath;
             options.SaveTokens = true; // important as we may want to use the access_token to call /userinfo endpoint
             options.Events.OnRedirectToIdentityProvider = context =>
             {
@@ -81,8 +83,16 @@ public static class GovukOneLoginExtensions
             options.Events.OnRedirectToIdentityProviderForSignOut = async (context) =>
             {
                 var uri = context.HttpContext.RequestServices.GetRequiredService<IAppHost>().GetBaseUri();
-                context.ProtocolMessage.PostLogoutRedirectUri = uri.ToString(); 
+                context.ProtocolMessage.PostLogoutRedirectUri = uri.ToString();
             };
+
+            options.Events.OnSignedOutCallbackRedirect = (ctx) =>
+            {
+                ctx.Response.Redirect(ctx.Properties.Items.Get("redirect") ?? "/");
+                ctx.HandleResponse();
+                return Task.CompletedTask;
+            };
+
         });
         return services;
     }
