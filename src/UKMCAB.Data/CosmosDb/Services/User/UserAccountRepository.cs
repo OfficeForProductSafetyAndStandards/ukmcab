@@ -12,6 +12,7 @@ namespace UKMCAB.Data.CosmosDb.Services.User;
 
 public class UserAccountRepository : IUserAccountRepository
 {
+
     public const string ContainerId = "user-accounts";
     private readonly Container _container;
     private readonly AsyncFallbackPolicy<UserAccount?> _getUserAccountPolicy;

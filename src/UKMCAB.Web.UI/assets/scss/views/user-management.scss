@@ -1,6 +1,7 @@
 .user-tabs {
 
     @media (min-width: 40.0625em) {
+        //@media (min-width: 960px) {
         td > label {
             display: none;
         }
@@ -8,10 +9,23 @@
         #user-table-cell__mobile {
             display: none;
         }
+
+        table {
+            table-layout: fixed;
+            //width: 100%;
+        }
+
+        td {
+            border: 1px solid blue;
+            overflow-wrap: anywhere;
+            font-size: 16px;
+            padding-left:5px;
+        }
     }
 
 
     @media (max-width: 40.0625em) {
+        //@media (max-width: 960px) {
         table tr td {
             display: block;
             overflow-wrap: break-word;
