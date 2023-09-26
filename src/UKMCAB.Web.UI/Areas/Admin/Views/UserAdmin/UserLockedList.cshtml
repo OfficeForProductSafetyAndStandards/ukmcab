@@ -30,7 +30,7 @@
             </ul>
             <div class="govuk-tabs__panel govuk-body" id="locked-user-list">
 
-                <table class="govuk-table govuk-!-font-size-16">
+                <table class="govuk-table govuk-!-font-size-16 user-list-6-col">
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
                             @if (Model.UserAccounts.Any())
@@ -60,15 +60,25 @@
                             @foreach (var account in Model.UserAccounts)
                             {
                                 <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell" title="@account.FirstName" style="overflow:hidden; white-space:nowrap">
+                                    <td class="govuk-table__cell user-table-cell__wide" title="@account.FirstName">
                                         <label aria-hidden="true">First name</label>
                                         @account.FirstName.Ellipsis(15)
                                     </td>
-                                    <td class="govuk-table__cell" title="@account.Surname" style="overflow:hidden; white-space:nowrap">
+                                    <td class="govuk-table__cell user-table-cell__mobile" title="@account.FirstName">
+                                        <label aria-hidden="true">First name</label>
+                                        @account.FirstName.Ellipsis(45)
+                                    </td>
+
+                                    <td class="govuk-table__cell user-table-cell__wide" title="@account.Surname">
                                         <label aria-hidden="true">Last name</label>
                                         @account.Surname.Ellipsis(15)
                                     </td>
-                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap" title="@account.GetEmailAddress()">
+                                    <td class="govuk-table__cell user-table-cell__mobile" title="@account.Surname">
+                                        <label aria-hidden="true">Last name</label>
+                                        @account.Surname.Ellipsis(45)
+                                    </td>
+
+                                    <td class="govuk-table__cell" title="@account.GetEmailAddress()">
                                         <label aria-hidden="true">Email</label>
                                         @account.GetEmailAddress().Ellipsis(40)
                                     </td>
@@ -76,7 +86,7 @@
                                         <label aria-hidden="true">User group</label>
                                         @UKMCAB.Core.Security.Roles.NameFor(account.Role)
                                     </td>
-                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap">
+                                    <td class="govuk-table__cell">
                                         <label aria-hidden="true">Last log in</label>
                                         @(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")
                                     </td>

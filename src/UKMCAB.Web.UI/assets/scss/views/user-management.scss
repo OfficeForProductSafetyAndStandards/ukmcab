@@ -1,31 +1,57 @@
 .user-tabs {
 
     @media (min-width: 40.0625em) {
-        //@media (min-width: 960px) {
         td > label {
-            display: none;
-        }
-
-        #user-table-cell__mobile {
             display: none;
         }
 
         table {
             table-layout: fixed;
-            //width: 100%;
+            width: 100%;
         }
 
         td {
-            border: 1px solid blue;
-            overflow-wrap: anywhere;
             font-size: 16px;
-            padding-left:5px;
+            padding-left: 5px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        .user-table-cell__mobile {
+            display: none;
+        }
+
+        .user-list-5-col {
+            th:nth-child(3) {
+                width: 35%;
+            }
+
+            th:nth-child(4) {
+                width: 15%;
+            }
+        }
+
+        .user-list-6-col {
+            th:nth-child(3) {
+                width: 35%;
+            }
+
+            th:nth-child(4) {
+                width: 10%;
+            }
+
+            th:nth-child(5) {
+                width: 15%;
+            }
+
+            th:nth-child(6) {
+                width: 5%;
+            }
         }
     }
 
 
     @media (max-width: 40.0625em) {
-        //@media (max-width: 960px) {
         table tr td {
             display: block;
             overflow-wrap: break-word;
@@ -47,17 +73,16 @@
             padding-bottom: 10px;
         }
 
-        #user-table-cell__wide {
+        .user-table-cell__wide {
             display: none;
         }
 
-        #user-table-cell__mobile {
+        .user-table-cell__mobile {
             display: block;
             padding: 20px 10px 20px 0;
         }
 
         .govuk-table__cell {
-            //display: block;
             padding: 20px 10px 20px 0;
         }
     }
@@ -70,7 +95,6 @@
 
         @include govuk-media-query($until: tablet) {
             border-bottom: none;
-            //border: 1px solid green;
         }
 
 
@@ -82,7 +106,6 @@
             width: auto;
             padding: govuk-spacing(2) govuk-spacing(4);
             margin: 0 govuk-spacing(1) 0 0;
-            //border: 1px solid red;
 
 
             @include govuk-media-query($until: tablet) {
@@ -92,7 +115,6 @@
                 height: 30px;
                 float: left;
                 border-bottom: 2px solid govuk-colour("light-grey", $legacy: "grey-4");
-                //border: 1px solid blue;
                 vertical-align: top;
                 display: inline;
             }
@@ -123,12 +145,9 @@
 
         .govuk-tabs__list-item--selected {
             $border-width: 1px;
-
             position: relative;
-            // Compensation for border (otherwise we get a shift)
             background-color: $govuk-body-background-colour;
             border-bottom: 0;
-            //margin-top: govuk-spacing(-1);
             margin-top: 5px;
             margin-bottom: -$border-width;
             padding-top: govuk-spacing(3) - $border-width;
