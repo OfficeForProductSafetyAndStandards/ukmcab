@@ -30,10 +30,17 @@
             @using (Html.BeginForm("DocumentsList", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
             {
                 <table class="govuk-table">
-                    <thead class="govuk-table__head">
+                    <thead class="govuk-table__head doc-upload-thead">
+                        <tr>
+                            <th scope="row" colspan="1"></th>
+                            <th scope="row" colspan="1"></th>
+                            <th scope="row" colspan="1"></th>
+                        </tr>
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header" colspan="3">Files you have uploaded</th>
                     </tr>
+                    <!--Create an invisible tr to hold th-->
+
                     </thead>
                     <tbody class="govuk-table__body">
                     @if (!Model.UploadedFiles.Any())
@@ -48,9 +55,9 @@
                         foreach (var uploadedFile in Model.UploadedFiles)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">@(index++).</td>
-                                <td class="govuk-table__cell">@uploadedFile.FileName</td>
-                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state app-button-link" name="fileName" value="@uploadedFile.FileName">Remove</button></td>
+                                    <td class="govuk-table__cell file-upload-col-1x">@(index++).</td>
+                                    <td class="govuk-table__cell file-upload-col-2x">@uploadedFile.FileName</td>
+                                    <td class="govuk-table__cell file-upload-col-3x"><button class="govuk-link govuk-link--no-visited-state app-button-link remove-file-button-link" name="fileName" value="@uploadedFile.FileName">Remove</button></td>
                             </tr>
                         }
                     }

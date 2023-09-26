@@ -21,6 +21,21 @@
     table {
         table-layout: fixed;
 
+        .file-upload-col-1 {
+            width: 10%;
+            border: 1px solid red;
+        }
+
+        .file-upload-col-2 {
+            width: 80%;
+            border: 1px solid green;
+        }
+
+        .file-upload-col-3 {
+            width: 10%;
+            border: 1px solid blue;
+        }
+
         thead {
             @include govuk-media-query($until: tablet) {
                 display: none;
@@ -28,10 +43,28 @@
 
             th:first-child {
                 width: 60%;
+                //width: 5%;
             }
 
             th:nth-child(2) {
                 width: 30%;
+                //width: 80%;
+            }
+        }
+
+        .doc-upload-thead {
+            @include govuk-media-query($until: tablet) {
+                display: none;
+            }
+
+            th:first-child {
+                //width: 60%;
+                width: 5%;
+            }
+
+            th:nth-child(2) {
+                //width: 30%;
+                width: 80%;
             }
         }
 
@@ -100,10 +133,11 @@
                         display: inline-block;
                         padding-right: 5px;
                     }
-                    
-                    .file-link{
+
+                    .file-link {
                         padding-left: 5px;
                     }
+
                     .govuk-form-group {
                         margin-bottom: 0;
                     }
