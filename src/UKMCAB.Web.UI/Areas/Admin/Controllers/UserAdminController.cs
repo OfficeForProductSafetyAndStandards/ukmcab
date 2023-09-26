@@ -57,13 +57,9 @@ public class UserAdminController : Controller
 
     private async Task<IActionResult> UserListAsync(int page, bool isLocked, UserAccountLockReason? lockReason, string title, string? sortField = null, string? sortDirection = null)
     {
-        const int take = 20;
-        var pageIndex = page - 1;
-        var skip = pageIndex * take;
-
-        var options = new UserAccountListOptions(isLocked, lockReason, skip, take, null, sortField, sortDirection);
+        var options = new UserAccountListOptions(SkipTake.FromPage(page-1,20), new SortBy(sortField, sortDirection), isLocked, lockReason, null);
         var accounts = await _userService.ListAsync(options);
-        var pendingAccounts = await GetAllPendingRequests();
+        var pendingAccountsCount = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending);
 
         var viewName = string.Empty;
         if (title.Equals("User accounts"))
@@ -82,7 +78,7 @@ public class UserAdminController : Controller
         return View(viewName, new UserAccountListViewModel
         {
             UserAccounts = accounts.ToList(),
-            PendingAccountsCount = pendingAccounts.Count,
+            PendingAccountsCount = pendingAccountsCount,
             Title = title,
             LockedOnly = isLocked,
             SortField = sortField ?? nameof(UserAccount.Surname),
@@ -183,46 +179,25 @@ public class UserAdminController : Controller
 
 
     [HttpGet("account-requests", Name = Routes.UserAccountRequestsList)]
-    public async Task<IActionResult> AccountRequestList(int pageNumber = 1)
+    public async Task<IActionResult> AccountRequestList(int pageNumber = 1, [FromQuery(Name = "sf")] string? sortField = null, [FromQuery(Name = "sd")] string? sortDirection = null)
     {
-        var pendingAccounts = await GetAllPendingRequests();
-        var total = pendingAccounts.Count;
-        var skip = (pageNumber - 1) * 20;
-        if (skip >= total)
-        {
-            skip = 0;
-        }
-
-        pendingAccounts = pendingAccounts.OrderByDescending(pa => pa.CreatedUtc).Skip(skip).Take(20).ToList();
-
+        var count = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending);
+        var pendingAccounts = await _userService.ListRequestsAsync(new UserAccountRequestListOptions(SkipTake.FromPage(pageNumber - 1, 20), new SortBy(sortField, sortDirection ?? SortDirectionHelper.Descending), UserAccountRequestStatus.Pending));
         return View(new AccountRequestListViewModel
         {
-            UserAccountRequests = pendingAccounts,
+            UserAccountRequests = pendingAccounts.ToList(),
             Pagination = new PaginationViewModel
             {
-                Total = total,
+                Total = count,
                 PageNumber = pageNumber,
                 ResultType = string.Empty,
                 ResultsPerPage = 20
-            }
+            },
+            SortField = sortField ?? nameof(UserAccountRequest.CreatedUtc),
+            SortDirection = sortDirection ?? SortDirectionHelper.Descending,
         });
     }
 
-    private async Task<List<UserAccountRequest>> GetAllPendingRequests()
-    {
-        var list = new List<UserAccountRequest>();
-        var request = await _userService.ListPendingAccountRequestsAsync();
-        list.AddRange(request);
-        var page = 1;
-        while (request.Count() == 20)
-        {
-            request = await _userService.ListPendingAccountRequestsAsync(page * 20);
-            list.AddRange(request);
-            page++;
-        }
-
-        return list;
-    }
 
     [HttpGet("review-account-request/{id}", Name = Routes.ReviewAccountRequest)]
     public async Task<IActionResult> ReviewAccountRequest(string id)

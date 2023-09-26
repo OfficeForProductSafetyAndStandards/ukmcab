@@ -8,5 +8,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User
         public List<UserAccountRequest> UserAccountRequests { get; set; }
         public string? Title => "User account requests";
         public PaginationViewModel Pagination { get; set; }
+        public string? SortField { get; set; }
+        public string? SortDirection { get; set; }
     }
 }

@@ -6,6 +6,7 @@ using UKMCAB.Core;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.CosmosDb.Services.User;
+using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Test.FakeRepositories;
@@ -147,7 +148,7 @@ namespace UKMCAB.Test.Services
             };
             await _sut.SubmitRequestAccountAsync(newRequest);
 
-            var results = await _sut.ListPendingAccountRequestsAsync();
+            var results = await _sut.ListRequestsAsync(new UserAccountRequestListOptions(new SkipTake(0,10000), new SortBy(nameof(UserAccountRequest.CreatedUtc), null), UserAccountRequestStatus.Pending));
 
             Assert.AreEqual(results.Count(), 1);
             var createdRequest = results.First();

@@ -1,4 +1,5 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.AccountRequestListViewModel
+﻿@using UKMCAB.Data.Models.Users;
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.AccountRequestListViewModel
 
 
 <div class="govuk-grid-row">
@@ -35,10 +36,18 @@
                         <tr class="govuk-table__row">
                             @if (Model.UserAccountRequests.Any())
                             {
-                                <th scope="col" class="govuk-table__header">First name</th>
-                                <th scope="col" class="govuk-table__header">Last name</th>
-                                <th scope="col" class="govuk-table__header">Email</th>
-                                <th scope="col" class="govuk-table__header">Requested on</th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccountRequest.FirstName)" sort="@Model.SortField" sort-direction="@Model.SortDirection">First name</sort>
+                                </th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccountRequest.Surname)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last name</sort>
+                                </th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccountRequest.ContactEmailAddress)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Email</sort>
+                                </th>
+                                <th scope="col" class="govuk-table__header">
+                                    <sort target="@nameof(UserAccountRequest.CreatedUtc)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Requested on</sort>
+                                </th>
                                 <th scope="col" class="govuk-table__header">Action</th>
                             }
                         </tr>
