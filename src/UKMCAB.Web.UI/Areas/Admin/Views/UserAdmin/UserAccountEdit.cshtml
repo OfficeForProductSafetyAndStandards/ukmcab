@@ -1,0 +1,107 @@
+﻿@using System.Net
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountEditViewModel
+@{
+    var userName = $"{Model.UserAccount.FirstName} {Model.UserAccount.Surname}";
+}
+
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (string.IsNullOrWhiteSpace(Model.ReturnURL))
+                {
+                    <a href="@Url.RouteUrl(UserAdminController.Routes.UserList)" class="govuk-back-link">Back</a>
+                }
+                else
+                {
+                    <a href="@WebUtility.UrlDecode(Model.ReturnURL)" class="govuk-back-link">Back</a>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="Model.FieldOrder" />
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-m">@Model.Title</span>
+        <h1 class="govuk-heading-l">Edit user: @userName</h1>
+    </div>
+</div>
+
+<div  class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <form method="post">
+            <input asp-for="ReturnURL" type="hidden" />
+            <fieldset class="govuk-fieldset">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Email">
+                            Email
+                        </label>
+                    </h3>
+                    <p error-id-for="Email" class="govuk-error-message">
+                        <span asp-validation-for="Email" class="govuk-error-message"></span>
+                    </p>
+                    <input class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" asp-for="Email" type="text" autocomplete="email" aria-required="true" error-describedby-for="Email">
+                </div>
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Organisation))">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="Organisation">
+                            Organisation
+                        </label>
+                    </h3>
+                    <p error-id-for="Organisation" class="govuk-error-message">
+                        <span asp-validation-for="Organisation" class="govuk-error-message"></span>
+                    </p>
+                    <input class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Organisation))" asp-for="Organisation" type="text" autocomplete="organisation" aria-required="true" error-describedby-for="Organisation">
+                </div>
+                
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.UserGroup))">
+                    <label class="govuk-label govuk-!-font-weight-bold" for="role">
+                        Select a user group
+                    </label>
+                    <div id="role-hint" class="govuk-hint">
+                        The user will be added to this user group
+                    </div>
+                    <p error-id-for="UserGroup" class="govuk-error-message">
+                        <span asp-validation-for="UserGroup" class="govuk-error-message"></span>
+                    </p>
+                    <select class="govuk-select govuk-!-margin-top-2 govuk-!-margin-bottom-2" id="UserGroup" name="UserGroup" aria-required="true" error-describedby-for="UserGroup">
+                        <option value="">Select a user group</option>
+                        @foreach (var role in UKMCAB.Core.Security.Roles.List)
+                        {
+                            if (role.Id == Model.UserGroup)
+                            {
+                                <option value="@role.Id" selected="">@role.Label</option>
+                            }
+                            else
+                            {
+                                <option value="@role.Id">@role.Label</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+
+            </fieldset>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button">
+                    Save
+                </button>
+                <a asp-area="admin" asp-controller="UserAdmin" asp-action="UserAccount" asp-route-id="@Model.UserAccount.Id" asp-route-returnUrl="@Model.ReturnURL" class="govuk-link">Cancel</a>
+            </div>
+        </form>
+
+
+    </div>
+</div>

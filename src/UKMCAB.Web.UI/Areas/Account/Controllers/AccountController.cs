@@ -100,7 +100,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     newUserAccount.Surname = model.LastName;
                     newUserAccount.ContactEmailAddress = model.ContactEmailAddress;
 
-                    await _users.UpdateUser(newUserAccount);
+                    await _users.UpdateUser(newUserAccount, newUserAccount);
                     _telemetry.TrackEvent(AiTracking.Events.UserEditedProfile, HttpContext.ToTrackingMetadata(new Dictionary<string, string>
                     {
                         {"Original user account values", $"FirstName: {userAccount.FirstName}, Surname: {userAccount.Surname}, ContactEmail: {userAccount.ContactEmailAddress}"},

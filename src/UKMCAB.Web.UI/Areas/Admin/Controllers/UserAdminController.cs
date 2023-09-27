@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using CsvHelper.Configuration.Attributes;
 using UKMCAB.Data.Domain;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
@@ -11,6 +12,7 @@ using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
+using UKMCAB.Web.UI.Areas.Account.Controllers;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
@@ -25,6 +27,7 @@ public class UserAdminController : Controller
         public const string UserListArchived = "user-admin.list.archived";
         public const string UserListLocked = "user-admin.list.locked";
         public const string UserAccount = "user-admin.user-account.view";
+        public const string UserAccountEdit = "user-admin.user-account.edit";
         public const string UserAccountLock = "user-admin.user-account.lock";
         public const string UserAccountUnlock = "user-admin.user-account.unlock";
         public const string UserAccountArchive = "user-admin.user-account.archive";
@@ -116,6 +119,59 @@ public class UserAdminController : Controller
             });
         }
     }
+
+    [HttpGet("{id}/edit", Name = Routes.UserAccountEdit)]
+    public async Task<IActionResult> UserAccountEditAsync(string id, string? returnUrl)
+    {
+        Rule.IsFalse(User.FindFirstValue(ClaimTypes.NameIdentifier) == id, "User cannot edit their own account.");
+        var account = await _userService.GetAsync(id);
+        if (account == null)
+        {
+            return NotFound();
+        }
+        else
+        {
+            return View(new UserAccountEditViewModel
+            {
+                UserAccount = account,
+                Email = account.ContactEmailAddress,
+                Organisation = account.OrganisationName,
+                UserGroup = account.Role,
+                ReturnURL = returnUrl
+            });
+        }
+    }
+
+    [HttpPost("{id}/edit", Name = Routes.UserAccountEdit)]
+    public async Task<IActionResult> UserAccountEditAsync(string id, UserAccountEditViewModel model)
+    {
+        Rule.IsFalse(User.FindFirstValue(ClaimTypes.NameIdentifier) == id, "User cannot edit their own account.");
+        var account = await _userService.GetAsync(id);
+        if (account == null)
+        {
+            return NotFound();
+        }
+        if(ModelState.IsValid)
+        {
+            if (!account.ContactEmailAddress.Equals(model.Email) ||
+                !account.OrganisationName.Equals(model.Organisation) ||
+                !account.Role.Equals(model.UserGroup))
+            {
+                var reviewerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                var reviewer = await _userService.GetAsync(reviewerId);
+                account.ContactEmailAddress = model.Email;
+                account.OrganisationName = model.Organisation;
+                account.Role = model.UserGroup;
+                await _userService.UpdateUser(account, reviewer);
+            }
+            return RedirectToAction("UserAccount", new { id, returnUrl = model.ReturnURL });
+        }
+
+        model.UserAccount = account;
+        return View(model);
+    }
+
+
 
     [Route("{id}/lock", Name = Routes.UserAccountLock)]
     public async Task<IActionResult> UserAccountLockAsync(string id, [FromForm] UserAccountLockUnlockViewModel? model = null) => await UserAccountLockToggleAsync(UserAccountLockToggleUIMode.Lock, id, model);
