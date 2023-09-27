@@ -25,6 +25,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
             ReviewDateYear = document.RenewalDate?.Year.ToString("0000") ?? string.Empty;
             UKASReference = document.UKASReference;
             DocumentStatus = document.StatusValue;
+            IsCompleted = CABId.IsNotNullOrEmpty() && Name.IsNotNullOrEmpty();
         }
 
         public string? CABId { get; set; }

@@ -1,19 +1,49 @@
-﻿
-.cab-summary-header {
-    position: relative;
+﻿.cab-summary-header-list {
 
-    h3 {
-        padding-bottom: 20px;
-        margin: 0;
-        border-bottom: 1px solid #b1b4b6;
+    .cab-summary-list {
+        .cab-summary-header {
+            position: relative;
+
+            h3 {
+                padding-bottom: 0;
+                margin: 0;
+                vertical-align: bottom;
+            }
+        }
+        .govuk-summary-list__value {
+            padding-right: 0;
+        }
+        .cab-result-status-label {
+            float: right;
+            border: 1px hidden;
+            padding: 0 5px 0 5px;
+            font-weight: 600;
+            margin-left: 10px;
+            margin-bottom: 5px;
+
+            &.cab-result-completed {
+                background-color: rgb(29, 112, 184);
+                color: white;
+            }
+
+            &.cab-result-not-completed {
+                background-color: rgba(248, 152, 128,0.5);
+                color: darkred;
+            }
+        }
     }
 
-    a {
-        position: absolute;
-        bottom: 20px;
-        right: 0;
+    .govuk-summary-list {
+        @media (min-width: 40.0625em) {
+            margin-bottom: 0;
+
+            dt {
+                width: 40%;
+            }
+        }
     }
 }
+
 .cab-confirmation-banner {
     word-wrap: break-word;
 }

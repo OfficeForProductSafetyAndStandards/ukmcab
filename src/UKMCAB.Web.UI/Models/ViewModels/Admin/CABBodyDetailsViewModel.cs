@@ -14,6 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
             BodyTypes = document.BodyTypes ?? new List<string>();
             LegislativeAreas = document.LegislativeAreas ?? new List<string>();
             ProductScheduleLegislativeAreas = document.Schedules?.Select(sch => sch.LegislativeArea).Distinct().ToList() ?? new List<string>();
+            IsCompleted = TestingLocations.Any() && BodyTypes.Any();
         }
 
         public string? CABId { get; set; }

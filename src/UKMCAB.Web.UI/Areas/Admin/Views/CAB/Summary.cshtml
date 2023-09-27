@@ -44,11 +44,32 @@
 </div>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <fieldset class="govuk-fieldset">
-            <div class="cab-summary-header">
-                <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
-                <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-            </div>
+        <fieldset class="govuk-fieldset cab-summary-header-list">
+            <dl class="govuk-summary-list cab-summary-list">
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">            
+                        <dt class="govuk-summary-list__key">
+                            <div class="cab-summary-header">
+                                <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
+                            </div>
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                            @if (Model.CabDetailsViewModel.IsCompleted)
+                            {
+                            <div class="cab-result-status-label cab-result-completed">
+                                    COMPLETED
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="cab-result-status-label cab-result-not-completed">
+                                    NOT COMPLETED
+                                </div>
+                            }
+                        </dd>                  
+                </div>           
+            </dl>
+            
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row  govuk-!-padding-top-5">
@@ -111,10 +132,32 @@
                 </dl>
             </div>
 
-            <div class="cab-summary-header">
-                <h3 class="govuk-heading-l govuk-!-padding-top-5">Contact details</h3>
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-            </div>
+            <dl class="govuk-summary-list cab-summary-list">
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+
+                    <dt class="govuk-summary-list__key">
+                        <div class="cab-summary-header">
+                            <h3 class="govuk-heading-l govuk-!-padding-top-5">Contact details</h3>
+                        </div>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        @if (Model.CabContactViewModel.IsCompleted)
+                        {
+                            <div class="cab-result-status-label cab-result-completed">
+                                COMPLETED
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cab-result-status-label cab-result-not-completed">
+                                NOT COMPLETED
+                            </div>
+                        }                        
+                    </dd>
+                </div>
+            </dl>
+
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row  govuk-!-padding-top-5">
@@ -192,10 +235,31 @@
                 </dl>
             </div>
 
-            <div class="cab-summary-header">
-                <h3 class="govuk-heading-l   govuk-!-padding-top-5">Body details</h3>
-                <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-            </div>
+            <dl class="govuk-summary-list cab-summary-list">
+                <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        <div class="cab-summary-header">
+                            <h3 class="govuk-heading-l govuk-!-padding-top-5">Body details</h3>
+                        </div>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        @if (Model.CabBodyDetailsViewModel.IsCompleted)
+                        {
+                            <div class="cab-result-status-label cab-result-completed">
+                                COMPLETED
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cab-result-status-label cab-result-not-completed">
+                                NOT COMPLETED
+                            </div>
+                        }
+                    </dd>
+                </div>
+            </dl>
+
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row  govuk-!-padding-top-5">
@@ -254,10 +318,23 @@
                 </dl>
             </div>
 
-            <div class="cab-summary-header  govuk-!-padding-top-5">
-                <h3 class="govuk-heading-l">Product schedules</h3>
-                <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-            </div>
+            <dl class="govuk-summary-list cab-summary-list">
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        <div class="cab-summary-header  govuk-!-padding-top-5">
+                            <h3 class="govuk-heading-l">Product schedules</h3>
+                        </div>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                            <div class="cab-result-status-label cab-result-completed">
+                                COMPLETED
+                            </div>             
+                    </dd>
+                </div>
+            </dl>
+
+
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row govuk-!-padding-top-5">
@@ -289,10 +366,22 @@
                 </dl>
             </div>
 
-            <div class="cab-summary-header govuk-!-padding-top-5">
-                <h3 class="govuk-heading-l">Supporting documents</h3>
-                <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-            </div>
+            <dl class="govuk-summary-list cab-summary-list">
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        <div class="cab-summary-header govuk-!-padding-top-5">
+                            <h3 class="govuk-heading-l">Supporting documents</h3>
+                        </div>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        <div class="cab-result-status-label cab-result-completed">
+                            COMPLETED
+                        </div>
+                    </dd>
+                </div>
+            </dl>
+
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row govuk-!-padding-top-5">
