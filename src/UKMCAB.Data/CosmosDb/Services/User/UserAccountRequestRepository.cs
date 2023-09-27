@@ -1,7 +1,10 @@
 ﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 using Polly;
 using Polly.Fallback;
+using System.Linq.Dynamic.Core;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
@@ -43,22 +46,32 @@ public class UserAccountRequestRepository : IUserAccountRequestRepository
         await _container.ReplaceItemAsync(userAccount, userAccount.Id).ConfigureAwait(false);
     }
 
-    public async Task<IEnumerable<UserAccountRequest>> ListAsync(UserAccountRequestStatus? status, int skip = 0, int take = 20)
+    public async Task<IEnumerable<UserAccountRequest>> ListAsync(UserAccountRequestListOptions options)
+    {
+        var query = _container.GetItemLinqQueryable<UserAccountRequest>().AsQueryable();
+        if (options.Status.HasValue)
+        {
+            query = query.Where(x => x.Status == options.Status);
+        }
+
+        var set = (await query.AsAsyncEnumerable().ToListAsync()).AsQueryable();
+
+        var data = set.OrderBy(options.SortBy.Expression(nameof(UserAccountRequest.CreatedUtc)))
+            .Skip(options.SkipTake.Skip)
+            .Take(options.SkipTake.Take)
+            .ToList();
+
+        return data;
+    }
+
+    public async Task<int> CountAsync(UserAccountRequestStatus? status = null)
     {
         var q = _container.GetItemLinqQueryable<UserAccountRequest>().AsQueryable();
-
         if (status.HasValue)
         {
             q = q.Where(x => x.Status == status);
         }
-
-        var data = await q.OrderByDescending(x => x.CreatedUtc)
-            .Skip(skip)
-            .Take(take)
-            .AsAsyncEnumerable()
-            .ToListAsync()
-            .ConfigureAwait(false);
-
-        return data;
+        var rv = await q.CountAsync().ConfigureAwait(false);
+        return rv;
     }
 }

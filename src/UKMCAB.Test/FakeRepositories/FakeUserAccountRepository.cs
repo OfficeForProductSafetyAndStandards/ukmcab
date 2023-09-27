@@ -68,8 +68,8 @@ namespace UKMCAB.Test.FakeRepositories
 
 
             var data = q.OrderBy(ua => ua.Surname)
-                .Skip(options.Skip)
-                .Take(options.Take)
+                .Skip(options.SkipTake.Skip)
+                .Take(options.SkipTake.Take)
                 .ToList();
 
             return data;

@@ -1,4 +1,6 @@
-﻿using UKMCAB.Data.CosmosDb.Services.User;
+﻿using System.Linq;
+using UKMCAB.Data.CosmosDb.Services.User;
+using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 
@@ -95,9 +97,13 @@ namespace UKMCAB.Test.FakeRepositories
             return userAccountRequest;
         }
 
-        public async Task<IEnumerable<UserAccountRequest>> ListAsync(UserAccountRequestStatus? status, int skip = 0, int take = 20)
+        public async Task<IEnumerable<UserAccountRequest>> ListAsync(UserAccountRequestListOptions options)
         {
-            return UserAccountRequests.Where(uar => uar.Status == status).Skip(skip).Take(take).ToList();
+            return UserAccountRequests.Where(uar => uar.Status == options.Status).Skip(options.SkipTake.Skip).Take(options.SkipTake.Take).ToList();
+        }
+        public Task<int> CountAsync(UserAccountRequestStatus? status = null)
+        {
+            return Task.FromResult(UserAccountRequests.Where(uar => uar.Status == status).Count());
         }
 
         public Task UpdateAsync(UserAccountRequest userAccount)
@@ -121,5 +127,6 @@ namespace UKMCAB.Test.FakeRepositories
             var userAccountRequest = UserAccountRequests.SingleOrDefault(uar => uar.Id == id);
             return userAccountRequest;
         }
+
     }
 }

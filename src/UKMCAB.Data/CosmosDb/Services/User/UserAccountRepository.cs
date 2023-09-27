@@ -2,16 +2,17 @@
 using Microsoft.Azure.Cosmos.Linq;
 using Polly;
 using Polly.Fallback;
+using System.Linq.Dynamic.Core;
 using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models.Users;
-using System.Linq.Dynamic.Core;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
 
 public class UserAccountRepository : IUserAccountRepository
 {
+
     public const string ContainerId = "user-accounts";
     private readonly Container _container;
     private readonly AsyncFallbackPolicy<UserAccount?> _getUserAccountPolicy;
@@ -66,11 +67,9 @@ public class UserAccountRepository : IUserAccountRepository
             }
         }
 
-        var sortExpression = $"{options.SortField ?? nameof(UserAccount.Surname)} {SortDirectionHelper.Get(options.SortDirection)}";
-
-        var data = q.OrderBy(sortExpression)
-            .Skip(options.Skip)
-            .Take(options.Take)
+        var data = q.OrderBy(options.SortBy.Expression(nameof(UserAccount.Surname)))
+            .Skip(options.SkipTake.Skip)
+            .Take(options.SkipTake.Take)
             .ToList();
 
         return data;
