@@ -28,7 +28,7 @@ public static class GovukOneLoginExtensions
             opt.LoginPath = new PathString("/account/login");
             opt.LogoutPath = new PathString("/account/logout");
             opt.Cookie.Name = "UKMCAB_Identity";
-            opt.ExpireTimeSpan = TimeSpan.FromMinutes(20);
+            opt.ExpireTimeSpan = TimeSpan.FromHours(2);
         })
         .AddOpenIdConnect(options =>
         {
@@ -90,6 +90,17 @@ public static class GovukOneLoginExtensions
             {
                 ctx.Response.Redirect(ctx.Properties.Items.Get("redirect") ?? "/");
                 ctx.HandleResponse();
+                return Task.CompletedTask;
+            };
+
+            options.Events.OnRemoteFailure = (ctx) =>
+            {
+                if (ctx.Failure?.Message == "Correlation failed.")
+                {
+                    ctx.Response.Redirect("/?0x00cf");
+                    ctx.HandleResponse();
+                }
+
                 return Task.CompletedTask;
             };
 
