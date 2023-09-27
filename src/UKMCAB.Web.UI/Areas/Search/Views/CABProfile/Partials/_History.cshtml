@@ -3,7 +3,7 @@
 @using System.Net
 @model UKMCAB.Web.UI.Models.ViewModels.Shared.AuditLogHistoryViewModel
 @{
-    var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
+    var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery + "#history");
 
 }
 <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden  govuk-body" id="history">
