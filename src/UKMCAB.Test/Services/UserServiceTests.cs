@@ -27,7 +27,7 @@ namespace UKMCAB.Test.Services
             var mockNotificationService = new Mock<IAsyncNotificationClient>();
             var mockOptions = Options.Create<CoreEmailTemplateOptions>(new CoreEmailTemplateOptions());
             _sut = new UserService(_fakeUserAccountRepository, _fakeUserAccountRequestRepository,
-                mockNotificationService.Object, mockOptions);
+                mockNotificationService.Object, mockOptions, null);
         }
 
         private void SeedUserAccount()
