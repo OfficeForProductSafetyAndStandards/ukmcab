@@ -286,5 +286,49 @@ public class UserService : IUserService
         }
     }
     
-    public async Task UpdateUser(UserAccount user) => await _userAccountRepository.UpdateAsync(user).ConfigureAwait(false);
+    public async Task UpdateUser(UserAccount user, UserAccount reviewer)
+    {
+        var existingAccount = await GetAsync(user.Id);
+        var auditDate = DateTime.UtcNow;
+        if (user.AuditLog == null)
+        {
+            user.AuditLog = new List<Audit>();
+        }
+
+        if (!existingAccount.ContactEmailAddress.Equals(user.ContactEmailAddress))
+        {
+            user.AuditLog.Add(new Audit
+            {
+                DateTime = auditDate,
+                UserId = reviewer.Id,
+                UserName = $"{reviewer.FirstName} {reviewer.Surname}",
+                UserRole = reviewer.Role,
+                Action = AuditUserActions.ChangeOfContactEmailAddress
+            });
+        }
+        if (!existingAccount.OrganisationName.Equals(user.OrganisationName))
+        {
+            user.AuditLog.Add(new Audit
+            {
+                DateTime = auditDate,
+                UserId = reviewer.Id,
+                UserName = $"{reviewer.FirstName} {reviewer.Surname}",
+                UserRole = reviewer.Role,
+                Action = AuditUserActions.ChangeOfOrganisation
+            });
+        }
+        if (!existingAccount.Role.Equals(user.Role))
+        {
+            user.AuditLog.Add(new Audit
+            {
+                DateTime = auditDate,
+                UserId = reviewer.Id,
+                UserName = $"{reviewer.FirstName} {reviewer.Surname}",
+                UserRole = reviewer.Role,
+                Action = AuditUserActions.ChangeOfRole
+            });
+        }
+
+        await _userAccountRepository.UpdateAsync(user).ConfigureAwait(false);
+    } 
 }

@@ -119,6 +119,9 @@
                             <a class="govuk-button govuk-button--secondary" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountArchive" asp-route-id="@Model.UserAccount.Id">
                                 Archive
                             </a>
+                            <a class="govuk-button" data-module="govuk-button" asp-route="@UserAdminController.Routes.UserAccountEdit" asp-route-id="@Model.UserAccount.Id" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnURL)">
+                                Edit
+                            </a>
                         </div>
                     }
                     else

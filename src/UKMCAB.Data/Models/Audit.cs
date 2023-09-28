@@ -99,9 +99,9 @@ namespace UKMCAB.Data.Models
         public const string UnlockAccountRequest = nameof(UnlockAccountRequest);
         public const string ArchiveAccountRequest = nameof(ArchiveAccountRequest);
         public const string UnarchiveAccountRequest = nameof(UnarchiveAccountRequest);
-
-
-
+        public const string ChangeOfContactEmailAddress = nameof(ChangeOfContactEmailAddress);
+        public const string ChangeOfOrganisation = nameof(ChangeOfOrganisation);
+        public const string ChangeOfRole = nameof(ChangeOfRole);
     }
 
 

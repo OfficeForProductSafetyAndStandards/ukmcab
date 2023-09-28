@@ -41,7 +41,7 @@ public interface IUserService
     /// </summary>
     /// <param name="user"></param>
     /// <returns></returns>
-    Task UpdateUser(UserAccount user);
+    Task UpdateUser(UserAccount user, UserAccount reviewer);
 
     /// <summary>
     /// Approves a user account request
