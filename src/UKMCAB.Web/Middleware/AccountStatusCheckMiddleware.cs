@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using System.Security.Claims;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 
 public class AccountStatusCheckMiddleware
@@ -14,7 +15,8 @@ public class AccountStatusCheckMiddleware
 
     public async Task Invoke(HttpContext context)
     {
-        if (context.User?.Identity?.IsAuthenticated ?? false)
+        var fake = context.User.FindFirstValue(Claims.IsFakeUser);
+        if ((context.User?.Identity?.IsAuthenticated ?? false) && fake == null)
         {
             var isActive = await IsUserAccountActiveAsync(context);
             if (!isActive)

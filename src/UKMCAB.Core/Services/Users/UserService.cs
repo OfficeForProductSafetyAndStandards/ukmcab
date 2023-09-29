@@ -340,11 +340,18 @@ public class UserService : IUserService
 
     public async Task<bool> IsActiveAsync(string id)
     {
-        return await _cache.GetOrCreateAsync(GenerateIsActiveCacheKey(id), async () =>
+        if (id == null)
         {
-            var envelope = await GetUserAccountStatusAsync(id);
-            return envelope.Status == UserAccountStatus.Active;
-        });
+            return true;
+        }
+        else
+        {
+            return await _cache.GetOrCreateAsync(GenerateIsActiveCacheKey(id), async () =>
+            {
+                var envelope = await GetUserAccountStatusAsync(id);
+                return envelope.Status == UserAccountStatus.Active;
+            });
+        }
     }
 
     private async Task ClearIsActiveCacheAsync(string id)

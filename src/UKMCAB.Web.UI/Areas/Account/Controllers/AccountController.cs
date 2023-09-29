@@ -127,13 +127,14 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 }
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
-                    var claimsIdentity = new ClaimsIdentity(Enumerable.Empty<Claim>(), CookieAuthenticationDefaults.AuthenticationScheme);
+                    var userId = $"fake_{Guid.NewGuid()}";
+                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId), new Claim(Claims.IsFakeUser, "1") }, CookieAuthenticationDefaults.AuthenticationScheme);
                     var acc = new UserAccount
                     {
+                        Id = userId,
                         FirstName = "Fake",
                         Surname = $"Persona ({Roles.NameFor(role)})",
                         Role = role,
-                        Id = $"fake_{Guid.NewGuid()}"
                     };
 
                     SignInHelper.AddClaims(acc, claimsIdentity);
