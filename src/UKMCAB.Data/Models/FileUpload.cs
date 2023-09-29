@@ -6,6 +6,7 @@ namespace UKMCAB.Data.Models
     {
         public string Label { get; set; }
         public string? LegislativeArea { get; set; }
+        public string? Category { get; set; }
         public string FileName { get; set; }
         public string BlobName { get; set; }
         public DateTime UploadDateTime { get; set; }
@@ -23,6 +24,8 @@ namespace UKMCAB.Data.Models
                        && x.FileName.Equals(y.FileName)
                        && ((x.LegislativeArea == null && y.LegislativeArea == null)
                            || (x.LegislativeArea?.Equals(y.LegislativeArea) ?? false))
+                       && ((x.Category == null && y.Category == null)
+                           || (x.Category?.Equals(y.Category) ?? false))
                        && x.UploadDateTime.Date.Equals(y.UploadDateTime.Date));
         }
 
