@@ -38,6 +38,14 @@ public class DataConstants
     }
     public static class Lists
     {
+        public static readonly List<string> DocumentCategories = new()
+        {
+            "Appointment",
+            "Recommendations",
+            "Schedules",
+            "Other"
+        };
+
         public static readonly List<string> LegislativeAreas = new()
         {
             "Cableway installation",
