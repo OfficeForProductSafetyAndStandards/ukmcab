@@ -1,7 +1,5 @@
-﻿@using UKMCAB.Data.Models
-@using Microsoft.AspNetCore.Mvc.TagHelpers
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using UKMCAB.Data
-@using UKMCAB.Web.UI.Models.ViewModels.Admin
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.FileListViewModel
 @section BackButton
 {
@@ -41,11 +39,11 @@
                 </div>
                 <table class="govuk-table" id="files-uploaded-table" aria-describedby="files-uploaded-table-hint">
                     <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">File</th>
-                        <th scope="col" class="govuk-table__header">Legislative area</th>
-                        <th scope="col" class="govuk-table__header">Action</th>
-                    </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">File</th>
+                            <th scope="col" class="govuk-table__header">Legislative area</th>
+                            <th scope="col" class="govuk-table__header">Action</th>
+                        </tr>
                     </thead>
                     <tbody class="govuk-table__body">
                     @if (!Model.UploadedFiles.Any())
@@ -67,17 +65,17 @@
                                 </td>
                             </tr>
                             <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell uploaded-file-atttribute">
-                                        <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
+                                <td class="govuk-table__cell uploaded-file-atttribute">
+                                    <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
                                         <label class="govuk-label govuk-label--s" asp-for="UploadedFiles[i].Label">File</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles[i].Label" class="govuk-error-message"></span>
                                         </p>
-                                            <input asp-for="UploadedFiles[i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
+                                        <input asp-for="UploadedFiles[i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
                                         <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
                                     </div>
                                 </td>
-                                    <td class="govuk-table__cell uploaded-file-atttribute">
+                                <td class="govuk-table__cell uploaded-file-atttribute">
                                     <p class="govuk-body">
                                     <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
                                         <label class="govuk-label govuk-label--s" asp-for="UploadedFiles[i].LegislativeArea">Legislative area</label>
@@ -100,7 +98,7 @@
                                         </select>
                                     </div>
                                 </td>
-                                    <td class="govuk-table__cell uploaded-file-atttribute"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="submitType" value="@("Remove-" + i)">Remove</button></td>
+                                <td class="govuk-table__cell uploaded-file-atttribute"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="submitType" value="@("Remove-" + i)">Remove</button></td>
                             </tr>
                         }
                     }

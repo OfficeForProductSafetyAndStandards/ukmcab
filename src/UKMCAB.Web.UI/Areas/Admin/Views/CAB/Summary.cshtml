@@ -305,8 +305,12 @@
                                 <ol class="govuk-list govuk-list--number">
                                     @foreach (var document in Model.Documents)
                                     {
-                                        <li>
-                                            <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@document.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@document.FileName</a>
+                                        <li class="cab-summary-schedule-item">
+                                            <div>
+                                                <div><a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@document.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@document.FileName</a></div>
+                                                <div>@document.Category</div>
+                                            </div>
+                                            
                                         </li>
                                     }
                                 </ol>

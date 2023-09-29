@@ -84,7 +84,7 @@
                                     @if (Model.IsOPSSUser && searchResult.Status == Status.Draft.ToString())
                                     {
                                         <div class="search-result-label">
-                                            <text>User group: </text><span>@searchResult.UserGroup.ToUpper()</span>
+                                            <text>User group: </text><span>@(searchResult.UserGroup?.ToUpper() ?? Constants.NotAssigned)</span>
                                         </div>
                                     }
                                 </li>

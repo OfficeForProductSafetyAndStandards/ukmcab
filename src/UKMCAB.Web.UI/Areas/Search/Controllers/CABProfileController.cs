@@ -178,7 +178,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     {
                         Label = s.Label ?? s.FileName,
                         FileName = s.FileName,
-                        BlobName = s.BlobName
+                        BlobName = s.BlobName,
+                        Category = s.Category
                     }).ToList() ?? new List<FileUpload>(),
                     DocumentType = DataConstants.Storage.Documents
                 },
