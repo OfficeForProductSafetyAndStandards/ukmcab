@@ -70,4 +70,5 @@ public interface IUserService
 
     Task<IEnumerable<UserAccountRequest>> ListRequestsAsync(UserAccountRequestListOptions options);
     Task<int> CountRequestsAsync(UserAccountRequestStatus? status = null);
+    Task<bool> IsActiveAsync(string id);
 }

@@ -8,6 +8,8 @@ using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Infrastructure.Cache;
+using Microsoft.AspNetCore.Http;
 
 namespace UKMCAB.Core.Services.Users;
 
@@ -17,14 +19,16 @@ public class UserService : IUserService
     private readonly IUserAccountRequestRepository _userAccountRequestRepository;
     private readonly IAsyncNotificationClient _notificationClient;
     private readonly IOptions<CoreEmailTemplateOptions> _templateOptions;
+    private readonly IDistCache _cache;
 
-    public UserService(IUserAccountRepository userAccountRepository, IUserAccountRequestRepository userAccountRequestRepository, 
-        IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions)
+    public UserService(IUserAccountRepository userAccountRepository, IUserAccountRequestRepository userAccountRequestRepository,
+        IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, IDistCache cache)
     {
         _userAccountRepository = userAccountRepository;
         _userAccountRequestRepository = userAccountRequestRepository;
         _notificationClient = notificationClient;
         _templateOptions = templateOptions;
+        _cache = cache;
     }
 
     public record UserStatus(UserAccountStatus Status, UserAccountLockReason? UserAccountLockReason = null);
@@ -79,7 +83,7 @@ public class UserService : IUserService
     public Task<int> UserCountAsync(UserAccountLockReason? lockedReason = null, bool locked = false) => _userAccountRepository.UserCountAsync(lockedReason, locked);
 
     /// <inheritdoc />
-    public Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options) 
+    public Task<IEnumerable<UserAccount>> ListAsync(UserAccountListOptions options)
         => _userAccountRepository.ListAsync(options);
 
     /// <inheritdoc />
@@ -88,10 +92,10 @@ public class UserService : IUserService
     public async Task<int> CountRequestsAsync(UserAccountRequestStatus? status = null) => await _userAccountRequestRepository.CountAsync(status);
 
     /// <inheritdoc />
-    public async Task<UserAccount?> GetAsync(string id) 
+    public async Task<UserAccount?> GetAsync(string id)
         => await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
 
-    public async Task<UserAccountRequest?> GetAccountRequestAsync(string id) 
+    public async Task<UserAccountRequest?> GetAccountRequestAsync(string id)
         => await _userAccountRequestRepository.GetAsync(id).ConfigureAwait(false);
 
 
@@ -100,7 +104,7 @@ public class UserService : IUserService
 
     /// <inheritdoc />
     public async Task RejectAsync(string id, string reason, UserAccount reviewer) => await ApproveRejectAsync(id, UserAccountRequestStatus.Rejected, reviewer, reason).ConfigureAwait(false);
-    
+
     private async Task ApproveRejectAsync(string id, UserAccountRequestStatus status, UserAccount reviewer, string? reviewComments = null, string? role = null)
     {
         Guard.IsFalse(status == UserAccountRequestStatus.Pending, "You cannot assign a status of Pending");
@@ -119,7 +123,7 @@ public class UserService : IUserService
             UserRole = reviewer.Role,
             Comment = reviewComments
         };
-        
+
         if (status == UserAccountRequestStatus.Approved)
         {
             Rule.IsTrue(role.EqualsAny(Roles.List.Select(x => x.Id).ToArray()), $"The supplied role id ('{role}') does not match any of the configured roles");
@@ -148,7 +152,7 @@ public class UserService : IUserService
                     OrganisationName = request.OrganisationName,
                     Surname = request.Surname,
                     Role = role,
-                    AuditLog =request.AuditLog != null && request.AuditLog.Any() ? request.AuditLog : new List<Audit>(),
+                    AuditLog = request.AuditLog != null && request.AuditLog.Any() ? request.AuditLog : new List<Audit>(),
                 };
                 account.AuditLog.Add(audit);
                 await _userAccountRepository.CreateAsync(account).ConfigureAwait(false);
@@ -184,7 +188,7 @@ public class UserService : IUserService
     public async Task LockAccountAsync(string id, UserAccount reviewer, UserAccountLockReason reason, string? reasonDescription, string? internalNotes)
     {
         var account = await _userAccountRepository.GetAsync(id).ConfigureAwait(false);
-        if (account != null) 
+        if (account != null)
         {
             LockAccount(account, reason, reasonDescription, internalNotes);
             if (account.AuditLog == null)
@@ -197,12 +201,13 @@ public class UserService : IUserService
                 UserId = reviewer.Id,
                 UserName = $"{reviewer.FirstName} {reviewer.Surname}",
                 UserRole = reviewer.Role,
-                Action =reason == UserAccountLockReason.Archived ? AuditUserActions.ArchiveAccountRequest : AuditUserActions.LockAccountRequest,
+                Action = reason == UserAccountLockReason.Archived ? AuditUserActions.ArchiveAccountRequest : AuditUserActions.LockAccountRequest,
                 Comment = internalNotes
             });
             await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
+            await ClearIsActiveCacheAsync(id).ConfigureAwait(false);
 
-            if(reason == UserAccountLockReason.Archived)
+            if (reason == UserAccountLockReason.Archived)
             {
                 await _notificationClient.SendEmailAsync(account.GetEmailAddress(), _templateOptions.Value.AccountArchived);
             }
@@ -252,6 +257,7 @@ public class UserService : IUserService
                 Comment = internalNotes
             });
             await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
+            await ClearIsActiveCacheAsync(id).ConfigureAwait(false);
 
             if (oldReason == UserAccountLockReason.Archived)
             {
@@ -285,7 +291,7 @@ public class UserService : IUserService
             throw new DomainException("The account is already locked");
         }
     }
-    
+
     public async Task UpdateUser(UserAccount user, UserAccount reviewer)
     {
         var existingAccount = await GetAsync(user.Id);
@@ -330,5 +336,29 @@ public class UserService : IUserService
         }
 
         await _userAccountRepository.UpdateAsync(user).ConfigureAwait(false);
-    } 
+    }
+
+    public async Task<bool> IsActiveAsync(string id)
+    {
+        if (id == null)
+        {
+            return true;
+        }
+        else
+        {
+            return await _cache.GetOrCreateAsync(GenerateIsActiveCacheKey(id), async () =>
+            {
+                var envelope = await GetUserAccountStatusAsync(id);
+                return envelope.Status == UserAccountStatus.Active;
+            });
+        }
+    }
+
+    private async Task ClearIsActiveCacheAsync(string id)
+    {
+        var key = GenerateIsActiveCacheKey(id);
+        await _cache.RemoveAsync(key).ConfigureAwait(false);
+    }
+
+    private static string GenerateIsActiveCacheKey(string id) => CacheKey.Make(nameof(UserService), nameof(IsActiveAsync), id);
 }

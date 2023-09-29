@@ -200,6 +200,8 @@ app.UseRequestLocalization(new RequestLocalizationOptions
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseMiddleware<AccountStatusCheckMiddleware>();
+
 app.MapControllerRoute(
     name: "Account",
     pattern: "{area:exists}/{controller=Home}/{action=Login}/{id?}");

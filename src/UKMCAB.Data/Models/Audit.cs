@@ -18,9 +18,9 @@ namespace UKMCAB.Data.Models
             Comment = comment;
         }
 
-        public Audit(UserAccount userAccount, string action, string comment = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, action, comment) { }
+        public Audit(UserAccount? userAccount, string action, string comment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment) { }
 
-        public Audit(UserAccount userAccount, string action, Document publisheDocument, Document previousDocument = null) : this(userAccount.Id, $"{userAccount.FirstName} {userAccount.Surname}", userAccount.Role, DateTime.UtcNow, action)
+        public Audit(UserAccount? userAccount, string action, Document publisheDocument, Document previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
         {
             var sb = new StringBuilder();
             if (previousDocument == null)
