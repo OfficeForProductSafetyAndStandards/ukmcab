@@ -1,4 +1,5 @@
 ﻿@using System.Net
+@using UKMCAB.Web.UI.Areas.Account.Controllers;
 @{
     ViewData["nav"] = "help";
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
@@ -277,7 +278,7 @@
                 </div>
                 <div id="accordion-default-content-12" class="govuk-accordion__section-content" aria-labelledby="accordion-default-heading-12">
                     <p class='govuk-body'>
-                        When you sign into your account by using the  <a class="govuk-link" asp-area="Account" asp-controller="Home" asp-action="Login">Sign in</a> link in the header you will be able to access the
+                        When you sign into your account by using the  <a class="govuk-link" asp-route="@AccountController.Routes.Login">Sign in</a> link in the header you will be able to access the
                         administration menu. This will be shown by the link in the header titled Admin.
                     </p>
                 </div>
