@@ -96,7 +96,7 @@ namespace UKMCAB.Core.Services
             Guard.IsFalse(documentExists.Any(), "CAB number already exists in database");
             
             var auditItem = new Audit(userAccount, AuditCABActions.Created);
-            document.CABId = Guid.NewGuid().ToString();
+            document.CABId ??= Guid.NewGuid().ToString();
             document.AuditLog.Add(auditItem);
             document.StatusValue = Status.Draft;
             var rv = await _cabRepostitory.CreateAsync(document);

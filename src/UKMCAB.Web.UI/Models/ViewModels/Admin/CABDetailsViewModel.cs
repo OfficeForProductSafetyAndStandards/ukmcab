@@ -44,7 +44,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string? ReviewDateYear { get; set; }
         public string ReviewDate => $"{ReviewDateDay}/{ReviewDateMonth}/{ReviewDateYear}";
         public string? UKASReference { get; set; }
-        public string? Title => $"{(CABId != null ? "Edit" : "Create")} a CAB";
+        public string? Title => $"{(!IsNew ? "Edit" : "Create")} a CAB";
         public string? CabNumberVisibility { get; set; }
+        public bool IsNew { get; set; }
     }
 }
