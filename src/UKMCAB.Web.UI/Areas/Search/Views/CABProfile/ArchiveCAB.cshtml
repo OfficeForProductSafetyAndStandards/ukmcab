@@ -28,9 +28,15 @@
             <form method="post">
                 <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL" />
                 <input type="hidden" asp-for="CABId" value="@Model.CABId" />
+                 @if (Model.HasDraft)
+                {
+                    <div class="govuk-inset-text govuk-inset-text-alert govuk-tag--red">
+                        <strong>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted</strong>
+                    </div>
+                }
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchiveReason")">
                     <div id="wrong-hint" class="govuk-hint">
-                        State the reason for archiving this CAB record.
+                        Enter the reason for archiving this CAB.
                     </div>
                     <p error-id-for="ArchiveReason" class="govuk-error-message">
                         <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
@@ -42,12 +48,6 @@
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-warning-text__assistive">Warning</span>
                             Archived CAB profiles cannot be edited and users cannot view them in the search results.
-                        @if (Model.HasDraft)
-                        {
-                            <br />
-                            <br />
-                            <text>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted</text>
-                        }
                         </strong>
                     </div>
                 <div class="govuk-button-group">
