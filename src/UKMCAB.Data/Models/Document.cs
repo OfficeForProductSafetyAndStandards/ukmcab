@@ -46,7 +46,7 @@
         public List<string> LegislativeAreas { get; set; }
 
         // Schedules of accreditation
-        public List<FileUpload>? Schedules { get; set; }
+        public List<FileUpload>? Schedules { get; set; } = new();
 
         public string ScheduleLabels => string.Join(", ", Schedules?.Select(sch => sch.Label) ?? new List<string>());
 

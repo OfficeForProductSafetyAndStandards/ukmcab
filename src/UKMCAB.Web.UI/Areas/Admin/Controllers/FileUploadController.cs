@@ -322,6 +322,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
             var fileUploadComparer = new FileUploadComparer();
+            latestDocument.Schedules ??= new();
             var newNotOld = newDocuments.Except(latestDocument.Schedules, fileUploadComparer);
             var oldNotNew = latestDocument.Schedules.Except(newDocuments, fileUploadComparer);
             if (newNotOld.Any() || oldNotNew.Any())
