@@ -9,7 +9,8 @@
         }
         else
         {
-            var groupedSchedules = Model.Documents.OrderBy(s => s.LegislativeArea).ThenBy(s => s.Label).GroupBy(s => s.LegislativeArea);
+            var isSchedule = Model.Documents.Any(d => !string.IsNullOrWhiteSpace(d.LegislativeArea));
+            var groupedSchedules = Model.Documents.OrderBy(s => isSchedule ? s.LegislativeArea : s.Category).ThenBy(s => s.Label).GroupBy(s => isSchedule ? s.LegislativeArea : s.Category);
 
             foreach (var groupedSchedule in groupedSchedules)
             {

@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Common;
+using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 
 namespace UKMCAB.Data.CosmosDb.Services
@@ -14,7 +15,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             _cache = cache;
             _cabRepository = cabRepository;
         }
-        public async Task<Document> FindPublishedDocumentByCABURLAsync(string url) => await _cache.GetOrCreateAsync(Key(url), () => GetPublishedCABByURLAsync(url));
+        public async Task<Document> FindPublishedDocumentByCABURLAsync(string url) => await _cache.GetOrCreateAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLAsync), Key(url)), () => GetPublishedCABByURLAsync(url));
 
         private async Task<Document?> GetPublishedCABByURLAsync(string url)
         {
@@ -50,7 +51,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             return null;
         }
 
-        public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string cabId) => await _cache.GetOrCreateAsync(Key(cabId), () =>  _cabRepository.Query<Document>(d => d.CABId.Equals(cabId)));
+        public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string cabId) => await _cache.GetOrCreateAsync(StringExt.Keyify(nameof(FindAllDocumentsByCABIdAsync), Key(cabId)), () =>  _cabRepository.Query<Document>(d => d.CABId.Equals(cabId)));
 
         public async Task<Document> FindPublishedDocumentByCABIdAsync(string cabId) => await GetPublishedCABByIdAsync(cabId);
 

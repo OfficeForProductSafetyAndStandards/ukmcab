@@ -18,6 +18,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         [Required(ErrorMessage = "Enter a title for the file")]
         public string? Label { get; set; }
         public string? LegislativeArea { get; set; }
+        public string? Category { get; set; }
     }
 
     public static class SchedulesOptions
@@ -38,6 +39,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public const string UploadTitle = "Upload the supporting documents";
         public const string ListTitle = "Supporting documents uploaded";
         public static readonly string[] AcceptedFileExtensions = new[] { ".doc", ".docx", ".xls", ".xlsx", ".pdf" };
+        public const int MaxFileCount = 10;
         public static readonly Dictionary<string, string> AcceptedFileExtensionsContentTypes = new()
         {
             { ".doc", "application/msword" },

@@ -8,4 +8,5 @@ public class Claims
     public const string Organisation = "org";
     public const string UserManagement = "user-mgt";
     public const string IsOneLoginUser = "one.login.gov.uk";
+    public const string IsFakeUser = "user.is-fake";
 }
