@@ -38,7 +38,7 @@ public static class GovukOneLoginExtensions
             options.UsePkce = false;
             options.ResponseMode = OpenIdConnectResponseMode.Query;
             options.ResponseType = OpenIdConnectResponseType.Code;
-            options.MetadataAddress = "https://oidc.integration.account.gov.uk/.well-known/openid-configuration";
+            options.MetadataAddress = configuration.GetValue<string>("OidcMetadataAddress");
             options.ClientId = govukOneLogin.ClientId;
             options.CallbackPath = OneLoginHelper.LoginCallbackPath;
             options.SignedOutCallbackPath = OneLoginHelper.LogoutCallbackPath;
