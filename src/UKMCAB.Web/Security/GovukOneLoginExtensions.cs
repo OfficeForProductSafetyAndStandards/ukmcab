@@ -45,7 +45,6 @@ public static class GovukOneLoginExtensions
             {
                 context.ProtocolMessage.SetParameter("vtr", "[\"Cl\"]");
                 context.ProtocolMessage.SetParameter("ui_locales", "en");
-                context.ProtocolMessage.SetParameter("claims", "{  \"userinfo\": { \"https://vocab.account.gov.uk/v1/coreIdentityJWT\": null  }}");
                 return Task.CompletedTask;
             };
             options.Events.OnAuthorizationCodeReceived = context =>
