@@ -3,24 +3,25 @@
 @{
     ViewBag.Title = Model.Title!;
 }
-<govuk-back-link href="/">Back to home page</govuk-back-link>
+<govuk-back-link href="/"/>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Notifications</h1>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
     </div>
 </div>
-
-<govuk-tabs>
-    <govuk-tabs-item id="past-day" label="Past day">
-        <h2 class="govuk-heading-l">Past day</h2>
-    </govuk-tabs-item>
-    <govuk-tabs-item id="past-week" label="Past week">
-        <h2 class="govuk-heading-l">Past week</h2>
-    </govuk-tabs-item>
-    <govuk-tabs-item id="past-month" label="Past month">
-        <h2 class="govuk-heading-l">Past month</h2>
-    </govuk-tabs-item>
-    <govuk-tabs-item id="past-year" label="Past year">
-        <h2 class="govuk-heading-l">Past year</h2>
-    </govuk-tabs-item>
-</govuk-tabs>
+<div class="govuk-grid-row">
+    <govuk-tabs>
+        <govuk-tabs-item id="Unassigned" label="Unassigned">
+            <p>There are no assigned notifications</p>
+        </govuk-tabs-item>
+        <govuk-tabs-item id="assigned-me" label="Assigned to me">
+            <p>partial to add</p>
+        </govuk-tabs-item>
+        <govuk-tabs-item id="assigned-group" label="Assigned to [user group]">
+            <h2 class="govuk-heading-l">Assigned to user group</h2>
+        </govuk-tabs-item>
+        <govuk-tabs-item id="completed" label="Completed">
+            <h2 class="govuk-heading-l">Completed</h2>
+        </govuk-tabs-item>
+    </govuk-tabs>
+</div>

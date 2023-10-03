@@ -1,0 +1,68 @@
+@model 
+
+<table class="govuk-table ukmcab-table">
+    <caption class="govuk-visually-hidden">List of notifications assigned</caption>
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+        @if (Model.Items.Any())
+        {
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <a class="cab-manage-sort" role="button" href="" aria-sort="">@Model.GetSortDescription("name", "CAB name")</a>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <a class="cab-manage-sort" role="button" href="" aria-sort="">@Model.GetSortDescription("number", "CAB number")</a>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <a class="cab-manage-sort" role="button" href="" aria-sort="">@Model.GetSortDescription("lastupd", "Last updated")</a>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <a class="cab-manage-sort" role="button" href="" aria-sort="">@Model.GetSortDescription("status", "Status")</a>
+            </th>
+        }
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    @if (Model.CABManagementItems.Any())
+    {
+        @foreach (var cab in Model.CABManagementItems)
+        {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">Cab name</label>
+                    @if (cab.Status == Status.Archived.ToString())
+                    {
+                        <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
+                    }
+                    else
+                    {
+                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
+                    }
+                </td>
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">Cab reference</label>@(UKMCAB.Core.Domain.CabNumberVisibility.Display(cab.CabNumberVisibility, User, cab.CABNumber) ?? Constants.NotProvided)
+                </td>
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">Last updated</label>@cab.LastUpdated.ToString("dd/MM/yyyy")
+                </td>
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">Status</label>@cab.Status
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr class="govuk-table__row">
+            <td>
+                <p class="govuk-body">There are currently no items in your work queue</p>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+@if (Model.CABManagementItems.Any())
+{
+    <div id="cab-management-pagination-container">
+        <partial name="Partials/_Pagination" model="Model.Pagination"/>
+    </div>
+}

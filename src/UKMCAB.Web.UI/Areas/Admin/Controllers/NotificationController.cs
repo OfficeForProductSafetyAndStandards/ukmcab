@@ -17,7 +17,7 @@ public class NotificationController : Controller
     {
         var model = new BasicPageModel
         {
-            Title = Constants.PageTitle.About
+            Title = Constants.PageTitle.Notifications
         };
         return View(model);
     }
