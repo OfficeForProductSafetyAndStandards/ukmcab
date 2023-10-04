@@ -1,4 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow.Schemas;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
@@ -6,19 +9,23 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 [Area("admin"), Route("admin")]
 public class NotificationController : Controller
 {
-    
     public NotificationController()
     {
-        
     }
 
     [HttpGet("notifications")]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(string sortField, string sortDirection)
     {
-        var model = new BasicPageModel
-        {
-            Title = Constants.PageTitle.Notifications
-        };
+        //todo connect to service
+        var model = new NotificationTableViewModel
+        (
+            Constants.PageTitle.Notifications,
+            true,
+            sortField,
+            SortDirectionHelper.Ascending,
+            new List<(string From, string Subject, string CABName, string SentOn, string CABLink)>(),
+            new PaginationViewModel()
+        );
         return View(model);
     }
 }
