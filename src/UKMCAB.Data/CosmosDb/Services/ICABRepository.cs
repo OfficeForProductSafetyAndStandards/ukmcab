@@ -9,10 +9,12 @@ namespace UKMCAB.Data.CosmosDb.Services
 
         Task<Document> CreateAsync(Document document);
 
+        [Obsolete("Use " + nameof(UpdateAsync))]
         Task<bool> Update(Document document);
         
         Task<bool> Delete(Document document);
         Task<bool> InitialiseAsync(bool force = false);
         IQueryable<Document> GetItemLinqQueryable();
+        Task UpdateAsync(Document document);
     }
 }

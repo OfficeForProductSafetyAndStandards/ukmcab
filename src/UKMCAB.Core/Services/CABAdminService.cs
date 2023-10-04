@@ -10,6 +10,24 @@ using UKMCAB.Data.Search.Services;
 
 namespace UKMCAB.Core.Services
 {
+    public interface ICABAdminService
+    {
+        Task<List<Document>> DocumentWithKeyIdentifiersExistsAsync(Document document);
+        Task<bool> DocumentWithSameNameExistsAsync(Document document);
+        Task<Document> FindPublishedDocumentByCABIdAsync(string id);
+        Task<List<Document>> FindAllDocumentsByCABIdAsync(string id);
+        Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
+        Task<List<Document>> FindAllCABManagementQueueDocuments();
+        Task<Document> GetLatestDocumentAsync(string id);
+        Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document, bool saveAsDraft = false);
+        Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft, bool submitForApproval = false);
+        Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument);
+        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveReason);
+        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveReason);
+        IAsyncEnumerable<string> GetAllCabIds();
+        Task RecordStatsAsync();
+    }
+
     public class CABAdminService : ICABAdminService
     {
         private readonly ICABRepository _cabRepostitory;
@@ -28,7 +46,8 @@ namespace UKMCAB.Core.Services
         public async Task<List<Document>> DocumentWithKeyIdentifiersExistsAsync(Document document)
         {
             var documents = await _cabRepostitory.Query<Document>(d =>
-                d.CABNumber.Equals(document.CABNumber) ||
+                (document.CABNumber != null && d.CABNumber.Equals(document.CABNumber)) 
+                ||
                 (!string.IsNullOrWhiteSpace(document.UKASReference) && d.UKASReference.Equals(document.UKASReference))
             );
             return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList();
@@ -94,7 +113,7 @@ namespace UKMCAB.Core.Services
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
             Guard.IsFalse(documentExists.Any(), "CAB number already exists in database");
-            
+
             var auditItem = new Audit(userAccount, AuditCABActions.Created);
             document.CABId ??= Guid.NewGuid().ToString();
             document.AuditLog.Add(auditItem);
@@ -137,30 +156,34 @@ namespace UKMCAB.Core.Services
 
         }
 
-        public async Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft, bool saveAsDraft = false)
+        public async Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft, bool submitForApproval = false)
         {
+            if (submitForApproval)
+            {
+                draft.SubStatus = SubStatus.PendingApproval;
+            }
+
             if (draft.StatusValue == Status.Published)
             {
-                // Need to create new version
                 draft.StatusValue = Status.Draft;
-                draft.id = string.Empty;
                 draft.AuditLog = new List<Audit> { new Audit(userAccount, AuditCABActions.Created) };
                 draft = await _cabRepostitory.CreateAsync(draft);
-                Guard.IsFalse(draft == null,
-                    $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
+                Guard.IsFalse(draft == null, $"Failed to create draft version during draft update, CAB Id: {draft?.CABId}");
             }
             else if (draft.StatusValue == Status.Draft)
             {
-                var audit = new Audit(userAccount, AuditCABActions.Saved);
-                draft.AuditLog.Add(audit);
-                Guard.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
+                draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.Saved));
+                await _cabRepostitory.UpdateAsync(draft);
             }
 
             await UpdateSearchIndex(draft);
-
             await RefreshCaches(draft.CABId, draft.URLSlug);
-
             await RecordStatsAsync();
+
+            if (submitForApproval)
+            {
+                // todo: create task and notify; out-of-scope of ticket 1017
+            }
 
             return draft;
         }
@@ -287,7 +310,7 @@ namespace UKMCAB.Core.Services
 
         public async Task RecordStatsAsync()
         {
-            async Task RecordStatAsync(Status status) => _telemetryClient.TrackMetric(string.Format(AiTracking.Metrics.CabsByStatusFormat, status.ToString()), 
+            async Task RecordStatAsync(Status status) => _telemetryClient.TrackMetric(string.Format(AiTracking.Metrics.CabsByStatusFormat, status.ToString()),
                 await _cabRepostitory.GetItemLinqQueryable().Where(x => x.StatusValue == status).CountAsync());
 
             await RecordStatAsync(Status.Unknown);

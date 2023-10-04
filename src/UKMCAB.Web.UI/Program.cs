@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.DataProtection;
@@ -29,6 +31,7 @@ using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.Security;
 using UKMCAB.Web.UI;
+using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Web.UI.Services.Subscriptions;
@@ -118,6 +121,10 @@ builder.Services.AddHostedService<RandomSortGenerator>();
 builder.Services.AddSearchService(cognitiveSearchConnectionString);
 builder.Services.Configure<CookieTempDataProviderOptions>(options => options.Cookie.Name = "UKMCAB_TempData");
 builder.Services.Configure<AntiforgeryOptions>(options => options.Cookie.Name = "UKMCAB_AntiForgery");
+
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddScoped<IValidator<CABDetailsViewModel>, CABDetailsViewModelValidator>();
 
 // =================================================================================================
 
