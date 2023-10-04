@@ -388,9 +388,15 @@
                 <div class="govuk-!-width-full">
                     <h2 class="govuk-heading-l">Archive @Model.Name</h2>
                     <input type="hidden" asp-for="CABId" value="@Model.CABId"/>
+                     @if (Model.HasDraft)
+                    {
+                        <div class="govuk-inset-text govuk-inset-text-alert govuk-tag--red">
+                            <strong>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted</strong>
+                        </div>
+                    }
                     <div id="archive-reason-formgroup" class="govuk-form-group">
                         <div id="archive-hint" class="govuk-hint">
-                            Enter the reason for archiving this CAB profile.
+                            Enter the reason for archiving this CAB.
                         </div>
                         <p id="archive-reason-error" class="govuk-error-message govuk-visually-hidden">
                             <span id="archive-error-message" class="govuk-error-message"></span>
@@ -402,12 +408,6 @@
                         <strong class="govuk-warning-text__text">
                             <span class="govuk-warning-text__assistive">Warning</span>
                             Archived CAB profiles cannot be edited and users cannot view them in the search results.
-                            @if (Model.HasDraft)
-                            {
-                                <br/>
-                                <br/>
-                                <text>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted</text>
-                            }
                         </strong>
                     </div>
                     <div class="govuk-button-group">
