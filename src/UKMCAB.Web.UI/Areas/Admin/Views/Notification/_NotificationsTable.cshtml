@@ -1,51 +1,50 @@
-@model 
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationTableViewModel
 
 <table class="govuk-table ukmcab-table">
-    <caption class="govuk-visually-hidden">List of notifications assigned</caption>
+    <caption class="govuk-visually-hidden">Table of notifications assigned</caption>
     <thead class="govuk-table__head">
     <tr class="govuk-table__row">
-        @if (Model.Items.Any())
+        @if (Model.ShowHeader)
         {
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <a class="cab-manage-sort" role="button" href="" aria-sort="">@Model.GetSortDescription("name", "CAB name")</a>
+                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">From</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <a class="cab-manage-sort" role="button" href="" aria-sort="">@Model.GetSortDescription("number", "CAB number")</a>
+                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">Subject</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <a class="cab-manage-sort" role="button" href="" aria-sort="">@Model.GetSortDescription("lastupd", "Last updated")</a>
+                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <a class="cab-manage-sort" role="button" href="" aria-sort="">@Model.GetSortDescription("status", "Status")</a>
+                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">Sent on</sort>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">Action</sort>
             </th>
         }
     </tr>
     </thead>
     <tbody class="govuk-table__body">
-    @if (Model.CABManagementItems.Any())
+    @if (Model.Items.Any())
     {
-        @foreach (var cab in Model.CABManagementItems)
+        @foreach (var item in Model.Items)
         {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">Cab name</label>
-                    @if (cab.Status == Status.Archived.ToString())
-                    {
-                        <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
-                    }
-                    else
-                    {
-                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
-                    }
+                    <label aria-hidden="true">From</label>
+                    @item.From
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">Cab reference</label>@(UKMCAB.Core.Domain.CabNumberVisibility.Display(cab.CabNumberVisibility, User, cab.CABNumber) ?? Constants.NotProvided)
+                    <label aria-hidden="true">Subject</label>@item.Subject
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">Last updated</label>@cab.LastUpdated.ToString("dd/MM/yyyy")
+                    <label aria-hidden="true">CAB name</label>@item.CABName
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">Status</label>@cab.Status
+                    <label aria-hidden="true">Sent on</label>@item.SentOn
+                </td>
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">Action</label><a class="govuk-link" href="@item.CABLink">View</a>
                 </td>
             </tr>
         }
@@ -54,13 +53,13 @@
     {
         <tr class="govuk-table__row">
             <td>
-                <p class="govuk-body">There are currently no items in your work queue</p>
+                <p class="govuk-body">There are no [assigned/completed] notifications</p>
             </td>
         </tr>
     }
     </tbody>
 </table>
-@if (Model.CABManagementItems.Any())
+@if (Model.Items.Any())
 {
     <div id="cab-management-pagination-container">
         <partial name="Partials/_Pagination" model="Model.Pagination"/>
