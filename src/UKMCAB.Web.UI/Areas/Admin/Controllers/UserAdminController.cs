@@ -82,7 +82,7 @@ public class UserAdminController : Controller
         {
             UserAccounts = accounts.ToList(),
             PendingAccountsCount = pendingAccountsCount,
-            Title = title,
+            Title = "User accounts",
             LockedOnly = isLocked,
             SortField = sortField ?? nameof(UserAccount.Surname),
             SortDirection = sortDirection ?? SortDirectionHelper.Ascending,
