@@ -16,7 +16,7 @@
     {
         reviewDate = revwDate.ToString("d MMM yyyy");
     }
-    
+
 }
 @if (Model.ShowError)
 {
@@ -39,37 +39,40 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">@Model.Title</span>
-        <h1 class="govuk-heading-l">Check details before publishing</h1>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
     </div>
 </div>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <fieldset class="govuk-fieldset cab-summary-header-list">
             <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">            
-                        <dt class="govuk-summary-list__key">
-                            <div class="cab-summary-header">
-                                <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
-                            </div>
-                        </dt>
-                        <dd class="govuk-summary-list__value">
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        <div class="cab-summary-header">
+                            <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
+                        </div>
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (Model.CanEdit)
+                        {
                             <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                            @if (Model.CabDetailsViewModel.IsCompleted)
-                            {
+                        }
+                        @if (Model.CabDetailsViewModel.IsCompleted)
+                        {
                             <div class="cab-result-status-label cab-result-completed">
-                                    COMPLETED
-                                </div>
-                            }
-                            else
-                            {
-                                <div class="cab-result-status-label cab-result-not-completed">
-                                    NOT COMPLETED
-                                </div>
-                            }
-                        </dd>                  
-                </div>           
+                                COMPLETED
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cab-result-status-label cab-result-not-completed">
+                                NOT COMPLETED
+                            </div>
+                        }
+                    </dd>
+                </div>
             </dl>
-            
+
             <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row  govuk-!-padding-top-5">
@@ -93,16 +96,30 @@
                         </dd>
                     </div>
 
-                    @if(CabNumberVisibility.CanDisplay(Model.CabDetailsViewModel.CabNumberVisibility, User))
-                    {                        
+                    @if (Model.CanSubmitForApproval)
+                    {
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
                                 CAB number
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @Model.CabDetailsViewModel.CABNumber
+                                CAB number assigned on approval
                             </dd>
                         </div>
+                    }
+                    else
+                    {
+                        if (CabNumberVisibility.CanDisplay(Model.CabDetailsViewModel.CabNumberVisibility, User))
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    CAB number
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.CabDetailsViewModel.CABNumber
+                                </dd>
+                            </div>
+                        }
                     }
 
                     <div class="govuk-summary-list__row">
@@ -141,7 +158,10 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        @if (Model.CanEdit)
+                        {
+                            <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        }
                         @if (Model.CabContactViewModel.IsCompleted)
                         {
                             <div class="cab-result-status-label cab-result-completed">
@@ -153,7 +173,7 @@
                             <div class="cab-result-status-label cab-result-not-completed">
                                 NOT COMPLETED
                             </div>
-                        }                        
+                        }
                     </dd>
                 </div>
             </dl>
@@ -243,7 +263,10 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        @if (Model.CanEdit)
+                        {
+                            <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        }
                         @if (Model.CabBodyDetailsViewModel.IsCompleted)
                         {
                             <div class="cab-result-status-label cab-result-completed">
@@ -326,10 +349,13 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                            <div class="cab-result-status-label cab-result-completed">
-                                COMPLETED
-                            </div>             
+                        @if (Model.CanEdit)
+                        {
+                            <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        }
+                        <div class="cab-result-status-label cab-result-completed">
+                            COMPLETED
+                        </div>
                     </dd>
                 </div>
             </dl>
@@ -344,7 +370,7 @@
                         <dd class="govuk-summary-list__value">
                             @if (Model.Schedules.Any())
                             {
-                               <ol class="govuk-list govuk-list--number">
+                                <ol class="govuk-list govuk-list--number">
                                     @foreach (var schedule in Model.Schedules)
                                     {
                                         <li class="cab-summary-schedule-item">
@@ -352,7 +378,7 @@
                                                 <div><a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@schedule.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@schedule.Label</a></div>
                                                 <div>@schedule.LegislativeArea</div>
                                             </div>
-                                            
+
                                         </li>
                                     }
                                 </ol>
@@ -374,7 +400,10 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        @if (Model.CanEdit)
+                        {
+                            <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                        }
                         <div class="cab-result-status-label cab-result-completed">
                             COMPLETED
                         </div>
@@ -399,7 +428,7 @@
                                                 <div><a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@document.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@document.FileName</a></div>
                                                 <div>@document.Category</div>
                                             </div>
-                                            
+
                                         </li>
                                     }
                                 </ol>
@@ -427,31 +456,47 @@
                 </strong>
             </div>
 
-            <div>
-                <form method="post">
-                    <input type="hidden" asp-for="CABId" />
-                    <div class="govuk-button-group">
-                        <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
-                            Publish
-                        </button>
-                        <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
-                            Save as draft
-                        </button>
-                        @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
-                        {
-                            <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                        }
-                        else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
-                        {
-                            <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId"  class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                        }
-                        else
-                        {
-                            <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                        }                            
-                    </div>
+            @if (Model.SubStatus == SubStatus.None)
+            {
+                <div>
+                    <form method="post">
+                        <input type="hidden" asp-for="CABId" />
+                        <div class="govuk-button-group">
+                            @if (Model.CanPublish)
+                            {
+                                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                                    Publish
+                                </button>
+                            }
+
+                            @if (Model.CanSubmitForApproval)
+                            {
+                                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.SubmitForApproval" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                                    Submit for approval
+                                </button>
+                            }
+
+                            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
+                                Save as draft
+                            </button>
+
+                            @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
+                            {
+                                <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            }
+                            else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                            {
+                                <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            }
+                            else
+                            {
+                                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                            }
+                        </div>
                 </form>
             </div>
+            }
+
         </fieldset>
     </div>
 </div>

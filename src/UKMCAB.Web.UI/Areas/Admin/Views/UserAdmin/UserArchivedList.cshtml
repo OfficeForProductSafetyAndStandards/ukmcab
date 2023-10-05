@@ -25,6 +25,27 @@
                     <a class="govuk-tabs__tab" href="#archived-user-list">Archived</a>
                 </li>
             </ul>
+
+
+            <div id="user-management-sort-form-group">
+                <form method="get" id="sortForm">
+                    <div id="mobile-sort" class="govuk-form-group">
+                        <label class="govuk-label" asp-for="@Model.SortField">
+                            Sort by
+                        </label>
+                        <a href="#" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc")? "descending" : "ascending")" class="user-manage-sort" role="button"></a>
+                        <select class="govuk-select" asp-for="@Model.SortField" name="sf" id="sortOption" style="width: 100%">
+                            <option value="@nameof(UserAccount.FirstName)">First name</option>
+                            <option value="@nameof(UserAccount.Surname)">Last Name</option>
+                            <option value="@nameof(UserAccount.ContactEmailAddress)">Email</option>
+                            <option value="@nameof(UserAccount.Role)">User group</option>
+                            <option value="@nameof(UserAccount.LastLogonUtc)">Last log in</option>
+                        </select>
+                        <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection" />
+                    </div>
+                </form>
+            </div>
+
             <div class="govuk-tabs__panel govuk-body" id="archived-user-list">
 
                 <table class="govuk-table govuk-!-font-size-16 user-list-6-col">
@@ -63,7 +84,7 @@
                                     </td>
                                     <td class="govuk-table__cell user-table-cell__mobile" title="@account.FirstName">
                                         <label aria-hidden="true">First name</label>
-                                        @account.FirstName
+                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">@account.FirstName</a>
                                     </td>
 
                                     <td class="govuk-table__cell user-table-cell__wide" title="@account.Surname">
@@ -92,7 +113,7 @@
                                         <label aria-hidden="true">Last log in</label>
                                         @(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")
                                     </td>
-                                    <td class="govuk-table__cell">
+                                    <td class="govuk-table__cell user-table-cell__wide">
                                         <label aria-hidden="true">Action</label>
                                         <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View</a>
                                     </td>

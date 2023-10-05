@@ -28,7 +28,7 @@ public static class GovukOneLoginExtensions
             opt.LoginPath = new PathString("/account/login");
             opt.LogoutPath = new PathString("/account/logout");
             opt.Cookie.Name = "UKMCAB_Identity";
-            opt.ExpireTimeSpan = TimeSpan.FromHours(2);
+            opt.ExpireTimeSpan = TimeSpan.FromMinutes(15);
         })
         .AddOpenIdConnect(options =>
         {
