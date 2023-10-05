@@ -1,4 +1,4 @@
-@model BasicPageModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationTableViewModel
 
 @{
     ViewBag.Title = Model.Title!;
@@ -10,8 +10,22 @@
     </div>
 </div>
 <div class="govuk-grid-row">
-    <govuk-tabs>
+    <govuk-tabs class="notifications-tabs" title=" ">
         <govuk-tabs-item id="Unassigned" label="Unassigned">
+            <div id="notifications-sort-form-group">
+                <form method="get" id="sortForm">
+                    <div id="mobile-sort" class="govuk-form-group">
+                        <label class="govuk-label" asp-for="@Model.SortField">
+                            Sort by
+                        </label>
+                        <a href="" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc") ? "descending" : "ascending")" class="notifications-sort" role="button"></a>
+                        <select class="govuk-select" asp-for="@Model.SortField" name="sf" id="sortOption">
+                            <option value="From">From</option>
+                        </select>
+                        <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection"/>
+                    </div>
+                </form>
+            </div>
             <partial name="_NotificationsTable" model="@Model"/>
         </govuk-tabs-item>
         <govuk-tabs-item id="assigned-me" label="Assigned to me">
@@ -25,3 +39,4 @@
         </govuk-tabs-item>
     </govuk-tabs>
 </div>
+

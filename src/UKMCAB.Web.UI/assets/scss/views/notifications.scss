@@ -16,8 +16,10 @@
       overflow: hidden;
       white-space: nowrap;
     }
+    #sortForm {
+      display: none;
+    }
   }
-
 
   @media (max-width: 40.0625em) {
     table tr td {
@@ -44,11 +46,69 @@
       font-weight: 600;
       padding-bottom: 10px;
     }
+    
     .govuk-table__cell {
       padding: 20px 10px 20px 0;
     }
+
+    #notifications-sort-form-group {
+      padding: 30px 5px 5px;
+    }
   }
-  
+
+  .notifications-sort {
+    position: relative;
+    text-decoration: none;
+    color: black;
+
+    &[aria-sort]:before {
+      content: " \25bc";
+      position: absolute;
+      right: -15px;
+      top: 10px;
+      font-size: 0.5em;
+    }
+
+    &[aria-sort]:after {
+      content: " \25b2";
+      position: absolute;
+      right: -15px;
+      top: 1px;
+      font-size: 0.5em;
+    }
+
+    &[aria-sort="ascending"]:before,
+    &[aria-sort="descending"]:before {
+      content: none;
+    }
+
+    &[aria-sort="ascending"]:after {
+      content: " \25b2";
+      font-size: 0.8em;
+      right: -18px;
+      top: 3px;
+    }
+
+    &[aria-sort="descending"]:after {
+      content: " \25bc";
+      font-size: 0.8em;
+      right: -18px;
+      top: 3px;
+    }
+  }
+
+  #mobile-sort {
+    label,
+    .user-manage-sort {
+      float: left;
+    }
+
+    select {
+      width: 100%;
+    }
+  }
+
+
   .govuk-tabs__list {
     @include govuk-clearfix;
     margin-bottom: 0;
@@ -58,7 +118,6 @@
       border-bottom: none;
     }
 
-
     .govuk-tabs__list-item {
       position: relative;
       float: left;
@@ -67,7 +126,6 @@
       width: auto;
       padding: govuk-spacing(2) govuk-spacing(4);
       margin: 0 govuk-spacing(1) 0 0;
-
 
       @include govuk-media-query($until: tablet) {
         padding: govuk-spacing(2) 0;
@@ -84,7 +142,7 @@
         content: none;
       }
 
-      .govuk-tabs__tab {
+      .user-tabs__tab .govuk-tabs__tab {
         @include govuk-link-style-text;
         margin-bottom: 0;
 
@@ -104,6 +162,14 @@
       }
     }
 
+    .govuk-tabs__tab:visited {
+      color: #0b0c0c;
+    }
+
+    .govuk-tabs__tab:link {
+      color: #0b0c0c;
+    }
+
     .govuk-tabs__list-item--selected {
       $border-width: 1px;
       position: relative;
@@ -113,7 +179,7 @@
       margin-bottom: -$border-width;
       padding-top: govuk-spacing(3) - $border-width;
       padding-right: govuk-spacing(4) - $border-width;
-      padding-bottom: govuk-spacing(3) + $border-width;
+      padding-bottom: govuk-spacing(1) + $border-width;
       padding-left: govuk-spacing(4) - $border-width;
 
       @include govuk-media-query($until: tablet) {

@@ -5,10 +5,10 @@
 @import "./views/cab-management.scss";
 @import "./views/user-management.scss";
 @import "./views/cab-profile.scss";
-@import "./views/notification-banner.scss";
 @import "./views/search.scss";
 @import "./views/sub-list.scss";
 @import "./views/summary.scss";
+@import "./views/notifications.scss";
 @import "./shared/atom-feed.scss";
 @import "./shared/feedback-form.scss";
 @import "./shared/file-upload.scss";
@@ -20,7 +20,7 @@
 @import "./shared/social-media-share.scss";
 @import "./shared/table.scss";
 @import "./shared/inset-text.scss";
-
+@import "./shared/notification-banner.scss";
 /* The below style shoulb be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */
 .govuk-link:hover {
     text-decoration-thickness: max(3px, .1875rem, .12em);
