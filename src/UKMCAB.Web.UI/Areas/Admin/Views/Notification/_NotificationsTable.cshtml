@@ -7,19 +7,19 @@
         @if (Model.ShowHeader)
         {
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">From</sort>
+                <sort target="From" sort="@Model.SortField" sort-direction="@Model.SortDirection">From</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">Subject</sort>
+                <sort target="Subject" sort="@Model.SortField" sort-direction="@Model.SortDirection">Subject</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
+                <sort target="CAB" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">Sent on</sort>
+                <sort target="Sent" sort="@Model.SortField" sort-direction="@Model.SortDirection">Sent on</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="" sort="@Model.SortField" sort-direction="@Model.SortDirection">Action</sort>
+                <sort target="Action" sort="@Model.SortField" sort-direction="@Model.SortDirection">Action</sort>
             </th>
         }
     </tr>
@@ -52,7 +52,7 @@
     else
     {
         <tr class="govuk-table__row">
-            <td>
+            <td colspan="5">
                 <p class="govuk-body">There are no [assigned/completed] notifications</p>
             </td>
         </tr>

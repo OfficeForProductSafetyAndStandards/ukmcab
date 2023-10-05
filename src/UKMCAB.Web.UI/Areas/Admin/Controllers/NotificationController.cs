@@ -21,7 +21,7 @@ public class NotificationController : Controller
         (
             Constants.PageTitle.Notifications,
             true,
-            sortField,
+            "sortField",
             SortDirectionHelper.Ascending,
             new List<(string From, string Subject, string CABName, string SentOn, string CABLink)>(),
             new PaginationViewModel()

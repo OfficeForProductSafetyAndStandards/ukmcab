@@ -12,16 +12,16 @@
 <div class="govuk-grid-row">
     <govuk-tabs>
         <govuk-tabs-item id="Unassigned" label="Unassigned">
-            <p>There are no assigned notifications</p>
+            <partial name="_NotificationsTable" model="@Model"/>
         </govuk-tabs-item>
         <govuk-tabs-item id="assigned-me" label="Assigned to me">
-            <p>partial to add</p>
+            <partial name="_NotificationsTable" model="@Model"/>
         </govuk-tabs-item>
         <govuk-tabs-item id="assigned-group" label="Assigned to [user group]">
-            <h2 class="govuk-heading-l">Assigned to user group</h2>
+            <partial name="_NotificationsTable" model="@Model"/>
         </govuk-tabs-item>
         <govuk-tabs-item id="completed" label="Completed">
-            <h2 class="govuk-heading-l">Completed</h2>
+            <partial name="_NotificationsTable" model="@Model"/>
         </govuk-tabs-item>
     </govuk-tabs>
 </div>
