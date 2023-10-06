@@ -2,15 +2,8 @@
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CABBodyDetailsViewModel
 @{
-    var returnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
-    var cabId = Model.CABId;
-
-    if (cabId == null && returnUrl.Contains("?fromSummary=true"))
-    {
-        int startIndex = returnUrl.LastIndexOf("/") + 1;
-        int endIndex = returnUrl.IndexOf("?fromSummary=true");
-        cabId = returnUrl.Substring(startIndex, endIndex - startIndex);
-    }
+    var id = this.Url.ActionContext.HttpContext.Request.RouteValues.GetValueOrDefault("id").ToString();
+    var cabId = Model.CABId ?? id;
 }
 @section BackButton
 {
