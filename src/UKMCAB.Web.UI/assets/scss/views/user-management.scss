@@ -206,11 +206,11 @@
         }
 
         .govuk-tabs__tab:visited {
-            color: #0b0c0c;
+            color: $govuk-text-colour;
         }
 
         .govuk-tabs__tab:link {
-            color: #0b0c0c;
+            color: $govuk-text-colour;
         }
 
         .govuk-tabs__list-item--selected {
