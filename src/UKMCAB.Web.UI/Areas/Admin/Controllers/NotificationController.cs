@@ -16,15 +16,24 @@ public class NotificationController : Controller
     [HttpGet("notifications")]
     public async Task<IActionResult> Index(string sortField, string sortDirection)
     {
+        var items = new List<(string From, string Subject, string CABName, string SentOn, string CABLink)>
+        {
+            new("From test", "Subject test", "CAB name test", DateTime.Now.ToShortDateString(), "view cab link")
+        };
         //todo connect to service
         var model = new NotificationTableViewModel
         (
             Constants.PageTitle.Notifications,
-            true,
+            items.Any(),
             "sortField",
             SortDirectionHelper.Ascending,
-            new List<(string From, string Subject, string CABName, string SentOn, string CABLink)>(),
+            items,
             new PaginationViewModel()
+            {
+                PageNumber = 1,
+                ResultsPerPage = 5,
+                Total = items.Count
+            }
         );
         return View(model);
     }
