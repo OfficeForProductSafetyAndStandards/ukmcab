@@ -67,7 +67,7 @@ public class SubscriptionsCabService : ICabService
     {
         var model = await BindAsync<SearchViewModel>(query).ConfigureAwait(false);
         var data = await SearchController.SearchInternalAsync(_cachedSearchService, model ?? new SearchViewModel(), configure: x => x.IgnorePaging = true);
-        return new CabApiService.SearchResults(data.Total, data.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = Guid.Parse(x.CABId), Name = x.Name }).ToList());
+        return new CabApiService.SearchResults(data.Total, data.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = x.CABId.ToGuid() ?? throw new Exception($"Unable to convert to guid: '{x.CABId}' (query={query})") , Name = x.Name }).ToList());
     }
 
     private async Task<T?> BindAsync<T>(string? query)

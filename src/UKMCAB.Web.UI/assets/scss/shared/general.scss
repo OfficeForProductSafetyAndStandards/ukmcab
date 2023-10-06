@@ -1,15 +1,19 @@
 ﻿.desktop-no-display {
-    @include govuk-media-query($from: tablet) {
-        display: none !important;
-    }
+  @include govuk-media-query($from: tablet) {
+    display: none !important;
+  }
 }
 
 .mobile-no-display {
-    @include govuk-media-query($until: tablet) {
-        display: none !important;
-    }
+  @include govuk-media-query($until: tablet) {
+    display: none !important;
+  }
 }
 
 .app-no-display {
-    display: none !important;
+  display: none !important;
+}
+
+.break-word {
+    word-wrap: break-word;
 }

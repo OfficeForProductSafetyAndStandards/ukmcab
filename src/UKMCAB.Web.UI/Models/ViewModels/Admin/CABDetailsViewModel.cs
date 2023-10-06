@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FluentValidation;
+using System.ComponentModel.DataAnnotations;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin
@@ -29,12 +30,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         }
 
         public string? CABId { get; set; }
-
-        [Required(ErrorMessage = "Enter a CAB name")]
         public string? Name { get; set; }
-        [Required(ErrorMessage = "Enter a CAB number")]
         public string? CABNumber { get; set; }
-
         public string? AppointmentDateDay { get; set; }
         public string? AppointmentDateMonth { get; set; }
         public string? AppointmentDateYear { get; set; }
@@ -48,5 +45,25 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string? Title => $"{(!IsNew ? "Edit" : "Create")} a CAB";
         public string? CabNumberVisibility { get; set; }
         public bool IsNew { get; set; }
+
+        public bool IsCabNumberDisabled { get; set; }
+    }
+
+    public class CABDetailsViewModelValidator : AbstractValidator<CABDetailsViewModel>
+    {
+        public CABDetailsViewModelValidator(IHttpContextAccessor httpContextAccessor)
+        {
+            RuleLevelCascadeMode = CascadeMode.Stop;
+
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Enter a CAB name");
+
+            RuleFor(x => x.CABNumber)
+                .Must((model, cabNumber) =>
+                {
+                    var isOpssUser = httpContextAccessor?.HttpContext?.User?.IsInRole(Core.Security.Roles.OPSS.Id) ?? false;
+                    return !isOpssUser || cabNumber.IsNotNullOrEmpty();
+                })
+                .WithMessage("Enter a CAB number");
+        }
     }
 }

@@ -39,6 +39,7 @@ public static class Constants
     public class SubmitType
     {
         public const string Continue = nameof(Continue);
+        public const string SubmitForApproval = nameof(SubmitForApproval);
         public const string Save = nameof(Save);
         public const string Add18 = nameof(Add18);
         public const string UploadAnother = nameof(UploadAnother);
