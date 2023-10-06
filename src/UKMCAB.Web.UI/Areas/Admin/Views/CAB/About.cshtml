@@ -59,8 +59,15 @@
                     <p class="govuk-error-message">
                         <span asp-validation-for="CABNumber" class="govuk-error-message"></span>
                     </p>
-                    <input asp-for="CABNumber" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.CABNumber))" autocomplete="cabnumber" aria-required="true"/>
+                    <input asp-for="CABNumber" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.CABNumber))" autocomplete="cabnumber" aria-required="true" disabled="@Model.IsCabNumberDisabled" />
+                
+                    @if (Model.IsCabNumberDisabled)
+                    {
+                        <p class="govuk-body-s govuk-!-margin-top-1">CAB number assigned on approval</p>
+                    }
+
                 </div>
+
 
                 <div class="govuk-form-group">
                     <h3 class="govuk-label-wrapper">

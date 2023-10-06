@@ -127,14 +127,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, configure: x => x.IgnorePaging = true);
             searchResults.CABs.OrderBy(x => x.Name).ForEach(x => x.HiddenText = "[omitted]");
-            //searchResults.CABs.ToList()
             Response.Headers.Add("X-Count", searchResults.Total.ToString());
-            return Json(searchResults.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = Guid.Parse(x.CABId), Name = x.Name }));
+            return Json(searchResults.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = x.CABId.ToGuid()??throw new Exception($"Cannot convert to guid '{x.CABId}'"), Name = x.Name }));
         }
 
         internal static async Task<CABResults> SearchInternalAsync(ICachedSearchService cachedSearchService, SearchViewModel model, bool internalSearch = false, Action<CABSearchOptions>? configure = null)
         {
-            //var internalSearch = User != null && User.Identity.IsAuthenticated;
             var opt = new CABSearchOptions
             {
                 PageNumber = model.PageNumber,

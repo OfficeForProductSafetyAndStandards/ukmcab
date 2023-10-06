@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Security.Claims;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using UKMCAB.Common.Security;
 
@@ -138,6 +139,8 @@ public static class ExtensionMethods
     /// <returns></returns>
     public static TOut Map<TIn, TOut>(this TIn obj, Func<TIn, TOut> func) => obj != null ? func(obj) : default;
 
+    public static Task<TOut?> MapAsync<TIn, TOut>(this TIn obj, Func<TIn, Task<TOut?>> func) => obj != null ? func(obj) : Task.FromResult<TOut?>(default);
+
     public static string? Md5(this string text) => Md5Helper.CalculateMD5(text).Replace("-", string.Empty);
 
     /// <summary>
@@ -225,4 +228,6 @@ public static class ExtensionMethods
     /// <param name="action"></param>
     /// <returns></returns>
     public static TOut Transform<T, TOut>(this T incoming, Func<T, TOut> action) => action(incoming);
+
+    public static string? GetUserId(this ClaimsPrincipal principal) => principal.FindFirstValue(ClaimTypes.NameIdentifier);
 }

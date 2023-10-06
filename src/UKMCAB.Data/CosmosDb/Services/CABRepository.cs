@@ -2,6 +2,7 @@
 using Microsoft.Azure.Cosmos.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 
@@ -68,10 +69,17 @@ namespace UKMCAB.Data.CosmosDb.Services
             return list;
         }
 
+        [Obsolete("Use " + nameof(UpdateAsync))]
         public async Task<bool> Update(Document document)
         {
             var response = await _container.UpsertItemAsync(document);
             return response.StatusCode == HttpStatusCode.OK;
+        }
+
+        public async Task UpdateAsync(Document document)
+        {
+            var response = await _container.UpsertItemAsync(document);
+            Guard.IsTrue(response.StatusCode == HttpStatusCode.OK, $"The CAB document was not updated; http status={response.StatusCode}");
         }
 
         public async Task<bool> Delete(Document document)

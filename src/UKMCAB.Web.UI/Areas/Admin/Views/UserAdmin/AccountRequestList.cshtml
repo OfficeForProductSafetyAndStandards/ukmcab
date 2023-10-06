@@ -14,7 +14,7 @@
         <div class="govuk-tabs user-tabs" data-module="govuk-tabs">
             <ul class="govuk-tabs__list">
                 <li class="govuk-tabs__list-item">
-                    <a class="" asp-route="@UserAdminController.Routes.UserList" style="color:#0b0c0c;">Active</a>
+                    <a asp-route="@UserAdminController.Routes.UserList" style="color:#0b0c0c;">Active</a>
                 </li>
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                     <a class="govuk-tabs__tab" href="#requests">Requests (@Model.Pagination.Total)</a>
@@ -26,6 +26,25 @@
                     <a asp-route="@UserAdminController.Routes.UserListArchived" style="color:#0b0c0c;">Archived</a>
                 </li>
             </ul>
+
+            <div id="user-management-sort-form-group">
+                <form method="get" id="sortForm">
+                    <div id="mobile-sort" class="govuk-form-group">
+                        <label class="govuk-label" asp-for="@Model.SortField">
+                            Sort by
+                        </label>
+                        <a href="" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc")? "descending" : "ascending")" class="user-manage-sort" role="button"></a>
+                        <select class="govuk-select" asp-for="@Model.SortField" name="sf" id="sortOption">
+                            <option value="@nameof(UserAccount.FirstName)">First name</option>
+                            <option value="@nameof(UserAccount.Surname)">Last Name</option>
+                            <option value="@nameof(UserAccount.ContactEmailAddress)">Email</option>
+                            <option value="@nameof(UserAccountRequest.CreatedUtc)">Requested on</option>
+                        </select>
+                        <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection" />
+                    </div>
+                </form>
+            </div>
+
             <div class="govuk-tabs__panel  govuk-body" id="requests">
 
                 <table class="govuk-table govuk-!-font-size-16 user-list-5-col">
@@ -61,7 +80,7 @@
                                     </td>
                                     <td class="govuk-table__cell user-table-cell__mobile" title="@account.FirstName">
                                         <label aria-hidden="true">First name</label>
-                                        @account.FirstName
+                                        <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="UserAdmin" asp-action="ReviewAccountRequest" asp-route-id="@account.Id">@account.FirstName</a>
                                     </td>
 
                                     <td class="govuk-table__cell user-table-cell__wide" title="@account.Surname">
@@ -83,10 +102,10 @@
                                     </td>
 
                                     <td class="govuk-table__cell">
-                                        <label aria-hidden="true">Last log in</label>
+                                        <label aria-hidden="true">Requested on</label>
                                         @account.CreatedUtc.ToString("dd/MM/yyyy HH:mm")
                                     </td>
-                                    <td class="govuk-table__cell">
+                                    <td class="govuk-table__cell user-table-cell__wide">
                                         <label aria-hidden="true">Action</label>
                                         <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="UserAdmin" asp-action="ReviewAccountRequest" asp-route-id="@account.Id">View</a>
                                     </td>

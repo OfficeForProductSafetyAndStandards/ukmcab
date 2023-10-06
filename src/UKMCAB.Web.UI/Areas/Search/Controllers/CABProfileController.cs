@@ -1,4 +1,5 @@
 ﻿using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.Security.Claims;
 using System.Xml;
@@ -31,6 +32,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public static class Routes
         {
             public const string CabDetails = "cab.detail";
+            public const string CabDraftProfile = "cab.profile.draft";
             public const string TrackInboundLinkCabDetails = "cab.details.inbound-email-link";
             public const string CabFeed = "cab.feed";
         }
@@ -75,6 +77,22 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }));
 
             return View(cab);
+        }
+
+        [HttpGet("profile/draft/{id:guid}", Name = Routes.CabDraftProfile), Authorize]
+        public async Task<IActionResult> DraftAsync(string id)
+        {
+            var cabDocument = await _cachedPublishedCabService.FindDraftDocumentByCABIdAsync(id);
+            
+            if (cabDocument != null)
+            {
+                var cab = await GetCabProfileViewModel(cabDocument, null, 0);
+                return View("Index", cab);
+            }
+            else
+            {
+                return NotFound();
+            }
         }
 
         [HttpGet("search/cab-profile-feed/{id}", Name = Routes.CabFeed)]
