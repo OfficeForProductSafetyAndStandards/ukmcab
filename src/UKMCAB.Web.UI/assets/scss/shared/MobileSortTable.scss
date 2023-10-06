@@ -1,0 +1,51 @@
+.mobile-sort {
+  position: relative;
+  text-decoration: none;
+  color: black;
+
+  &[aria-sort]:before {
+    content: " \25bc";
+    position: absolute;
+    right: -15px;
+    top: 10px;
+    font-size: 0.5em;
+  }
+
+  &[aria-sort]:after {
+    content: " \25b2";
+    position: absolute;
+    right: -15px;
+    top: 1px;
+    font-size: 0.5em;
+  }
+
+  &[aria-sort="ascending"]:before,
+  &[aria-sort="descending"]:before {
+    content: none;
+  }
+
+  &[aria-sort="ascending"]:after {
+    content: " \25b2";
+    font-size: 0.8em;
+    right: -18px;
+    top: 3px;
+  }
+
+  &[aria-sort="descending"]:after {
+    content: " \25bc";
+    font-size: 0.8em;
+    right: -18px;
+    top: 3px;
+  }
+}
+
+#mobile-sort {
+  label,
+  {
+    float: left;
+  }
+
+  select {
+    width: 100%;
+  }
+}

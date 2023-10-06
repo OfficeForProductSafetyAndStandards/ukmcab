@@ -22,6 +22,7 @@
 @import "./shared/inset-text.scss";
 @import "./shared/notification-banner.scss";
 @import "./shared/tabs.scss";
+@import "./shared/MobileSortTable.scss";
 /* The below style shoulb be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */
 .govuk-link:hover {
     text-decoration-thickness: max(3px, .1875rem, .12em);

@@ -1,26 +1,13 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationTableViewModel
- @if (Model.ShowTableHeader)
- {
-     <div id="notifications-sort-form-group">
-         <form method="get" id="sortForm">
-             <div id="mobile-sort" class="govuk-form-group">
-                 <label class="govuk-label" asp-for="@Model.SortField">
-                     Sort by
-                 </label>
-                 <a href="" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc") ? "descending" : "ascending")" class="notifications-sort" role="button"></a>
-                 <select class="govuk-select" asp-for="@Model.SortField" name="sf" id="sortOption">
-                     <option value="From">From</option>
-                 </select>
-                 <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection"/>
-             </div>
-         </form>
-     </div>
- }
+@if (Model.ShowTableItems)
+{
+    <partial name="Partials/_MobileSortTable" model="@Model.MobileSortTableViewModel"/>
+}
 <table class="govuk-table ukmcab-table">
     <caption class="govuk-visually-hidden">Table of notifications assigned</caption>
     <thead class="govuk-table__head">
     <tr class="govuk-table__row">
-        @if (Model.ShowTableHeader)
+        @if (Model.ShowTableItems)
         {
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
                 <sort target="From" sort="@Model.SortField" sort-direction="@Model.SortDirection">From</sort>
@@ -41,7 +28,7 @@
     </tr>
     </thead>
     <tbody class="govuk-table__body">
-    @if (Model.Items.Any())
+    @if (Model.ShowTableItems)
     {
         @foreach (var item in Model.Items)
         {
@@ -75,7 +62,7 @@
     }
     </tbody>
 </table>
-@if (Model.Items.Any())
+@if (Model.ShowTableItems)
 {
     <div id="cab-management-pagination-container">
         <partial name="Partials/_Pagination" model="Model.Pagination"/>

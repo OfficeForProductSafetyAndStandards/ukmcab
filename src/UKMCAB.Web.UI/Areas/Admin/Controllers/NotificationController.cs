@@ -14,7 +14,7 @@ public class NotificationController : Controller
     }
 
     [HttpGet("notifications")]
-    public async Task<IActionResult> Index(string sortField, string sortDirection)
+    public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
     {
         var items = new List<(string From, string Subject, string CABName, string SentOn, string CABLink)>
         {
@@ -25,16 +25,22 @@ public class NotificationController : Controller
         (
             Constants.PageTitle.Notifications,
             items.Any(),
-            "sortField",
-            SortDirectionHelper.Ascending,
+            sf,
+            SortDirectionHelper.Get(sd),
             items,
-            new PaginationViewModel()
+            new PaginationViewModel
             {
-                PageNumber = 1,
+                PageNumber = pageNumber,
                 ResultsPerPage = 5,
                 Total = items.Count
-            }
-        );
+            },
+            new MobileSortTableViewModel(
+                "asc",
+                "sf",
+                new List<Tuple<string, string>>()
+                {
+                    new("From", "From")
+                }));
         return View(model);
     }
 }
