@@ -15,7 +15,7 @@ public class NotificationController : Controller
             new("From test", "Subject test", "CAB name test", DateTime.Now.ToShortDateString(), "view cab link")
         };
         //todo connect to service
-        var model = new NotificationTableViewModel
+        var model = new NotificationsViewModel
         (
             Constants.PageTitle.Notifications,
             items.Any(),
