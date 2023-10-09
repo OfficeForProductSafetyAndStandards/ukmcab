@@ -289,7 +289,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.RegisteredOfficeLocation = model.RegisteredOfficeLocation;
 
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, submitType == Constants.SubmitType.Save);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary ?
