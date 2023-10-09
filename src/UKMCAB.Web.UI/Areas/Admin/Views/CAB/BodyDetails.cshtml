@@ -1,18 +1,25 @@
 ﻿@using UKMCAB.Data.Models
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CABBodyDetailsViewModel
+@{
+    var id = this.Url.ActionContext.HttpContext.Request.RouteValues.GetValueOrDefault("id").ToString();
+    var cabId = Model.CABId ?? id;
+}
 @section BackButton
 {
 <div class="govuk-width-container ">
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @if (Model.IsFromSummary)
+            @if(cabId == null){
+                    <a asp-area="Admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-back-link">Back</a>
+            }
+            else if (Model.IsFromSummary)
             {
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" class="govuk-back-link">Back</a>
             }
             else
             {
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@cabId" class="govuk-back-link">Back</a>
             }
         </div>
     </div>
@@ -141,13 +148,13 @@
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft
                 </button>
-                @if (Model.IsFromSummary)
+                @if (cabId == null)
                 {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
 
