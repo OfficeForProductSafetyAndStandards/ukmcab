@@ -1,6 +1,6 @@
 ﻿namespace UKMCAB.Web.UI.Models;
 
-public class BasicPageModel : ILayoutModel
+public record BasicPageModel(string? Title = null) : ILayoutModel
 {
-    public string? Title { get; set; }
+    public string? Title { get; set; } = Title;
 }

@@ -1,0 +1,70 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationTableViewModel
+@if (Model.ShowTableItems)
+{
+    <partial name="Partials/_MobileSortTable" model="@Model.MobileSortTableViewModel"/>
+}
+<table class="govuk-table ukmcab-table">
+    <caption class="govuk-visually-hidden">Table of notifications assigned</caption>
+    <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+        @if (Model.ShowTableItems)
+        {
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <sort target="From" sort="@Model.SortField" sort-direction="@Model.SortDirection">From</sort>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <sort target="Subject" sort="@Model.SortField" sort-direction="@Model.SortDirection">Subject</sort>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <sort target="CAB" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <sort target="Sent" sort="@Model.SortField" sort-direction="@Model.SortDirection">Sent on</sort>
+            </th>
+            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <sort target="Action" sort="@Model.SortField" sort-direction="@Model.SortDirection">Action</sort>
+            </th>
+        }
+    </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+    @if (Model.ShowTableItems)
+    {
+        @foreach (var item in Model.Items)
+        {
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">From</label>
+                    @item.From
+                </td>
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">Subject</label>@item.Subject
+                </td>
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">CAB name</label>@item.CABName
+                </td>
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">Sent on</label>@item.SentOn
+                </td>
+                <td class="govuk-table__cell">
+                    <label aria-hidden="true">Action</label><a class="govuk-link" href="@item.CABLink">View</a>
+                </td>
+            </tr>
+        }
+    }
+    else
+    {
+        <tr class="govuk-table__row">
+            <td colspan="5">
+                <p class="govuk-body">There are no [assigned/completed] notifications</p>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+@if (Model.ShowTableItems)
+{
+    <div id="cab-management-pagination-container">
+        <partial name="Partials/_Pagination" model="Model.Pagination"/>
+    </div>
+}

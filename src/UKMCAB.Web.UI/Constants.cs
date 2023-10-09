@@ -24,6 +24,7 @@ public static class Constants
         public const string PrivacyNotice = "Privacy Notice";
         public const string TermsAndConditions = "Terms And Conditions";
         public const string Updates = "Updates";
+        public const string Notifications = "Notifications";
     }
 
     public class Heading
