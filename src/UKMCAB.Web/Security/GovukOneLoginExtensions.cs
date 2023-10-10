@@ -37,7 +37,7 @@ public static class GovukOneLoginExtensions
             options.UsePkce = false;
             options.ResponseMode = OpenIdConnectResponseMode.Query;
             options.ResponseType = OpenIdConnectResponseType.Code;
-            options.MetadataAddress = "https://oidc.integration.account.gov.uk/.well-known/openid-configuration";
+            options.MetadataAddress = configuration.GetValue<string>("OidcMetadataAddress");
             options.ClientId = govukOneLogin.ClientId;
             options.CallbackPath = "/oidc";
             options.SaveTokens = true; // important as we may want to use the access_token to call /userinfo endpoint
@@ -59,7 +59,7 @@ public static class GovukOneLoginExtensions
                 var accessToken = context.TokenEndpointResponse?.AccessToken ?? throw new Exception("The access token is null");
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var response = await client.GetAsync("https://oidc.integration.account.gov.uk/userinfo");
+                var response = await client.GetAsync(configuration.GetValue<string>("OidcUserInfoEndPoint"));
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 var userInfo = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
