@@ -12,8 +12,7 @@ public record NotificationDetailViewModel(
     string Reason,
     string SentOn,
     string CompletedOn,
-    string linkToCABAddress,
+    (string ViewLinkName,string ViewLinkAddress) ViewLink,
     string CompletedBy,
-    string AssignedOn,
-    
+    string AssignedOn
     ) : BasicPageModel(PageTitle);
