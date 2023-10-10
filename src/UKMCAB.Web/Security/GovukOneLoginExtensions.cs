@@ -61,7 +61,7 @@ public static class GovukOneLoginExtensions
                 var accessToken = context.TokenEndpointResponse?.AccessToken ?? throw new Exception("The access token is null");
                 var client = new HttpClient();
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-                var response = await client.GetAsync("https://oidc.integration.account.gov.uk/userinfo");
+                var response = await client.GetAsync(configuration.GetValue<string>("OidcUserInfoEndPoint"));
                 response.EnsureSuccessStatusCode();
                 var content = await response.Content.ReadAsStringAsync();
                 var userInfo = JsonSerializer.Deserialize<Dictionary<string, object>>(content);
