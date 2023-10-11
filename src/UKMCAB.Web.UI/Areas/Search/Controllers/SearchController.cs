@@ -19,7 +19,7 @@ using UKMCAB.Web.Security;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
-    [Area("search")]
+    [Area("search"), Route("search")]
     public class SearchController : Controller
     {
         private readonly ICachedSearchService _cachedSearchService;

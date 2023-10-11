@@ -1,0 +1,100 @@
+
+#service-management-page {
+    #manage-cabs {
+        margin-top: 60px;
+    }
+
+    a > .govuk-heading-m, a > .govuk-label--m {
+        color: $govuk-link-colour;
+    }
+
+    #search-for-a-cab {
+        float: right;
+
+
+
+        #search-results {
+            width: 67%;
+            margin-bottom: 158px;
+        }
+
+        #search-keyword-container {
+            #search-filter-keywords {
+                margin-bottom: 20px;
+                margin-left: 15px;
+
+
+
+
+                #search-filter-keywords-input-container {
+                    position: relative;
+
+                    input {
+                        width: calc(100% - 40px);
+                        padding-right: 28px;
+                    }
+
+                    #search-keyword-button {
+                        background-color: #1d70b8;
+                        background-image: url('../finder/images/search/search-button.png');
+                        background-position: 2px 50%;
+                        background-repeat: no-repeat;
+                        bottom: 0;
+                        border: 2px solid #0b0c0c;
+                        border-left: none;
+                        color: #fff;
+                        cursor: pointer;
+                        height: 100%;
+                        overflow: hidden;
+                        padding: 0;
+                        position: absolute;
+                        right: 0;
+                        text-indent: -5000px;
+                        width: 40px;
+
+                        &:focus {
+                            outline: 3px solid #ffdd00;
+                            outline-offset: 0;
+                        }
+                    }
+
+                    .clear-icon-internal {
+                        display: none;
+                        position: absolute;
+                        top: 50%;
+                        right: 44px;
+                        transform: translateY(-50%);
+                        cursor: pointer;
+                        border: 1px solid transparent;
+                        background-color: transparent;
+                        display: inline-block;
+                        vertical-align: middle;
+                        outline: 0;
+                    }
+
+                    .clear-icon-internal:after {
+                        content: "X";
+                        display: block;
+                        width: 15px;
+                        height: 15px;
+                        position: absolute;
+                        border: 1px solid black;
+                        z-index: 1;
+                        right: 1px;
+                        top: 0;
+                        bottom: 0;
+                        margin: auto;
+                        padding: 3px 2px 1px;
+                        border-radius: 50%;
+                        text-align: center;
+                        vertical-align: middle;
+                        color: black;
+                        font-weight: normal;
+                        font-size: 12px;
+                        cursor: pointer;
+                    }
+                }
+            }
+        }
+    }
+}

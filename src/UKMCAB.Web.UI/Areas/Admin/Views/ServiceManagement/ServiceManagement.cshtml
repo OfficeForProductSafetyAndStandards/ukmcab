@@ -1,4 +1,5 @@
-﻿@using UKMCAB.Web.UI.Extensions
+﻿@using UKMCAB.Web.UI.Areas.Search.Controllers;
+@using UKMCAB.Web.UI.Extensions
 @using UKMCAB.Web.UI.Models.ViewModels.Search
 @model SearchViewModel
 @{
@@ -11,11 +12,14 @@
     </div>
 </div>
 
-<div class="govuk-grid-row">
+
+<div id="service-management-page" class="govuk-grid-row">
     <div class="govuk-grid-column-one-third">
         <div>
-            <table class="govuk-table">
-                <caption class="govuk-table__caption govuk-table__caption--m">Notifications</caption>
+            <table class="govuk-table">                
+                <a asp-route="@NotificationController.Routes.NotificationsHome">
+                    <h2 class="govuk-heading-m">Notifications</h2>
+                </a>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header">Unassigned</th>
@@ -33,20 +37,34 @@
             </table>
         </div>
 
-        <div style="margin-top: 60px">
+        <div id="manage-cabs">
             <table class="govuk-table">
-                <caption class="govuk-table__caption govuk-table__caption--m">Manage CABs</caption>
+                <a asp-route="@AdminController.Routes.CABManagement">
+                    <h2 class="govuk-heading-m">Manage CABs</h2>
+                </a>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Draft</th>
+                        <th scope="row" class="govuk-table__header">                            
+                            <a asp-route="@AdminController.Routes.CABManagement" asp-route-filter = "draft">
+                                Draft
+                            </a>
+                        </th>
                         <td class="govuk-table__cell">123</td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Awaiting approval</th>
+                        <th scope="row" class="govuk-table__header">
+                            <a asp-route="@AdminController.Routes.CABManagement">
+                                Awaiting approval
+                            </a>                            
+                        </th>
                         <td class="govuk-table__cell">12</td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Create a CAB</th>
+                        <th scope="row" class="govuk-table__header">
+                            <a asp-route="@CABController.Routes.CreateNewCab">
+                                Create a CAB
+                            </a>                            
+                        </th>
                         <td class="govuk-table__cell"></td>
                     </tr>
                 </tbody>
@@ -55,32 +73,46 @@
 
     </div>
 
-    <div id="search-page" class="govuk-grid-column-one-half" style="float: right">
-        <div id="search-results" class="govuk-grid-row" style="width: 67%">
-            <div style="margin-left:15px" id="search-keyword-container">
+
+
+
+
+    <div id="search-for-a-cab" class="govuk-grid-column-one-half">
+        <div id="search-results" class="govuk-grid-row">
+            <div id="search-keyword-container">
                 <div id="search-filter-keywords">
-                    <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">
-                        <h2 class="govuk-label-wrapper">
-                            <label class="govuk-label govuk-label--m" asp-for="Keywords">
+                    <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">                        
+                        <a asp-route="@SearchController.Routes.Search">
+                            <h2 class="govuk-heading-m">
+                                Search for a CAB
+                            <label class="govuk-label govuk-label--m" asp-for="Keywords" style="display:none">
                                 Search for a CAB
                             </label>
                         </h2>
-                        <div id="search-filter-keywords-input-container" style="border: 1px solid red">
+                        </a>
+                        <div id="search-filter-keywords-input-container">
                             <input type="text" asp-for="Keywords" class="govuk-input search-box" />
-                            <button id="search-keyword-button" type="submit" style="border: 1px solid red">Search</button>
-                            <button class="clear-icon-internal" type="submit" style="border: 1px solid red"></button>
+                            <button id="search-keyword-button" type="submit">Search</button>
+                            <button class="clear-icon-internal" type="submit" ></button>
                         </div>
                     </fieldset>
                 </div>
             </div>
         </div>
 
-        <div style="margin-top: 160px">
+
+        <div style="">
             <table class="govuk-table" style="width: 67%">
-                <caption class="govuk-table__caption govuk-table__caption--m">Manage users</caption>
+                <a asp-route="@UserAdminController.Routes.UserList">
+                    <h2 class="govuk-heading-m">Manage users</h2>
+                </a>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Draft</th>
+                        <th scope="row" class="govuk-table__header">                            
+                            <a asp-route="@UserAdminController.Routes.UserAccountRequestsList">
+                                Account requests
+                            </a>
+                        </th>
                         <td class="govuk-table__cell">123</td>
                     </tr>
 
