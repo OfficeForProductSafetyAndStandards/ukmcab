@@ -9,6 +9,7 @@
   @include govuk-media-query($until: tablet) {
     border-bottom: none;
   }
+
   .govuk-tabs__list-item {
     position: relative;
     float: left;
@@ -27,9 +28,11 @@
       vertical-align: top;
       display: inline;
     }
+
     &:before {
       content: none;
     }
+
     .user-tabs__tab .govuk-tabs__tab {
       @include govuk-link-style-text;
       margin-bottom: 0;
@@ -37,6 +40,7 @@
         vertical-align: -webkit-baseline-middle;
         display: inline;
       }
+
       &:after {
         content: "";
         position: absolute;
@@ -47,12 +51,15 @@
       }
     }
   }
+
   .govuk-tabs__tab:visited {
     color: #0b0c0c;
   }
+
   .govuk-tabs__tab:link {
     color: #0b0c0c;
   }
+
   .govuk-tabs__list-item--selected {
     $border-width: 1px;
     position: relative;
@@ -69,6 +76,7 @@
       padding: govuk-spacing(2) 0;
       margin: 5px 2px;
     }
+
     .govuk-tabs__tab {
       text-decoration: none;
     }

@@ -12,5 +12,60 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+        <govuk-summary-list>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Status
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    <govuk-select asp-for="@Model.SelectedStatus">
+                        @foreach (var item in @Model.SelectStatus)
+                        {
+                            <govuk-select-item value="@item.Value">@item.Text</govuk-select-item>
+                        }
+                    </govuk-select>
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    From
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    <p class="govuk-body">@Model.From</p>
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Subject
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.Subject
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Reason
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.Reason
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    Sent on
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    @Model.SentOn
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+            <govuk-summary-list-row>
+                <govuk-summary-list-row-key>
+                    View
+                </govuk-summary-list-row-key>
+                <govuk-summary-list-row-value>
+                    <a class="govuk-link" href="@Model.ViewLink.ViewLinkAddress">@Model.ViewLink.ViewLinkName</a>
+                </govuk-summary-list-row-value>
+            </govuk-summary-list-row>
+        </govuk-summary-list>
     </div>
 </div>

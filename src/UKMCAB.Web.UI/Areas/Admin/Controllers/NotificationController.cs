@@ -37,4 +37,30 @@ public class NotificationController : Controller
                 }));
         return View(model);
     }
+
+    [HttpGet("/details/id")]
+    public IActionResult Detail()
+    {
+        //todo connect to service
+        var statuses = new List<(int Value, string Text)>
+        {
+            (1, "Unassigned"),
+            (2, "Assigned"),
+            (3, "Completed"),
+        };
+        var assignees = new List<(string Value, string Text)>
+        {
+            ("user1", "Test User 1"),
+            ("user2", "Test User 2")
+        };
+        var vm = new NotificationDetailViewModel(
+            "Notification Details",
+            "Notification: Test Notification",
+            "1",
+            statuses,
+            "From value", "Subject value", "reason value", "11/10/2023 12:15", "12/10/2023 13:00", ("view cab", "/"),
+            "Mr BPSS", "12/10/2023 11:00", assignees, assignees.First().Value, "BPSS"
+        );
+        return View(vm);
+    }
 }
