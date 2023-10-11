@@ -1,7 +1,8 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@using UKMCAB.Web.UI.Extensions
+@using UKMCAB.Web.UI.Models.ViewModels.Search
+@model SearchViewModel
 @{
+ 
 }
 
 <div class="govuk-grid-row">
@@ -11,8 +12,7 @@
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third" style="margin-right: 150px">
-
+    <div class="govuk-grid-column-one-third">
         <div>
             <table class="govuk-table">
                 <caption class="govuk-table__caption govuk-table__caption--m">Notifications</caption>
@@ -55,23 +55,28 @@
 
     </div>
 
-    <div class="govuk-grid-column-one-third" style="padding-right: 50px">
-
-        <div>
-            <table class="govuk-table">
-                <caption class="govuk-table__caption govuk-table__caption--m">Search for a CAB</caption>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Unassigned</th>
-                        <td class="govuk-table__cell">123</td>
-                    </tr>
-
-                </tbody>
-            </table>
+    <div id="search-page" class="govuk-grid-column-one-half" style="float: right">
+        <div id="search-results" class="govuk-grid-row" style="width: 67%">
+            <div style="margin-left:15px" id="search-keyword-container">
+                <div id="search-filter-keywords">
+                    <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">
+                        <h2 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--m" asp-for="Keywords">
+                                Search for a CAB
+                            </label>
+                        </h2>
+                        <div id="search-filter-keywords-input-container" style="border: 1px solid red">
+                            <input type="text" asp-for="Keywords" class="govuk-input search-box" />
+                            <button id="search-keyword-button" type="submit" style="border: 1px solid red">Search</button>
+                            <button class="clear-icon-internal" type="submit" style="border: 1px solid red"></button>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
         </div>
 
         <div style="margin-top: 160px">
-            <table class="govuk-table">
+            <table class="govuk-table" style="width: 67%">
                 <caption class="govuk-table__caption govuk-table__caption--m">Manage users</caption>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
