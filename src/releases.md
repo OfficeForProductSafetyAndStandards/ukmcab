@@ -28,5 +28,7 @@ All environments are separate and self-contained.  The production environment is
 1. GOING LIVE: To go-live with a deployment that's already in vnext - you need to swap the slots in the app service.  Therefore you will need to request production access beforehand.
 1. ROLLBACK: If for some reason you need to rollback, you just swap the slots back.  
 Bear in mind backward compatibility - if the vnext app changes the data substantially, is the current production version going to work with that.
+1. Clear redis cache
+1. Merge `release/vX.X` into `master` and delete the release branch
 
 
