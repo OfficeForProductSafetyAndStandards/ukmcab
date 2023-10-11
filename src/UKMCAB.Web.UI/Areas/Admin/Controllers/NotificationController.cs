@@ -4,10 +4,10 @@ using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
-[Area("admin"), Route("admin"), Authorize]
+[Area("admin"), Route("admin/notifications"), Authorize]
 public class NotificationController : Controller
 {
-    [HttpGet("notifications")]
+    [HttpGet]
     public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
     {
         var items = new List<(string From, string Subject, string CABName, string SentOn, string CABLink)>
@@ -38,8 +38,8 @@ public class NotificationController : Controller
         return View(model);
     }
 
-    [HttpGet("/details/id")]
-    public IActionResult Detail()
+    [HttpGet("details")]
+    public IActionResult Detail(string id)
     {
         //todo connect to service
         var statuses = new List<(int Value, string Text)>

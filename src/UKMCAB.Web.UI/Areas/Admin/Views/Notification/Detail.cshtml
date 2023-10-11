@@ -18,7 +18,7 @@
                     Status
                 </govuk-summary-list-row-key>
                 <govuk-summary-list-row-value>
-                    <govuk-select asp-for="@Model.SelectedStatus">
+                    <govuk-select asp-for="@Model.SelectedStatus" label-class="govuk-visually-hidden">
                         @foreach (var item in @Model.SelectStatus)
                         {
                             <govuk-select-item value="@item.Value">@item.Text</govuk-select-item>
