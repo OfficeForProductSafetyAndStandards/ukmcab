@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.OpenSsl;
@@ -16,6 +15,7 @@ public class OneLoginHelper
     public const string ClientAssertionTypeJwtBearer = "urn:ietf:params:oauth:client-assertion-type:jwt-bearer";
 
     public string ClientId { get; }
+    public string Audience { get; }
     private string KeyPairPem { get; }
 
     public OneLoginHelper(IConfiguration configuration)
@@ -24,6 +24,7 @@ public class OneLoginHelper
         var keyPairBase64 = configuration["OneLoginKeyPairBase64"] ?? throw new Exception("GOV.UK One Login key pair could not be found");
         var keyPairBytes = Convert.FromBase64String(keyPairBase64);
         KeyPairPem = Encoding.UTF8.GetString(keyPairBytes);
+        Audience = configuration["OidcAudience"] ?? throw new Exception("OidcAudience is not configured");
     }
 
     public string CreateClientAuthJwt()
@@ -33,7 +34,7 @@ public class OneLoginHelper
         var securityToken = tokenHandler.CreateJwtSecurityToken(
             issuer: ClientId,
             expires: DateTime.Now.AddDays(1),
-            audience: "https://oidc.integration.account.gov.uk/token",
+            audience: Audience,
             subject: new ClaimsIdentity(new List<Claim> { new Claim("sub", ClientId) }),
             signingCredentials: new SigningCredentials(rsaSecurityKey, "RS256")
         );
