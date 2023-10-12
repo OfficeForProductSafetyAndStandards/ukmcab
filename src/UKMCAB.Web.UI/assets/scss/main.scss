@@ -4,6 +4,7 @@
 @import "./views/cab-contact.scss";
 @import "./views/cab-management.scss";
 @import "./views/user-management.scss";
+@import "./views/user-profile.scss";
 @import "./views/cab-profile.scss";
 @import "./views/search.scss";
 @import "./views/service-management.scss";
@@ -23,7 +24,7 @@
 @import "./shared/inset-text.scss";
 @import "./shared/notification-banner.scss";
 @import "./shared/tabs.scss";
-@import "./shared/MobileSortTable.scss";
+@import "./shared/mobile-sort-table.scss";
 /* The below style shoulb be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */
 .govuk-link:hover {
     text-decoration-thickness: max(3px, .1875rem, .12em);
