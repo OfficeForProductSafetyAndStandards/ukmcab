@@ -87,5 +87,29 @@ namespace UKMCAB.Data.CosmosDb.Services
             var response = await _container.DeleteItemAsync<Document>(document.id, new PartitionKey(document.CABId));
             return response.StatusCode == HttpStatusCode.NoContent;
         }
+
+        public async Task<int> CABCountAsync(Status status = Status.Unknown)
+        {
+            if(status == Status.Unknown)
+            {
+                return await _container.GetItemLinqQueryable<Document>().AsQueryable().CountAsync();
+            }
+            else
+            {
+                return await _container.GetItemLinqQueryable<Document>().AsQueryable().Where(x => x.StatusValue == status).CountAsync();
+            }
+        }
+
+        public async Task<int> CABCountAsync(SubStatus subStatus = SubStatus.None)
+        {
+            if (subStatus == SubStatus.None)
+            {
+                return await _container.GetItemLinqQueryable<Document>().AsQueryable().CountAsync();
+            }
+            else
+            {
+                return await _container.GetItemLinqQueryable<Document>().AsQueryable().Where(x => x.SubStatus == subStatus).CountAsync();
+            }
+        }
     }
 }

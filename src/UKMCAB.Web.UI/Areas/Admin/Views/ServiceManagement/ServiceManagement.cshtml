@@ -1,10 +1,9 @@
 ﻿@using UKMCAB.Web.UI.Areas.Search.Controllers;
 @using UKMCAB.Web.UI.Extensions
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 @using UKMCAB.Web.UI.Models.ViewModels.Search
-@model SearchViewModel
-@{
- 
-}
+@model InternalLandingPageViewModel;
+
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -49,7 +48,7 @@
                                 Draft
                             </a>
                         </th>
-                        <td class="govuk-table__cell">123</td>
+                        <td class="govuk-table__cell">@Model.TotalDraftCABs</td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header">
@@ -57,7 +56,7 @@
                                 Awaiting approval
                             </a>                            
                         </th>
-                        <td class="govuk-table__cell">12</td>
+                        <td class="govuk-table__cell">@Model.TotalCABsPendingApproval</td>
                     </tr>
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header">
@@ -70,7 +69,6 @@
                 </tbody>
             </table>
         </div>
-
     </div>
 
 
@@ -78,27 +76,38 @@
 
 
     <div id="search-for-a-cab" class="govuk-grid-column-one-half">
-        <div id="search-results" class="govuk-grid-row">
-            <div id="search-keyword-container">
-                <div id="search-filter-keywords">
-                    <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">                        
-                        <a asp-route="@SearchController.Routes.Search">
-                            <h2 class="govuk-heading-m">
-                                Search for a CAB
-                            <label class="govuk-label govuk-label--m" asp-for="Keywords" style="display:none">
-                                Search for a CAB
-                            </label>
-                        </h2>
-                        </a>
-                        <div id="search-filter-keywords-input-container">
-                            <input type="text" asp-for="Keywords" class="govuk-input search-box" />
-                            <button id="search-keyword-button" type="submit">Search</button>
-                            <button class="clear-icon-internal" type="submit" ></button>
-                        </div>
-                    </fieldset>
+
+
+
+
+
+
+        <form id="search-results-form" asp-route="@SearchController.Routes.Search" method="get" novalidate>
+            <div id="search-results" class="govuk-grid-row">
+               
+                <div id="search-keyword-container">
+                    <div id="search-filter-keywords">
+                        <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">
+                            <a asp-route="@SearchController.Routes.Search">
+                                <h2 class="govuk-heading-m">
+                                    Search for a CAB
+                                    <label class="govuk-label govuk-label--m" asp-for="Keywords" style="display:none">
+                                        Search for a CAB
+                                    </label>
+                                </h2>
+                            </a>
+                            <div id="search-filter-keywords-input-container">
+                                <input type="text" asp-for="Keywords" class="govuk-input search-box" />
+                                <button id="search-keyword-button" type="submit">Search</button>
+                            </div>
+                        </fieldset>
+                    </div>
                 </div>
             </div>
-        </div>
+        </form>
+        
+
+
 
 
         <div style="">
@@ -113,7 +122,7 @@
                                 Account requests
                             </a>
                         </th>
-                        <td class="govuk-table__cell">123</td>
+                        <td class="govuk-table__cell">@Model.TotalAccountRequests</td>
                     </tr>
 
                 </tbody>

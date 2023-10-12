@@ -26,6 +26,8 @@ namespace UKMCAB.Core.Services
         Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveReason);
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
+        Task<int> CABCountAsync(Status status = Status.Unknown);
+        Task<int> CABCountAsync(SubStatus subStatus = SubStatus.None);
     }
 
     public class CABAdminService : ICABAdminService
@@ -319,5 +321,10 @@ namespace UKMCAB.Core.Services
             await RecordStatAsync(Status.Archived);
             await RecordStatAsync(Status.Historical);
         }
+
+        public Task<int> CABCountAsync(Status status = Status.Unknown) => _cabRepostitory.CABCountAsync(status);
+
+
+        public Task<int> CABCountAsync(SubStatus subStatus = SubStatus.None) => _cabRepostitory.CABCountAsync(subStatus);
     }
 }
