@@ -2,6 +2,9 @@
 @using UKMCAB.Web.UI.Extensions
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 @using UKMCAB.Web.UI.Models.ViewModels.Search
+@using Microsoft.AspNetCore.Identity
+@using UKMCAB.Core.Security;
+@using System.Security;
 @model InternalLandingPageViewModel;
 
 
@@ -104,25 +107,27 @@
         </div>
     </div>
 
-
-    <div id="manage-users" class="govuk-grid-column-one-half">
-        <div >
-            <table class="govuk-table" style="">
-                <a asp-route="@UserAdminController.Routes.UserList">
-                    <h2 class="govuk-heading-m">Manage users</h2>
-                </a>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">
-                            <a asp-route="@UserAdminController.Routes.UserAccountRequestsList">
-                                Account requests
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell">@Model.TotalAccountRequests</td>
-                    </tr>
-
-                </tbody>
-            </table>
+    @if (User.HasClaim(Claims.UserManagement))
+    {
+        <div id="manage-users" class="govuk-grid-column-one-half">
+            <div>
+                <table class="govuk-table" style="">
+                    <a asp-route="@UserAdminController.Routes.UserList">
+                        <h2 class="govuk-heading-m">Manage users</h2>
+                    </a>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">
+                                <a asp-route="@UserAdminController.Routes.UserAccountRequestsList">
+                                    Account requests
+                                </a>
+                            </th>
+                            <td class="govuk-table__cell">@Model.TotalAccountRequests</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    }
+    
 </div>
