@@ -1,8 +1,14 @@
-.additional-row{
+#user-profile-my-details {
+    .govuk-summary-list{
+        margin-bottom:10px;
+    }
+}
+
+.additional-row {
     border-bottom: 1px solid $govuk-border-colour;
     padding-bottom: 10px;
 
-    .govuk-link{
+    .govuk-link {
         font-weight: bold;
         font-size: 19px;
     }
