@@ -22,6 +22,8 @@
     var clearFiltersLink = document.getElementById('clear-filters-link');
     var keywordsInput = document.getElementById('Keywords');
     var keywordsButton = document.getElementById('search-keyword-button');
+    const searchBox = document.querySelector(".search-box");
+    const clearButton = document.querySelector(".clear-icon");
 
     var mql;
 
@@ -30,6 +32,13 @@
             searchFilterContainer.classList.add("search-result-mobile-hidden");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);
+
+            clearButton.style.display = searchBox.value ? "block" : "none";
+
+            clearButton.addEventListener("click", () => {
+                searchBox.value = "";
+                clearButton.style.display = "none";
+            });
 
             keywordsButton.addEventListener('click', function () {
                 keywordsButton.focus();

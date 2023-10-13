@@ -1,5 +1,5 @@
 ﻿using UKMCAB.Data.Models;
-using UKMCAB.Identity.Stores.CosmosDB;
+using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Services
 {
@@ -13,11 +13,11 @@ namespace UKMCAB.Core.Services
         Task<List<Document>> FindAllCABManagementQueueDocuments();
         Task<Document> GetLatestDocumentAsync(string id);
 
-        Task<Document> CreateDocumentAsync(UKMCABUser user, Document document, bool saveAsDraft = false);
-        Task<Document> UpdateOrCreateDraftDocumentAsync(UKMCABUser user, Document draft, bool saveAsDraft = false);
-        Task<bool> DeleteDraftDocumentAsync(string cabId);
-        Task<Document> PublishDocumentAsync(UKMCABUser user, Document latestDocument);
-        Task<Document> ArchiveDocumentAsync(UKMCABUser user, Document latestDocument, string archiveReason);
+        Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document, bool saveAsDraft = false);
+        Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft, bool saveAsDraft = false);
+        Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument);
+        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveReason);
+        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveReason);
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
     }

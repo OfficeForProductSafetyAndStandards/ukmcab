@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Globalization;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
@@ -31,10 +32,11 @@ public class SubscriptionsCabService : ICabService
         var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id.ToString());
         if (cabDocument != null)
         {
+            var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditActions.Published);
             var cab = new SubscriptionsCoreCabModel
             {
                 CABId = cabDocument.CABId,
-                PublishedDate = cabDocument.Published.DateTime,
+                PublishedDate = publishedAudit.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber = string.Empty,
@@ -64,7 +66,7 @@ public class SubscriptionsCabService : ICabService
     public async Task<CabApiService.SearchResults> SearchAsync(string? query)
     {
         var model = await BindAsync<SearchViewModel>(query).ConfigureAwait(false);
-        var data = await SearchController.SearchInternalAsync(_cachedSearchService, model ?? new SearchViewModel(), x => x.IgnorePaging = true);
+        var data = await SearchController.SearchInternalAsync(_cachedSearchService, model ?? new SearchViewModel(), configure: x => x.IgnorePaging = true);
         return new CabApiService.SearchResults(data.Total, data.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = Guid.Parse(x.CABId), Name = x.Name }).ToList());
     }
 

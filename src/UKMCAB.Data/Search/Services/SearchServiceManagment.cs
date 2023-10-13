@@ -57,7 +57,7 @@ namespace UKMCAB.Data.Search.Services
                 SearchIndexerDataSourceType.CosmosDb, cosmosDBConnectionString + $";Database={DataConstants.CosmosDb.Database}",
                 new SearchIndexerDataContainer(DataConstants.CosmosDb.Container));
 
-            cosmosDbDataSource.Container.Query = $"SELECT * FROM c WHERE c.Status = \"{Status.Published}\"";
+            cosmosDbDataSource.Container.Query = $"SELECT * FROM c WHERE c.StatusValue not in ({(int)Status.Historical})";
 
             await searchIndexerClient.CreateOrUpdateDataSourceConnectionAsync(cosmosDbDataSource);
 

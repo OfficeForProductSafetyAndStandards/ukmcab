@@ -10,6 +10,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using Microsoft.ApplicationInsights;
 using UKMCAB.Web.UI.Extensions;
+using UKMCAB.Web.UI.Helpers;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -23,6 +24,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private static readonly List<string> _select = new()
         {
             nameof(CABIndexItem.CABId),
+            nameof(CABIndexItem.Status),
             nameof(CABIndexItem.Name),
             nameof(CABIndexItem.URLSlug),
             nameof(CABIndexItem.AddressLine1),
@@ -38,6 +40,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.LastUpdatedDate),
         };
 
+        public static class Routes
+        {
+            public const string Search = "search.index";
+        }
         public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry)
         {
             _cachedSearchService = cachedSearchService;
@@ -47,13 +53,16 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
 
-        [Route("/")]
+        [Route("/", Name = Routes.Search)]
         public async Task<IActionResult> Index(SearchViewModel model)
         {
-            var searchResults = await SearchInternalAsync(_cachedSearchService, model);
+            var internalSearch = User != null && User.Identity.IsAuthenticated;
+            model.Sort ??= internalSearch ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
+            var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
+            model.InternalSearch = internalSearch;
 
             await SetFacetOptions(model);
-            
+
             model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
 
             model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
@@ -68,8 +77,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 FeedUrl = "/search-feed",
                 EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes
-                    .Step0RequestSearchSubscription)
+                    .Step0RequestSearchSubscription),
+                SearchKeyword = model.Keywords ?? string.Empty
             };
+
+            ShareUtils.AddDetails(HttpContext, model.FeedLinksViewModel);
+
             if (Request.QueryString.HasValue)
             {
                 model.FeedLinksViewModel.FeedUrl += Request.QueryString.Value.EnsureStartsWith("?").RemoveQueryParameters("pagenumber", "sort");
@@ -99,15 +112,16 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [HttpGet("~/__api/subscriptions/core/cab-search")]
         public async Task<IActionResult> GetSearchResultsAsync(SearchViewModel model)
         {
-            var searchResults = await SearchInternalAsync(_cachedSearchService, model, x => x.IgnorePaging = true);
+            var searchResults = await SearchInternalAsync(_cachedSearchService, model, configure: x => x.IgnorePaging = true);
             searchResults.CABs.OrderBy(x => x.Name).ForEach(x => x.HiddenText = "[omitted]");
             //searchResults.CABs.ToList()
             Response.Headers.Add("X-Count", searchResults.Total.ToString());
             return Json(searchResults.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = Guid.Parse(x.CABId), Name = x.Name }));
         }
 
-        internal static async Task<CABResults> SearchInternalAsync(ICachedSearchService cachedSearchService, SearchViewModel model, Action<CABSearchOptions>? configure = null)
+        internal static async Task<CABResults> SearchInternalAsync(ICachedSearchService cachedSearchService, SearchViewModel model, bool internalSearch = false, Action<CABSearchOptions>? configure = null)
         {
+            //var internalSearch = User != null && User.Identity.IsAuthenticated;
             var opt = new CABSearchOptions
             {
                 PageNumber = model.PageNumber,
@@ -116,7 +130,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 BodyTypesFilter = model.BodyTypes,
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
+                StatusesFilter = model.Statuses,
                 Select = _select,
+                InternalSearch = internalSearch
             };
             configure?.Invoke(opt);
             return await cachedSearchService.QueryAsync(opt);
@@ -168,13 +184,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task SetFacetOptions(SearchViewModel model)
         {
-            var facets = await _cachedSearchService.GetFacetsAsync();
+            var facets = await _cachedSearchService.GetFacetsAsync(model.InternalSearch);
 
             facets.LegislativeAreas = facets.LegislativeAreas.Select(la => la.ToSentenceCase()).ToList()!;
 
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
             model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
+            if (model.InternalSearch)
+            {
+                model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "Status", facets.StatusValue, model.Statuses);
+            }
         }
 
         private FilterViewModel GetFilterOptions(string facetName, string facetLabel, IEnumerable<string> facets, IEnumerable<string> selectedFacets)

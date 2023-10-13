@@ -6,6 +6,8 @@
     var showCookieHeader = !Context.Request.Cookies.ContainsKey(Constants.AnalyticsOptInCookieName);
     var loadAnalytics = !showCookieHeader && Context.Request.Cookies[Constants.AnalyticsOptInCookieName] == "accept";
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
+    var fullUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri();
+    var pageTitle = Model?.Title.FormatTitle(ViewData.ModelState.IsValid) ?? Constants.SiteName;    
 }
 <!DOCTYPE html>
 <html lang="en" class="govuk-template ">
@@ -24,7 +26,9 @@
             gtag('config', '@(config.GetValue<string>("GoogleAnalyticsId"))');
         </script>
     }
-    <title>@(Model?.Title.FormatTitle(ViewData.ModelState.IsValid) ?? Constants.SiteName)</title>
+
+    <title>@pageTitle</title>
+    <meta name="description" content="The UK Market Conformity Assessment Bodies (UKMCAB) service is the definitive source and a register of UK Government appointed Conformity Assessment Bodies (CABs) who can certify goods for both the GB and NI markets.">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <meta name="theme-color" content="#0b0c0c"/>
 
@@ -40,6 +44,13 @@
     <link href="/assets/css/main.css" rel="stylesheet" asp-append-version="true" />
     
     <meta property="og:image" content="/assets/images/govuk-opengraph-image.png"/>
+
+    <meta property="og:image:alt" content="">
+    <meta property="og:title" content="@pageTitle" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="@fullUrl" />
+    <meta property="og:description" content="The UK Market Conformity Assessment Bodies (UKMCAB) service is the definitive source and a register of UK Government appointed Conformity Assessment Bodies (CABs) who can certify goods for both the GB and NI markets." />
+
     @if (loadAnalytics)
     {
         <script nonce="@Nonces.AppInsights">@Html.Raw(JavaScriptSnippet.ScriptBody)</script>
@@ -50,6 +61,13 @@
     <script nonce="@Nonces.Main">
         document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');
     </script>
+
+    <div id="fb-root"></div>
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v17.0" nonce="6YFCIjtn"></script>
+
+    <script src="https://platform.linkedin.com/in.js" type="text/javascript" lang="en-US"></script>
+    @* <script type="IN/Share" data-url="@fullUrl"></script> *@
+
 
     <a href="#main-content" class="govuk-skip-link" data-module="govuk-skip-link">Skip to main content</a>
 

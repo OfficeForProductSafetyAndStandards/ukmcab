@@ -69,7 +69,7 @@
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles[i].Label" class="govuk-error-message"></span>
                                         </p>
-                                        <input asp-for="UploadedFiles[i].Label" type="text" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true">
+                                        <input asp-for="UploadedFiles[i].Label" type="text" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
                                         <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
                                     </div>
                                 </td>
@@ -107,31 +107,29 @@
 
         @if (Model.UploadedFiles.Count < SchedulesOptions.MaxFileCount)
         {
-        var label = Model.UploadedFiles.Any() ? "Save and upload another file" : "Upload a file";
         <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
             <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
-                @label
+                @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file" , "Upload a file")
             </button>
         </div>
         }
 
         <div class="govuk-grid-column-two-thirds">
             <div class="govuk-button-group">
-                
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                    Continue
-                </button>
+                        @Html.Conditional(Model.UploadedFiles.Any(), "Save and Continue", "Save")
+                </button>                
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft
                 </button>
 
-                @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                @if (Model.IsFromSummary)
                 {
                     <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
         </div>

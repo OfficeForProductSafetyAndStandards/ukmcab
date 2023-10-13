@@ -1,0 +1,92 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.User.UserAccountListViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">@Model.Title</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <div class="govuk-tabs" data-module="govuk-tabs">
+            <h2 class="govuk-tabs__title">
+                Contents
+            </h2>
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#active-user-list">Active</a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" style="color:#0b0c0c;">Requests (@Model.PendingAccountsCount)</a>
+                </li>
+            </ul>
+            <div class="govuk-tabs__panel govuk-body" id="active-user-list">
+                
+                <table class="govuk-table govuk-!-font-size-16">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            @if (Model.UserAccounts.Any())
+                            {
+                                <th scope="col" class="govuk-table__header">First name</th>
+                                <th scope="col" class="govuk-table__header">Last name</th>
+                                <th scope="col" class="govuk-table__header">Email</th>
+                                <th scope="col" class="govuk-table__header">User group</th>
+                                <th scope="col" class="govuk-table__header">Last log in</th>
+                                <th scope="col" class="govuk-table__header">Action</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @if (Model.UserAccounts.Any())
+                        {
+                            @foreach (var account in Model.UserAccounts)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell" title="@account.FirstName" style="overflow:hidden; white-space:nowrap">@account.FirstName.Ellipsis(15)</td>
+                                    <td class="govuk-table__cell" title="@account.Surname" style="overflow:hidden; white-space:nowrap">@account.Surname.Ellipsis(15)</td>
+                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap" title="@account.GetEmailAddress()">@account.GetEmailAddress().Ellipsis(40)</td>
+                                    <td class="govuk-table__cell">@UKMCAB.Core.Security.Roles.NameFor(account.Role)</td>
+                                    <td class="govuk-table__cell" style="overflow:hidden; white-space:nowrap">@(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")</td>
+                                    <td class="govuk-table__cell">
+                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View&nbsp;profile</a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr class="govuk-table__row">
+                                <td>
+                                    <p class="govuk-body">There are no users to display</p>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                @if (Model.UserAccounts.Any())
+                {
+                    <div id="user-management-pagination-container">
+                        <partial name="Partials/_Pagination" model="Model.Pagination" />
+                    </div>
+                }
+
+                @if (!Model.LockedOnly)
+                {
+                    <p class="govuk-body-s govuk-!-text-align-right">
+                        <a asp-route="@UserAdminController.Routes.UserListLocked">View locked/archived accounts</a>
+                    </p>
+                }
+                else
+                {
+                    <p class="govuk-body-s govuk-!-text-align-right">
+                        <a asp-route="@UserAdminController.Routes.UserList">View active accounts</a>
+                    </p>
+                }
+
+            </div>
+        </div>
+
+    </div>
+</div>
+

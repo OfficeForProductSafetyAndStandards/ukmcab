@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using System.Linq.Expressions;
+using System.Security.Claims;
 
 namespace UKMCAB.Web.UI;
 
@@ -19,6 +22,27 @@ public static class Ext
     public static IHtmlContent Conditional<T>(this IHtmlHelper<T> htmlHelper, bool condition, HtmlString html) => condition ? html : HtmlString.Empty;
 
     public static IHtmlContent SanitiseURL(this IHtmlHelper htmlHelper, string text) => text.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? htmlHelper.Raw(text) : htmlHelper.Raw($"https://{text}");
+
+    public static IHtmlContent ValidationCssFor<TModel, TProperty>(
+            this IHtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TProperty>> expression, string cssClass)
+    {
+        var error = (TagBuilder)htmlHelper.ValidationMessageFor(expression);
+        return !error.HasInnerHtml
+            ? HtmlString.Empty : 
+            (IHtmlContent)new HtmlString(cssClass);
+    }
+
+    public static IHtmlContent CssFor<TModel, TProperty>(
+            this IHtmlHelper<TModel> htmlHelper,
+            Expression<Func<TModel, TProperty>> expression, string mainCssClass, string errorCssState = "--error")
+    {
+        var error = (TagBuilder) htmlHelper.ValidationMessageFor(expression);
+        var css = !error.HasInnerHtml
+            ? mainCssClass :
+            $"{mainCssClass} {mainCssClass}{errorCssState}";
+        return new HtmlString(css);
+    }
 
     public static IHtmlContent ShowModelStateFormGroupErrorClass(this IHtmlHelper htmlHelper, ModelStateDictionary modelState, string modelStateKey)
     {
@@ -43,8 +67,10 @@ public static class Ext
     public static IHtmlContent OpensInNewWindow(this IHtmlHelper htmlHelper) =>
         htmlHelper.Raw("<span class=\"govuk-visually-hidden\">(opens in a new tab)</span>");
 
-    public static IHtmlContent ValueOrNotProvided(this IHtmlHelper htmlHelper, string text) =>
+    public static IHtmlContent ValueOrNotProvided(this IHtmlHelper htmlHelper, string? text) =>
         string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.NotProvided) : htmlHelper.Raw(text);
+    public static IHtmlContent ValueOrNone(this IHtmlHelper htmlHelper, string? text) =>
+        string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.None) : htmlHelper.Raw(text);
 
     public static string ControllerName(this string text) => text.Replace("Controller", string.Empty);
 
@@ -80,4 +106,6 @@ public static class Ext
         titleComponents.Add(Constants.SiteName);
         return string.Join(" - ", titleComponents);
     }
+
+    public static bool HasClaim(this ClaimsPrincipal principal, string type) => principal.HasClaim(x => x.Type == type);
 }

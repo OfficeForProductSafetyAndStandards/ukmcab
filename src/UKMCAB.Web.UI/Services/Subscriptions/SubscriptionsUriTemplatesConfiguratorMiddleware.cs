@@ -1,6 +1,4 @@
 ﻿using Microsoft.ApplicationInsights;
-using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Hosting.Server.Features;
 using UKMCAB.Subscriptions.Core.Domain.Emails;
 using UKMCAB.Subscriptions.Core.Domain.Emails.Uris;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
@@ -14,20 +12,18 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
     private readonly LinkGenerator _linkGenerator;
     private readonly TelemetryClient _telemetry;
     private readonly ILogger<SubscriptionsConfiguratorHostedService> _logger;
-    private readonly IConfiguration _configuration;
     private readonly IHostApplicationLifetime _hostApplicationLifetime;
-    private readonly IServer _server;
-
+    private readonly IAppHost _appHost;
+    
     public SubscriptionsConfiguratorHostedService(IEmailTemplatesService emailTemplatesService, LinkGenerator linkGenerator, 
-        TelemetryClient telemetry, ILogger<SubscriptionsConfiguratorHostedService> logger, IConfiguration configuration, IHostApplicationLifetime hostApplicationLifetime, IServer server)
+        TelemetryClient telemetry, ILogger<SubscriptionsConfiguratorHostedService> logger, IHostApplicationLifetime hostApplicationLifetime, IAppHost appHost)
     {
         _emailTemplatesService = emailTemplatesService;
         _linkGenerator = linkGenerator;
         _telemetry = telemetry;
         _logger = logger;
-        _configuration = configuration;
         _hostApplicationLifetime = hostApplicationLifetime;
-        _server = server;
+        _appHost = appHost;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
@@ -38,10 +34,7 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
         return Task.CompletedTask;
     }
 
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
-    }
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 
 
     private void OnStarted()
@@ -58,22 +51,13 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
         }
     }
 
-    private void OnStopping()
-    {
-    }
+    private void OnStopping() { }
 
-    private void OnStopped()
-    {
-    }
-
+    private void OnStopped() { }
 
     public void Initialise()
     {
-        var defaultAppAddresses = _server.Features.Get<IServerAddressesFeature>()?.Addresses.ToArray() ?? Array.Empty<string>();
-        var defaultAppAddress = defaultAppAddresses.FirstOrDefault(x => x.StartsWith("https"));
-        var configuredAppAddress = _configuration["AppHostName"].PrependIf("https://");
-        var baseAddress = configuredAppAddress ?? defaultAppAddress ?? throw new Exception("No web addresses obtainable");
-        var @base = new Uri(baseAddress);
+        var @base = _appHost.GetBaseUri();
 
         var options = new UriTemplateOptions
         {
@@ -119,9 +103,7 @@ public class SubscriptionsConfiguratorHostedService : IHostedService
         _telemetry.TrackEvent(AiTracking.Events.SubscriptionsInitialise, new Dictionary<string, string>()
         {
             [nameof(options)] = options.Serialize() ?? "",
-            [nameof(defaultAppAddresses)] = defaultAppAddresses.Serialize() ?? "",
-            [nameof(defaultAppAddress)] = defaultAppAddress ?? "",
-            [nameof(baseAddress)] = baseAddress ?? "",
+            ["BaseAddress"] = @base.ToString(),
         });
 
         _logger.LogInformation($"{nameof(SubscriptionsConfiguratorHostedService)} initialised successfully");

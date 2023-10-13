@@ -1,9 +1,7 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
-using System.Globalization;
 using System.Linq.Expressions;
 using System.Net;
-using CsvHelper;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 
@@ -19,15 +17,6 @@ namespace UKMCAB.Data.CosmosDb.Services
             _cosmosDbConnectionString = cosmosDbConnectionString;
         }
 
-        private class FileMap
-        {
-            public string Name { get; set; }
-            public string CABNumber { get; set; }
-            public string FileName { get; set; }
-            public string Label { get; set; }
-            public string LegislativeArea { get; set; }
-
-        }
 
         public async Task<bool> InitialiseAsync(bool force = false)
         {
@@ -35,53 +24,47 @@ namespace UKMCAB.Data.CosmosDb.Services
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
-
-            var itemToCheck = items.First(i => i.Schedules != null && i.Schedules.Any());
-            if (string.IsNullOrWhiteSpace(itemToCheck.Schedules.First().LegislativeArea))
+            foreach (var legacyDocument in items)
             {
-                List<FileMap> fileMapList;
-                using (var reader = new StreamReader("legislative-file-lookup.csv"))
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                if (legacyDocument.StatusValue == Status.Created)
                 {
-                    fileMapList = csv.GetRecords<FileMap>().ToList();
+                    await Delete(legacyDocument);
                 }
+            }
 
+            items = await Query<Document>(_container, document => true);
+
+            if (items[0].AuditLog == null)
+            {
                 foreach (var document in items)
                 {
-                    if (document.Schedules == null || !document.Schedules.Any())
+                    var auditLog = new List<Audit>();
+                    if (document.Created != null)
                     {
-                        continue;
+                        var audit = document.Created;
+                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Created));
                     }
-                    var maps = new List<FileMap>();
-                    if (!string.IsNullOrWhiteSpace(document.CABNumber))
+                    if (document.LastUpdated != null && document.StatusValue == Status.Draft)
                     {
-                        var cabNumber = document.CABNumber.TrimStart('0');
-                        maps = fileMapList.Where(f => f.CABNumber.Equals(cabNumber)).ToList();
-                    }
-                    if (!maps.Any())
-                    {
-                        maps = fileMapList.Where(f => f.Name.Equals(document.Name, StringComparison.InvariantCultureIgnoreCase)).ToList();
+                        var audit = document.LastUpdated;
+                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Saved));
                     }
 
-                    if (!maps.Any())
+                    if (document.Published != null)
                     {
-                        continue;
-                    }
-                    var documentChanged = false;
-                    foreach (var documentSchedule in document.Schedules)
-                    {
-                        var map = maps.SingleOrDefault(m => m.Label == documentSchedule.Label && m.FileName == documentSchedule.FileName);
-                        if (map != null)
-                        {
-                            documentSchedule.LegislativeArea = map.LegislativeArea;
-                            documentChanged = true;
-                        }
+                        var audit = document.Published;
+                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Published));
                     }
 
-                    if (documentChanged)
+                    if (document.Archived != null)
                     {
-                        await Update(document);
+                        var audit = document.Archived;
+                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Archived, document.ArchivedReason));
                     }
+
+                    document.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();
+
+                    await Update(document);
                 }
             }
 

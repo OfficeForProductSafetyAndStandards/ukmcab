@@ -1,18 +1,19 @@
-﻿using System.Security.Policy;
-
-namespace UKMCAB.Web.UI;
+﻿namespace UKMCAB.Web.UI;
 
 public static class Constants
 {
     public const string MainLayoutPath = "~/Views/Shared/_Layout.cshtml";
-    public const string SiteName = "UKMCAB";
+    public const string SiteName = "UK Market Conformity Assessment Bodies";
     public const string NotProvided = "Not provided";
+    public const string None = "None";
     public const string NotAssigned = "Not assigned";
 
     public const string TempDraftKey = nameof(TempDraftKey);
     public const string TempCookieChangeKey = nameof(TempCookieChangeKey);
 
     public const string AnalyticsOptInCookieName = "accept_analytics_cookies";
+
+    public const string DateTimeFormat = "dd/MM/yyyy HH:mm";
 
     public class PageTitle
     {
@@ -41,20 +42,8 @@ public static class Constants
         public const string Save = nameof(Save);
         public const string Add18 = nameof(Add18);
         public const string UploadAnother = nameof(UploadAnother);
-    }
-
-    public class Roles
-    {
-        public const string OPSSAdmin = nameof(OPSSAdmin);
-        public const string UKASUser = nameof(UKASUser);
-        public const string OGDUser = nameof(OGDUser);
-
-        public static readonly List<string> AuthRoles = new List<string>
-        {
-            nameof(OPSSAdmin),
-            nameof(UKASUser),
-            nameof(OGDUser),
-        };
+        public const string Approve = nameof(Approve);
+        public const string Reject = nameof(Reject);
     }
 
     public class ErrorMessages

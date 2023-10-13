@@ -15,8 +15,9 @@
                         </label>
                     </h3>
                     <div id="search-filter-keywords-input-container">
-                        <input type="search" asp-for="Keywords" class="govuk-input"/>
+                        <input type="text" asp-for="Keywords" class="govuk-input search-box" />
                         <button id="search-keyword-button" type="submit">Search</button>
+                        <button class="clear-icon" type="submit"></button>
                     </div>
                 </fieldset>
             </div>
@@ -35,7 +36,10 @@
                 <partial name="Partials/_SearchFilter" model="Model.BodyTypeOptions"/>
                 <partial name="Partials/_SearchFilter" model="Model.RegisteredOfficeLocationOptions"/>
                 <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaOptions"/>
-
+                @if (Model.InternalSearch)
+                {
+                    <partial name="Partials/_SearchFilter" model="Model.StatusOptions"/>
+                }
                 <div id="search-filter-button-wrapper">
                     <button class="govuk-button">Apply filters</button>
                 </div>

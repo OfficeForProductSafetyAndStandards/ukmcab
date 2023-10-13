@@ -120,7 +120,7 @@
                         @foreach (var legislativeArea in DataConstants.Lists.LegislativeAreas)
                         {
                             <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" id="@legislativeArea" name="LegislativeAreas" type="checkbox" value="@legislativeArea" disabled="@(Model.ProductScheduleLegislativeAreas !=null && Model.ProductScheduleLegislativeAreas.Any(psch => psch.Equals(legislativeArea, StringComparison.CurrentCultureIgnoreCase)))" checked="@(Model?.LegislativeAreas != null && Model.LegislativeAreas.Any(la => la.Equals(legislativeArea, StringComparison.InvariantCultureIgnoreCase)))">
+                                <input class="govuk-checkboxes__input" id="@legislativeArea" name="LegislativeAreas" type="checkbox" value="@legislativeArea" disabled="@(Model.ProductScheduleLegislativeAreas !=null && Model.ProductScheduleLegislativeAreas.Any(psch => psch.Equals(legislativeArea, StringComparison.CurrentCultureIgnoreCase)))" checked="@(Model?.LegislativeAreas != null && Model.LegislativeAreas.Any(la => la != null && la.Equals(legislativeArea, StringComparison.InvariantCultureIgnoreCase)))">
                                 <label class="govuk-label govuk-checkboxes__label" for="@legislativeArea">
                                     @legislativeArea
                                 </label>
@@ -141,13 +141,13 @@
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft
                 </button>
-                @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                @if (Model.IsFromSummary)
                 {
                     <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
 

@@ -6,6 +6,8 @@ namespace UKMCAB.Data.CosmosDb.Services
     {
         Task<Document?> FindPublishedDocumentByCABURLAsync(string url);
         Task<Document> FindPublishedDocumentByCABIdAsync(string id);
+
+        Task<Document> FindDraftDocumentByCABIdAsync(string id);
         Task<int> PreCacheAllCabsAsync();
         Task ClearAsync(string id, string slug);
     }

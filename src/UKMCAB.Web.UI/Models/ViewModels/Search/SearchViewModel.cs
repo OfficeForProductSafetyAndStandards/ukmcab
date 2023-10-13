@@ -1,5 +1,5 @@
-﻿using NuGet.Packaging;
-using UKMCAB.Data;
+﻿using UKMCAB.Data;
+using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
@@ -20,37 +20,41 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         /// NOTE: This is used by the email subscriptions functionality 
         /// </remarks>
         public static string GetKeywordsQueryStringKey() => nameof(Keywords);
-
         public string? ReturnUrl { get; set; }
+        public bool InternalSearch { get; set; }
 
         // ILayout
         public string? Title => Keywords.IsNotNullOrEmpty()? Keywords: "Search";
+
 
         // Form fields
         public string? Keywords { get; set; }
         public string[]? BodyTypes { get; set; }
         public string[]? RegisteredOfficeLocations { get; set; }
         public string[]? LegislativeAreas { get; set; }
-        public string? Sort { get; set; } = DataConstants.SortOptions.Default;
+        public string[]? Statuses { get; set; }
+        public string? Sort { get; set; }
         public int PageNumber { get; set; } = 1;
 
         // Form elements
         public FilterViewModel? BodyTypeOptions { get; set; }
         public FilterViewModel? RegisteredOfficeLocationOptions { get; set; }
         public FilterViewModel? LegislativeAreaOptions { get; set; }
+        public FilterViewModel? StatusOptions { get; set; }
 
-        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0);
+        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && InternalSearch ? Statuses.Length : 0);
 
-        public List<string> SelectedFilters
+        public Dictionary<string, string[]> SelectedFilters => new Dictionary<string, string[]>
         {
-            get
-            {
-                var filters = new List<string>();
-                filters.AddRange(BodyTypes ?? Array.Empty<string>());
-                filters.AddRange(RegisteredOfficeLocations ?? Array.Empty<string>());
-                filters.AddRange(LegislativeAreas ?? Array.Empty<string>());
-                return filters;
-            }
+            { nameof(BodyTypes), BodyTypes ?? Array.Empty<string>() },
+            { nameof(RegisteredOfficeLocations), RegisteredOfficeLocations ?? Array.Empty<string>() },
+            { nameof(LegislativeAreas), LegislativeAreas ?? Array.Empty<string>() },
+            { nameof(Statuses), Statuses ?? Array.Empty<string>() },
+        };
+
+        public string StatusLabel(string status)
+        {
+            return ((Status)int.Parse(status)).ToString();
         }
 
         public List<SortOption> SortOptions => new List<SortOption>

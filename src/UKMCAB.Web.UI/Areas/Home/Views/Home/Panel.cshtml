@@ -1,0 +1,32 @@
+﻿@model MessageViewModel
+@{
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <div class="govuk-panel govuk-panel--confirmation">
+            @if (Model.Heading != null)
+            {
+                <h1 class="govuk-panel__title">
+                    @Model.Heading
+                </h1>
+            }
+
+            @if (Model.Body != null)
+            {
+                <div class="govuk-panel__body">
+                    @Model.Body
+                </div>
+            }
+        </div>
+
+        @if (Model.LinkUrl != null)
+        {
+            <p class="govuk-body">
+                <a href="@Model.LinkUrl">@(Model.LinkLabel ?? "Continue")</a>
+            </p>
+        }
+
+    </div>
+</div>

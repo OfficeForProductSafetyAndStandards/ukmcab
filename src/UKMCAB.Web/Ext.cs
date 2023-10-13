@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 using UKMCAB.Common;
 
 namespace UKMCAB.Web;
@@ -39,7 +40,7 @@ public static class Ext
         var dictionary = new Dictionary<string, string>
         {
             [AiTracking.Metadata.UserAgent] = ctx.Request.Headers.UserAgent.ToString(),
-            [AiTracking.Metadata.User] = ctx.User?.Identity?.Name??"",
+            [AiTracking.Metadata.User] = ctx.User?.FindFirstValue(ClaimTypes.NameIdentifier) ?? "",
         };
 
         if (extra != null)

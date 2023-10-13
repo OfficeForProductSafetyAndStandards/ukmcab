@@ -1,12 +1,12 @@
-﻿using UKMCAB.Common;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.Azure.Cosmos.Linq;
+using UKMCAB.Common;
+using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models;
-using UKMCAB.Data;
-using UKMCAB.Data.Search.Services;
-using UKMCAB.Identity.Stores.CosmosDB;
-using Microsoft.ApplicationInsights;
-using Microsoft.Azure.Cosmos.Linq;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
+using UKMCAB.Data.Search.Services;
 
 namespace UKMCAB.Core.Services
 {
@@ -71,9 +71,9 @@ namespace UKMCAB.Core.Services
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             // if a newly create cab or a draft version exists this will be the latest version, there should be no more than one
-            if (documents.Any(d => d.StatusValue == Status.Created || d.StatusValue == Status.Draft))
+            if (documents.Any(d => d.StatusValue == Status.Draft))
             {
-                return documents.Single(d => d.StatusValue == Status.Created || d.StatusValue == Status.Draft);
+                return documents.Single(d => d.StatusValue == Status.Draft);
             }
             // if no draft or created version exists then see if a published version exists, again should only ever be one
             if (documents.Any(d => d.StatusValue == Status.Published))
@@ -89,17 +89,16 @@ namespace UKMCAB.Core.Services
             return _cabRepostitory.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
         }
 
-        public async Task<Document> CreateDocumentAsync(UKMCABUser user, Document document, bool saveAsDraft = false)
+        public async Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document, bool saveAsDraft = false)
         {
             var documentExists = await DocumentWithKeyIdentifiersExistsAsync(document);
 
             Guard.IsFalse(documentExists.Any(), "CAB number already exists in database");
             
-            var auditItem = new Audit(user);
+            var auditItem = new Audit(userAccount, AuditActions.Created);
             document.CABId = Guid.NewGuid().ToString();
-            document.Created = auditItem;
-            document.LastUpdated = auditItem;
-            document.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
+            document.AuditLog.Add(auditItem);
+            document.StatusValue = Status.Draft;
             var rv = await _cabRepostitory.CreateAsync(document);
 
             await RecordStatsAsync();
@@ -107,105 +106,96 @@ namespace UKMCAB.Core.Services
             return rv;
         }
 
-        public async Task<Document> UpdateOrCreateDraftDocumentAsync(UKMCABUser user, Document draft, bool saveAsDraft = false)
+        public async Task UpdateSearchIndex(Document document)
         {
-            var audit = new Audit(user);
+            await _cachedSearchService.ReIndexAsync(new CABIndexItem
+            {
+                id = document.id,
+                Status = document.Status,
+                StatusValue = ((int)document.StatusValue).ToString(),
+                Name = document.Name,
+                CABId = document.CABId,
+                CABNumber = document.CABNumber,
+                AddressLine1 = document.AddressLine1,
+                AddressLine2 = document.AddressLine1,
+                TownCity = document.TownCity,
+                County = document.County,
+                Postcode = document.Postcode,
+                Country = document.Country,
+                Email = document.Email,
+                Phone = document.Phone,
+                Website = document.Website,
+                BodyTypes = document.BodyTypes?.ToArray() ?? Array.Empty<string>(),
+                TestingLocations = document.TestingLocations?.ToArray() ?? Array.Empty<string>(),
+                LegislativeAreas = document.LegislativeAreas?.Where(la => la != null).ToArray() ?? Array.Empty<string>(),
+                RegisteredOfficeLocation = document.RegisteredOfficeLocation,
+                URLSlug = document.URLSlug,
+                LastUpdatedDate = document.LastUpdatedDate,
+                RandomSort = document.RandomSort,
+            });
+
+        }
+
+        public async Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft, bool saveAsDraft = false)
+        {
             if (draft.StatusValue == Status.Published)
             {
-                draft.StatusValue = saveAsDraft ? Status.Draft : Status.Created;
-                draft.id = string.Empty;
-                draft.Created = audit;
-                draft.LastUpdated = audit;
-                var newdraft = await _cabRepostitory.CreateAsync(draft);
-                Guard.IsFalse(newdraft == null,
-                    $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
-                return newdraft;
-            }
-
-            if (draft.StatusValue == Status.Created && saveAsDraft)
-            {
+                // Need to create new version
                 draft.StatusValue = Status.Draft;
+                draft.id = string.Empty;
+                draft.AuditLog = new List<Audit> { new Audit(userAccount, AuditActions.Created) };
+                draft = await _cabRepostitory.CreateAsync(draft);
+                Guard.IsFalse(draft == null,
+                    $"Failed to create draft version during draft update, CAB Id: {draft.CABId}");
             }
-            if (draft.StatusValue == Status.Created || draft.StatusValue == Status.Draft)
+            else if (draft.StatusValue == Status.Draft)
             {
-                draft.LastUpdated = audit;
+                var audit = new Audit(userAccount, AuditActions.Saved);
+                draft.AuditLog.Add(audit);
                 Guard.IsTrue(await _cabRepostitory.Update(draft), $"Failed to update draft , CAB Id: {draft.CABId}");
-
-                await RecordStatsAsync();
-
-                return draft;
             }
 
-            throw new Exception($"Invalid document for creating or updating draft, CAB Id: {draft.CABId}");
-        }
+            await UpdateSearchIndex(draft);
 
-        public async Task<bool> DeleteDraftDocumentAsync(string cabId)
-        {
-            var documents = await FindAllDocumentsByCABIdAsync(cabId);
-            // currently we only delete newly created docs that haven't been saved as draft
-            var createdDoc = documents.SingleOrDefault(d => d.StatusValue == Status.Created);
-            Guard.IsTrue(createdDoc != null, $"Error finding the document to delete, CAB Id: {cabId}");
-            Guard.IsTrue(await _cabRepostitory.Delete(createdDoc), $"Failed to delete draft version, CAB Id: {cabId}");
+            await RefreshCaches(draft.CABId, draft.URLSlug);
+
             await RecordStatsAsync();
-            return true;
+
+            return draft;
         }
 
-        public async Task<Document> PublishDocumentAsync(UKMCABUser user, Document latestDocument)
+        public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)
         {
             if (latestDocument.StatusValue == Status.Published)
             {
                 // An accidental double sumbmit might cause this action to be repeated so just return the already published doc.
                 return latestDocument;
             }
-            Guard.IsTrue(latestDocument.StatusValue == Status.Created || latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
-            var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
-            var audit = new Audit(user);
-            if (publishedVersion == null)
+            Guard.IsTrue(latestDocument.StatusValue == Status.Draft, $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
+
+            //var publishedDocument = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
+            var allDocument = await FindAllDocumentsByCABIdAsync(latestDocument.CABId);
+            var publishedOrArchivedDocument = allDocument.SingleOrDefault(doc => doc.StatusValue == Status.Published || doc.StatusValue == Status.Archived);
+            if (publishedOrArchivedDocument != null)
             {
-                // If there is no published version then we set the published date
-                latestDocument.Published = audit;
-            }
-            else
-            {
-                publishedVersion.StatusValue = Status.Historical;
-                Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
+                publishedOrArchivedDocument.StatusValue = Status.Historical;
+                publishedOrArchivedDocument.AuditLog.Add(new Audit(userAccount, AuditActions.RePublished));
+                Guard.IsTrue(await _cabRepostitory.Update(publishedOrArchivedDocument),
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
-                await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
+                await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
-            latestDocument.LastUpdated = audit;
             latestDocument.StatusValue = Status.Published;
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditActions.Published));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
                 $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
 
-            var urlSlug = publishedVersion != null && !publishedVersion.URLSlug.Equals(latestDocument.URLSlug)
-                ? publishedVersion.URLSlug
+            var urlSlug = publishedOrArchivedDocument != null && !publishedOrArchivedDocument.URLSlug.Equals(latestDocument.URLSlug)
+                ? publishedOrArchivedDocument.URLSlug
                 : latestDocument.URLSlug;
 
-            await _cachedSearchService.ReIndexAsync(new CABIndexItem
-            {
-                id = latestDocument.id,
-                Name = latestDocument.Name,
-                CABId = latestDocument.CABId,
-                CABNumber = latestDocument.CABNumber,
-                AddressLine1 = latestDocument.AddressLine1,
-                AddressLine2 = latestDocument.AddressLine1,
-                TownCity = latestDocument.TownCity,
-                County = latestDocument.County,
-                Postcode = latestDocument.Postcode,
-                Country = latestDocument.Country,
-                Email = latestDocument.Email,
-                Phone = latestDocument.Phone,
-                Website = latestDocument.Website,
-                BodyTypes = latestDocument.BodyTypes.ToArray(),
-                TestingLocations = latestDocument.TestingLocations.ToArray(),
-                LegislativeAreas = latestDocument.LegislativeAreas.ToArray(),
-                RegisteredOfficeLocation = latestDocument.RegisteredOfficeLocation,
-                URLSlug = latestDocument.URLSlug,
-                LastUpdatedDate = latestDocument.LastUpdatedDate,
-                RandomSort = latestDocument.RandomSort,
-            });
+            await UpdateSearchIndex(latestDocument);
 
             await RefreshCaches(latestDocument.CABId, urlSlug);
 
@@ -214,29 +204,74 @@ namespace UKMCAB.Core.Services
             return latestDocument;
         }
 
-        public async Task<Document> ArchiveDocumentAsync(UKMCABUser user, Document latestDocument, string archiveReason)
+        public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId, string unarchiveReason)
         {
-            var publishedVersion = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
+            var documents = await FindAllDocumentsByCABIdAsync(cabId);
+            var draft = documents.SingleOrDefault(d => d.StatusValue == Status.Draft);
+            if (draft != null && documents.Any(d => d.StatusValue == Status.Draft))
+            {
+                // An accidental double sumbmit might cause this action to be repeated so just return the already unarchived doc.
+                return draft;
+            }
+            var archvivedDoc = documents.SingleOrDefault(d => d.StatusValue == Status.Archived);
+            Guard.IsFalse(archvivedDoc == null, $"Failed for find and archived version for CAB id: {cabId}");
+            // Flag latest with unarchive audit entry
+            archvivedDoc.AuditLog.Add(new Audit(userAccount, AuditActions.UnarchiveRequest, unarchiveReason));
+            Guard.IsTrue(await _cabRepostitory.Update(archvivedDoc),
+                $"Failed to update published version during draft publish, CAB Id: {archvivedDoc.CABId}");
+            await UpdateSearchIndex(archvivedDoc);
+
+            // Create new draft from latest with unarchive entry and reset audit
+            archvivedDoc.StatusValue = Status.Draft;
+            archvivedDoc.id = string.Empty;
+            archvivedDoc.AuditLog = new List<Audit>
+            {
+                new Audit(userAccount, AuditActions.Unarchived)
+            };
+            archvivedDoc = await _cabRepostitory.CreateAsync(archvivedDoc);
+            Guard.IsFalse(archvivedDoc == null,
+                $"Failed to create draft version during unarchive action, CAB Id: {archvivedDoc.CABId}");
+            await UpdateSearchIndex(archvivedDoc);
+
+            await RefreshCaches(archvivedDoc.CABId, archvivedDoc.URLSlug);
+
+            await RecordStatsAsync();
+
+            return archvivedDoc;
+        }
+
+        public async Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveReason)
+        {
+            var docs = await FindAllDocumentsByCABIdAsync(CABId);
+
+
+            var publishedVersion = docs.SingleOrDefault(d => d.StatusValue == Status.Published);
             if (publishedVersion == null)
             {
                 // An accidental double sumbmit might cause this action to be repeated so just return the already archived doc.
-                var latest = await GetLatestDocumentAsync(latestDocument.id);
-                if (latest.StatusValue == Status.Archived)
+                var latest = await GetLatestDocumentAsync(CABId);
+                if (latest == null || latest.StatusValue == Status.Archived)
                 {
                     return latest;
                 }
             }
-            Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {latestDocument.CABId}");
-            var audit = new Audit(user);
-            publishedVersion.StatusValue = Status.Archived;
-            publishedVersion.Archived = audit;
-            publishedVersion.LastUpdated = audit;
-            publishedVersion.ArchivedReason = archiveReason;
-            Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
-                $"Failed to archive published version, CAB Id: {latestDocument.CABId}");
+            Guard.IsTrue(publishedVersion != null, $"Submitted document for archiving incorrectly flagged, CAB Id: {CABId}");
 
-            await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
-            await RefreshCaches(latestDocument.CABId, latestDocument.URLSlug);
+            var draft = docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
+            if (draft != null)
+            {
+                Guard.IsTrue(await _cabRepostitory.Delete(draft), $"Failed to delete draft version before archive, CAB Id: {CABId}");
+                await _cachedSearchService.RemoveFromIndexAsync(draft.id);
+            }
+
+            publishedVersion.StatusValue = Status.Archived;
+            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditActions.Archived, archiveReason));
+            Guard.IsTrue(await _cabRepostitory.Update(publishedVersion), $"Failed to archive published version, CAB Id: {CABId}");
+
+            await UpdateSearchIndex(publishedVersion);
+
+            await RefreshCaches(publishedVersion.CABId, publishedVersion.URLSlug);
+
             await RecordStatsAsync();
 
             return publishedVersion;
@@ -255,13 +290,10 @@ namespace UKMCAB.Core.Services
                 await _cabRepostitory.GetItemLinqQueryable().Where(x => x.StatusValue == status).CountAsync());
 
             await RecordStatAsync(Status.Unknown);
-            await RecordStatAsync(Status.Created);
             await RecordStatAsync(Status.Draft);
             await RecordStatAsync(Status.Published);
             await RecordStatAsync(Status.Archived);
             await RecordStatAsync(Status.Historical);
         }
     }
-
-
 }

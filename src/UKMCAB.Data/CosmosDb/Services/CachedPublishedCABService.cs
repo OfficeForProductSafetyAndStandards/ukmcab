@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Common;
+using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 
 namespace UKMCAB.Data.CosmosDb.Services
@@ -7,6 +8,8 @@ namespace UKMCAB.Data.CosmosDb.Services
     {
         private readonly IDistCache _cache;
         private readonly ICABRepository _cabRepository;
+        private const string KeyPrefix = $"{DataConstants.Version.Number}_cab_";
+        private const string DraftKeyPrefix = $"{DataConstants.Version.Number}_draft_cab_";
 
         public CachedPublishedCABService(IDistCache cache, ICABRepository cabRepository)
         {
@@ -32,14 +35,14 @@ namespace UKMCAB.Data.CosmosDb.Services
                 return documents.First();
             }
 
-            // Is url somewhere in a historical CAB
+            // Is url somewhere in a historical CAB which was last updated in the last two months
             documents = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Historical && d.URLSlug.Equals(url));
-            if (documents != null && documents.Any() && documents.Count == 1)
+            if (documents != null && documents.Any() && documents.Count == 1 && documents.First().LastUpdatedDate > DateTime.UtcNow.AddMonths(-2))
             {
                 var document = documents.First();
                 // Find published version
                 documents = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published && d.CABId.Equals(document.CABId));
-                if (documents != null && documents.Any() && documents.Count == 1)
+                if (documents != null && documents.Any() && documents.Count == 1 )
                 {
                     return documents.First();
                 }
@@ -52,11 +55,25 @@ namespace UKMCAB.Data.CosmosDb.Services
 
         private async Task<Document> GetPublishedCABByIdAsync(string id)
         {
-            var doc = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published && d.CABId.Equals(id));
-            return doc.Any() && doc.Count == 1 ? doc.First() : null;
+            var doc = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published || d.StatusValue == Status.Archived) && d.CABId.Equals(id));
+            return doc.Any() ? doc.OrderByDescending(d => d.LastUpdatedDate).First() : null;
         }
 
-        private static string Key(string id) => $"cab_{id}";
+        public async Task<Document> FindDraftDocumentByCABIdAsync(string id) => await _cache.GetOrCreateAsync(DraftKey(id), () => GetDraftCABByIdAsync(id));
+
+        private async Task<Document> GetDraftCABByIdAsync(string id)
+        {
+            var doc = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft && d.CABId.Equals(id));
+            if (doc != null && doc.Any())
+            {
+                Guard.IsTrue(doc.Count == 1, $"Multiple drafts found for CABId: {id}");
+                return doc.First();
+            }
+            return null;
+        }
+
+        private static string DraftKey(string id) => $"{DraftKeyPrefix}{id}";
+        private static string Key(string id) => $"{KeyPrefix}{id}";
 
         public async Task<int> PreCacheAllCabsAsync()
         {
@@ -74,6 +91,7 @@ namespace UKMCAB.Data.CosmosDb.Services
         public async Task ClearAsync(string id, string slug)
         { 
             await _cache.RemoveAsync(Key(id));
+            await _cache.RemoveAsync(DraftKey(id));
             await _cache.RemoveAsync(Key(slug));
         } 
     }

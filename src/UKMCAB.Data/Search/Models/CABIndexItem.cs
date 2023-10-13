@@ -1,4 +1,5 @@
 ﻿using Azure.Search.Documents.Indexes;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data.Search.Models
 {
@@ -6,6 +7,11 @@ namespace UKMCAB.Data.Search.Models
     {
         [SimpleField(IsKey = true)]
         public string id { get; set; }
+
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
+        public string StatusValue { get; set; }
+        [SimpleField]
+        public string Status { get; set; }
         [SimpleField]
         public string CABId { get; set; }
 
@@ -57,6 +63,10 @@ namespace UKMCAB.Data.Search.Models
 
         [SimpleField(IsSortable = true)]
         public DateTime? LastUpdatedDate { get; set; }
+        [SearchableField]
+        public string ScheduleLabels { get; set; }
+        [SearchableField]
+        public string DocumentLabels { get; set; }
 
 
         [SimpleField(IsSortable = true)]

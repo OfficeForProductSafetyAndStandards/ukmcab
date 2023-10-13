@@ -1,15 +1,14 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Abstractions;
+using UKMCAB.Core.Security;
 using UKMCAB.Data;
 using UKMCAB.Infrastructure.Logging;
-using UKMCAB.Infrastructure.Logging.Models;
 using LogEntry = UKMCAB.Infrastructure.Logging.Models.LogEntry;
 
 namespace UKMCAB.Web.UI.Areas.Test.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize(Roles = $"{Constants.Roles.OPSSAdmin}")]
+    [Authorize(Policy = Policies.SuperAdmin)]
     [ApiController]
     public class InitialiseController : Controller
     {

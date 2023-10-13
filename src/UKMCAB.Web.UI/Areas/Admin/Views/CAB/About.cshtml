@@ -11,7 +11,7 @@
             }
             else
             {
-                <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-back-link">Back</a>
+                <a asp-area="Admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-back-link">Back</a>
             }
         </div>
     </div>
@@ -165,17 +165,17 @@
                     <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                         Save as draft
                     </button>
-                    @if (Model.IsFromSummary && Model.DocumentStatus != Status.Created)
+                    @if (Model.IsFromSummary)
                     {
                         <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }
                     else if(string.IsNullOrWhiteSpace(Model.CABId))
                     {
-                        <a asp-area="Admin" asp-controller="Admin" asp-action="Index" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }
                     else
                     {
-                        <a asp-area="Admin" asp-controller="CAB" asp-action="Cancel" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }
                 </div>
             </fieldset>
