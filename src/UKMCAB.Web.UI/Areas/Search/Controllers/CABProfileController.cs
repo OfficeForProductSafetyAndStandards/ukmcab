@@ -146,7 +146,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
                 IsPublished = isPublished,
-                HasDraft = hasDraft != null,
+                HasDraft = hasDraft,
                 ArchivedBy = isArchived ? archiveAudit.UserName : string.Empty,
                 ArchivedDate = isArchived ? archiveAudit.DateTime.ToString("dd MMM yyyy") : string.Empty,
                 ArchiveReason =  isArchived ? archiveAudit.Comment : string.Empty,

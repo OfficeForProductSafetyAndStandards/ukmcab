@@ -8,6 +8,7 @@ using Microsoft.CodeAnalysis.Formatting;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
+using GovUk.Frontend.AspNetCore;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core;
@@ -95,9 +96,7 @@ builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(b
 
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<ICABRepository, CABRepository>(); 
-builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddSingleton<ICachedPublishedCABService, CachedPublishedCABService>();
-builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();
@@ -107,7 +106,12 @@ builder.Services.AddSingleton<IUserAccountRequestRepository, UserAccountRequestR
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
+
+builder.Services.AddTransient<ICABAdminService, CABAdminService>();
+builder.Services.AddTransient<IFeedService, FeedService>();
+
 builder.Services.AddCustomHttpErrorHandling();
+builder.Services.AddGovUkFrontend();
 
 AddSubscriptionCoreServices(builder, azureDataConnectionString);
 
