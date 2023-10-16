@@ -1,4 +1,5 @@
-﻿using UKMCAB.Common;
+﻿using System.Security.Policy;
+using UKMCAB.Common;
 using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 
@@ -89,6 +90,7 @@ namespace UKMCAB.Data.CosmosDb.Services
         { 
             await _cache.RemoveAsync(Key(id));
             await _cache.RemoveAsync(Key(slug));
+            await _cache.RemoveAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLAsync), Key(slug)));
         } 
     }
 }

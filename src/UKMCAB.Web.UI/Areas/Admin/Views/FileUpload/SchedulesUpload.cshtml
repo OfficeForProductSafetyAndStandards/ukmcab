@@ -1,7 +1,7 @@
 ﻿@using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.FileUploadViewModel
 @section BackButton
-{
+    {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -20,15 +20,15 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <partial name="Partials/_ValidationSummary" model="null"/>
+        <partial name="Partials/_ValidationSummary" model="null" />
         <span class="govuk-caption-m">@Model.Title</span>
         <h1 class="govuk-heading-l">@Model.Title</h1>
         <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to @SchedulesOptions.MaxFileCount PDF documents.</p>
-            
-        <div id="file-upload-list-container">
+
+        <div id="schedule-upload-list-container">
             @using (Html.BeginForm("SchedulesList", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
             {
-                <table class="govuk-table">
+                <table class="govuk-table" id="files-uploaded-table">
                     <caption class="govuk-table__caption govuk-table__caption--s">Files you have uploaded</caption>
                     <thead class="govuk-table__head">
                         <tr class="govuk-table__row">
@@ -38,33 +38,40 @@
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                    @if (!Model.UploadedFiles.Any())
-                    {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
-                        </tr>
-                    }
-                    else
-                    {
-                        for (int i = 0; i < Model.UploadedFiles.Count; i++)
+                        @if (!Model.UploadedFiles.Any())
                         {
-                        var uploadedFile = Model.UploadedFiles[i];
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell">
-                                <p class="govuk-body file-name"><span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a></p>
-                                <label class="govuk-label govuk-label--s">File</label>
-                                <p class="govuk-body file-label">@uploadedFile.Label</p>
-                            </td>
-                            <td class="govuk-table__cell"><p class="govuk-body">
-                                <label class="govuk-label govuk-label--s">Legislative area</label>
-                                    <p class="govuk-body file-legislative-area">
-                                    @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
-                                </p>
-                            </td>
-                            <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="submitType" value="@("Remove-" + i)">Remove</button></td>
-                        </tr>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
+                            </tr>
                         }
-                    }
+                        else
+                        {
+                            for (int i = 0; i < Model.UploadedFiles.Count; i++)
+                            {
+                                var uploadedFile = Model.UploadedFiles[i];
+                                <tr>
+                                    <td id="uploaded-file-name-td">
+                                        <p class="govuk-body file-name"><span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a></p>
+                                      
+                                    </td>
+                                </tr>
+                                <tr class="govuk-table__row">
+
+                                    <td class="govuk-table__cell schedule-upload-attribute">
+                                        <label class="govuk-label govuk-label--s">File</label>
+                                        <p class="govuk-body file-label">@uploadedFile.Label</p>
+                                    </td>
+                                    <td class="govuk-table__cell schedule-upload-attribute">
+                                        
+                                            <label class="govuk-label govuk-label--s">Legislative area</label>
+                                        <p class="govuk-body file-legislative-area">
+                                                @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
+                                        </p>
+                                    </td>
+                                    <td class="govuk-table__cell schedule-upload-attribute"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="submitType" value="@("Remove-" + i)">Remove</button></td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             }

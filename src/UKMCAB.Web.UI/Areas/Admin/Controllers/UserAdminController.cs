@@ -97,7 +97,7 @@ public class UserAdminController : Controller
     }
 
     [HttpGet("{id}", Name = Routes.UserAccount)]
-    public async Task<IActionResult> UserAccountAsync(string id, string returnUrl, int pagenumber = 1)
+    public async Task<IActionResult> UserAccountAsync(string id, string? returnUrl, int pagenumber = 1)
     {
         var account = await _userService.GetAsync(id);
         if (account == null)

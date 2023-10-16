@@ -37,6 +37,9 @@ public class UserService : IUserService
     public async Task<UserStatus> GetUserAccountStatusAsync(string id)
     {
         var account = await _userAccountRepository.GetAsync(id);
+        
+        await ClearIsActiveCacheAsync(id);
+
         if (account == null)
         {
             var pendingRequest = await _userAccountRequestRepository.GetPendingAsync(id).ConfigureAwait(false);

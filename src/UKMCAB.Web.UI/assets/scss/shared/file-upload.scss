@@ -16,25 +16,127 @@
     }
 }
 
-
 #file-upload-list-container {
-    table {
+
+    #files-uploaded-table {
         table-layout: fixed;
 
-        .file-upload-col-1 {
-            width: 10%;
-            border: 1px solid red;
+        thead {
+
+            @include govuk-media-query($until: tablet) {
+                display: none;
+            }
+
+            th:first-child {
+                width: 60%;
+            }
+
+            th:nth-child(2) {
+                width: 30%;
+            }
         }
 
-        .file-upload-col-2 {
-            width: 80%;
-            border: 1px solid green;
+        .doc-upload-thead {
+            @include govuk-media-query($until: tablet) {
+                display: none;
+            }
+
+            th:first-child {
+                width: 5%;
+            }
+
+            th:nth-child(2) {
+                width: 80%;
+            }
         }
 
-        .file-upload-col-3 {
-            width: 10%;
-            border: 1px solid blue;
+        tbody {
+
+            #document-list-row {
+
+                td {
+                    overflow-wrap: break-word;
+                    vertical-align: top;
+
+                    label {
+                        display: none;
+
+                        @include govuk-media-query($until: tablet) {
+                            display: block;
+                        }
+                    }
+
+                    .govuk-form-group {
+                        margin-top: -12px;
+                    }
+                }
+            }
         }
+    }
+
+
+    #document-upload-table {
+        table-layout: fixed;
+
+        thead {
+
+            @include govuk-media-query($until: tablet) {
+                display: none;
+            }
+
+            th:first-child {
+                width: 60%;
+            }
+
+            th:nth-child(2) {
+                width: 30%;
+            }
+        }
+
+        .doc-upload-thead {
+            @include govuk-media-query($until: tablet) {
+                display: none;
+            }
+
+            th:first-child {
+                width: 5%;
+            }
+
+            th:nth-child(2) {
+                width: 80%;
+            }
+        }
+
+        tbody {
+
+            #document-upload-row {
+
+                td {
+                    overflow-wrap: break-word;
+                    vertical-align: top;
+
+                    label {
+                        display: none;
+
+                        @include govuk-media-query($until: tablet) {
+                            display: block;
+                        }
+                    }
+
+                    .govuk-form-group {
+                        margin-top: -12px;
+                        background-color: aqua;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+#schedule-upload-list-container {
+    table {
+        table-layout: fixed;
 
         thead {
             @include govuk-media-query($until: tablet) {
@@ -76,14 +178,20 @@
                     padding-top: 20px;
                 }
 
-                .uploaded-file-atttribute {
+                .uploaded-file-attribute {
                     padding-top: 0px;
                     padding-bottom: 20px;
+                    vertical-align: bottom;
+                }
+
+                .schedule-upload-attribute {
+                    padding-top: 0px;
+                    padding-bottom: 20px;
+                    vertical-align: top;
                 }
 
                 td {
                     overflow-wrap: break-word;
-                    vertical-align: bottom;
 
                     select {
                         width: 90%;
@@ -113,7 +221,7 @@
                     }
 
                     .file-label {
-                        padding-left: 20px;
+                        padding-left: 31px;
                         margin-bottom: 0;
 
                         @include govuk-media-query($until: tablet) {
