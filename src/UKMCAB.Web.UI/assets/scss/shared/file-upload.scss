@@ -54,7 +54,7 @@
 
             #document-list-row {
                 @include govuk-media-query($until: tablet) {
-                    border-bottom: 1px solid #b1b4b6;
+                    border-bottom: 1px solid $govuk-border-colour;
                     display: block;
                     padding: 10px 0;
                 }
@@ -141,7 +141,6 @@
 
                     .govuk-form-group {
                         margin-top: -12px;
-                        background-color: aqua;
                     }
                 }
             }
@@ -191,7 +190,7 @@
 
             tr {
                 @include govuk-media-query($until: tablet) {
-                    border-bottom: 1px solid #b1b4b6;
+                    border-bottom: 1px solid $govuk-border-colour;
                     display: block;
                     padding: 10px 0;
                 }
