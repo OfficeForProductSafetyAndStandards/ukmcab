@@ -6,8 +6,9 @@ using FileUpload = UKMCAB.Core.Domain.FileUpload;
 namespace UKMCAB.Core.Mappers;
 internal static class CabModelMapper
 {
-    public static void MapToCabModel(this Document source, CabModel dest)
+    public static CabModel MapToCabModel(this Document source)
     {
+        var dest = new CabModel();
         var supportingDocuments = new List<FileUpload>();
         source.Documents?.ForEach(d => supportingDocuments.Add(new FileUpload(d.Label, d.LegislativeArea, d.Category, d.FileName, d.BlobName, d.UploadDateTime)));
         var schedules = new List<FileUpload>();
@@ -38,11 +39,15 @@ internal static class CabModelMapper
         dest.SupportingDocuments = supportingDocuments;
         dest.TestingLocations = source.TestingLocations;
         dest.UKASReference = source.UKASReference;
+        return dest;
     }
 
-    public static void MapToDocument(this CabModel source, Document dest)
+    public static Document MapToDocument(this CabModel source)
     {
-        dest.id = (source.Id == Guid.Empty ? null : source.Id.ToString()) ?? throw new InvalidOperationException();
+        var dest = new Document
+        {
+            id = (source.Id == Guid.Empty ? null : source.Id.ToString()) ?? throw new InvalidOperationException()
+        };
         if (source.Address != null)
         {
             dest.AddressLine1 = source.Address.AddressLine1;
@@ -115,6 +120,7 @@ internal static class CabModelMapper
 
         dest.TestingLocations = source.TestingLocations;
         if (source.UKASReference != null) dest.UKASReference = source.UKASReference;
+        return dest;
     }
 
 }
