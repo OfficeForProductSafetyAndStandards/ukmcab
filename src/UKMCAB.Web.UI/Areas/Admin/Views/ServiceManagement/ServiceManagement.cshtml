@@ -44,7 +44,9 @@
     </div>
 
     <div id="search-for-a-cab" class="govuk-grid-column-one-half">
+        <div id="service-management-col-width-65-percent">
 
+        
         <form id="search-results-form" asp-route="@SearchController.Routes.Search" method="get" novalidate>
             <div id="search-results" class="govuk-grid-row">
 
@@ -68,6 +70,7 @@
                 </div>
             </div>
         </form>
+        </div>
 
     </div>
 
@@ -110,8 +113,8 @@
     @if (User.HasClaim(Claims.UserManagement))
     {
         <div id="manage-users" class="govuk-grid-column-one-half">
-            <div>
-                <table class="govuk-table" style="">
+            <div id="service-management-col-width-65-percent">
+                <table class="govuk-table">
                     <a asp-route="@UserAdminController.Routes.UserList">
                         <h2 class="govuk-heading-m">Manage users</h2>
                     </a>
