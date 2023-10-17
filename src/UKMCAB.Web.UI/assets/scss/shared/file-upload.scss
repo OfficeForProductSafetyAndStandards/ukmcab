@@ -53,16 +53,28 @@
         tbody {
 
             #document-list-row {
+                @include govuk-media-query($until: tablet) {
+                    border-bottom: 1px solid $govuk-border-colour;
+                    display: block;
+                    padding: 10px 0;
+                }
 
                 td {
                     overflow-wrap: break-word;
                     vertical-align: top;
+
+
+                    @include govuk-media-query($until: tablet) {
+                        display: block;
+                        border-bottom: none;
+                    }
 
                     label {
                         display: none;
 
                         @include govuk-media-query($until: tablet) {
                             display: block;
+                            padding-top: 15px;
                         }
                     }
 
@@ -115,6 +127,10 @@
                     overflow-wrap: break-word;
                     vertical-align: top;
 
+                    @include govuk-media-query($until: tablet) {
+                        display: block;
+                    }
+
                     label {
                         display: none;
 
@@ -125,7 +141,6 @@
 
                     .govuk-form-group {
                         margin-top: -12px;
-                        background-color: aqua;
                     }
                 }
             }
@@ -167,9 +182,15 @@
         }
 
         tbody {
+            #uploaded-file-name-tr {
+                @include govuk-media-query($until: tablet) {
+                    border-bottom: none;
+                }
+            }
+
             tr {
                 @include govuk-media-query($until: tablet) {
-                    border-bottom: 1px solid #b1b4b6;
+                    border-bottom: 1px solid $govuk-border-colour;
                     display: block;
                     padding: 10px 0;
                 }
