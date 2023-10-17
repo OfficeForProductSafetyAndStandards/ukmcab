@@ -14,6 +14,7 @@ using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
