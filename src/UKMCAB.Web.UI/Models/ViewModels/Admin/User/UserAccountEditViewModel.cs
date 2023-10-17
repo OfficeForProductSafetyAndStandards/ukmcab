@@ -9,6 +9,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User
         public UserAccount? UserAccount { get; set; }
 
         [Required(ErrorMessage = "Enter a contact email address")]
+        [RegularExpression("^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$", ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
         public string Email { get; set; }
         [Required(ErrorMessage = "Enter an organisation")]
         public string Organisation { get; set; }

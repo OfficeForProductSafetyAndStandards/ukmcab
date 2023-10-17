@@ -14,7 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Account
         public string? LastName { get; set; }
 
         [Required(ErrorMessage = "Enter an email address")]
-        [RegularExpression("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$", ErrorMessage = "Enter a valid email address")]
+        [RegularExpression("^([a-zA-Z0-9._%-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})$", ErrorMessage = "Enter an email address in the correct format, like name@example.com")]
         public string? ContactEmailAddress { get; set; }
 
         public string[] FieldOrder => new[] { nameof(FirstName), nameof(LastName), nameof(ContactEmailAddress) };
