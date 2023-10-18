@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
-using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Helpers;
@@ -94,10 +94,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 document.RenewalDate = reviewDate;
                 document.UKASReference = model.UKASReference;
 
-                var duplicateDocuments = await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document);
+                var duplicateDocuments = await _cabAdminService.FindOtherDocumentsByCabNumberOrUkasReference(document.CABId, document.CABNumber, document.UKASReference);
                 if (duplicateDocuments.Any())
                 {
-                    if (model.CABNumber != null && duplicateDocuments.Any(d => d.CABNumber.DoesEqual(model.CABNumber)))
+                    if (model.CABNumber != null && duplicateDocuments.Any(d => d.CabNumber.DoesEqual(model.CABNumber)))
                     {
                         ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
                     }
