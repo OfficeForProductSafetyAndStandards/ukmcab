@@ -70,12 +70,11 @@ namespace UKMCAB.Data.Models
         public string RegisteredOfficeLocation { get; set; }
 
         // Body details
-        public List<string> TestingLocations { get; set; } = new();
-        public List<string> BodyTypes { get; set; } = new();
-        public List<string> LegislativeAreas { get; set; } = new();
-
+        public List<string> TestingLocations { get; set; }
+        public List<string> BodyTypes { get; set; }
+        public List<string> LegislativeAreas { get; set; }
         // Schedules of accreditation
-        public List<FileUpload>? Schedules { get; set; } = new();
+        public List<FileUpload>? Schedules { get; set; }
 
         public string ScheduleLabels => string.Join(", ", Schedules?.Select(sch => sch.Label) ?? new List<string>());
 
