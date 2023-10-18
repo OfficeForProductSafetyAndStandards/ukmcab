@@ -36,6 +36,10 @@ namespace UKMCAB.Data.CosmosDb.Services
             
             foreach (var document in items)
             {
+                if (document.AuditLog.Any())
+                {
+                    continue;
+                }
                 var auditLog = new List<Audit>();
                 if (document.Created != null)
                 {
