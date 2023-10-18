@@ -30,9 +30,7 @@ namespace UKMCAB.Core.Services.CAB
 
         public async Task<List<CabModel>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber, string? ukasReference)
         {
-            Guard.IsTrue(cabId, s => !string.IsNullOrWhiteSpace(s), "CAB Id cannot be null");
-
-            var documents = await _cabRepostitory.Query<Document>(d =>
+                var documents = await _cabRepostitory.Query<Document>(d =>
                 d.CABNumber!.Equals(cabNumber)
                 ||
                 (!string.IsNullOrWhiteSpace(ukasReference) && d.UKASReference.Equals(ukasReference))
