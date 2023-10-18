@@ -79,7 +79,7 @@ namespace UKMCAB.Data.Models
         public string ScheduleLabels => string.Join(", ", Schedules?.Select(sch => sch.Label) ?? new List<string>());
 
         // Supporting documents
-        public List<FileUpload>? Documents { get; set; } = new();
+        public List<FileUpload>? Documents { get; set; } 
 
         public string DocumentLabels => string.Join(", ", Documents?.Select(doc => doc.Label) ?? new List<string>());
 
