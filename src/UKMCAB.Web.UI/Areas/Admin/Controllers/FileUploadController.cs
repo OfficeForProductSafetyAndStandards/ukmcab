@@ -273,7 +273,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         UploadDateTime = current.UploadDateTime
                     });
                 }
-                newSchedules.OrderByDescending(x => x.UploadDateTime);
             }
 
             if (newSchedules.Any())
@@ -320,7 +319,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         UploadDateTime = current.UploadDateTime
                     });
                 }
-                newDocuments.OrderByDescending(x => x.UploadDateTime);
             }
             var fileUploadComparer = new FileUploadComparer();
             latestDocument.Schedules ??= new();
@@ -391,6 +389,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, model.File.FileName, DataConstants.Storage.Documents,
                     model.File.OpenReadStream(), contentType);
                 latestVersion.Documents.Add(result);
+                if(latestVersion.Documents.Count > 1)
+                {
+                    latestVersion.Documents.Sort((x, y) => DateTime.Compare(y.UploadDateTime, x.UploadDateTime));
+                }
+
 
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
