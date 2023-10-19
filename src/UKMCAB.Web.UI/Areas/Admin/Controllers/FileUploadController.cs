@@ -273,6 +273,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         UploadDateTime = current.UploadDateTime
                     });
                 }
+                newSchedules.OrderByDescending(x => x.UploadDateTime);
             }
 
             if (newSchedules.Any())
@@ -319,6 +320,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         UploadDateTime = current.UploadDateTime
                     });
                 }
+                newDocuments.OrderByDescending(x => x.UploadDateTime);
             }
             var fileUploadComparer = new FileUploadComparer();
             latestDocument.Schedules ??= new();
@@ -452,6 +454,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     DocumentStatus = latestDocument.StatusValue
                 });
             }
+
+
+
+            if (model.UploadedFiles != null && model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.Category)))
+            {
+                var index = 0;
+                foreach (var uploadedFile in model.UploadedFiles)
+                {
+                    if (string.IsNullOrWhiteSpace(uploadedFile.Category))
+                    {
+                        ModelState.AddModelError($"UploadedFiles[{index}].Category", "Select a category");
+                    }
+
+                    index++;
+                }
+            }
+
+
 
             if (ModelState.IsValid)
             {

@@ -1,9 +1,8 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.FileUploadViewModel
-
 @section BackButton
-{
+    {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -22,55 +21,55 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <partial name="Partials/_ValidationSummary" model="null"/>
+        <partial name="Partials/_ValidationSummary" model="null" />
         <span class="govuk-caption-m">@Model.Title</span>
         <h1 class="govuk-heading-l">@Model.Title</h1>
         <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to @DocumentsOptions.MaxFileCount Word, Excel, or PDF documents.</p>
-            
+
         <div id="file-upload-list-container">
             @using (Html.BeginForm("DocumentsList", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
             {
                 <table id="document-upload-table" class="govuk-table">
                     <caption class="govuk-table__caption govuk-table__caption--s">Files you have uploaded</caption>
                     <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">File</th>
-                        <th scope="col" class="govuk-table__header">Category</th>
-                        <th scope="col" class="govuk-table__header">Action</th>
-                    </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">File</th>
+                            <th scope="col" class="govuk-table__header">Category</th>
+                            <th scope="col" class="govuk-table__header">Action</th>
+                        </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                    @if (!Model.UploadedFiles.Any())
-                    {
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
-                        </tr>
-                    }
-                    else
-                    {
-                        for (int i = 0; i < Model.UploadedFiles.Count; i++)
+                        @if (!Model.UploadedFiles.Any())
                         {
-                            var uploadedFile = Model.UploadedFiles[i];
-                                <tr id="document-upload-row" class="govuk-table__row">
-                                <td class="govuk-table__cell">
-                                    <p class="govuk-body file-name"><span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a></p>
-                                    <label class="govuk-label govuk-label--s">File</label>
-                                </td>
-                                <td class="govuk-table__cell">
-                                    <label class="govuk-label govuk-label--s">Category</label>
-                                    <p class="govuk-body file-legislative-area">
-                                                @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.Category), uploadedFile.Category, @Constants.NotAssigned)
-                                    </p>
-                                </td>
-                                <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="submitType" value="@("Remove-" + i)">Remove</button></td>
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
                             </tr>
                         }
-                    }
+                        else
+                        {
+                            for (int i = 0; i < Model.UploadedFiles.Count; i++)
+                            {
+                                var uploadedFile = Model.UploadedFiles[i];
+                                <tr id="document-upload-row" class="govuk-table__row">
+                                    <td class="govuk-table__cell">
+                                        <p class="govuk-body file-name"><span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a></p>
+                                        <label class="govuk-label govuk-label--s">File</label>
+                                    </td>
+                                    <td class="govuk-table__cell">
+                                        <label class="govuk-label govuk-label--s">Category</label>
+                                        <p class="govuk-body file-legislative-area">
+                                            @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.Category), uploadedFile.Category, @Constants.NotAssigned)
+                                        </p>
+                                    </td>
+                                    <td class="govuk-table__cell"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="submitType" value="@("Remove-" + i)">Remove</button></td>
+                                </tr>
+                            }
+                        }
                     </tbody>
                 </table>
             }
         </div>
-        
+
     </div>
 </div>
 
@@ -85,7 +84,7 @@
                 <span asp-validation-for="File" class="govuk-error-message"></span>
                 <input class="govuk-file-upload schedules-upload" asp-for="File" accept=".doc,.docx,.xls,.xlsx,.pdf" type="file">
             </div>
-                
+
             <div class="govuk-grid-row">
                 <div class="govuk-grid-column-two-thirds govuk-!-padding-bottom-5">
                     <p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId">Skip this step</a></p>
@@ -107,8 +106,8 @@
                     <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
-                
+
         </form>
     </div>
-</div>    
+</div>
 
