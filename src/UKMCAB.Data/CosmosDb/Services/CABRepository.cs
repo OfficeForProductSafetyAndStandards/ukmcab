@@ -33,39 +33,45 @@ namespace UKMCAB.Data.CosmosDb.Services
             }
 
             items = await Query<Document>(_container, document => true);
-
-            if (items[0].AuditLog == null)
+            
+            foreach (var document in items)
             {
-                foreach (var document in items)
+                if (document.AuditLog.Any())
                 {
-                    var auditLog = new List<Audit>();
-                    if (document.Created != null)
-                    {
-                        var audit = document.Created;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Created));
-                    }
-                    if (document.LastUpdated != null && document.StatusValue == Status.Draft)
-                    {
-                        var audit = document.LastUpdated;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Saved));
-                    }
-
-                    if (document.Published != null)
-                    {
-                        var audit = document.Published;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Published));
-                    }
-
-                    if (document.Archived != null)
-                    {
-                        var audit = document.Archived;
-                        auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime, AuditActions.Archived, document.ArchivedReason));
-                    }
-
-                    document.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();
-
-                    await Update(document);
+                    continue;
                 }
+                var auditLog = new List<Audit>();
+                if (document.Created != null)
+                {
+                    var audit = document.Created;
+                    auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime,
+                        AuditActions.Created));
+                }
+
+                if (document.LastUpdated != null && document.StatusValue == Status.Draft)
+                {
+                    var audit = document.LastUpdated;
+                    auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime,
+                        AuditActions.Saved));
+                }
+
+                if (document.Published != null)
+                {
+                    var audit = document.Published;
+                    auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime,
+                        AuditActions.Published));
+                }
+
+                if (document.Archived != null)
+                {
+                    var audit = document.Archived;
+                    auditLog.Add(new Audit(audit.UserId, audit.UserName, audit.UserRole ?? "opss", audit.DateTime,
+                        AuditActions.Archived, document.ArchivedReason));
+                }
+
+                document.AuditLog = auditLog.OrderBy(al => al.DateTime).ToList();
+
+                await Update(document);
             }
 
             return force;
@@ -79,6 +85,7 @@ namespace UKMCAB.Data.CosmosDb.Services
             {
                 return response.Resource;
             }
+
             return null;
         }
 
