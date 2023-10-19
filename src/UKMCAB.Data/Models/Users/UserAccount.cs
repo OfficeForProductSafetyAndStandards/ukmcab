@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Data.Models.Users;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UKMCAB.Data.Models.Users;
 
 public class UserAccount
 {
@@ -22,7 +24,11 @@ public class UserAccount
         }
     }
     public string? SurnameNormalized { get; set; }
+
+    [MaxLength(500, ErrorMessage = "Maximum organisation name length is 500 characters")]
     public string? OrganisationName { get; set; }
+
+    [MaxLength(500, ErrorMessage = "Maximum email address length is 500 characters")]
     public string? EmailAddress { get; set; }
     public string? ContactEmailAddress { get; set; }
     public bool IsLocked { get; set; }
