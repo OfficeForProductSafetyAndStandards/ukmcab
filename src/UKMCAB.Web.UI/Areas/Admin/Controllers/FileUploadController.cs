@@ -377,27 +377,40 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
             latestVersion.Documents ??= new List<FileUpload>();
-            if (latestVersion.Documents.Count >= 10)
-            {
-                return RedirectToAction("DocumentsList", model.IsFromSummary ? new { id, fromSummary = "true" } : new { id });
-            }
 
-            var contentType = ValidateUploadFileAndGetContentType(model.File, DocumentsOptions.AcceptedFileExtensionsContentTypes, DocumentsOptions.AcceptedFileTypes, latestVersion.Documents);
-
-            if (ModelState.IsValid)
+            if (model.Files != null)
             {
-                var result = await _fileStorage.UploadCABFile(latestVersion.CABId, model.File.FileName, model.File.FileName, DataConstants.Storage.Documents,
-                    model.File.OpenReadStream(), contentType);
-                latestVersion.Documents.Add(result);
-                if(latestVersion.Documents.Count > 1)
+                var errorCount = 0;
+
+                foreach (var file in model.Files)
                 {
-                    latestVersion.Documents.Sort((x, y) => DateTime.Compare(y.UploadDateTime, x.UploadDateTime));
+                    var contentType = ValidateUploadFileAndGetContentType(file, DocumentsOptions.AcceptedFileExtensionsContentTypes, DocumentsOptions.AcceptedFileTypes, latestVersion.Documents);
+
+                    if (ModelState.ErrorCount == errorCount)
+                    {
+                        var result = await _fileStorage.UploadCABFile(latestVersion.CABId, file.FileName, file.FileName, DataConstants.Storage.Schedules,
+                            file.OpenReadStream(), contentType);
+                        latestVersion.Documents.Add(result);
+                        if (latestVersion.Documents.Count > 1)
+                        {
+                            latestVersion.Documents.Sort((x, y) => DateTime.Compare(y.UploadDateTime, x.UploadDateTime));
+                        }
+
+                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
+                    }
+
+                    errorCount = ModelState.ErrorCount;
                 }
 
-
-                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
-                return RedirectToAction("DocumentsList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
+                if (ModelState.IsValid)
+                {
+                    return RedirectToAction("DocumentsList", model.IsFromSummary ? new { id = latestVersion.CABId, fromSummary = "true" } : new { id = latestVersion.CABId });
+                }
+            }
+            else if (model.Files == null && model.File == null)
+            {
+                ModelState.AddModelError("File", $"Select a {DocumentsOptions.AcceptedFileTypes} file 10 megabytes or less.");
             }
 
             model.Title = DocumentsOptions.UploadTitle;

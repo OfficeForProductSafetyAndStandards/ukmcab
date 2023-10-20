@@ -78,11 +78,11 @@
         <form class="js-submit-once" method="post" enctype="multipart/form-data" novalidate>
             <input type="hidden" asp-for="IsFromSummary" />
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"File")">
-                <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
-                    Select a file
+                <label class="govuk-label govuk-!-font-weight-bold" asp-for="Files">
+                    Select files
                 </label>
                 <span asp-validation-for="File" class="govuk-error-message"></span>
-                <input class="govuk-file-upload schedules-upload" asp-for="File" accept=".doc,.docx,.xls,.xlsx,.pdf" type="file">
+                <input id="File"  class="govuk-file-upload schedules-upload" asp-for="Files" accept=".doc,.docx,.xls,.xlsx,.pdf" type="file" multiple>
             </div>
 
             <div class="govuk-grid-row">
