@@ -47,14 +47,13 @@
         public List<string> TestingLocations { get; set; }
         public List<string> BodyTypes { get; set; }
         public List<string> LegislativeAreas { get; set; }
-
         // Schedules of accreditation
         public List<FileUpload>? Schedules { get; set; } = new();
 
         public string ScheduleLabels => string.Join(", ", Schedules?.Select(sch => sch.Label) ?? new List<string>());
 
         // Supporting documents
-        public List<FileUpload>? Documents { get; set; }
+        public List<FileUpload>? Documents { get; set; } 
 
         public string DocumentLabels => string.Join(", ", Documents?.Select(doc => doc.Label) ?? new List<string>());
 
