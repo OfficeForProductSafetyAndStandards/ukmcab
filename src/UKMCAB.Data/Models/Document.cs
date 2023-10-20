@@ -17,6 +17,7 @@
         public DateTime LastUpdatedDate => AuditLog != null && AuditLog.Any() ? AuditLog.Max(al => al.DateTime) : DateTime.MinValue;
         public string LastUserGroup => AuditLog != null && AuditLog.Any() ? AuditLog.OrderBy(al => al.DateTime).Last().UserRole : string.Empty;
 
+        private List<Task.Task> Tasks { get; set; }
         // About
         public string CABId { get; set; }
         public string Name { get; set; }
