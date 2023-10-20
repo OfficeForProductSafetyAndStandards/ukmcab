@@ -280,11 +280,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private async Task<IActionResult> SaveDraft(Document document)
         {
-            if (document.StatusValue == Status.Created)
-            {
-                var user = await _userManager.GetUserAsync(User);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(user, document, true);
-            }
             TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
             return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
