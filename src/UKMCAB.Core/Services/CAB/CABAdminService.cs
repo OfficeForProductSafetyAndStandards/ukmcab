@@ -5,6 +5,7 @@ using UKMCAB.Core.Domain;
 using UKMCAB.Core.Mappers;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
