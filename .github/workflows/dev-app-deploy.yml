@@ -1,7 +1,7 @@
 name: dev-app-deploy
 
 on:
-  # workflow_dispatch
+  workflow_dispatch:
   push:
    branches:
      - dev
@@ -15,7 +15,7 @@ env:
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: src/UKMCAB.Web.UI
-  TEST_PROJECT_DIR: src/UKMCAB.Test
+  TEST_PROJECT_DIR: src/UKMCAB.sln
   OPSS_UKMCAB_PACKAGES_TOKEN: ${{ secrets.OPSS_UKMCAB_PACKAGES_TOKEN }}
 
 jobs:
