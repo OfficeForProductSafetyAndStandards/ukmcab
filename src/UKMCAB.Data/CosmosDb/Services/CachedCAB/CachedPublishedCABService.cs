@@ -86,7 +86,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
             return count;
         }
 
-        public async Task ClearAsync(string id, string slug)
+        public async System.Threading.Tasks.Task ClearAsync(string id, string slug)
         { 
             await _cache.RemoveAsync(Key(id));
             await _cache.RemoveAsync(Key(slug));

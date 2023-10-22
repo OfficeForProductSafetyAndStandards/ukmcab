@@ -22,7 +22,7 @@ public class UserAccountRequestRepository : IUserAccountRequestRepository
         _getUserAccountRequestPolicy = Policy<UserAccountRequest?>.Handle<CosmosException>(x => x.StatusCode == System.Net.HttpStatusCode.NotFound).FallbackAsync(null as UserAccountRequest);
     }
 
-    public async Task InitialiseAsync() => await _container.Database.CreateContainerIfNotExistsAsync(ContainerId, "/id").ConfigureAwait(false);
+    public async System.Threading.Tasks.Task InitialiseAsync() => await _container.Database.CreateContainerIfNotExistsAsync(ContainerId, "/id").ConfigureAwait(false);
 
     public async Task<UserAccountRequest?> GetPendingAsync(string subjectId)
     {
@@ -36,12 +36,12 @@ public class UserAccountRequestRepository : IUserAccountRequestRepository
         return retVal;
     }
 
-    public async Task CreateAsync(UserAccountRequest userAccount)
+    public async System.Threading.Tasks.Task CreateAsync(UserAccountRequest userAccount)
     {
         await _container.CreateItemAsync(userAccount).ConfigureAwait(false);
     }
 
-    public async Task UpdateAsync(UserAccountRequest userAccount)
+    public async System.Threading.Tasks.Task UpdateAsync(UserAccountRequest userAccount)
     {
         await _container.ReplaceItemAsync(userAccount, userAccount.Id).ConfigureAwait(false);
     }

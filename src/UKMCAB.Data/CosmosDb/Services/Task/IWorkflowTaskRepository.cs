@@ -1,0 +1,12 @@
+using System.Linq.Expressions;
+using UKMCAB.Data.Models.WorkflowTask;
+
+namespace UKMCAB.Data.CosmosDb.Services.Task;
+
+public interface IWorkflowTaskRepository
+{
+    Task<WorkflowTask> CreateAsync(WorkflowTask task);
+    Task<WorkflowTask> GetAsync(string id);
+    Task<WorkflowTask> PatchAsync<T>(string id, string fieldName, T value);
+    Task<WorkflowTask> ReplaceAsync(WorkflowTask workflowTask);
+}

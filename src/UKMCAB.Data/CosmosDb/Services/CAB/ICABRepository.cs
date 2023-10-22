@@ -15,6 +15,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         Task<bool> Delete(Document document);
         Task<bool> InitialiseAsync(bool force = false);
         IQueryable<Document> GetItemLinqQueryable();
-        Task UpdateAsync(Document document);
+        System.Threading.Tasks.Task UpdateAsync(Document document);
     }
 }

@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Data.Models;
 
-namespace UKMCAB.Data.CosmosDb.Services
+namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
 {
     public interface ICachedPublishedCABService
     {
@@ -11,6 +11,6 @@ namespace UKMCAB.Data.CosmosDb.Services
 
         Task<Document> FindDraftDocumentByCABIdAsync(string id);
         Task<int> PreCacheAllCabsAsync();
-        Task ClearAsync(string id, string slug);
+        System.Threading.Tasks.Task ClearAsync(string id, string slug);
     }
 }

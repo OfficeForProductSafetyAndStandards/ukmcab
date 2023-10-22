@@ -8,6 +8,7 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;

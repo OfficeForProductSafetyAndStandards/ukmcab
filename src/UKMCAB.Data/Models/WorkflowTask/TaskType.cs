@@ -1,4 +1,4 @@
-namespace UKMCAB.Data.Models.Task;
+namespace UKMCAB.Data.Models.WorkflowTask;
 
 public enum TaskType
 {

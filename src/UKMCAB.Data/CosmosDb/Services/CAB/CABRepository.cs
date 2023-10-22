@@ -76,7 +76,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             return response.StatusCode == HttpStatusCode.OK;
         }
 
-        public async Task UpdateAsync(Document document)
+        public async System.Threading.Tasks.Task UpdateAsync(Document document)
         {
             var response = await _container.UpsertItemAsync(document);
             Guard.IsTrue(response.StatusCode == HttpStatusCode.OK, $"The CAB document was not updated; http status={response.StatusCode}");
