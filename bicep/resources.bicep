@@ -175,10 +175,10 @@ resource cosmosDbDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@20
 
 resource cosmosDbContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
   parent: cosmosDbDatabase
-  name: 'cabs'
+  name: 'cab-documents'
   properties: {
     resource: {
-      id: 'cabs'
+      id: 'cab-documents'
       partitionKey: {
         paths: [
           '/id'
