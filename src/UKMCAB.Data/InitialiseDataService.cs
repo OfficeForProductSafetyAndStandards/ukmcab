@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Infrastructure.Cache;

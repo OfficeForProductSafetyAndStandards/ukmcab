@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Data.Models;
 
-namespace UKMCAB.Data.CosmosDb.Services
+namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
 {
     public interface ICachedPublishedCABService
     {

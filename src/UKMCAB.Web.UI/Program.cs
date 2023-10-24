@@ -18,6 +18,8 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.CAB;
+using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
