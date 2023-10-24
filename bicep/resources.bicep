@@ -181,7 +181,7 @@ resource cosmosDbContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/c
       id: 'cab-documents'
       partitionKey: {
         paths: [
-          '/id'
+          '/CABId'
         ]
         kind: 'Hash'
       }
