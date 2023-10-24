@@ -11,6 +11,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
 
         Task<Document> FindDraftDocumentByCABIdAsync(string id);
         Task<int> PreCacheAllCabsAsync();
-        System.Threading.Tasks.Task ClearAsync(string id, string slug);
+        Task ClearAsync(string id, string slug);
     }
 }

@@ -24,7 +24,7 @@ public class UserAccountRepository : IUserAccountRepository
         _getUserAccountPolicy = Policy<UserAccount?>.Handle<CosmosException>(x => x.StatusCode == System.Net.HttpStatusCode.NotFound).FallbackAsync(null as UserAccount);
     }
 
-    public async System.Threading.Tasks.Task InitialiseAsync() => await _container.Database.CreateContainerIfNotExistsAsync(ContainerId, "/id");
+    public async Task InitialiseAsync() => await _container.Database.CreateContainerIfNotExistsAsync(ContainerId, "/id");
 
 
     public async Task<UserAccount?> GetAsync(string id)
@@ -33,9 +33,9 @@ public class UserAccountRepository : IUserAccountRepository
         return retVal;
     }
 
-    public async System.Threading.Tasks.Task CreateAsync(UserAccount userAccount) => await _container.CreateItemAsync(userAccount).ConfigureAwait(false);
+    public async Task CreateAsync(UserAccount userAccount) => await _container.CreateItemAsync(userAccount).ConfigureAwait(false);
 
-    public async System.Threading.Tasks.Task UpdateAsync(UserAccount userAccount) => await _container.ReplaceItemAsync(userAccount, userAccount.Id, new PartitionKey(userAccount.Id)).ConfigureAwait(false);
+    public async Task UpdateAsync(UserAccount userAccount) => await _container.ReplaceItemAsync(userAccount, userAccount.Id, new PartitionKey(userAccount.Id)).ConfigureAwait(false);
 
     public async Task<int> UserCountAsync(UserAccountLockReason? lockReason = null, bool locked = false) {        
 
@@ -75,7 +75,7 @@ public class UserAccountRepository : IUserAccountRepository
         return data;
     }
 
-    public async System.Threading.Tasks.Task PatchAsync<T>(string id, string fieldName, T value)
+    public async Task PatchAsync<T>(string id, string fieldName, T value)
     {
         await _container.PatchItemAsync<UserAccount>(id, new PartitionKey(id), new[]
         {

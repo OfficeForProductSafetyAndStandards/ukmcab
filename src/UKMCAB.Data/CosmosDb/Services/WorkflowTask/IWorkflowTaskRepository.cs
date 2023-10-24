@@ -1,7 +1,5 @@
-using System.Linq.Expressions;
-using UKMCAB.Data.Models.WorkflowTask;
-
-namespace UKMCAB.Data.CosmosDb.Services.Task;
+namespace UKMCAB.Data.CosmosDb.Services.WorkflowTask;
+using Models.WorkflowTask;
 
 public interface IWorkflowTaskRepository
 {

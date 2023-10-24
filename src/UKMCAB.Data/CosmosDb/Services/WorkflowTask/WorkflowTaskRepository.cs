@@ -1,9 +1,7 @@
-using System.Linq.Expressions;
 using Microsoft.Azure.Cosmos;
 using UKMCAB.Common.ConnectionStrings;
-using UKMCAB.Data.Models.WorkflowTask;
 
-namespace UKMCAB.Data.CosmosDb.Services.Task;
+namespace UKMCAB.Data.CosmosDb.Services.WorkflowTask;
 
 public class WorkflowTaskRepository : IWorkflowTaskRepository
 {
@@ -20,25 +18,25 @@ public class WorkflowTaskRepository : IWorkflowTaskRepository
         _container = client.GetContainer(DataConstants.CosmosDb.Database, ContainerId);
     }
 
-    public async Task<WorkflowTask> CreateAsync(WorkflowTask task)
+    public async Task<Models.WorkflowTask.WorkflowTask> CreateAsync(Models.WorkflowTask.WorkflowTask task)
     {
         return await _container.CreateItemAsync(task);
     }
 
-    public async Task<WorkflowTask> GetAsync(string id)
+    public async Task<Models.WorkflowTask.WorkflowTask> GetAsync(string id)
     {
-        return await _container.ReadItemAsync<WorkflowTask>(id, new PartitionKey(id));
+        return await _container.ReadItemAsync<Models.WorkflowTask.WorkflowTask>(id, new PartitionKey(id));
     }
 
-    public async Task<WorkflowTask> PatchAsync<T>(string id, string fieldName, T value)
+    public async Task<Models.WorkflowTask.WorkflowTask> PatchAsync<T>(string id, string fieldName, T value)
     {
-        return await _container.PatchItemAsync<WorkflowTask>(id, new PartitionKey(id), new[]
+        return await _container.PatchItemAsync<Models.WorkflowTask.WorkflowTask>(id, new PartitionKey(id), new[]
         {
             PatchOperation.Set($"/{fieldName}", value)
         });
     }
 
-    public async Task<WorkflowTask> ReplaceAsync(WorkflowTask workflowTask)
+    public async Task<Models.WorkflowTask.WorkflowTask> ReplaceAsync(Models.WorkflowTask.WorkflowTask workflowTask)
     {
         return await _container.ReplaceItemAsync(workflowTask, workflowTask.Id, new PartitionKey(workflowTask.Id));
     }
