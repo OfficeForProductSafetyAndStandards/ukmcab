@@ -14,7 +14,7 @@ public class WorkflowTaskRepository : IWorkflowTaskRepository
     /// Repository for CRUD Workflow Tasks.
     /// </summary>
     /// <param name="connectionString"></param>
-    public WorkflowTaskRepository(ConnectionString connectionString)
+    public WorkflowTaskRepository(CosmosDbConnectionString connectionString)
     {
         var client = CosmosClientFactory.Create(connectionString);
         _container = client.GetContainer(DataConstants.CosmosDb.Database, ContainerId);
