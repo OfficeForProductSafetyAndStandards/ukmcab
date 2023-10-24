@@ -1,4 +1,6 @@
+using System.Linq.Expressions;
 using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common.ConnectionStrings;
 
 namespace UKMCAB.Data.CosmosDb.Services.WorkflowTask;
@@ -16,6 +18,19 @@ public class WorkflowTaskRepository : IWorkflowTaskRepository
     {
         var client = CosmosClientFactory.Create(connectionString);
         _container = client.GetContainer(DataConstants.CosmosDb.Database, ContainerId);
+    }
+
+    public async Task<ICollection<Models.WorkflowTask.WorkflowTask>> QueryAsync(Expression<Func<Models.WorkflowTask.WorkflowTask, bool>> predicate)
+    {
+        var query = _container.GetItemLinqQueryable<Models.WorkflowTask.WorkflowTask>().Where(predicate).ToFeedIterator();
+        var list = new List<Models.WorkflowTask.WorkflowTask>();
+        while (query.HasMoreResults)
+        {
+            var response = await query.ReadNextAsync();
+            list.AddRange(response.Resource.Select(r => r));
+        }
+
+        return list;
     }
 
     public async Task<Models.WorkflowTask.WorkflowTask> CreateAsync(Models.WorkflowTask.WorkflowTask task)
