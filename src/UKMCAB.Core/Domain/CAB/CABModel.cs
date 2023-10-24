@@ -1,6 +1,6 @@
 using UKMCAB.Data.Models;
 
-namespace UKMCAB.Core.Domain;
+namespace UKMCAB.Core.Domain.CAB;
 
 public class CabModel
 {

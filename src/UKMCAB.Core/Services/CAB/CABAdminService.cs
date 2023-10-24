@@ -1,11 +1,9 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
-using UKMCAB.Core.Domain;
+using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
-using UKMCAB.Core.Security;
 using UKMCAB.Data;
-using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;

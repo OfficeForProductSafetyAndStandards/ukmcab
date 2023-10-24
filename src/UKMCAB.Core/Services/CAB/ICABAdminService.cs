@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Core.Domain;
+using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 
