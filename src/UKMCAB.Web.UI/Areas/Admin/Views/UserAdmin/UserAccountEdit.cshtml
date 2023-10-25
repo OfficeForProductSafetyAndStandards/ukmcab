@@ -43,18 +43,9 @@
             <input asp-for="ReturnURL" type="hidden" />
             <fieldset class="govuk-fieldset">
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
-                    <h3 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--s" asp-for="Email">
-                            Email
-                        </label>
-                    </h3>
-                    <div id="email-hint" class="govuk-hint">
-                        Maximum length is 500 characters
-                    </div>
-                    <p error-id-for="Email" class="govuk-error-message">
-                        <span asp-validation-for="Email" class="govuk-error-message"></span>
-                    </p>
-                    <input class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" asp-for="Email" type="text" autocomplete="email" aria-required="true" error-describedby-for="Email">
+                    <govuk-input name="Email" class="govuk-!-width-two-thirds" label-class="govuk-label--s"  asp-for="Email">
+                        <govuk-input-hint >Maximum length is 500 characters</govuk-input-hint>
+                    </govuk-input>
                 </div>
 
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Organisation))">
@@ -62,14 +53,11 @@
                         <label class="govuk-label govuk-label--s" asp-for="Organisation">
                             Organisation
                         </label>
-<<<<<<< HEAD
                     </h3>
                     <div id="organisation-hint" class="govuk-hint">
                         Maximum length is 500 characters
                     </div>
-=======
-                    </h3>                    
->>>>>>> dev
+
                     <p error-id-for="Organisation" class="govuk-error-message">
                         <span asp-validation-for="Organisation" class="govuk-error-message"></span>
                     </p>
