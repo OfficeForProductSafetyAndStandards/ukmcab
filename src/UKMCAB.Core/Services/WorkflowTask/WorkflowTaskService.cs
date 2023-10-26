@@ -13,6 +13,7 @@ public class WorkflowTaskService : IWorkFlowTaskService
         _workflowTaskRepository = workflowTaskRepository;
     }
 
+    //todo - assigned user role
     public async Task<List<Domain.WorkflowTask.WorkflowTask>> GetBySubmittedUserRoleAndStatus(string submittedUserRole, TaskState taskState)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>

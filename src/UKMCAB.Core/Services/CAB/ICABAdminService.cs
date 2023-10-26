@@ -10,6 +10,7 @@ namespace UKMCAB.Core.Services.CAB
         //todo Change these methods to use CabModel as return value / params instead of Document
         Task<List<CabModel>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
             string? ukasReference);
+
         Task<bool> DocumentWithSameNameExistsAsync(Document document);
         Task<Document> FindPublishedDocumentByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
@@ -25,5 +26,7 @@ namespace UKMCAB.Core.Services.CAB
         Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveReason);
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
+        Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown);
+        Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None);
     }
 }
