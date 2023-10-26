@@ -33,7 +33,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new InternalLandingPageViewModel
             {
                 TotalDraftCABs = await _cabAdminService.GetCABCountForStatusAsync(Status.Draft),
-                TotalCABsPendingApproval = await _cabAdminService.CABCountAsync(SubStatus.PendingApproval),
+                TotalCABsPendingApproval = await _cabAdminService.GetCABCountForSubStatusAsync(SubStatus.PendingApproval),
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending)
             }); 
         }

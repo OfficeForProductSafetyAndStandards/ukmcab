@@ -27,6 +27,6 @@ namespace UKMCAB.Core.Services.CAB
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
         Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown);
-        Task<int> CABCountAsync(SubStatus subStatus = SubStatus.None);
+        Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None);
     }
 }
