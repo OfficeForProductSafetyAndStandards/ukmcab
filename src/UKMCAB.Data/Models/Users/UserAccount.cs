@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Data.Models.Users;
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace UKMCAB.Data.Models.Users;
 
 public class UserAccount
 {

@@ -4,6 +4,7 @@ using Microsoft.ApplicationInsights;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
