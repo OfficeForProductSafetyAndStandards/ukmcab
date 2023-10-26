@@ -15,7 +15,6 @@ using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
-using UKMCAB.Test.FakeRepositories;
 
 namespace UKMCAB.Test.Services
 {

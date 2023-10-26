@@ -1,9 +1,9 @@
-﻿using System.Security.Policy;
-using UKMCAB.Common;
+﻿using UKMCAB.Common;
+using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 
-namespace UKMCAB.Data.CosmosDb.Services
+namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
 {
     public class CachedPublishedCABService : ICachedPublishedCABService
     {

@@ -1,12 +1,12 @@
-﻿using Microsoft.Azure.Cosmos;
-using Microsoft.Azure.Cosmos.Linq;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 using System.Net;
+using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
 
-namespace UKMCAB.Data.CosmosDb.Services
+namespace UKMCAB.Data.CosmosDb.Services.CAB
 {
     public class CABRepository : ICABRepository
     {

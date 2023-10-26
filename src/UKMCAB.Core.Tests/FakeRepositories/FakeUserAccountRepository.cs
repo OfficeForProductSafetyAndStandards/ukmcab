@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UKMCAB.Common;
 using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models.Users;
 
-namespace UKMCAB.Test.FakeRepositories
+namespace UKMCAB.Core.Tests.FakeRepositories
 {
     public class FakeUserAccountRepository : IUserAccountRepository
     {
