@@ -2,14 +2,14 @@
 using Microsoft.AspNetCore.Mvc;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
-    [Area("admin")]
-    //[Area("admin"), Authorize]
+    [Area("admin"), Authorize]
     public class ServiceManagementController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
@@ -32,8 +32,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             return View(new InternalLandingPageViewModel
             {
-                TotalDraftCABs = await _cabAdminService.CABCountAsync(Status.Draft),
-                TotalCABsPendingApproval = await _cabAdminService.CABCountAsync(SubStatus.PendingApproval),
+                TotalDraftCABs = await _cabAdminService.GetCABCountForStatusAsync(Status.Draft),
+                TotalCABsPendingApproval = await _cabAdminService.GetCABCountForSubStatusAsync(SubStatus.PendingApproval),
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending)
             }); 
         }

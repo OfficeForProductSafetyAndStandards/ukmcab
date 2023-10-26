@@ -13,26 +13,6 @@ using UKMCAB.Data.Search.Services;
 
 namespace UKMCAB.Core.Services.CAB
 {
-    public interface ICABAdminService
-    {
-        Task<List<Document>> DocumentWithKeyIdentifiersExistsAsync(Document document);
-        Task<bool> DocumentWithSameNameExistsAsync(Document document);
-        Task<Document> FindPublishedDocumentByCABIdAsync(string id);
-        Task<List<Document>> FindAllDocumentsByCABIdAsync(string id);
-        Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
-        Task<List<Document>> FindAllCABManagementQueueDocuments();
-        Task<Document> GetLatestDocumentAsync(string id);
-        Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document, bool saveAsDraft = false);
-        Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft, bool submitForApproval = false);
-        Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument);
-        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveReason);
-        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveReason);
-        IAsyncEnumerable<string> GetAllCabIds();
-        Task RecordStatsAsync();
-        Task<int> CABCountAsync(Status status = Status.Unknown);
-        Task<int> CABCountAsync(SubStatus subStatus = SubStatus.None);
-    }
-
     public class CABAdminService : ICABAdminService
     {
         private readonly ICABRepository _cabRepostitory;
@@ -352,9 +332,7 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatAsync(Status.Historical);
         }
 
-        public Task<int> CABCountAsync(Status status = Status.Unknown) => _cabRepostitory.CABCountAsync(status);
-
-
-        public Task<int> CABCountAsync(SubStatus subStatus = SubStatus.None) => _cabRepostitory.CABCountAsync(subStatus);
+        public Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown) => _cabRepostitory.CABCountAsync(status);
+        public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) => _cabRepostitory.CABCountAsync(subStatus);
     }
 }

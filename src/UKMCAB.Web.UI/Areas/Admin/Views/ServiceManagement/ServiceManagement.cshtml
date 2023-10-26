@@ -7,12 +7,6 @@
 @using System.Security;
 @model InternalLandingPageViewModel;
 
-
-<div class="govuk-grid-row">
-
-</div>
-
-
 <div id="service-management-page" class="govuk-grid-row">
 
     <div class="govuk-grid-column-full">
@@ -21,8 +15,8 @@
 
     <div id="notifications" class="govuk-grid-column-one-third">
         <div>
-            <table class="govuk-table">                
-                <a asp-route="@NotificationController.Routes.NotificationsHome">
+            <table class="govuk-table">   
+                <a asp-route="@NotificationController.Routes.NotificationsHome" class="govuk-link">
                     <h2 class="govuk-heading-m">Notifications</h2>
                 </a>
                 <tbody class="govuk-table__body">
@@ -62,8 +56,8 @@
                                 </h2>
                             </a>
                             <div id="search-filter-keywords-input-container">
-                                <input type="text" asp-for="Keywords" class="govuk-input search-box" />
-                                <button id="search-keyword-button" type="submit">Search</button>
+                                <govuk-input asp-for="Keywords" input-class="search-box"></govuk-input>
+                                <govuk-button id="search-keyword-button" type="submit">Search</govuk-button>
                             </div>
                         </fieldset>
                     </div>
