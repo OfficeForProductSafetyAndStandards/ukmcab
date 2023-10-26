@@ -332,7 +332,7 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatAsync(Status.Historical);
         }
 
-        public Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown) => _cabRepostitory.CABCountAsync(status);
-        public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) => _cabRepostitory.CABCountAsync(subStatus);
+        public Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown) => _cabRepostitory.GetCABCountByStatusAsync(status);
+        public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) => _cabRepostitory.GetCABCountBySubStatusAsync(subStatus);
     }
 }

@@ -26,7 +26,8 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
 
-            if (items != null && items.Any() && items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
+            if (items != null && items.Any() &&
+                items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
             {
                 foreach (var document in items)
                 {
@@ -46,6 +47,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             {
                 return response.Resource;
             }
+
             return null;
         }
 
@@ -79,7 +81,8 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         public async Task UpdateAsync(Document document)
         {
             var response = await _container.UpsertItemAsync(document);
-            Guard.IsTrue(response.StatusCode == HttpStatusCode.OK, $"The CAB document was not updated; http status={response.StatusCode}");
+            Guard.IsTrue(response.StatusCode == HttpStatusCode.OK,
+                $"The CAB document was not updated; http status={response.StatusCode}");
         }
 
         public async Task<bool> Delete(Document document)
@@ -88,28 +91,26 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             return response.StatusCode == HttpStatusCode.NoContent;
         }
 
-        public async Task<int> CABCountAsync(Status status = Status.Unknown)
+        public async Task<int> GetCABCountByStatusAsync(Status status = Status.Unknown)
         {
-            if(status == Status.Unknown)
+            var list = _container.GetItemLinqQueryable<Document>().AsQueryable();
+            if (status == Status.Unknown)
             {
-                return await _container.GetItemLinqQueryable<Document>().AsQueryable().CountAsync();
+                return await list.CountAsync();
             }
-            else
-            {
-                return await _container.GetItemLinqQueryable<Document>().AsQueryable().Where(x => x.StatusValue == status).CountAsync();
-            }
+
+            return await list.Where(x => x.StatusValue == status).CountAsync();
         }
 
-        public async Task<int> CABCountAsync(SubStatus subStatus = SubStatus.None)
+        public async Task<int> GetCABCountBySubStatusAsync(SubStatus subStatus = SubStatus.None)
         {
+            var list = _container.GetItemLinqQueryable<Document>().AsQueryable();
             if (subStatus == SubStatus.None)
             {
-                return await _container.GetItemLinqQueryable<Document>().AsQueryable().CountAsync();
+                return await list.CountAsync();
             }
-            else
-            {
-                return await _container.GetItemLinqQueryable<Document>().AsQueryable().Where(x => x.SubStatus == subStatus).CountAsync();
-            }
+
+            return await list.Where(x => x.SubStatus == subStatus).CountAsync();
         }
     }
 }
