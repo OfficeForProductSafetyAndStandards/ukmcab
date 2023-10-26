@@ -1,10 +1,6 @@
 ﻿@using UKMCAB.Web.UI.Areas.Search.Controllers;
-@using UKMCAB.Web.UI.Extensions
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
-@using UKMCAB.Web.UI.Models.ViewModels.Search
-@using Microsoft.AspNetCore.Identity
 @using UKMCAB.Core.Security;
-@using System.Security;
 @model InternalLandingPageViewModel;
 
 <div id="service-management-page" class="govuk-grid-row">
@@ -16,7 +12,7 @@
     <div id="notifications" class="govuk-grid-column-one-third">
         <div>
             <table class="govuk-table">                
-                <a asp-route="@NotificationController.Routes.NotificationsHome">
+                <a class="govuk-link"  asp-route="@NotificationController.Routes.NotificationsHome">
                     <h2 class="govuk-heading-m">Notifications</h2>
                 </a>
                 <tbody class="govuk-table__body">
@@ -47,7 +43,7 @@
                 <div id="search-keyword-container">
                     <div id="search-filter-keywords">
                         <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">
-                            <a asp-route="@SearchController.Routes.Search">
+                            <a class="govuk-link" asp-route="@SearchController.Routes.Search">
                                 <h2 class="govuk-heading-m">
                                     Search for a CAB
                                     <label id="keywords-hidden-label" class="govuk-label govuk-label--m" asp-for="Keywords">
@@ -71,13 +67,13 @@
     <div class="govuk-grid-column-one-third">
         <div id="manage-cabs">
             <table class="govuk-table">
-                <a asp-route="@AdminController.Routes.CABManagement">
+                <a class="govuk-link" asp-route="@AdminController.Routes.CABManagement">
                     <h2 class="govuk-heading-m">Manage CABs</h2>
                 </a>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header">
-                            <a asp-route="@AdminController.Routes.CABManagement" asp-route-filter="draft">
+                            <a class="govuk-link" asp-route="@AdminController.Routes.CABManagement" asp-route-filter="draft">
                                 Draft
                             </a>
                         </th>
@@ -85,7 +81,7 @@
                     </tr>
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header">
-                            <a asp-route="@AdminController.Routes.CABManagement">
+                            <a class="govuk-link" asp-route="@AdminController.Routes.CABManagement">
                                 Awaiting approval
                             </a>
                         </th>
@@ -93,7 +89,7 @@
                     </tr>
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__header">
-                            <a asp-route="@CABController.Routes.CreateNewCab">
+                            <a class="govuk-link" asp-route="@CABController.Routes.CreateNewCab">
                                 Create a CAB
                             </a>
                         </th>
@@ -109,13 +105,13 @@
         <div id="manage-users" class="govuk-grid-column-one-half">
             <div id="service-management-col-width-65-percent">
                 <table class="govuk-table">
-                    <a asp-route="@UserAdminController.Routes.UserList">
+                    <a class="govuk-link" asp-route="@UserAdminController.Routes.UserList">
                         <h2 class="govuk-heading-m">Manage users</h2>
                     </a>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">
-                                <a asp-route="@UserAdminController.Routes.UserAccountRequestsList">
+                                <a class="govuk-link" asp-route="@UserAdminController.Routes.UserAccountRequestsList">
                                     Account requests
                                 </a>
                             </th>
