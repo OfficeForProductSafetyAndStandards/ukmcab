@@ -1,5 +1,6 @@
 using UKMCAB.Common;
 using UKMCAB.Core.Domain;
+using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Data.Models;
 using FileUpload = UKMCAB.Core.Domain.FileUpload;
 
