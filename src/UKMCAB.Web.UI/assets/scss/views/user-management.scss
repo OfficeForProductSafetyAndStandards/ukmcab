@@ -1,5 +1,9 @@
 .user-tabs {
 
+    .user-management-unselected-link {
+        color: $govuk-link-active-colour;
+    }
+
     @media (min-width: 40.0625em) {
 
 
