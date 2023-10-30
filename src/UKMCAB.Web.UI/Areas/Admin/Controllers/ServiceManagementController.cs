@@ -6,6 +6,7 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
