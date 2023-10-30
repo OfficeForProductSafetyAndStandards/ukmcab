@@ -8,6 +8,8 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate);
 
         Task<Document> CreateAsync(Document document);
+        Task<int> GetCABCountByStatusAsync(Status status);
+        Task<int> GetCABCountBySubStatusAsync(SubStatus subStatus);
 
         [Obsolete("Use " + nameof(UpdateAsync))]
         Task<bool> Update(Document document);

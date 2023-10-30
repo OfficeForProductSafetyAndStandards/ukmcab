@@ -19,7 +19,7 @@ using UKMCAB.Web.Security;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
-    [Area("search")]
+    [Area("search"), Route("search")]
     public class SearchController : Controller
     {
         private readonly ICachedSearchService _cachedSearchService;
@@ -232,8 +232,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (password == _basicAuthOptions.Password)
             {
                 await _cachedSearchService.ClearAsync();
-                
-                await Task.Delay(1000);
                 return RedirectToAction("Index");
             }
 

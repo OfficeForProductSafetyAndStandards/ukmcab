@@ -17,6 +17,8 @@ using UKMCAB.Web.UI.Models.ViewModels;
 using System.Text.Encodings.Web;
 using Microsoft.IdentityModel.Tokens;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
+using UKMCAB.Web.UI.Areas.Admin.Controllers;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
 {
@@ -164,7 +166,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             {
                 await _users.UpdateLastLogonDate(id);
                 _telemetry.TrackEvent(AiTracking.Events.LoginSuccess, HttpContext.ToTrackingMetadata());
-                return Redirect("/");
+                return RedirectToRoute(ServiceManagementController.Routes.ServiceManagement);
             }
             else // log-out the user and redirect somewhere...
             {
