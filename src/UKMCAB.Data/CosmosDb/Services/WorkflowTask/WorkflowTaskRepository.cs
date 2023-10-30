@@ -20,10 +20,10 @@ public class WorkflowTaskRepository : IWorkflowTaskRepository
         _container = client.GetContainer(DataConstants.CosmosDb.Database, ContainerId);
     }
 
-    public async Task<ICollection<Models.WorkflowTask.WorkflowTask>> QueryAsync(Expression<Func<Models.WorkflowTask.WorkflowTask, bool>> predicate)
+    public async Task<ICollection<Models.Workflow.WorkflowTask>> QueryAsync(Expression<Func<Models.Workflow.WorkflowTask, bool>> predicate)
     {
-        var query = _container.GetItemLinqQueryable<Models.WorkflowTask.WorkflowTask>().Where(predicate).ToFeedIterator();
-        var list = new List<Models.WorkflowTask.WorkflowTask>();
+        var query = _container.GetItemLinqQueryable<Models.Workflow.WorkflowTask>().Where(predicate).ToFeedIterator();
+        var list = new List<Models.Workflow.WorkflowTask>();
         while (query.HasMoreResults)
         {
             var response = await query.ReadNextAsync();
@@ -33,25 +33,25 @@ public class WorkflowTaskRepository : IWorkflowTaskRepository
         return list;
     }
 
-    public async Task<Models.WorkflowTask.WorkflowTask> CreateAsync(Models.WorkflowTask.WorkflowTask task)
+    public async Task<Models.Workflow.WorkflowTask> CreateAsync(Models.Workflow.WorkflowTask task)
     {
         return await _container.CreateItemAsync(task);
     }
 
-    public async Task<Models.WorkflowTask.WorkflowTask> GetAsync(string id)
+    public async Task<Models.Workflow.WorkflowTask> GetAsync(string id)
     {
-        return await _container.ReadItemAsync<Models.WorkflowTask.WorkflowTask>(id, new PartitionKey(id));
+        return await _container.ReadItemAsync<Models.Workflow.WorkflowTask>(id, new PartitionKey(id));
     }
 
-    public async Task<Models.WorkflowTask.WorkflowTask> PatchAsync<T>(string id, string fieldName, T value)
+    public async Task<Models.Workflow.WorkflowTask> PatchAsync<T>(string id, string fieldName, T value)
     {
-        return await _container.PatchItemAsync<Models.WorkflowTask.WorkflowTask>(id, new PartitionKey(id), new[]
+        return await _container.PatchItemAsync<Models.Workflow.WorkflowTask>(id, new PartitionKey(id), new[]
         {
             PatchOperation.Set($"/{fieldName}", value)
         });
     }
 
-    public async Task<Models.WorkflowTask.WorkflowTask> ReplaceAsync(Models.WorkflowTask.WorkflowTask workflowTask)
+    public async Task<Models.Workflow.WorkflowTask> ReplaceAsync(Models.Workflow.WorkflowTask workflowTask)
     {
         return await _container.ReplaceItemAsync(workflowTask, workflowTask.Id, new PartitionKey(workflowTask.Id));
     }
