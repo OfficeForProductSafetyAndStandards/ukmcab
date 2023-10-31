@@ -1,5 +1,8 @@
 ﻿@using UKMCAB.Web.UI.Areas.Account.Controllers
 @model UserProfileViewModel
+@{
+    ViewData["nav"] = "profile";
+}
 
 @if (Model.IsEdited)
 {
@@ -32,7 +35,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-form-group">
+        <div id="user-profile-my-details" class="govuk-form-group">
             <dl class="govuk-summary-list">
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -52,7 +55,7 @@
                 </div>
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        Email
+                        Contact email
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @Html.ValueOrNotProvided(Model.ContactEmailAddress)
@@ -84,7 +87,7 @@
                 </div>
             </dl>
             <div class="additional-row" >
-                <a href="https://home.account.gov.uk/settings" class="govuk-link" rel="noreferrer noopener" target="_blank">Manage your GOV One Login</a>
+                <a href="https://home.account.gov.uk/settings" class="govuk-link" rel="noreferrer noopener" target="_blank">Manage your GOV.UK One Login</a>
             </div>
         </div>   
 

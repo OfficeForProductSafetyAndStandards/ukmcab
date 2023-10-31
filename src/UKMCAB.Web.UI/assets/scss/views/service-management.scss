@@ -1,0 +1,108 @@
+
+#service-management-page {
+  /* Display set to none to hide Notification section until the Notification part of the app has been developed.
+      Uncomment line 44 as well
+  */
+  #notifications {
+    display: none;
+  }
+
+  a > .govuk-heading-m, a > .govuk-label--m {
+    color: $govuk-link-colour;
+  }
+
+  /*mobile*/
+  @media (max-width: 40.0625em) {
+    .govuk-heading-l {
+      margin-bottom: 30px;
+    }
+
+    .govuk-grid-column-one-third, .govuk-grid-column-one-half {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 0 15px;
+      margin-bottom: 50px;
+      padding-right: 15px;
+    }
+
+    #search-results {
+      padding: 0 15px;
+    }
+  }
+
+  /*desktop*/
+  @media (min-width: 40.0625em) {
+    .govuk-grid-column-one-third, .govuk-grid-column-one-half {
+      height: 270px;
+
+      #service-management-col-width-65-percent {
+        width: 65%;
+      }
+    }
+    #search-for-a-cab, #manage-users {
+      // Uncomment when Notification section is re-instated
+      //float: right;
+
+      table {
+        width: 100%;
+      }
+
+      #search-results {
+        width: 100%;
+      }
+
+      #search-keyword-container {
+        #search-filter-keywords {
+          margin-bottom: 20px;
+          margin-left: 15px;
+
+          #search-filter-keywords-input-container {
+            position: relative;
+
+            input {
+              width: calc(100% - 40px);
+              padding-right: 28px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  #keywords-hidden-label {
+    display: none;
+  }
+
+  #search-filter-keywords-input-container {
+    position: relative;
+
+    input {
+      width: calc(100% - 40px);
+      padding-right: 28px;
+    }
+
+    #search-keyword-button {
+      background-color: $govuk-brand-colour;
+      background-image: url('../finder/images/search/search-button.png');
+      background-position: 2px 50%;
+      background-repeat: no-repeat;
+      bottom: 0;
+      border: 2px solid $govuk-focus-text-colour;
+      border-left: none;
+      color: govuk-colour('white');
+      cursor: pointer;
+      height: 100%;
+      overflow: hidden;
+      padding: 0;
+      position: absolute;
+      right: 0;
+      text-indent: -5000px;
+      width: 40px;
+
+      &:focus {
+        outline: 3px solid $govuk-focus-colour;
+        outline-offset: 0;
+      }
+    }
+  }
+}
