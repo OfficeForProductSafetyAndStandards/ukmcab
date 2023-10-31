@@ -51,7 +51,7 @@ public class NotificationController : Controller
     public IActionResult Detail(string id)
     {
         //todo connect to service
-
+        string status = "Assigned"; // Unassigned,  Assigned, Completed 
         var assignees = new List<(string Value, string Text)>
         {
             ("user1", "Test User 1"),
@@ -63,7 +63,7 @@ public class NotificationController : Controller
             "Notification Details",
             "Notification: Test Notification",
             "1",
-            Status: NotificationStatus.Assigned,
+            Status: status,
             "From value",
             "Subject value",
             "reason value",

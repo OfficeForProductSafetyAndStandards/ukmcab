@@ -6,7 +6,7 @@ public record NotificationDetailViewModel(
     string PageTitle, 
     string NotificationTitle, 
     string SelectedStatus,
-    NotificationStatus Status,
+    string Status,
     //int StatusId,
     string From, 
     string Subject,
