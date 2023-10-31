@@ -1,4 +1,4 @@
-namespace UKMCAB.Core.Domain.WorkflowTask;
+namespace UKMCAB.Core.Domain.Workflow;
 
 public enum TaskState
 {

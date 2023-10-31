@@ -1,4 +1,4 @@
-using UKMCAB.Core.Domain.WorkflowTask;
+using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Mappers;

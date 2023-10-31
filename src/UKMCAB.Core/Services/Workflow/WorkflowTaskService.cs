@@ -1,4 +1,4 @@
-using UKMCAB.Core.Domain.WorkflowTask;
+using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Mappers;
 using UKMCAB.Data.CosmosDb.Services.WorkflowTask;
 
@@ -13,30 +13,30 @@ public class WorkflowTaskService : IWorkflowTaskService
         _workflowTaskRepository = workflowTaskRepository;
     }
 
-    public async Task<List<WorkflowTask>> GetUnassignedBySubmittedUserRole(string submitterUserRole)
+    public async Task<List<WorkflowTask>> GetUnassignedBySubmittedUserRoleAsync(string submitterUserRole)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
                 w.Submitter.Role != null && w.Submitter.Role.Equals(submitterUserRole, StringComparison.CurrentCultureIgnoreCase)))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
-    public async Task<List<WorkflowTask>> GetByAssignedUserRoleAndStatus(string assignedUserRole, TaskState taskState)
+    public async Task<List<WorkflowTask>> GetByAssignedUserRoleAndStatusAsync(string assignedUserRole, TaskState taskState)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
                 w.Assignee != null && w.Assignee.Role != null && w.Submitter.Role != null && w.Assignee.Role.Equals(assignedUserRole, StringComparison.CurrentCultureIgnoreCase) && w.State.Equals(taskState.ToString())))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
-    public async Task<List<WorkflowTask>> GetByAssignedUser(string userId)
+    public async Task<List<WorkflowTask>> GetByAssignedUserAsync(string userId)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
                 w.Assignee != null && w.Assignee.Id.Equals(userId, StringComparison.CurrentCultureIgnoreCase)))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
-    public async Task<WorkflowTask> GetAsync(WorkflowTask workflowTask)
+    public async Task<WorkflowTask> GetAsync(Guid id)
     {
-        var task = await _workflowTaskRepository.GetAsync(workflowTask.Id.ToString());
+        var task = await _workflowTaskRepository.GetAsync(id.ToString());
         return task.MapToWorkflowTaskModel();
     }
 

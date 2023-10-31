@@ -1,4 +1,4 @@
-namespace UKMCAB.Core.Domain.WorkflowTask;
+namespace UKMCAB.Core.Domain.Workflow;
 
 public record WorkflowTask
 {
@@ -22,11 +22,14 @@ public record WorkflowTask
         this.DocumentId = DocumentId;
     }
 
+    // init only properties
     public Guid Id { get; init; }
     public Guid DocumentId { get; init; }
     public TaskType TaskType { get; init; }
     public User Submitter { get; init; }
     public DateTime SentOn { get; init; }
+   
+    // set properties
     public User? Assignee { get; set; }
     public DateTime? Assigned { get; set; }
     public TaskState State { get; set; }
