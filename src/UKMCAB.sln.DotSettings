@@ -2,4 +2,5 @@
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=CAB/@EntryIndexedValue">CAB</s:String>
 	<s:String x:Key="/Default/CodeStyle/Naming/CSharpNaming/Abbreviations/=CABURL/@EntryIndexedValue">CABURL</s:String>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=UKAS/@EntryIndexedValue">True</s:Boolean>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=UKMCAB/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=Unarchive/@EntryIndexedValue">True</s:Boolean></wpf:ResourceDictionary>
