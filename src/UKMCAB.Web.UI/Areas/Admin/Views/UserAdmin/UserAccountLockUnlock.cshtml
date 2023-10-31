@@ -1,16 +1,36 @@
 ﻿@model UserAccountLockUnlockViewModel
+@{
+    var subTitle = string.Empty;
+    var hint = string.Empty;
+
+    switch (Model.Mode)
+    {
+        case UserAccountLockToggleUIMode.Lock:
+            subTitle = "Locking an account means that the user will not be able to log in to the UKMCAB service. This should be used when you need to temporarily lock access to the account.";
+            hint = "Enter the reason for locking this user account. The user will be notified that their account has been locked and the reason will be included.";
+            break;
+
+        case UserAccountLockToggleUIMode.Unlock:
+            subTitle = "Unlocking an account means that the user will be able to log in to the UKMCAB service.";
+            hint = "Enter the reason for unlocking this user account. The user will be notified that their account has been unlocked and the reason will be included.";
+            break;
+
+        case UserAccountLockToggleUIMode.Archive:
+            subTitle = "Archiving an account means that the user will not be able to log in to the UKMCAB service. This should be used when you need to permanently remove access to the account.";
+            hint = "Enter the reason for archiving this user account. The user will be notified that their account has been archived and the reason will be included.";
+            break;
+
+        default:
+            subTitle = "Unarchiving an account means that the user will be able to log in to the UKMCAB service.";
+            hint = "Enter the reason for unarchiving this user account. The user will be notified that their account has been unarchived and the reason will be included.";
+            break;
+    }
+}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">@Model.VerbBaseForm.ToTitleCase() user account</h1>
-        @if (Model.Mode == UserAccountLockToggleUIMode.Lock)
-        {
-            <p class="govuk-body">Locking an account means that the user will not be able to log in to the UKMCAB service. This should be used when you need to temporarily lock access to the account.</p>
-        }
-        else if (Model.Mode == UserAccountLockToggleUIMode.Unlock)
-        {
-            <p class="govuk-body">Unlocking an account means that the user will be able to log in to the UKMCAB service.</p>
-        }
+        <p class="govuk-body">@subTitle</p>
     </div>
 </div>
 
@@ -25,24 +45,7 @@
 
         <div class="@Html.CssFor(x=>x.Reason, "govuk-form-group")">
             <label class="govuk-label govuk-!-font-weight-bold" for="reason">Reason</label>
-            @if (Model.Mode == UserAccountLockToggleUIMode.Lock)
-            {
-                <div id="reason-hint" class="govuk-hint">
-                    Enter the reason for locking this user account. The user will be notified that their account has been locked and the reason will be included.
-                </div>
-            }
-            else if (Model.Mode == UserAccountLockToggleUIMode.Unlock)
-            {
-                <div id="reason-hint" class="govuk-hint">
-                    Enter the reason for unlocking this user account. The user will be notified that their account has been unlocked and the reason will be included.
-                </div>
-            }
-            else
-            {
-                <div id="reason-hint" class="govuk-hint">
-                    This will be included in user notifications and the account history viewable by all users.
-                </div>
-            }
+            <div id="reason-hint" class="govuk-hint">@hint</div>
             <p error-id-for="Reason" class="govuk-error-message">
                 <span asp-validation-for="Reason" class="govuk-error-message"></span>
             </p>

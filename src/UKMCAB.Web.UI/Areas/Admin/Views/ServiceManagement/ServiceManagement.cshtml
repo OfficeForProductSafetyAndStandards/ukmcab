@@ -2,6 +2,9 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 @using UKMCAB.Core.Security;
 @model InternalLandingPageViewModel;
+@{
+    ViewData["nav"] = "service-management";
+}
 
 <div id="service-management-page" class="govuk-grid-row">
 
@@ -17,15 +20,15 @@
                 </a>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Unassigned</th>
+                        <th scope="row" class="govuk-table__cell">Unassigned</th>
                         <td class="govuk-table__cell">123</td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Assigned</th>
+                        <th scope="row" class="govuk-table__cell">Assigned</th>
                         <td class="govuk-table__cell">123</td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">Assigned to me</th>
+                        <th scope="row" class="govuk-table__cell">Assigned to me</th>
                         <td class="govuk-table__cell">123</td>
                     </tr>
                 </tbody>
@@ -72,7 +75,7 @@
                 </a>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">
+                        <th scope="row" class="govuk-table__cell">
                             <a class="govuk-link" asp-route="@AdminController.Routes.CABManagement" asp-route-filter="draft">
                                 Draft
                             </a>
@@ -80,7 +83,7 @@
                         <td class="govuk-table__cell">@Model.TotalDraftCABs</td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">
+                        <th scope="row" class="govuk-table__cell">
                             <a class="govuk-link" asp-route="@AdminController.Routes.CABManagement">
                                 Awaiting approval
                             </a>
@@ -88,7 +91,7 @@
                         <td class="govuk-table__cell">@Model.TotalCABsPendingApproval</td>
                     </tr>
                     <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header">
+                        <th scope="row" class="govuk-table__cell">
                             <a class="govuk-link" asp-route="@CABController.Routes.CreateNewCab">
                                 Create a CAB
                             </a>
@@ -110,7 +113,7 @@
                     </a>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__header">
+                            <th scope="row" class="govuk-table__cell">
                                 <a class="govuk-link" asp-route="@UserAdminController.Routes.UserAccountRequestsList">
                                     Account requests
                                 </a>
