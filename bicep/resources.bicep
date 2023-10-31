@@ -175,10 +175,100 @@ resource cosmosDbDatabase 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases@20
 
 resource cosmosDbContainer 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
   parent: cosmosDbDatabase
-  name: 'cabs'
+  name: 'cab-documents'
   properties: {
     resource: {
-      id: 'cabs'
+      id: 'cab-documents'
+      partitionKey: {
+        paths: [
+          '/CABId'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
+resource cosmosDbContainerUsers 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'user-accounts'
+  properties: {
+    resource: {
+      id: 'user-accounts'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
+resource cosmosDbContainerUserAccountRequests 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'user-account-requests'
+  properties: {
+    resource: {
+      id: 'user-account-requests'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
+resource cosmosDbContainerTasks 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'workflow-tasks'
+  properties: {
+    resource: {
+      id: 'workflow-tasks'
       partitionKey: {
         paths: [
           '/id'

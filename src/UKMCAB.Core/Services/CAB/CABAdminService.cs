@@ -1,10 +1,11 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
-using UKMCAB.Core.Domain;
+using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
 using UKMCAB.Data;
-using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.CAB;
+using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
@@ -330,5 +331,8 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatAsync(Status.Archived);
             await RecordStatAsync(Status.Historical);
         }
+
+        public Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown) => _cabRepostitory.GetCABCountByStatusAsync(status);
+        public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) => _cabRepostitory.GetCABCountBySubStatusAsync(subStatus);
     }
 }

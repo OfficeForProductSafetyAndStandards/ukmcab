@@ -38,7 +38,7 @@ internal class CachedSearchService : ICachedSearchService
     /// <inheritdoc />
     public async Task ClearAsync()
     {
-        string[] keys = (await _cache.GetSetMembersAsync(_globalSearchesCacheKey));
+        string[] keys = await _cache.GetSetMembersAsync(_globalSearchesCacheKey);
         var batches = keys.Batch(50); // clear N cache keys in parallel at a time (don't want to run an unlimited amount of tasks in parallel)
         foreach (var batch in batches)
         {

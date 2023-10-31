@@ -4,7 +4,6 @@ using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.CodeAnalysis.Formatting;
 using Notify.Client;
 using Notify.Interfaces;
 using System.Security.Cryptography.X509Certificates;
@@ -13,12 +12,13 @@ using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core;
 using UKMCAB.Core.Security;
-using UKMCAB.Core.Services;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
-using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.CAB;
+using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.CosmosDb.Services.User;
+using UKMCAB.Data.CosmosDb.Services.WorkflowTask;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
 using UKMCAB.Infrastructure.Cache;
@@ -49,14 +49,14 @@ if (builder.Configuration["AppInsightsConnectionString"].IsNotNullOrEmpty())
     });
 }
 
-var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration["DataConnectionString"]);
+var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration.GetValue<string>("DataConnectionString"));
 var cosmosDbConnectionString = new CosmosDbConnectionString(builder.Configuration.GetValue<string>("CosmosConnectionString"));
 var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]);
 
-var redisConnectionString = builder.Configuration["RedisConnectionString"];
+var redisConnectionString = builder.Configuration.GetValue<string>("RedisConnectionString");
 if (!redisConnectionString.Contains("allowAdmin"))
 {
-    redisConnectionString = redisConnectionString + ",allowAdmin=true";
+    redisConnectionString += ",allowAdmin=true";
 }
 builder.Services.Configure<FormOptions>(options => options.MultipartBodyLengthLimit = 367001600);
 
@@ -87,7 +87,7 @@ builder.Services.AddHsts(x => x.MaxAge = TimeSpan.FromDays(370));
 builder.Services.AddSingleton(new BasicAuthenticationOptions 
 { 
     Password = builder.Configuration["BasicAuthPassword"], 
-    ExclusionPaths = new() { "/search-feed", "/search/cab-profile-feed" }
+    ExclusionPaths = new List<string> { "/search-feed", "/search/cab-profile-feed" }
 });
 builder.Services.AddSingleton(new RedisConnectionString(redisConnectionString));
 builder.Services.AddSingleton(cognitiveSearchConnectionString);
@@ -104,6 +104,7 @@ builder.Services.AddSingleton<IFileStorage, FileStorageService>();
 builder.Services.AddSingleton<IInitialiseDataService, InitialiseDataService>();
 builder.Services.AddSingleton<IUserAccountRepository, UserAccountRepository>();
 builder.Services.AddSingleton<IUserAccountRequestRepository, UserAccountRequestRepository>();
+builder.Services.AddSingleton<IWorkflowTaskRepository, WorkflowTaskRepository>();
 builder.Services.AddSingleton<IUserService, UserService>();
 builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
@@ -225,8 +226,9 @@ UseSubscriptions(app);
 
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 var telemetryClient = app.Services.GetRequiredService<TelemetryClient>();
-
-await app.Services.GetRequiredService<IDistCache>().InitialiseAsync();
+var redisCache = app.Services.GetRequiredService<IDistCache>();
+await redisCache.InitialiseAsync();
+await redisCache.FlushAsync();
 
 try
 {
@@ -238,22 +240,6 @@ catch (Exception ex)
     await telemetryClient.FlushAsync(CancellationToken.None);
     throw;
 }
-
-_ = Task.Run(async () => // asynchronously precache
-{
-    try
-    {
-        await Task.Delay(5000);
-        var count = await app.Services.GetRequiredService<ICachedPublishedCABService>().PreCacheAllCabsAsync();
-        logger.LogInformation($"Precached {count} CABs");
-    }
-    catch (Exception ex)
-    {
-        telemetryClient.TrackException(ex);
-        await telemetryClient.FlushAsync(CancellationToken.None);
-        logger.LogError(ex, "Error precaching");
-    }
-});
 
 var stats = new Timer(async state =>
 {
