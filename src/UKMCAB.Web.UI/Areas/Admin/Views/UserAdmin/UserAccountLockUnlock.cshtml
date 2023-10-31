@@ -23,13 +23,10 @@
                 </p>
                 break;
 
-            case UserAccountLockToggleUIMode.Unarchive:
+            default:
                 <p class="govuk-body">
                     Unarchiving an account means that the user will be able to log in to the UKMCAB service.
                 </p>
-                break;
-
-            default:
                 break;
         }
 
@@ -67,13 +64,10 @@
                     </div>
                     break;
 
-                case UserAccountLockToggleUIMode.Unarchive:
+                default:
                     <div id="reason-hint" class="govuk-hint">
                         Enter the reason for unarchiving this user account. The user will be notified that their account has been unarchived and the reason will be included.
                     </div>
-                    break;
-
-                default:
                     break;
             }
             
