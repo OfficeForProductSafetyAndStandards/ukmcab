@@ -1,21 +1,21 @@
 ﻿using System.Net;
 using System.Xml;
+using Microsoft.ApplicationInsights;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using Microsoft.Extensions.Options;
+using UKMCAB.Core.Security;
 using UKMCAB.Data;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
-using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
+using UKMCAB.Web.Middleware.BasicAuthentication;
+using UKMCAB.Web.Security;
+using UKMCAB.Web.UI.Areas.Subscriptions.Controllers;
+using UKMCAB.Web.UI.Extensions;
+using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
-using Microsoft.ApplicationInsights;
-using UKMCAB.Core.Security;
-using UKMCAB.Web.UI.Extensions;
-using UKMCAB.Web.UI.Helpers;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.Extensions.Options;
-using UKMCAB.Web.Security;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -50,6 +50,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public static class Routes
         {
             public const string Search = "search.index";
+            public const string SearchFeed = "search.feed";
         }
         public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry, IOptionsMonitor<OpenIdConnectOptions> options)
         {
@@ -88,9 +89,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
             model.FeedLinksViewModel = new FeedLinksViewModel
             {
-                FeedUrl = "/search-feed",
-                EmailUrl = Url.RouteUrl(Subscriptions.Controllers.SubscriptionsController.Routes
-                    .Step0RequestSearchSubscription),
+                FeedUrl = Url.RouteUrl(Routes.SearchFeed) ?? throw new InvalidOperationException(),
+                EmailUrl = Url.RouteUrl(SubscriptionsController.Routes
+                    .Step0RequestSearchSubscription) ?? throw new InvalidOperationException(),
                 SearchKeyword = model.Keywords ?? string.Empty
             };
 
@@ -150,7 +151,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return await cachedSearchService.QueryAsync(opt);
         }
 
-        [Route("search-feed")]
+        [Route("search-feed", Name = Routes.SearchFeed)]
         public async Task<IActionResult> AtomFeed(SearchViewModel model)
         {
             model.Sort = DataConstants.SortOptions.LastUpdated;
