@@ -23,7 +23,6 @@
     <form method="post" enctype="multipart/form-data" novalidate>
         <div class="govuk-grid-column-full">
             <input type="hidden" asp-for="IsFromSummary" />
-            <partial name="Partials/_ValidationSummary" model="null" />
             <span class="govuk-caption-m">@Model.Title</span>
             <h1 class="govuk-heading-l">@Model.Title</h1>
             <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to @DocumentsOptions.MaxFileCount Word, Excel or PDF documents.</p>
@@ -66,38 +65,28 @@
                                 </tr>
 
                                 <tr class="govuk-table__row" id="document-list-row" style="vertical-align: bottom">
-                                    <td class="govuk-table__cell uploaded-file-attribute">  
-                                        <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
-                                            <label class="govuk-label govuk-label--s" asp-for="UploadedFiles[i].Label">File</label>
-                                            <p class="govuk-error-message">
-                                                <span asp-validation-for="UploadedFiles[i].Label" class="govuk-error-message"></span>
-                                            </p>
-
-                                            <input asp-for="UploadedFiles[i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150" />
-                                            <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName" />
-                                        </div>
+                                    <td class="govuk-table__cell uploaded-file-attribute">
+                                        <govuk-input asp-for="UploadedFiles[i].Label" type="text" id="UploadedFiles[@i].Label" value="@uploadedFile.Label" aria-required="true" maxlength="150">
+                                            <govuk-input-label class=govuk-label govuk-label--s">File</govuk-input-label>
+                                        </govuk-input>
+                                        <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName" />
                                     </td>
                                     <td class="govuk-table__cell uploaded-file-attribute">
-                                        <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
-                                            <label class="govuk-label govuk-label--s" asp-for="UploadedFiles[i].Category">Category</label>
-                                            <p class="govuk-error-message">
-                                                <span asp-validation-for="UploadedFiles[i].Category" class="govuk-error-message"></span>
-                                            </p>
-                                            <select id="UploadedFiles[@i].Category" name="UploadedFiles[@i].Category" class="govuk-select @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
-                                                <option value="">Not assigned</option>
-                                                @foreach (var la in items)
+                                        <govuk-select id="UploadedFiles[@i].Category" asp-for="UploadedFiles[i].Category">
+                                            <govuk-select-label>Category</govuk-select-label>
+                                            <govuk-select-item value="">Not assigned</govuk-select-item>
+                                            @foreach (var la in items)
+                                            {
+                                                if (la.Selected)
                                                 {
-                                                    if (la.Selected)
-                                                    {
-                                                        <option value="@la.Value" selected="selected">@la.Text</option>
-                                                    }
-                                                    else
-                                                    {
-                                                        <option value="@la.Value">@la.Text</option>
-                                                    }
+                                                    <govuk-select-item value="@la.Value" selected="true">@la.Text</govuk-select-item>
                                                 }
-                                            </select>
-                                        </div>
+                                                else
+                                                {
+                                                    <govuk-select-item value="@la.Value">@la.Text</govuk-select-item>
+                                                }
+                                            }
+                                        </govuk-select>
                                     </td>
                                     <td class="govuk-table__cell" id="document-list-remove-btn-td"><button class="govuk-link govuk-link--no-visited-state remove-file-button-link" name="submitType" value="@("Remove-" + i)">Remove</button></td>
                                 </tr>

@@ -521,7 +521,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileListViewModel
             {
                 Title = DocumentsOptions.ListTitle,
-                UploadedFiles = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, Category = s.Category}).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = model.UploadedFiles,
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestDocument.StatusValue
