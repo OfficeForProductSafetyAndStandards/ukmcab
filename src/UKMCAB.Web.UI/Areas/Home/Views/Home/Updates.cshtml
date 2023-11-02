@@ -11,7 +11,7 @@
     </div>
     <div class="atom-feed atom-feed-top govuk-grid-column-one-third">
 
-        <partial name="Partials/_FeedLinks" model="Model?.FeedLinksViewModel" />
+        <partial name="Partials/_FeedLinks" model="Model?.FeedLinksViewModel"/>
     </div>
 </div>
 
@@ -30,7 +30,63 @@
 
     </div>
 </div>
-
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <h2 class="govuk-heading-m">Release 2.1 - Updates to the home page, internal CAB search, CAB management and user management for users that are signed in.</h2>
+                <p class="govuk-body">
+                    03 November 2023
+                </p>
+                <p class="govuk-body">
+                    This release includes several new features and resolves small issues from previous releases.
+                </p>
+                <p class="govuk-body">For signed in users:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>New landing page showing information and actions on one page</li>
+                    <li>New CAB search filter for user groups</li>
+                    <li>Draft CAB records now show the user group in search results</li>
+                    <li>The ability to unarchive an archived CAB</li>
+                    <li>Added UKAS user group and permissions</li>
+                    <li>Resolved issue with GOV.UK One Login timeouts</li>
+                </ul>
+                <p class="govuk-body">For CAB management:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Multiple product schedules can be uploaded at once</li>
+                    <li>The CAB number can now be hidden from public view</li>
+                    <li>The CAB summary page, shown when editing or at the end of creating a CAB, now highlights sections that have been completed and where more information is required</li>
+                    <li>A CAB history page with different views for public and signed in users</li>
+                </ul>
+                <p class="govuk-body">For OPSS administrators:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Tabs for locked and archived accounts have been added to the user management pages</li>
+                    <li>User management pages have new sorting options</li>
+                    <li>The ability to edit and update user profiles</li>
+                    <li>A history page for each user profile</li>
+                </ul>
+                <p class="govuk-body">For all users:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Added options to the ‘Is there anything wrong with this page’ feedback form to direct issues to the correct team</li>
+                </ul>
+            </div>
+        </dl>
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <h2 class="govuk-heading-m">Release 2.0.1 - Fix applied for publishing a CAB</h2>
+                <p class="govuk-body">
+                    19 October 2023
+                </p>
+                <p class="govuk-body">
+                    This release resolves an issue that was happening when an administrator saved a CAB.
+                </p>
+            </div>
+        </dl>
+    </div>
+</div>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -38,7 +94,7 @@
             <div class="govuk-summary-list__row">
 
                 <h2 class="govuk-heading-m">Release 2.0 – GOV.UK One Login and user management</h2>
-                
+
                 <p class="govuk-body">13 October 2023</p>
 
                 <p class="govuk-body">
@@ -98,7 +154,7 @@
                     This release resolves three issues. When a search filter for mutual recognition agreements (MRA) was selected, a special character was
                     stopping them from being removed in the filter area at the top of the page. When the random order for the search is calculated each day,
                     it was intermittently failing, and the system became unresponsive for a few seconds. Also, the limit of 5 product schedules for a CAB profile
-                    has been increased to 35. 
+                    has been increased to 35.
                 </p>
             </div>
         </dl>
@@ -117,7 +173,7 @@
                     This release includes several search improvements. The search box has been separated from the search filters area.
                     The mobile view will now show the search box above the search results and on desktop views the search box has moved outside of the filters section.
                     The search term can now be cleared easily with the addition of a close icon. When search filters are selected, they appear at the top of the search results in a list and can be removed individually, updating the search results.
-                    These improvements make searching and filtering simpler and quicker. 
+                    These improvements make searching and filtering simpler and quicker.
                 </p>
                 <p class="govuk-body">
                     Various changes have been made in the CAB create and edit screens to make the process easier.
@@ -125,7 +181,7 @@
                     This makes it clearer where legislative areas are assigned and where to edit them.
                     A warning message will show when a CAB name already exists and prompt to check the duplication before continuing.
                     The process of uploading another product schedule has been improved to automatically save the details before uploading the next schedule,
-                    and a small addition to the review date entry field makes it easier to complete and quicker to progress. 
+                    and a small addition to the review date entry field makes it easier to complete and quicker to progress.
                 </p>
 
                 <p class="govuk-body">Included in this release are:</p>
@@ -154,10 +210,10 @@
                 </p>
                 <p class="govuk-body">
                     This release includes the ability to assign the product schedules uploaded to Conformity Assessment Bodies (CAB) profiles to the relevant legislative areas.
-                    These legislative areas will be shown on the CAB profile page and in search results. The titles of the uploaded product schedules can also be changed, making them clearer and relevant to the CAB and the legislative area. 
+                    These legislative areas will be shown on the CAB profile page and in search results. The titles of the uploaded product schedules can also be changed, making them clearer and relevant to the CAB and the legislative area.
                 </p>
                 <p class="govuk-body">
-                    The search results have also been expanded to show all the legislative areas and body types. The final round of accessibility updates and issues from the Minimum Viable Product (MVP) release have been completed. 
+                    The search results have also been expanded to show all the legislative areas and body types. The final round of accessibility updates and issues from the Minimum Viable Product (MVP) release have been completed.
                 </p>
 
                 <p class="govuk-body">Included in this release are: </p>
@@ -266,5 +322,3 @@
         </dl>
     </div>
 </div>
-
-

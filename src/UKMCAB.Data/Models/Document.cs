@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Data.Models
+﻿using UKMCAB.Data.Models.Workflow;
+
+namespace UKMCAB.Data.Models
 {
     public class Document
     {
@@ -17,6 +19,7 @@
         public DateTime LastUpdatedDate => AuditLog != null && AuditLog.Any() ? AuditLog.Max(al => al.DateTime) : DateTime.MinValue;
         public string LastUserGroup => AuditLog != null && AuditLog.Any() ? AuditLog.OrderBy(al => al.DateTime).Last().UserRole : string.Empty;
 
+        private List<WorkflowTask> Tasks { get; set; }
         // About
         public string CABId { get; set; }
         public string Name { get; set; }
@@ -47,14 +50,13 @@
         public List<string> TestingLocations { get; set; }
         public List<string> BodyTypes { get; set; }
         public List<string> LegislativeAreas { get; set; }
-
         // Schedules of accreditation
         public List<FileUpload>? Schedules { get; set; } = new();
 
         public string ScheduleLabels => string.Join(", ", Schedules?.Select(sch => sch.Label) ?? new List<string>());
 
         // Supporting documents
-        public List<FileUpload>? Documents { get; set; }
+        public List<FileUpload>? Documents { get; set; } 
 
         public string DocumentLabels => string.Join(", ", Documents?.Select(doc => doc.Label) ?? new List<string>());
 

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Core.Security;
-using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
@@ -21,15 +21,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public AdminController(ICABAdminService cabAdminService)
         {
             _cabAdminService = cabAdminService;
-        }
-
-        [HttpGet, Route("", Name = Routes.Index)]
-        public async Task<IActionResult> Index()
-        {
-            return View(new BasicPageModel
-            {
-                Title = "Admin dashboard"
-            });
         }
 
         [HttpGet, Route("cab-management", Name = Routes.CABManagement)]

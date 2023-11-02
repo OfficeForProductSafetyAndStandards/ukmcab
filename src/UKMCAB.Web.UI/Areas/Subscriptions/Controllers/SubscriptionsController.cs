@@ -2,6 +2,7 @@
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security;
 using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Subscriptions.Core.Domain;
 using UKMCAB.Subscriptions.Core.Services;
 using UKMCAB.Web.UI.Areas.Search.Controllers;

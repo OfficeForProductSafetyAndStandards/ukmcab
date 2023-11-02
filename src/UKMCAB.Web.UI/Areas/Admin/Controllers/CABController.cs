@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
-using UKMCAB.Core.Services;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Helpers;
@@ -94,10 +94,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 document.RenewalDate = reviewDate;
                 document.UKASReference = model.UKASReference;
 
-                var duplicateDocuments = await _cabAdminService.DocumentWithKeyIdentifiersExistsAsync(document);
+                var duplicateDocuments = await _cabAdminService.FindOtherDocumentsByCabNumberOrUkasReference(document.CABId, document.CABNumber, document.UKASReference);
                 if (duplicateDocuments.Any())
                 {
-                    if (model.CABNumber != null && duplicateDocuments.Any(d => d.CABNumber.DoesEqual(model.CABNumber)))
+                    if (model.CABNumber != null && duplicateDocuments.Any(d => d.CabNumber.DoesEqual(model.CABNumber)))
                     {
                         ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
                     }
@@ -111,7 +111,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     var createdDocument = !model.IsNew ?
-                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, document, submitType == Constants.SubmitType.Save) :
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, document, User.IsInRole(Roles.UKAS.Id)) :
                         await _cabAdminService.CreateDocumentAsync(userAccount, document, submitType == Constants.SubmitType.Save);
                     if (createdDocument == null)
                     {
@@ -151,7 +151,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 latest.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest, false);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
                 model.LegislativeAreas = latest.LegislativeAreas;
             }
 
@@ -182,7 +182,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType == "Add" && model.TestingLocations.Any())
             {
                 latestDocument.TestingLocations = model.TestingLocations;
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, submitType == Constants.SubmitType.Save);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 model.TestingLocations.Add(string.Empty);
                 ModelState.Clear();
             }
@@ -190,7 +190,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var locationToRemove = submitType.Replace("Remove-", string.Empty);
                 model.TestingLocations.Remove(locationToRemove);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, submitType == Constants.SubmitType.Save);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 ModelState.Clear();
             }
             else if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
@@ -199,7 +199,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.BodyTypes = model.BodyTypes;
                 latestDocument.LegislativeAreas = model.LegislativeAreas;
 
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, submitType == Constants.SubmitType.Save);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, User.IsInRole(Roles.UKAS.Id));
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary ?
@@ -289,7 +289,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.RegisteredOfficeLocation = model.RegisteredOfficeLocation;
 
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, User.IsInRole(Roles.UKAS.Id) && submitType == Constants.SubmitType.Save);
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary ?

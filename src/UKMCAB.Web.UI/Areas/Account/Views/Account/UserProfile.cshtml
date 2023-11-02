@@ -1,5 +1,8 @@
 ﻿@using UKMCAB.Web.UI.Areas.Account.Controllers
 @model UserProfileViewModel
+@{
+    ViewData["nav"] = "profile";
+}
 
 @if (Model.IsEdited)
 {

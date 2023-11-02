@@ -1,5 +1,6 @@
 ﻿using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Models.ViewModels.Home;
@@ -55,6 +56,14 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             ShareUtils.AddDetails(HttpContext, model.FeedLinksViewModel);
 
             return View(model);
+        }
+
+        [Route("search-feed")]
+        public IActionResult SearchFeed()
+        {
+            //Permanent redirect for existing feed subscribers
+            return RedirectPermanent(Url.RouteUrl(SearchController.Routes.SearchFeed) ??
+                              throw new InvalidOperationException());
         }
 
         public static class Routes
