@@ -16,13 +16,13 @@
                     <a class="govuk-tabs__tab" href="#active-user-list">Active</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" style="color:#0b0c0c;">Requests (@Model.PendingAccountsCount)</a>
+                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="tab-item-title">Requests (@Model.PendingAccountsCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListLocked" style="color:#0b0c0c;">Locked</a>
+                    <a asp-route="@UserAdminController.Routes.UserListLocked" class="tab-item-title">Locked</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListArchived" style="color:#0b0c0c;">Archived</a>
+                    <a asp-route="@UserAdminController.Routes.UserListArchived" class="tab-item-title">Archived</a>
                 </li>
             </ul>
 
@@ -66,7 +66,6 @@
                                 <th scope="col" class="govuk-table__header">
                                     <sort target="@nameof(UserAccount.LastLogonUtc)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last log in</sort>
                                 </th>
-                                <th scope="col" class="govuk-table__header">Action</th>
                                 }
                         </tr>
                     </thead>
@@ -78,7 +77,7 @@
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell user-table-cell__wide" title="@account.FirstName">
                                         <label aria-hidden="true">First name</label>
-                                        @account.FirstName.Ellipsis(15)
+                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">@account.FirstName.Ellipsis(15)</a>
                                     </td>
                                     <td class="govuk-table__cell user-table-cell__mobile" title="@account.FirstName">
                                         <label aria-hidden="true">First name</label>
@@ -111,10 +110,6 @@
                                     <td class="govuk-table__cell">
                                         <label aria-hidden="true">Last log in</label>
                                         @(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")
-                                    </td>
-                                    <td class="govuk-table__cell user-table-cell__wide">
-                                        <label aria-hidden="true">Action</label>
-                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View</a>
                                     </td>
                                 </tr>
                             }
