@@ -17,13 +17,13 @@
                     <a class="govuk-tabs__tab" href="#requests">Requests (@Model.Pagination.Total)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserList" class="user-management-unselected-link">Active</a>
+                    <a asp-route="@UserAdminController.Routes.UserList" class="user-management-unselected-link">Active (@Model.ActiveUsersCount)</a>
                 </li>                
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListLocked" class="user-management-unselected-link">Locked</a>
+                    <a asp-route="@UserAdminController.Routes.UserListLocked" class="user-management-unselected-link">Locked (@Model.LockedUsersCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListArchived" class="user-management-unselected-link">Archived</a>
+                    <a asp-route="@UserAdminController.Routes.UserListArchived" class="user-management-unselected-link">Archived (@Model.ArchivedUsersCount)</a>
                 </li>
             </ul>
 

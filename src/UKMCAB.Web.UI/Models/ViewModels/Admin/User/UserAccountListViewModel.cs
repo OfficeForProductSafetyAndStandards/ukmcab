@@ -8,6 +8,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.User
         public string? Title { get; set; }
         public List<UserAccount> UserAccounts { get; set; }
         public int PendingAccountsCount { get; set; }
+        public int ActiveUsersCount { get; set; }
+        public int LockedUsersCount { get; set; }
+        public int ArchivedUsersCount { get; set; }
         public bool LockedOnly { get; set; }
         public PaginationViewModel Pagination { get; set; }
         public string? SortField { get; set; }
