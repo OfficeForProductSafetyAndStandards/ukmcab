@@ -16,7 +16,7 @@
                     <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="user-management-unselected-link">Requests (@Model.PendingAccountsCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#active-user-list">Active (@Model.Pagination.Total)</a>
+                    <a class="govuk-tabs__tab" href="#active-user-list">Active (@Model.ActiveUsersCount)</a>
                 </li>                
                 <li class="govuk-tabs__list-item">
                     <a asp-route="@UserAdminController.Routes.UserListLocked" class="user-management-unselected-link">Locked (@Model.LockedUsersCount)</a>

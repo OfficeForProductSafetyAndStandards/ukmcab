@@ -19,7 +19,7 @@
                     <a asp-route="@UserAdminController.Routes.UserList" class="user-management-unselected-link">Active (@Model.ActiveUsersCount)</a>
                 </li>                
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#locked-user-list">Locked (@Model.Pagination.Total)</a>
+                    <a class="govuk-tabs__tab" href="#locked-user-list">Locked (@Model.LockedUsersCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
                     <a asp-route="@UserAdminController.Routes.UserListArchived" class="user-management-unselected-link">Archived (@Model.ArchivedUsersCount)</a>
