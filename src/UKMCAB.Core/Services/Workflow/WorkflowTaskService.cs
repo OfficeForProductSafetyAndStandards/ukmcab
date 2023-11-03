@@ -16,14 +16,18 @@ public class WorkflowTaskService : IWorkflowTaskService
     public async Task<List<WorkflowTask>> GetUnassignedBySubmittedUserRoleAsync(string submitterUserRole)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
-                w.Submitter.Role != null && w.Submitter.Role.Equals(submitterUserRole, StringComparison.CurrentCultureIgnoreCase)))
+                w.Submitter.Role != null &&
+                w.Submitter.Role.Equals(submitterUserRole, StringComparison.CurrentCultureIgnoreCase) && !w.Completed))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
-    public async Task<List<WorkflowTask>> GetByAssignedUserRoleAndStatusAsync(string assignedUserRole, TaskState taskState)
+    public async Task<List<WorkflowTask>> GetByAssignedUserRoleAndCompletedAsync(string assignedUserRole,
+        bool completed = false)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
-                w.Assignee != null && w.Assignee.Role != null && w.Submitter.Role != null && w.Assignee.Role.Equals(assignedUserRole, StringComparison.CurrentCultureIgnoreCase) && w.State.Equals(taskState.ToString())))
+                w.Assignee != null && w.Assignee.Role != null && w.Submitter.Role != null &&
+                w.Assignee.Role.Equals(assignedUserRole, StringComparison.CurrentCultureIgnoreCase) &&
+                w.Completed.Equals(completed)))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
