@@ -30,7 +30,7 @@
     <tbody class="govuk-table__body">
     @if (Model.ShowTableItems)
     {
-        @foreach (var item in Model.Items)
+        @foreach (var item in Model.UnassignedItems)
         {
             <tr class="govuk-table__row">
                 <td class="govuk-table__cell">

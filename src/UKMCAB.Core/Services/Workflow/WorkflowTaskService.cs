@@ -1,6 +1,7 @@
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Mappers;
 using UKMCAB.Data.CosmosDb.Services.WorkflowTask;
+// ReSharper disable SpecifyStringComparison
 
 namespace UKMCAB.Core.Services.Workflow;
 
@@ -17,7 +18,9 @@ public class WorkflowTaskService : IWorkflowTaskService
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
                 w.Submitter.Role != null &&
-                w.Submitter.Role.Equals(submitterUserRole, StringComparison.CurrentCultureIgnoreCase) && !w.Completed))
+                w.Submitter.Role.ToLower() == submitterUserRole.ToLower() && 
+                w.Assignee == null && 
+                !w.Completed))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
@@ -25,16 +28,17 @@ public class WorkflowTaskService : IWorkflowTaskService
         bool completed = false)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
-                w.Assignee != null && w.Assignee.Role != null && w.Submitter.Role != null &&
-                w.Assignee.Role.Equals(assignedUserRole, StringComparison.CurrentCultureIgnoreCase) &&
-                w.Completed.Equals(completed)))
+                w.Assignee != null && 
+                w.Assignee.Role != null &&
+                w.Assignee.Role.ToLower() == assignedUserRole.ToLower() &&
+                w.Completed == completed))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
     public async Task<List<WorkflowTask>> GetByAssignedUserAsync(string userId)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
-                w.Assignee != null && w.Assignee.Id.Equals(userId, StringComparison.CurrentCultureIgnoreCase)))
+                w.Assignee != null && w.Assignee.Id == userId))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
