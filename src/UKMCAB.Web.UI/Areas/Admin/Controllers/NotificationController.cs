@@ -16,7 +16,7 @@ public class NotificationController : Controller
 {
     public static class Routes
     {
-        public const string NotificationsHome = "admin.notifications";
+        public const string NotificationsUnassigned = "admin.notifications";
         public const string NotificationsAssignedToMe = "admin.notifications.assigned.me";
         public const string NotificationsAssignedToMyGroup = "admin.notifications.assigned.group";
         public const string NotificationsCompleted = "admin.notifications.completed";
@@ -25,7 +25,9 @@ public class NotificationController : Controller
 
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly ICABAdminService _cabAdminService;
+    private string? _role;
 
+   
     public NotificationController(IWorkflowTaskService workflowTaskService, ICABAdminService cabAdminService)
     {
         _workflowTaskService = workflowTaskService;
@@ -33,12 +35,41 @@ public class NotificationController : Controller
     }
 
 
-    [HttpGet(Name = Routes.NotificationsHome)]
+    [HttpGet(Name = Routes.NotificationsUnassigned)]
     public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
     {
-        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
-        var unassignedNotifications = await _workflowTaskService.GetUnassignedBySubmittedUserRoleAsync(role);
-        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> items = new();
+        var test = Request.Path;
+        var testBase = Request.PathBase;
+        _role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
+        var unassignedNotifications = await _workflowTaskService.GetUnassignedBySubmittedUserRoleAsync(_role);
+        var model = await CreateNotificationsViewModelAsync(sf, sd, pageNumber, unassignedNotifications);
+        return View(model);
+    }
+
+    [HttpGet("assigned-to-me", Name = Routes.NotificationsAssignedToMe)]
+    public async Task<IActionResult> AssignedToMe(string sf, string sd, int pageNumber = 1)
+    {
+        _role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
+        var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(_role);
+        var model = await CreateNotificationsViewModelAsync(sf, sd, pageNumber, assignedToMe);
+        return Redirect(Url.RouteUrl(NotificationController.Routes.NotificationsUnassigned) + "#assigned-me" );
+
+        return View("~/Areas/Admin/Views/Notification/Index.cshtml", model);
+    }
+
+    [HttpGet("/assigned-to-group", Name = Routes.NotificationsAssignedToMyGroup)]
+    public async Task<IActionResult> AssignedToGroup(string sf, string sd, int pageNumber = 1)
+    {
+        _role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
+        var assignedToGroupPending = await _workflowTaskService.GetByAssignedUserRoleAndCompletedAsync(_role);
+        var model = await CreateNotificationsViewModelAsync(sf, sd, pageNumber, assignedToGroupPending);
+        return View("~/Areas/Admin/Views/Notification/Index.cshtml", model);
+    }
+
+    private async Task<NotificationsViewModel> CreateNotificationsViewModelAsync(string sf, string sd, int pageNumber,
+        List<WorkflowTask> unassignedNotifications)
+    {
+        var items = new List<(string From, string Subject, string CABName, string SentOn, string? CABLink)>();
         foreach (var notification in unassignedNotifications)
         {
             var cab = await _cabAdminService.GetLatestDocumentAsync(notification.CABId.ToString());
@@ -47,7 +78,7 @@ public class NotificationController : Controller
                 CABLink: Url.RouteUrl(Routes.NotificationDetails, notification.Id));
             items.Add(item);
         }
-        
+
         var model = new NotificationsViewModel
         (
             Constants.PageTitle.Notifications,
@@ -68,7 +99,7 @@ public class NotificationController : Controller
                 {
                     new("From", "From")
                 }));
-        return View(model);
+        return model;
     }
 
     [HttpGet("details/{id}", Name = Routes.NotificationDetails)]

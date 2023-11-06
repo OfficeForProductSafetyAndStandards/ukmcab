@@ -13,7 +13,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <govuk-tabs class="notifications-tabs" title=" ">
-            <govuk-tabs-item id="Unassigned" label="Unassigned" asp-route="@NotificationController.Routes.NotificationsHome">
+            <govuk-tabs-item id="Unassigned" label="Unassigned" asp-route="@NotificationController.Routes.NotificationsUnassigned">
                 <partial name="_NotificationsTable" model="@Model"/>
             </govuk-tabs-item>
             <govuk-tabs-item id="assigned-me" label="Assigned to me" asp-route="@NotificationController.Routes.NotificationsAssignedToMe">
