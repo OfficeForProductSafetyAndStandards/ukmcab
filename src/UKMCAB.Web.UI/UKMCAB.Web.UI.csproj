@@ -86,10 +86,4 @@
     </None>
   </ItemGroup>
 
-  <ItemGroup>
-    <AdditionalFiles Include="Areas\Admin\Views\NotificationDetails\Detail.cshtml" />
-    <AdditionalFiles Include="Areas\Admin\Views\NotificationDetails\Index.cshtml" />
-    <AdditionalFiles Include="Areas\Admin\Views\NotificationDetails\_NotificationsTable.cshtml" />
-  </ItemGroup>
-
 </Project>
