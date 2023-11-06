@@ -55,7 +55,7 @@
                         @Model.SentOn
                     </govuk-summary-list-row-value>
                 </govuk-summary-list-row>
-                @if ( Model.Status == "Completed")
+                @if (Model.Status!.ToLowerInvariant() == "completed")
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
@@ -66,7 +66,7 @@
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                 }
-                @if (Model.Status == "Assigned")
+                @if (Model.Status!.ToLowerInvariant() == "assigned")
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
@@ -85,7 +85,7 @@
                         <a class="govuk-link" href="@Model.ViewLink.ViewLinkAddress">@Model.ViewLink.ViewLinkName</a>
                     </govuk-summary-list-row-value>
                 </govuk-summary-list-row>
-                @if ( Model.Status == "Completed")
+                @if (Model.Status!.ToLowerInvariant() == "completed")
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
@@ -106,16 +106,16 @@
                 }
             </govuk-summary-list>
 
-            @if (Model.Status == "Unassigned")
+            @if (Model.Status!.ToLowerInvariant() == "unassigned")
             {
-                <govuk-select name="SelectAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-label--s" asp-for="SelectAssignee">
+                <govuk-select name="SelectedAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-label--s" asp-for="SelectedAssignee">
                     <govuk-select-label>Select an assignee</govuk-select-label>
                     <govuk-select-hint>The user will be assigned to this notification</govuk-select-hint>
                     <govuk-select-item value="">Select an assignee</govuk-select-item>
 
                     @foreach (var assignee in @Model.SelectAssignee)
                     {
-                        if (assignee.Value == Model.SelectedAssignee)
+                        if (assignee.Value == Model.SelectedAssigneeId)
                         {
                             <govuk-select-item value="@assignee.Value" selected>@assignee.Text</govuk-select-item>
                         }
@@ -126,19 +126,26 @@
                     }
                 </govuk-select>
             }
-            @if (Model.Status == "Assigned")
+            @if (Model.Status!.ToLowerInvariant() == "assigned")
             {
                 <govuk-summary-list>
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
-                            Assignee Assigned to
+                            Assignee
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
-                            @* Todo - hide the label *@
+
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Assigned to
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
                             <govuk-select name="SelectedAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-visually-hidden" asp-for="SelectedAssignee">
                                 @foreach (var assignee in @Model.SelectAssignee)
                                 {
-                                    if (assignee.Value == Model.SelectedAssignee)
+                                    if (assignee.Value == Model.SelectedAssigneeId)
                                     {
                                         <govuk-select-item value="@assignee.Value" selected>@assignee.Text</govuk-select-item>
                                     }
@@ -168,11 +175,11 @@
                     </govuk-summary-list-row>
                 </govuk-summary-list>
             }
-            @if (Model.Status != "Completed")
+            @if (Model.Status!.ToLowerInvariant() != "completed")
             {
                 <div class="govuk-button-group">
                     <govuk-button id="search-keyword-button" type="submit">Update</govuk-button>
-                    <a asp-area="admin" asp-controller="UserAdmin" asp-action="UserAccount" class="govuk-link">Cancel</a>
+                    <a asp-area="admin" asp-controller="Notification" asp-action="Index" class="govuk-link">Cancel</a>
                 </div>
             }
         </form>
