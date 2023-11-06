@@ -241,6 +241,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(new ArchiveCABViewModel
             {
                 CABId = id,
+                Name = cabDocument.Name,
                 ReturnURL = returnUrl,
                 HasDraft = draft != null
             });
@@ -256,7 +257,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveReason);
+                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveInternalReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,

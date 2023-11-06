@@ -22,7 +22,7 @@
         <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                 <h1 class="govuk-fieldset__heading">
-                    Archive CAB profile
+                    Archive @Model.Name
                 </h1>
             </legend>
             <form method="post">
@@ -34,15 +34,47 @@
                         <strong>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted.</strong>
                     </div>
                 }
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchiveReason")">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchiveInternalReason")">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="ArchiveInternalReason">
+                            Internal notes
+                        </label>
+                    </h3>
                     <div id="wrong-hint" class="govuk-hint">
-                        Enter the reason for archiving this CAB.
+                        These notes will only be seen by users that are signed in to the UKMCAB service.
                     </div>
-                    <p error-id-for="ArchiveReason" class="govuk-error-message">
-                        <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
+                    <p error-id-for="ArchiveInternalReason" class="govuk-error-message">
+                        <span asp-validation-for="ArchiveInternalReason" class="govuk-error-message"></span>
                     </p>
-                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ArchiveReason")" rows="5" aria-describedby="wrong-hint" asp-for="ArchiveReason" error-describedby-for="ArchiveReason"></textarea>
+                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ArchiveInternalReason")" rows="5" aria-describedby="wrong-hint" asp-for="ArchiveInternalReason" error-describedby-for="ArchiveInternalReason"></textarea>
+                    <div class="govuk-hint">You have 1,000 characters remaining</div>
                 </div>
+
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchivePublicReason")">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="ArchivePublicReason">
+                            Reason (optional)
+                        </label>
+                    </h3>
+                    <div id="wrong-hint" class="govuk-hint">
+                        Enter the reason for archiving this CAB. This will be shown to all users in the CAB history page.
+                    </div>
+                    <p error-id-for="ArchivePublicReason" class="govuk-error-message">
+                        <span asp-validation-for="ArchivePublicReason" class="govuk-error-message"></span>
+                    </p>
+                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ArchivePublicReason")" rows="5" aria-describedby="wrong-hint" asp-for="ArchivePublicReason" error-describedby-for="ArchivePublicReason"></textarea>
+                    <div class="govuk-hint">You have 1,000 characters remaining</div>
+                </div>
+
+
+
+
+
+
+
+
+
                 <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">
