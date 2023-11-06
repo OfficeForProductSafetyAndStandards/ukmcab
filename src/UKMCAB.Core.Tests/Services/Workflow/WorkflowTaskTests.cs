@@ -112,7 +112,7 @@ public class WorkflowTaskServiceTests
             null, _faker.Random.Words(), _faker.Date.Past(), ukasUser, _faker.Date.Past(), null, null, false,
             _faker.Random.Guid()
         );
-        var dataTask = task.MapToWorkflowTaskData();
+      
         var newTask = task;
         newTask.Completed = true;
         newTask.Assignee = CreateFakeOpssUser();
@@ -169,7 +169,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByAssignedUserAsync(userAssigned.UserID);
+        var result = await _sut.GetByAssignedUserAsync(userAssigned.UserId);
 
         // Arrange
         Assert.AreEqual(2, result.Count);
@@ -193,7 +193,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByAssignedUserRoleAndStatusAsync(userAssigned.UserID, TaskState.Done);
+        var result = await _sut.GetByAssignedUserRoleAndCompletedAsync(userAssigned.UserId, true);
 
         // Arrange
         Assert.AreEqual(2, result.Count);
@@ -218,7 +218,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByAssignedUserRoleAndStatusAsync(userSubmitter.Role!, TaskState.Done);
+        var result = await _sut.GetByAssignedUserRoleAndCompletedAsync(userSubmitter.Role!, true);
 
         // Arrange
         Assert.AreEqual(2, result.Count);

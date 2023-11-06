@@ -9,7 +9,7 @@
     cursor: pointer;
     text-align: left;
     color: $govuk-link-colour;
-    vertical-align: top;
+    vertical-align: bottom;
 
     @include govuk-media-query($until: tablet) {
         padding: 12px 0 12px 0;
@@ -18,7 +18,7 @@
 
 #file-upload-list-container {
 
-    #files-uploaded-table {
+    #doc-list-files-uploaded-table {
         table-layout: fixed;
 
         thead {
@@ -52,21 +52,96 @@
 
         tbody {
 
-            #document-list-row {
+            #uploaded-file-name-tr {
+
+                #uploaded-file-name-td {
+                    padding-top: 20px;
+                }
+            }
+
+            tr {
+
                 @include govuk-media-query($until: tablet) {
                     border-bottom: 1px solid $govuk-border-colour;
                     display: block;
                     padding: 10px 0;
                 }
 
+                #uploaded-file-name-td {
+                    padding-top: 20px;
+                }
+
+                #document-list-remove-btn-td {
+                    vertical-align: bottom;
+                    padding-bottom: 20px;
+                }
+
+                .uploaded-file-attribute {
+                    padding-top: 0px;
+                    padding-bottom: 20px;
+                    vertical-align: bottom;
+                }
+
+                .schedule-upload-attribute {
+                    padding-top: 0px;
+                    padding-bottom: 20px;
+                    vertical-align: top;
+                }
+
                 td {
                     overflow-wrap: break-word;
-                    vertical-align: top;
 
+                    select {
+                        width: 90%;
+
+                        @include govuk-media-query($until: tablet) {
+                            width: 100%;
+                        }
+                    }
 
                     @include govuk-media-query($until: tablet) {
                         display: block;
                         border-bottom: none;
+                        padding: 5px 0;
+                    }
+
+                    p {
+                        @include govuk-media-query($until: tablet) {
+                            padding: 0;
+                            margin-bottom: 5px;
+                        }
+                    }
+
+                    .file-name {
+                        @include govuk-media-query($until: tablet) {
+                            padding-bottom: 5px;
+                        }
+                    }
+
+                    .file-label {
+                        padding-left: 31px;
+                        margin-bottom: 0;
+
+                        @include govuk-media-query($until: tablet) {
+                            padding-left: 0;
+                        }
+                    }
+
+                    .file-legislative-area {
+                        margin-bottom: 0;
+                    }
+
+                    .file-number {
+                        display: inline-block;
+                        padding-right: 5px;
+                    }
+
+                    .file-link {
+                        padding-left: 5px;
+                    }
+
+                    .govuk-form-group {
+                        margin-bottom: 0;
                     }
 
                     label {
@@ -74,12 +149,7 @@
 
                         @include govuk-media-query($until: tablet) {
                             display: block;
-                            padding-top: 15px;
                         }
-                    }
-
-                    .govuk-form-group {
-                        margin-top: -12px;
                     }
                 }
             }
@@ -189,6 +259,7 @@
             }
 
             tr {
+
                 @include govuk-media-query($until: tablet) {
                     border-bottom: 1px solid $govuk-border-colour;
                     display: block;

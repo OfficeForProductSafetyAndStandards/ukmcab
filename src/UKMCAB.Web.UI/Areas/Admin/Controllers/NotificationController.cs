@@ -1,6 +1,11 @@
+using System.Globalization;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using UKMCAB.Data.Models;
+using UKMCAB.Core.Domain.Workflow;
+using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.CAB;
+using UKMCAB.Core.Services.Workflow;
+using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
@@ -12,22 +17,41 @@ public class NotificationController : Controller
     public static class Routes
     {
         public const string NotificationsHome = "admin.notifications";
+        public const string NotificationsAssignedToMe = "admin.notifications.assigned.me";
+        public const string NotificationsAssignedToMyGroup = "admin.notifications.assigned.group";
+        public const string NotificationsCompleted = "admin.notifications.completed";
         public const string NotificationDetails = "admin.notification.details";
+    }
+
+    private readonly IWorkflowTaskService _workflowTaskService;
+    private readonly ICABAdminService _cabAdminService;
+
+    public NotificationController(IWorkflowTaskService workflowTaskService, ICABAdminService cabAdminService)
+    {
+        _workflowTaskService = workflowTaskService;
+        _cabAdminService = cabAdminService;
     }
 
 
     [HttpGet(Name = Routes.NotificationsHome)]
     public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
     {
-        var items = new List<(string From, string Subject, string CABName, string SentOn, string CABLink)>
+        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
+        var unassignedNotifications = await _workflowTaskService.GetUnassignedBySubmittedUserRoleAsync(role);
+        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> items = new();
+        foreach (var notification in unassignedNotifications)
         {
-            new("From test", "Subject test", "CAB name test", DateTime.Now.ToShortDateString(), "view cab link")
-        };
-        //todo connect to service
+            var cab = await _cabAdminService.GetLatestDocumentAsync(notification.CABId.ToString());
+            var item = (From: notification.Submitter.FirstAndLastName, Subject: notification.TaskType.ToString(),
+                CABName: cab.Name, SentOn: notification.SentOn.ToString(CultureInfo.CurrentCulture),
+                CABLink: Url.RouteUrl(Routes.NotificationDetails, notification.Id));
+            items.Add(item);
+        }
+        
         var model = new NotificationsViewModel
         (
             Constants.PageTitle.Notifications,
-            items.Any(),
+            unassignedNotifications.Any(),
             sf,
             SortDirectionHelper.Get(sd),
             items,
@@ -35,7 +59,7 @@ public class NotificationController : Controller
             {
                 PageNumber = pageNumber,
                 ResultsPerPage = 5,
-                Total = items.Count
+                Total = unassignedNotifications.Count
             },
             new MobileSortTableViewModel(
                 "asc",
@@ -47,7 +71,7 @@ public class NotificationController : Controller
         return View(model);
     }
 
-    [HttpGet("details", Name = Routes.NotificationDetails)]
+    [HttpGet("details/{id}", Name = Routes.NotificationDetails)]
     public IActionResult Detail(string id)
     {
         //todo connect to service
@@ -57,7 +81,7 @@ public class NotificationController : Controller
             ("user1", "Test User 1"),
             ("user2", "Test User 2")
         };
-      
+
 
         var vm = new NotificationDetailViewModel(
             "Notification Details",
@@ -80,7 +104,7 @@ public class NotificationController : Controller
     }
 
     //todo : Post needs to be implement
-    [HttpPost("details", Name = Routes.NotificationDetails)]
+    [HttpPost("details/{id}", Name = Routes.NotificationDetails)]
     public async Task<IActionResult> Detail(string id, NotificationDetailViewModel model)
     {
         if (ModelState.IsValid)
