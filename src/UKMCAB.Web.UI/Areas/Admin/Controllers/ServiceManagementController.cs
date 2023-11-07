@@ -28,7 +28,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
 
-        [HttpGet("admin/service-management", Name = "service.management")]
+        [HttpGet("service-management", Name = "service.management")]
         public async Task<IActionResult> ServiceManagement()
         {
             return View(new InternalLandingPageViewModel
