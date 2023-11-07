@@ -15,11 +15,10 @@ public class WorkflowTaskService : IWorkflowTaskService
     }
 
     
-    public async Task<List<WorkflowTask>> GetUnassignedBySubmittedUserRoleAsync(string submitterUserRole)
+    public async Task<List<WorkflowTask>> GetUnassignedByForRoleIdAsync(string roleId)
     {
         return (await _workflowTaskRepository.QueryAsync(w =>
-                w.Submitter.Role != null &&
-                w.Submitter.Role.ToLower() == submitterUserRole.ToLower() && 
+               w.ForRoleId.ToLower() == roleId.ToLower() &&
                 w.Assignee == null && 
                 !w.Completed))
             .Select(w => w.MapToWorkflowTaskModel()).ToList();

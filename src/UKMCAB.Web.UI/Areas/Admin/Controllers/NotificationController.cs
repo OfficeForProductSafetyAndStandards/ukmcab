@@ -46,9 +46,9 @@ public class NotificationController : Controller
         }
 
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
-        var unassigned = await _workflowTaskService.GetUnassignedBySubmittedUserRoleAsync(role);
+        var unassigned = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role);
         var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var assignedToGroup = await _workflowTaskService.GetUnassignedBySubmittedUserRoleAsync(role);
+        var assignedToGroup = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role);
         var completed = await _workflowTaskService.GetByAssignedUserRoleAndCompletedAsync(role,true);
         List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> unAssignedItems =
             await BuildItems(unassigned);

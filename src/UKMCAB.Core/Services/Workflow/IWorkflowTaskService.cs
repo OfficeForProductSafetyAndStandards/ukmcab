@@ -4,7 +4,7 @@ namespace UKMCAB.Core.Services.Workflow;
 
 public interface IWorkflowTaskService
 {
-    public Task<List<WorkflowTask>> GetUnassignedBySubmittedUserRoleAsync(string userRole);
+    public Task<List<WorkflowTask>> GetUnassignedByForRoleIdAsync(string roleId);
     public Task<List<WorkflowTask>> GetByAssignedUserRoleAndCompletedAsync(string assignedUserRole,
         bool completed = false);
 
