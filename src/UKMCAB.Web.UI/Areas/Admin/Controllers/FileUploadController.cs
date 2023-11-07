@@ -25,8 +25,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _userService = userService;
         }
 
-        [HttpGet]
-        [Route("admin/cab/schedules-upload/{id}")]
+        [HttpGet("admin/cab/schedules-upload/{id}")]
         public async Task<IActionResult> SchedulesUpload(string id, bool fromSummary)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
