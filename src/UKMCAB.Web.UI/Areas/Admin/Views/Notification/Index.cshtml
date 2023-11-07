@@ -14,16 +14,16 @@
     <div class="govuk-grid-column-full">
         <govuk-tabs class="notifications-tabs" title=" ">
             <govuk-tabs-item id="Unassigned" label="Unassigned" asp-route="@NotificationController.Routes.Notifications">
-                <partial name="_NotificationsTable" model="@Model"/>
+                <partial name="_NotificationsTable" model="@Model.UnassignedTab"/>
             </govuk-tabs-item>
             <govuk-tabs-item id="assigned-me" label="Assigned to me" asp-route="@NotificationController.Routes.Notifications">
-                <partial name="_NotificationsTable" model="@Model"/>
+                <partial name="_NotificationsTable" model="@Model.AssignedToMeTab"/>
             </govuk-tabs-item>
             <govuk-tabs-item id="assigned-group" label="Assigned to [user group]" asp-route="@NotificationController.Routes.Notifications">
-                <partial name="_NotificationsTable" model="@Model"/>
+                <partial name="_NotificationsTable" model="@Model.AssignedToGroupTab"/>
             </govuk-tabs-item>
             <govuk-tabs-item id="completed" label="Completed" asp-route="@NotificationController.Routes.Notifications">
-                <partial name="_NotificationsTable" model="@Model"/>
+                <partial name="_NotificationsTable" model="@Model.CompletedTab"/>
             </govuk-tabs-item>
         </govuk-tabs>
     </div>

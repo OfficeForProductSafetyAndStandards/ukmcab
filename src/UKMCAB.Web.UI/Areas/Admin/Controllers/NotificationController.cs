@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Claims;
 using UKMCAB.Core.Services.Users;
 using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Core.Domain.Workflow;
@@ -20,58 +21,92 @@ public class NotificationController : Controller
 
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly ICABAdminService _cabAdminService;
-   
+
     public NotificationController(IWorkflowTaskService workflowTaskService, ICABAdminService cabAdminService)
     {
         _workflowTaskService = workflowTaskService;
-        _cabAdminService = cabAdminService; 
+        _cabAdminService = cabAdminService;
     }
-    
+
     [HttpGet(Name = Routes.Notifications)]
     public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
     {
         var model = await CreateNotificationsViewModelAsync(sf, sd, pageNumber);
         return View(model);
     }
+
     private async Task<NotificationsViewModel> CreateNotificationsViewModelAsync(
         string sf,
         string sd,
         int pageNumber)
     {
+        if (string.IsNullOrWhiteSpace(sd))
+        {
+            sd = SortDirectionHelper.Ascending;
+        }
+
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
         var unassigned = await _workflowTaskService.GetUnassignedBySubmittedUserRoleAsync(role);
-        var assignedToMe = await _workflowTaskService.GetByAssignedUserRoleAndCompletedAsync(role);
+        var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
         var assignedToGroup = await _workflowTaskService.GetUnassignedBySubmittedUserRoleAsync(role);
-        var completed = await _workflowTaskService.GetUnassignedBySubmittedUserRoleAsync(role);
-        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> unassigneditems = await BuildItems(unassigned);
-        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> assignedToMeItems = await BuildItems(assignedToMe);
-        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> assignedToGroupItems = await BuildItems(assignedToGroup);
-        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> completedItems = await BuildItems(completed);
+        var completed = await _workflowTaskService.GetByAssignedUserRoleAndCompletedAsync(role,true);
+        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> unAssignedItems =
+            await BuildItems(unassigned);
+        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> assignedToMeItems =
+            await BuildItems(assignedToMe);
+        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> assignedToGroupItems =
+            await BuildItems(assignedToGroup);
+        List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> completedItems =
+            await BuildItems(completed);
 
         var model = new NotificationsViewModel
         (
             Constants.PageTitle.Notifications,
-            unassigneditems.Any(),
-            sf,
-            SortDirectionHelper.Get(sd),
-            unassigneditems,
-            new PaginationViewModel
+            new NotificationsViewModelTab(unAssignedItems.Any(), sf, sd, unAssignedItems, new PaginationViewModel
             {
                 PageNumber = pageNumber,
                 ResultsPerPage = 5,
-                Total = unassigneditems.Count
-            },
-            new MobileSortTableViewModel(
-                "asc",
-                "sf",
-                new List<Tuple<string, string>>()
+                Total = unAssignedItems.Count
+            }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
+            {
+                new("From", "From")
+            })),
+            new NotificationsViewModelTab(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd), assignedToMeItems,
+                new PaginationViewModel
+                {
+                    PageNumber = pageNumber,
+                    ResultsPerPage = 5,
+                    Total = unAssignedItems.Count
+                }, new MobileSortTableViewModel(sf, sd, new List<Tuple<string, string>>
                 {
                     new("From", "From")
-                }));
+                })),
+            new NotificationsViewModelTab(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
+                assignedToGroupItems, new PaginationViewModel
+                {
+                    PageNumber = pageNumber,
+                    ResultsPerPage = 5,
+                    Total = unAssignedItems.Count
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
+                {
+                    new("From", "From")
+                })),
+            new NotificationsViewModelTab(completedItems.Any(), sf, SortDirectionHelper.Get(sd), completedItems,
+                new PaginationViewModel
+                {
+                    PageNumber = pageNumber,
+                    ResultsPerPage = 5,
+                    Total = unAssignedItems.Count
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
+                {
+                    new("From", "From")
+                }))
+        );
         return model;
     }
 
-    private async Task<List<(string From, string Subject, string CABName, string SentOn, string? CABLink)>> BuildItems(List<WorkflowTask> unassigned)
+    private async Task<List<(string From, string Subject, string CABName, string SentOn, string? CABLink)>> BuildItems(
+        List<WorkflowTask> unassigned)
     {
         var unassigneditems = new List<(string From, string Subject, string CABName, string SentOn, string? CABLink)>();
         foreach (var notification in unassigned)

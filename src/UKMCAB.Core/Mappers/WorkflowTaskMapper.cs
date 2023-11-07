@@ -13,6 +13,7 @@ public static class WorkflowTaskMapper
             Guid.Parse(source.Id),
             taskType, taskState,
             new User(source.Submitter.Id, source.Submitter.FirstName, source.Submitter.Surname, source.Submitter.Role),
+            source.ForRoleId,
             source.Assignee != null
                 ? new User(source.Assignee.Id, source.Assignee.FirstName, source.Assignee.Surname, source.Assignee.Role)
                 : null,
@@ -42,6 +43,7 @@ public static class WorkflowTaskMapper
                 Surname = source.Submitter.Surname,
                 Role = source.Submitter.Role
             },
+            source.ForRoleId,
             source.Assignee != null
                 ? new UserAccount
                 {
