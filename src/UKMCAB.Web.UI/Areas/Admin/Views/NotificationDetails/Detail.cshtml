@@ -7,7 +7,7 @@
 <govuk-back-link href="/"/>
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">@Model.NotificationTitle</h1>
+        <h1 class="govuk-heading-l">@Model.Subject</h1>
     </div>
 </div>
 
@@ -31,14 +31,14 @@
                         <p class="govuk-body">@Model.From</p>
                     </govuk-summary-list-row-value>
                 </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        Subject
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        @Model.Subject
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
+                @* <govuk-summary-list-row> *@
+                @*     <govuk-summary-list-row-key> *@
+                @*         Subject *@
+                @*     </govuk-summary-list-row-key> *@
+                @*     <govuk-summary-list-row-value> *@
+                @*         @Model.Subject *@
+                @*     </govuk-summary-list-row-value> *@
+                @* </govuk-summary-list-row> *@
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>
                         Reason

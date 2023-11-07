@@ -6,7 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 public record NotificationDetailViewModel : ILayoutModel  
 {
  
-    public string? NotificationTitle { get; set; }
+ //   public string? NotificationTitle { get; set; }
     public string? SelectedStatus { get; set; }
     public string? Status { get; set; }
     public string? From { get; set; }
