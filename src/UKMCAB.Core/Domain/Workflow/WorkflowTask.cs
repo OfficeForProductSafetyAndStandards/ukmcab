@@ -8,7 +8,6 @@ public record WorkflowTask(Guid Id, TaskType TaskType, TaskState State, User Sub
 {
     // set properties
     public User? Assignee { get; set; } = Assignee;
-    
     public DateTime? Assigned { get; set; } = Assigned;
     public TaskState State { get; set; } = State;
     public string Reason { get; set; } = Reason;

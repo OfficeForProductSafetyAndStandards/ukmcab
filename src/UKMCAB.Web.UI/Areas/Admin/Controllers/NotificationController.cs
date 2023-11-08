@@ -117,7 +117,7 @@ public class NotificationController : Controller
             var item = (From: notification.Submitter.FirstAndLastName, Subject: notification.TaskType.ToString(),
                 CABName: cab.Name, SentOn: notification.SentOn.ToString(CultureInfo.CurrentCulture),
                 CABLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails, notification.Id));
-            items.Add(item);
+            unassigneditems.Add(item);
         }
 
         return items;
