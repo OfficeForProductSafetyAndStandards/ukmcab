@@ -51,73 +51,75 @@ public class NotificationController : Controller
         var assignedToGroup = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role);
         var completed = await _workflowTaskService.GetByAssignedUserRoleAndCompletedAsync(role,true);
         List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> unAssignedItems =
-            await BuildItems(unassigned);
+            await BuildTableItems(unassigned);
         List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> assignedToMeItems =
-            await BuildItems(assignedToMe);
+            await BuildTableItems(assignedToMe);
         List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> assignedToGroupItems =
-            await BuildItems(assignedToGroup);
+            await BuildTableItems(assignedToGroup);
         List<(string From, string Subject, string CABName, string SentOn, string? CABLink)> completedItems =
-            await BuildItems(completed);
+            await BuildTableItems(completed);
 
+        var resultsPerPage = 5;
+        var mobileSortOptions = new Tuple<string, string>("From", "From");
         var model = new NotificationsViewModel
         (
             Constants.PageTitle.Notifications,
             new NotificationsViewModelTab(unAssignedItems.Any(), sf, sd, unAssignedItems, new PaginationViewModel
             {
                 PageNumber = pageNumber,
-                ResultsPerPage = 5,
+                ResultsPerPage = resultsPerPage,
                 Total = unAssignedItems.Count
             }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
             {
-                new("From", "From")
+                mobileSortOptions
             })),
             new NotificationsViewModelTab(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd), assignedToMeItems,
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = 5,
-                    Total = unAssignedItems.Count
+                    ResultsPerPage = resultsPerPage,
+                    Total = assignedToMe.Count
                 }, new MobileSortTableViewModel(sf, sd, new List<Tuple<string, string>>
                 {
-                    new("From", "From")
+                    mobileSortOptions
                 })),
             new NotificationsViewModelTab(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
                 assignedToGroupItems, new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = 5,
-                    Total = unAssignedItems.Count
+                    ResultsPerPage = resultsPerPage,
+                    Total = assignedToGroup.Count
                 }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
                 {
-                    new("From", "From")
+                    mobileSortOptions
                 })),
             new NotificationsViewModelTab(completedItems.Any(), sf, SortDirectionHelper.Get(sd), completedItems,
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = 5,
-                    Total = unAssignedItems.Count
+                    ResultsPerPage = resultsPerPage,
+                    Total = completed.Count
                 }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
                 {
-                    new("From", "From")
+                    mobileSortOptions
                 }))
         );
         return model;
     }
 
-    private async Task<List<(string From, string Subject, string CABName, string SentOn, string? CABLink)>> BuildItems(
+    private async Task<List<(string From, string Subject, string CABName, string SentOn, string? CABLink)>> BuildTableItems(
         List<WorkflowTask> unassigned)
     {
-        var unassigneditems = new List<(string From, string Subject, string CABName, string SentOn, string? CABLink)>();
+        var items = new List<(string From, string Subject, string CABName, string SentOn, string? CABLink)>();
         foreach (var notification in unassigned)
         {
             var cab = await _cabAdminService.GetLatestDocumentAsync(notification.CABId.ToString());
             var item = (From: notification.Submitter.FirstAndLastName, Subject: notification.TaskType.ToString(),
                 CABName: cab.Name, SentOn: notification.SentOn.ToString(CultureInfo.CurrentCulture),
                 CABLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails, notification.Id));
-            unassigneditems.Add(item);
+            items.Add(item);
         }
 
-        return unassigneditems;
+        return items;
     }
 }
