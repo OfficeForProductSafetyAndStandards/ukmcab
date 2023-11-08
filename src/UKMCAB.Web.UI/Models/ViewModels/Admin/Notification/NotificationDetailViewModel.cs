@@ -1,4 +1,3 @@
-using UKMCAB.Data.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
@@ -6,7 +5,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 public record NotificationDetailViewModel : ILayoutModel  
 {
  
- //   public string? NotificationTitle { get; set; }
     public string? SelectedStatus { get; set; }
     public string? Status { get; set; }
     public string? From { get; set; }

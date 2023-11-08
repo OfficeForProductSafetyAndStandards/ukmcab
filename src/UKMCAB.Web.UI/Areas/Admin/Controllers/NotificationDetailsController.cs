@@ -1,11 +1,11 @@
-using UKMCAB.Core.Services.Users;
 using Microsoft.AspNetCore.Authorization;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
-using UKMCAB.Web.UI.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
@@ -37,12 +37,11 @@ public class NotificationDetailsController : Controller
         return View(vm.Item1);
     }
 
-//todo : Post needs to be implement
+ 
     [HttpPost("details/{id}", Name = Routes.NotificationDetails)]
     public async Task<IActionResult> Detail(string id, NotificationDetailViewModel model)
     {
         var (notificationDetail, workFlowTask) = await NotificationDetailsMapping(id);
-        //model.NotificationTitle = notificationDetail.NotificationTitle;
         model.Status = notificationDetail.Status;
         model.From = notificationDetail.From;
         model.Subject = notificationDetail.Subject;
@@ -55,7 +54,7 @@ public class NotificationDetailsController : Controller
         model.AssignedOn = notificationDetail.AssignedOn;
         model.SelectAssignee = notificationDetail.SelectAssignee;
         model.SelectedAssignee = model.SelectedAssignee;
-        model.UserGroup = notificationDetail.UserGroup;
+       // model.UserGroup = notificationDetail.UserGroup;
 
         if (!ModelState.IsValid)
         {
@@ -85,29 +84,27 @@ public class NotificationDetailsController : Controller
 
     private async Task<(NotificationDetailViewModel, WorkflowTask)> NotificationDetailsMapping(string id)
     {
-        var workFlowTask = await _workflowTaskService.GetAsync(Guid.Parse(id));
+        var workFlowTask = await _workflowTaskService.GetAsync(id.ToGuid()?? throw new Exception($"Notification detail id is not a guid (value:{id})"));
         var notificationDetail = new NotificationDetailViewModel()
         {
-            //NotificationTitle = "Notification Details", //TODO : check with BA
             Status = workFlowTask.Completed ? "Completed" :
                 workFlowTask.Assignee == null ? "Unassigned" : "Assigned",
             From = workFlowTask.Submitter.FirstAndLastName,
-            Subject =  TaskType.UserAccountRequest.GetEnumDescription(), // TODO - change to switch
+            Subject = TaskType.UserAccountRequest.GetEnumDescription(), // TODO - change to switch
             Reason = workFlowTask.Reason,
-            SentOn = workFlowTask.SentOn
-                .ToShortDateString(), //TODO: create helper for UK  DD/MM/YYYY 14:15 -- verify the profile page -- take Constants
-            CompletedOn = workFlowTask.Completed ? workFlowTask.LastUpdatedOn.ToShortDateString() : string.Empty,
-            LastUpdated = workFlowTask.LastUpdatedOn.ToShortDateString(),
+            SentOn = workFlowTask.SentOn.ToStringBeisFormat(),
+            CompletedOn = workFlowTask.Completed ? workFlowTask.LastUpdatedOn.ToStringBeisFormat() : string.Empty,
+            LastUpdated = workFlowTask.LastUpdatedOn.ToStringBeisFormat(),
             ViewLink = ("view cab",
                 Url.RouteUrl(CABProfileController.Routes.CabDetails,
                     workFlowTask.CABId)),
-            CompletedBy = "completed by",
+            CompletedBy = workFlowTask.LastUpdatedBy.FirstAndLastName,
             AssignedOn =
-                workFlowTask.Assigned != null ? workFlowTask?.Assigned.Value.ToShortDateString() : string.Empty,
+                workFlowTask.Assigned != null ? workFlowTask?.Assigned.Value.ToStringBeisFormat() : string.Empty,
             SelectAssignee = await GetUser(),
-            SelectedAssignee = workFlowTask.Assignee?.FirstName! + " " + workFlowTask.Assignee?.Surname,
-            SelectedAssigneeId = workFlowTask.Assignee?.UserId,
-            UserGroup = "BPSS"
+            SelectedAssignee = workFlowTask?.Assignee?.FirstAndLastName!,
+            SelectedAssigneeId = workFlowTask!.Assignee?.UserId,
+            //UserGroup = "Todo" // "BPSS"  //
         };
 
         return (notificationDetail, workFlowTask);
