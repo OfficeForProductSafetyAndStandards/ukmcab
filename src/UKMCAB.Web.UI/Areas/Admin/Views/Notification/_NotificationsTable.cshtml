@@ -1,28 +1,28 @@
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationsViewModelTab
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationsViewModelTable
 @if (Model.ShowTableItems)
 {
     <partial name="Partials/_MobileSortTable" model="@Model.MobileSortTableViewModel"/>
 }
 <table class="govuk-table ukmcab-table govuk-!-font-size-16">
-    <caption class="govuk-visually-hidden">Table of notifications assigned</caption>
+    <caption class="govuk-visually-hidden">Table of notifications</caption>
     <thead class="govuk-table__head">
     <tr class="govuk-table__row">
         @if (Model.ShowTableItems)
         {
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="From" sort="@Model.SortField" sort-direction="@Model.SortDirection">From</sort>
+                <sort tab-to-show="@Model.TabName" target="From" sort="@Model.SortField" sort-direction="@Model.SortDirection">From</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="Subject" sort="@Model.SortField" sort-direction="@Model.SortDirection">Subject</sort>
+                <sort tab-to-show="@Model.TabName" target="Subject" sort="@Model.SortField" sort-direction="@Model.SortDirection">Subject</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="CAB" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
+                <sort tab-to-show="@Model.TabName" target="CabName" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="Sent" sort="@Model.SortField" sort-direction="@Model.SortDirection">Sent on</sort>
+                <sort tab-to-show="@Model.TabName" target="LastUpdated" sort="@Model.SortField" sort-direction="@Model.SortDirection">Sent on</sort>
             </th>
             <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
-                <sort target="Action" sort="@Model.SortField" sort-direction="@Model.SortDirection">Action</sort>
+                Action
             </th>
         }
     </tr>
@@ -44,7 +44,7 @@
                     <label aria-hidden="true">CAB name</label>@item.CABName
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">Sent on</label>@item.SentOn
+                    <label aria-hidden="true">Sent on</label>@item.LastUpdated
                 </td>
                 <td class="govuk-table__cell">
                     <label aria-hidden="true">Action</label><a class="govuk-link" href="@item.DetailLink">View</a>
@@ -56,7 +56,7 @@
     {
         <tr class="govuk-table__row">
             <td colspan="5">
-                <p class="govuk-body">There are no [assigned/completed] notifications</p>
+                <p class="govuk-body">There are no @Model.NoItemsLabel notifications</p>
             </td>
         </tr>
     }

@@ -1,11 +1,12 @@
 using System.Globalization;
 using System.Security.Claims;
-using UKMCAB.Core.Services.Users;
 using Microsoft.AspNetCore.Authorization;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Workflow;
+using UKMCAB.Data.Domain;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
@@ -14,6 +15,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 [Area("admin"), Route("admin/notifications"), Authorize]
 public class NotificationController : Controller
 {
+    private const string UnassignedTabName = "unassigned";
+    private const string AssignedMeTabName = "assigned-me";
+    private const string AssignedGroupTabName = "assigned-group";
+    private const string CompletedTabName = "completed";
+
     public static class Routes
     {
         public const string Notifications = "admin.notifications";
@@ -45,85 +51,126 @@ public class NotificationController : Controller
             sd = SortDirectionHelper.Ascending;
         }
 
-        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
-        var unassigned = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role);
-        var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
-        var assignedToGroup = await _workflowTaskService.GetByForRoleAndCompletedAsync(role);
-        var completed = await _workflowTaskService.GetByForRoleAndCompletedAsync(role,true);
-        List<(string From, string Subject, string CABName, string SentOn, string? DetailLink)> unAssignedItems =
-            await BuildTableItems(unassigned);
-        List<(string From, string Subject, string CABName, string SentOn, string? DetailLink)> assignedToMeItems =
-            await BuildTableItems(assignedToMe);
-        List<(string From, string Subject, string CABName, string SentOn, string? DetailLink)> assignedToGroupItems =
-            await BuildTableItems(assignedToGroup);
-        List<(string From, string Subject, string CABName, string SentOn, string? DetailLink)> completedItems =
-            await BuildTableItems(completed);
-
+        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS: Roles.UKAS;
         var resultsPerPage = 5;
+        var skipTake = SkipTake.FromPage(pageNumber - 1, 5);
+        var unassigned = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
+        var assignedToMe =
+            await _workflowTaskService.GetByAssignedUserAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+        var assignedToGroup =
+            await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id);
+        var completed =
+            await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id, true);
+        List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)> unAssignedItems =
+            await BuildTableItemsAsync(unassigned, sf, sd);
+        List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)> assignedToMeItems =
+            await BuildTableItemsAsync(assignedToMe, sf, sd);
+        List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)>
+            assignedToGroupItems =
+                await BuildTableItemsAsync(assignedToGroup, sf, sd);
+        List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)> completedItems =
+            await BuildTableItemsAsync(completed, sf, sd);
+
         var mobileSortOptions = new Tuple<string, string>("From", "From");
         var model = new NotificationsViewModel
         (
             Constants.PageTitle.Notifications,
-            new NotificationsViewModelTab(unAssignedItems.Any(), sf, sd, unAssignedItems, new PaginationViewModel
-            {
-                PageNumber = pageNumber,
-                ResultsPerPage = resultsPerPage,
-                Total = unAssignedItems.Count,
-                TabId = "Unassigned"
-            }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
-            {
-                mobileSortOptions
-            })),
-            new NotificationsViewModelTab(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd), assignedToMeItems,
+            new NotificationsViewModelTable(unAssignedItems.Any(), sf, sd,
+                unAssignedItems.Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
+                {
+                    PageNumber = pageNumber,
+                    ResultsPerPage = resultsPerPage,
+                    Total = unAssignedItems.Count,
+                    TabId = UnassignedTabName
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
+                {
+                    mobileSortOptions
+                }), UnassignedTabName, "unassigned"),
+            new NotificationsViewModelTable(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd),
+                assignedToMeItems.Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
                     ResultsPerPage = resultsPerPage,
                     Total = assignedToMe.Count,
-                    TabId = "assigned-me"
+                    TabId = AssignedMeTabName
                 }, new MobileSortTableViewModel(sf, sd, new List<Tuple<string, string>>
                 {
                     mobileSortOptions
-                })),
-            new NotificationsViewModelTab(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
-                assignedToGroupItems, new PaginationViewModel
+                }), AssignedMeTabName, "assigned to me"),
+            new NotificationsViewModelTable(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
+                assignedToGroupItems.Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
                     PageNumber = pageNumber,
                     ResultsPerPage = resultsPerPage,
                     Total = assignedToGroup.Count,
-                    TabId = "assigned-group"
+                    TabId = AssignedGroupTabName
                 }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
                 {
                     mobileSortOptions
-                })),
-            new NotificationsViewModelTab(completedItems.Any(), sf, SortDirectionHelper.Get(sd), completedItems,
+                }), AssignedGroupTabName, "assigned to " + role.Label),
+            new NotificationsViewModelTable(completedItems.Any(), sf, SortDirectionHelper.Get(sd),
+                completedItems.Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
                     ResultsPerPage = resultsPerPage,
                     Total = completed.Count,
-                    TabId = "completed"
+                    TabId = CompletedTabName
                 }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
                 {
                     mobileSortOptions
-                }))
+                }), CompletedTabName, "completed")
         );
         return model;
     }
 
-    private async Task<List<(string From, string Subject, string CABName, string SentOn, string? DetailLink)>> BuildTableItems(
-        List<WorkflowTask> unassigned)
+    private async Task<List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)>>
+        BuildTableItemsAsync(
+            IEnumerable<WorkflowTask> tasks,
+            string? sf,
+            string? sd)
     {
-        var items = new List<(string From, string Subject, string CABName, string SentOn, string? DetailLink)>();
-        foreach (var notification in unassigned)
+        var items = new List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)>();
+        foreach (var notification in tasks)
         {
             var cab = await _cabAdminService.GetLatestDocumentAsync(notification.CABId.ToString());
-            var item = (From: notification.Submitter.FirstAndLastName, Subject: notification.TaskType.ToString(),
-                CABName: cab.Name, SentOn: notification.SentOn.ToString(CultureInfo.CurrentCulture),
-                DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails, notification.Id));
+            var item = (From: notification.Submitter.FirstAndLastName,
+                Subject: notification.TaskType.GetEnumDescription(),
+                CABName: cab.Name, LastUpdated: notification.SentOn.ToStringBeisFormat(),
+                DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails,
+                    new { id = notification.Id.ToString() }));
             items.Add(item);
         }
 
-        return items;
+        if (!items.Any())
+        {
+            return items;
+        }
+
+        // ReSharper disable once RedundantAssignment
+        // ReSharper disable once EntityNameCapturedOnly.Local
+        var itemForNameOf = items.First();
+        switch (sf?.ToLower())
+        {
+            case { } str when str.Equals(nameof(itemForNameOf.From), StringComparison.CurrentCultureIgnoreCase):
+                return sd == SortDirectionHelper.Ascending
+                    ? items.OrderBy(i => i.From).ToList()
+                    : items.OrderByDescending(i => i.From).ToList();
+            case { } str when str.Equals(nameof(itemForNameOf.Subject), StringComparison.CurrentCultureIgnoreCase):
+                return sd == SortDirectionHelper.Ascending
+                    ? items.OrderBy(i => i.Subject).ToList()
+                    : items.OrderByDescending(i => i.Subject).ToList();
+            case { } str when str.Equals(nameof(itemForNameOf.CABName), StringComparison.CurrentCultureIgnoreCase):
+                return sd == SortDirectionHelper.Ascending
+                    ? items.OrderBy(i => i.CABName).ToList()
+                    : items.OrderByDescending(i => i.CABName).ToList();
+            case { } str when str.Equals(nameof(itemForNameOf.LastUpdated), StringComparison.CurrentCultureIgnoreCase):
+                return sd == SortDirectionHelper.Ascending
+                    ? items.OrderBy(i => i.LastUpdated).ToList()
+                    : items.OrderByDescending(i => i.LastUpdated).ToList();
+            default:
+                return items.OrderByDescending(i => i.LastUpdated).ToList();
+        }
     }
 }

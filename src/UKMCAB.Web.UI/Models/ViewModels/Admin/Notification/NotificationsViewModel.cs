@@ -1,3 +1,5 @@
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 
-public record NotificationsViewModel(string PageTitle, NotificationsViewModelTab UnassignedTab,NotificationsViewModelTab AssignedToMeTab,NotificationsViewModelTab AssignedToGroupTab,NotificationsViewModelTab CompletedTab) : BasicPageModel(PageTitle);
+public record NotificationsViewModel(string PageTitle, NotificationsViewModelTable UnassignedTable,
+    NotificationsViewModelTable AssignedToMeTable, NotificationsViewModelTable AssignedToGroupTable,
+    NotificationsViewModelTable CompletedTable) : BasicPageModel(PageTitle);
