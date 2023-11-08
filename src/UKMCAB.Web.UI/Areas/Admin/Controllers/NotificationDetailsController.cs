@@ -1,14 +1,12 @@
-using System.Globalization;
-using UKMCAB.Core.Services.Users;
 using Microsoft.AspNetCore.Authorization;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
-using UKMCAB.Core.Services.CAB;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
-using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
@@ -24,7 +22,6 @@ public class NotificationDetailsController : Controller
     private readonly IUserService _userService;
 
     public NotificationDetailsController(IWorkflowTaskService workflowTaskService,
-        ICABAdminService cabAdminService,
         IUserService userService
     )
     {
@@ -33,74 +30,44 @@ public class NotificationDetailsController : Controller
     }
 
 
- 
-
     [HttpGet("details/{id}", Name = Routes.NotificationDetails)]
     public async Task<IActionResult> Detail(string id)
     {
-        var workFlowTask = await _workflowTaskService.GetAsync(Guid.Parse(id));
-        var vm = new NotificationDetailViewModel()
-        {
-            NotificationTitle = "Notification Details", //TODO : check with BA
-            Status = WorkFlowTaskStatus(workFlowTask.Completed, workFlowTask.Assignee),
-            From = workFlowTask.Submitter.FirstName + " " +
-                   workFlowTask.Submitter.Surname, //TODO : take latest property
-            Subject = workFlowTask.TaskType.ToString(), //TODO : Bring the enum description rather than enum
-            Reason = workFlowTask.Reason,
-            SentOn = workFlowTask.SentOn
-                .ToShortDateString(), //TODO: create helper for UK  DD/MM/YYYY 14:15 -- verify the profile page -- take Constants
-            CompletedOn = "todo", // "commpleted on not found", //TODO : check with date -- need to take the latest code
-            LastUpdated = workFlowTask.LastUpdatedOn.ToShortDateString(),
-            ViewLink = ("view cab",
-                Url.RouteUrl(CABProfileController.Routes.CabDetails,
-                    workFlowTask.CABId)),
-            CompletedBy = "completed by",
-            AssignedOn =
-                workFlowTask.Assigned != null ? workFlowTask?.Assigned.Value.ToShortDateString() : string.Empty,
-            SelectAssignee = await GetUser(),
-            SelectedAssignee = workFlowTask.Assignee?.FirstName! + " " + workFlowTask.Assignee?.Surname,
-            SelectedAssigneeId = workFlowTask.Assignee?.UserId,
-            UserGroup = "BPSS"
-        };
-
-        return View(vm);
+        var vm = await NotificationDetailsMapping(id);
+        return View(vm.Item1);
     }
 
-//todo : Post needs to be implement
+ 
     [HttpPost("details/{id}", Name = Routes.NotificationDetails)]
     public async Task<IActionResult> Detail(string id, NotificationDetailViewModel model)
     {
-        var workFlowTask = await _workflowTaskService.GetAsync(Guid.Parse(id));
-
-        model.NotificationTitle = "Notification Details";
-        model.Status = WorkFlowTaskStatus(workFlowTask.Completed, workFlowTask.Assignee);
-        model.From = workFlowTask.Submitter.FirstName + " " + workFlowTask.Submitter.Surname;
-        model.Subject = workFlowTask.TaskType.ToString();
-        model.Reason = workFlowTask.Reason;
-        model.SentOn = workFlowTask.SentOn.ToShortDateString(); //TODO: create helper for UK
-        model.CompletedOn = "todo"; //TODO : check with date
-        model.LastUpdated = workFlowTask.LastUpdatedOn.ToShortDateString();
-        model.ViewLink = ("view cab", "/");
-        model.CompletedBy = "completed by";
-        model.AssignedOn = workFlowTask.Assigned != null
-            ? workFlowTask.Assigned.Value.ToShortDateString()
-            : string.Empty;
-        model.SelectAssignee = await GetUser();
+        var (notificationDetail, workFlowTask) = await NotificationDetailsMapping(id);
+        model.Status = notificationDetail.Status;
+        model.From = notificationDetail.From;
+        model.Subject = notificationDetail.Subject;
+        model.Reason = notificationDetail.Reason;
+        model.SentOn = notificationDetail.SentOn;
+        model.CompletedOn = notificationDetail.CompletedOn;
+        model.LastUpdated = notificationDetail.LastUpdated;
+        model.ViewLink = notificationDetail.ViewLink;
+        model.CompletedBy = notificationDetail.CompletedBy;
+        model.AssignedOn = notificationDetail.AssignedOn;
+        model.SelectAssignee = notificationDetail.SelectAssignee;
         model.SelectedAssignee = model.SelectedAssignee;
-        model.UserGroup = "BPSS";
+       // model.UserGroup = notificationDetail.UserGroup;
 
         if (!ModelState.IsValid)
         {
             return View(model);
         }
-        
-        var userAccount = await _userService.GetAsync(model.SelectedAssignee);
 
-        workFlowTask.Assignee =    new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role);
+        var userAccount = await _userService.GetAsync(model.SelectedAssignee);
+        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname,
+            userAccount.Role);
         workFlowTask.Assigned = DateTime.Now;
         await _workflowTaskService.UpdateAsync(workFlowTask);
 
-        return RedirectToAction("Index", "Notification", new { Area = "admin"});
+        return RedirectToAction("Index", "Notification", new { Area = "admin" });
     }
 
     private async Task<List<(string, string)>> GetUser()
@@ -114,9 +81,32 @@ public class NotificationDetailsController : Controller
         return assignees;
     }
 
-    private string WorkFlowTaskStatus(bool isCompleted, User? assignee)
+
+    private async Task<(NotificationDetailViewModel, WorkflowTask)> NotificationDetailsMapping(string id)
     {
-        return isCompleted ? "Completed" :
-            assignee == null ? "Unassigned" : "Assigned";
+        var workFlowTask = await _workflowTaskService.GetAsync(id.ToGuid()?? throw new Exception($"Notification detail id is not a guid (value:{id})"));
+        var notificationDetail = new NotificationDetailViewModel()
+        {
+            Status = workFlowTask.Completed ? "Completed" :
+                workFlowTask.Assignee == null ? "Unassigned" : "Assigned",
+            From = workFlowTask.Submitter.FirstAndLastName,
+            Subject = TaskType.UserAccountRequest.GetEnumDescription(), // TODO - change to switch
+            Reason = workFlowTask.Reason,
+            SentOn = workFlowTask.SentOn.ToStringBeisFormat(),
+            CompletedOn = workFlowTask.Completed ? workFlowTask.LastUpdatedOn.ToStringBeisFormat() : string.Empty,
+            LastUpdated = workFlowTask.LastUpdatedOn.ToStringBeisFormat(),
+            ViewLink = ("view cab",
+                Url.RouteUrl(CABProfileController.Routes.CabDetails,
+                    workFlowTask.CABId)),
+            CompletedBy = workFlowTask.LastUpdatedBy.FirstAndLastName,
+            AssignedOn =
+                workFlowTask.Assigned != null ? workFlowTask?.Assigned.Value.ToStringBeisFormat() : string.Empty,
+            SelectAssignee = await GetUser(),
+            SelectedAssignee = workFlowTask?.Assignee?.FirstAndLastName!,
+            SelectedAssigneeId = workFlowTask!.Assignee?.UserId,
+            //UserGroup = "Todo" // "BPSS"  //
+        };
+
+        return (notificationDetail, workFlowTask);
     }
 }
