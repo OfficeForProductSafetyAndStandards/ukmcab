@@ -7,8 +7,7 @@ public record WorkflowTask(Guid Id, TaskType TaskType, TaskState State, User Sub
     string? DeclineReason, bool Completed, Guid CABId)
 {
     // set properties
-    public User? Assignee { get; set; } = Assignee; //TODO - Add Group Property UKAS/OPSS 
-    
+    public User? Assignee { get; set; } = Assignee;
     public DateTime? Assigned { get; set; } = Assigned;
     public TaskState State { get; set; } = State;
     public string Reason { get; set; } = Reason;

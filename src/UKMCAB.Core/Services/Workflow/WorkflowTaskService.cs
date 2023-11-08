@@ -13,7 +13,6 @@ public class WorkflowTaskService : IWorkflowTaskService
     {
         _workflowTaskRepository = workflowTaskRepository;
     }
-
     
     public async Task<List<WorkflowTask>> GetUnassignedByForRoleIdAsync(string roleId)
     {
