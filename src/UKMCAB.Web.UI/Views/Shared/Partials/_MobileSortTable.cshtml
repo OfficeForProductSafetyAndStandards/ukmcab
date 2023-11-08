@@ -6,7 +6,7 @@
         <label class="govuk-label" asp-for="@Model.SortField">
             Sort by
         </label>
-        <a href="" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc") ? "descending" : "ascending")" class="mobile-sort" role="button"></a>
+        <a href="" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc") ? "descending" : "ascending")" class="link-mobile-sort" role="button"></a>
         <select class="govuk-select" asp-for="@Model.SortField" name="sf" id="sortOption">
             @foreach (var option in Model.SortSelectItems)
             {
