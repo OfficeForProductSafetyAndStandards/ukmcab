@@ -201,7 +201,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByAssignedUserRoleAndCompletedAsync(userAssigned.UserId, true);
+        var result = await _sut.GetByForRoleAndCompletedAsync(userAssigned.UserId, true);
 
         // Arrange
         Assert.AreEqual(2, result.Count);
@@ -228,7 +228,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByAssignedUserRoleAndCompletedAsync(userSubmitter.Role!, true);
+        var result = await _sut.GetByForRoleAndCompletedAsync(userSubmitter.Role!, true);
 
         // Arrange
         Assert.AreEqual(2, result.Count);
