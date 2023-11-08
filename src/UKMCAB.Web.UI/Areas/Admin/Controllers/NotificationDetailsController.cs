@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
@@ -18,20 +19,23 @@ public class NotificationDetailsController : Controller
         public const string NotificationDetails = "admin.notification.details";
     }
 
-    private readonly IWorkflowTaskService _workflowTaskService;
+    private readonly ICABAdminService _cabAdminService;
     private readonly IUserService _userService;
+    private readonly IWorkflowTaskService _workflowTaskService;
 
-    public NotificationDetailsController(IWorkflowTaskService workflowTaskService,
+    public NotificationDetailsController(ICABAdminService cabAdminService,
+        IWorkflowTaskService workflowTaskService,
         IUserService userService
     )
     {
+        _cabAdminService = cabAdminService;
         _workflowTaskService = workflowTaskService;
         _userService = userService;
     }
 
 
     [HttpGet("details/{id}", Name = Routes.NotificationDetails)]
-    public async Task<IActionResult> Detail(string id)
+    public async Task<IActionResult> Detail(Guid id)
     {
         var vm = await NotificationDetailsMapping(id);
         return View(vm.Item1);
@@ -39,7 +43,7 @@ public class NotificationDetailsController : Controller
 
  
     [HttpPost("details/{id}", Name = Routes.NotificationDetails)]
-    public async Task<IActionResult> Detail(string id, NotificationDetailViewModel model)
+    public async Task<IActionResult> Detail(Guid id, NotificationDetailViewModel model)
     {
         var (notificationDetail, workFlowTask) = await NotificationDetailsMapping(id);
         model.Status = notificationDetail.Status;
@@ -54,7 +58,6 @@ public class NotificationDetailsController : Controller
         model.AssignedOn = notificationDetail.AssignedOn;
         model.SelectAssignee = notificationDetail.SelectAssignee;
         model.SelectedAssignee = model.SelectedAssignee;
-       // model.UserGroup = notificationDetail.UserGroup;
 
         if (!ModelState.IsValid)
         {
@@ -62,8 +65,7 @@ public class NotificationDetailsController : Controller
         }
 
         var userAccount = await _userService.GetAsync(model.SelectedAssignee);
-        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname,
-            userAccount.Role);
+        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount?.FirstName, userAccount?.Surname, userAccount?.Role);
         workFlowTask.Assigned = DateTime.Now;
         await _workflowTaskService.UpdateAsync(workFlowTask);
 
@@ -73,7 +75,7 @@ public class NotificationDetailsController : Controller
     private async Task<List<(string, string)>> GetUser()
     {
         var options =
-            new UserAccountListOptions(SkipTake.FromPage(-1, 40), new SortBy("firstName", null), false, null, null);
+            new UserAccountListOptions(SkipTake.FromPage(-1, 40), new SortBy("firstName", null));
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
         var users = await _userService.ListAsync(options);
         var assignees = users.Where(x => x.Role == role)
@@ -82,31 +84,29 @@ public class NotificationDetailsController : Controller
     }
 
 
-    private async Task<(NotificationDetailViewModel, WorkflowTask)> NotificationDetailsMapping(string id)
+    private async Task<(NotificationDetailViewModel, WorkflowTask)> NotificationDetailsMapping(Guid id)
     {
-        var workFlowTask = await _workflowTaskService.GetAsync(id.ToGuid()?? throw new Exception($"Notification detail id is not a guid (value:{id})"));
+        var workFlowTask = await _workflowTaskService.GetAsync(id);
         var notificationDetail = new NotificationDetailViewModel()
         {
             Status = workFlowTask.Completed ? "Completed" :
                 workFlowTask.Assignee == null ? "Unassigned" : "Assigned",
             From = workFlowTask.Submitter.FirstAndLastName,
-            Subject = TaskType.UserAccountRequest.GetEnumDescription(), // TODO - change to switch
+            Subject = workFlowTask.TaskType.GetEnumDescription(),
             Reason = workFlowTask.Reason,
             SentOn = workFlowTask.SentOn.ToStringBeisFormat(),
             CompletedOn = workFlowTask.Completed ? workFlowTask.LastUpdatedOn.ToStringBeisFormat() : string.Empty,
             LastUpdated = workFlowTask.LastUpdatedOn.ToStringBeisFormat(),
-            ViewLink = ("view cab",
-                Url.RouteUrl(CABProfileController.Routes.CabDetails,
-                    workFlowTask.CABId)),
             CompletedBy = workFlowTask.LastUpdatedBy.FirstAndLastName,
             AssignedOn =
-                workFlowTask.Assigned != null ? workFlowTask?.Assigned.Value.ToStringBeisFormat() : string.Empty,
+                workFlowTask.Assigned != null ? workFlowTask.Assigned.Value.ToStringBeisFormat() : string.Empty,
             SelectAssignee = await GetUser(),
-            SelectedAssignee = workFlowTask?.Assignee?.FirstAndLastName!,
-            SelectedAssigneeId = workFlowTask!.Assignee?.UserId,
-            //UserGroup = "Todo" // "BPSS"  //
+            SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
+            SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
-
+        var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString());
+        notificationDetail.ViewLink = (cabDetails.Name,
+            Url.RouteUrl(CABProfileController.Routes.CabDetails, new {id = workFlowTask.CABId}));
         return (notificationDetail, workFlowTask);
     }
 }
