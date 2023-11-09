@@ -234,7 +234,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId,
-            string unarchiveReason)
+            string unarchiveInternalReason, string unarchivePublicReason)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             var draft = documents.SingleOrDefault(d => d.StatusValue == Status.Draft);
@@ -247,7 +247,7 @@ namespace UKMCAB.Core.Services.CAB
             var archvivedDoc = documents.SingleOrDefault(d => d.StatusValue == Status.Archived);
             Guard.IsFalse(archvivedDoc == null, $"Failed for find and archived version for CAB id: {cabId}");
             // Flag latest with unarchive audit entry
-            archvivedDoc.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnarchiveRequest, unarchiveReason));
+            archvivedDoc.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnarchiveRequest, unarchiveInternalReason, unarchivePublicReason));
             Guard.IsTrue(await _cabRepostitory.Update(archvivedDoc),
                 $"Failed to update published version during draft publish, CAB Id: {archvivedDoc.CABId}");
             await UpdateSearchIndex(archvivedDoc);
@@ -271,7 +271,7 @@ namespace UKMCAB.Core.Services.CAB
             return archvivedDoc;
         }
 
-        public async Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveReason)
+        public async Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveInternalReason, string archivePublicReason)
         {
             var docs = await FindAllDocumentsByCABIdAsync(CABId);
 
@@ -299,7 +299,7 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             publishedVersion.StatusValue = Status.Archived;
-            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.Archived, archiveReason));
+            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.Archived, archiveInternalReason, archivePublicReason));
             Guard.IsTrue(await _cabRepostitory.Update(publishedVersion),
                 $"Failed to archive published version, CAB Id: {CABId}");
 

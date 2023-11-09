@@ -8,6 +8,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         // ILayoutModel
         public string? Title => $"CAB profile - {Name}";
         public string? ReturnUrl { get; set; }
+        public string? Status { get; set; }
         public string? ArchivedBy { get; set; }
         public string? ArchivedDate { get; set; }
         public string? ArchiveReason { get; set; }

@@ -8,7 +8,7 @@ namespace UKMCAB.Data.Models
     {
         public Audit() { }
 
-        public Audit(string userId, string username, string userrole, DateTime date, string action, string comment = null)
+        public Audit(string userId, string username, string userrole, DateTime date, string action, string comment = null, string publicComment = null)
         {
             UserId = userId;
             UserName = username;
@@ -16,9 +16,10 @@ namespace UKMCAB.Data.Models
             DateTime = date;
             Action = action;
             Comment = comment;
+            PublicComment = publicComment;
         }
 
-        public Audit(UserAccount? userAccount, string action, string comment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment) { }
+        public Audit(UserAccount? userAccount, string action, string comment = null, string publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
 
         public Audit(UserAccount? userAccount, string action, Document publisheDocument, Document previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
         {
@@ -77,6 +78,7 @@ namespace UKMCAB.Data.Models
         public DateTime DateTime { get; set; }
         public string Action { get; set; }
         public string? Comment { get; set; }
+        public string? PublicComment { get; set; }
     }
 
     public class AuditCABActions

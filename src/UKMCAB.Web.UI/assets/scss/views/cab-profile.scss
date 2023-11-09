@@ -11,6 +11,22 @@
 
 #cab-profile-page {
 
+
+    /* mobile */
+    @include govuk-media-query($until: tablet) {
+        #cab-profile-page-caption--desktop{
+            display:none;
+        }
+    }
+
+
+    /* desktop*/
+    @include govuk-media-query($from: tablet) {
+        #cab-profile-page-caption--mobile {
+            display: none;
+        }
+    }
+
     .atom-feed-top {
         margin-bottom: 10px;
     }
@@ -31,7 +47,6 @@
             margin-left: 0;
         }
     }
-
 
     .cab-detail-date-meta {
         margin: -5px 0 30px;
@@ -120,6 +135,7 @@
                 padding-top: 20px;
             }
         }
+
         .cabs-panel {
             padding-left: 0px;
             padding-right: 0px;
@@ -139,8 +155,9 @@
                         display: block;
                     }
 
+                    /* Temporarily disabled not sure if there are other pages depending on it*/
                     .govuk-summary-list__key {
-                        font-weight: 400;
+                       // font-weight: 400;
                     }
 
                     .govuk-summary-list__actions {

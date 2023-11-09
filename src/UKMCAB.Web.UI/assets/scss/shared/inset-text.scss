@@ -1,3 +1,9 @@
 .govuk-inset-text-alert{
   border-left: 10px solid govuk-colour("red");
 }
+
+.ukmcab-inset-text--red {
+    .govuk-inset-text {
+        border-left: 10px solid govuk-colour("red");
+    }
+}

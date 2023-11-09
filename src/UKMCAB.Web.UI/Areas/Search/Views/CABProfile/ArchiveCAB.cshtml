@@ -30,50 +30,50 @@
                 <input type="hidden" asp-for="CABId" value="@Model.CABId" />
                  @if (Model.HasDraft)
                 {
-                    <div class="govuk-inset-text govuk-inset-text-alert govuk-tag--red">
-                        <strong>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted.</strong>
+                    <div class="ukmcab-inset-text--red">
+                        <div class="govuk-inset-text govuk-tag--red govuk-inset-text-alert ">
+                            <strong>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted.</strong>
+                        </div>
                     </div>
                 }
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchiveInternalReason")">
-                    <h3 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--s" asp-for="ArchiveInternalReason">
-                            Internal notes
-                        </label>
-                    </h3>
-                    <div id="wrong-hint" class="govuk-hint">
-                        These notes will only be seen by users that are signed in to the UKMCAB service.
+                <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
+                    <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchiveInternalReason")">
+                        <h3 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--m" asp-for="ArchiveInternalReason">
+                                Internal notes
+                            </label>
+                        </h3>
+                        <div id="with-hint-hint" class="govuk-hint">
+                            These notes will only be seen by users that are signed in to the UKMCAB service.
+                        </div>
+                        <p id="ArchiveInternalReason" error-id-for="ArchiveInternalReason" class="govuk-error-message">
+                            <span asp-validation-for="ArchiveInternalReason" class="govuk-error-message"></span>
+                        </p>
+                        <textarea class="govuk-textarea govuk-js-character-count @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ArchiveInternalReason")" id="with-hint" rows="5" asp-for="ArchiveInternalReason" aria-describedby="with-hint-info with-hint-hint" error-describedby-for="ArchiveInternalReason"></textarea>
+                       
                     </div>
-                    <p error-id-for="ArchiveInternalReason" class="govuk-error-message">
-                        <span asp-validation-for="ArchiveInternalReason" class="govuk-error-message"></span>
-                    </p>
-                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ArchiveInternalReason")" rows="5" aria-describedby="wrong-hint" asp-for="ArchiveInternalReason" error-describedby-for="ArchiveInternalReason"></textarea>
-                    <div class="govuk-hint">You have 1,000 characters remaining</div>
+                    <div id="with-hint-info" class="govuk-hint govuk-character-count__message">You have 1,000 characters remaining</div>
                 </div>
 
-
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchivePublicReason")">
-                    <h3 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--s" asp-for="ArchivePublicReason">
-                            Reason (optional)
-                        </label>
-                    </h3>
-                    <div id="wrong-hint" class="govuk-hint">
-                        Enter the reason for archiving this CAB. This will be shown to all users in the CAB history page.
+                <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
+                    <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchivePublicReason")">
+                        <h3 class="govuk-label-wrapper ukmcab-padding-top-30">
+                            <label class="govuk-label govuk-label--m" asp-for="ArchivePublicReason">
+                                Reason (optional)
+                            </label>
+                        </h3>
+                        <div id="archive-public-reason-hint-hint" class="govuk-hint">
+                            Enter the reason for archiving this CAB. This will be shown to all users in the CAB history page.
+                        </div>
+                        <p id="ArchivePublicReason" error-id-for="ArchivePublicReason" class="govuk-error-message">
+                            <span asp-validation-for="ArchivePublicReason" class="govuk-error-message"></span>
+                        </p>
+                        <textarea class="govuk-textarea govuk-js-character-count @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ArchivePublicReason")" id="archive-public-reason-hint" rows="5" aria-describedby="archive-public-reason-hint-info archive-public-reason-hint-hint" asp-for="ArchivePublicReason"></textarea>
                     </div>
-                    <p error-id-for="ArchivePublicReason" class="govuk-error-message">
-                        <span asp-validation-for="ArchivePublicReason" class="govuk-error-message"></span>
-                    </p>
-                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ArchivePublicReason")" rows="5" aria-describedby="wrong-hint" asp-for="ArchivePublicReason" error-describedby-for="ArchivePublicReason"></textarea>
-                    <div class="govuk-hint">You have 1,000 characters remaining</div>
+                    <div id="archive-public-reason-hint-info" class="govuk-hint govuk-character-count__message">
+                        You can enter up to 1000 characters
+                    </div>
                 </div>
-
-
-
-
-
-
-
-
 
                 <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -81,12 +81,13 @@
                             <span class="govuk-warning-text__assistive">Warning</span>
                             Archived CAB profiles cannot be edited and users cannot view them in the search results.
                         </strong>
-                    </div>
+                </div>
+
                 <div class="govuk-button-group">
                     <button class="govuk-button" data-module="govuk-button">
                         Archive
                     </button>
-                    <a class="govuk-button govuk-button--secondary" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Cancel</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Cancel</a>
                 </div>
             </form>
         </fieldset>
