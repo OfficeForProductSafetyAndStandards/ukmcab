@@ -1,19 +1,15 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Shared.MobileSortTableViewModel
-
-<div id="sort-form-group">
-    <form method="get" id="sortForm">
-        <div id="mobile-sort" class="govuk-form-group">
+<form method="get" class="sort-form desktop-no-display">
+    <div class="govuk-form-group">
         <label class="govuk-label" asp-for="@Model.SortField">
             Sort by
         </label>
-        <a href="" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc") ? "descending" : "ascending")" class="mobile-sort" role="button"></a>
-        <select class="govuk-select" asp-for="@Model.SortField" name="sf" id="sortOption">
+        <select class="govuk-select sort-option" asp-for="@Model.SortField" name="sf" style="width: 100%">
             @foreach (var option in Model.SortSelectItems)
             {
                 <option value="@option.Item1">@option.Item2</option>
             }
         </select>
-        <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection"/>
-        </div>
-    </form>
-</div>
+        <input type="hidden" name="sd" class="sort-direction" value="@Model.SortDirection"/>
+    </div>
+</form>
