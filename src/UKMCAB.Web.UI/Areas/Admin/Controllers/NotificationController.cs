@@ -7,6 +7,7 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
@@ -27,21 +28,37 @@ public class NotificationController : Controller
 
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly ICABAdminService _cabAdminService;
+    private readonly IDistCache _distCache;
 
-    public NotificationController(IWorkflowTaskService workflowTaskService, ICABAdminService cabAdminService)
+    public NotificationController(IWorkflowTaskService workflowTaskService, ICABAdminService cabAdminService,
+        IDistCache distCache)
     {
         _workflowTaskService = workflowTaskService;
         _cabAdminService = cabAdminService;
+        _distCache = distCache;
     }
 
     [HttpGet(Name = Routes.Notifications)]
     public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
     {
-        var model = await CreateNotificationsViewModelAsync(sf, sd, pageNumber);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(userId);
+        var cacheKey = userId + "-assigned-to-me-notifications";
+        if (assignedToMe.Any() && await _distCache.GetAsync<string?>(cacheKey) == null &&
+            string.IsNullOrWhiteSpace(sf) && string.IsNullOrWhiteSpace(sd))
+        {
+            //Business rule redirect to assigned to me tab if items found
+            await _distCache.SetAsync(cacheKey, assignedToMe.Count.ToString(), new TimeSpan(0, 0, 10, 0));
+            return new RedirectResult(Url.RouteUrl(Routes.Notifications) + $"#{AssignedMeTabName}");
+        }
+
+        await _distCache.RemoveAsync(cacheKey);
+        var model = await CreateNotificationsViewModelAsync(assignedToMe, sf, sd, pageNumber);
         return View(model);
     }
 
     private async Task<NotificationsViewModel> CreateNotificationsViewModelAsync(
+        List<WorkflowTask> assignedToMe,
         string sf,
         string sd,
         int pageNumber)
@@ -51,12 +68,11 @@ public class NotificationController : Controller
             sd = SortDirectionHelper.Ascending;
         }
 
-        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS: Roles.UKAS;
+        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
         var resultsPerPage = 5;
         var skipTake = SkipTake.FromPage(pageNumber - 1, 5);
         var unassigned = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
-        var assignedToMe =
-            await _workflowTaskService.GetByAssignedUserAsync(User.FindFirstValue(ClaimTypes.NameIdentifier));
+
         var assignedToGroup =
             await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id);
         var completed =
@@ -71,7 +87,13 @@ public class NotificationController : Controller
         List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)> completedItems =
             await BuildTableItemsAsync(completed, sf, sd);
 
-        var mobileSortOptions = new Tuple<string, string>("From", "From");
+        var mobileSortOptions = new List<Tuple<string, string>>
+        {
+            new("From", "From"),
+            new("Subject", "Subject"),
+            new("CabName", "Cab name"),
+            new("LastUpdated", "Last Updated")
+        };
         var model = new NotificationsViewModel
         (
             Constants.PageTitle.Notifications,
@@ -82,10 +104,8 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = unAssignedItems.Count,
                     TabId = UnassignedTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
-                {
-                    mobileSortOptions
-                }), UnassignedTabName, "unassigned"),
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), UnassignedTabName,
+                "unassigned", unAssignedItems.Count),
             new NotificationsViewModelTable(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd),
                 assignedToMeItems.Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
@@ -94,10 +114,8 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = assignedToMe.Count,
                     TabId = AssignedMeTabName
-                }, new MobileSortTableViewModel(sf, sd, new List<Tuple<string, string>>
-                {
-                    mobileSortOptions
-                }), AssignedMeTabName, "assigned to me"),
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), AssignedMeTabName, "assigned to me",
+                assignedToMe.Count),
             new NotificationsViewModelTable(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
                 assignedToGroupItems.Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
@@ -105,10 +123,8 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = assignedToGroup.Count,
                     TabId = AssignedGroupTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
-                {
-                    mobileSortOptions
-                }), AssignedGroupTabName, "assigned to " + role.Label),
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions),
+                AssignedGroupTabName, "assigned to " + role.Label, assignedToGroup.Count),
             new NotificationsViewModelTable(completedItems.Any(), sf, SortDirectionHelper.Get(sd),
                 completedItems.Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
@@ -117,10 +133,9 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = completed.Count,
                     TabId = CompletedTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Get(sd), new List<Tuple<string, string>>
-                {
-                    mobileSortOptions
-                }), CompletedTabName, "completed")
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), CompletedTabName,
+                "completed", completedItems.Count),
+            role.Label
         );
         return model;
     }
