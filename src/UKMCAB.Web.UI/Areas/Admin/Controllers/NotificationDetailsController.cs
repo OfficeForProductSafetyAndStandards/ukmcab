@@ -72,7 +72,7 @@ public class NotificationDetailsController : Controller
         return RedirectToAction("Index", "Notification", new { Area = "admin" });
     }
 
-    private async Task<List<(string, string)>> GetUser()
+    private async Task<(List<(string, string)>, string)> GetUser()
     {
         var options =
             new UserAccountListOptions(SkipTake.FromPage(-1, 40), new SortBy("firstName", null));
@@ -80,13 +80,14 @@ public class NotificationDetailsController : Controller
         var users = await _userService.ListAsync(options);
         var assignees = users.Where(x => x.Role == role)
             .Select(user => new ValueTuple<string, string>(user.Id, user.FirstName! + " " + user.Surname)).ToList();
-        return assignees;
+        return (assignees, role);
     }
 
 
     private async Task<(NotificationDetailViewModel, WorkflowTask)> NotificationDetailsMapping(Guid id)
     {
         var workFlowTask = await _workflowTaskService.GetAsync(id);
+        var (assigneeList, group) = await GetUser();
         var notificationDetail = new NotificationDetailViewModel()
         {
             Status = workFlowTask.Completed ? "Completed" :
@@ -100,7 +101,8 @@ public class NotificationDetailsController : Controller
             CompletedBy = workFlowTask.LastUpdatedBy.FirstAndLastName,
             AssignedOn =
                 workFlowTask.Assigned != null ? workFlowTask.Assigned.Value.ToStringBeisFormat() : string.Empty,
-            SelectAssignee = await GetUser(),
+            SelectAssignee = assigneeList,
+            UserGroup = group,
             SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
