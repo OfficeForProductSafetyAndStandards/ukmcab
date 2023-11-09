@@ -1,9 +1,9 @@
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationsViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationsViewModelTab
 @if (Model.ShowTableItems)
 {
     <partial name="Partials/_MobileSortTable" model="@Model.MobileSortTableViewModel"/>
 }
-<table class="govuk-table ukmcab-table">
+<table class="govuk-table ukmcab-table govuk-!-font-size-16">
     <caption class="govuk-visually-hidden">Table of notifications assigned</caption>
     <thead class="govuk-table__head">
     <tr class="govuk-table__row">
@@ -64,7 +64,7 @@
 </table>
 @if (Model.ShowTableItems)
 {
-    <div id="cab-management-pagination-container">
+    <div id="noitifications-pagination-container">
         <partial name="Partials/_Pagination" model="Model.Pagination"/>
     </div>
 }

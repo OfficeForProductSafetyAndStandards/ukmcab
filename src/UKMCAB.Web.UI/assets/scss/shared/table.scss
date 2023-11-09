@@ -1,6 +1,6 @@
 ﻿.ukmcab-table {
     table-layout: fixed;
-
+    
     thead {
         @include govuk-media-query($until: tablet) {
             display: none;

@@ -8,3 +8,4 @@ global using System.Threading.Tasks;
 global using UKMCAB.Common;
 global using UKMCAB.Web;
 global using UKMCAB.Web.UI.Models;
+global using UKMCAB.Common;
