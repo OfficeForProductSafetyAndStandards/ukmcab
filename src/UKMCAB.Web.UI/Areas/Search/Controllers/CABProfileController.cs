@@ -33,7 +33,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             public const string CabDetails = "cab.detail";
             public const string CabDraftProfile = "cab.profile.draft";
-            public const string CabProfileHistoryDetails = "cab-profile.history-details";
+            public const string CabProfileHistoryDetails = "cab.profile.history-details";
             public const string TrackInboundLinkCabDetails = "cab.details.inbound-email-link";
             public const string CabFeed = "cab.feed";
         }

@@ -36,6 +36,27 @@
                         </div>
                     </div>
                 }
+
+                <govuk-character-count asp-for="ArchiveInternalReason" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--l" is-page-heading="false">
+                        Internal notes
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        These notes will only be seen by users that are signed in to the UKMCAB service.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+ 
+
+
+                <govuk-character-count asp-for="ArchivePublicReason" max-length="1000">
+                    <govuk-character-count-label class="govuk-label--l" is-page-heading="false">
+                        Reason (optional)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        Enter the reason for archiving this CAB. This will be shown to all users in the CAB history page.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+                @*
                 <div class="govuk-character-count" data-module="govuk-character-count" data-maxlength="1000">
                     <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchiveInternalReason")">
                         <h3 class="govuk-label-wrapper">
@@ -74,6 +95,7 @@
                         You can enter up to 1000 characters
                     </div>
                 </div>
+                *@
 
                 <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
