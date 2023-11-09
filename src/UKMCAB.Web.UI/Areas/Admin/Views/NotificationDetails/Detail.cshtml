@@ -3,7 +3,9 @@
 @{
     ViewBag.Title = Model.Title!;
 }
-<govuk-back-link href="/admin/notifications"/>
+
+<a asp-area="Admin" asp-controller="Notification" asp-action="Index" class="govuk-back-link">Back</a>
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">@Model.Subject</h1>
@@ -91,6 +93,14 @@
                     </govuk-summary-list-row>
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
+                            User group
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            <p class="govuk-body">@Model.UserGroup</p>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
                             Assigned on
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
@@ -122,9 +132,8 @@
             }
             @if (Model.Status!.ToLowerInvariant() == "assigned")
             {
-                @*TODO : hide the border for Assignee *@
                 <govuk-summary-list>
-                    <govuk-summary-list-row>
+                    <govuk-summary-list-row class="hideBottomBorder">
                         <govuk-summary-list-row-key>
                             Assignee
                         </govuk-summary-list-row-key>
@@ -157,7 +166,7 @@
                             User group
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
-                            <p class="govuk-body">User group</p>
+                            <p class="govuk-body">@Model.UserGroup</p>
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                     <govuk-summary-list-row>
