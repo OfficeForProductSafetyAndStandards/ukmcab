@@ -1,4 +1,3 @@
-using System.Globalization;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Common.Extensions;
@@ -7,6 +6,7 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
+using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
@@ -77,14 +77,14 @@ public class NotificationController : Controller
             await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id);
         var completed =
             await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id, true);
-        List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)> unAssignedItems =
+        List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)> unAssignedItems =
             await BuildTableItemsAsync(unassigned, sf, sd);
-        List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)> assignedToMeItems =
+        List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)> assignedToMeItems =
             await BuildTableItemsAsync(assignedToMe, sf, sd);
-        List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)>
             assignedToGroupItems =
                 await BuildTableItemsAsync(assignedToGroup, sf, sd);
-        List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)> completedItems =
+        List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)> completedItems =
             await BuildTableItemsAsync(completed, sf, sd);
 
         var mobileSortOptions = new List<Tuple<string, string>>
@@ -140,19 +140,25 @@ public class NotificationController : Controller
         return model;
     }
 
-    private async Task<List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)>>
+    private async Task<List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)>>
         BuildTableItemsAsync(
             IEnumerable<WorkflowTask> tasks,
             string? sf,
             string? sd)
     {
-        var items = new List<(string From, string Subject, string CABName, string LastUpdated, string? DetailLink)>();
+        var items = new List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)>();
         foreach (var notification in tasks)
         {
-            var cab = await _cabAdminService.GetLatestDocumentAsync(notification.CABId.ToString());
+            Document? cab = null;
+            if (notification.CABId.HasValue)
+            {
+                cab = await _cabAdminService.GetLatestDocumentAsync(notification.CABId.ToString()!);
+            }
+
             var item = (From: notification.Submitter.FirstAndLastName,
                 Subject: notification.TaskType.GetEnumDescription(),
-                CABName: cab.Name, LastUpdated: notification.SentOn.ToStringBeisFormat(),
+                CABName: cab?.Name, 
+                LastUpdated: notification.SentOn.ToStringBeisFormat(),
                 DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails,
                     new { id = notification.Id.ToString() }));
             items.Add(item);

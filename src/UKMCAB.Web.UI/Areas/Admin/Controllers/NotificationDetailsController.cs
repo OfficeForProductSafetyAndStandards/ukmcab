@@ -41,7 +41,7 @@ public class NotificationDetailsController : Controller
         return View(vm.Item1);
     }
 
- 
+
     [HttpPost("details/{id}", Name = Routes.NotificationDetails)]
     public async Task<IActionResult> Detail(Guid id, NotificationDetailViewModel model)
     {
@@ -106,9 +106,12 @@ public class NotificationDetailsController : Controller
             SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
+        if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
+        
         var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString());
         notificationDetail.ViewLink = (cabDetails.Name,
-            Url.RouteUrl(CABProfileController.Routes.CabDetails, new {id = workFlowTask.CABId}));
+            Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
+
         return (notificationDetail, workFlowTask);
     }
 }

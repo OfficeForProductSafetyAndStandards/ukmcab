@@ -32,7 +32,7 @@
                         <p class="govuk-body">@Model.From</p>
                     </govuk-summary-list-row-value>
                 </govuk-summary-list-row>
-                @if (Model.Reason != null)
+                @if (!string.IsNullOrWhiteSpace(Model.Reason))
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
@@ -73,14 +73,17 @@
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                 }
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        View
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        <a class="govuk-link" href="@Model.ViewLink.ViewLinkAddress">@Model.ViewLink.ViewLinkName</a>
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
+                @if (!string.IsNullOrWhiteSpace(Model.ViewLink.ViewLinkAddress))
+                {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            View
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            <a class="govuk-link" href="@Model.ViewLink.ViewLinkAddress">@Model.ViewLink.ViewLinkName</a>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                }
                 @if (Model.Status!.ToLowerInvariant() == "completed")
                 {
                     <govuk-summary-list-row>
