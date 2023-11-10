@@ -8,7 +8,7 @@ namespace UKMCAB.Data.Models
     {
         public Audit() { }
 
-        public Audit(string userId, string username, string userrole, DateTime date, string action, string comment = null, string publicComment = null)
+        public Audit(string userId, string username, string userrole, DateTime date, string action, string comment = null, string publicComment = null, bool isUserInputComment = true)
         {
             UserId = userId;
             UserName = username;
@@ -17,6 +17,7 @@ namespace UKMCAB.Data.Models
             Action = action;
             Comment = comment;
             PublicComment = publicComment;
+            IsUserInputComment = isUserInputComment;
         }
 
         public Audit(UserAccount? userAccount, string action, string comment = null, string publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
@@ -65,6 +66,7 @@ namespace UKMCAB.Data.Models
             }
 
             Comment = HttpUtility.HtmlEncode(sb.ToString());
+            IsUserInputComment = false;
         }
 
         private static string ScheduleLink(string cabId, string fileName)
@@ -79,6 +81,7 @@ namespace UKMCAB.Data.Models
         public string Action { get; set; }
         public string? Comment { get; set; }
         public string? PublicComment { get; set; }
+        public bool? IsUserInputComment { get; set; }
     }
 
     public class AuditCABActions

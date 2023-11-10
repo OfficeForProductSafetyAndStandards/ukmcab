@@ -59,13 +59,23 @@
                         {
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header">Internal notes</th>
-                                <td class="govuk-table__cell">@Html.Raw(HttpUtility.HtmlDecode(@Model.InternalComment))</td>
+                                <td class="govuk-table__cell">
+                                    @if (Model.IsUserInputComment)
+                                    {
+                                        @HttpUtility.HtmlDecode(@Model.InternalComment);
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(HttpUtility.HtmlDecode(@Model.InternalComment));
+                                    }
+                                    
+                                    </td>
                             </tr>
                         }
                         
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">Reason</th>
-                            <td class="govuk-table__cell">@Html.Raw(HttpUtility.HtmlDecode(@Model.PublicComment))</td>
+                            <td class="govuk-table__cell">@HttpUtility.HtmlDecode(@Model.PublicComment)</td>
                         </tr>
                     </tbody>
                 </table>

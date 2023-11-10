@@ -484,9 +484,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab/history-details")]
-        public async Task<IActionResult> CABHistoryDetails(string date, string time, string username, string userId, string userGroup, string auditAction, string internalComment, string? publicComment, string? returnUrl)        
+        public async Task<IActionResult> CABHistoryDetails(string date, string time, string username, string userId, string userGroup, string auditAction, string internalComment, string? publicComment, string? returnUrl, bool isUserInputComment)        
         {
-
             var auditHistoryItemViewModel = new AuditHistoryItemViewModel
             {
                 Date = date,
@@ -497,7 +496,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Action = auditAction,
                 InternalComment = internalComment,
                 PublicComment = publicComment ?? Constants.NotProvided,
-                ReturnUrl = WebUtility.UrlDecode(returnUrl)
+                ReturnUrl = WebUtility.UrlDecode(returnUrl),
+                IsUserInputComment = isUserInputComment
             };
 
             return View(auditHistoryItemViewModel);

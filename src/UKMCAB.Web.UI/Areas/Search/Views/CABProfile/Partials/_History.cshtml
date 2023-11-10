@@ -61,6 +61,11 @@
                                     <label aria-hidden="true">Reason</label>
                                     @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment))
                                     {
+                                        var isUserInputComment = true;
+                                        if (auditHistoryItem.IsUserInputComment == null || auditHistoryItem.IsUserInputComment == false)
+                                        {
+                                            isUserInputComment = false;
+                                        }
                                         var parms = new Dictionary<string, string>
                                         {
                                             { "date", @auditHistoryItem.Date },
@@ -74,7 +79,7 @@
                                             { "returnUrl", returnUrl }
                                         };
 
-                                        <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms">View</a>
+                                        <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms" asp-route-isUserInputComment="@isUserInputComment">View</a>
                                     }
                                     else
                                     {

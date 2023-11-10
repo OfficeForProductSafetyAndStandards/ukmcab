@@ -11,22 +11,6 @@
 
 #cab-profile-page {
 
-
-    /* mobile */
-    @include govuk-media-query($until: tablet) {
-        #cab-profile-page-caption--desktop{
-            display:none;
-        }
-    }
-
-
-    /* desktop*/
-    @include govuk-media-query($from: tablet) {
-        #cab-profile-page-caption--mobile {
-            display: none;
-        }
-    }
-
     .atom-feed-top {
         margin-bottom: 10px;
     }
@@ -153,11 +137,6 @@
 
                     .cab-detail-list-item {
                         display: block;
-                    }
-
-                    /* Temporarily disabled not sure if there are other pages depending on it*/
-                    .govuk-summary-list__key {
-                       // font-weight: 400;
                     }
 
                     .govuk-summary-list__actions {

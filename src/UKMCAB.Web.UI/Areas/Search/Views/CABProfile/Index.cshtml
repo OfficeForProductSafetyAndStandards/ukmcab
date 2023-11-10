@@ -69,7 +69,7 @@
             <h1 class="govuk-heading-l">@Model.Name</h1>
         </div>
 
-        <div id="cab-profile-page-caption--mobile" class="govuk-grid-column-full">
+        <div class="govuk-grid-column-full desktop-no-display">
             <div class="cab-detail-date-meta">
                 <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5 govuk-!-margin-top-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
                 <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
@@ -113,7 +113,7 @@
     </div>
     <div class="govuk-grid-row">
        
-        <div id="cab-profile-page-caption--desktop" class="govuk-grid-column-full">
+        <div class="govuk-grid-column-full mobile-no-display">
             <div class="cab-detail-date-meta">
                 <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
                 <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
