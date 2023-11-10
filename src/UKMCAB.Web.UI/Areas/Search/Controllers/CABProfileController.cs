@@ -169,7 +169,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 AppointmentDate = cabDocument.AppointmentDate,
                 ReviewDate = cabDocument.RenewalDate,
                 UKASReferenceNumber = cabDocument.UKASReference,
-                Address = cabDocument.GetAddress(),
+                Address = cabDocument.GetFormattedAddress(),
                 Website = cabDocument.Website,
                 Email = cabDocument.Email,
                 Phone = cabDocument.Phone,
