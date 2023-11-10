@@ -13,16 +13,16 @@
         <div class="govuk-tabs user-tabs" data-module="govuk-tabs">
             <ul class="govuk-tabs__list">
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="user-management-unselected-link">Requests (@Model.PendingAccountsCount)</a>
+                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="tab-item-title">Requests (@Model.PendingAccountsCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserList" class="user-management-unselected-link">Active (@Model.ActiveUsersCount)</a>
+                    <a asp-route="@UserAdminController.Routes.UserList" class="tab-item-title">Active (@Model.ActiveUsersCount)</a>
                 </li>                
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                     <a class="govuk-tabs__tab" href="#locked-user-list">Locked (@Model.LockedUsersCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListArchived" class="user-management-unselected-link">Archived (@Model.ArchivedUsersCount)</a>
+                    <a asp-route="@UserAdminController.Routes.UserListArchived" class="tab-item-title">Archived (@Model.ArchivedUsersCount)</a>
                 </li>
             </ul>
 
@@ -33,15 +33,14 @@
                         <label class="govuk-label" asp-for="@Model.SortField">
                             Sort by
                         </label>
-                        <a href="#" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc")? "descending" : "ascending")" class="user-manage-sort" role="button"></a>
-                        <select class="govuk-select" asp-for="@Model.SortField" name="sf" id="sortOption">
+                        <select class="govuk-select sort-option" asp-for="@Model.SortField" name="sf" id="sortOption">
                             <option value="@nameof(UserAccount.FirstName)">First name</option>
                             <option value="@nameof(UserAccount.Surname)">Last Name</option>
                             <option value="@nameof(UserAccount.ContactEmailAddress)">Email</option>
                             <option value="@nameof(UserAccount.Role)">User group</option>
                             <option value="@nameof(UserAccount.LastLogonUtc)">Last log in</option>
                         </select>
-                        <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection" />
+                          <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection" />
                     </div>
                 </form>
             </div>
@@ -69,7 +68,6 @@
                                 <th scope="col" class="govuk-table__header">
                                     <sort target="@nameof(UserAccount.LastLogonUtc)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last log in</sort>
                                 </th>
-                                <th scope="col" class="govuk-table__header">Action</th>
                             }
                         </tr>
                     </thead>
@@ -81,7 +79,7 @@
                                 <tr class="govuk-table__row">
                                     <td class="govuk-table__cell user-table-cell__wide" title="@account.FirstName">
                                         <label aria-hidden="true">First name</label>
-                                        @account.FirstName.Ellipsis(15)
+                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">@account.FirstName.Ellipsis(15)</a>
                                     </td>
                                     <td class="govuk-table__cell user-table-cell__mobile" title="@account.FirstName">
                                         <label aria-hidden="true">First name</label>
@@ -113,10 +111,6 @@
                                     <td class="govuk-table__cell">
                                         <label aria-hidden="true">Last log in</label>
                                         @(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")
-                                    </td>
-                                    <td class="govuk-table__cell user-table-cell__wide">
-                                        <label aria-hidden="true">Action</label>
-                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View</a>
                                     </td>
                                 </tr>
                             }

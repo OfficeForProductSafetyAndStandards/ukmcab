@@ -60,7 +60,7 @@ public class UserAdminController : Controller
 
     private async Task<IActionResult> UserListAsync(int page, bool isLocked, UserAccountLockReason? lockReason, string title, string? sortField = null, string? sortDirection = null)
     {
-        var options = new UserAccountListOptions(SkipTake.FromPage(page-1,20), new SortBy(sortField, sortDirection), isLocked, lockReason, null);
+        var options = new UserAccountListOptions(SkipTake.FromPage(page-1,20), new SortBy(sortField, sortDirection ?? SortDirectionHelper.Descending), isLocked, lockReason, null);
         var accounts = await _userService.ListAsync(options);
         var pendingAccountsCount = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending);
 
@@ -87,8 +87,8 @@ public class UserAdminController : Controller
             LockedUsersCount = await _userService.UserCountAsync(UserAccountLockReason.None, true),
             Title = "User accounts",
             LockedOnly = isLocked,
-            SortField = sortField ?? nameof(UserAccount.Surname),
-            SortDirection = sortDirection ?? SortDirectionHelper.Ascending,
+            SortField = sortField ?? nameof(UserAccount.LastLogonUtc),
+            SortDirection = sortDirection ?? SortDirectionHelper.Descending,
             Pagination = new PaginationViewModel
             {
                 PageNumber = page,

@@ -7,6 +7,16 @@
         display: none;
     }
 
+    tbody{
+
+        th{
+            width: 80%;
+        }
+        
+        td{
+            width: 20%;
+        }
+    }
     /*mobile*/
     @media (max-width: 40.0625em) {
         .govuk-heading-l {

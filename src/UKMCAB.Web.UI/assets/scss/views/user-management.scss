@@ -1,11 +1,10 @@
 .user-tabs {
 
-    .user-management-unselected-link {
+    .tab-item-title {
         color: $govuk-link-active-colour;
     }
-
+    /*Desktop*/
     @media (min-width: 40.0625em) {
-
 
         table {
             table-layout: fixed;
@@ -59,10 +58,7 @@
             display: none;
         }
     }
-
-
-
-
+    /*Mobile*/
     @media (max-width: 40.0625em) {
 
         table {

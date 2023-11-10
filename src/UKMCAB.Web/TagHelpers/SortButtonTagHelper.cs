@@ -23,6 +23,12 @@ public class SortButtonTagHelper : TagHelper
     /// </summary>
     [HtmlAttributeName("target")]
     public string? TargetField { get; set; }
+    
+    /// <summary>
+    /// Name of the tab to show
+    /// </summary>
+    [HtmlAttributeName("tab-to-show")]
+    public string? TabToShow { get; set; }
 
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
@@ -32,12 +38,12 @@ public class SortButtonTagHelper : TagHelper
         
         if(SortField == TargetField)
         {
-            output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Opposite(SortDirection)}");
+            output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Opposite(SortDirection)}#{TabToShow}");
             output.Attributes.EnsureAttribute("aria-sort", SortDirectionHelper.Get(SortDirection));
         }
         else
         {
-            output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Ascending}");
+            output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Ascending}#{TabToShow}");
             output.Attributes.EnsureAttribute("aria-sort", "none");
         }
     }

@@ -25,7 +25,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public bool IsOPSSUser { get; set; }
 
         // ILayout
-        public string? Title => Keywords.IsNotNullOrEmpty()? Keywords: "Search";
+        public virtual string? Title => Keywords.IsNotNullOrEmpty()? Keywords: "Search";
 
 
         // Form fields
