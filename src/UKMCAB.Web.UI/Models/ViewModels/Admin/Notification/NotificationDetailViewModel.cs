@@ -21,5 +21,6 @@ public record NotificationDetailViewModel : ILayoutModel
     [Required(ErrorMessage = "Select an assignee")]
     public string SelectedAssignee { get; set; }
     public string? SelectedAssigneeId { get; set; }
+    public string? UserGroup { get; set; }
     public string? Title { get; }
 }

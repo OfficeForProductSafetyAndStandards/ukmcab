@@ -67,7 +67,7 @@ public class UserAccountRepository : IUserAccountRepository
             }
         }
 
-        var data = q.OrderBy(options.SortBy.Expression(nameof(UserAccount.Surname)))
+        var data = q.OrderBy(options.SortBy.Expression(nameof(UserAccount.LastLogonUtc)))
             .Skip(options.SkipTake.Skip)
             .Take(options.SkipTake.Take)
             .ToList();
