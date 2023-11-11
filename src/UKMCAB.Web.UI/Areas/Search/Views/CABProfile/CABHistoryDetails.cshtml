@@ -50,7 +50,6 @@
                                 <td class="govuk-table__cell">@Model.Usergroup</td>
                             </tr>
                         }
-                        
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">Action</th>
                             <td class="govuk-table__cell">@Model.Action</td>
@@ -68,11 +67,9 @@
                                     {
                                         @Html.Raw(HttpUtility.HtmlDecode(@Model.InternalComment));
                                     }
-                                    
                                     </td>
                             </tr>
                         }
-                        
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">Reason</th>
                             <td class="govuk-table__cell">@HttpUtility.HtmlDecode(@Model.PublicComment)</td>
