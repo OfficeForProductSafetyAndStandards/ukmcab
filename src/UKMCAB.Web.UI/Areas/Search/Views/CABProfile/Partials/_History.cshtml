@@ -80,11 +80,6 @@
                                         };
 
                                         <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms" asp-route-isUserInputComment="@isUserInputComment">View</a>
-                                        *@
-                                        <form asp-route="@CABProfileController.Routes.CabProfileHistoryDetails">
-                                            <input name="date" value="@auditHistoryItem.Date" type="hidden"/>
-                                            <button type="submit">Submit</button>
-                                        </form>
                                     }
                                     else
                                     {
