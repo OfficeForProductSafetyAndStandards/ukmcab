@@ -483,7 +483,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return Ok("File does not exist");
         }
 
-        [HttpGet("search/cab/history-details")]
+        [HttpGet("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
         public async Task<IActionResult> CABHistoryDetails(string date, string time, string username, string userId, string userGroup, string auditAction, string internalComment, string? publicComment, string? returnUrl, bool isUserInputComment)        
         {
             var auditHistoryItemViewModel = new AuditHistoryItemViewModel
