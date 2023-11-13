@@ -10,6 +10,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+// ReSharper disable SpecifyStringComparison - Not For Cosmos
 
 namespace UKMCAB.Core.Services.CAB
 {
@@ -29,16 +30,17 @@ namespace UKMCAB.Core.Services.CAB
             _telemetryClient = telemetryClient;
         }
 
-        public async Task<List<CabModel>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber, string? ukasReference)
+        public async Task<List<CabModel>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
+            string? ukasReference)
         {
-                var documents = await _cabRepostitory.Query<Document>(d =>
-                d.CABNumber!.Equals(cabNumber)
-                ||
-                (!string.IsNullOrWhiteSpace(ukasReference) && d.UKASReference.Equals(ukasReference))
-            );
+            var documents = await _cabRepostitory.Query<Document>(d =>
+                (!string.IsNullOrWhiteSpace(cabNumber) &&
+                d.CABNumber == cabNumber) ||
+                (!string.IsNullOrWhiteSpace(ukasReference) && d.UKASReference == ukasReference));
+            //Do not identify same record as a duplicate
             var documentsFound =  documents.Where(d => !d.CABId.Equals(cabId)).ToList();
             List<CabModel> cabs = new List<CabModel>();
-            foreach (var document in documentsFound)
+            foreach (var document in documentsFound.ToList())
             {
                 cabs.Add(document.MapToCabModel());
             }
@@ -108,7 +110,9 @@ namespace UKMCAB.Core.Services.CAB
         public async Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document,
             bool saveAsDraft = false)
         {
-            var documentExists = await FindOtherDocumentsByCabNumberOrUkasReference(document.id, document.CABNumber, document.UKASReference);
+            var documentExists =
+                await FindOtherDocumentsByCabNumberOrUkasReference(document.CABId, document.CABNumber,
+                    document.UKASReference);
 
             Guard.IsFalse(documentExists.Any(), "CAB number already exists in database");
 
@@ -332,7 +336,10 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatAsync(Status.Historical);
         }
 
-        public Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown) => _cabRepostitory.GetCABCountByStatusAsync(status);
-        public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) => _cabRepostitory.GetCABCountBySubStatusAsync(subStatus);
+        public Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown) =>
+            _cabRepostitory.GetCABCountByStatusAsync(status);
+
+        public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) =>
+            _cabRepostitory.GetCABCountBySubStatusAsync(subStatus);
     }
 }

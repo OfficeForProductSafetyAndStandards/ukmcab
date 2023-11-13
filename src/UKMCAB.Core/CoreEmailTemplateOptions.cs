@@ -25,4 +25,7 @@ public class CoreEmailTemplateOptions
     public string AccountArchived { get; set; } = null!;
     public string AccountUnarchived { get; set; } = null!;
 
+    public string NotificationRequestToPublish { get; set; } = null!;
+    public string NotificationRequestToPublishEmail { get; set; } = null!;
+
 }
