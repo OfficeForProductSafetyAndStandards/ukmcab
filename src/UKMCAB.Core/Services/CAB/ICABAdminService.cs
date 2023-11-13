@@ -22,8 +22,8 @@ namespace UKMCAB.Core.Services.CAB
             bool submitForApproval = false);
 
         Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument);
-        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveReason);
-        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveReason);
+        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveInternalReason, string archivePublicReason);
+        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveInternalReason, string unarchivePublicReason);
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
         Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown);
