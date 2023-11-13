@@ -185,7 +185,7 @@
             @if (Model.Status!.ToLowerInvariant() != "completed")
             {
                 <div class="govuk-button-group">
-                    <govuk-button id="search-keyword-button" type="submit">Update</govuk-button>
+                       <govuk-button id="search-keyword-button" type="submit">  @((Model.Status!.ToLowerInvariant() == "unassigned")? "Assign": "Update")</govuk-button>
                     <a asp-area="admin" asp-controller="Notification" asp-action="Index" class="govuk-link">Cancel</a>
                 </div>
             }
