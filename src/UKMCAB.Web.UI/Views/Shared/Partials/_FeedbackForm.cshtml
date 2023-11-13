@@ -16,34 +16,40 @@
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
                         <h2 class="govuk-fieldset__heading">
-                            Help us improve GOV.UK
+                            Help us improve this service
                         </h2>
                     </legend>
-                    <p class="govuk-body">Don't include personal or financial information like your National Insurance number or credit card details.</p>
+                    <p class="govuk-body">We use your feedback to make our service easier to use.</p>
                     <form asp-area="Home" asp-controller="Feedback" asp-action="Submit" method="post" novalidate>
                         <input type="hidden" id="ReturnURL" name="ReturnURL" value="@Context.Request.Path"/>
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--m" for="WhatWereYouDoing">
-                                    What you were doing
+                                    What were you doing?
                                 </label>
                             </h3>
                             <div id="doing-hint" class="govuk-hint">
-                                Please explain, step by step, what you did. If we can reproduce a problem, we can try and fix it.
+                                Explain, step by step, what you did. If we can reproduce a problem, we can try and fix it.
                             </div>
                             <textarea class="govuk-textarea" rows="5" aria-describedby="doing-hint" id="WhatWereYouDoing" name="WhatWereYouDoing"></textarea>
                         </div>
                         <div class="govuk-form-group">
                             <h3 class="govuk-label-wrapper">
                                 <label class="govuk-label govuk-label--m" for="WhatWentWrong">
-                                    What went wrong
+                                    What went wrong?
                                 </label>
                             </h3>
                             <div id="wrong-hint" class="govuk-hint">
-                                Please explain what you expected to happen, and what actually happened. A clear explanation will help us fix the problem.
+                                Explain what you expected to happen, and what actually happened. A clear explanation will help us fix the problem.
                             </div>
                             <textarea class="govuk-textarea" rows="5" aria-describedby="wrong-hint" id="WhatWentWrong" name="WhatWentWrong"></textarea>
                         </div>
+
+                        <govuk-input name="Email" id="Email">
+                            <govuk-input-label class="govuk-label--m">Email address (optional)</govuk-input-label>
+                            <govuk-input-hint>We may contact you to ask you some questions about your feedback</govuk-input-hint>
+                        </govuk-input>
+
                         <div class="govuk-button-group">
                             <button class="govuk-button" id="feedback-sumbit-button" name="feedback-sumbit-button" data-module="govuk-button">
                                 Send
@@ -56,10 +62,9 @@
                 </fieldset>
             </div>
             <div id="feedback-success" class="govuk-visually-hidden feedback-success-container">
-                <h2 class="govuk-heading-m">Thank you for your help</h2>
-                <p class="govuk-body">We will look to improve this service based on your feedback.</p>
+                <h2 class="govuk-heading-m">Thank you for your feedback</h2>
                 <div>
-                    <a class="govuk-link" href="#" id="feedback-form-submit-again-button">Submit further feedback on this page</a>
+                    <a class="govuk-link" href="#" id="feedback-form-submit-again-button">Provide more feedback about this page</a>
                 </div>
             </div>
         </details>
