@@ -92,6 +92,8 @@ public class NotificationDetailsController : Controller
         {
             Status = workFlowTask.Completed ? "Completed" :
                 workFlowTask.Assignee == null ? "Unassigned" : "Assigned",
+            IsCompleted = workFlowTask.Completed,
+            IsAssigned =  workFlowTask.Assignee != null,
             From = workFlowTask.Submitter.FirstAndLastName,
             Subject = workFlowTask.TaskType.GetEnumDescription(),
             Reason = workFlowTask.Reason,
@@ -108,7 +110,7 @@ public class NotificationDetailsController : Controller
         };
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
         
-        var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString());
+        var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString()!);
         notificationDetail.ViewLink = (cabDetails.Name,
             Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
 

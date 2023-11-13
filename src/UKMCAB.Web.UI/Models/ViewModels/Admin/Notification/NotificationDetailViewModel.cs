@@ -7,6 +7,8 @@ public record NotificationDetailViewModel : ILayoutModel
  
     public string? SelectedStatus { get; set; }
     public string? Status { get; set; }
+    public bool IsCompleted { get; set; } = false;
+    public bool IsAssigned { get; set; } = false;
     public string? From { get; set; }
     public string? Subject { get; set; }
     public string? Reason { get; set; }
