@@ -4,7 +4,7 @@
     ViewBag.Title = Model.Title!;
 }
 
-<govuk-back-link asp-area="Admin" asp-controller="Notification" asp-action="Index" />
+<govuk-back-link asp-area="Admin" asp-controller="Notification" asp-action="Index"/>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -120,7 +120,7 @@
                     <govuk-select-hint>The user will be assigned to this notification</govuk-select-hint>
                     <govuk-select-item value="">Select an assignee</govuk-select-item>
 
-                    @foreach (var assignee in @Model.SelectAssignee)
+                    @foreach (var assignee in Model.SelectAssignee)
                     {
                         if (assignee.Value == Model.SelectedAssigneeId)
                         {
@@ -150,7 +150,7 @@
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
                             <govuk-select name="SelectedAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-visually-hidden" asp-for="SelectedAssignee">
-                                @foreach (var assignee in @Model.SelectAssignee)
+                                @foreach (var assignee in Model.SelectAssignee)
                                 {
                                     if (assignee.Value == Model.SelectedAssigneeId)
                                     {
@@ -185,7 +185,7 @@
             @if (Model.Status!.ToLowerInvariant() != "completed")
             {
                 <div class="govuk-button-group">
-                       <govuk-button id="search-keyword-button" type="submit">  @((Model.Status!.ToLowerInvariant() == "unassigned")? "Assign": "Update")</govuk-button>
+                    <govuk-button id="search-keyword-button" type="submit">@(Model.Status!.ToLowerInvariant() == "unassigned" ? "Assign" : "Update")</govuk-button>
                     <a asp-area="admin" asp-controller="Notification" asp-action="Index" class="govuk-link">Cancel</a>
                 </div>
             }
