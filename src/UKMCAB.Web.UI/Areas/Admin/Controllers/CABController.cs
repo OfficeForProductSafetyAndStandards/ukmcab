@@ -464,7 +464,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private async Task SendNotificationForApproveCab(UserAccount userAccount, Dictionary<string, dynamic?> personalisation,
             CABSummaryViewModel publishModel)
         {
-            var userRoleId = Roles.List.First(r => r.Label != null && r.Label.Equals(userAccount.Role)).Id;
+            var userRoleId = Roles.List.First(r => r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
             await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail,
                 _templateOptions.NotificationRequestToPublish, personalisation);
             await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish,
