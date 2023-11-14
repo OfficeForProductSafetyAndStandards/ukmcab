@@ -3,7 +3,7 @@
     public class CABManagementItemViewModel
     {
         public string Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public string URLSlug { get; set; }
         public string CABNumber { get; set; }
         public string? CabNumberVisibility { get; set; }

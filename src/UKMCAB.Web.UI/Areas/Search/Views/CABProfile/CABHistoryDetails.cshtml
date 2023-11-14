@@ -1,0 +1,82 @@
+﻿@using System.Net;
+@using System.Web;
+@using UKMCAB.Core.Security;
+@using UKMCAB.Web.UI.Areas.Admin.Controllers;
+@using UKMCAB.Web.UI.Areas.Search.Controllers;
+@model UKMCAB.Web.UI.Models.ViewModels.Shared.AuditHistoryItemViewModel;
+@{
+    var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
+}
+
+<div id="cab-history-details-page"class="govuk-width-container">
+    @section BackButton
+        {
+        <div class="govuk-width-container ">
+            <div class="govuk-grid-row">
+                <div class="govuk-grid-column-two-thirds">
+                    @if (!string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                    {
+                        <a href="@Model.ReturnUrl" class="govuk-back-link">Back</a>
+                    }
+                    else
+                    {
+                        <a asp-route="@SearchController.Routes.Search" class="govuk-back-link">Back</a>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
+    <main class="govuk-main-wrapper">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <table class="govuk-table ukmcab-table--2-col">
+                    <caption class="govuk-table__caption govuk-table__caption--l">History details</caption>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Date and time</th>
+                            <td class="govuk-table__cell">@Model.Date @Model.Time</td>
+                        </tr>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole(Roles.OPSS.Id))
+                        {
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header" style="width:30%">User</th>
+                                <td class="govuk-table__cell">
+                                     <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@Model.UserId" asp-route-returnUrl="@returnUrl" class="govuk-link">@Model.Username</a>
+                                </td>
+                            </tr>
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">User group</th>
+                                <td class="govuk-table__cell">@Model.Usergroup</td>
+                            </tr>
+                        }
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Action</th>
+                            <td class="govuk-table__cell">@Model.Action</td>
+                        </tr>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole(Roles.OPSS.Id))
+                        {
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__header">Internal notes</th>
+                                <td class="govuk-table__cell">
+                                    @if (Model.IsUserInputComment)
+                                    {
+                                        @HttpUtility.HtmlDecode(@Model.InternalComment);
+                                    }
+                                    else
+                                    {
+                                        @Html.Raw(HttpUtility.HtmlDecode(@Model.InternalComment));
+                                    }
+                                    </td>
+                            </tr>
+                        }
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header">Reason</th>
+                            <td class="govuk-table__cell">@HttpUtility.HtmlDecode(@Model.PublicComment)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>

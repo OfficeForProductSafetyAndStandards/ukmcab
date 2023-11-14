@@ -18,7 +18,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             UserGroup = cab.LastUserGroup;
         }
 
-        private string ListItems(IEnumerable<string> list)
+        private string? ListItems(IEnumerable<string> list)
         {
             if (list != null && list.Any())
             {
@@ -27,15 +27,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             return string.Empty;
         }
 
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public string Status { get; set; }
         public string CABId { get; set; }
         public string URLSlug { get; set; }
-        public string Address { get; set; }
-        public string BodyType { get; set; }
-        public string RegisteredOfficeLocation { get; set; }
-        public string RegisteredTestLocation { get; set; }
-        public string LegislativeArea { get; set; }
+        public string? Address { get; set; }
+        public string? BodyType { get; set; }
+        public string? RegisteredOfficeLocation { get; set; }
+        public string? RegisteredTestLocation { get; set; }
+        public string? LegislativeArea { get; set; }
         public string UserGroup { get;}
     }
 }

@@ -18,43 +18,56 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <partial name="Partials/_ValidationSummary" model="null" />
         <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h1 class="govuk-fieldset__heading">
-                    Archive CAB profile
-                </h1>
-            </legend>
             <form method="post">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading ukmcab-padding-bottom-20">
+                        Archive @Model.Name
+                    </h1>
+                </legend>
+
                 <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL" />
                 <input type="hidden" asp-for="CABId" value="@Model.CABId" />
                  @if (Model.HasDraft)
                 {
-                    <div class="govuk-inset-text govuk-inset-text-alert govuk-tag--red">
-                        <strong>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted.</strong>
+                    <div class="ukmcab-inset-text--red">
+                        <div class="govuk-inset-text govuk-tag--red govuk-inset-text-alert">
+                            <strong>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted.</strong>
+                        </div>
                     </div>
                 }
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "ArchiveReason")">
-                    <div id="wrong-hint" class="govuk-hint">
-                        Enter the reason for archiving this CAB.
-                    </div>
-                    <p error-id-for="ArchiveReason" class="govuk-error-message">
-                        <span asp-validation-for="ArchiveReason" class="govuk-error-message"></span>
-                    </p>
-                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "ArchiveReason")" rows="5" aria-describedby="wrong-hint" asp-for="ArchiveReason" error-describedby-for="ArchiveReason"></textarea>
-                </div>
+
+                <govuk-character-count asp-for="ArchiveInternalReason" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        Internal notes
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        These notes will only be seen by users that are signed in to the UKMCAB service.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+ 
+                <govuk-character-count asp-for="ArchivePublicReason" max-length="1000">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        Reason (optional)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        Enter the reason for archiving this CAB. This will be shown to all users in the CAB history page.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+               
                 <div class="govuk-warning-text">
-                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                        <strong class="govuk-warning-text__text">
-                            <span class="govuk-warning-text__assistive">Warning</span>
-                            Archived CAB profiles cannot be edited and users cannot view them in the search results.
-                        </strong>
-                    </div>
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        Archived CAB profiles cannot be edited and users cannot view them in the search results.
+                    </strong>
+                </div>
+
                 <div class="govuk-button-group">
                     <button class="govuk-button" data-module="govuk-button">
                         Archive
                     </button>
-                    <a class="govuk-button govuk-button--secondary" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Cancel</a>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Cancel</a>
                 </div>
             </form>
         </fieldset>

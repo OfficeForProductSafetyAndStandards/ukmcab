@@ -5,7 +5,7 @@ namespace UKMCAB.Web.UI.Helpers;
 
 public class DateUtils
 {
-    public static DateTime? CheckDate(ModelStateDictionary modelState, string day, string month, string year, string modelKey, string errorMessagePart, DateTime? aptDate = null)
+    public static DateTime? CheckDate(ModelStateDictionary modelState, string? day, string? month, string? year, string modelKey, string errorMessagePart, DateTime? aptDate = null)
     {
         var date = $"{year}/{month}/{day}";
         var dayParsed = int.TryParse(day, out int parsedDay);

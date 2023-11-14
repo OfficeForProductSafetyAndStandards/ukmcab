@@ -33,6 +33,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             public const string CabDetails = "cab.detail";
             public const string CabDraftProfile = "cab.profile.draft";
+            public const string CabProfileHistoryDetails = "cab.profile.history-details";
             public const string TrackInboundLinkCabDetails = "cab.details.inbound-email-link";
             public const string CabFeed = "cab.feed";
         }
@@ -182,6 +183,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 BodyTypes = cabDocument.BodyTypes ?? new List<string>(),
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
+                Status = cabDocument.Status,
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
                 ProductSchedules = new CABDocumentsViewModel
                 {
@@ -241,6 +243,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(new ArchiveCABViewModel
             {
                 CABId = id,
+                Name = cabDocument.Name,
                 ReturnURL = returnUrl,
                 HasDraft = draft != null
             });
@@ -256,7 +259,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveReason);
+                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveInternalReason, model.ArchivePublicReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
@@ -264,13 +267,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 }));
                 return RedirectToAction("Index", new { id = cabDocument.URLSlug, returnUrl = model.ReturnURL });
             }
-
+            model.Name = cabDocument.Name ?? string.Empty;
             return View(model);
         }
 
         [HttpPost]
         [Route("search/cab-profile/archive/submit-js")]
-        public async Task<IActionResult> ArchiveJs(string CABId, string ArchiveReason)
+        public async Task<IActionResult> ArchiveJs(string CABId, string archiveInternalReason, string archivePublicReason)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(CABId);
             if (cabDocument == null)
@@ -282,14 +285,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 });
             }
 
-            if (cabDocument.StatusValue == Status.Published && !string.IsNullOrWhiteSpace(ArchiveReason))
+            if (cabDocument.StatusValue == Status.Published && !string.IsNullOrWhiteSpace(archiveInternalReason))
             {
                 try
                 {
                     var userAccount =
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                             .Value);
-                    await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, ArchiveReason);
+                    await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, archiveInternalReason, archivePublicReason);
                     _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                     {
                         [AiTracking.Metadata.CabId] = CABId,
@@ -332,6 +335,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(new UnarchiveCABViewModel
             {
                 CABId = id,
+                CABName = cabDocument.Name,
                 ReturnURL = returnUrl
             });
         }
@@ -346,7 +350,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UnarchiveDocumentAsync(userAccount, cabDocument.CABId, model.UnarchiveReason);
+                await _cabAdminService.UnarchiveDocumentAsync(userAccount, cabDocument.CABId, model.UnarchiveInternalReason, model.UnarchivePublicReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
@@ -355,12 +359,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 return RedirectToAction("Summary", "CAB", new { area = "Admin", id = cabDocument.CABId });
             }
 
+            model.CABName = cabDocument.Name;
+
             return View(model);
         }
 
         [HttpPost]
         [Route("search/cab-profile/unarchive/submit-js")]
-        public async Task<IActionResult> UnarchiveJs(string CABId, string UnarchiveReason)
+        public async Task<IActionResult> UnarchiveJs(string CABId, string UnarchiveInternalReason, string UnarchivePublicReason)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(CABId);
             if (cabDocument == null)
@@ -372,14 +378,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 });
             }
 
-            if (cabDocument.StatusValue == Status.Archived && !string.IsNullOrWhiteSpace(UnarchiveReason))
+            if (cabDocument.StatusValue == Status.Archived && !string.IsNullOrWhiteSpace(UnarchiveInternalReason))
             {
                 try
                 {
                     var userAccount =
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                             .Value);
-                    await _cabAdminService.UnarchiveDocumentAsync(userAccount, CABId, UnarchiveReason);
+                    await _cabAdminService.UnarchiveDocumentAsync(userAccount, CABId, UnarchiveInternalReason, UnarchivePublicReason);
                     _telemetryClient.TrackEvent(AiTracking.Events.CabUnarchived, HttpContext.ToTrackingMetadata(new()
                     {
                         [AiTracking.Metadata.CabId] = CABId
@@ -475,6 +481,26 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
 
             return Ok("File does not exist");
+        }
+
+        [HttpGet("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
+        public async Task<IActionResult> CABHistoryDetails(string date, string time, string username, string userId, string userGroup, string auditAction, string internalComment, string? publicComment, string? returnUrl, bool isUserInputComment)        
+        {
+            var auditHistoryItemViewModel = new AuditHistoryItemViewModel
+            {
+                Date = date,
+                Time = time,
+                Username = username,
+                UserId = userId,
+                Usergroup = userGroup,
+                Action = auditAction,
+                InternalComment = internalComment,
+                PublicComment = publicComment ?? Constants.NotProvided,
+                ReturnUrl = WebUtility.UrlDecode(returnUrl),
+                IsUserInputComment = isUserInputComment
+            };
+
+            return View(auditHistoryItemViewModel);
         }
     }
 }
