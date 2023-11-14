@@ -23,15 +23,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _cabAdminService = cabAdminService;
         }
 
-        [HttpGet, Route("", Name = Routes.Index)]
-        public async Task<IActionResult> Index()
-        {
-            return View(new BasicPageModel
-            {
-                Title = "Admin dashboard"
-            });
-        }
-
         [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
         public async Task<IActionResult> CABManagement(CABManagementViewModel model)
         {

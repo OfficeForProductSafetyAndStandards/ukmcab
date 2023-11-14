@@ -14,10 +14,12 @@
 
     <div id="notifications" class="govuk-grid-column-one-third">
         <div>
-            <table class="govuk-table">                
-                <a class="govuk-link"  asp-route="@NotificationController.Routes.NotificationsHome">
-                    <h2 class="govuk-heading-m">Notifications</h2>
-                </a>
+            <table class="govuk-table">
+                <caption class="govuk-table__caption govuk-table__caption--m">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications">
+                        Notifications
+                    </a>
+                </caption>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__cell">Unassigned</th>
@@ -37,46 +39,51 @@
     </div>
 
     <div id="search-for-a-cab" class="govuk-grid-column-one-half">
-        <div id="service-management-col-width-65-percent">
+        <div class="service-management-col-width-65-percent">
 
-        
-        <form id="search-results-form" asp-route="@SearchController.Routes.Search" method="get" novalidate>
-            <div id="search-results" class="govuk-grid-row">
 
-                <div id="search-keyword-container">
-                    <div id="search-filter-keywords">
-                        <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">
-                            <a class="govuk-link" asp-route="@SearchController.Routes.Search">
+            <form id="search-results-form" asp-route="@SearchController.Routes.Search" method="get" novalidate>
+                <div id="search-results" class="govuk-grid-row">
+
+                    <div id="search-keyword-container">
+                        <div id="search-filter-keywords">
+                            <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">
                                 <h2 class="govuk-heading-m">
-                                    Search for a CAB
-                                    <label id="keywords-hidden-label" class="govuk-label govuk-label--m" asp-for="Keywords">
+                                    <a class="govuk-link govuk-link--no-visited-state" asp-route="@SearchController.Routes.Search">
                                         Search for a CAB
-                                    </label>
+                                    </a>
                                 </h2>
-                            </a>
-                            <div id="search-filter-keywords-input-container">
-                                <input type="text" asp-for="Keywords" class="govuk-input search-box"/>
-                                <button id="search-keyword-button" type="submit">Search</button>
-                            </div>
-                        </fieldset>
+                                <label id="keywords-hidden-label" class="govuk-label govuk-label--m" asp-for="Keywords">
+                                    Search for a CAB
+                                </label>
+                                <div id="search-filter-keywords-input-container">
+                                    <input type="text" asp-for="Keywords" class="govuk-input search-box" />
+                                    <button id="search-keyword-button" type="submit">Search</button>
+                                </div>
+                            </fieldset>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </form>
+            </form>
         </div>
 
     </div>
 
     <div class="govuk-grid-column-one-third">
         <div id="manage-cabs">
+
             <table class="govuk-table">
-                <a class="govuk-link" asp-route="@AdminController.Routes.CABManagement">
-                    <h2 class="govuk-heading-m">Manage CABs</h2>
-                </a>
+
+
+                <caption class="govuk-table__caption govuk-table__caption--m">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-route="@AdminController.Routes.CABManagement">
+                        Manage CABs
+                    </a>
+                </caption>
                 <tbody class="govuk-table__body">
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link" asp-route="@AdminController.Routes.CABManagement" asp-route-filter="draft">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@AdminController.Routes.CABManagement" asp-route-filter="draft">
                                 Draft
                             </a>
                         </th>
@@ -84,7 +91,7 @@
                     </tr>
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link" asp-route="@AdminController.Routes.CABManagement">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@AdminController.Routes.CABManagement">
                                 Awaiting approval
                             </a>
                         </th>
@@ -92,7 +99,7 @@
                     </tr>
                     <tr class="govuk-table__row">
                         <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link" asp-route="@CABController.Routes.CreateNewCab">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@CABController.Routes.CreateNewCab">
                                 Create a CAB
                             </a>
                         </th>
@@ -106,15 +113,17 @@
     @if (User.HasClaim(Claims.UserManagement))
     {
         <div id="manage-users" class="govuk-grid-column-one-half">
-            <div id="service-management-col-width-65-percent">
+            <div class="service-management-col-width-65-percent">
                 <table class="govuk-table">
-                    <a class="govuk-link" asp-route="@UserAdminController.Routes.UserList">
-                        <h2 class="govuk-heading-m">Manage users</h2>
-                    </a>
+                    <caption class="govuk-table__caption govuk-table__caption--m">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@UserAdminController.Routes.UserAccountRequestsList">
+                            Manage users
+                        </a>
+                    </caption>
                     <tbody class="govuk-table__body">
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__cell">
-                                <a class="govuk-link" asp-route="@UserAdminController.Routes.UserAccountRequestsList">
+                                <a class="govuk-link govuk-link--no-visited-state" asp-route="@UserAdminController.Routes.UserAccountRequestsList">
                                     Account requests
                                 </a>
                             </th>
@@ -124,5 +133,5 @@
                 </table>
             </div>
         </div>
-    }    
+    }
 </div>

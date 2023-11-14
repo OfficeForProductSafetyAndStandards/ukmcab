@@ -18,25 +18,35 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <partial name="Partials/_ValidationSummary" model="null" />
         <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                <h1 class="govuk-fieldset__heading">
-                    Unarchive CAB profile
-                </h1>
-            </legend>
             <form method="post">
                 <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL" />
                 <input type="hidden" asp-for="CABId" value="@Model.CABId" />
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "UnarchiveReason")">
-                    <div id="wrong-hint" class="govuk-hint">
-                        State the reason for unarchiving this CAB record.
-                    </div>
-                    <p error-id-for="UnarchiveReason" class="govuk-error-message">
-                        <span asp-validation-for="UnarchiveReason" class="govuk-error-message"></span>
-                    </p>
-                    <textarea class="govuk-textarea @Html.ShowModelStateInputErrorClass(ViewData.ModelState, "UnarchiveReason")" rows="5" aria-describedby="wrong-hint" asp-for="UnarchiveReason" error-describedby-for="UnarchiveReason"></textarea>
-                </div>
+
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading ukmcab-padding-bottom-20">
+                        Unarchive @Model.CABName
+                    </h1>
+                </legend>
+
+                <govuk-character-count asp-for="UnarchiveInternalReason" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        Internal notes
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        These notes will only be seen by users that are signed in to the UKMCAB service.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+
+                <govuk-character-count asp-for="UnarchivePublicReason" max-length="1000">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        Reason (optional)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        Enter the reason for unarchiving this CAB. This will be shown to all users in the CAB history page.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+
                 <div class="govuk-warning-text">
                         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                         <strong class="govuk-warning-text__text">

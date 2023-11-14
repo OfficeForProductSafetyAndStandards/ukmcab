@@ -1,13 +1,14 @@
-@using UKMCAB.Data.Models
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationDetailViewModel
 
 @{
     ViewBag.Title = Model.Title!;
 }
-<govuk-back-link href="/"/>
+
+<govuk-back-link asp-area="Admin" asp-controller="Notification" asp-action="Index"/>
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">@Model.NotificationTitle</h1>
+        <h1 class="govuk-heading-l">@Model.Subject</h1>
     </div>
 </div>
 
@@ -31,22 +32,17 @@
                         <p class="govuk-body">@Model.From</p>
                     </govuk-summary-list-row-value>
                 </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        Subject
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        @Model.Subject
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        Reason
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        @Model.Reason
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
+                @if (!string.IsNullOrWhiteSpace(Model.Reason))
+                {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Reason
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            @Model.Reason
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                }
                 <govuk-summary-list-row>
                     <govuk-summary-list-row-key>
                         Sent on
@@ -55,7 +51,7 @@
                         @Model.SentOn
                     </govuk-summary-list-row-value>
                 </govuk-summary-list-row>
-                @if ( Model.Status == "Completed")
+                @if (Model.IsCompleted)
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
@@ -66,7 +62,7 @@
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                 }
-                @if (Model.Status == "Assigned")
+                @if (Model.IsAssigned)
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
@@ -77,15 +73,18 @@
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                 }
-                <govuk-summary-list-row>
-                    <govuk-summary-list-row-key>
-                        View
-                    </govuk-summary-list-row-key>
-                    <govuk-summary-list-row-value>
-                        <a class="govuk-link" href="@Model.ViewLink.ViewLinkAddress">@Model.ViewLink.ViewLinkName</a>
-                    </govuk-summary-list-row-value>
-                </govuk-summary-list-row>
-                @if ( Model.Status == "Completed")
+                @if (!string.IsNullOrWhiteSpace(Model.ViewLink.ViewLinkAddress))
+                {
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            View
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            <a class="govuk-link" href="@Model.ViewLink.ViewLinkAddress">@Model.ViewLink.ViewLinkName</a>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                }
+                @if (Model.IsCompleted)
                 {
                     <govuk-summary-list-row>
                         <govuk-summary-list-row-key>
@@ -93,6 +92,14 @@
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
                             <p class="govuk-body">@Model.CompletedBy</p>
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            User group
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
+                            <p class="govuk-body">@Model.UserGroup</p>
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                     <govuk-summary-list-row>
@@ -106,16 +113,16 @@
                 }
             </govuk-summary-list>
 
-            @if (Model.Status == "Unassigned")
+            @if (Model is { IsCompleted: false,IsAssigned: false })
             {
-                <govuk-select name="SelectAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-label--s" asp-for="SelectAssignee">
+                <govuk-select name="SelectedAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-label--s" asp-for="SelectedAssignee">
                     <govuk-select-label>Select an assignee</govuk-select-label>
                     <govuk-select-hint>The user will be assigned to this notification</govuk-select-hint>
                     <govuk-select-item value="">Select an assignee</govuk-select-item>
 
-                    @foreach (var assignee in @Model.SelectAssignee)
+                    @foreach (var assignee in Model.SelectAssignee!)
                     {
-                        if (assignee.Value == Model.SelectedAssignee)
+                        if (assignee.Value == Model.SelectedAssigneeId)
                         {
                             <govuk-select-item value="@assignee.Value" selected>@assignee.Text</govuk-select-item>
                         }
@@ -126,19 +133,26 @@
                     }
                 </govuk-select>
             }
-            @if (Model.Status == "Assigned")
+            @if (Model.IsAssigned)
             {
                 <govuk-summary-list>
-                    <govuk-summary-list-row>
+                    <govuk-summary-list-row class="hideBottomBorder">
                         <govuk-summary-list-row-key>
-                            Assignee Assigned to
+                            Assignee
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
-                            @* Todo - hide the label *@
+
+                        </govuk-summary-list-row-value>
+                    </govuk-summary-list-row>
+                    <govuk-summary-list-row>
+                        <govuk-summary-list-row-key>
+                            Assigned to
+                        </govuk-summary-list-row-key>
+                        <govuk-summary-list-row-value>
                             <govuk-select name="SelectedAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-visually-hidden" asp-for="SelectedAssignee">
-                                @foreach (var assignee in @Model.SelectAssignee)
+                                @foreach (var assignee in Model.SelectAssignee!)
                                 {
-                                    if (assignee.Value == Model.SelectedAssignee)
+                                    if (assignee.Value == Model.SelectedAssigneeId)
                                     {
                                         <govuk-select-item value="@assignee.Value" selected>@assignee.Text</govuk-select-item>
                                     }
@@ -155,7 +169,7 @@
                             User group
                         </govuk-summary-list-row-key>
                         <govuk-summary-list-row-value>
-                            <p class="govuk-body">User group</p>
+                            <p class="govuk-body">@Model.UserGroup</p>
                         </govuk-summary-list-row-value>
                     </govuk-summary-list-row>
                     <govuk-summary-list-row>
@@ -168,11 +182,11 @@
                     </govuk-summary-list-row>
                 </govuk-summary-list>
             }
-            @if (Model.Status != "Completed")
+            @if (!Model.IsCompleted)
             {
                 <div class="govuk-button-group">
-                    <govuk-button id="search-keyword-button" type="submit">Update</govuk-button>
-                    <a asp-area="admin" asp-controller="UserAdmin" asp-action="UserAccount" class="govuk-link">Cancel</a>
+                    <govuk-button id="search-keyword-button" type="submit">@(Model.IsAssigned ?"Update" : "Assign")</govuk-button>
+                    <a asp-area="admin" asp-controller="Notification" asp-action="Index" class="govuk-link">Cancel</a>
                 </div>
             }
         </form>

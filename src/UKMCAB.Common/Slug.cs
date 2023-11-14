@@ -11,7 +11,7 @@ namespace UKMCAB.Common
         /// <param name="text">Text to slugify</param>
         /// <param name="maxLength">Max length of slug</param>
         /// <returns>URL and SEO friendly string</returns>
-        public static string Make(string text, int maxLength = 0)
+        public static string Make(string? text, int maxLength = 0)
         {
             // Return empty value if text is null
             if (text.Clean() == null) return string.Empty;

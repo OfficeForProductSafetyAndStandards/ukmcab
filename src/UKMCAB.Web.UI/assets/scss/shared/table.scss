@@ -1,6 +1,6 @@
 ﻿.ukmcab-table {
     table-layout: fixed;
-
+    
     thead {
         @include govuk-media-query($until: tablet) {
             display: none;
@@ -20,6 +20,61 @@
                 display: block;
                 border-bottom: none;
                 overflow-wrap: break-word;
+            }
+
+            label {
+                display: none;
+
+                @include govuk-media-query($until: tablet) {
+                    display: block;
+                    font-weight: 600;
+                    padding-bottom: 10px;
+                }
+            }
+        }
+    }
+}
+
+
+.ukmcab-table--2-col {
+    table-layout: fixed;
+
+    thead {
+        @include govuk-media-query($until: tablet) {
+            display: none;
+        }
+    }
+
+    tr {
+
+        th {
+            overflow-wrap: break-word;
+
+            @include govuk-media-query($until: tablet) {
+                display: block;
+                border-bottom: none;
+                overflow-wrap: break-word;
+            }
+
+            label {
+                display: none;
+
+                @include govuk-media-query($until: tablet) {
+                    display: block;
+                    font-weight: 600;
+                    padding-bottom: 10px;
+                }
+            }
+        }
+
+        td {
+            overflow-wrap: break-word;
+
+            @include govuk-media-query($until: tablet) {
+                display: block;
+                border-bottom: none;
+                overflow-wrap: break-word;
+                padding: 0 10px 20px 0;
             }
 
             label {

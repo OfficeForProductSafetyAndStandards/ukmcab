@@ -14,6 +14,7 @@ using UKMCAB.Core;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
+using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
@@ -104,8 +105,9 @@ builder.Services.AddSingleton<IFileStorage, FileStorageService>();
 builder.Services.AddSingleton<IInitialiseDataService, InitialiseDataService>();
 builder.Services.AddSingleton<IUserAccountRepository, UserAccountRepository>();
 builder.Services.AddSingleton<IUserAccountRequestRepository, UserAccountRequestRepository>();
-builder.Services.AddSingleton<IWorkflowTaskRepository, WorkflowTaskRepository>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IWorkflowTaskRepository, WorkflowTaskRepository>();
+builder.Services.AddSingleton<IWorkflowTaskService, WorkflowTaskService>();
 builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
 

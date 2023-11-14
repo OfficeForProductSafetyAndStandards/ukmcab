@@ -5,6 +5,7 @@ using UKMCAB.Common.Security;
 
 namespace UKMCAB.Common;
 
+//TODO : Needs tobe splint according to the datatype
 public static class ExtensionMethods
 {
     /// <summary>
@@ -37,7 +38,10 @@ public static class ExtensionMethods
     /// <param name="dateTime"></param>
     /// <returns></returns>
     public static DateTime AsUtc(this DateTime dateTime) => dateTime.Kind == DateTimeKind.Utc ? dateTime : DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
-
+    public static string ToStringBeisFormat(this DateTime dateTime)
+     {
+        return dateTime.ToString("dd/MM/yyyy HH:mm");
+     }
     public static string AsYesNo(this bool b)
     {
         return b ? "yes" : "no";

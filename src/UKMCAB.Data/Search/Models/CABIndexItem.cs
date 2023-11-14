@@ -19,31 +19,31 @@ namespace UKMCAB.Data.Search.Models
 
 
         [SearchableField(IsSortable = true, NormalizerName = "lowercase", AnalyzerName = "en.microsoft")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [SimpleField]
         public string URLSlug { get; set; }
         [SearchableField]
-        public string AddressLine1 { get; set; }
+        public string? AddressLine1 { get; set; }
         [SearchableField]
-        public string AddressLine2 { get; set; }
+        public string? AddressLine2 { get; set; }
         [SearchableField]
-        public string TownCity { get; set; }
+        public string? TownCity { get; set; }
         [SearchableField]
         public string County { get; set; }
         [SearchableField]
-        public string Postcode { get; set; }
+        public string? Postcode { get; set; }
         [SearchableField]
-        public string Country { get; set; }
+        public string? Country { get; set; }
 
         [SearchableField]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
         [SearchableField]
-        public string Website { get; set; }
+        public string? Website { get; set; }
 
         [SearchableField]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
 
         [SearchableField(AnalyzerName = "en.microsoft")]
         public string HiddenText { get; set; }
@@ -61,7 +61,7 @@ namespace UKMCAB.Data.Search.Models
         public string[] TestingLocations { get; set; }
 
         [SearchableField(IsFacetable = true, IsFilterable = true)]
-        public string RegisteredOfficeLocation { get; set; }
+        public string? RegisteredOfficeLocation { get; set; }
 
         [SimpleField(IsSortable = true)]
         public DateTime? LastUpdatedDate { get; set; }

@@ -1,0 +1,120 @@
+using Microsoft.AspNetCore.Authorization;
+using UKMCAB.Common.Extensions;
+using UKMCAB.Core.Domain.Workflow;
+using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.CAB;
+using UKMCAB.Core.Services.Users;
+using UKMCAB.Core.Services.Workflow;
+using UKMCAB.Data.Domain;
+using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
+
+namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
+
+[Area("admin"), Route("admin/notifications"), Authorize]
+public class NotificationDetailsController : Controller
+{
+    public static class Routes
+    {
+        public const string NotificationDetails = "admin.notification.details";
+    }
+
+    private readonly ICABAdminService _cabAdminService;
+    private readonly IUserService _userService;
+    private readonly IWorkflowTaskService _workflowTaskService;
+
+    public NotificationDetailsController(ICABAdminService cabAdminService,
+        IWorkflowTaskService workflowTaskService,
+        IUserService userService
+    )
+    {
+        _cabAdminService = cabAdminService;
+        _workflowTaskService = workflowTaskService;
+        _userService = userService;
+    }
+
+
+    [HttpGet("details/{id}", Name = Routes.NotificationDetails)]
+    public async Task<IActionResult> Detail(Guid id)
+    {
+        var vm = await NotificationDetailsMapping(id);
+        return View(vm.Item1);
+    }
+
+
+    [HttpPost("details/{id}", Name = Routes.NotificationDetails)]
+    public async Task<IActionResult> Detail(Guid id, NotificationDetailViewModel model)
+    {
+        var (notificationDetail, workFlowTask) = await NotificationDetailsMapping(id);
+        model.Status = notificationDetail.Status;
+        model.From = notificationDetail.From;
+        model.Subject = notificationDetail.Subject;
+        model.Reason = notificationDetail.Reason;
+        model.SentOn = notificationDetail.SentOn;
+        model.CompletedOn = notificationDetail.CompletedOn;
+        model.LastUpdated = notificationDetail.LastUpdated;
+        model.ViewLink = notificationDetail.ViewLink;
+        model.CompletedBy = notificationDetail.CompletedBy;
+        model.AssignedOn = notificationDetail.AssignedOn;
+        model.SelectAssignee = notificationDetail.SelectAssignee;
+        model.SelectedAssignee = model.SelectedAssignee;
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var userAccount = await _userService.GetAsync(model.SelectedAssignee);
+        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount?.FirstName, userAccount?.Surname, userAccount?.Role);
+        workFlowTask.Assigned = DateTime.Now;
+        await _workflowTaskService.UpdateAsync(workFlowTask);
+
+        return RedirectToAction("Index", "Notification", new { Area = "admin" });
+    }
+
+    private async Task<(List<(string, string)>, string)> GetUser()
+    {
+        var options =
+            new UserAccountListOptions(SkipTake.FromPage(-1, 40), new SortBy("firstName", null));
+        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
+        var users = await _userService.ListAsync(options);
+        var assignees = users.Where(x => x.Role == role)
+            .Select(user => new ValueTuple<string, string>(user.Id, user.FirstName! + " " + user.Surname)).ToList();
+        return (assignees, role);
+    }
+
+
+    private async Task<(NotificationDetailViewModel, WorkflowTask)> NotificationDetailsMapping(Guid id)
+    {
+        var workFlowTask = await _workflowTaskService.GetAsync(id);
+        var (assigneeList, group) = await GetUser();
+        var notificationDetail = new NotificationDetailViewModel()
+        {
+            Status = workFlowTask.Completed ? "Completed" :
+                workFlowTask.Assignee == null ? "Unassigned" : "Assigned",
+            IsCompleted = workFlowTask.Completed,
+            IsAssigned =  workFlowTask.Assignee != null,
+            From = workFlowTask.Submitter.FirstAndLastName,
+            Subject = workFlowTask.TaskType.GetEnumDescription(),
+            Reason = workFlowTask.Reason,
+            SentOn = workFlowTask.SentOn.ToStringBeisFormat(),
+            CompletedOn = workFlowTask.Completed ? workFlowTask.LastUpdatedOn.ToStringBeisFormat() : string.Empty,
+            LastUpdated = workFlowTask.LastUpdatedOn.ToStringBeisFormat(),
+            CompletedBy = workFlowTask.LastUpdatedBy.FirstAndLastName,
+            AssignedOn =
+                workFlowTask.Assigned != null ? workFlowTask.Assigned.Value.ToStringBeisFormat() : string.Empty,
+            SelectAssignee = assigneeList,
+            UserGroup = group,
+            SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
+            SelectedAssigneeId = workFlowTask.Assignee?.UserId,
+        };
+        if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
+        
+        var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString()!);
+        notificationDetail.ViewLink = (cabDetails.Name,
+            Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
+
+        return (notificationDetail, workFlowTask);
+    }
+}

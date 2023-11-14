@@ -12,17 +12,17 @@
 
         <div class="govuk-tabs user-tabs" data-module="govuk-tabs">
             <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item">
+                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="tab-item-title">Requests (@Model.PendingAccountsCount)</a>
+                </li>
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#active-user-list">Active</a>
+                    <a class="govuk-tabs__tab" href="#active-user-list">Active (@Model.ActiveUsersCount)</a>
+                </li>                
+                <li class="govuk-tabs__list-item">
+                    <a asp-route="@UserAdminController.Routes.UserListLocked" class="tab-item-title">Locked (@Model.LockedUsersCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" style="color:#0b0c0c;">Requests (@Model.PendingAccountsCount)</a>
-                </li>
-                <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListLocked" style="color:#0b0c0c;">Locked</a>
-                </li>
-                <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListArchived" style="color:#0b0c0c;">Archived</a>
+                    <a asp-route="@UserAdminController.Routes.UserListArchived" class="tab-item-title">Archived (@Model.ArchivedUsersCount)</a>
                 </li>
             </ul>
 
@@ -32,107 +32,101 @@
                         <label class="govuk-label" asp-for="@Model.SortField">
                             Sort by
                         </label>
-                        <a href="" id="sortButton" aria-sort="@(Model.SortDirection.Equals("desc")? "descending" : "ascending")" class="user-manage-sort" role="button"></a>
-                        <select class="govuk-select" asp-for="@Model.SortField" name="sf" id="sortOption">
+                        <select class="govuk-select sort-option" asp-for="@Model.SortField" name="sf" id="sortOption">
                             <option value="@nameof(UserAccount.FirstName)">First name</option>
                             <option value="@nameof(UserAccount.Surname)">Last Name</option>
                             <option value="@nameof(UserAccount.ContactEmailAddress)">Email</option>
                             <option value="@nameof(UserAccount.Role)">User group</option>
                             <option value="@nameof(UserAccount.LastLogonUtc)">Last log in</option>
                         </select>
-                        <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection" />
+                        <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection"/>
                     </div>
                 </form>
             </div>
 
             <div class="govuk-tabs__panel govuk-body" id="active-user-list">                
-                <table class="govuk-table govuk-!-font-size-16 user-list-6-col">
+                <table class="govuk-table govuk-!-font-size-16 user-list-5-col">
                     <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                                @if (Model.UserAccounts.Any())
-                                {
-                                <th scope="col" class="govuk-table__header">
-                                    <sort target="@nameof(UserAccount.FirstName)" sort="@Model.SortField" sort-direction="@Model.SortDirection">First name</sort>
-                                </th>
-                                <th scope="col" class="govuk-table__header">
-                                    <sort target="@nameof(UserAccount.Surname)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last name</sort>
-                                </th>
-                                <th scope="col" class="govuk-table__header">
-                                    <sort target="@nameof(UserAccount.ContactEmailAddress)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Email</sort>
-                                </th>
-                                <th scope="col" class="govuk-table__header">
-                                    <sort target="@nameof(UserAccount.Role)" sort="@Model.SortField" sort-direction="@Model.SortDirection">User group</sort>
-                                </th>
-                                <th scope="col" class="govuk-table__header">
-                                    <sort target="@nameof(UserAccount.LastLogonUtc)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last log in</sort>
-                                </th>
-                                <th scope="col" class="govuk-table__header">Action</th>
-                                }
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
                         @if (Model.UserAccounts.Any())
                         {
-                            @foreach (var account in Model.UserAccounts)
-                            {
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell user-table-cell__wide" title="@account.FirstName">
-                                        <label aria-hidden="true">First name</label>
-                                        @account.FirstName.Ellipsis(15)
-                                    </td>
-                                    <td class="govuk-table__cell user-table-cell__mobile" title="@account.FirstName">
-                                        <label aria-hidden="true">First name</label>
-                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">@account.FirstName</a>
-                                    </td>
-
-                                    <td class="govuk-table__cell user-table-cell__wide" title="@account.Surname">
-                                        <label aria-hidden="true">Last name</label>
-                                        @account.Surname.Ellipsis(15)
-                                    </td>
-                                    <td class="govuk-table__cell user-table-cell__mobile" title="@account.Surname">
-                                        <label aria-hidden="true">Last name</label>
-                                        @account.Surname
-                                    </td>
-
-                                    <td class="govuk-table__cell user-table-cell__wide" title="@account.GetEmailAddress()">
-                                        <label aria-hidden="true">Email</label>
-                                        @account.GetEmailAddress().Ellipsis(40)
-                                    </td>
-                                    <td class="govuk-table__cell user-table-cell__mobile" title="@account.GetEmailAddress()">
-                                        <label aria-hidden="true">Email</label>
-                                        @account.GetEmailAddress()
-                                    </td>
-
-                                    <td class="govuk-table__cell">
-                                        <label aria-hidden="true">User group</label>
-                                        @UKMCAB.Core.Security.Roles.NameFor(account.Role)
-                                    </td>
-
-                                    <td class="govuk-table__cell">
-                                        <label aria-hidden="true">Last log in</label>
-                                        @(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")
-                                    </td>
-                                    <td class="govuk-table__cell user-table-cell__wide">
-                                        <label aria-hidden="true">Action</label>
-                                        <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">View</a>
-                                    </td>
-                                </tr>
-                            }
+                            <th scope="col" class="govuk-table__header">
+                                <sort target="@nameof(UserAccount.FirstName)" sort="@Model.SortField" sort-direction="@Model.SortDirection">First name</sort>
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                <sort target="@nameof(UserAccount.Surname)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last name</sort>
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                <sort target="@nameof(UserAccount.ContactEmailAddress)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Email</sort>
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                <sort target="@nameof(UserAccount.Role)" sort="@Model.SortField" sort-direction="@Model.SortDirection">User group</sort>
+                            </th>
+                            <th scope="col" class="govuk-table__header">
+                                <sort target="@nameof(UserAccount.LastLogonUtc)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last log in</sort>
+                            </th>
                         }
-                        else
+                    </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                    @if (Model.UserAccounts.Any())
+                    {
+                        @foreach (var account in Model.UserAccounts)
                         {
                             <tr class="govuk-table__row">
-                                <td>
-                                    <p class="govuk-body">There are no users to display</p>
+                                <td class="govuk-table__cell user-table-cell__wide" title="@account.FirstName">
+                                    <label aria-hidden="true">First name</label>
+                                    <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">@account.FirstName.Ellipsis(15)</a>
+                                </td>
+                                <td class="govuk-table__cell user-table-cell__mobile" title="@account.FirstName">
+                                    <label aria-hidden="true">First name</label>
+                                    <a asp-route="@UserAdminController.Routes.UserAccount" asp-route-id="@account.Id" class="govuk-link">@account.FirstName</a>
+                                </td>
+
+                                <td class="govuk-table__cell user-table-cell__wide" title="@account.Surname">
+                                    <label aria-hidden="true">Last name</label>
+                                    @account.Surname.Ellipsis(15)
+                                </td>
+                                <td class="govuk-table__cell user-table-cell__mobile" title="@account.Surname">
+                                    <label aria-hidden="true">Last name</label>
+                                    @account.Surname
+                                </td>
+
+                                <td class="govuk-table__cell user-table-cell__wide" title="@account.GetEmailAddress()">
+                                    <label aria-hidden="true">Email</label>
+                                    @account.GetEmailAddress().Ellipsis(40)
+                                </td>
+                                <td class="govuk-table__cell user-table-cell__mobile" title="@account.GetEmailAddress()">
+                                    <label aria-hidden="true">Email</label>
+                                    @account.GetEmailAddress()
+                                </td>
+
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">User group</label>
+                                    @UKMCAB.Core.Security.Roles.NameFor(account.Role)
+                                </td>
+
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Last log in</label>
+                                    @(account.LastLogonUtc?.ToString("dd/MM/yyyy HH:mm") ?? "None")
                                 </td>
                             </tr>
                         }
+                    }
+                    else
+                    {
+                        <tr class="govuk-table__row">
+                            <td>
+                                <p class="govuk-body">There are no users to display</p>
+                            </td>
+                        </tr>
+                    }
                     </tbody>
                 </table>
                 @if (Model.UserAccounts.Any())
                 {
                     <div id="user-management-pagination-container">
-                        <partial name="Partials/_Pagination" model="Model.Pagination" />
+                        <partial name="Partials/_Pagination" model="Model.Pagination"/>
                     </div>
                 }
             </div>
@@ -140,4 +134,3 @@
 
     </div>
 </div>
-
