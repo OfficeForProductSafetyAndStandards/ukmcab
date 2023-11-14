@@ -75,18 +75,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 model.ReviewDateYear = autoRenewDate.Year.ToString();
                 ModelState.Clear();
             }
-            else if(submitType == Constants.SubmitType.Save)
-            {
-                var doc = AboutSaveDraft(document, id, model, appointmentDate, reviewDate).Result;
-                //if (createdDoc == null)
-                //{
-                //    ModelState.AddModelError(string.Empty, "Failed to create the document, please try again.");
-                //}
-                //else
-                //{
-                    return SaveDraft(doc);
-                //}
-            }
             else if (ModelState.IsValid)
             {
                 if (document == null)
@@ -157,79 +145,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.DocumentStatus = document?.StatusValue ?? Status.Draft;
             return View(model);
-        }
-
-        private async Task<Document> AboutSaveDraft(Document? document, string id, CABDetailsViewModel model,DateTime? appointmentDate, DateTime? reviewDate)
-        {
-            ModelState.Clear();
-
-            if (document == null)
-            {
-                document = new Document()
-                {
-                    AuditLog = new List<Audit>(),
-                    CABId = id,
-                };
-            }
-
-            if (string.IsNullOrWhiteSpace(document.URLSlug) || !document.Name.Equals(model.Name))
-            {
-                var slug = Slug.Make(model.Name);
-                var newSlug = slug;
-                var existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
-                var index = 0;
-                while (existingDocs.Any(d => !d.CABId.Equals(document.CABId)))
-                {
-                    newSlug = $"{slug}-{index++}";
-                    existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
-                }
-
-                document.URLSlug = newSlug;
-            }
-            document.Name = model.Name;
-            document.CABNumber = model.CABNumber;
-            document.CabNumberVisibility = model.CabNumberVisibility;
-            document.AppointmentDate = appointmentDate;
-            document.RenewalDate = reviewDate;
-            document.UKASReference = model.UKASReference;
-
-            var duplicateDocuments = new List<CabModel>();
-
-            if (model.CABNumber != null)
-            {
-                duplicateDocuments = await _cabAdminService.FindOtherDocumentsByCabNumberOrUkasReference(document.CABId, document.CABNumber, document.UKASReference);
-            }
-
-            //if (duplicateDocuments.Any())
-            //{
-            //    if (model.CABNumber != null && duplicateDocuments.Any(d => d.CabNumber.DoesEqual(model.CABNumber)))
-            //    {
-            //        ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
-            //    }
-
-            //    if (duplicateDocuments.Any(d => d.UKASReference != null && d.UKASReference.Equals(model.UKASReference, StringComparison.CurrentCultureIgnoreCase)))
-            //    {
-            //        ModelState.AddModelError(nameof(model.UKASReference), "This UKAS reference number already exists");
-            //    }
-            //}
-            //else
-
-            var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            //return await _cabAdminService.CreateDocumentAsync(userAccount, document, true);
-
-            var createdDocument = await _cabAdminService.CreateDocumentAsync(userAccount, document, true);
-            if (createdDocument == null)
-            {
-                ModelState.AddModelError(string.Empty, "Failed to create the document, please try again.");
-            }
-            //else
-            //{
-            return document;
-            //}
-
-
-            //model.DocumentStatus = document != null ? document.StatusValue : Status.Draft;
-            //return View(model);
         }
 
         [HttpGet("admin/cab/body-details/{id}")]
