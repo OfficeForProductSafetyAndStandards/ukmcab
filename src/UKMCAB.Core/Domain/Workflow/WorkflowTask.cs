@@ -4,7 +4,7 @@ namespace UKMCAB.Core.Domain.Workflow;
 
 public record WorkflowTask(Guid Id, TaskType TaskType, User Submitter, string ForRoleId, User? Assignee, DateTime? Assigned,
     string Reason, DateTime SentOn, User LastUpdatedBy, DateTime LastUpdatedOn, bool? Approved,
-    string? DeclineReason, bool Completed, Guid? CABId)
+    string? DeclineReason, bool Completed, Guid? CABId = null)
 {
     // set properties
     public User? Assignee { get; set; } = Assignee;

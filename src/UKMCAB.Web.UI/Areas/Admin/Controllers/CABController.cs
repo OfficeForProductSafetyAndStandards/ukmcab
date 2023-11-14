@@ -4,6 +4,7 @@ using System.Net;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
@@ -11,6 +12,7 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 
@@ -34,7 +36,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CabSummary = "cab.summary";
         }
 
-        public CABController(ICABAdminService cabAdminService, IUserService userService, IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions)
+        public CABController(ICABAdminService cabAdminService, IUserService userService,
+            IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient,
+            IOptions<CoreEmailTemplateOptions> templateOptions)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
@@ -46,7 +50,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
         public async Task<IActionResult> About(string id, bool fromSummary)
         {
-            var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ?? new CABDetailsViewModel { IsNew = true };
+            var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
+                        new CABDetailsViewModel { IsNew = true };
             model.IsFromSummary = fromSummary;
             return View(model);
         }
@@ -54,8 +59,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpPost("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
-            var appointmentDate = DateUtils.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth, model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
-            var reviewDate = DateUtils.CheckDate(ModelState, model.ReviewDateDay, model.ReviewDateMonth, model.ReviewDateYear, nameof(model.ReviewDate), "review", appointmentDate);
+            var appointmentDate = DateUtils.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth,
+                model.AppointmentDateYear, nameof(model.AppointmentDate), "appointment");
+            var reviewDate = DateUtils.CheckDate(ModelState, model.ReviewDateDay, model.ReviewDateMonth,
+                model.ReviewDateYear, nameof(model.ReviewDate), "review", appointmentDate);
 
             var document = await _cabAdminService.GetLatestDocumentAsync(id);
             model.IsNew = document == null;
@@ -65,7 +72,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var createdAudit = document?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Created);
                 var publishedAudit = document?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Published);
-                var autoRenewDate = document != null && createdAudit != null && publishedAudit == null ? createdAudit.DateTime.AddMonths(18) : DateTime.UtcNow.AddMonths(18);
+                var autoRenewDate = document != null && createdAudit != null && publishedAudit == null
+                    ? createdAudit.DateTime.AddMonths(18)
+                    : DateTime.UtcNow.AddMonths(18);
 
                 autoRenewDate = autoRenewDate.Date < DateTime.Today ? DateTime.UtcNow.AddMonths(1) : autoRenewDate;
 
@@ -87,18 +96,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if ((string.IsNullOrWhiteSpace(document.URLSlug) || !document.Name.Equals(model.Name)))
                 {
-                        var slug = Slug.Make(model.Name);
-                        var newSlug = slug;
-                        var existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
-                        var index = 0;
-                        while (existingDocs.Any(d => !d.CABId.Equals(document.CABId)))
-                        {
-                            newSlug = $"{slug}-{index++}";
-                            existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
-                        }
+                    var slug = Slug.Make(model.Name);
+                    var newSlug = slug;
+                    var existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
+                    var index = 0;
+                    while (existingDocs.Any(d => !d.CABId.Equals(document.CABId)))
+                    {
+                        newSlug = $"{slug}-{index++}";
+                        existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
+                    }
 
-                        document.URLSlug = newSlug;
+                    document.URLSlug = newSlug;
                 }
+
                 document.Name = model.Name;
                 document.CABNumber = model.CABNumber;
                 document.CabNumberVisibility = model.CabNumberVisibility;
@@ -106,7 +116,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 document.RenewalDate = reviewDate;
                 document.UKASReference = model.UKASReference;
 
-                var duplicateDocuments = await _cabAdminService.FindOtherDocumentsByCabNumberOrUkasReference(document.CABId, document.CABNumber, document.UKASReference);
+                var duplicateDocuments =
+                    await _cabAdminService.FindOtherDocumentsByCabNumberOrUkasReference(document.CABId,
+                        document.CABNumber, document.UKASReference);
                 if (duplicateDocuments.Any())
                 {
                     if (model.CABNumber != null && duplicateDocuments.Any(d => d.CabNumber.DoesEqual(model.CABNumber)))
@@ -114,9 +126,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
                     }
 
-                    if (duplicateDocuments.Any(d => d.UKASReference != null && d.UKASReference.Equals(model.UKASReference, StringComparison.CurrentCultureIgnoreCase)))
+                    if (duplicateDocuments.Any(d =>
+                            d.UKASReference != null && d.UKASReference.Equals(model.UKASReference,
+                                StringComparison.CurrentCultureIgnoreCase)))
                     {
-                        ModelState.AddModelError(nameof(model.UKASReference), "This UKAS reference number already exists");
+                        ModelState.AddModelError(nameof(model.UKASReference),
+                            "This UKAS reference number already exists");
                     }
                 }
                 else
@@ -128,7 +143,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         ? await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, document)
                         : await _cabAdminService.CreateDocumentAsync(userAccount, document,
                             submitType == Constants.SubmitType.Save);
-                   
+
                     if (submitType == Constants.SubmitType.Continue)
                     {
                         return !model.IsNew
@@ -161,7 +176,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             // Ensure legislative areas are full covered
             if (model.ProductScheduleLegislativeAreas.Except(model.LegislativeAreas).Any())
             {
-                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                var userAccount =
+                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 latest.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
                 model.LegislativeAreas = latest.LegislativeAreas;
@@ -178,19 +194,25 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/body-details/{id}")]
-        public async Task<IActionResult> BodyDetails(string id, CABBodyDetailsViewModel model, string submitType, bool fromSummary)
+        public async Task<IActionResult> BodyDetails(string id, CABBodyDetailsViewModel model, string submitType,
+            bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
             {
                 return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
-            model.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas ?? new List<string>());
+
+            model.LegislativeAreas = GetLAUnion(model.LegislativeAreas,
+                model.ProductScheduleLegislativeAreas ?? new List<string>());
             ModelState.Clear();
             TryValidateModel(model);
 
-            var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            model.TestingLocations = model.TestingLocations != null ? model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList() : new List<string>();
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            model.TestingLocations = model.TestingLocations != null
+                ? model.TestingLocations.Where(t => !string.IsNullOrWhiteSpace(t)).ToList()
+                : new List<string>();
             if (submitType == "Add" && model.TestingLocations.Any())
             {
                 latestDocument.TestingLocations = model.TestingLocations;
@@ -214,10 +236,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    return model.IsFromSummary ?
-                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
-                        RedirectToAction("SchedulesUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
+                    return model.IsFromSummary
+                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId })
+                        : RedirectToAction("SchedulesUpload", "FileUpload",
+                            new { Area = "admin", id = latestDocument.CABId });
                 }
+
                 return SaveDraft(latestDocument);
             }
 
@@ -241,6 +265,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
+
             return View(new CABConfirmationViewModel
             {
                 Name = latest.Name,
@@ -268,6 +293,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
+
             // Pre-populate model for edit
             var model = new CABContactViewModel(latest);
             model.IsFromSummary = fromSummary;
@@ -275,7 +301,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/contact/{id}")]
-        public async Task<IActionResult> Contact(string id, CABContactViewModel model, string submitType, bool fromSummary)
+        public async Task<IActionResult> Contact(string id, CABContactViewModel model, string submitType,
+            bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -300,14 +327,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.IsPointOfContactPublicDisplay = model.IsPointOfContactPublicDisplay;
                 latestDocument.RegisteredOfficeLocation = model.RegisteredOfficeLocation;
 
-                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                var userAccount =
+                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    return model.IsFromSummary ?
-                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
-                        RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
+                    return model.IsFromSummary
+                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId })
+                        : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
                 }
+
                 return SaveDraft(latestDocument);
             }
 
@@ -340,8 +369,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabBodyDetailsViewModel = cabBody,
                 Schedules = latest.Schedules ?? new List<FileUpload>(),
                 Documents = latest.Documents ?? new List<FileUpload>(),
-                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode(string.Empty) : WebUtility.UrlDecode(returnUrl),
-                CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) && latest.StatusValue != Status.Published,
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl)
+                    ? WebUtility.UrlDecode(string.Empty)
+                    : WebUtility.UrlDecode(returnUrl),
+                CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) &&
+                                       latest.StatusValue != Status.Published,
                 SubStatus = latest.SubStatus,
             };
 
@@ -357,7 +389,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpPost("admin/cab/summary/{id}", Name = Routes.CabSummary)]
         public async Task<IActionResult> Summary(CABSummaryViewModel model, string submitType)
         {
-            var latest = await _cabAdminService.GetLatestDocumentAsync(model.CABId);
+            var latest =
+                await _cabAdminService.GetLatestDocumentAsync(model.CABId ?? throw new InvalidOperationException());
             if (latest == null) // Implies no document or archived
             {
                 return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
@@ -365,8 +398,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType == Constants.SubmitType.Save)
             {
-                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
+                var userAccount =
+                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
+                    userAccount ?? throw new InvalidOperationException(), latest);
                 return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
 
@@ -387,23 +422,30 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
                 if (submitType == Constants.SubmitType.Continue) // publish
                 {
-                    _ = await _cabAdminService.PublishDocumentAsync(userAccount, latest);
+                    _ = await _cabAdminService.PublishDocumentAsync(
+                        userAccount ?? throw new InvalidOperationException(), latest);
                     return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
                 }
 
                 if (submitType == Constants.SubmitType.SubmitForApproval)
                 {
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest, true);
-                    // to-do notification and email
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
+                        userAccount ?? throw new InvalidOperationException(), latest, true);
                     var personalisation = new Dictionary<string, dynamic?>
                     {
-                        {"UserGroup", Roles.UKAS.Label},
-                        {"CABName", latest.Name},
-                        {"NotificationsUrl", Url.RouteUrl(NotificationController.Routes.Notifications) ?? throw new InvalidOperationException()},
-                        {"CABManagementUrl" , Url.RouteUrl(AdminController.Routes.CABManagement) ?? throw new InvalidOperationException()}
+                        { "UserGroup", Roles.UKAS.Label },
+                        { "CABName", latest.Name },
+                        {
+                            "NotificationsUrl",
+                            Url.RouteUrl(NotificationController.Routes.Notifications) ??
+                            throw new InvalidOperationException()
+                        },
+                        {
+                            "CABManagementUrl",
+                            Url.RouteUrl(AdminController.Routes.CABManagement) ?? throw new InvalidOperationException()
+                        }
                     };
-                    await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail, _templateOptions.NotificationRequestToPublish, personalisation);
-                    // await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish))
+                    await SendNotificationForApproveCab(userAccount, personalisation, publishModel);
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
                 }
             }
@@ -412,9 +454,29 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(publishModel);
         }
 
+        
+        /// <summary>
+        /// Sends an email and notification for Request to publish a cab
+        /// </summary>
+        /// <param name="userAccount">User creating the cab</param>
+        /// <param name="personalisation">params for the email</param>
+        /// <param name="publishModel">ViewModel to build notification</param>
+        private async Task SendNotificationForApproveCab(UserAccount userAccount, Dictionary<string, dynamic?> personalisation,
+            CABSummaryViewModel publishModel)
+        {
+            var userRoleId = Roles.List.First(r => r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+            await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail,
+                _templateOptions.NotificationRequestToPublish, personalisation);
+            await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish,
+                new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId),
+                Roles.OPSS.Id, null, null, TaskType.RequestToPublish.GetEnumDescription(), DateTime.Now,
+                new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId), DateTime.Now, null, null,
+                false, Guid.Parse(publishModel.CABId ?? throw new InvalidOperationException())));
+        }
+
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            if(context.Result is ViewResult viewResult)
+            if (context.Result is ViewResult viewResult)
             {
                 if (viewResult.Model is CABSummaryViewModel summaryViewModel)
                 {
@@ -428,7 +490,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            base.OnActionExecuted(context); 
+            base.OnActionExecuted(context);
         }
 
         private List<string> GetLAUnion(List<string> las, List<string> pschLAs)
@@ -439,7 +501,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private IActionResult SaveDraft(Document document)
         {
-            TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
+            TempData[Constants.TempDraftKey] =
+                $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
             return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
         }
     }
