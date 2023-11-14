@@ -14,7 +14,6 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
-using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 
