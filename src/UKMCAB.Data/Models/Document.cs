@@ -4,7 +4,8 @@ namespace UKMCAB.Data.Models
 {
     public class Document
     {
-        public string Id { get; set; } = string.Empty;
+        // ReSharper disable once InconsistentNaming
+        public string id { get; set; } = string.Empty;
         public string Version { get; set; } = string.Empty;
 
         public Status StatusValue { get; set; }

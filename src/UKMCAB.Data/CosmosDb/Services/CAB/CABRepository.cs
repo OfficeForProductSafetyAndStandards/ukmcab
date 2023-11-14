@@ -41,14 +41,14 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
         public async Task<Document> CreateAsync(Document document)
         {
-            document.Id = Guid.NewGuid().ToString();
+            document.id = Guid.NewGuid().ToString();
             var response = await _container.CreateItemAsync(document);
             if (response.StatusCode == HttpStatusCode.Created)
             {
                 return response.Resource;
             }
 
-            throw new InvalidOperationException($"Document {document.Id} not created");
+            throw new InvalidOperationException($"Document {document.id} not created");
         }
 
         public async Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate)
@@ -87,7 +87,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
         public async Task<bool> Delete(Document document)
         {
-            var response = await _container.DeleteItemAsync<Document>(document.Id, new PartitionKey(document.CABId));
+            var response = await _container.DeleteItemAsync<Document>(document.id, new PartitionKey(document.CABId));
             return response.StatusCode == HttpStatusCode.NoContent;
         }
 

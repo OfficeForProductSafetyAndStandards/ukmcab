@@ -125,7 +125,7 @@ namespace UKMCAB.Core.Services.CAB
         {
             await _cachedSearchService.ReIndexAsync(new CABIndexItem
             {
-                id = document.Id,
+                id = document.id,
                 Status = document.Status,
                 StatusValue = ((int)document.StatusValue).ToString(),
                 LastUserGroup = document.LastUserGroup,
@@ -200,7 +200,7 @@ namespace UKMCAB.Core.Services.CAB
                 publishedOrArchivedDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.RePublished));
                 Guard.IsTrue(await _cabRepostitory.Update(publishedOrArchivedDocument),
                     $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
-                await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.Id);
+                await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
             latestDocument.StatusValue = Status.Published;
@@ -245,7 +245,7 @@ namespace UKMCAB.Core.Services.CAB
 
             // Create new draft from latest with unarchive entry and reset audit
             archvivedDoc.StatusValue = Status.Draft;
-            archvivedDoc.Id = string.Empty;
+            archvivedDoc.id = string.Empty;
             archvivedDoc.AuditLog = new List<Audit>
             {
                 new Audit(userAccount, AuditCABActions.Unarchived)
@@ -284,7 +284,7 @@ namespace UKMCAB.Core.Services.CAB
             {
                 Guard.IsTrue(await _cabRepostitory.Delete(draft),
                     $"Failed to delete draft version before archive, CAB Id: {CABId}");
-                await _cachedSearchService.RemoveFromIndexAsync(draft.Id);
+                await _cachedSearchService.RemoveFromIndexAsync(draft.id);
             }
 
             publishedVersion.StatusValue = Status.Archived;
