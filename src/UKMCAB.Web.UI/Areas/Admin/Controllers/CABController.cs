@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common.Extensions;
@@ -13,6 +14,7 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
 
@@ -467,11 +469,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userRoleId = Roles.List.First(r => r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
             await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail,
                 _templateOptions.NotificationRequestToPublish, personalisation);
-            await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish,
-                new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId),
-                Roles.OPSS.Id, null, null, TaskType.RequestToPublish.GetEnumDescription(), DateTime.Now,
-                new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId), DateTime.Now, null, null,
-                false, Guid.Parse(publishModel.CABId ?? throw new InvalidOperationException())));
+            if (publishModel.CabDetailsViewModel != null)
+            {
+                await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish,
+                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId),
+                    Roles.OPSS.Id, null, null,
+                    $"{userAccount.FirstName} {userAccount.Surname} from {Roles.NameFor(userRoleId)} has submitted a request to approve and publish {publishModel.CabDetailsViewModel.Name}.",
+                    DateTime.Now,
+                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId), DateTime.Now,
+                    null, null,
+                    false, Guid.Parse(publishModel.CABId ?? throw new InvalidOperationException())));
+            }
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)
