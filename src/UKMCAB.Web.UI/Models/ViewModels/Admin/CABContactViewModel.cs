@@ -35,15 +35,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string? CABId { get; set; }
 
         [Required(ErrorMessage = "Enter an address")]
-        public string AddressLine1 { get; set; }
+        public string? AddressLine1 { get; set; }
         public string? AddressLine2 { get; set; }
         [Required(ErrorMessage = "Enter a town or city")]
-        public string TownCity { get; set; }
+        public string? TownCity { get; set; }
         [Required(ErrorMessage = "Enter a postcode")]
-        public string Postcode { get; set; }
+        public string? Postcode { get; set; }
         public string? County { get; set; }
         [Required(ErrorMessage = "Enter a country")]
-        public string Country { get; set; }
+        public string? Country { get; set; }
 
         public string? FormattedAddress => string.Join("<br />",
             new [] { AddressLine1, AddressLine2, TownCity, County, Postcode, Country }.Where(a =>
@@ -52,13 +52,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string? Website { get; set; }
         public string? Email { get; set; }
         [Required(ErrorMessage = "Enter a telephone number")]
-        public string Phone { get; set; }
+        public string? Phone { get; set; }
         public string? PointOfContactName { get; set; }
         public string? PointOfContactEmail { get; set; }
         public string? PointOfContactPhone { get; set; }
         public bool IsPointOfContactPublicDisplay { get; set; }
         [Required(ErrorMessage = "Enter a registered office location")]
-        public string RegisteredOfficeLocation { get; set; }
+        public string? RegisteredOfficeLocation { get; set; }
 
         public string? Title => "Contact details";
 

@@ -48,7 +48,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 return response.Resource;
             }
 
-            return null;
+            throw new InvalidOperationException($"Document {document.id} not created");
         }
 
         public async Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate)

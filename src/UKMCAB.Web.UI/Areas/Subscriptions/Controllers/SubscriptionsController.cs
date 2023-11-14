@@ -404,7 +404,7 @@ public class SubscriptionsController : Controller
     #endregion
 
 
-    private async Task<string> GetCabNameAsync(Guid id)
+    private async Task<string?> GetCabNameAsync(Guid id)
     {
         var cab = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id.ToString());
         if (cab != null)

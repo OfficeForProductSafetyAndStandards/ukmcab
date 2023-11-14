@@ -13,5 +13,5 @@ public static class StringExt
     public static string? Join(string separator, params object?[]? values)
         => values != null && values.Any() ? string.Join(separator, values.Flatten().Select(x => x?.ToString()).Where(x => x.IsNotNullOrEmpty())).Clean() : null;
 
-    public static string Keyify(params object[] values) => Join("-", values) ?? string.Empty;
+    public static string Keyify(params object?[]? values) => Join("-", values) ?? string.Empty;
 }

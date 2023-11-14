@@ -12,7 +12,7 @@ public static class CabNumberVisibility
     public static CabNumberVisibilityOption[] Options { get; } = new[] { Public, Internal, Private };
     public static CabNumberVisibilityOption Get(string? id) => Options.FirstOrDefault(x => x.Id == id) ?? Public;
 
-    public static string? Display(string? optionId, ClaimsPrincipal principal, string? cabNumber) => CanDisplay(optionId, principal) ? cabNumber.Clean() : null;
+    public static string Display(string? optionId, ClaimsPrincipal principal, string? cabNumber) => CanDisplay(optionId, principal) ? cabNumber.Clean() : null;
 
     public static bool CanDisplay(string? optionId, ClaimsPrincipal principal)
     {

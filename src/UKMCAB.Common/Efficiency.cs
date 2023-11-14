@@ -26,7 +26,7 @@ public static class Efficiency
     /// <param name="name"></param>
     /// <param name="task"></param>
     /// <returns></returns>
-    public static async Task DoOnceAsync(string scope, string innerScope, string name, Func<Task> task)
+    public static async Task DoOnceAsync(string? scope, string innerScope, string name, Func<Task> task)
         => await DoOnceAsync(StringExt.Keyify(scope, innerScope), name, task);
 
     /// <summary>

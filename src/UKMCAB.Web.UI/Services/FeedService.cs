@@ -7,7 +7,7 @@ namespace UKMCAB.Web.UI.Services
 {
     public class FeedService : IFeedService
     {
-        public SyndicationFeed GetSyndicationFeed(string feedName, HttpRequest request, Document document, IUrlHelper url)
+        public SyndicationFeed GetSyndicationFeed(string? feedName, HttpRequest request, Document document, IUrlHelper url)
         {
             var feed = GetFeedBody(feedName, request);
             var syndicationItems = new List<SyndicationItem>();
@@ -36,7 +36,7 @@ namespace UKMCAB.Web.UI.Services
             return feed;
         }
 
-        public SyndicationFeed GetSyndicationFeed(string feedName, HttpRequest request, IEnumerable<CABIndexItem> items, IUrlHelper url)
+        public SyndicationFeed GetSyndicationFeed(string? feedName, HttpRequest request, IEnumerable<CABIndexItem> items, IUrlHelper url)
         {
             var feed = GetFeedBody(feedName, request);
             var syndicationItems = new List<SyndicationItem>();
@@ -61,7 +61,7 @@ namespace UKMCAB.Web.UI.Services
             return feed;
         }
 
-        private SyndicationFeed GetFeedBody(string feedName, HttpRequest request)
+        private SyndicationFeed GetFeedBody(string? feedName, HttpRequest request)
         {
             var feed = new SyndicationFeed
             {
@@ -87,7 +87,7 @@ namespace UKMCAB.Web.UI.Services
         }
 
 
-        private string GetFeedElement(string title, params string[] content)
+        private string GetFeedElement(string title, params string?[] content)
         {
             var sb = new StringBuilder($"<h2>{title}:</h2>");
             sb.AppendFormat("<div>{0}</div>",
