@@ -17,7 +17,7 @@ internal static class CabModelMapper
             schedules.Add(new FileUpload(s.Label, s.LegislativeArea, s.Category, s.FileName, s.BlobName,
                 s.UploadDateTime)));
         
-        dest.Id = source.id.ToGuid() ?? throw new Exception($"{nameof(source.id)} is not a guid (value:{source.id})");
+        dest.Id = source.Id.ToGuid() ?? throw new Exception($"{nameof(source.Id)} is not a guid (value:{source.Id})");
         dest.Address = new GeoAddress(source.AddressLine1, source.AddressLine2, source.TownCity, source.County,
             source.Postcode, source.Country);
         dest.AppointmentDate = source.AppointmentDate;
@@ -47,7 +47,7 @@ internal static class CabModelMapper
     {
         var dest = new Document
         {
-            id = (source.Id == Guid.Empty ? null : source.Id.ToString()) ?? throw new InvalidOperationException()
+            Id = (source.Id == Guid.Empty ? null : source.Id.ToString()) ?? throw new InvalidOperationException()
         };
         if (source.Address != null)
         {

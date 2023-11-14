@@ -32,7 +32,7 @@ public class WorkflowTaskServiceTests
     {
         // Arrange
         var guid = _faker.Random.Guid();
-        var task = new WorkflowTask(guid, TaskType.UserAccountRequest, TaskState.ToDo, CreateFakeOpssUser(),
+        var task = new WorkflowTask(guid, TaskType.UserAccountRequest,  CreateFakeOpssUser(),
             Roles.OPSS.Id, null,
             null, _faker.Random.Words(), _faker.Date.Past(), CreateFakeOpssUser(), _faker.Date.Past(), null, null,
             false,
@@ -77,10 +77,9 @@ public class WorkflowTaskServiceTests
         Assert.AreEqual(task, returnedTask);
     }
 
-    private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User userAssigned,
-        TaskState taskState = TaskState.ToDo)
+    private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User userAssigned)
     {
-        var task = new WorkflowTask(_faker.Random.Guid(), TaskType.RequestToPublish, taskState, userSubmitter,
+        var task = new WorkflowTask(_faker.Random.Guid(), TaskType.RequestToPublish, userSubmitter,
             forRoleId, userAssigned,
             DateTime.UtcNow, _faker.Random.Words(), _faker.Date.Past(), userSubmitter, _faker.Date.Past(), null, null,
             false,
@@ -94,7 +93,7 @@ public class WorkflowTaskServiceTests
     {
         // Arrange
         var ukasUser = CreateFakeUkasUser();
-        var task = new WorkflowTask(Guid.Empty, TaskType.RequestToPublish, TaskState.ToDo, ukasUser, Roles.OPSS.Id,
+        var task = new WorkflowTask(Guid.Empty, TaskType.RequestToPublish,  ukasUser, Roles.OPSS.Id,
             null,
             null, _faker.Random.Words(), _faker.Date.Past(), ukasUser, _faker.Date.Past(), null, null, false,
             _faker.Random.Guid()
@@ -111,7 +110,7 @@ public class WorkflowTaskServiceTests
     {
         // Arrange
         var ukasUser = CreateFakeUkasUser();
-        var task = new WorkflowTask(_faker.Random.Guid(), TaskType.RequestToPublish, TaskState.ToDo, ukasUser,
+        var task = new WorkflowTask(_faker.Random.Guid(), TaskType.RequestToPublish, ukasUser,
             Roles.OPSS.Id, null,
             null, _faker.Random.Words(), _faker.Date.Past(), ukasUser, _faker.Date.Past(), null, null, false,
             _faker.Random.Guid()
@@ -123,7 +122,6 @@ public class WorkflowTaskServiceTests
         newTask.Assigned = DateTime.UtcNow.AddDays(-1);
         newTask.Approved = true;
         newTask.Reason = "approved";
-        newTask.State = TaskState.Done;
         newTask.LastUpdatedBy = CreateFakeOpssUser();
         newTask.LastUpdatedOn = DateTime.UtcNow;
         _mockWorkflowTaskRepository.Setup(r => r.ReplaceAsync(It.IsAny<Data.Models.Workflow.WorkflowTask>()))
@@ -139,7 +137,6 @@ public class WorkflowTaskServiceTests
         Assert.AreEqual(newTask.Assigned, returnedTask.Assigned);
         Assert.AreEqual(newTask.Approved, returnedTask.Approved);
         Assert.AreEqual(newTask.Reason, returnedTask.Reason);
-        Assert.AreEqual(newTask.State, returnedTask.State);
         Assert.AreEqual(newTask.LastUpdatedBy, returnedTask.LastUpdatedBy);
         Assert.AreEqual(newTask.LastUpdatedOn, returnedTask.LastUpdatedOn);
     }
@@ -149,7 +146,7 @@ public class WorkflowTaskServiceTests
     {
         // Arrange
         var ukasUser = CreateFakeUkasUser();
-        var task = new WorkflowTask(Guid.Empty, TaskType.RequestToPublish, TaskState.ToDo, ukasUser, Roles.UKAS.Id,
+        var task = new WorkflowTask(Guid.Empty, TaskType.RequestToPublish,  ukasUser, Roles.UKAS.Id,
             null,
             null, _faker.Random.Words(), _faker.Date.Past(), ukasUser, _faker.Date.Past(), null, null, false,
             _faker.Random.Guid()
@@ -194,9 +191,9 @@ public class WorkflowTaskServiceTests
                 r.QueryAsync(It.IsAny<Expression<Func<Data.Models.Workflow.WorkflowTask, bool>>>()))
             .ReturnsAsync(new List<Data.Models.Workflow.WorkflowTask>
             {
-                CreateValidTask(CreateFakeOpssUser(), Roles.OPSS.Id, userAssigned, TaskState.Done)
+                CreateValidTask(CreateFakeOpssUser(), Roles.OPSS.Id, userAssigned)
                     .MapToWorkflowTaskData(),
-                CreateValidTask(CreateFakeUkasUser(), Roles.UKAS.Id, userAssigned, TaskState.Done)
+                CreateValidTask(CreateFakeUkasUser(), Roles.UKAS.Id, userAssigned)
                     .MapToWorkflowTaskData(),
             });
 
@@ -208,7 +205,6 @@ public class WorkflowTaskServiceTests
         foreach (var task in result)
         {
             Assert.AreEqual(userAssigned, task.Assignee);
-            Assert.AreEqual(TaskState.Done, task.State);
         }
     }
 
@@ -221,9 +217,9 @@ public class WorkflowTaskServiceTests
                 r.QueryAsync(It.IsAny<Expression<Func<Data.Models.Workflow.WorkflowTask, bool>>>()))
             .ReturnsAsync(new List<Data.Models.Workflow.WorkflowTask>
             {
-                CreateValidTask(userSubmitter, Roles.OPSS.Id, CreateFakeOpssUser(), TaskState.InProgress)
+                CreateValidTask(userSubmitter, Roles.OPSS.Id, CreateFakeOpssUser())
                     .MapToWorkflowTaskData(),
-                CreateValidTask(userSubmitter, Roles.OPSS.Id, CreateFakeOpssUser(), TaskState.InProgress)
+                CreateValidTask(userSubmitter, Roles.OPSS.Id, CreateFakeOpssUser())
                     .MapToWorkflowTaskData(),
             });
 
@@ -235,7 +231,6 @@ public class WorkflowTaskServiceTests
         foreach (var task in result)
         {
             Assert.AreEqual(userSubmitter, task.Submitter);
-            Assert.AreEqual(TaskState.InProgress, task.State);
         }
     }
 

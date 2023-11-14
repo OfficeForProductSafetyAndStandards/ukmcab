@@ -85,19 +85,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     };
                 }
 
-                if (string.IsNullOrWhiteSpace(document.URLSlug) || !document.Name.Equals(model.Name))
+                if ((string.IsNullOrWhiteSpace(document.URLSlug) || !document.Name.Equals(model.Name)))
                 {
-                    var slug = Slug.Make(model.Name);
-                    var newSlug = slug;
-                    var existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
-                    var index = 0;
-                    while (existingDocs.Any(d => !d.CABId.Equals(document.CABId)))
-                    {
-                        newSlug = $"{slug}-{index++}";
-                        existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
-                    }
+                        var slug = Slug.Make(model.Name);
+                        var newSlug = slug;
+                        var existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
+                        var index = 0;
+                        while (existingDocs.Any(d => !d.CABId.Equals(document.CABId)))
+                        {
+                            newSlug = $"{slug}-{index++}";
+                            existingDocs = await _cabAdminService.FindAllDocumentsByCABURLAsync(newSlug);
+                        }
 
-                    document.URLSlug = newSlug;
+                        document.URLSlug = newSlug;
                 }
                 document.Name = model.Name;
                 document.CABNumber = model.CABNumber;
@@ -112,37 +112,37 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     if (model.CABNumber != null && duplicateDocuments.Any(d => d.CabNumber.DoesEqual(model.CABNumber)))
                     {
                         ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
-                        return View(model);
                     }
 
                     if (duplicateDocuments.Any(d => d.UKASReference != null && d.UKASReference.Equals(model.UKASReference, StringComparison.CurrentCultureIgnoreCase)))
                     {
                         ModelState.AddModelError(nameof(model.UKASReference), "This UKAS reference number already exists");
-                        return View(model);
                     }
-                }
-
-                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                var createdDocument = !model.IsNew ?
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, document) :
-                    await _cabAdminService.CreateDocumentAsync(userAccount, document, submitType == Constants.SubmitType.Save);
-                if (createdDocument == null)
-                {
-                    ModelState.AddModelError(string.Empty, "Failed to create the document, please try again.");
-                }
-                else if (submitType == Constants.SubmitType.Continue)
-                {
-                    return !model.IsNew ?
-                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId }) :
-                        RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
                 }
                 else
                 {
-                    return SaveDraft(document);
+                    var userAccount =
+                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                            .Value) ?? throw new InvalidOperationException("User account not found");
+                    var createdDocument = !model.IsNew
+                        ? await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, document)
+                        : await _cabAdminService.CreateDocumentAsync(userAccount, document,
+                            submitType == Constants.SubmitType.Save);
+                   
+                    if (submitType == Constants.SubmitType.Continue)
+                    {
+                        return !model.IsNew
+                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId })
+                            : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
+                    }
+                    else
+                    {
+                        return SaveDraft(document);
+                    }
                 }
             }
 
-            model.DocumentStatus = document != null ? document.StatusValue : Status.Draft;
+            model.DocumentStatus = document?.StatusValue ?? Status.Draft;
             return View(model);
         }
 
@@ -369,48 +369,47 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
                 return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
             }
-            else
-            {
-                var publishModel = new CABSummaryViewModel
-                {
-                    CABId = latest.CABId,
-                    CabDetailsViewModel = new CABDetailsViewModel(latest),
-                    CabContactViewModel = new CABContactViewModel(latest),
-                    CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
-                    Schedules = latest.Schedules ?? new List<FileUpload>(),
-                    Documents = latest.Documents ?? new List<FileUpload>(),
-                };
-                ModelState.Clear();
 
-                publishModel.ValidCAB = TryValidateModel(publishModel);
-                if (publishModel.ValidCAB)
+            var publishModel = new CABSummaryViewModel
+            {
+                CABId = latest.CABId,
+                CabDetailsViewModel = new CABDetailsViewModel(latest),
+                CabContactViewModel = new CABContactViewModel(latest),
+                CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
+                Schedules = latest.Schedules ?? new List<FileUpload>(),
+                Documents = latest.Documents ?? new List<FileUpload>(),
+            };
+            ModelState.Clear();
+
+            publishModel.ValidCAB = TryValidateModel(publishModel);
+            if (publishModel.ValidCAB)
+            {
+                var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
+                if (submitType == Constants.SubmitType.Continue) // publish
                 {
-                    var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
-                    if (submitType == Constants.SubmitType.Continue) // publish
-                    {
-                        _ = await _cabAdminService.PublishDocumentAsync(userAccount, latest);
-                        return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
-                    }
-                    else if (submitType == Constants.SubmitType.SubmitForApproval)
-                    {
-                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest, true);
-                        // to-do notification and email
-                        var personalisation = new Dictionary<string, dynamic>
-                        {
-                            {"UserGroup", Roles.UKAS.Label},
-                            {"CABName", latest.Name},
-                            {"NotificationsUrl", Url.RouteUrl(NotificationController.Routes.Notifications) ?? throw new InvalidOperationException()},
-                            {"CABManagementUrl" , Url.RouteUrl(AdminController.Routes.CABManagement) ?? throw new InvalidOperationException()}
-                        };
-                        await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail, _templateOptions.NotificationRequestToPublish, personalisation);
-                        // await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish))
-                        return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
-                    }
+                    _ = await _cabAdminService.PublishDocumentAsync(userAccount, latest);
+                    return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
                 }
 
-                publishModel.ShowError = true;
-                return View(publishModel);
+                if (submitType == Constants.SubmitType.SubmitForApproval)
+                {
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest, true);
+                    // to-do notification and email
+                    var personalisation = new Dictionary<string, dynamic?>
+                    {
+                        {"UserGroup", Roles.UKAS.Label},
+                        {"CABName", latest.Name},
+                        {"NotificationsUrl", Url.RouteUrl(NotificationController.Routes.Notifications) ?? throw new InvalidOperationException()},
+                        {"CABManagementUrl" , Url.RouteUrl(AdminController.Routes.CABManagement) ?? throw new InvalidOperationException()}
+                    };
+                    await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail, _templateOptions.NotificationRequestToPublish, personalisation);
+                    // await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish))
+                    return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
+                }
             }
+
+            publishModel.ShowError = true;
+            return View(publishModel);
         }
 
         public override void OnActionExecuted(ActionExecutedContext context)
