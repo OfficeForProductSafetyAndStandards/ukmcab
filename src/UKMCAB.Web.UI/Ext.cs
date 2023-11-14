@@ -13,7 +13,7 @@ public static class Ext
 
     public static IHtmlContent Conditional(this IHtmlHelper htmlHelper, bool condition, HtmlString html) => condition ? html : HtmlString.Empty;
 
-    public static IHtmlContent Conditional(this IHtmlHelper htmlHelper, bool condition, string text, string substituteText) => condition ? htmlHelper.Raw(text) : htmlHelper.Raw(substituteText);
+    public static IHtmlContent Conditional(this IHtmlHelper htmlHelper, bool condition, string? text, string substituteText) => condition ? htmlHelper.Raw(text) : htmlHelper.Raw(substituteText);
 
     public static IHtmlContent Conditional(this IHtmlHelper htmlHelper, bool condition, HtmlString html, HtmlString substituteHTML) => condition ? html : substituteHTML;
 
@@ -21,7 +21,7 @@ public static class Ext
 
     public static IHtmlContent Conditional<T>(this IHtmlHelper<T> htmlHelper, bool condition, HtmlString html) => condition ? html : HtmlString.Empty;
 
-    public static IHtmlContent SanitiseURL(this IHtmlHelper htmlHelper, string text) => text.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? htmlHelper.Raw(text) : htmlHelper.Raw($"https://{text}");
+    public static IHtmlContent SanitiseURL(this IHtmlHelper htmlHelper, string? text) => text.StartsWith("http", StringComparison.InvariantCultureIgnoreCase) ? htmlHelper.Raw(text) : htmlHelper.Raw($"https://{text}");
 
     public static IHtmlContent ValidationCssFor<TModel, TProperty>(
             this IHtmlHelper<TModel> htmlHelper,

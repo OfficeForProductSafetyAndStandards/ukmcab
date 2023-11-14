@@ -82,6 +82,9 @@ public class UserAdminController : Controller
         {
             UserAccounts = accounts.ToList(),
             PendingAccountsCount = pendingAccountsCount,
+            ActiveUsersCount = await _userService.UserCountAsync(null, false),
+            ArchivedUsersCount = await _userService.UserCountAsync(UserAccountLockReason.Archived, true),
+            LockedUsersCount = await _userService.UserCountAsync(UserAccountLockReason.None, true),
             Title = "User accounts",
             LockedOnly = isLocked,
             SortField = sortField ?? nameof(UserAccount.LastLogonUtc),
@@ -243,6 +246,9 @@ public class UserAdminController : Controller
         return View(new AccountRequestListViewModel
         {
             UserAccountRequests = pendingAccounts.ToList(),
+            ActiveUsersCount = await _userService.UserCountAsync(null, false),
+            ArchivedUsersCount = await _userService.UserCountAsync(UserAccountLockReason.Archived, true),
+            LockedUsersCount = await _userService.UserCountAsync(UserAccountLockReason.None, true),
             Pagination = new PaginationViewModel
             {
                 Total = count,

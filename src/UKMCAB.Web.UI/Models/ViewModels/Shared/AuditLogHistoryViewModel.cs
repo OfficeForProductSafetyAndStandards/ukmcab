@@ -29,7 +29,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                     Usergroup = al.UserRole,
                     DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
-                    Comment = al.Comment
+                    InternalComment = al.Comment
                 });
 
             Pagination = new PaginationViewModel
@@ -71,7 +71,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                     Usergroup = al.UserRole,
                     DateAndTime = al.DateTime, 
                     Action = NormaliseAction(al.Action),
-                    Comment = al.Comment
+                    InternalComment = al.Comment,
+                    PublicComment = al.PublicComment,
+                    IsUserInputComment= al.IsUserInputComment
                 });
 
             Pagination = new PaginationViewModel
@@ -136,6 +138,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public string UserId { get; set; }
         public string Usergroup { get; set; }
         public string Action { get; set; }
-        public string Comment { get; set; }
+        public string InternalComment { get; set; }
+        public string PublicComment { get; set; }
+        public bool? IsUserInputComment { get; set; }
     }
 }

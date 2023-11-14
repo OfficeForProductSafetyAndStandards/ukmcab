@@ -17,24 +17,25 @@
         {
             <table class="govuk-table ukmcab-table">
                 <thead class="govuk-table__head">
-                @if (Model.IsOPSSUser)
-                {
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Date and time</th>
-                        <th scope="col" class="govuk-table__header">User</th>
-                        <th scope="col" class="govuk-table__header">User group</th>
-                        <th scope="col" class="govuk-table__header ">Action</th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reason</th>
-                    </tr>
+                    @if (Model.IsOPSSUser)
+                    {
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Date and time</th>
+                            <th scope="col" class="govuk-table__header">User</th>
+                            <th scope="col" class="govuk-table__header">User group</th>
+                            <th scope="col" class="govuk-table__header ">Action</th>
+                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reason</th>
+                        </tr>
 
-                }
-                else
-                {
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Date and time</th>
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-half">Action</th>
-                    </tr>
-                }
+                    }
+                    else
+                    {
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header govuk-!-width-one-half">Date and time</th>
+                            <th scope="col" class="govuk-table__header govuk-!-width-one-half">Action</th>
+                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reason</th>
+                        </tr>
+                    }
                 </thead>
                 <tbody class="govuk-table__body">
                     @foreach (var auditHistoryItem in Model.AuditHistoryItems)
@@ -43,7 +44,8 @@
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
-                                <td class="govuk-table__cell"><label aria-hidden="true">User</label>
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">User</label>
                                     @if (auditHistoryItem.UserId.Equals(new Guid().ToString()))
                                     {
                                         <text>@auditHistoryItem.Username</text>
@@ -56,20 +58,34 @@
                                 <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@auditHistoryItem.Usergroup.ToUpper()</td>
                                 <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
                                 <td class="govuk-table__cell">
-                                    @if (!string.IsNullOrWhiteSpace(auditHistoryItem.Comment))
+                                    <label aria-hidden="true">Reason</label>
+                                    @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment))
                                     {
-                                        <label aria-hidden="true">Reason</label>
-                                        <details class="govuk-details" data-module="govuk-details">
-                                            <summary class="govuk-details__summary">
-                                                <span class="govuk-details__summary-text">
-                                                    View more
-                                                </span>
-                                            </summary>
-                                            <div class="govuk-details__text">
-                                                @Html.Raw(HttpUtility.HtmlDecode(auditHistoryItem.Comment))
-                                            </div>
-                                        </details>
+                                        var isUserInputComment = true;
+                                        if (auditHistoryItem.IsUserInputComment == null || auditHistoryItem.IsUserInputComment == false)
+                                        {
+                                            isUserInputComment = false;
+                                        }
+                                        var parms = new Dictionary<string, string>
+                                        {
+                                            { "date", @auditHistoryItem.Date },
+                                            { "time", @auditHistoryItem.Time },
+                                            { "username", @auditHistoryItem.Username },
+                                            { "userId", auditHistoryItem.UserId},
+                                            { "userGroup", auditHistoryItem.Usergroup},
+                                            { "auditAction", auditHistoryItem.Action },
+                                            { "internalComment", auditHistoryItem.InternalComment },
+                                            { "publicComment", auditHistoryItem.PublicComment },
+                                            { "returnUrl", returnUrl }
+                                        };
+
+                                        <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms" asp-route-isUserInputComment="@isUserInputComment">View</a>
                                     }
+                                    else
+                                    {
+                                        @Constants.NotProvided
+                                    }
+                                </td>
                             </tr>
 
                         }
@@ -78,6 +94,26 @@
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
                                 <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Reason</label>
+                                    @if (!string.IsNullOrWhiteSpace(auditHistoryItem.PublicComment))
+                                    {
+                                        var parms = new Dictionary<string, string>
+                                        {
+                                            { "date", @auditHistoryItem.Date },
+                                            { "time", @auditHistoryItem.Time },                                            
+                                            { "auditAction", auditHistoryItem.Action },                                        
+                                            { "publicComment", auditHistoryItem.PublicComment },
+                                            { "returnUrl", returnUrl },
+                                        };
+
+                                        <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms">View</a>
+                                    }
+                                    else
+                                    {
+                                        @Constants.NotProvided
+                                    }
+                                </td>
                             </tr>
                         }
                     }

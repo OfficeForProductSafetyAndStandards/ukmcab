@@ -13,16 +13,16 @@
         <div class="govuk-tabs user-tabs" data-module="govuk-tabs">
             <ul class="govuk-tabs__list">
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserList" class="tab-item-title">Active</a>
-                </li>
-                <li class="govuk-tabs__list-item">
                     <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="tab-item-title">Requests (@Model.PendingAccountsCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListLocked" class="tab-item-title">Locked</a>
+                    <a asp-route="@UserAdminController.Routes.UserList" class="tab-item-title">Active (@Model.ActiveUsersCount)</a>
+                </li>                
+                <li class="govuk-tabs__list-item">
+                    <a asp-route="@UserAdminController.Routes.UserListLocked" class="tab-item-title">Locked (@Model.LockedUsersCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
-                    <a class="govuk-tabs__tab" href="#archived-user-list">Archived</a>
+                    <a class="govuk-tabs__tab" href="#archived-user-list">Archived (@Model.ArchivedUsersCount)</a>
                 </li>
             </ul>
 
