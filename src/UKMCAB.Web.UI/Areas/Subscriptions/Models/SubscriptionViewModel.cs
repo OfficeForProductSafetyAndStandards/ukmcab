@@ -24,7 +24,7 @@ public class SubscriptionViewModel : ILayoutModel
         _ => throw new NotImplementedException(),
     };
 
-    public string CabName { get; internal set; }
+    public string? CabName { get; internal set; }
     public string SearchUrl { get; internal set; }
     public string? CabProfileUrl { get; internal set; }
 }

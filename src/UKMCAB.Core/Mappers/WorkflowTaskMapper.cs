@@ -8,10 +8,9 @@ public static class WorkflowTaskMapper
     public static WorkflowTask MapToWorkflowTaskModel(this Data.Models.Workflow.WorkflowTask source)
     {
         TaskType taskType = Enum.Parse<TaskType>(source.TaskType);
-        TaskState taskState = Enum.Parse<TaskState>(source.State);
         WorkflowTask task = new WorkflowTask(
             Guid.Parse(source.Id),
-            taskType, taskState,
+            taskType, 
             new User(source.Submitter.Id, source.Submitter.FirstName, source.Submitter.Surname, source.Submitter.Role),
             source.ForRoleId,
             source.Assignee != null
@@ -35,7 +34,6 @@ public static class WorkflowTaskMapper
         Data.Models.Workflow.WorkflowTask task = new Data.Models.Workflow.WorkflowTask(
             source.Id.ToString(),
             source.TaskType.ToString(),
-            source.State.ToString(),
             new UserAccount
             {
                 Id = source.Submitter.UserId,

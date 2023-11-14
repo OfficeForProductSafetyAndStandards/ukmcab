@@ -261,5 +261,5 @@ public class RedisCache : IDistCache
 
     public async Task AssertLockReleaseAsync(string name, LockOwner lockOwner) => Guard.IsTrue(await LockReleaseAsync(name, lockOwner), () => new Exception($"The lock '{name}' was not released"));
 
-    private static string CleanKey(object key) => (key?.ToString()).Clean();
+    private static string? CleanKey(object key) => (key?.ToString()).Clean();
 }

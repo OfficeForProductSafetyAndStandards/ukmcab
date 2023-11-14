@@ -190,7 +190,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
         }
 
-        private string GetFeedName(SearchViewModel model)
+        private string? GetFeedName(SearchViewModel model)
         {
             return string.IsNullOrEmpty(model.Keywords) ? "UKMCAB search results" : $"UKMCAB search results for \"{model.Keywords.Trim()}\"";
         }
