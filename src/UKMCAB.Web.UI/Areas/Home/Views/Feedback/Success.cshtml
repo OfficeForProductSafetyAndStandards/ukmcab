@@ -2,15 +2,23 @@
 @{
     ViewData["HideFeeback"] = true;
 }
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="@Model.ReturnURL" class="govuk-back-link">Back</a>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Thank you for your help</h1>
-        <p class="govuk-body">We will look to improve this service based on your feedback.</p>
+        <h1 class="govuk-heading-l">Thank you for your feedback</h1>
         <div class="govuk-!-margin-bottom-3">
-            <a class="govuk-link" asp-area="Home" asp-controller="Feedback" asp-action="Submit" asp-route-returnURL="@Model.ReturnURL">Submit another feedback</a>
-        </div>
-        <div>
-            <a class="govuk-link" href="@Model.ReturnURL">Return to where you were</a>
+            <a class="govuk-link" asp-area="Home" asp-controller="Feedback" asp-action="Submit" asp-route-returnURL="@Model.ReturnURL">Provide more feedback about this page</a>
         </div>
     </div>
 </div>

@@ -9,6 +9,7 @@
     // Form fields
     var whatWereYouDoing = document.getElementById("WhatWereYouDoing");
     var whatWentWrong = document.getElementById("WhatWentWrong");
+    var email = document.getElementById("Email");
 
     // Form sections
     var feedbackDetails = document.getElementById("feedback-form-details");
@@ -38,6 +39,7 @@
             var formData = new FormData();
             formData.append("WhatWereYouDoing", whatWereYouDoing.value);
             formData.append("WhatWentWrong", whatWentWrong.value);
+            formData.append("Email", email.value);
             formData.append("ReturnURL", window.location.pathname);
 
             fetch("/feedback-form/submit-js",
@@ -80,13 +82,13 @@
             errorMessage = "";
             if (!validValue(whatWereYouDoing.value)) {
                 whatWereYouDoing.classList.add("feedback-form-error");
-                errorMessage = "Please enter details of what you were doing";
+                errorMessage = "Enter information about what you were doing";
             } else {
                 whatWereYouDoing.classList.remove("feedback-form-error");
             }
             if (!validValue(whatWentWrong.value)) {
                 whatWentWrong.classList.add("feedback-form-error");
-                errorMessage += errorMessage.length ? " and what went wrong" : "Please enter details of what went wrong";
+                errorMessage += errorMessage.length ? " and what went wrong" : "Enter details of what went wrong";
             } else {
                 whatWentWrong.classList.remove("feedback-form-error");
             }
@@ -108,6 +110,7 @@
         // Clear values
         whatWereYouDoing.value = "";
         whatWentWrong.value = "";
+        email.value = "";
         // Remove success
         feedbackSuccess.classList.add("govuk-visually-hidden");
     }

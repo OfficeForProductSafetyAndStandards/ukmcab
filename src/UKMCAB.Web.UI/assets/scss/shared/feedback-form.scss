@@ -7,7 +7,7 @@
 }
 
 .feedback-form-errors-container, .feedback-form-error {
-    border: 5px solid $govuk-error-colour;
+    border: 5px solid $govuk-error-colour !important;
 }
 
 .feedback-form-errors-container {
