@@ -16,6 +16,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Core.Domain.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
