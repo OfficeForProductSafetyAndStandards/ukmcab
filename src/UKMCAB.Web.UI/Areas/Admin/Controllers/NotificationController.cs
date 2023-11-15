@@ -20,6 +20,12 @@ public class NotificationController : Controller
     private const string AssignedMeTabName = "assigned-me";
     private const string AssignedGroupTabName = "assigned-group";
     private const string CompletedTabName = "completed";
+    private const string LastUpdated = "LastUpdated";
+    private const string From = "From";
+    private const string Subject = "Subject";
+    private const string CabNameValue = "CabName";
+    private const string CABNameLabel = "Cab name";
+    private const string LastUpdatedLabel = "Last updated";
 
     public static class Routes
     {
@@ -63,11 +69,11 @@ public class NotificationController : Controller
         string sd,
         int pageNumber)
     {
-        if (string.IsNullOrWhiteSpace(sd))
+        if (string.IsNullOrWhiteSpace(sf) && string.IsNullOrWhiteSpace(sd))
         {
-            sd = SortDirectionHelper.Ascending;
+            sf = LastUpdated;
+            sd = SortDirectionHelper.Descending;
         }
-
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
         var resultsPerPage = 5;
         var skipTake = SkipTake.FromPage(pageNumber - 1, 5);
@@ -89,10 +95,10 @@ public class NotificationController : Controller
 
         var mobileSortOptions = new List<Tuple<string, string>>
         {
-            new("From", "From"),
-            new("Subject", "Subject"),
-            new("CabName", "Cab name"),
-            new("LastUpdated", "Last Updated")
+            new(From, From),
+            new(Subject, Subject),
+            new(CabNameValue, CABNameLabel),
+            new(LastUpdated, LastUpdatedLabel)
         };
         var model = new NotificationsViewModel
         (
@@ -105,7 +111,7 @@ public class NotificationController : Controller
                     Total = unAssignedItems.Count,
                     TabId = UnassignedTabName
                 }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), UnassignedTabName,
-                "unassigned", unAssignedItems.Count),
+                "unassigned", unAssignedItems.Count, "Sent on"),
             new NotificationsViewModelTable(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd),
                 assignedToMeItems.Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
@@ -115,7 +121,7 @@ public class NotificationController : Controller
                     Total = assignedToMe.Count,
                     TabId = AssignedMeTabName
                 }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), AssignedMeTabName, "assigned to me",
-                assignedToMe.Count),
+                assignedToMe.Count, LastUpdatedLabel),
             new NotificationsViewModelTable(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
                 assignedToGroupItems.Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
@@ -124,7 +130,7 @@ public class NotificationController : Controller
                     Total = assignedToGroup.Count,
                     TabId = AssignedGroupTabName
                 }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions),
-                AssignedGroupTabName, "assigned to " + role.Label, assignedToGroup.Count),
+                AssignedGroupTabName, "assigned to " + role.Label, assignedToGroup.Count, LastUpdatedLabel),
             new NotificationsViewModelTable(completedItems.Any(), sf, SortDirectionHelper.Get(sd),
                 completedItems.Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
@@ -134,7 +140,7 @@ public class NotificationController : Controller
                     Total = completed.Count,
                     TabId = CompletedTabName
                 }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), CompletedTabName,
-                "completed", completedItems.Count),
+                "completed", completedItems.Count,"Completed on"),
             role.Label
         );
         return model;

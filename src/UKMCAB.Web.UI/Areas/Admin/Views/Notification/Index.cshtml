@@ -22,7 +22,7 @@
             <govuk-tabs-item id="assigned-group" label='@("Assigned to " + Model.UserGroup +" (" + Model.AssignedToGroupTable.TotalCount + ")")' asp-route="@NotificationController.Routes.Notifications">
                 <partial name="_NotificationsTable" model="@Model.AssignedToGroupTable"/>
             </govuk-tabs-item>
-            <govuk-tabs-item id="completed" label='@("Completed " + Model.CompletedTable.TotalCount + ")")' asp-route="@NotificationController.Routes.Notifications">
+            <govuk-tabs-item id="completed" label='@("Completed (" + Model.CompletedTable.TotalCount + ")")' asp-route="@NotificationController.Routes.Notifications">
                 <partial name="_NotificationsTable" model="@Model.CompletedTable"/>
             </govuk-tabs-item>
         </govuk-tabs>
