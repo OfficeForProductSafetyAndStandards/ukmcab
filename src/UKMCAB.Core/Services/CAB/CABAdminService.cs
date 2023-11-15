@@ -1,8 +1,12 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
+using StackExchange.Redis;
 using UKMCAB.Common;
 using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
+using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.Users;
+using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
@@ -22,7 +26,7 @@ namespace UKMCAB.Core.Services.CAB
         private readonly TelemetryClient _telemetryClient;
 
         public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient)
+            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient, IUserService userService)
         {
             _cabRepostitory = cabRepostitory;
             _cachedSearchService = cachedSearchService;
@@ -71,11 +75,14 @@ namespace UKMCAB.Core.Services.CAB
             return docs;
         }
 
-        public async Task<List<Document>> FindAllCABManagementQueueDocuments()
+        public async Task<List<Document>> FindAllCABManagementQueueDocuments(UserAccount userAccount)
         {
-            var docs = await _cabRepostitory.Query<Document>(d =>
-                d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
-            return docs;
+            if(userAccount.Role == Roles.UKAS.Id)
+            {
+                return await _cabRepostitory.Query<Document>(d => d.LastUserGroup == userAccount.Role &&
+                (d.StatusValue == Status.Draft || d.StatusValue == Status.Archived));
+            }
+            return await _cabRepostitory.Query<Document>(d => d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
         }
 
         public async Task<Document?> GetLatestDocumentAsync(string cabId)
