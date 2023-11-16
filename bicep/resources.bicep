@@ -326,6 +326,38 @@ resource cosmosDbContainerLegislativeArea 'Microsoft.DocumentDB/databaseAccounts
 }
 
 
+resource cosmosDbContainerProcedures  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'procedures'
+  properties: {
+    resource: {
+      id: 'procedures'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
+
+
 
 
 
