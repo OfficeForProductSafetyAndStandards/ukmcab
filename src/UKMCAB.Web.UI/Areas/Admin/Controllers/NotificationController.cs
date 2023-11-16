@@ -49,6 +49,8 @@ public class NotificationController : Controller
     [HttpGet(Name = Routes.Notifications)]
     public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
     {
+        var url = UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,Url.RouteUrl(Routes.Notifications));
+
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(userId);
         var cacheKey = userId + "-assigned-to-me-notifications";
