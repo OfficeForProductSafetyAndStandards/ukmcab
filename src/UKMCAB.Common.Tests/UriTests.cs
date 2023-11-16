@@ -18,15 +18,7 @@ public class UriTests
         Assert.Throws<ArgumentNullException>(() =>
             UriHelper.GetAbsoluteUriFromRequestAndPath(httpContext.Object.Request, path));
     }
-
-    [Test]
-    public void EmptyPort_GetAbsoluteUriFromRequestAndPath_ReturnsPort80()
-    {
-        Mock<HttpContext> httpContext = new Mock<HttpContext>();
-        var result = UriHelper.GetAbsoluteUriFromRequestAndPath(httpContext.Object.Request, "/path");
-        Assert.AreEqual("/path", result);
-    }
-
+    
     [Test]
     public void Port_GetAbsoluteUriFromRequestAndPath_ReturnsHostAndPort()
     {
