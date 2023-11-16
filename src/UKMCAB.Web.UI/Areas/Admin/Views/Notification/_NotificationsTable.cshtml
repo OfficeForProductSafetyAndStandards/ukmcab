@@ -9,25 +9,25 @@
     <tr class="govuk-table__row">
         @if (Model.ShowTableItems)
         {
-            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+            <th scope="col" class="govuk-table__header">
                 <sort tab-to-show="@Model.TabName" target="From" sort="@Model.SortField" sort-direction="@Model.SortDirection">From</sort>
             </th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+            <th scope="col" class="govuk-table__header">
                 <sort tab-to-show="@Model.TabName" target="Subject" sort="@Model.SortField" sort-direction="@Model.SortDirection">Subject</sort>
             </th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+            <th scope="col" class="govuk-table__header">
                 <sort tab-to-show="@Model.TabName" target="CabName" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
             </th>
             @if (Model.TabName.Equals(NotificationController.AssignedGroupTabName))
             {
-                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+                <th scope="col" class="govuk-table__header">
                     <sort tab-to-show="@Model.TabName" target="Assignee" sort="@Model.SortField" sort-direction="@Model.SortDirection">Assignee</sort>
                 </th>
             }
-            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+            <th scope="col" class="govuk-table__header">
                 <sort tab-to-show="@Model.TabName" target="LastUpdated" sort="@Model.SortField" sort-direction="@Model.SortDirection">@Model.LastUpdatedLabel</sort>
             </th>
-            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">
+            <th scope="col" class="govuk-table__header">
                 Action
             </th>
         }
