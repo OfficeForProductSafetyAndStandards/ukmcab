@@ -38,9 +38,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var docs = await _cabAdminService.FindAllCABManagementQueueDocuments(userAccount);
             return View(new InternalLandingPageViewModel
             {
-                //TotalDraftCABs = await _cabAdminService.GetCABCountForStatusAsync(userAccount, Status.Draft),
                 TotalDraftCABs = docs.Where(d => d.StatusValue == Status.Draft).Count(),
-                //TotalCABsPendingApproval = await _cabAdminService.GetCABCountForSubStatusAsync(SubStatus.PendingApproval),
                 TotalCABsPendingApproval = docs.Where(d => d.SubStatus == SubStatus.PendingApproval).Count(),
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending)
             }); 
