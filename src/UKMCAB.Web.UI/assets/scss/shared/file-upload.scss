@@ -145,10 +145,11 @@
                     }
 
                     label {
-                        display: none;
+                        visibility: hidden;
 
                         @include govuk-media-query($until: tablet) {
                             display: block;
+                            visibility: visible;
                         }
                     }
                 }
@@ -202,10 +203,11 @@
                     }
 
                     label {
-                        display: none;
+                        visibility: hidden;
 
                         @include govuk-media-query($until: tablet) {
                             display: block;
+                            visibility: visible;
                         }
                     }
 
