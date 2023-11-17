@@ -76,7 +76,7 @@ public class NotificationDetailsController : Controller
     private async Task<(List<(string, string)>, string)> GetUser()
     {
         var options =
-            new UserAccountListOptions(SkipTake.FromPage(-1, 40), new SortBy("firstName", null));
+            new UserAccountListOptions(SkipTake.FromPage(-1, 500), new SortBy("firstName", null));
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
         var users = await _userService.ListAsync(options);
         var assignees = users.Where(x => x.Role == role)
