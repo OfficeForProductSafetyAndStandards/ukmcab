@@ -73,7 +73,7 @@
     }
 
     function isAValidEmail(text) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         return text === null || text === "" || emailRegex.test(text);
     }
@@ -101,11 +101,9 @@
                 whatWentWrong.classList.remove("feedback-form-error");
             }
 
-            errorMessage += ".";
-
             if (!isAValidEmail(email.value)) {
                 email.classList.add("feedback-form-error");
-                errorMessage += errorMessage.length ? "\n\nEnter an email address in the correct format, like name@example.com" :
+                errorMessage += errorMessage.length ? ".\n\nEnter an email address in the correct format, like name@example.com" :
                     "Enter an email address in the correct format, like name@example.com";
             } else {
                 email.classList.remove("feedback-form-error");
