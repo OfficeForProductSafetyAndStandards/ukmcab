@@ -55,7 +55,7 @@ public class NotificationController : Controller
         var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(userId);
         var cacheKey = userId + "-assigned-to-me-notifications";
         if (assignedToMe.Any() && await _distCache.GetAsync<string?>(cacheKey) == null &&
-            string.IsNullOrWhiteSpace(sf) && string.IsNullOrWhiteSpace(sd))
+            string.IsNullOrWhiteSpace(sf) && string.IsNullOrWhiteSpace(sd) && pageNumber == 1)
         {
             //Business rule redirect to assigned to me tab if items found
             await _distCache.SetAsync(cacheKey, assignedToMe.Count.ToString(), new TimeSpan(0, 0, 10, 0));
