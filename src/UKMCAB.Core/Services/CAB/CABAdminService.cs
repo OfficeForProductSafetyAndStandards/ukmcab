@@ -79,8 +79,8 @@ namespace UKMCAB.Core.Services.CAB
         {
             if(userAccount.Role == Roles.UKAS.Id)
             {
-                return await _cabRepostitory.Query<Document>(d => d.LastUserGroup == userAccount.Role &&
-                (d.StatusValue == Status.Draft || d.StatusValue == Status.Archived));
+                return await _cabRepostitory.Query<Document>(d => (d.LastUserGroup == userAccount.Role &&
+                d.StatusValue == Status.Draft) || d.StatusValue == Status.Archived);
             }
             return await _cabRepostitory.Query<Document>(d => d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
         }
