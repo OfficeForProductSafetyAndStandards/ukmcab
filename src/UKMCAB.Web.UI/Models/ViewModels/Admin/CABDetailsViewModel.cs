@@ -44,6 +44,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string? UKASReference { get; set; }
         public string? Title => $"{(!IsNew ? "Edit" : "Create")} a CAB";
         public string? CabNumberVisibility { get; set; }
+        public string? SubmitType { get; set; }
         public bool IsNew { get; set; }
 
         public bool IsCabNumberDisabled { get; set; }
@@ -61,7 +62,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
                 .Must((model, cabNumber) =>
                 {
                     var isOpssUser = httpContextAccessor?.HttpContext?.User?.IsInRole(Core.Security.Roles.OPSS.Id) ?? false;
-                    return !isOpssUser || cabNumber.IsNotNullOrEmpty();
+                    return model.SubmitType == Constants.SubmitType.Save || !isOpssUser || cabNumber.IsNotNullOrEmpty();
                 })
                 .WithMessage("Enter a CAB number");
         }

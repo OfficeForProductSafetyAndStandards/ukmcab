@@ -91,6 +91,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
             await _cache.RemoveAsync(Key(id));
             await _cache.RemoveAsync(Key(slug));
             await _cache.RemoveAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLAsync), Key(slug)));
+            await _cache.RemoveAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLAsync), Key(id)));
             await _cache.RemoveAsync(StringExt.Keyify(nameof(FindAllDocumentsByCABIdAsync), Key(id)));
         } 
     }

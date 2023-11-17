@@ -10,16 +10,24 @@ using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
+using YamlDotNet.Serialization.EventEmitters;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
 [Area("admin"), Route("admin/notifications"), Authorize]
 public class NotificationController : Controller
 {
+    public const string AssignedGroupTabName = "assigned-group";
+    public const string LastUpdatedLabel = "Last updated";
+
     private const string UnassignedTabName = "unassigned";
     private const string AssignedMeTabName = "assigned-me";
-    private const string AssignedGroupTabName = "assigned-group";
     private const string CompletedTabName = "completed";
+    private const string LastUpdated = "LastUpdated";
+    private const string From = "From";
+    private const string Subject = "Subject";
+    private const string CabNameValue = "CabName";
+    private const string CABNameLabel = "Cab name";
 
     public static class Routes
     {
@@ -41,6 +49,8 @@ public class NotificationController : Controller
     [HttpGet(Name = Routes.Notifications)]
     public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
     {
+        var url = UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,Url.RouteUrl(Routes.Notifications));
+
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(userId);
         var cacheKey = userId + "-assigned-to-me-notifications";
@@ -63,9 +73,10 @@ public class NotificationController : Controller
         string sd,
         int pageNumber)
     {
-        if (string.IsNullOrWhiteSpace(sd))
+        if (string.IsNullOrWhiteSpace(sf) && string.IsNullOrWhiteSpace(sd))
         {
-            sd = SortDirectionHelper.Ascending;
+            sf = LastUpdated;
+            sd = SortDirectionHelper.Descending;
         }
 
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
@@ -77,22 +88,25 @@ public class NotificationController : Controller
             await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id);
         var completed =
             await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id, true);
-        List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)> unAssignedItems =
-            await BuildTableItemsAsync(unassigned, sf, sd);
-        List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)> assignedToMeItems =
-            await BuildTableItemsAsync(assignedToMe, sf, sd);
-        List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+            unAssignedItems =
+                await BuildTableItemsAsync(unassigned, sf, sd);
+        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+            assignedToMeItems =
+                await BuildTableItemsAsync(assignedToMe, sf, sd);
+        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
             assignedToGroupItems =
                 await BuildTableItemsAsync(assignedToGroup, sf, sd);
-        List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)> completedItems =
-            await BuildTableItemsAsync(completed, sf, sd);
+        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+            completedItems =
+                await BuildTableItemsAsync(completed, sf, sd);
 
         var mobileSortOptions = new List<Tuple<string, string>>
         {
-            new("From", "From"),
-            new("Subject", "Subject"),
-            new("CabName", "Cab name"),
-            new("LastUpdated", "Last Updated")
+            new(From, From),
+            new(Subject, Subject),
+            new(CabNameValue, CABNameLabel),
+            new(LastUpdated, LastUpdatedLabel)
         };
         var model = new NotificationsViewModel
         (
@@ -104,8 +118,9 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = unAssignedItems.Count,
                     TabId = UnassignedTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), UnassignedTabName,
-                "unassigned", unAssignedItems.Count),
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions),
+                UnassignedTabName,
+                "unassigned", unAssignedItems.Count, "Sent on"),
             new NotificationsViewModelTable(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd),
                 assignedToMeItems.Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
@@ -114,8 +129,9 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = assignedToMe.Count,
                     TabId = AssignedMeTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), AssignedMeTabName, "assigned to me",
-                assignedToMe.Count),
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions),
+                AssignedMeTabName, "assigned to me",
+                assignedToMe.Count, LastUpdatedLabel),
             new NotificationsViewModelTable(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
                 assignedToGroupItems.Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
@@ -133,20 +149,24 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = completed.Count,
                     TabId = CompletedTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions), CompletedTabName,
-                "completed", completedItems.Count),
+                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, mobileSortOptions),
+                CompletedTabName,
+                "completed", completedItems.Count, "Completed on"),
             role.Label
         );
         return model;
     }
 
-    private async Task<List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)>>
+    private async Task<List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string?
+            DetailLink)>>
         BuildTableItemsAsync(
             IEnumerable<WorkflowTask> tasks,
             string? sf,
             string? sd)
     {
-        var items = new List<(string From, string Subject, string? CABName, string LastUpdated, string? DetailLink)>();
+        var items =
+            new List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string?
+                DetailLink)>();
         foreach (var notification in tasks)
         {
             Document? cab = null;
@@ -157,7 +177,8 @@ public class NotificationController : Controller
 
             var item = (From: notification.Submitter.FirstAndLastName,
                 Subject: notification.TaskType.GetEnumDescription(),
-                CABName: cab?.Name, 
+                CABName: cab?.Name,
+                Assignee: notification.Assignee?.FirstAndLastName,
                 LastUpdated: notification.SentOn.ToStringBeisFormat(),
                 DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails,
                     new { id = notification.Id.ToString() }));

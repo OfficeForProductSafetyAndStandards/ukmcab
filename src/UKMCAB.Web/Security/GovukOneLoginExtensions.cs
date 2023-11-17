@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text.Json;
 using UKMCAB.Common;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
@@ -79,20 +79,20 @@ public static class GovukOneLoginExtensions
                 }
             };
 
-            options.Events.OnRedirectToIdentityProviderForSignOut = async (context) =>
+            options.Events.OnRedirectToIdentityProviderForSignOut = async context =>
             {
                 var uri = context.HttpContext.RequestServices.GetRequiredService<IAppHost>().GetBaseUri();
                 context.ProtocolMessage.PostLogoutRedirectUri = uri.ToString();
             };
 
-            options.Events.OnSignedOutCallbackRedirect = (ctx) =>
+            options.Events.OnSignedOutCallbackRedirect = ctx =>
             {
                 ctx.Response.Redirect(ctx.Properties.Items.Get("redirect") ?? "/");
                 ctx.HandleResponse();
                 return Task.CompletedTask;
             };
 
-            options.Events.OnRemoteFailure = (ctx) =>
+            options.Events.OnRemoteFailure = ctx =>
             {
                 if (ctx.Failure?.Message == "Correlation failed.")
                 {

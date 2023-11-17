@@ -16,6 +16,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Core.Domain.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -432,21 +433,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
                         userAccount ?? throw new InvalidOperationException(), latest, true);
-                    var personalisation = new Dictionary<string, dynamic?>
-                    {
-                        { "UserGroup", Roles.UKAS.Label },
-                        { "CABName", latest.Name },
-                        {
-                            "NotificationsUrl",
-                            Url.RouteUrl(NotificationController.Routes.Notifications) ??
-                            throw new InvalidOperationException()
-                        },
-                        {
-                            "CABManagementUrl",
-                            Url.RouteUrl(AdminController.Routes.CABManagement) ?? throw new InvalidOperationException()
-                        }
-                    };
-                    await SendNotificationForApproveCab(userAccount, personalisation, publishModel);
+                    await SendNotificationForApproveCab(userAccount,
+                        latest.Name ?? throw new InvalidOperationException(), publishModel);
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
                 }
             }
@@ -455,17 +443,33 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(publishModel);
         }
 
-        
+
         /// <summary>
         /// Sends an email and notification for Request to publish a cab
         /// </summary>
         /// <param name="userAccount">User creating the cab</param>
-        /// <param name="personalisation">params for the email</param>
+        /// <param name="cabName">Name of CAB</param>
         /// <param name="publishModel">ViewModel to build notification</param>
-        private async Task SendNotificationForApproveCab(UserAccount userAccount, Dictionary<string, dynamic?> personalisation,
+        private async Task SendNotificationForApproveCab(UserAccount userAccount, string cabName,
             CABSummaryViewModel publishModel)
         {
-            var userRoleId = Roles.List.First(r => r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+            var personalisation = new Dictionary<string, dynamic?>
+            {
+                { "UserGroup", Roles.UKAS.Label },
+                { "CABName", cabName },
+                {
+                    "NotificationsUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(NotificationController.Routes.Notifications))
+                },
+                {
+                    "CABManagementUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(AdminController.Routes.CABManagement))
+                }
+            };
+            var userRoleId = Roles.List.First(r =>
+                r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
             await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail,
                 _templateOptions.NotificationRequestToPublish, personalisation);
             if (publishModel.CabDetailsViewModel != null)
