@@ -64,6 +64,7 @@ public class NotificationController : Controller
 
         await _distCache.RemoveAsync(cacheKey);
         var model = await CreateNotificationsViewModelAsync(assignedToMe, sf, sd, pageNumber);
+        ModelState.Clear();
         return View(model);
     }
 
