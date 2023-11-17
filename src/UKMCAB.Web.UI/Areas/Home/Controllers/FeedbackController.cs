@@ -55,7 +55,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
                 {"date-time", DateTime.UtcNow.ToString("f")},
                 {"what-were-you-doing" , model.WhatWereYouDoing},
                 {"what-went-wrong" , model.WhatWentWrong},
-                {"email-address" , model.Email},
+                {"contact-email-address" , model.Email},
             };
             await _notificationClient.SendEmailAsync(_templateOptions.FeedbackEmail, _templateOptions.FeedbackForm, personalisation);
 
@@ -67,6 +67,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(model.Email == null)
+                {
+                    model.Email = string.Empty;
+                }
                 await SubmitEmailAsync(model); // let exceptions propagate. they'll be handled by UnexpectedExceptionHandlerMiddleware which will show the standard friendly error message+error code.
                 return Json(new FeedbackFormResult
                 {

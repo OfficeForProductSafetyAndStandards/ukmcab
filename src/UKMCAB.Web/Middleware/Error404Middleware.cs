@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using UKMCAB.Common;
 
 namespace UKMCAB.Web.Middleware;
 
@@ -19,7 +20,7 @@ public class PageNotFoundMiddleware
         if (context.Response.StatusCode == StatusCodes.Status404NotFound)
         {
             context.SetEndpoint(endpoint: null);
-            context.SetInternalRewrite(true);
+            context.SetInternalRewrite();
             context.Items["originalPath"] = context.Request.Path.Value;
             context.Request.Path = _httpErrorOptions.Error404Path;
             await _next(context);

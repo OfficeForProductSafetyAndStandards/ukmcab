@@ -35,7 +35,7 @@
 
     function submitDetails(e) {
         e.preventDefault();
-        if (validValue(whatWereYouDoing.value) && validValue(whatWentWrong.value)) {
+        if (validValue(whatWereYouDoing.value) && validValue(whatWentWrong.value) && isAValidEmail(email.value)) {
             var formData = new FormData();
             formData.append("WhatWereYouDoing", whatWereYouDoing.value);
             formData.append("WhatWentWrong", whatWentWrong.value);
@@ -62,6 +62,7 @@
                 }).catch((error) => {
                     displayErrors(error);
                 });
+
         } else {
             displayErrors();
         }
@@ -70,6 +71,13 @@
     function validValue(text) {
         return text && text.length > 0;
     }
+
+    function isAValidEmail(text) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        return text === null || text === "" || emailRegex.test(text);
+    }
+
 
     function displaySuccess() {
         feedbackForm.classList.add("govuk-visually-hidden");
@@ -92,10 +100,20 @@
             } else {
                 whatWentWrong.classList.remove("feedback-form-error");
             }
+
+            errorMessage += ".";
+
+            if (!isAValidEmail(email.value)) {
+                email.classList.add("feedback-form-error");
+                errorMessage += errorMessage.length ? "\n\nEnter an email address in the correct format, like name@example.com" :
+                    "Enter an email address in the correct format, like name@example.com";
+            } else {
+                email.classList.remove("feedback-form-error");
+            }
         }
 
         feedbackError.classList.remove("govuk-visually-hidden");
-        feedbackErrorMessage.innerText = errorMessage + ".";
+        feedbackErrorMessage.innerText = errorMessage;
     }
 
     function reset(e) {
@@ -107,6 +125,7 @@
         feedbackErrorMessage.innerText = "";
         whatWereYouDoing.classList.remove("feedback-form-error");
         whatWentWrong.classList.remove("feedback-form-error");
+        email.classList.remove("feedback-form-error");
         // Clear values
         whatWereYouDoing.value = "";
         whatWentWrong.value = "";

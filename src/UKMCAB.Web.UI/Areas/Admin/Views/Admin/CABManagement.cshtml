@@ -67,10 +67,10 @@
                         <tr class="govuk-table__row">
                             @if (Model.CABManagementItems.Any())
                             {
-                                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("name"))" aria-sort="@Model.GetAriaSort("name")">@Model.GetSortDescription("name", "CAB name")</a></th>
-                                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("number"))" aria-sort="@Model.GetAriaSort("number")">@Model.GetSortDescription("number", "CAB number")</a></th>
-                                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("lastupd"))" aria-sort="@Model.GetAriaSort("lastupd")">@Model.GetSortDescription("lastupd", "Last updated")</a></th>
-                                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("status"))" aria-sort="@Model.GetAriaSort("status")">@Model.GetSortDescription("status", "Status")</a></th>
+                                <th scope="col" class="govuk-table__header width-two-fifth"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("name"))" aria-sort="@Model.GetAriaSort("name")">@Model.GetSortDescription("name", "CAB name")</a></th>
+                                <th scope="col" class="govuk-table__header width-one-fifth"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("number"))" aria-sort="@Model.GetAriaSort("number")">@Model.GetSortDescription("number", "CAB number")</a></th>
+                                <th scope="col" class="govuk-table__header width-one-fifth"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("lastupd"))" aria-sort="@Model.GetAriaSort("lastupd")">@Model.GetSortDescription("lastupd", "Last updated")</a></th>
+                                <th scope="col" class="govuk-table__header width-one-tenth"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("status"))" aria-sort="@Model.GetAriaSort("status")">@Model.GetSortDescription("status", "Status")</a></th>
                             }
                         </tr>
                     </thead>
