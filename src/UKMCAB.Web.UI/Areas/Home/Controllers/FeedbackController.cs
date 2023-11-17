@@ -67,6 +67,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(string.IsNullOrWhiteSpace(model.Email))
+                {
+                    model.Email = "Not provided";
+                }
                 await SubmitEmailAsync(model); // let exceptions propagate. they'll be handled by UnexpectedExceptionHandlerMiddleware which will show the standard friendly error message+error code.
                 return Json(new FeedbackFormResult
                 {
