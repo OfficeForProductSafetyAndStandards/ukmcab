@@ -1,0 +1,22 @@
+@model (string CABId, string CABName)
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="null"/>
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">Approve CAB</span>
+        <h1 class="govuk-heading-l">Approve CAB @Model.CABName</h1>
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="approvecabform" method="post">
+               <govuk-input name="CABNumber">
+                   <govuk-input-label is-page-heading="false">CAB number</govuk-input-label>
+                   <govuk-input-error-message>Enter a CAB number</govuk-input-error-message>
+               </govuk-input>
+        </form>
+    </div>
+</div>

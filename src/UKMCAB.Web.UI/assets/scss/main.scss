@@ -26,7 +26,8 @@
 @import "./shared/notification-banner.scss";
 @import "./shared/tags.scss";
 @import "./shared/mobile-sort-table.scss";
-/* The below style shoulb be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */
+@import "./shared/page-content-banner.scss";
+/* The below style should be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */
 .govuk-link:hover {
     text-decoration-thickness: max(3px, .1875rem, .12em);
 }
