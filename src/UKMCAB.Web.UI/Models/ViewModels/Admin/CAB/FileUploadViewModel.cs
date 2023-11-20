@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class FileUploadViewModel : CreateEditCABViewModel, ILayoutModel 
     {

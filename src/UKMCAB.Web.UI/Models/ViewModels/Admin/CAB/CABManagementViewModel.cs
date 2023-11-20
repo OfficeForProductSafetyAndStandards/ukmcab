@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Html;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABManagementViewModel : ILayoutModel
     {
@@ -14,7 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
         public HtmlString GetAriaSort(string sortName)
         {
-            if (Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
+            if (Sort != null && Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
             {
                 return Sort.EndsWith("desc") ? new HtmlString("descending") : new HtmlString("ascending");
             }
@@ -24,7 +24,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
 
         public HtmlString GetSortQueryValue(string sortName)
         {
-            if (Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
+            if (Sort != null && Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
             {
                 return Sort.EndsWith("desc") ? new HtmlString(sortName) : new HtmlString($"{sortName}-desc");
             }

@@ -183,23 +183,21 @@ namespace UKMCAB.Core.Services.CAB
         {
             if (latestDocument.StatusValue == Status.Published)
             {
-                // An accidental double sumbmit might cause this action to be repeated so just return the already published doc.
+                // An accidental double submit might cause this action to be repeated so just return the already published doc.
                 return latestDocument;
             }
 
             Guard.IsTrue(latestDocument.StatusValue == Status.Draft,
                 $"Submitted document for publishing incorrectly flagged, CAB Id: {latestDocument.CABId}");
 
-            //var publishedDocument = await FindPublishedDocumentByCABIdAsync(latestDocument.CABId);
             var allDocument = await FindAllDocumentsByCABIdAsync(latestDocument.CABId);
             var publishedOrArchivedDocument = allDocument.SingleOrDefault(doc =>
-                doc.StatusValue == Status.Published || doc.StatusValue == Status.Archived);
+                doc is { StatusValue: Status.Published or Status.Archived });
             if (publishedOrArchivedDocument != null)
             {
                 publishedOrArchivedDocument.StatusValue = Status.Historical;
                 publishedOrArchivedDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.RePublished));
-                Guard.IsTrue(await _cabRepostitory.Update(publishedOrArchivedDocument),
-                    $"Failed to update published version during draft publish, CAB Id: {latestDocument.CABId}");
+                await _cabRepostitory.UpdateAsync(publishedOrArchivedDocument);
                 await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
@@ -207,8 +205,7 @@ namespace UKMCAB.Core.Services.CAB
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
                 publishedOrArchivedDocument));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
-            Guard.IsTrue(await _cabRepostitory.Update(latestDocument),
-                $"Failed to publish latest version during draft publish, CAB Id: {latestDocument.CABId}");
+            await _cabRepostitory.UpdateAsync(latestDocument);
 
             var urlSlug = publishedOrArchivedDocument != null &&
                           !publishedOrArchivedDocument.URLSlug.Equals(latestDocument.URLSlug)
