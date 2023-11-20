@@ -297,10 +297,10 @@ resource cosmosDbContainerTasks 'Microsoft.DocumentDB/databaseAccounts/sqlDataba
 
 resource cosmosDbContainerLegislativeArea 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
   parent: cosmosDbDatabase
-  name: 'legislative-area'
+  name: 'legislative-areas'
   properties: {
     resource: {
-      id: 'legislative-area'
+      id: 'legislative-areas'
       partitionKey: {
         paths: [
           '/id'
@@ -356,9 +356,66 @@ resource cosmosDbContainerProcedures  'Microsoft.DocumentDB/databaseAccounts/sql
   }
 }
 
+resource cosmosDbContainerCategories  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'categories'
+  properties: {
+    resource: {
+      id: 'categories'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
 
 
-
+resource cosmosDbContainerProducts  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'products'
+  properties: {
+    resource: {
+      id: 'products'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
 
 
 
