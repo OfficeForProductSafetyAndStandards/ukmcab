@@ -1,7 +1,7 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.ApproveCABViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form class=""@Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CABNumber)) id="approvecabform" method="post">
+        <form class="@Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CABNumber))" id="approvecabform" method="post">
             <div class="govuk-grid-row">
                 <div>
                     <span class="govuk-caption-m">Approve CAB</span>
