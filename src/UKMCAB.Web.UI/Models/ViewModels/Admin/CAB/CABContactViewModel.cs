@@ -1,8 +1,7 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using UKMCAB.Data.Models;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABContactViewModel : CreateEditCABViewModel, ILayoutModel
     {

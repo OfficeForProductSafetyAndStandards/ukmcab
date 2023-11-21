@@ -35,6 +35,7 @@ using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.Security;
 using UKMCAB.Web.UI;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Web.UI.Services.Subscriptions;

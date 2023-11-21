@@ -1,8 +1,7 @@
 ﻿@using UKMCAB.Core.Domain;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
-@using Microsoft.AspNetCore.Mvc.Routing
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABSummaryViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
 @{
     string appointmentDate = Constants.NotProvided;
     string reviewDate = Constants.NotProvided;
@@ -512,7 +511,7 @@ else if (Model.SubStatus == SubStatus.PendingApproval)
 {
     <div>
         <div class="govuk-button-group">
-            <govuk-button-link href="@Url.RouteUrl(ApproveCABController.Routes.Approve)">Approve</govuk-button-link>
+            <govuk-button-link asp-area="admin" asp-controller="ApproveCAB" asp-action="@nameof(ApproveCABController.Approve)" asp-route-id="@Model.CABId">Approve</govuk-button-link>
             <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
         </div>
     </div>

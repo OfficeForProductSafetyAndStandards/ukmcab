@@ -1,7 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
-using UKMCAB.Data.Models;
+﻿using UKMCAB.Data.Models;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABBodyDetailsViewModel : CreateEditCABViewModel, ILayoutModel
     {
@@ -20,10 +19,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public string? CABId { get; set; }
 
         [CannotBeEmpty(ErrorMessage = "Select a registered test location")]
-        public List<string> TestingLocations { get; set; }
+        public List<string> TestingLocations { get; set; } = new();
+
         [CannotBeEmpty(ErrorMessage = "Select a body type")]
-        public List<string> BodyTypes { get; set; }
-        public List<string> LegislativeAreas { get; set; }
+        public List<string> BodyTypes { get; set; } = new();
+
+        public List<string> LegislativeAreas { get; set; } = new();
 
         public List<string>? ProductScheduleLegislativeAreas { get; set; }
         public string? Title => "Body details";

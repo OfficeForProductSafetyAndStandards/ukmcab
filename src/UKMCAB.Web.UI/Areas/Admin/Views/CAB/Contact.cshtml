@@ -1,7 +1,7 @@
 ﻿@using System.Net;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABContactViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABContactViewModel
 @{
     var id = this.Url.ActionContext.HttpContext.Request.RouteValues.GetValueOrDefault("id").ToString();
     var cabId = Model.CABId ?? id;

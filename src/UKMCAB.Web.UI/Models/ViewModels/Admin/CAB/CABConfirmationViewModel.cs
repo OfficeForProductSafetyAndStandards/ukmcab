@@ -1,10 +1,10 @@
-﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin;
+﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 public class CABConfirmationViewModel : ILayoutModel
 {
     public string? Name { get; set; }
-    public string URLSlug { get; set; }
-    public string CABNumber { get; set; }
+    public string URLSlug { get; set; } = string.Empty;
+    public string CABNumber { get; set; } = string.Empty;
     public string? Title => "CAB confirmation";
 }
 

@@ -1,22 +1,24 @@
-@model (string CABId, string CABName)
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.ApproveCABViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <partial name="Partials/_ValidationSummary" model="null"/>
-    </div>
-</div>
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <span class="govuk-caption-m">Approve CAB</span>
-        <h1 class="govuk-heading-l">Approve CAB @Model.CABName</h1>
-    </div>
-</div>
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <form id="approvecabform" method="post">
-               <govuk-input name="CABNumber">
-                   <govuk-input-label is-page-heading="false">CAB number</govuk-input-label>
-                   <govuk-input-error-message>Enter a CAB number</govuk-input-error-message>
-               </govuk-input>
+        <form class="@Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CABNumber))" id="approvecabform" method="post">
+            <div class="govuk-grid-row">
+                <div>
+                    <span class="govuk-caption-m">Approve CAB</span>
+                    <h1 class="govuk-heading-l">Approve CAB @Model.CABName</h1>
+                </div>
+            </div>
+            <div class="govuk-!-width-two-thirds">
+                <govuk-input asp-for="CABNumber">
+                    <govuk-input-label is-page-heading="false">CAB number</govuk-input-label>
+                </govuk-input>
+            </div>
+
+            <govuk-warning-text icon-fallback-text="Warning">Approved CABs will be published and the user group will be notified.</govuk-warning-text>
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Approve</govuk-button>
+                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
         </form>
     </div>
 </div>

@@ -7,6 +7,7 @@ using UKMCAB.Data;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using Document = UKMCAB.Data.Models.Document;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers

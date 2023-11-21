@@ -22,7 +22,7 @@ namespace UKMCAB.Data.Models
 
         public Audit(UserAccount? userAccount, string action, string comment = null, string publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
 
-        public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
+        public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document? previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
         {
             var sb = new StringBuilder();
             if (previousDocument == null)
