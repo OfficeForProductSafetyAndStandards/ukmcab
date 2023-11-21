@@ -3,22 +3,22 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
     [Area("admin"), Route("admin"), Authorize(Policy = Policies.CabManagement)]
-    public class AdminController : Controller
+    public class CabManagementController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
 
         public static class Routes
         {
-            public const string Index = "admin.index";
             public const string CABManagement = "admin.cab-management";
         }
 
-        public AdminController(ICABAdminService cabAdminService)
+        public CabManagementController(ICABAdminService cabAdminService)
         {
             _cabAdminService = cabAdminService;
         }

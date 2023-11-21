@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Data.Models;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABSummaryViewModel: ILayoutModel
     {
@@ -13,7 +13,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin
         public List<FileUpload>? Documents { get; set; }
         public bool ValidCAB { get; set; }
         public bool ShowError { get; set; }
-        public string? Title => "Check details before " + (CanPublish ? "publishing" : "submitting for approval");
+        public string Title => "Check details before " + (CanPublish ? "publishing" : "submitting for approval");
         public string? ReturnUrl { get; set; }
         public bool CABNameAlreadyExists { get; set; }
         public bool CanPublish { get; set; }

@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Data.Models;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public abstract class CreateEditCABViewModel
     {

@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
-using UKMCAB.Common.Extensions;
 using UKMCAB.Core;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
@@ -16,7 +14,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin;
-using UKMCAB.Core.Domain.CAB;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -169,7 +167,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
             {
-                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
             // Pre-populate model for edit
@@ -202,7 +200,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
             {
-                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
             model.LegislativeAreas = GetLAUnion(model.LegislativeAreas,
@@ -265,7 +263,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null || latest.StatusValue != Status.Published)
             {
-                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
             return View(new CABConfirmationViewModel
@@ -293,7 +291,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
             {
-                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
             // Pre-populate model for edit
@@ -309,7 +307,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
             {
-                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
             if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
@@ -356,7 +354,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
             {
-                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
             // Pre-populate model for edit
@@ -395,7 +393,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _cabAdminService.GetLatestDocumentAsync(model.CABId ?? throw new InvalidOperationException());
             if (latest == null) // Implies no document or archived
             {
-                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
             if (submitType == Constants.SubmitType.Save)
@@ -404,7 +402,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
                     userAccount ?? throw new InvalidOperationException(), latest);
-                return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
             var publishModel = new CABSummaryViewModel
@@ -465,7 +463,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     "CABManagementUrl",
                     UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                        Url.RouteUrl(AdminController.Routes.CABManagement))
+                        Url.RouteUrl(CabManagementController.Routes.CABManagement))
                 }
             };
             var userRoleId = Roles.List.First(r =>
@@ -514,7 +512,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             TempData[Constants.TempDraftKey] =
                 $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
-            return RedirectToAction("CABManagement", "Admin", new { Area = "admin" });
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿@using UKMCAB.Web.UI.Areas.Search.Controllers;
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CabSubmittedForApprovalConfirmationViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CabSubmittedForApprovalConfirmationViewModel
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -16,7 +16,7 @@
             <a class="govuk-link" asp-route="@CABProfileController.Routes.CabDraftProfile" asp-route-id="@Model.Id">View CAB</a>
         </p>
         <p class="govuk-body">
-            <a class="govuk-link" asp-area="admin" asp-controller="Admin" asp-action="CABManagement">Go to CAB management</a>
+            <a class="govuk-link" asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement">Go to CAB management</a>
         </p>
     </div>
 </div>

@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
 @using UKMCAB.Data
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.FileListViewModel
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileListViewModel
 @section BackButton
     {
     <div class="govuk-width-container ">
@@ -121,7 +122,7 @@
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
         </div>
