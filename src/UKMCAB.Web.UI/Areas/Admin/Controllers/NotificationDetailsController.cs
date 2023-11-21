@@ -97,7 +97,7 @@ public class NotificationDetailsController : Controller
             IsAssigned =  workFlowTask.Assignee != null,
             From = workFlowTask.Submitter.FirstAndLastName,
             Subject = workFlowTask.TaskType.GetEnumDescription(),
-            Reason = workFlowTask.Reason,
+            Reason = workFlowTask.Body,
             SentOn = workFlowTask.SentOn.ToStringBeisFormat(),
             CompletedOn = workFlowTask.Completed ? workFlowTask.LastUpdatedOn.ToStringBeisFormat() : string.Empty,
             LastUpdated = workFlowTask.LastUpdatedOn.ToStringBeisFormat(),

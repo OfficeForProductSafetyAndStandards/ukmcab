@@ -78,7 +78,8 @@ public class ApproveCABController : Controller
         await _cabAdminService.PublishDocumentAsync(
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
             throw new InvalidOperationException("User account not found"), document);
-        await MarkTaskAsCompleted(cabId);
+        var submitTask = await MarkTaskAsCompleteAsync(cabId);
+        await SendNotificationOfApprovalAsync(cabId, document.Name, submitTask.Submitter);
         return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
     }
 
@@ -86,12 +87,12 @@ public class ApproveCABController : Controller
     /// Mark incoming Request to publish task as completed
     /// </summary>
     /// <param name="cabId">Associated CAB</param>
-    private async Task MarkTaskAsCompleted(Guid cabId)
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId)
     {
         var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
         var task = tasks.First(t => t.TaskType == TaskType.RequestToPublish);
         task.Completed = true;
-        await _workflowTaskService.UpdateAsync(task);
+        return await _workflowTaskService.UpdateAsync(task);
     }
 
     /// <summary>
@@ -100,7 +101,7 @@ public class ApproveCABController : Controller
     /// <param name="cabId">CAB id</param>
     /// <param name="cabName">Name of CAB</param>
     /// <param name="submitter"></param>
-    private async Task SendNotificationOfApproval(Guid cabId, string cabName, User submitter)
+    private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter)
     {
         var personalisation = new Dictionary<string, dynamic?>
         {
@@ -115,17 +116,17 @@ public class ApproveCABController : Controller
             _templateOptions.NotificationCabApprovedEmail, personalisation);
         var user =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ?? throw new InvalidOperationException();
-        var approver = new User(user.Id, user.FirstName, user.Surname, user.Role,
+        var approver = new User(user.Id, user.FirstName, user.Surname, user.Role ?? throw new InvalidOperationException(),
             user.EmailAddress ?? throw new InvalidOperationException());
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(Guid.NewGuid(), 
             TaskType.CABPublished,
             approver, 
             // Approver becomes the submitter for Published Notification
-            Roles.UKAS.Id, 
+            submitter.RoleId, 
             submitter,
             DateTime.Now, 
-            $"Approved CAB",
+            $"The CAB {cabName} has been approved and published.",
             DateTime.Now,
             approver, 
             DateTime.Now,

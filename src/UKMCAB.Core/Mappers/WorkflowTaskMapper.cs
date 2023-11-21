@@ -39,7 +39,7 @@ public static class WorkflowTaskMapper
                 Id = source.Submitter.UserId,
                 FirstName = source.Submitter.FirstName,
                 Surname = source.Submitter.Surname,
-                Role = source.Submitter.Role,
+                Role = source.Submitter.RoleId,
                 EmailAddress = source.Submitter.EmailAddress
             },
             source.ForRoleId,
@@ -49,20 +49,20 @@ public static class WorkflowTaskMapper
                     Id = source.Assignee.UserId,
                     FirstName = source.Assignee.FirstName,
                     Surname = source.Assignee.Surname,
-                    Role = source.Assignee.Role,
+                    Role = source.Assignee.RoleId,
                     EmailAddress = source.Assignee.EmailAddress
                 }
                 : null
             ,
             source.Assigned,
-            source.Reason,
+            source.Body,
             source.SentOn,
             new UserAccount
             {
                 Id = source.LastUpdatedBy.UserId,
                 FirstName = source.LastUpdatedBy.FirstName,
                 Surname = source.LastUpdatedBy.Surname,
-                Role = source.LastUpdatedBy.Role,
+                Role = source.LastUpdatedBy.RoleId,
                 EmailAddress = source.LastUpdatedBy.EmailAddress
             },
             source.LastUpdatedOn,

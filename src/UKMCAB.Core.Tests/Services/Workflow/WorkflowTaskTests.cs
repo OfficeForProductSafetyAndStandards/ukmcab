@@ -121,7 +121,7 @@ public class WorkflowTaskServiceTests
         newTask.Assignee = CreateFakeOpssUser();
         newTask.Assigned = DateTime.UtcNow.AddDays(-1);
         newTask.Approved = true;
-        newTask.Reason = "approved";
+        newTask.Body = "approved";
         newTask.LastUpdatedBy = CreateFakeOpssUser();
         newTask.LastUpdatedOn = DateTime.UtcNow;
         _mockWorkflowTaskRepository.Setup(r => r.ReplaceAsync(It.IsAny<Data.Models.Workflow.WorkflowTask>()))
@@ -136,7 +136,7 @@ public class WorkflowTaskServiceTests
         Assert.AreEqual(newTask.Assignee, returnedTask.Assignee);
         Assert.AreEqual(newTask.Assigned, returnedTask.Assigned);
         Assert.AreEqual(newTask.Approved, returnedTask.Approved);
-        Assert.AreEqual(newTask.Reason, returnedTask.Reason);
+        Assert.AreEqual(newTask.Body, returnedTask.Body);
         Assert.AreEqual(newTask.LastUpdatedBy, returnedTask.LastUpdatedBy);
         Assert.AreEqual(newTask.LastUpdatedOn, returnedTask.LastUpdatedOn);
     }
@@ -224,7 +224,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByForRoleAndCompletedAsync(userSubmitter.Role!, true);
+        var result = await _sut.GetByForRoleAndCompletedAsync(userSubmitter.RoleId!, true);
 
         // Arrange
         Assert.AreEqual(2, result.Count);
