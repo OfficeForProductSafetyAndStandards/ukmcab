@@ -53,7 +53,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 
             var auditActionsToShow = IsOPSSUser ? OPSSUserAuditActionsToShow : PublicAuditActionsToShow;
 
-            var auditLog = documents.SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action)))).Distinct().ToList();
+            var auditLog = documents.SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action)))).ToList();
 
             if (auditLog.Any())
             {
