@@ -65,8 +65,8 @@ public class NotificationDetailsController : Controller
             return View(model);
         }
 
-        var userAccount = await _userService.GetAsync(model.SelectedAssignee);
-        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount?.FirstName, userAccount?.Surname, userAccount?.Role);
+        var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
+        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
         workFlowTask.Assigned = DateTime.Now;
         await _workflowTaskService.UpdateAsync(workFlowTask);
 

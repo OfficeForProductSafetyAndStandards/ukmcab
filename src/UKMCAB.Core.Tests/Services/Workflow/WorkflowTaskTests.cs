@@ -263,14 +263,14 @@ public class WorkflowTaskServiceTests
     private User CreateFakeUkasUser()
     {
         var ukasUser = new User(_faker.Random.Word(), _faker.Random.Word(), _faker.Random.Word(),
-            Roles.UKAS.ToString());
+            Roles.UKAS.ToString(), _faker.Internet.Email());
         return ukasUser;
     }
 
     private User CreateFakeOpssUser()
     {
         var ukasUser = new User(_faker.Random.Word(), _faker.Random.Word(), _faker.Random.Word(),
-            Roles.OPSS.ToString());
+            Roles.OPSS.ToString(), _faker.Internet.Email());
         return ukasUser;
     }
 }

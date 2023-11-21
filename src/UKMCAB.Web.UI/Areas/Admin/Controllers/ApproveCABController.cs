@@ -87,7 +87,7 @@ public class ApproveCABController : Controller
     /// </summary>
     /// <param name="cabId">CAB id</param>
     /// <param name="cabName">Name of CAB</param>
-    private async Task SendNotificationOfApproval(string cabId, string cabName)
+    private async Task SendNotificationOfApproval(Guid cabId, string cabName)
     {
         var personalisation = new Dictionary<string, dynamic?>
         {
@@ -99,10 +99,12 @@ public class ApproveCABController : Controller
             }
         };
         
-        await _notificationClient.SendEmailAsync("todo@test.com",
+        var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
+        var task = tasks.First(t => t.TaskType == TaskType.RequestToPublish);
+        await _notificationClient.SendEmailAsync(task.Submitter.emailAddress,
             _templateOptions.NotificationCabApprovedEmail, personalisation);
 
-        await _workflowTaskService.GetByCabIdAsync(cabId);
+       
         // if (publishModel.CabDetailsViewModel != null)
         // {
         //     await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish,
