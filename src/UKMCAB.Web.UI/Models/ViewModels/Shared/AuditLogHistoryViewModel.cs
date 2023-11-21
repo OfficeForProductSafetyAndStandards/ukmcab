@@ -58,7 +58,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             if (auditLog.Any())
             {
                 auditLog = auditLog.GroupBy(a => new { a.Action, a.DateTime, a.UserId })
-                                .Select(g => g.FirstOrDefault()).ToList();
+                                .Select(g => g.First()).ToList();
             }
 
             if ((pageNumber - 1) * resultsPerPage > auditLog.Count)
