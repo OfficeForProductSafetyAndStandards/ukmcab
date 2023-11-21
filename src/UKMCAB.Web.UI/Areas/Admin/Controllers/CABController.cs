@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core;
 using UKMCAB.Core.Domain.Workflow;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;

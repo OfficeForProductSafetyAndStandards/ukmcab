@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Web.UI.Models.ViewModels.Feedback;
 

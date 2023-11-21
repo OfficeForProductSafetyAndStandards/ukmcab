@@ -1,5 +1,3 @@
-using UKMCAB.Core.Security;
-
 namespace UKMCAB.Core.Domain.Workflow;
 
 public record WorkflowTask(Guid Id, TaskType TaskType, User Submitter, string ForRoleId, User? Assignee, DateTime? Assigned,

@@ -25,7 +25,7 @@ public static class WorkflowTaskMapper
             source.Approved,
             source.DeclineReason,
             source.Completed,
-            source.DocumentId);
+            source.CabId);
         return task;
     }
 
