@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Web.UI.Models.ViewModels.Footer;
 
 namespace UKMCAB.Web.UI.Areas.Home.Controllers

@@ -202,6 +202,7 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             latestDocument.StatusValue = Status.Published;
+            latestDocument.SubStatus = SubStatus.None;
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
                 publishedOrArchivedDocument));
             latestDocument.RandomSort = Guid.NewGuid().ToString();

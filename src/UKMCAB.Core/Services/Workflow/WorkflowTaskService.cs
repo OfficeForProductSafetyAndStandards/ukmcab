@@ -40,6 +40,12 @@ public class WorkflowTaskService : IWorkflowTaskService
             w.Assignee != null && w.Assignee.Id == userId));
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
+    public async Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId)
+    {
+        var items = await _workflowTaskRepository.QueryAsync(w =>
+            w.CabId.HasValue && w.CabId.Value == cabId);
+        return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
+    }
 
     public async Task<WorkflowTask> GetAsync(Guid id)
     {

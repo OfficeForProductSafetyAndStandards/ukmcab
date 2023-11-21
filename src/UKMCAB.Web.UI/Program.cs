@@ -11,6 +11,7 @@ using GovUk.Frontend.AspNetCore;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;

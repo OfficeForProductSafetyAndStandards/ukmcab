@@ -1,8 +1,18 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using Notify.Interfaces;
+using UKMCAB.Common.Exceptions;
+using UKMCAB.Core;
+using UKMCAB.Core.Domain.Workflow;
+using UKMCAB.Core.EmailTemplateOptions;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
+using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
@@ -12,11 +22,22 @@ public class ApproveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly IUserService _userService;
+    private readonly IAsyncNotificationClient _notificationClient;
+    private readonly CoreEmailTemplateOptions _templateOptions;
+    private readonly IWorkflowTaskService _workflowTaskService;
 
-    public ApproveCABController(ICABAdminService cabAdminService, IUserService userService)
+    public ApproveCABController(
+        ICABAdminService cabAdminService,
+        IUserService userService,
+        IAsyncNotificationClient notificationClient,
+        IOptions<CoreEmailTemplateOptions> templateOptions,
+        IWorkflowTaskService workflowTaskService)
     {
         _cabAdminService = cabAdminService;
         _userService = userService;
+        _notificationClient = notificationClient;
+        _workflowTaskService = workflowTaskService;
+        _templateOptions = templateOptions.Value;
     }
 
     public static class Routes
@@ -29,6 +50,11 @@ public class ApproveCABController : Controller
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(id) ??
                        throw new InvalidOperationException("CAB not found");
+        if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApproval)
+        {
+            throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
+        }
+
         var model = new ApproveCABViewModel("Approve CAB", document.CABId,
             document.Name ?? throw new InvalidOperationException(), string.Empty);
 
@@ -36,12 +62,13 @@ public class ApproveCABController : Controller
     }
 
     [HttpPost("/cab/approve/{id}")]
-    public async Task<IActionResult> ApprovePost(string id)
+    public async Task<IActionResult> ApprovePost(Guid cabId, string cabNumber)
     {
-        var document = await _cabAdminService.GetLatestDocumentAsync(id) ??
+        var document = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
+
         var model = new ApproveCABViewModel("Approve CAB", document.CABId,
-            document.Name ?? throw new InvalidOperationException(), string.Empty);
+            document.Name ?? throw new InvalidOperationException(), cabNumber);
         if (!ModelState.IsValid)
         {
             return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
@@ -51,7 +78,61 @@ public class ApproveCABController : Controller
         await _cabAdminService.PublishDocumentAsync(
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
             throw new InvalidOperationException("User account not found"), document);
-
+        var submitTask = await MarkTaskAsCompleteAsync(cabId);
+        await SendNotificationOfApprovalAsync(cabId, document.Name, submitTask.Submitter);
         return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
+    }
+
+    /// <summary>
+    /// Mark incoming Request to publish task as completed
+    /// </summary>
+    /// <param name="cabId">Associated CAB</param>
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId)
+    {
+        var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
+        var task = tasks.First(t => t.TaskType == TaskType.RequestToPublish);
+        task.Completed = true;
+        return await _workflowTaskService.UpdateAsync(task);
+    }
+
+    /// <summary>
+    /// Sends an email and notification for approved cab
+    /// </summary>
+    /// <param name="cabId">CAB id</param>
+    /// <param name="cabName">Name of CAB</param>
+    /// <param name="submitter"></param>
+    private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter)
+    {
+        var personalisation = new Dictionary<string, dynamic?>
+        {
+            { "CABName", cabName },
+            {
+                "CABUrl",
+                UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId }))
+            }
+        };
+        await _notificationClient.SendEmailAsync(submitter.EmailAddress,
+            _templateOptions.NotificationCabApprovedEmail, personalisation);
+        var user =
+            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ?? throw new InvalidOperationException();
+        var approver = new User(user.Id, user.FirstName, user.Surname, user.Role ?? throw new InvalidOperationException(),
+            user.EmailAddress ?? throw new InvalidOperationException());
+        await _workflowTaskService.CreateAsync(
+            new WorkflowTask(Guid.NewGuid(), 
+            TaskType.CABPublished,
+            approver, 
+            // Approver becomes the submitter for Published Notification
+            submitter.RoleId, 
+            submitter,
+            DateTime.Now, 
+            $"The CAB {cabName} has been approved and published.",
+            DateTime.Now,
+            approver, 
+            DateTime.Now,
+            true, 
+            null,
+            true, 
+            cabId));
     }
 }
