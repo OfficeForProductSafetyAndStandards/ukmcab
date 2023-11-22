@@ -458,7 +458,15 @@
         }
         else if (Model is { ValidCAB: false,CanPublish: true })
         {
-            <text>Provide all mandatory information before you are able to publish this record.</text>
+            //Not Valid CAB because of missing CAB Number for UKAS user
+            if (Model.SubStatus == SubStatus.PendingApproval)
+            {
+                <text>You need to enter all mandatory information before you can approve this CAB profile.</text>
+            }
+            else
+            {
+                <text>Provide all mandatory information before you are able to publish this record.</text>    
+            }
         }
         else
         {
@@ -507,7 +515,7 @@
         </form>
     </div>
 }
-else if (Model.SubStatus == SubStatus.PendingApproval)
+else if (Model is { CanPublish: true ,SubStatus: SubStatus.PendingApproval })
 {
     <div>
         <div class="govuk-button-group">

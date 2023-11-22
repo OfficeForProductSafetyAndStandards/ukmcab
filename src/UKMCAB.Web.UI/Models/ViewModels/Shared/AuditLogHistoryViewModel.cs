@@ -6,8 +6,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 {
     public class AuditLogHistoryViewModel
     {
-        public readonly string[] PublicAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest };
-        public readonly string[] OPSSUserAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest, AuditCABActions.Saved, AuditCABActions.Unarchived, AuditCABActions.Created };
+        public readonly string[] PublicAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest, AuditCABActions.CABApproved, AuditCABActions.CABDeclined };
+        public readonly string[] OPSSUserAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest, AuditCABActions.Saved, AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved, AuditCABActions.CABDeclined };
 
 
         public const int resultsPerPage = 10;
