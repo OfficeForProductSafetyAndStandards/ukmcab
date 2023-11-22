@@ -204,22 +204,58 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             latestDocument.Schedules ??= new List<FileUpload>();
 
-            if (submitType != null && submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
-            {
-                var fileToRemove = latestDocument.Schedules[fileIndex];
+            // TODO: Consider moving this code out to a method reusable for the supporting docs and call on all selected files to remove in batch.
+            //if (submitType != null && submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
+            //{
+            //    var fileToRemove = latestDocument.Schedules[fileIndex];
 
-                latestDocument.Schedules.Remove(fileToRemove);
+            //    latestDocument.Schedules.Remove(fileToRemove);
+            //    var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            //    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            //    return View(new FileListViewModel
+            //    {
+            //        Title = SchedulesOptions.ListTitle,
+            //        UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea }).ToList() ?? new List<FileViewModel>(),
+            //        CABId = id,
+            //        IsFromSummary = fromSummary,
+            //        DocumentStatus = latestDocument.StatusValue
+            //    });
+            //}
+
+            
+            var selectedFileUploads = new List<FileUpload>();
+            
+            if (model.UploadedFiles != null && model.UploadedFiles.Any())
+            {
+                var selectedViewModels = model.UploadedFiles.Where(f => f.IsSelected);
+
+                foreach(var file in selectedViewModels)
+                {
+                    selectedFileUploads.Add(latestDocument.Schedules[file.FileIndex]);
+                }               
+            }
+           
+
+
+            if (submitType != null && submitType.Equals(Constants.SubmitType.Remove))
+            {
+                foreach(var fileToRemove in selectedFileUploads)
+                {                   
+                    latestDocument.Schedules.Remove(fileToRemove);
+                }
+                
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 return View(new FileListViewModel
                 {
                     Title = SchedulesOptions.ListTitle,
-                    UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea }).ToList() ?? new List<FileViewModel>(),
+                    UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>(),
                     CABId = id,
                     IsFromSummary = fromSummary,
                     DocumentStatus = latestDocument.StatusValue
                 });
             }
+
 
             if (model.UploadedFiles != null && model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
             {

@@ -47,6 +47,7 @@ public static class Constants
         public const string UploadAnother = nameof(UploadAnother);
         public const string Approve = nameof(Approve);
         public const string Reject = nameof(Reject);
+        public const string Remove = nameof(Remove);
     }
 
     public class ErrorMessages
