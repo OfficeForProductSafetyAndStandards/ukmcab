@@ -17,8 +17,8 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
-[Area("admin"), Route("admin/cab/approve"), Authorize]
-public class ApproveCABController : Controller
+[Area("admin"), Route("admin/cab/decline"), Authorize]
+public class DeclineCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly IUserService _userService;
@@ -26,7 +26,7 @@ public class ApproveCABController : Controller
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
 
-    public ApproveCABController(
+    public DeclineCABController(
         ICABAdminService cabAdminService,
         IUserService userService,
         IAsyncNotificationClient notificationClient,
@@ -42,49 +42,42 @@ public class ApproveCABController : Controller
 
     public static class Routes
     {
-        public const string Approve = "cab.approve";
+        public const string Decline = "cab.decline";
     }
 
-    [HttpGet("{cabId}", Name = Routes.Approve)]
-    public async Task<IActionResult> ApproveAsync(Guid cabId)
+    [HttpGet("{cabId}", Name = Routes.Decline)]
+    public async Task<IActionResult> DeclineAsync(string cabId)
     {
-        var document = await GetDocumentAsync(cabId);
+        var document = await _cabAdminService.GetLatestDocumentAsync(cabId) ??
+                       throw new InvalidOperationException("CAB not found");
         if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApproval)
         {
-            throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
+            throw new PermissionDeniedException("CAB status needs to be Pending Approval for decline");
         }
 
-        var model = new ApproveCABViewModel("Approve CAB",
-            document.Name ?? throw new InvalidOperationException());
-
-        return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
+        var model = new DeclineCABViewModel("Decline CAB", document.Name ?? throw new InvalidOperationException());
+        return View("~/Areas/Admin/Views/CAB/Decline.cshtml", model);
     }
 
     [HttpPost("{cabId}")]
-    public async Task<IActionResult> ApprovePostAsync(Guid cabId, [Bind(nameof(ApproveCABViewModel.CABNumber))] ApproveCABViewModel vm)
-    {
-       var document = await GetDocumentAsync(cabId);
-        ModelState.Remove(nameof(ApproveCABViewModel.CABName));
-        if (!ModelState.IsValid)
-        {
-            vm.Title = "Approve CAB";
-            return View("~/Areas/Admin/Views/CAB/Approve.cshtml", vm);
-        }
-
-        document.CABNumber = vm.CABNumber;
-        await _cabAdminService.PublishDocumentAsync(
-            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
-            throw new InvalidOperationException("User account not found"), document);
-        var submitTask = await MarkTaskAsCompleteAsync(cabId);
-        await SendNotificationOfApprovalAsync(cabId, document.Name, submitTask.Submitter);
-        return RedirectToRoute(CabManagementController.Routes.CABManagement);
-    }
-    
-    private async Task<Document> GetDocumentAsync(Guid cabId)
+    public async Task<IActionResult> DeclinePostAsync(Guid cabId, [Bind( nameof(DeclineCABViewModel.DeclineReason))] DeclineCABViewModel vm)
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
-        return document;
+        ModelState.Remove(nameof(DeclineCABViewModel.CABName));
+        if (!ModelState.IsValid)
+        {
+            vm.CABName = document.Name ?? throw new InvalidOperationException();
+            vm.Title = "Decline CAB";
+            return View("~/Areas/Admin/Views/CAB/Decline.cshtml", vm);
+        }
+
+        var currentUser =
+            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+        document.AuditLog.Add(new Audit(currentUser, nameof(AuditCABActions.CABDeclined)));
+        var submitTask = await MarkTaskAsCompleteAsync(cabId);
+        await SendNotificationOfDeclineAsync(cabId, document.Name, submitTask.Submitter, vm.DeclineReason);
+        return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
     /// <summary>
@@ -100,13 +93,15 @@ public class ApproveCABController : Controller
     }
 
     /// <summary>
-    /// Sends an email and notification for approved cab
+    /// Sends an email and notification for declined cab
     /// </summary>
     /// <param name="cabId">CAB id</param>
     /// <param name="cabName">Name of CAB</param>
     /// <param name="submitter"></param>
-    private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter)
+    /// <param name="declineReason"></param>
+    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, User submitter, string declineReason)
     {
+        if (cabName == null) throw new ArgumentNullException(nameof(cabName));
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", cabName },
@@ -114,29 +109,32 @@ public class ApproveCABController : Controller
                 "CABUrl",
                 UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
                     Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId }))
-            }
+            },
+            { "DeclineReason", declineReason }
         };
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
-            _templateOptions.NotificationCabApproved, personalisation);
+            _templateOptions.NotificationCabDeclined, personalisation);
         var user =
-            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ?? throw new InvalidOperationException();
-        var approver = new User(user.Id, user.FirstName, user.Surname, user.Role ?? throw new InvalidOperationException(),
+            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
+            throw new InvalidOperationException();
+        var approver = new User(user.Id, user.FirstName, user.Surname,
+            user.Role ?? throw new InvalidOperationException(),
             user.EmailAddress ?? throw new InvalidOperationException());
         await _workflowTaskService.CreateAsync(
-            new WorkflowTask(Guid.NewGuid(), 
-            TaskType.CABPublished,
-            approver, 
-            // Approver becomes the submitter for Approved CAB Notification
-            submitter.RoleId, 
-            submitter,
-            DateTime.Now, 
-            $"The CAB '{cabName}' has been approved and published.",
-            DateTime.Now,
-            approver, 
-            DateTime.Now,
-            true, 
-            null,
-            true, 
-            cabId));
+            new WorkflowTask(Guid.NewGuid(),
+                TaskType.CABDeclined,
+                approver,
+                // Approver becomes the submitter for Declined CAB Notification
+                submitter.RoleId,
+                submitter,
+                DateTime.Now,
+                $"The request to approve CAB '{cabName}' has been declined. The reason for this is: {declineReason}.",
+                DateTime.Now,
+                approver,
+                DateTime.Now,
+                false,
+                declineReason,
+                true,
+                cabId));
     }
 }

@@ -1,0 +1,24 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.DeclineCABViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="declinecabform" method="post">
+            <div class="govuk-grid-row">
+                <div>
+                    <span class="govuk-caption-m">Decline CAB</span>
+                    <h1 class="govuk-heading-l">Decline CAB @Model.CABName</h1>
+                </div>
+            </div>
+            <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.DeclineReason))">
+                <govuk-input asp-for="DeclineReason" label-class="govuk-label--s">
+                    <govuk-input-label is-page-heading="false">Enter the reason for declining this CAB profile.</govuk-input-label>
+                </govuk-input>
+            </div>
+
+            <govuk-warning-text icon-fallback-text="Warning">Declined CABs will not be published and the user group will be notified.</govuk-warning-text>
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Decline</govuk-button>
+                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
