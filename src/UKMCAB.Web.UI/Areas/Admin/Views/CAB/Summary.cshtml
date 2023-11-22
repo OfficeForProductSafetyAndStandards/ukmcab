@@ -465,7 +465,7 @@
             }
             else
             {
-                <text>Provide all mandatory information before you are able to publish this record.</text>    
+                <text>Provide all mandatory information before you are able to publish this record.</text>
             }
         }
         else
@@ -519,7 +519,8 @@ else if (Model is { CanPublish: true ,SubStatus: SubStatus.PendingApproval })
 {
     <div>
         <div class="govuk-button-group">
-            <govuk-button-link asp-area="admin" asp-controller="ApproveCAB" asp-action="@nameof(ApproveCABController.Approve)" asp-route-id="@Model.CABId">Approve</govuk-button-link>
+            <govuk-button-link asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId">Approve</govuk-button-link>
+            <govuk-button-link class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
             <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
         </div>
     </div>

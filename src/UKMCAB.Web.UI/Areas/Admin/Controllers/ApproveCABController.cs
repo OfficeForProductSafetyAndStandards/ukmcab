@@ -46,7 +46,7 @@ public class ApproveCABController : Controller
     }
 
     [HttpGet("{cabId}", Name = Routes.Approve)]
-    public async Task<IActionResult> Approve(string cabId)
+    public async Task<IActionResult> ApproveAsync(string cabId)
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(cabId) ??
                        throw new InvalidOperationException("CAB not found");
@@ -62,7 +62,7 @@ public class ApproveCABController : Controller
     }
 
     [HttpPost("{cabId}")]
-    public async Task<IActionResult> ApprovePost(Guid cabId, [Bind(nameof(ApproveCABViewModel.CABNumber))] ApproveCABViewModel vm)
+    public async Task<IActionResult> ApprovePostAsync(Guid cabId, [Bind(nameof(ApproveCABViewModel.CABNumber))] ApproveCABViewModel vm)
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
