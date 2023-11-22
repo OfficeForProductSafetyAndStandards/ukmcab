@@ -46,10 +46,9 @@ public class ApproveCABController : Controller
     }
 
     [HttpGet("{cabId}", Name = Routes.Approve)]
-    public async Task<IActionResult> ApproveAsync(string cabId)
+    public async Task<IActionResult> ApproveAsync(Guid cabId)
     {
-        var document = await _cabAdminService.GetLatestDocumentAsync(cabId) ??
-                       throw new InvalidOperationException("CAB not found");
+        var document = await GetDocumentAsync(cabId);
         if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApproval)
         {
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
@@ -64,8 +63,7 @@ public class ApproveCABController : Controller
     [HttpPost("{cabId}")]
     public async Task<IActionResult> ApprovePostAsync(Guid cabId, [Bind(nameof(ApproveCABViewModel.CABNumber))] ApproveCABViewModel vm)
     {
-        var document = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString()) ??
-                       throw new InvalidOperationException("CAB not found");
+       var document = await GetDocumentAsync(cabId);
         ModelState.Remove(nameof(ApproveCABViewModel.CABName));
         if (!ModelState.IsValid)
         {
@@ -80,6 +78,13 @@ public class ApproveCABController : Controller
         var submitTask = await MarkTaskAsCompleteAsync(cabId);
         await SendNotificationOfApprovalAsync(cabId, document.Name, submitTask.Submitter);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
+    }
+    
+    private async Task<Document> GetDocumentAsync(Guid cabId)
+    {
+        var document = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString()) ??
+                       throw new InvalidOperationException("CAB not found");
+        return document;
     }
 
     /// <summary>
