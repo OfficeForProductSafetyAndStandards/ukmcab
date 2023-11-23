@@ -130,7 +130,7 @@ public class ApproveCABController : Controller
             submitter.RoleId, 
             submitter,
             DateTime.Now, 
-            $"The CAB '{cabName}' has been approved and published.",
+            $"The request to publish CAB {cabName} has been approved.",
             DateTime.Now,
             approver, 
             DateTime.Now,
