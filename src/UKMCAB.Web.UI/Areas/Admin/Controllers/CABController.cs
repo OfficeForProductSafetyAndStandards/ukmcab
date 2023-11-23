@@ -376,12 +376,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) &&
                                        latest.StatusValue != Status.Published,
                 SubStatus = latest.SubStatus,
+                ValidCAB = latest.StatusValue != Status.Published
+                           && TryValidateModel(cabDetails)
+                           && TryValidateModel(cabContact)
+                           && TryValidateModel(cabBody)
             };
 
-            model.ValidCAB = latest.StatusValue != Status.Published
-                             && TryValidateModel(cabDetails)
-                             && TryValidateModel(cabContact)
-                             && TryValidateModel(cabBody);
             ModelState.Clear();
 
             return View(model);
