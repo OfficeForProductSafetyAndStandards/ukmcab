@@ -28,7 +28,7 @@ public class WorkflowTaskService : IWorkflowTaskService
     public async Task<List<WorkflowTask>> GetByForRoleAndCompletedAsync(string assignedUserRole, bool completed = false)
     {
         var items = (await _workflowTaskRepository.QueryAsync(w =>
-            w.ForRoleId.ToLower() == assignedUserRole.ToLower() &&
+            w.ForRoleId.ToLower() == assignedUserRole.ToLower() && w.Assignee == null && w.Assigned == null &&
             w.Completed == completed));
 
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
