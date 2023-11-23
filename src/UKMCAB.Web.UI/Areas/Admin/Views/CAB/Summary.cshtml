@@ -19,7 +19,15 @@
 }
 @if (Model.SubStatus == SubStatus.PendingApproval)
 {
-    <partial model="@("This CAB profile cannot be edited until it has been approved or declined.")" name="Partials/_PageContentBanner"/>
+    if (Model.CanPublish)
+    {
+        <partial model="@("This CAB profile cannot be edited until it has been approved or declined.")" name="Partials/_PageContentBanner"/>
+    }
+    else
+    {
+        /*Todo become User Group when ODG's*/ 
+        <partial model="@("This CAB is being reviewed by OPSS")" name="Partials/_PageContentBanner"/>
+    }
 }
 @if (Model.ShowError)
 {

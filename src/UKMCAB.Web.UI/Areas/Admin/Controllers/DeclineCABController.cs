@@ -128,7 +128,7 @@ public class DeclineCABController : Controller
                 submitter.RoleId,
                 submitter,
                 DateTime.Now,
-                $"The request to approve CAB '{cabName}' has been declined. The reason for this is: {declineReason}.",
+                $"The request to approve CAB {cabName} has been declined for the following reason: {declineReason}.",
                 DateTime.Now,
                 approver,
                 DateTime.Now,

@@ -1,13 +1,10 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.DeclineCABViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Decline CAB @Model.CABName</h1>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
         <form id="declinecabform" method="post">
-            <div class="govuk-grid-row">
-                <div>
-                    <span class="govuk-caption-m">Decline CAB</span>
-                    <h1 class="govuk-heading-l">Decline CAB @Model.CABName</h1>
-                </div>
-            </div>
             <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.DeclineReason))">
                 <govuk-input asp-for="DeclineReason" label-class="govuk-label--s">
                     <govuk-input-label is-page-heading="false">Enter the reason for declining this CAB profile.</govuk-input-label>
