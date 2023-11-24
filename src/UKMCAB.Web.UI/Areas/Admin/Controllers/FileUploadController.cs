@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
@@ -165,7 +166,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (currentDocuments.Any(s => s.FileName.Equals(file.FileName)))
                 {
-                    ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Uploaded files must have different names to those already uploaded.");
+                    ModelState.AddModelError("File", $"{file.FileName} has already been uploaded. Select the existing file and the Use file again option, or upload a different file.");
                     isValidFile = false;
                 }                
             }
@@ -198,6 +199,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> SchedulesList(string id, string submitType, FileUploadViewModel model, bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            
             if (latestDocument == null) // Implies no document or archived
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
@@ -205,51 +207,51 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             latestDocument.Schedules ??= new List<FileUpload>();
 
             // TODO: Consider moving this code out to a method reusable for the supporting docs and call on all selected files to remove in batch.
-            //if (submitType != null && submitType.StartsWith("Remove") && Int32.TryParse(submitType.Replace("Remove-", String.Empty), out var fileIndex))
-            //{
-            //    var fileToRemove = latestDocument.Schedules[fileIndex];
 
-            //    latestDocument.Schedules.Remove(fileToRemove);
-            //    var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            //    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-            //    return View(new FileListViewModel
-            //    {
-            //        Title = SchedulesOptions.ListTitle,
-            //        UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea }).ToList() ?? new List<FileViewModel>(),
-            //        CABId = id,
-            //        IsFromSummary = fromSummary,
-            //        DocumentStatus = latestDocument.StatusValue
-            //    });
-            //}
+            var uploadedFiles = model.UploadedFiles ?? new List<FileViewModel>();
+            
+            var selectedViewModels = uploadedFiles.Where(f => f.IsSelected) ?? new List<FileViewModel>();
 
-            
-            var selectedFileUploads = new List<FileUpload>();
-            
-            if (model.UploadedFiles != null && model.UploadedFiles.Any())
+            if ((submitType == Constants.SubmitType.Remove || submitType == Constants.SubmitType.UseFileAgain) && !selectedViewModels.Any())
             {
-                var selectedViewModels = model.UploadedFiles.Where(f => f.IsSelected);
+                ModelState.AddModelError("remove-or-use-it-again-btn-group", "Select a file to remove or use it again.");
+            }
+            var selectedFileUploads = new List<FileUpload>();
 
-                foreach(var file in selectedViewModels)
+            if (selectedViewModels.Any())
+            {              
+
+                foreach(var fileVM in selectedViewModels)
                 {
-                    selectedFileUploads.Add(latestDocument.Schedules[file.FileIndex]);
+                    if (!fileVM.IsDuplicated)
+                    {
+                        selectedFileUploads.Add(latestDocument.Schedules[fileVM.FileIndex]);
+                    }
+                    
                 }               
             }
-           
 
 
-            if (submitType != null && submitType.Equals(Constants.SubmitType.Remove))
+
+            if (selectedFileUploads.Any() && submitType != null && submitType.Equals(Constants.SubmitType.Remove))
             {
-                foreach(var fileToRemove in selectedFileUploads)
-                {                   
+                foreach (var fileToRemove in selectedFileUploads)
+                {
                     latestDocument.Schedules.Remove(fileToRemove);
                 }
-                
+
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+
+                var currentFileUploads = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
+                var unsavedFileUploads = model.UploadedFiles.Where(u => u.IsDuplicated && !u.IsSelected).ToList();
+                currentFileUploads.AddRange(unsavedFileUploads);
+
                 return View(new FileListViewModel
                 {
                     Title = SchedulesOptions.ListTitle,
-                    UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>(),
+                    //UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>(),
+                    UploadedFiles = currentFileUploads,
                     CABId = id,
                     IsFromSummary = fromSummary,
                     DocumentStatus = latestDocument.StatusValue
@@ -271,6 +273,35 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
+            
+
+            if(uploadedFiles.Any())
+            {
+                var duplicatedLabels = model.UploadedFiles.GroupBy(x => x.Label).Where(g => g.Count() > 1)
+                                        .Select(y => y.Key).ToList();
+
+                if(duplicatedLabels.Count > 0)
+                {
+                    var index = 0;
+                    foreach (var uploadedFile in model.UploadedFiles)
+                    {
+                        foreach(var uploadedLabel in duplicatedLabels)
+                        {
+                            if (uploadedFile.Label.Equals(uploadedLabel) && uploadedFile.IsDuplicated)
+                            {
+                                ModelState.AddModelError($"UploadedFiles[{index}].Label", "A file already exists with this title. Change the title or upload a different file.");
+                            }
+                        }
+
+                        index++;
+                    }
+                }
+
+            }
+
+            var duplicatedFiles = new List<FileViewModel>();
+            var updatedUploadedFiles = new List<FileViewModel>();
+
             if (ModelState.IsValid)
             {
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
@@ -291,13 +322,54 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
                         RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
                 }
-                return SaveDraft(latestDocument);
+               
+                if (submitType == Constants.SubmitType.UseFileAgain)
+                {
+                    // TODO: Implement version for UseFileAgain
+                    //return model.IsFromSummary ?
+                    //    RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
+                    //    RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
+
+                    //var selectedViewModels = model.UploadedFiles.Where(f => f.IsSelected);
+
+                    foreach (var file in selectedViewModels)
+                    {
+                        var duplicateFile = new FileViewModel
+                        {
+                            FileName = file.FileName,
+                            Label = file.FileName,
+                            LegislativeArea = string.Empty,
+                            IsSelected = false,
+                            IsDuplicated = true,
+                        };
+
+                        duplicatedFiles.Add(duplicateFile);
+                    }
+                }
+
+                if (submitType == Constants.SubmitType.Save)
+                {
+                    return SaveDraft(latestDocument);
+                }
             }
 
+            if (uploadedFiles.Any())
+            {
+                foreach (var file in uploadedFiles)
+                {
+                    updatedUploadedFiles.Add(file);
+                }
+            }
+            if (duplicatedFiles.Any())
+            {
+                updatedUploadedFiles.AddRange(duplicatedFiles);
+            }
+            
             return View(new FileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
-                UploadedFiles = model.UploadedFiles,
+                //UploadedFiles = model.UploadedFiles,
+                UploadedFiles = updatedUploadedFiles,
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestDocument.StatusValue
@@ -340,7 +412,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var fileUploadComparer = new FileUploadComparer();
             var newNotOld = newSchedules.Except(latestDocument.Schedules, fileUploadComparer);
-            var oldNotNew = latestDocument.Schedules.Except(newSchedules, fileUploadComparer);
+            var oldNotNew = latestDocument.Schedules.Except(newSchedules, fileUploadComparer); 
             if (newNotOld.Any() || oldNotNew.Any())
             {
                 latestDocument.Schedules = newSchedules;

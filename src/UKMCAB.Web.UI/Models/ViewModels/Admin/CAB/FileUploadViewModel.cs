@@ -21,6 +21,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? Category { get; set; }
         public int FileIndex { get; set; }
         public bool IsSelected { get; set; } = false;
+        public bool IsDuplicated { get; set; } = false;
     }
 
     public static class SchedulesOptions
