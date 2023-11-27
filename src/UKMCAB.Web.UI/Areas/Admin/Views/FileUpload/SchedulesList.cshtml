@@ -123,42 +123,34 @@
             </div>
         </div>
 
-        <div >
-            <div class="govuk-button-group govuk-grid-column-one-half">
-                @if (Model.UploadedFiles.Any())
-                {
-
-                    <label type="hidden"></label>
-                    <p class="govuk-error-message">
-                        <span name="remove-or-use-it-again-btn-group" class="govuk-error-message">@Html.ValidationMessage("remove-or-use-it-again-btn-group", "")</span>
-                    </p>
+        <div class="govuk-grid-column-full">
+            <p class="govuk-error-message">
+                <span name="remove-or-use-it-again-btn-group" class="govuk-error-message">@Html.ValidationMessage("remove-or-use-it-again-btn-group", "")</span>
+            </p>
+        </div>
+        <div class="govuk-grid-column-one-half">
+            @if (Model.UploadedFiles.Any())
+            {
+                <div class="govuk-button-group">
                     <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove" />
                     <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">
                         Use file again
                     </button>
-
-                }
-            </div>
-
-            @if (Model.UploadedFiles.Count < SchedulesOptions.MaxFileCount)
-            {
-                <div class="govuk-grid-column-one-half govuk-!-padding-bottom-5 ukmcab-text-aligin-right">
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
-                        @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file" , "Upload a file")
-                    </button>
                 </div>
             }
-            
-            
         </div>
 
-
-
-
-        
+        @if (Model.UploadedFiles.Count < SchedulesOptions.MaxFileCount)
+        {
+            <div class="govuk-grid-column-one-half ukmcab-text-aligin-right">
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
+                    @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file" , "Upload a file")
+                </button>
+            </div>
+        }
 
         <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-button-group">
+            <div class="govuk-button-group ukmcab-padding-top-50">
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
                     @Html.Conditional(Model.UploadedFiles.Any(), "Save and continue", "Save")
                 </button>
