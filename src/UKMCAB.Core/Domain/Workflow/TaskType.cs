@@ -12,7 +12,9 @@ public enum TaskType
     ReviewCAB,
     [Description("Approve account request")]
     UserAccountRequest,
+    [Description("CAB approved")]
     CABPublished,
+    [Description("CAB declined")]
     CABDeclined,
     UnarchiveApproved,
     UnarchiveDeclined,

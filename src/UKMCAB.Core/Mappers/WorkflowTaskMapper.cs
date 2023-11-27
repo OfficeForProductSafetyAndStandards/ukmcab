@@ -11,21 +11,21 @@ public static class WorkflowTaskMapper
         WorkflowTask task = new WorkflowTask(
             Guid.Parse(source.Id),
             taskType, 
-            new User(source.Submitter.Id, source.Submitter.FirstName, source.Submitter.Surname, source.Submitter.Role),
+            new User(source.Submitter.Id, source.Submitter.FirstName, source.Submitter.Surname, source.Submitter.Role, source.Submitter.EmailAddress),
             source.ForRoleId,
             source.Assignee != null
-                ? new User(source.Assignee.Id, source.Assignee.FirstName, source.Assignee.Surname, source.Assignee.Role)
+                ? new User(source.Assignee.Id, source.Assignee.FirstName, source.Assignee.Surname, source.Assignee.Role,source.Assignee.EmailAddress)
                 : null,
             source.Assigned,
             source.Reason,
             source.SentOn,
             new User(source.LastUpdatedBy.Id, source.LastUpdatedBy.FirstName, source.LastUpdatedBy.Surname,
-                source.LastUpdatedBy.Role),
+                source.LastUpdatedBy.Role, source.LastUpdatedBy.EmailAddress),
             source.LastUpdatedOn,
             source.Approved,
             source.DeclineReason,
             source.Completed,
-            source.DocumentId);
+            source.CabId);
         return task;
     }
 
@@ -39,7 +39,8 @@ public static class WorkflowTaskMapper
                 Id = source.Submitter.UserId,
                 FirstName = source.Submitter.FirstName,
                 Surname = source.Submitter.Surname,
-                Role = source.Submitter.Role
+                Role = source.Submitter.RoleId,
+                EmailAddress = source.Submitter.EmailAddress
             },
             source.ForRoleId,
             source.Assignee != null
@@ -48,19 +49,21 @@ public static class WorkflowTaskMapper
                     Id = source.Assignee.UserId,
                     FirstName = source.Assignee.FirstName,
                     Surname = source.Assignee.Surname,
-                    Role = source.Assignee.Role
+                    Role = source.Assignee.RoleId,
+                    EmailAddress = source.Assignee.EmailAddress
                 }
                 : null
             ,
             source.Assigned,
-            source.Reason,
+            source.Body,
             source.SentOn,
             new UserAccount
             {
                 Id = source.LastUpdatedBy.UserId,
                 FirstName = source.LastUpdatedBy.FirstName,
                 Surname = source.LastUpdatedBy.Surname,
-                Role = source.LastUpdatedBy.Role
+                Role = source.LastUpdatedBy.RoleId,
+                EmailAddress = source.LastUpdatedBy.EmailAddress
             },
             source.LastUpdatedOn,
             source.Approved,

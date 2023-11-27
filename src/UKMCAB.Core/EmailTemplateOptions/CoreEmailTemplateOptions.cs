@@ -1,6 +1,6 @@
-﻿namespace UKMCAB.Core;
+﻿namespace UKMCAB.Core.EmailTemplateOptions;
 
-public class CoreEmailTemplateOptions
+public partial class CoreEmailTemplateOptions
 {
     public string RegistrationRequest { get; set; } = null!;
     public string RegisterRequestConfirmation { get; set; } = null!;
@@ -24,8 +24,4 @@ public class CoreEmailTemplateOptions
     public string AccountUnlocked { get; set; } = null!;
     public string AccountArchived { get; set; } = null!;
     public string AccountUnarchived { get; set; } = null!;
-
-    public string NotificationRequestToPublish { get; set; } = null!;
-    public string NotificationRequestToPublishEmail { get; set; } = null!;
-
 }

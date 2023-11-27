@@ -10,6 +10,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Infrastructure.Cache;
 using Microsoft.AspNetCore.Http;
+using UKMCAB.Core.EmailTemplateOptions;
 
 namespace UKMCAB.Core.Services.Users;
 

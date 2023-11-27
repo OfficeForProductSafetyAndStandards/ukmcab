@@ -7,7 +7,7 @@
         <select class="govuk-select sort-option" asp-for="@Model.SortField" name="sf" style="width: 100%">
             @foreach (var option in Model.SortSelectItems)
             {
-                <option value="@option.Item1">@option.Item2</option>
+                <option value="@option.Item1" selected="@option.Item3">@option.Item2</option>
             }
         </select>
         <input type="hidden" name="sd" class="sort-direction" value="@Model.SortDirection"/>

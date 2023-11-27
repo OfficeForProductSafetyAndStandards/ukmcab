@@ -17,7 +17,7 @@
         {
             <table class="govuk-table ukmcab-table">
                 <thead class="govuk-table__head">
-                    @if (Model.IsOPSSUser)
+                    @if (User.Identity.IsAuthenticated)
                     {
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header">Date and time</th>
@@ -40,7 +40,7 @@
                 <tbody class="govuk-table__body">
                     @foreach (var auditHistoryItem in Model.AuditHistoryItems)
                     {
-                        @if (Model.IsOPSSUser)
+                        @if (User.Identity.IsAuthenticated)
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>

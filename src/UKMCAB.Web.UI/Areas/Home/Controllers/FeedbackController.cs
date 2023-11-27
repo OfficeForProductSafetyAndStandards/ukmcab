@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Web.UI.Models.ViewModels.Feedback;
 
@@ -67,6 +68,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             if (ModelState.IsValid)
             {
+                if(string.IsNullOrWhiteSpace(model.Email))
+                {
+                    model.Email = "Not provided";
+                }
                 await SubmitEmailAsync(model); // let exceptions propagate. they'll be handled by UnexpectedExceptionHandlerMiddleware which will show the standard friendly error message+error code.
                 return Json(new FeedbackFormResult
                 {

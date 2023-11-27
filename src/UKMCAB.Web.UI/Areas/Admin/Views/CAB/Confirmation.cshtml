@@ -1,4 +1,4 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABConfirmationViewModel
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABConfirmationViewModel
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -18,7 +18,7 @@
             <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.URLSlug" asp-route-returnURL="confirmation">View CAB</a>
         </p>
         <p class="govuk-body">
-            <a class="govuk-link" asp-area="admin" asp-controller="Admin" asp-action="CABManagement">Go to CAB management</a>
+            <a class="govuk-link" asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement">Go to CAB management</a>
         </p>
     </div>
 </div>

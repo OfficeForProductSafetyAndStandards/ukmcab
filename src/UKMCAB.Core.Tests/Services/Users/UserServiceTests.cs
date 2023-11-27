@@ -7,6 +7,7 @@ using Moq;
 using Notify.Interfaces;
 using NUnit.Framework;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Core.Tests.FakeRepositories;

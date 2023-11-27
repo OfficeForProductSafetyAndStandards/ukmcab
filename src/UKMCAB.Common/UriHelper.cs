@@ -19,7 +19,7 @@ public static class UriHelper
         }
         
         return new UriBuilder(request.Scheme, request.Host.Host,
-        request.Host.Port ?? 80, path).Uri.AbsoluteUri;
+        request.Host.Port ?? -1, path).Uri.AbsoluteUri;
     }
     
     public static Uri GetRequestUri(this HttpRequest request)

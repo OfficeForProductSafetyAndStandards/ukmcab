@@ -1,7 +1,7 @@
 ﻿@using System.Net;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CABContactViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABContactViewModel
 @{
     var id = this.Url.ActionContext.HttpContext.Request.RouteValues.GetValueOrDefault("id").ToString();
     var cabId = Model.CABId ?? id;
@@ -12,7 +12,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if(string.IsNullOrWhiteSpace(cabId)){
-                <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-back-link">Back</a>
+                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-back-link">Back</a>
             }
             else if (Model.IsFromSummary)
             {                    
@@ -218,7 +218,7 @@
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="Admin" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
         </form>

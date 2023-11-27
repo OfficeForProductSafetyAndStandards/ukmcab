@@ -22,18 +22,18 @@ namespace UKMCAB.Data.Models
 
         public Audit(UserAccount? userAccount, string action, string comment = null, string publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
 
-        public Audit(UserAccount? userAccount, string action, Document publisheDocument, Document previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
+        public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document? previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
         {
             var sb = new StringBuilder();
             if (previousDocument == null)
             {
-                sb.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>", publisheDocument.AppointmentDate.HasValue ? publisheDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00" : "Not provided");
+                sb.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>", publishedDocument.AppointmentDate.HasValue ? publishedDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00" : "Not provided");
                 sb.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>", DateTime.UtcNow.ToString("dd/MM/yyyy"));
             }
             else
             {
                 var previousSchedules = previousDocument.Schedules ?? new List<FileUpload>();
-                var currentSchedules = publisheDocument.Schedules ?? new List<FileUpload>();
+                var currentSchedules = publishedDocument.Schedules ?? new List<FileUpload>();
                 var existingSchedules = currentSchedules.Where(sch => previousSchedules.Any(prev => prev.UploadDateTime.Equals(sch.UploadDateTime)));
                 var newSchedules = currentSchedules.Where(sch => previousSchedules.All(prev => !prev.UploadDateTime.Equals(sch.UploadDateTime)));
                 var removedSchedules = previousSchedules.Where(sch => currentSchedules.All(pub => !pub.UploadDateTime.Equals(sch.UploadDateTime)));
@@ -43,11 +43,11 @@ namespace UKMCAB.Data.Models
                         previousDocument.Schedules.Single(sch => sch.UploadDateTime.Equals(schedule.UploadDateTime));
                     if (!previousSchedule.LegislativeArea.Equals(schedule.LegislativeArea))
                     {
-                        sb.AppendFormat("<p class=\"govuk-body\">The legislative area {0} has been changed to {1} on this product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>", previousSchedule.LegislativeArea, schedule.LegislativeArea, ScheduleLink(publisheDocument.CABId, schedule.FileName), schedule.Label);
+                        sb.AppendFormat("<p class=\"govuk-body\">The legislative area {0} has been changed to {1} on this product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>", previousSchedule.LegislativeArea, schedule.LegislativeArea, ScheduleLink(publishedDocument.CABId, schedule.FileName), schedule.Label);
                     }
                     if (!previousSchedule.Label.Equals(schedule.Label))
                     {
-                        sb.AppendFormat("<p class=\"govuk-body\">The title of this product schedule <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been changed from {2} to {3}.</p>", ScheduleLink(publisheDocument.CABId, schedule.FileName), schedule.Label, previousSchedule.Label, schedule.Label);
+                        sb.AppendFormat("<p class=\"govuk-body\">The title of this product schedule <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been changed from {2} to {3}.</p>", ScheduleLink(publishedDocument.CABId, schedule.FileName), schedule.Label, previousSchedule.Label, schedule.Label);
                     }
                 }
 
@@ -55,13 +55,13 @@ namespace UKMCAB.Data.Models
                 {
                     sb.AppendFormat(
                         "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was added to the Product schedules page.</p>",
-                        ScheduleLink(publisheDocument.CABId, newSchedule.FileName), newSchedule.Label);
+                        ScheduleLink(publishedDocument.CABId, newSchedule.FileName), newSchedule.Label);
                 }
                 foreach (var removedSchedule in removedSchedules)
                 {
                     sb.AppendFormat(
                         "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the Product schedules page.</p>",
-                        ScheduleLink(publisheDocument.CABId, removedSchedule.FileName), removedSchedule.Label);
+                        ScheduleLink(publishedDocument.CABId, removedSchedule.FileName), removedSchedule.Label);
                 }
             }
 
@@ -93,7 +93,9 @@ namespace UKMCAB.Data.Models
         public const string Archived = nameof(Archived);
         public const string Unarchived = nameof(Unarchived);
         public const string UnarchiveRequest = nameof(UnarchiveRequest);
-        public const string SubmittedForApproval = nameof(SubmittedForApproval);
+        public const string SubmittedForApproval = "CAB Submitted for approval";
+        public const string CABApproved = "CAB Approved";
+        public const string CABDeclined = "CAB Declined";
     }
 
     public class AuditUserActions
