@@ -21,7 +21,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CABManagement = "admin.cab-management";
         }
 
-        public AdminController(ICABAdminService cabAdminService, IUserService userService)
+        public CabManagementController(ICABAdminService cabAdminService, IUserService userService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
