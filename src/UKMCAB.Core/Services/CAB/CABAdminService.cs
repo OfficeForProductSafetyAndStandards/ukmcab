@@ -25,7 +25,7 @@ namespace UKMCAB.Core.Services.CAB
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
         private readonly TelemetryClient _telemetryClient;
 
-        public CABAdminService(ICABRepository cabRepostitory, ICachedSearchService cachedSearchService,
+        public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
             ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient, IUserService userService)
         {
             _cabRepository = cabRepository;
