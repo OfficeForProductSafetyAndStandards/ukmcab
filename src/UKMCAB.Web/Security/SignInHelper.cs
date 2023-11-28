@@ -11,7 +11,7 @@ public class SignInHelper
         identity.AddClaim(new Claim(ClaimTypes.GivenName, account.FirstName ?? string.Empty));
         identity.AddClaim(new Claim(ClaimTypes.Surname, account.Surname ?? string.Empty));
         identity.AddClaim(new Claim(Claims.Organisation, account.OrganisationName ?? string.Empty));
-        identity.AddClaim(new Claim(ClaimTypes.Role, account.Role ?? string.Empty));
-        identity.AddClaims(ClaimsIssuer.Get(account.Role));
+        identity.AddClaim(new Claim(ClaimTypes.Role, account.RoleId ?? string.Empty));
+        identity.AddClaims(ClaimsIssuer.Get(account.RoleId));
     }
 }

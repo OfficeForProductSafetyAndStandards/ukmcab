@@ -4,7 +4,9 @@
         <h1 class="govuk-heading-l">Request to unarchive CAB @Model.CABName</h1>
     </div>
     <div class="govuk-grid-column-two-thirds">
-        <form id="unarchivecabform" method="post">
+        <form id="requestunarchivecabform" method="post">
+            <input type="hidden" asp-for="CabId"/>
+            <input type="hidden" asp-for="CABName"/>
             <govuk-radios asp-for="IsPublish">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--s">
@@ -26,7 +28,7 @@
 
             <div class="govuk-button-group">
                 <govuk-button type="submit">Confirm</govuk-button>
-                <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>

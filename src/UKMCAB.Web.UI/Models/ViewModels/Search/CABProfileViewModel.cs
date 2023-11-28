@@ -19,6 +19,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public AuditLogHistoryViewModel AuditLogHistory { get; set; }
 
         public string CABId { get; set; }
+        public string CABUrl { get; set; }
 
         // Publish attributes
         public DateTime? PublishedDate { get; set; }

@@ -97,7 +97,7 @@
                             if (Model.RequiresUnarchiveApproval)
                             {
                                 <span>
-                                    <govuk-button-link class="govuk-button--secondary" asp-route="@RequestToUnarchiveCABController.Routes.RequestUnarchive" asp-route-cabId="@Model.CABId">Request to unarchive</govuk-button-link>
+                                    <govuk-button-link class="govuk-button--secondary" asp-route="@RequestToUnarchiveCABController.Routes.RequestUnarchive" asp-route-cabUrl="@Model.CABUrl">Request to unarchive</govuk-button-link>
                                 </span>
                             }
                             else

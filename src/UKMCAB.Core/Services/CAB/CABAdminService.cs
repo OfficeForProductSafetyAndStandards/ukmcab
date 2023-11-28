@@ -51,9 +51,9 @@ namespace UKMCAB.Core.Services.CAB
             return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList().Count > 0;
         }
 
-        public async Task<Document> FindPublishedDocumentByCABIdAsync(string id)
+        public async Task<Document?> FindPublishedDocumentByCABIdAsync(string id)
         {
-            var doc = await _cabRepository.Query<Document>(
+            List<Document> doc = await _cabRepository.Query<Document>(
                 d => d.StatusValue == Status.Published && d.CABId.Equals(id));
             return doc.Any() && doc.Count == 1 ? doc.First() : null;
         }

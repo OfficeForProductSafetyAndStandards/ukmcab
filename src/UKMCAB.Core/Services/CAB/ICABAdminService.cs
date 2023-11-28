@@ -12,7 +12,7 @@ namespace UKMCAB.Core.Services.CAB
             string? ukasReference);
 
         Task<bool> DocumentWithSameNameExistsAsync(Document document);
-        Task<Document> FindPublishedDocumentByCABIdAsync(string id);
+        Task<Document?> FindPublishedDocumentByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
         Task<List<Document>> FindAllCABManagementQueueDocuments();
         Task<Document?> GetLatestDocumentAsync(string id);

@@ -11,16 +11,16 @@ public static class WorkflowTaskMapper
         WorkflowTask task = new WorkflowTask(
             Guid.Parse(source.Id),
             taskType, 
-            new User(source.Submitter.Id, source.Submitter.FirstName, source.Submitter.Surname, source.Submitter.Role, source.Submitter.EmailAddress),
+            new User(source.Submitter.Id, source.Submitter.FirstName, source.Submitter.Surname, source.Submitter.RoleId, source.Submitter.EmailAddress),
             source.ForRoleId,
             source.Assignee != null
-                ? new User(source.Assignee.Id, source.Assignee.FirstName, source.Assignee.Surname, source.Assignee.Role,source.Assignee.EmailAddress)
+                ? new User(source.Assignee.Id, source.Assignee.FirstName, source.Assignee.Surname, source.Assignee.RoleId,source.Assignee.EmailAddress)
                 : null,
             source.Assigned,
             source.Reason,
             source.SentOn,
             new User(source.LastUpdatedBy.Id, source.LastUpdatedBy.FirstName, source.LastUpdatedBy.Surname,
-                source.LastUpdatedBy.Role, source.LastUpdatedBy.EmailAddress),
+                source.LastUpdatedBy.RoleId, source.LastUpdatedBy.EmailAddress),
             source.LastUpdatedOn,
             source.Approved,
             source.DeclineReason,
@@ -39,7 +39,7 @@ public static class WorkflowTaskMapper
                 Id = source.Submitter.UserId,
                 FirstName = source.Submitter.FirstName,
                 Surname = source.Submitter.Surname,
-                Role = source.Submitter.RoleId,
+                RoleId = source.Submitter.RoleId,
                 EmailAddress = source.Submitter.EmailAddress
             },
             source.ForRoleId,
@@ -49,7 +49,7 @@ public static class WorkflowTaskMapper
                     Id = source.Assignee.UserId,
                     FirstName = source.Assignee.FirstName,
                     Surname = source.Assignee.Surname,
-                    Role = source.Assignee.RoleId,
+                    RoleId = source.Assignee.RoleId,
                     EmailAddress = source.Assignee.EmailAddress
                 }
                 : null
@@ -62,7 +62,7 @@ public static class WorkflowTaskMapper
                 Id = source.LastUpdatedBy.UserId,
                 FirstName = source.LastUpdatedBy.FirstName,
                 Surname = source.LastUpdatedBy.Surname,
-                Role = source.LastUpdatedBy.RoleId,
+                RoleId = source.LastUpdatedBy.RoleId,
                 EmailAddress = source.LastUpdatedBy.EmailAddress
             },
             source.LastUpdatedOn,

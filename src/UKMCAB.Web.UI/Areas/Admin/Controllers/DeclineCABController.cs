@@ -118,7 +118,7 @@ public class DeclineCABController : Controller
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
             throw new InvalidOperationException();
         var approver = new User(user.Id, user.FirstName, user.Surname,
-            user.Role ?? throw new InvalidOperationException(),
+            user.RoleId ?? throw new InvalidOperationException(),
             user.EmailAddress ?? throw new InvalidOperationException());
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(Guid.NewGuid(),

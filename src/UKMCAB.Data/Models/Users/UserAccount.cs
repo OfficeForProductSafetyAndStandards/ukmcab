@@ -38,7 +38,7 @@ public class UserAccount
     public DateTime? LastLogonUtc { get; set; }
     public string? LockReasonDescription { get; set; }
     public string? LockInternalNotes { get; set; }
-    public string? Role { get; set; }
+    public string? RoleId { get; set; }
 
     public string? GetEmailAddress() => ContactEmailAddress ?? EmailAddress;
     public string Status
