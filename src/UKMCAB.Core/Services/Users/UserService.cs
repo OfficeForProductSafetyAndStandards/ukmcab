@@ -124,7 +124,7 @@ public class UserService : IUserService
             DateTime = DateTime.UtcNow,
             UserName = $"{reviewer.FirstName} {reviewer.Surname}",
             UserId = reviewer.Id,
-            UserRole = reviewer.RoleId,
+            UserRole = reviewer.Role,
             Comment = reviewComments
         };
 
@@ -139,7 +139,7 @@ public class UserService : IUserService
                 {
                     account.IsLocked = false;
                     account.LockReason = null;
-                    account.RoleId = role;
+                    account.Role = role;
                     await _userAccountRepository.UpdateAsync(account).ConfigureAwait(false);
                 }
                 // else: //noop - they already have an unlocked account anywayz.... 
@@ -155,7 +155,7 @@ public class UserService : IUserService
                     FirstName = request.FirstName,
                     OrganisationName = request.OrganisationName,
                     Surname = request.Surname,
-                    RoleId = role,
+                    Role = role,
                     AuditLog = request.AuditLog != null && request.AuditLog.Any() ? request.AuditLog : new List<Audit>(),
                 };
                 account.AuditLog.Add(audit);
@@ -204,7 +204,7 @@ public class UserService : IUserService
                 DateTime = DateTime.UtcNow,
                 UserId = reviewer.Id,
                 UserName = $"{reviewer.FirstName} {reviewer.Surname}",
-                UserRole = reviewer.RoleId,
+                UserRole = reviewer.Role,
                 Action = reason == UserAccountLockReason.Archived ? AuditUserActions.ArchiveAccountRequest : AuditUserActions.LockAccountRequest,
                 Comment = internalNotes
             });
@@ -256,7 +256,7 @@ public class UserService : IUserService
                 DateTime = DateTime.UtcNow,
                 UserId = reviewer.Id,
                 UserName = $"{reviewer.FirstName} {reviewer.Surname}",
-                UserRole = reviewer.RoleId,
+                UserRole = reviewer.Role,
                 Action = reason == UserAccountUnlockReason.Unarchived ? AuditUserActions.UnarchiveAccountRequest : AuditUserActions.UnlockAccountRequest,
                 Comment = internalNotes
             });
@@ -312,7 +312,7 @@ public class UserService : IUserService
                 DateTime = auditDate,
                 UserId = reviewer.Id,
                 UserName = $"{reviewer.FirstName} {reviewer.Surname}",
-                UserRole = reviewer.RoleId,
+                UserRole = reviewer.Role,
                 Action = AuditUserActions.ChangeOfContactEmailAddress
             });
         }
@@ -323,18 +323,18 @@ public class UserService : IUserService
                 DateTime = auditDate,
                 UserId = reviewer.Id,
                 UserName = $"{reviewer.FirstName} {reviewer.Surname}",
-                UserRole = reviewer.RoleId,
+                UserRole = reviewer.Role,
                 Action = AuditUserActions.ChangeOfOrganisation
             });
         }
-        if (!existingAccount.RoleId.Equals(user.RoleId))
+        if (!existingAccount.Role.Equals(user.Role))
         {
             user.AuditLog.Add(new Audit
             {
                 DateTime = auditDate,
                 UserId = reviewer.Id,
                 UserName = $"{reviewer.FirstName} {reviewer.Surname}",
-                UserRole = reviewer.RoleId,
+                UserRole = reviewer.Role,
                 Action = AuditUserActions.ChangeOfRole
             });
         }

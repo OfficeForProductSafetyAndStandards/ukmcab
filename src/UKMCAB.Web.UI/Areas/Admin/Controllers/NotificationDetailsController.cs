@@ -66,7 +66,7 @@ public class NotificationDetailsController : Controller
         }
 
         var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
-        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.RoleId, userAccount.EmailAddress ?? throw new InvalidOperationException());
+        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
         workFlowTask.Assigned = DateTime.Now;
         await _workflowTaskService.UpdateAsync(workFlowTask);
 
@@ -79,7 +79,7 @@ public class NotificationDetailsController : Controller
             new UserAccountListOptions(SkipTake.FromPage(-1, 500), new SortBy("firstName", null));
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
         var users = await _userService.ListAsync(options);
-        var assignees = users.Where(x => x.RoleId == role)
+        var assignees = users.Where(x => x.Role == role)
             .Select(user => new ValueTuple<string, string>(user.Id, user.FirstName! + " " + user.Surname)).ToList();
         return (assignees, role);
     }

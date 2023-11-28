@@ -37,7 +37,7 @@
                             <option value="@nameof(UserAccount.FirstName)">First name</option>
                             <option value="@nameof(UserAccount.Surname)">Last Name</option>
                             <option value="@nameof(UserAccount.ContactEmailAddress)">Email</option>
-                            <option value="@nameof(UserAccount.RoleId)">User group</option>
+                            <option value="@nameof(UserAccount.Role)">User group</option>
                             <option value="@nameof(UserAccount.LastLogonUtc)">Last log in</option>
                         </select>
                           <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection" />
@@ -62,7 +62,7 @@
                                     <sort target="@nameof(UserAccount.ContactEmailAddress)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Email</sort>
                                 </th>
                                 <th scope="col" class="govuk-table__header">
-                                    <sort target="@nameof(UserAccount.RoleId)" sort="@Model.SortField" sort-direction="@Model.SortDirection">User group</sort>
+                                    <sort target="@nameof(UserAccount.Role)" sort="@Model.SortField" sort-direction="@Model.SortDirection">User group</sort>
                                 </th>
                                 <th scope="col" class="govuk-table__header">
                                     <sort target="@nameof(UserAccount.LastLogonUtc)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last log in</sort>
@@ -105,7 +105,7 @@
 
                                     <td class="govuk-table__cell">
                                         <label aria-hidden="true">User group</label>
-                                        @UKMCAB.Core.Security.Roles.NameFor(account.RoleId)
+                                        @UKMCAB.Core.Security.Roles.NameFor(account.Role)
                                     </td>
                                     <td class="govuk-table__cell">
                                         <label aria-hidden="true">Last log in</label>

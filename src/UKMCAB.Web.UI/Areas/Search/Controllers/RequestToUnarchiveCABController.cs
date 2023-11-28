@@ -53,7 +53,7 @@ public class RequestToUnarchiveCABController : Controller
     }
 
     [HttpPost("{cabUrl}", Name = Routes.RequestUnarchive)]
-    public async Task<IActionResult> Index(string cabUrl, RequestToUnarchiveCABViewModel vm)
+    public async Task<IActionResult> IndexAsync(RequestToUnarchiveCABViewModel vm)
     {
         if (!ModelState.IsValid)
         {
@@ -63,11 +63,11 @@ public class RequestToUnarchiveCABController : Controller
         var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
                           throw new InvalidOperationException();
         var submitter = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
-            currentUser.RoleId ?? throw new InvalidOperationException(),
+            currentUser.Role ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
         await _workflowTaskService.CreateAsync(new WorkflowTask(
             Guid.NewGuid(),
-            TaskType.RequestToUnarchive,
+            vm.IsPublish!.Value ? TaskType.RequestToUnarchiveForPublish: TaskType.RequestToUnarchiveForDraft,
             submitter,
             Roles.OPSS.Id,
             null,
