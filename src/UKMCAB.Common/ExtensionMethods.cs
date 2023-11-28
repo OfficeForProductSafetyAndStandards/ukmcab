@@ -101,7 +101,7 @@ public static class ExtensionMethods
     {
         if (string.IsNullOrEmpty(text)) return text;
         if (text.Length > maxChars) return text[..(maxChars - 3)] + "...";
-        else return text;
+        return text;
     }
 
     /// <summary>
