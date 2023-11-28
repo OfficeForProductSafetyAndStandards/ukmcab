@@ -1,0 +1,35 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Search.RequestToUnarchiveCAB.RequestToUnarchiveCABViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Request to unarchive CAB @Model.CABName</h1>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+        <form id="requestunarchivecabform" method="post">
+            <input type="hidden" asp-for="CabId"/>
+            <input type="hidden" asp-for="CABName"/>
+            <govuk-radios asp-for="IsPublish">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-label--s">
+                        Select an option
+                    </govuk-radios-fieldset-legend>
+                    <govuk-radios-item value="@bool.TrueString">Unarchive and publish</govuk-radios-item>
+                    <govuk-radios-item value="@bool.FalseString">Unarchive and save as draft</govuk-radios-item>
+                </govuk-radios-fieldset>
+            </govuk-radios>
+            <govuk-character-count asp-for="Reason" max-length="1000">
+                <govuk-character-count-label class="govuk-label--s" is-page-heading="false">
+                    Reason
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Enter the reason for requesting to unarchive this CAB.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+            <govuk-warning-text icon-fallback-text="Warning">Your request will be sent to OPSS to review. You will be notified then the request is approved or declined.</govuk-warning-text>
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Confirm</govuk-button>
+                <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

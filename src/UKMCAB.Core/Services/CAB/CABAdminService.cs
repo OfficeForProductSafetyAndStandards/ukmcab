@@ -14,6 +14,7 @@ using UKMCAB.Data.Search.Services;
 
 namespace UKMCAB.Core.Services.CAB
 {
+    //todo Change these methods to use CabModel as return value / params instead of Document
     public class CABAdminService : ICABAdminService
     {
         private readonly ICABRepository _cabRepository;
@@ -50,9 +51,9 @@ namespace UKMCAB.Core.Services.CAB
             return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList().Count > 0;
         }
 
-        public async Task<Document> FindPublishedDocumentByCABIdAsync(string id)
+        public async Task<Document?> FindPublishedDocumentByCABIdAsync(string id)
         {
-            var doc = await _cabRepository.Query<Document>(
+            List<Document> doc = await _cabRepository.Query<Document>(
                 d => d.StatusValue == Status.Published && d.CABId.Equals(id));
             return doc.Any() && doc.Count == 1 ? doc.First() : null;
         }
@@ -82,15 +83,15 @@ namespace UKMCAB.Core.Services.CAB
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             // if a newly create cab or a draft version exists this will be the latest version, there should be no more than one
-            if (documents.Any(d => d.StatusValue == Status.Draft))
+            if (documents.Any(d => d is { StatusValue: Status.Draft }))
             {
-                return documents.Single(d => d.StatusValue == Status.Draft);
+                return documents.Single(d => d is { StatusValue: Status.Draft });
             }
 
             // if no draft or created version exists then see if a published version exists, again should only ever be one
-            if (documents.Any(d => d.StatusValue == Status.Published))
+            if (documents.Any(d => d is { StatusValue: Status.Published }))
             {
-                return documents.Single(d => d.StatusValue == Status.Published);
+                return documents.Single(d => d is { StatusValue: Status.Published });
             }
 
             return null;

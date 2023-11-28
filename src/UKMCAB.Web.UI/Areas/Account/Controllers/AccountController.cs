@@ -136,7 +136,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                         Id = userId,
                         FirstName = "Fake",
                         Surname = $"Persona ({Roles.NameFor(role)})",
-                        Role = role,
+                        RoleId = role,
                     };
 
                     SignInHelper.AddClaims(acc, claimsIdentity);
@@ -327,7 +327,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 LastName = userAccount.Surname,
                 OrganisationName = userAccount.OrganisationName,
                 ContactEmailAddress = userAccount.ContactEmailAddress,
-                Role = userAccount.Role,
+                Role = userAccount.RoleId,
                 LastLogonUtc = userAccount.LastLogonUtc,
                 IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
             });

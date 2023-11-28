@@ -3,7 +3,6 @@
     public enum Status
     {
         Unknown = 0,
-        Created = 10,
         Draft = 20,
         Published = 30,
         Archived = 40,
