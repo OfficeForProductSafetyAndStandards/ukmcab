@@ -112,9 +112,19 @@ public class NotificationDetailsController : Controller
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
         
         var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString()!);
-        notificationDetail.ViewLink = (cabDetails.Name,
-            Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
+        
+        if (cabDetails?.Status == Status.Archived.ToString() || cabDetails?.Status == Status.Published.ToString())
+        {
+            notificationDetail.ViewLink = (cabDetails.Name,
+                Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
 
+        }
+        if(cabDetails?.Status == Status.Draft.ToString())
+        {
+            notificationDetail.ViewLink = (cabDetails.Name,
+                Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId }));
+        }
+    
         return (notificationDetail, workFlowTask);
     }
 }
