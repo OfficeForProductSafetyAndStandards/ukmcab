@@ -119,7 +119,7 @@ public class NotificationDetailsController : Controller
                 Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
 
         }
-        if(cabDetails?.Status == Status.Draft.ToString())
+        else if(cabDetails?.Status == Status.Draft.ToString())
         {
             notificationDetail.ViewLink = (cabDetails.Name,
                 Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId }));
