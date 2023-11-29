@@ -75,11 +75,11 @@ namespace UKMCAB.Core.Services.CAB
             return docs;
         }
 
-        public async Task<List<Document>> FindAllCABManagementQueueDocuments(UserAccount userAccount)
+        public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(String userRole)
         {
-            if(userAccount.Role == Roles.UKAS.Id)
+            if(userRole == Roles.UKAS.Id)
             {
-                return await _cabRepository.Query<Document>(d => (d.LastUserGroup == userAccount.Role &&
+                return await _cabRepository.Query<Document>(d => (d.LastUserGroup == userRole &&
                 d.StatusValue == Status.Draft) || d.StatusValue == Status.Archived);
             }
             return await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);

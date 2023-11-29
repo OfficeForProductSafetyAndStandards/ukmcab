@@ -14,7 +14,7 @@ namespace UKMCAB.Core.Services.CAB
         Task<bool> DocumentWithSameNameExistsAsync(Document document);
         Task<Document> FindPublishedDocumentByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
-        Task<List<Document>> FindAllCABManagementQueueDocuments(UserAccount userAccount);
+        Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(String userRole);
         Task<Document?> GetLatestDocumentAsync(string id);
         Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document, bool saveAsDraft = false);
 

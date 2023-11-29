@@ -38,7 +38,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userAccount =
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                             .Value) ?? throw new InvalidOperationException("User account not found");
-            var cabManagementItems = await _cabAdminService.FindAllCABManagementQueueDocuments(userAccount);
+            var cabManagementItems = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(userAccount.Role);
             model.CABManagementItems = cabManagementItems.Any()
                 ? cabManagementItems.Select(cmi => new CABManagementItemViewModel
                 {
