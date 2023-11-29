@@ -1,6 +1,7 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
 using UKMCAB.Data;
@@ -178,6 +179,26 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatsAsync();
 
             return draft;
+        }
+
+        /// <summary>
+        /// Updates document with Pending approval with audit action
+        /// </summary>
+        /// <param name="cabId">cabId to update</param>
+        /// <param name="status">status of Cab to get</param>
+        /// <param name="audit">Audit to log</param>
+        public async Task SetSubStatusToPendingApprovalAsync(Guid cabId, Status status, Audit audit)
+        {
+            var documents = await _cabRepository.Query<Document>(c => c.CABId == cabId.ToString() && c.Status == status.ToString());
+            if (documents.Count != 1)
+            {
+                throw new NotFoundException("Single Document not found to set to pending approval");
+            }
+
+            var document = documents.First();
+            document.SubStatus = SubStatus.PendingApproval;
+            document.AuditLog.Add(audit);
+            await _cabRepository.UpdateAsync(document);
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)
