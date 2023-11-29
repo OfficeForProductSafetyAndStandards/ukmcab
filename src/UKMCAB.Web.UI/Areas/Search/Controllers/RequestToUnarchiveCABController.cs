@@ -41,8 +41,7 @@ public class RequestToUnarchiveCABController : Controller
     [HttpGet("{cabUrl}", Name = Routes.RequestUnarchive)]
     public async Task<IActionResult> IndexAsync(string cabUrl)
     {
-        var documents = await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl);
-        var archivedDocument = documents.First(d => d.StatusValue == Status.Archived);
+        var archivedDocument = await GetArchivedDocumentAsync(cabUrl);
         var vm =
             new RequestToUnarchiveCABViewModel(archivedDocument.Name ?? throw new InvalidOperationException(),
                 archivedDocument.URLSlug, Guid.Parse(archivedDocument.CABId))
@@ -50,6 +49,18 @@ public class RequestToUnarchiveCABController : Controller
                 Title = "Request to unarchive CAB"
             };
         return View(vm);
+    }
+
+    /// <summary>
+    /// Get the Archived document
+    /// </summary>
+    /// <param name="cabUrl">url slug to get</param>
+    /// <returns>document with archived status</returns>
+    private async Task<Document> GetArchivedDocumentAsync(string cabUrl)
+    {
+        var documents = await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl);
+        var archivedDocument = documents.First(d => d.StatusValue == Status.Archived);
+        return archivedDocument;
     }
 
     [HttpPost("{cabUrl}", Name = Routes.RequestUnarchive)]
@@ -62,9 +73,19 @@ public class RequestToUnarchiveCABController : Controller
 
         var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
                           throw new InvalidOperationException();
+        var userRoleId = Roles.List.First(r =>
+            r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
         var submitter = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
+<<<<<<< Updated upstream
             currentUser.RoleId ?? throw new InvalidOperationException(),
+=======
+            userRoleId ?? throw new InvalidOperationException(),
+>>>>>>> Stashed changes
             currentUser.EmailAddress ?? throw new InvalidOperationException());
+
+        await _cabAdminService.SetSubStatusToPendingApprovalAsync(vm.CabId, Status.Archived,
+            new Audit(currentUser, AuditCABActions.UnarchiveApprovalRequest));
+        
         await _workflowTaskService.CreateAsync(new WorkflowTask(
             Guid.NewGuid(),
             TaskType.RequestToUnarchive,
@@ -84,6 +105,8 @@ public class RequestToUnarchiveCABController : Controller
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", vm.CABName },
+            {"CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = vm.CabId }))},
             { "UserGroup", Roles.NameFor(submitter.RoleId) },
             { "Name", submitter.FirstAndLastName },
             { "Published", vm.IsPublish },
