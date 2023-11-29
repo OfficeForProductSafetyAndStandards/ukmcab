@@ -36,7 +36,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
         }
 
         [Theory]
-        [TestCase("dsdds")]
+        [TestCase("ukas")]
         public async Task FindAllCABManagementQueueDocumentsForUserRole_UKAS_ShouldReturnFilteredResults(string role)
         {
             // Arrange
@@ -66,6 +66,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             CollectionAssert.AreEquivalent(expectedResults, ukasResults);
+            CollectionAssert.AreNotEquivalent(expectedOther, ukasResults);
         }
 
         private bool EvaluateDocumentPredicateWithoutRole(Expression<Func<Document, bool>> predicate)

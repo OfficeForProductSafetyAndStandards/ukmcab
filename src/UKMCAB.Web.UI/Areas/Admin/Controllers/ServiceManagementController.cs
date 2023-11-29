@@ -7,6 +7,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using System.Security.Claims;
+using UKMCAB.Core.Security;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -35,7 +36,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                             .Value) ?? throw new InvalidOperationException("User account not found");
 
-            var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(userAccount.Role);
+            var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
+            var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
             return View(new InternalLandingPageViewModel
             {
                 TotalDraftCABs = docs.Where(d => d.StatusValue == Status.Draft).Count(),

@@ -77,7 +77,7 @@ namespace UKMCAB.Core.Services.CAB
 
 
         /// <inheritdoc />
-        public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string userRole)
+        public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
             if(!string.IsNullOrWhiteSpace(userRole))
             {
