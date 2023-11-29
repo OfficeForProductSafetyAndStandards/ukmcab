@@ -156,7 +156,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
-                RequiresUnarchiveApproval = !string.Equals(userAccount.RoleId,Roles.OPSS.Label,StringComparison.CurrentCultureIgnoreCase),
+                RequiresUnarchiveApproval = !string.Equals(userAccount.Role,Roles.OPSS.Label,StringComparison.CurrentCultureIgnoreCase),
                 IsPublished = isPublished,
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,

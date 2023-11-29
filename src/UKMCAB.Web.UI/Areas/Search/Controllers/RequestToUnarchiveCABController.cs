@@ -76,11 +76,7 @@ public class RequestToUnarchiveCABController : Controller
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
         var submitter = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
-<<<<<<< Updated upstream
-            currentUser.RoleId ?? throw new InvalidOperationException(),
-=======
             userRoleId ?? throw new InvalidOperationException(),
->>>>>>> Stashed changes
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
         await _cabAdminService.SetSubStatusToPendingApprovalAsync(vm.CabId, Status.Archived,
@@ -88,7 +84,7 @@ public class RequestToUnarchiveCABController : Controller
         
         await _workflowTaskService.CreateAsync(new WorkflowTask(
             Guid.NewGuid(),
-            TaskType.RequestToUnarchive,
+            vm.IsPublish!.Value ? TaskType.RequestToUnarchiveForPublish : TaskType.RequestToUnarchiveForDraft,
             submitter,
             Roles.OPSS.Id,
             null,

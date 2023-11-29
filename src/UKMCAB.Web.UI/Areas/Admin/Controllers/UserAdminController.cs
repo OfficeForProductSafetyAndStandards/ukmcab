@@ -135,7 +135,7 @@ public class UserAdminController : Controller
                 UserAccount = account,
                 Email = account.ContactEmailAddress,
                 Organisation = account.OrganisationName,
-                UserGroup = account.RoleId,
+                UserGroup = account.Role,
                 ReturnURL = returnUrl
             });
         }
@@ -154,13 +154,13 @@ public class UserAdminController : Controller
         {
             if (!account.ContactEmailAddress.Equals(model.Email) ||
                 !account.OrganisationName.Equals(model.Organisation) ||
-                !account.RoleId.Equals(model.UserGroup))
+                !account.Role.Equals(model.UserGroup))
             {
                 var reviewerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 var reviewer = await _userService.GetAsync(reviewerId);
                 account.ContactEmailAddress = model.Email;
                 account.OrganisationName = model.Organisation;
-                account.RoleId = model.UserGroup;
+                account.Role = model.UserGroup;
                 await _userService.UpdateUser(account, reviewer);
             }
             return RedirectToAction("UserAccount", new { id, returnUrl = model.ReturnURL });
