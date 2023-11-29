@@ -1,0 +1,1854 @@
+[
+    {
+        "id": "c7b7c77c-848b-11ee-b962-0242ac120002",
+        "name": "Schedule 3 – Module B Type examination",
+        "legislativeAreaId": [
+            "cdbeca52-8536-11ee-b9d1-0242ac120002"
+        ],
+        "productIds": [
+            "fbaf7628-885b-11ee-b9d1-0242ac120002",
+            "fbaf7916-885b-11ee-b9d1-0242ac120002",
+            "fbaf7eca-885b-11ee-b9d1-0242ac120002",
+            "fbaf8014-885b-11ee-b9d1-0242ac120002",
+            "fbaf815e-885b-11ee-b9d1-0242ac120002",
+            "fbaf8276-885b-11ee-b9d1-0242ac120002",
+            "fbaf8398-885b-11ee-b9d1-0242ac120002",
+            "fbaf84ba-885b-11ee-b9d1-0242ac120002",
+            "fbaf85d2-885b-11ee-b9d1-0242ac120002",
+            "fbaf8a3c-885b-11ee-b9d1-0242ac120002",
+            "fbaf8bfe-885b-11ee-b9d1-0242ac120002",
+            "fbaf8d52-885b-11ee-b9d1-0242ac120002"
+        ],
+        "categoryIds": ""
+    },
+    {
+        "id": "c7b7a13e-848b-11ee-b962-0242ac120002",
+        "name": "Part 9 - Type examination",
+        "legislativeAreaId": [
+            "cdbed358-8536-11ee-b9d1-0242ac120002"
+        ],
+        "productIds": [
+            "fbaf90c2-885b-11ee-b9d1-0242ac120002",
+            "fbaf9216-885b-11ee-b9d1-0242ac120002",
+            "fbaf9392-885b-11ee-b9d1-0242ac120002",
+            "fbaf954a-885b-11ee-b9d1-0242ac120002",
+            "fbaf9784-885b-11ee-b9d1-0242ac120002",
+            "fbaf9be4-885b-11ee-b9d1-0242ac120002",
+            "fbaf9cfc-885b-11ee-b9d1-0242ac120002",
+            "fbafa454-885b-11ee-b9d1-0242ac120002"
+        ],
+        "categoryIds": [
+            "342365ce-8856-11ee-b9d1-0242ac120002",
+            "3423693e-8856-11ee-b9d1-0242ac120002",
+            "34236b64-8856-11ee-b9d1-0242ac120002",
+            "34236db2-8856-11ee-b9d1-0242ac120002",
+            "34236f06-8856-11ee-b9d1-0242ac120002",
+            "34237032-8856-11ee-b9d1-0242ac120002",
+            "34237582-8856-11ee-b9d1-0242ac120002",
+            "342376c2-8856-11ee-b9d1-0242ac120002",
+            "342377e4-8856-11ee-b9d1-0242ac120002",
+            "34237906-8856-11ee-b9d1-0242ac120002",
+            "34237a32-8856-11ee-b9d1-0242ac120002",
+            "34237b54-8856-11ee-b9d1-0242ac120002",
+            "34237c6c-8856-11ee-b9d1-0242ac120002",
+            "34237d7a-8856-11ee-b9d1-0242ac120002",
+            "34238144-8856-11ee-b9d1-0242ac120002",
+            "34238270-8856-11ee-b9d1-0242ac120002",
+            "34238392-8856-11ee-b9d1-0242ac120002",
+            "342384aa-8856-11ee-b9d1-0242ac120002",
+            "34238784-8856-11ee-b9d1-0242ac120002",
+            "342388a6-8856-11ee-b9d1-0242ac120002",
+            "342389dc-8856-11ee-b9d1-0242ac120002",
+            "34238b26-8856-11ee-b9d1-0242ac120002",
+            "3423927e-8856-11ee-b9d1-0242ac120002"
+        ]
+    },
+    {
+        "id": "c7b778da-848b-11ee-b962-0242ac120002",
+        "name": "Part 10 - Full quality assurance",
+        "legislativeAreaId": [
+            "cdbed358-8536-11ee-b9d1-0242ac120002"
+        ],
+        "productIds": [
+            "fbaf90c2-885b-11ee-b9d1-0242ac120002",
+            "fbaf9216-885b-11ee-b9d1-0242ac120002",
+            "fbaf9392-885b-11ee-b9d1-0242ac120002",
+            "fbaf954a-885b-11ee-b9d1-0242ac120002",
+            "fbaf9784-885b-11ee-b9d1-0242ac120002",
+            "fbaf9be4-885b-11ee-b9d1-0242ac120002",
+            "fbaf9cfc-885b-11ee-b9d1-0242ac120002",
+            "fbafa454-885b-11ee-b9d1-0242ac120002"
+        ],
+        "categoryIds": [
+            "342365ce-8856-11ee-b9d1-0242ac120002",
+            "3423693e-8856-11ee-b9d1-0242ac120002",
+            "34236b64-8856-11ee-b9d1-0242ac120002",
+            "34236db2-8856-11ee-b9d1-0242ac120002",
+            "34236f06-8856-11ee-b9d1-0242ac120002",
+            "34237032-8856-11ee-b9d1-0242ac120002",
+            "34237582-8856-11ee-b9d1-0242ac120002",
+            "342376c2-8856-11ee-b9d1-0242ac120002",
+            "342377e4-8856-11ee-b9d1-0242ac120002",
+            "34237906-8856-11ee-b9d1-0242ac120002",
+            "34237a32-8856-11ee-b9d1-0242ac120002",
+            "34237b54-8856-11ee-b9d1-0242ac120002",
+            "34237c6c-8856-11ee-b9d1-0242ac120002",
+            "34237d7a-8856-11ee-b9d1-0242ac120002",
+            "34238144-8856-11ee-b9d1-0242ac120002",
+            "34238270-8856-11ee-b9d1-0242ac120002",
+            "34238392-8856-11ee-b9d1-0242ac120002",
+            "342384aa-8856-11ee-b9d1-0242ac120002",
+            "34238784-8856-11ee-b9d1-0242ac120002",
+            "342388a6-8856-11ee-b9d1-0242ac120002",
+            "342389dc-8856-11ee-b9d1-0242ac120002",
+            "34238b26-8856-11ee-b9d1-0242ac120002",
+            "3423927e-8856-11ee-b9d1-0242ac120002"
+        ]
+    },
+    {
+        "id": "b8580dc7-ad01-4f3e-8898-c8fbf98fc3b5",
+        "name": "Schedule 3 – Module B Type examination",
+        "legislativeAreaId": [
+            "a59f88aa-c6ae-4c90-939b-89c16e478728"
+        ],
+        "productIds": [
+            "ea6034c7-b363-499d-b032-4bd90563233c",
+            "c76c346e-e1c5-4f1a-9184-091a3fdd937e",
+            "d7779ee0-6720-4c8a-9231-73db4911d579",
+            "a95a3bbd-3107-4173-8572-607b01b9942e",
+            "03319939-7d80-4d8a-bd0c-b6b69925480f",
+            "d80266eb-7ad9-4aa7-b2bc-ce1d826f19f6",
+            "c1541a77-9709-4df8-bd21-14d1868f6a6b",
+            "967debf0-6027-4cd9-ad33-e67cce73afb6",
+            "88f423e4-8e10-4809-8e43-35caeab63e4c",
+            "fc10a061-901f-4be9-a139-a63878257f3e",
+            "d2a36dd0-98df-49e0-9e4f-f92b15fc3d39",
+            "d4f55869-6e00-4fdd-9804-280a08720253",
+            "57ae060c-2960-46eb-8df7-1cd25f6f4cf7",
+            "bef49901-9f00-4bc8-ab81-0d1ad3510553",
+            "eda90a1a-8158-41e6-97fa-dbdb28db5b2d",
+            "eeb48c7c-dd4b-45df-b0f0-7ce4792a2298",
+            "61748e6d-9694-4e58-ace5-00cc3bff2786",
+            "95467059-cf54-48ac-8474-9295be10ee33",
+            "99bc6992-d34f-48b7-b68c-956d315f7da8",
+            "b849b4a2-9c4b-4751-af1a-9654243ad51b",
+            "83e58f4d-92c9-4e38-b261-0429765067e6",
+            "a5fce71e-ef3f-45db-901c-9defba434960"
+        ],
+        "categoryIds": ""
+    },
+    {
+        "id": "36d8fb9b-8821-4d0e-b64c-51d55eabbb2b",
+        "name": "Schedule 4 – Module H Conformity based on full quality assurance",
+        "legislativeAreaId": [
+            "a59f88aa-c6ae-4c90-939b-89c16e478728"
+        ],
+        "productIds": [
+            "ea6034c7-b363-499d-b032-4bd90563233c",
+            "c76c346e-e1c5-4f1a-9184-091a3fdd937e",
+            "d7779ee0-6720-4c8a-9231-73db4911d579",
+            "a95a3bbd-3107-4173-8572-607b01b9942e",
+            "03319939-7d80-4d8a-bd0c-b6b69925480f",
+            "d80266eb-7ad9-4aa7-b2bc-ce1d826f19f6",
+            "c1541a77-9709-4df8-bd21-14d1868f6a6b",
+            "967debf0-6027-4cd9-ad33-e67cce73afb6",
+            "88f423e4-8e10-4809-8e43-35caeab63e4c",
+            "fc10a061-901f-4be9-a139-a63878257f3e",
+            "d2a36dd0-98df-49e0-9e4f-f92b15fc3d39",
+            "d4f55869-6e00-4fdd-9804-280a08720253",
+            "57ae060c-2960-46eb-8df7-1cd25f6f4cf7",
+            "bef49901-9f00-4bc8-ab81-0d1ad3510553",
+            "eda90a1a-8158-41e6-97fa-dbdb28db5b2d",
+            "eeb48c7c-dd4b-45df-b0f0-7ce4792a2298",
+            "61748e6d-9694-4e58-ace5-00cc3bff2786",
+            "95467059-cf54-48ac-8474-9295be10ee33",
+            "99bc6992-d34f-48b7-b68c-956d315f7da8",
+            "b849b4a2-9c4b-4751-af1a-9654243ad51b",
+            "83e58f4d-92c9-4e38-b261-0429765067e6",
+            "a5fce71e-ef3f-45db-901c-9defba434960"
+        ],
+        "categoryIds": ""
+    },
+    {
+        "id": "a24023e6-fe2f-4019-947e-21585ddf8920",
+        "name": "Part 1 Type Examination",
+        "legislativeAreaId": [
+            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "f9ccdb3e-b62a-47b9-914d-8f2d115e49d4",
+            "b267439a-d41b-4d43-9220-64ace59b0ea3",
+            "9680645a-f994-4556-8d74-8309c3583b89"
+        ]
+    },
+    {
+        "id": "dc78de09-e38c-48e0-a05e-f30adc8bbac9",
+        "name": "Part 2 Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "f9ccdb3e-b62a-47b9-914d-8f2d115e49d4",
+            "b267439a-d41b-4d43-9220-64ace59b0ea3"
+        ]
+    },
+    {
+        "id": "ad7b9be0-1f32-4c5f-8e66-678aa1cddfbd",
+        "name": "Part 3 Conformity to type based on product verification",
+        "legislativeAreaId": [
+            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "f9ccdb3e-b62a-47b9-914d-8f2d115e49d4",
+            "b267439a-d41b-4d43-9220-64ace59b0ea3"
+        ]
+    },
+    {
+        "id": "ed103d42-3b34-4c43-9f0a-3342479fd4f5",
+        "name": "Part 4 Conformity to type based on internal production control plus supervised product Testing",
+        "legislativeAreaId": [
+            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "9680645a-f994-4556-8d74-8309c3583b89"
+        ]
+    },
+    {
+        "id": "2587f80f-ff89-4419-9b80-8124aa8eaf77",
+        "name": "Part 5 Conformity to type based on product quality assurance",
+        "legislativeAreaId": [
+            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "9680645a-f994-4556-8d74-8309c3583b89"
+        ]
+    },
+    {
+        "id": "b0669ae7-db2a-4aef-97ed-e1458c309ffd",
+        "name": "Part 7 Conformity based on unit verification",
+        "legislativeAreaId": [
+            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "f9ccdb3e-b62a-47b9-914d-8f2d115e49d4",
+            "b267439a-d41b-4d43-9220-64ace59b0ea3",
+            "9680645a-f994-4556-8d74-8309c3583b89",
+            "396ccf2f-e857-4fde-aea5-8dd35f2bb842"
+        ]
+    },
+    {
+        "id": "9533c7b9-1cf1-44e5-87f9-d2334b7734cd",
+        "name": "Part 7 Conformity based on unit verification.Receipt and retention of a Technical File by an Approved Body",
+        "legislativeAreaId": [
+            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "d07fa04a-2110-42e5-a7dc-130c96ecde94"
+        ]
+    },
+    {
+        "id": "0a7350be-19c8-463e-8255-21d6ea164240",
+        "name": "Schedule 11: Type examination for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "7b870174-7b89-4420-a58f-037b175d7560"
+        ]
+    },
+    {
+        "id": "63419410-1fde-45c6-bc22-4cab40460416",
+        "name": "Schedule 11: Type Examination for safety components for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": [
+            "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
+            "ed227bf3-55cf-4dc9-b39d-34932be5c762",
+            "5672cff1-ae6d-4b08-b3c8-873c9c4c4eed",
+            "e0da85d4-fef3-4b60-b338-b5a7e5cbf3ce",
+            "6bdf0ecb-b15c-4d00-9b8d-2e3de95688c3",
+            "66db06e2-9f5b-44fa-80a6-88efae7ec6e4",
+            "c0f6e958-33e2-49bf-a75e-4297b23267a1",
+            "76f6467d-ee83-427d-8b89-29c9c2d945b1"
+        ],
+        "categoryIds": [
+            "95f509be-cb6f-4f94-9b49-591af11ac10e"
+        ]
+    },
+    {
+        "id": "71f24f44-265c-4542-9d1d-816cefa5bb4e",
+        "name": "Schedule 12: Final inspection for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "7b870174-7b89-4420-a58f-037b175d7560"
+        ]
+    },
+    {
+        "id": "1843f1ba-175b-4431-a0a1-4147b2b78555",
+        "name": "Schedule 13: Conformity to type based on product quality assurance for safety components for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": [
+            "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
+            "ed227bf3-55cf-4dc9-b39d-34932be5c762",
+            "5672cff1-ae6d-4b08-b3c8-873c9c4c4eed",
+            "e0da85d4-fef3-4b60-b338-b5a7e5cbf3ce",
+            "6bdf0ecb-b15c-4d00-9b8d-2e3de95688c3",
+            "66db06e2-9f5b-44fa-80a6-88efae7ec6e4",
+            "c0f6e958-33e2-49bf-a75e-4297b23267a1",
+            "76f6467d-ee83-427d-8b89-29c9c2d945b1"
+        ],
+        "categoryIds": [
+            "95f509be-cb6f-4f94-9b49-591af11ac10e"
+        ]
+    },
+    {
+        "id": "018661a8-40cb-4247-97e1-98da40a8a08e",
+        "name": "Schedule 14: Conformity based on full quality assurance for safety components for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": [
+            "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
+            "ed227bf3-55cf-4dc9-b39d-34932be5c762",
+            "5672cff1-ae6d-4b08-b3c8-873c9c4c4eed",
+            "e0da85d4-fef3-4b60-b338-b5a7e5cbf3ce",
+            "6bdf0ecb-b15c-4d00-9b8d-2e3de95688c3",
+            "66db06e2-9f5b-44fa-80a6-88efae7ec6e4",
+            "c0f6e958-33e2-49bf-a75e-4297b23267a1",
+            "76f6467d-ee83-427d-8b89-29c9c2d945b1"
+        ],
+        "categoryIds": [
+            "95f509be-cb6f-4f94-9b49-591af11ac10e"
+        ]
+    },
+    {
+        "id": "9d3d8a59-2a5a-40e7-aa40-643e37071faf",
+        "name": "Schedule 15: Conformity based on unit verification for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "7b870174-7b89-4420-a58f-037b175d7560"
+        ]
+    },
+    {
+        "id": "1259efe5-9b13-4de9-83d4-869f208de86a",
+        "name": "Schedule 16: Conformity to type with random checking for safety components for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": [
+            "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
+            "ed227bf3-55cf-4dc9-b39d-34932be5c762",
+            "5672cff1-ae6d-4b08-b3c8-873c9c4c4eed",
+            "e0da85d4-fef3-4b60-b338-b5a7e5cbf3ce",
+            "6bdf0ecb-b15c-4d00-9b8d-2e3de95688c3",
+            "66db06e2-9f5b-44fa-80a6-88efae7ec6e4",
+            "c0f6e958-33e2-49bf-a75e-4297b23267a1",
+            "76f6467d-ee83-427d-8b89-29c9c2d945b1"
+        ],
+        "categoryIds": [
+            "95f509be-cb6f-4f94-9b49-591af11ac10e"
+        ]
+    },
+    {
+        "id": "f80dbfac-d0cd-4d4f-be41-57a4cbec2ec2",
+        "name": "Schedule 17: Conformity to type based on product quality assurance for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "7b870174-7b89-4420-a58f-037b175d7560"
+        ]
+    },
+    {
+        "id": "3ffbea95-da66-4e75-a932-4abb2f38207f",
+        "name": "Schedule 18: Conformity based on full quality assurance plus design examination for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "7b870174-7b89-4420-a58f-037b175d7560"
+        ]
+    },
+    {
+        "id": "cea6c4de-29dc-4fb2-8c5e-182497bb46ad",
+        "name": "Schedule 19: Conformity to type based on production quality assurance for lifts",
+        "legislativeAreaId": [
+            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "7b870174-7b89-4420-a58f-037b175d7560"
+        ]
+    },
+    {
+        "id": "61f4fbfd-fa02-493c-9f01-b2347723e5dc",
+        "name": "Part 10 – Module G Conformity based on unit verification",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "6f140b6c-2bdf-48d4-870a-6771d449e00b"
+        ]
+    },
+    {
+        "id": "b9a37796-8d31-4a37-af11-4265203c27dc",
+        "name": "Part 11 – Module H Conformity based on full quality assurance",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "5d2923d6-1a9c-40dc-803c-1d37fac28a0c"
+        ]
+    },
+    {
+        "id": "7f0ab699-c5ff-47c9-8b9b-a42a3c943ffb",
+        "name": "Part 12 – Module H1 Conformity based on full quality assurance plus design examination",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "6f140b6c-2bdf-48d4-870a-6771d449e00b"
+        ]
+    },
+    {
+        "id": "3423e3dc-6fab-4a92-9db8-a8e3f388174a",
+        "name": "Part 2 – Module A2 Internal production control plus supervised pressure equipment checks at random",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "cf71cad2-6558-4cd8-b409-26a4c7f4ee00"
+        ]
+    },
+    {
+        "id": "d88aa4ce-f154-49a5-98af-bf807bd8ef3c",
+        "name": "Part 3 – Module B Type Examination",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "5d2923d6-1a9c-40dc-803c-1d37fac28a0c",
+            "6f140b6c-2bdf-48d4-870a-6771d449e00b"
+        ]
+    },
+    {
+        "id": "17339cfa-2489-47f1-9cc0-c9977eaceb03",
+        "name": "Part 4 – Module C2 Conformity to type based on internal production control plus supervised pressure equipment checks at random intervals",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "5d2923d6-1a9c-40dc-803c-1d37fac28a0c"
+        ]
+    },
+    {
+        "id": "c50bea12-324a-4d87-b6fb-b59f8ae5f36b",
+        "name": "Part 5 – Module D Conformity to type based on quality assurance in the production process",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "5d2923d6-1a9c-40dc-803c-1d37fac28a0c",
+            "6f140b6c-2bdf-48d4-870a-6771d449e00b"
+        ]
+    },
+    {
+        "id": "b691a0ec-7518-415e-8491-ef1f9fc3f24d",
+        "name": "Part 6 – Module D1 Quality assurance of the production process",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "cf71cad2-6558-4cd8-b409-26a4c7f4ee00"
+        ]
+    },
+    {
+        "id": "3ad75a71-a2f2-468a-aa67-885a323b821c",
+        "name": "Part 7 – Module E Conformity to type based on pressure equipment quality assurance",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "5d2923d6-1a9c-40dc-803c-1d37fac28a0c"
+        ]
+    },
+    {
+        "id": "bf5e99ca-835f-4a7f-a949-d4e0144e05d8",
+        "name": "Part 8 – Module E1 Quality assurance of final pressure equipment inspection and testing",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "cf71cad2-6558-4cd8-b409-26a4c7f4ee00"
+        ]
+    },
+    {
+        "id": "f6b0cc26-ba13-47e9-99a2-afa4273edef2",
+        "name": "Part 9 – Module F Conformity to type based on pressure equipment verification",
+        "legislativeAreaId": [
+            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "5d2923d6-1a9c-40dc-803c-1d37fac28a0c",
+            "6f140b6c-2bdf-48d4-870a-6771d449e00b"
+        ]
+    },
+    {
+        "id": "c2ad6e1f-d4f4-481d-a4e5-2c1ec87535f2",
+        "name": "Regulation 50",
+        "legislativeAreaId": [
+            "a8343134-d1ff-43ea-9122-9dceb2e735b5"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "9b7b079a-66f0-4172-bbe9-3d8e13c94fde"
+        ]
+    },
+    {
+        "id": "6c2809f3-f4b8-4a9a-abd2-abb3eae60ff5",
+        "name": "Schedule 2 (21) Approval of permanent joining Personnel",
+        "legislativeAreaId": [
+            "bd62c97a-ee35-48e9-ba44-48967cd95e41",
+            "4b143080-7f3b-462f-a201-b2f291e465a4"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2a80e365-4ba9-43db-a213-ac3717c6ceed",
+            "c7b793ca-d581-4a73-81ed-a1500a202abc",
+            "227b523e-655a-4b59-a8b8-5e8318f1658f",
+            "c489e319-363d-4566-a20d-87bed57b356a",
+            "84b6af7a-d4dc-4087-bf5d-e53e4d8b2ba5"
+        ]
+    },
+    {
+        "id": "5a21d41f-b3c5-450d-8c9e-9584357267a7",
+        "name": "Schedule 2 (21) Approval of permanent joining procedures",
+        "legislativeAreaId": [
+            "bd62c97a-ee35-48e9-ba44-48967cd95e41",
+            "4b143080-7f3b-462f-a201-b2f291e465a4",
+            "26706cbb-1443-4d61-a860-69cd36c1d68c"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2a80e365-4ba9-43db-a213-ac3717c6ceed",
+            "c7b793ca-d581-4a73-81ed-a1500a202abc",
+            "227b523e-655a-4b59-a8b8-5e8318f1658f",
+            "c489e319-363d-4566-a20d-87bed57b356a",
+            "84b6af7a-d4dc-4087-bf5d-e53e4d8b2ba5"
+        ]
+    },
+    {
+        "id": "070b3b67-6fc3-4826-8b51-b73631271a12",
+        "name": "Schedule 2 (22) Non destructive testing of permanent joining, approval of Personnel",
+        "legislativeAreaId": [
+            "26706cbb-1443-4d61-a860-69cd36c1d68c",
+            "4b143080-7f3b-462f-a201-b2f291e465a4"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "a61c79bc-3667-4d82-bfef-84b4c288a8df",
+            "e85134dc-730f-4529-8bde-9af6014e3298"
+        ]
+    },
+    {
+        "id": "f722ba45-82fc-4142-8473-3a748b1213c2",
+        "name": "Part 1 – Module B Design Type Examination",
+        "legislativeAreaId": [
+            "e3751919-8b26-4059-ae34-8540146e262a"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "716974a3-2354-4eda-9cd7-5f11e0ef8ee8"
+        ]
+    },
+    {
+        "id": "d13d550d-97d8-456d-b95c-cebd3ab6f5d9",
+        "name": "Part 1 – Module B Production Type examination",
+        "legislativeAreaId": [
+            "e3751919-8b26-4059-ae34-8540146e262a"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "716974a3-2354-4eda-9cd7-5f11e0ef8ee8"
+        ]
+    },
+    {
+        "id": "98fe6c17-f771-415e-8825-21e46686743c",
+        "name": "Part 2 – Module C1 Conformity to type based on internal production control plus supervised vessel testing",
+        "legislativeAreaId": [
+            "e3751919-8b26-4059-ae34-8540146e262a",
+            "d469755c-d57b-41d7-9c37-d383a952f237"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "98748964-e48f-4ba5-8ea6-654f4b863d8e",
+            "3887b3cc-dc48-401b-9530-cae610cec519",
+            "f8aba860-ea94-4e1a-bb37-8b1c48421639"
+        ]
+    },
+    {
+        "id": "69f8ea36-6cdf-42c0-8f25-5c045b12caf3",
+        "name": "Part 3 – Module C2 Conformity to type based on internal production control plus supervised vessel checks at random intervals",
+        "legislativeAreaId": [
+            "d469755c-d57b-41d7-9c37-d383a952f237"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "3887b3cc-dc48-401b-9530-cae610cec519"
+        ]
+    },
+    {
+        "id": "92adf121-0dea-4b15-8a5a-90549244d316",
+        "name": "Part 4 – Module C Conformity to type based on internal production control",
+        "legislativeAreaId": [
+            "d469755c-d57b-41d7-9c37-d383a952f237"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "f8aba860-ea94-4e1a-bb37-8b1c48421639"
+        ]
+    },
+    {
+        "id": "034200f8-57e1-4b57-8785-9997ee931f87",
+        "name": "Point 1 – Module B Production Type examination",
+        "legislativeAreaId": [
+            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
+        ],
+        "productIds": [
+            "44f34e2a-3db6-431b-88f4-232f74ca2be9",
+            "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
+            "b6d041bf-1b60-4e05-9509-47563f2ea523",
+            "fea7af5d-4608-49f7-9e89-f9c2a0c55e2b",
+            "10cce88d-5055-4402-8c61-df7feb540bff",
+            "220ddb0a-8693-4fe2-96de-e4e484c7fd16",
+            "a17edf22-ed32-4ba1-b144-d9b058f5b04c",
+            "56fa6510-6e9c-4e8a-9202-39ffcbfe77e4",
+            "7d2c5fb1-267c-4299-83bb-74503297db96",
+            "7cca926d-12a5-4855-b8be-4e55789557ee",
+            "68d4777e-de09-4cd2-bcdb-3c09725dbbc9",
+            "78badfdf-ba08-4b0a-bcfc-ed76820db49d",
+            "685a2df3-987e-4701-8925-a7effa3dacf3",
+            "f6a791af-511c-4226-b3fe-2261c0ab8cf7",
+            "78c1343b-3fad-40b6-9b93-4e243138905a",
+            "db326a6a-21ca-46ea-ae5c-e1a69743b59d"
+        ],
+        "categoryIds": [
+            "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf",
+            "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+        ]
+    },
+    {
+        "id": "b008378e-f899-49d2-9fb8-6789cdbda7d7",
+        "name": "Point 2 – Module C2 Conformity to type based on internal production control plus supervised product checks at random intervals",
+        "legislativeAreaId": [
+            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
+        ],
+        "productIds": [
+            "44f34e2a-3db6-431b-88f4-232f74ca2be9",
+            "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
+            "b6d041bf-1b60-4e05-9509-47563f2ea523",
+            "fea7af5d-4608-49f7-9e89-f9c2a0c55e2b",
+            "10cce88d-5055-4402-8c61-df7feb540bff",
+            "220ddb0a-8693-4fe2-96de-e4e484c7fd16",
+            "a17edf22-ed32-4ba1-b144-d9b058f5b04c",
+            "56fa6510-6e9c-4e8a-9202-39ffcbfe77e4",
+            "7d2c5fb1-267c-4299-83bb-74503297db96",
+            "7cca926d-12a5-4855-b8be-4e55789557ee",
+            "68d4777e-de09-4cd2-bcdb-3c09725dbbc9",
+            "78badfdf-ba08-4b0a-bcfc-ed76820db49d",
+            "685a2df3-987e-4701-8925-a7effa3dacf3",
+            "f6a791af-511c-4226-b3fe-2261c0ab8cf7",
+            "78c1343b-3fad-40b6-9b93-4e243138905a",
+            "db326a6a-21ca-46ea-ae5c-e1a69743b59d"
+        ],
+        "categoryIds": [
+            "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf",
+            "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+        ]
+    },
+    {
+        "id": "c56ac103-c23c-44e8-8246-ba727963eea7",
+        "name": "Point 3 – Module D Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
+        ],
+        "productIds": [
+            "44f34e2a-3db6-431b-88f4-232f74ca2be9",
+            "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
+            "b6d041bf-1b60-4e05-9509-47563f2ea523",
+            "fea7af5d-4608-49f7-9e89-f9c2a0c55e2b",
+            "10cce88d-5055-4402-8c61-df7feb540bff",
+            "220ddb0a-8693-4fe2-96de-e4e484c7fd16",
+            "a17edf22-ed32-4ba1-b144-d9b058f5b04c",
+            "56fa6510-6e9c-4e8a-9202-39ffcbfe77e4",
+            "7d2c5fb1-267c-4299-83bb-74503297db96",
+            "7cca926d-12a5-4855-b8be-4e55789557ee",
+            "68d4777e-de09-4cd2-bcdb-3c09725dbbc9",
+            "78badfdf-ba08-4b0a-bcfc-ed76820db49d",
+            "685a2df3-987e-4701-8925-a7effa3dacf3",
+            "f6a791af-511c-4226-b3fe-2261c0ab8cf7",
+            "78c1343b-3fad-40b6-9b93-4e243138905a",
+            "db326a6a-21ca-46ea-ae5c-e1a69743b59d"
+        ],
+        "categoryIds": [
+            "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf",
+            "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+        ]
+    },
+    {
+        "id": "fca6ed34-796d-460c-8358-2665f9f90c76",
+        "name": "Point 4 – Module E Conformity to type based on product quality assurance",
+        "legislativeAreaId": [
+            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
+        ],
+        "productIds": [
+            "44f34e2a-3db6-431b-88f4-232f74ca2be9",
+            "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
+            "b6d041bf-1b60-4e05-9509-47563f2ea523",
+            "fea7af5d-4608-49f7-9e89-f9c2a0c55e2b",
+            "10cce88d-5055-4402-8c61-df7feb540bff",
+            "220ddb0a-8693-4fe2-96de-e4e484c7fd16",
+            "a17edf22-ed32-4ba1-b144-d9b058f5b04c",
+            "56fa6510-6e9c-4e8a-9202-39ffcbfe77e4",
+            "7d2c5fb1-267c-4299-83bb-74503297db96",
+            "7cca926d-12a5-4855-b8be-4e55789557ee",
+            "68d4777e-de09-4cd2-bcdb-3c09725dbbc9",
+            "78badfdf-ba08-4b0a-bcfc-ed76820db49d",
+            "685a2df3-987e-4701-8925-a7effa3dacf3",
+            "f6a791af-511c-4226-b3fe-2261c0ab8cf7",
+            "78c1343b-3fad-40b6-9b93-4e243138905a",
+            "db326a6a-21ca-46ea-ae5c-e1a69743b59d"
+        ],
+        "categoryIds": [
+            "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf",
+            "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+        ]
+    },
+    {
+        "id": "96ac7579-1bce-49bb-bfc8-7602d9f1380e",
+        "name": "Point 5 – Module F Conformity to type based on product verification",
+        "legislativeAreaId": [
+            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
+        ],
+        "productIds": [
+            "44f34e2a-3db6-431b-88f4-232f74ca2be9",
+            "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
+            "b6d041bf-1b60-4e05-9509-47563f2ea523",
+            "fea7af5d-4608-49f7-9e89-f9c2a0c55e2b",
+            "10cce88d-5055-4402-8c61-df7feb540bff",
+            "220ddb0a-8693-4fe2-96de-e4e484c7fd16",
+            "a17edf22-ed32-4ba1-b144-d9b058f5b04c",
+            "56fa6510-6e9c-4e8a-9202-39ffcbfe77e4",
+            "7d2c5fb1-267c-4299-83bb-74503297db96",
+            "7cca926d-12a5-4855-b8be-4e55789557ee",
+            "68d4777e-de09-4cd2-bcdb-3c09725dbbc9",
+            "78badfdf-ba08-4b0a-bcfc-ed76820db49d",
+            "685a2df3-987e-4701-8925-a7effa3dacf3",
+            "f6a791af-511c-4226-b3fe-2261c0ab8cf7",
+            "78c1343b-3fad-40b6-9b93-4e243138905a",
+            "db326a6a-21ca-46ea-ae5c-e1a69743b59d"
+        ],
+        "categoryIds": [
+            "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf",
+            "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+        ]
+    },
+    {
+        "id": "b37c3a07-c9c5-47c4-8389-2c9e77bdad52",
+        "name": "Point 6 – Module G Conformity based on unit verification",
+        "legislativeAreaId": [
+            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
+        ],
+        "productIds": [
+            "44f34e2a-3db6-431b-88f4-232f74ca2be9",
+            "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
+            "b6d041bf-1b60-4e05-9509-47563f2ea523",
+            "fea7af5d-4608-49f7-9e89-f9c2a0c55e2b",
+            "10cce88d-5055-4402-8c61-df7feb540bff",
+            "220ddb0a-8693-4fe2-96de-e4e484c7fd16",
+            "a17edf22-ed32-4ba1-b144-d9b058f5b04c",
+            "56fa6510-6e9c-4e8a-9202-39ffcbfe77e4",
+            "7d2c5fb1-267c-4299-83bb-74503297db96",
+            "7cca926d-12a5-4855-b8be-4e55789557ee",
+            "68d4777e-de09-4cd2-bcdb-3c09725dbbc9",
+            "78badfdf-ba08-4b0a-bcfc-ed76820db49d",
+            "685a2df3-987e-4701-8925-a7effa3dacf3",
+            "f6a791af-511c-4226-b3fe-2261c0ab8cf7",
+            "78c1343b-3fad-40b6-9b93-4e243138905a",
+            "db326a6a-21ca-46ea-ae5c-e1a69743b59d"
+        ],
+        "categoryIds": [
+            "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf",
+            "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+        ]
+    },
+    {
+        "id": "582e48b3-f0dc-43bf-98a0-213bb21fdf9a",
+        "name": "Schedule 9: Internal control of production with assessment of technical documentation and periodical checking ",
+        "legislativeAreaId": [
+            "55174916-ba65-49e8-9ad5-48a0321f4e9b"
+        ],
+        "productIds": [
+            "a397272e-a13e-405c-ac54-c77064ef290e",
+            "2ae322ec-d1e5-4b54-9365-294c8a362012",
+            "8152ed13-48e3-47c1-beef-cf4f126d824d",
+            "cf21f0bc-0af1-46f9-9db5-e34e78a2f969",
+            "3ac65121-875e-4f7e-bffa-f270ffabad30",
+            "783044d9-6e7a-4611-8765-9c1f018b235e",
+            "fcf317ed-de3e-47cc-9d86-553d20d9b44e",
+            "083f7f8c-309e-4af5-947c-5ca8beddfca0",
+            "8f61fb10-c921-4695-bef8-210b8a84330b",
+            "df3681f0-0680-4211-8e03-848ec3afea5b",
+            "c7ff7623-4a87-4970-9ca9-25ed13e6ea58",
+            "7240ad0b-8117-4409-b263-407e16ba3789",
+            "661f7ba5-d069-4079-ba10-a4141bf3d027",
+            "516e3ef8-cb71-48b4-8ee6-6312a2da4dc6",
+            "06435e3b-f274-4494-8e77-08eb8ca2dbdd",
+            "5c157a49-b61a-4b0d-b95d-163bb0a1cc54",
+            "8d000f3e-8a5a-4e5f-9b82-f6ec1de9e519",
+            "ecd04ada-c6b2-4da0-9c3f-954cdceeccbf",
+            "df29f3bb-be56-41dc-a669-87cfcfaeb99a",
+            "eb85d710-c8e6-4b77-adc5-69888544669c",
+            "b965d6e0-eb19-4cb1-b47f-aa96104c6cc3",
+            "e318924c-8ddb-46f3-8d39-2c195ec8c4d2"
+        ],
+        "categoryIds": ""
+    },
+    {
+        "id": "256c10fd-94ff-45c0-8e63-d6f546d611c2",
+        "name": "Schedule 10: Unit Verification",
+        "legislativeAreaId": [
+            "55174916-ba65-49e8-9ad5-48a0321f4e9b"
+        ],
+        "productIds": [
+            "a397272e-a13e-405c-ac54-c77064ef290e",
+            "2ae322ec-d1e5-4b54-9365-294c8a362012",
+            "8152ed13-48e3-47c1-beef-cf4f126d824d",
+            "cf21f0bc-0af1-46f9-9db5-e34e78a2f969",
+            "3ac65121-875e-4f7e-bffa-f270ffabad30",
+            "783044d9-6e7a-4611-8765-9c1f018b235e",
+            "fcf317ed-de3e-47cc-9d86-553d20d9b44e",
+            "083f7f8c-309e-4af5-947c-5ca8beddfca0",
+            "8f61fb10-c921-4695-bef8-210b8a84330b",
+            "df3681f0-0680-4211-8e03-848ec3afea5b",
+            "c7ff7623-4a87-4970-9ca9-25ed13e6ea58",
+            "7240ad0b-8117-4409-b263-407e16ba3789",
+            "661f7ba5-d069-4079-ba10-a4141bf3d027",
+            "516e3ef8-cb71-48b4-8ee6-6312a2da4dc6",
+            "06435e3b-f274-4494-8e77-08eb8ca2dbdd",
+            "5c157a49-b61a-4b0d-b95d-163bb0a1cc54",
+            "8d000f3e-8a5a-4e5f-9b82-f6ec1de9e519",
+            "ecd04ada-c6b2-4da0-9c3f-954cdceeccbf",
+            "df29f3bb-be56-41dc-a669-87cfcfaeb99a",
+            "eb85d710-c8e6-4b77-adc5-69888544669c",
+            "b965d6e0-eb19-4cb1-b47f-aa96104c6cc3",
+            "e318924c-8ddb-46f3-8d39-2c195ec8c4d2"
+        ],
+        "categoryIds": ""
+    },
+    {
+        "id": "232201d0-9a4d-4271-8938-bcdc1959e3e3",
+        "name": "Schedule 11: Full quality assurance",
+        "legislativeAreaId": [
+            "55174916-ba65-49e8-9ad5-48a0321f4e9b"
+        ],
+        "productIds": [
+            "a397272e-a13e-405c-ac54-c77064ef290e",
+            "2ae322ec-d1e5-4b54-9365-294c8a362012",
+            "8152ed13-48e3-47c1-beef-cf4f126d824d",
+            "cf21f0bc-0af1-46f9-9db5-e34e78a2f969",
+            "3ac65121-875e-4f7e-bffa-f270ffabad30",
+            "783044d9-6e7a-4611-8765-9c1f018b235e",
+            "fcf317ed-de3e-47cc-9d86-553d20d9b44e",
+            "083f7f8c-309e-4af5-947c-5ca8beddfca0",
+            "8f61fb10-c921-4695-bef8-210b8a84330b",
+            "df3681f0-0680-4211-8e03-848ec3afea5b",
+            "c7ff7623-4a87-4970-9ca9-25ed13e6ea58",
+            "7240ad0b-8117-4409-b263-407e16ba3789",
+            "661f7ba5-d069-4079-ba10-a4141bf3d027",
+            "516e3ef8-cb71-48b4-8ee6-6312a2da4dc6",
+            "06435e3b-f274-4494-8e77-08eb8ca2dbdd",
+            "5c157a49-b61a-4b0d-b95d-163bb0a1cc54",
+            "8d000f3e-8a5a-4e5f-9b82-f6ec1de9e519",
+            "ecd04ada-c6b2-4da0-9c3f-954cdceeccbf",
+            "df29f3bb-be56-41dc-a669-87cfcfaeb99a",
+            "eb85d710-c8e6-4b77-adc5-69888544669c",
+            "b965d6e0-eb19-4cb1-b47f-aa96104c6cc3",
+            "e318924c-8ddb-46f3-8d39-2c195ec8c4d2"
+        ],
+        "categoryIds": ""
+    },
+    {
+        "id": "ab0fae73-b4db-42c6-b62a-0eefe3127515",
+        "name": "Schedule 4 – Module B Type examination",
+        "legislativeAreaId": [
+            "32d80c5e-0314-483b-8985-a35d507cad52"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "60d1244b-da14-45ce-9d9c-4c2d065b0f7e",
+            "0b0c8938-a7e4-4c9d-a5f9-61eaff789ce5"
+        ]
+    },
+    {
+        "id": "8c8a6e42-024d-4553-ad84-5e91cd4c8d4c",
+        "name": "Schedule 5 Part 1 – Module C Conformity to type based on internal production control",
+        "legislativeAreaId": [
+            "32d80c5e-0314-483b-8985-a35d507cad52"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "60d1244b-da14-45ce-9d9c-4c2d065b0f7e",
+            "0b0c8938-a7e4-4c9d-a5f9-61eaff789ce5"
+        ]
+    },
+    {
+        "id": "1f0ba129-c8c1-4314-9434-cdea5d07fe41",
+        "name": "Schedule 5 Part 2 – Module D Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "32d80c5e-0314-483b-8985-a35d507cad52"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "60d1244b-da14-45ce-9d9c-4c2d065b0f7e",
+            "0b0c8938-a7e4-4c9d-a5f9-61eaff789ce5"
+        ]
+    },
+    {
+        "id": "e2028f5c-497f-490d-9f4c-4eb47c864973",
+        "name": "Schedule 5 Part 3 – Module E Conformity to type based on product quality assurance",
+        "legislativeAreaId": [
+            "32d80c5e-0314-483b-8985-a35d507cad52"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "60d1244b-da14-45ce-9d9c-4c2d065b0f7e",
+            "0b0c8938-a7e4-4c9d-a5f9-61eaff789ce5"
+        ]
+    },
+    {
+        "id": "35b63cb9-4062-4088-8601-f4adf2d4b819",
+        "name": "Module A1 Internal production control plus supervised product testing",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2f59e69b-f984-4dd5-b44d-2d264c5aeb5f",
+            "9964b165-bc13-489c-8acd-daf720f87091",
+            "a6300a83-c1db-404d-aff9-c70363276c3c",
+            "e73bf09b-d473-475c-a0ab-74a943701be0"
+        ]
+    },
+    {
+        "id": "a0882592-537d-4271-b32b-272d48c7432f",
+        "name": "Module B Type examination",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2f59e69b-f984-4dd5-b44d-2d264c5aeb5f",
+            "9964b165-bc13-489c-8acd-daf720f87091",
+            "f9bf9dea-2bff-4e06-8416-7b113f00bc5c",
+            "55baa3a9-0631-4284-bcb9-f81a3c47968b",
+            "15dfd696-f9ad-4025-a34a-ef565af600c1",
+            "3381d852-5934-4654-b495-520a76277a11"
+        ]
+    },
+    {
+        "id": "63c2d27b-a2e5-4543-a778-13739b08f537",
+        "name": "Module C Conformity to type based on internal production control",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2f59e69b-f984-4dd5-b44d-2d264c5aeb5f",
+            "9964b165-bc13-489c-8acd-daf720f87091",
+            "f9bf9dea-2bff-4e06-8416-7b113f00bc5c",
+            "55baa3a9-0631-4284-bcb9-f81a3c47968b",
+            "15dfd696-f9ad-4025-a34a-ef565af600c1"
+        ]
+    },
+    {
+        "id": "6907371b-b14d-435b-81bd-f4eddcf506b0",
+        "name": "Module C1 Conformity to type based on internal production control plus supervised product testing",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "3381d852-5934-4654-b495-520a76277a11"
+        ]
+    },
+    {
+        "id": "adfb9b83-390d-4cc7-b304-6ca16ee5a536",
+        "name": "Module D Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2f59e69b-f984-4dd5-b44d-2d264c5aeb5f",
+            "9964b165-bc13-489c-8acd-daf720f87091",
+            "f9bf9dea-2bff-4e06-8416-7b113f00bc5c",
+            "55baa3a9-0631-4284-bcb9-f81a3c47968b",
+            "15dfd696-f9ad-4025-a34a-ef565af600c1"
+        ]
+    },
+    {
+        "id": "527df19b-6fe8-4f14-b51e-bf708ca1b8d4",
+        "name": "Module E Conformity to type based on product quality assurance",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2f59e69b-f984-4dd5-b44d-2d264c5aeb5f",
+            "9964b165-bc13-489c-8acd-daf720f87091",
+            "f9bf9dea-2bff-4e06-8416-7b113f00bc5c",
+            "55baa3a9-0631-4284-bcb9-f81a3c47968b",
+            "15dfd696-f9ad-4025-a34a-ef565af600c1"
+        ]
+    },
+    {
+        "id": "5d28a812-6a40-4ddf-b3dc-24926e98c4f3",
+        "name": "Module F Conformity to type based on product verification",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2f59e69b-f984-4dd5-b44d-2d264c5aeb5f",
+            "9964b165-bc13-489c-8acd-daf720f87091",
+            "f9bf9dea-2bff-4e06-8416-7b113f00bc5c",
+            "55baa3a9-0631-4284-bcb9-f81a3c47968b",
+            "15dfd696-f9ad-4025-a34a-ef565af600c1"
+        ]
+    },
+    {
+        "id": "a49dbbaf-60c2-4e8e-b937-644b39fbd3a4",
+        "name": "Module G Conformity based on unit verification",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2f59e69b-f984-4dd5-b44d-2d264c5aeb5f",
+            "9964b165-bc13-489c-8acd-daf720f87091",
+            "f9bf9dea-2bff-4e06-8416-7b113f00bc5c",
+            "55baa3a9-0631-4284-bcb9-f81a3c47968b",
+            "15dfd696-f9ad-4025-a34a-ef565af600c1",
+            "3381d852-5934-4654-b495-520a76277a11",
+            "a6300a83-c1db-404d-aff9-c70363276c3c",
+            "e73bf09b-d473-475c-a0ab-74a943701be0",
+            "2c9bacf5-0e01-449a-bb01-945a72529b5a"
+        ]
+    },
+    {
+        "id": "cfb3e95a-4f91-49eb-a09b-83c77ba9ea9a",
+        "name": "Module H Conformity based on full quality assurance",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "2f59e69b-f984-4dd5-b44d-2d264c5aeb5f",
+            "9964b165-bc13-489c-8acd-daf720f87091",
+            "f9bf9dea-2bff-4e06-8416-7b113f00bc5c",
+            "55baa3a9-0631-4284-bcb9-f81a3c47968b",
+            "15dfd696-f9ad-4025-a34a-ef565af600c1",
+            "a6300a83-c1db-404d-aff9-c70363276c3c",
+            "e73bf09b-d473-475c-a0ab-74a943701be0",
+            "2c9bacf5-0e01-449a-bb01-945a72529b5a"
+        ]
+    },
+    {
+        "id": "fc112c8a-d77a-4ed6-82d2-40a53e5468ea",
+        "name": "Schedule 5 Post Construction Assessment",
+        "legislativeAreaId": [
+            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "bee676ed-8e77-47fd-b5a4-f268638f2a26"
+        ]
+    },
+    {
+        "id": "3fe89c2e-9424-43d7-9fbe-342788262345",
+        "name": "Annex III – Module B Production Type examination",
+        "legislativeAreaId": [
+            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        ],
+        "productIds": [
+            "e261df79-15c1-4a90-a650-ca5671224241",
+            "e5acb6ff-49fc-45e9-986e-46325259d7bf",
+            "1b7cac38-834c-4daa-8408-c476dbbe6665",
+            "f59384c9-7087-44fb-b8cb-bc781d97fb73",
+            "7a452590-1826-4215-b9db-0ecbcbdd850e",
+            "0c5d3af3-ff82-4301-8750-c967a2d56750",
+            "5e2393a8-55e3-4430-be73-cdc079483990",
+            "c59881d6-5955-4fa7-9568-38226814673c",
+            "b03e36e1-dc17-42af-9b5c-09f8bbe3ce1a",
+            "852472e9-1f87-4eaa-9ca3-0cfbdfeb9559",
+            "c230ac8c-b9d8-4d61-84d0-ec7f32c758c8",
+            "e0bf1ece-9486-440b-a25c-1e195b622ea6"
+        ],
+        "categoryIds": [
+            "73a7ac40-2b28-4973-b371-10605bcbc123",
+            "0e6f721a-0eda-42bb-b3e6-f208566d48aa",
+            "cfd43643-31c3-476f-803b-acaa957318a9",
+            "c2579268-ec87-4508-9524-69be6892dce3",
+            "c5451bb8-a867-4702-a2bd-027ffb77873c",
+            "21021680-ec96-4ad6-b854-0df84444d883"
+        ]
+    },
+    {
+        "id": "992c0d70-b6c8-4e09-ac65-f605e4f816bb",
+        "name": "Annex IV – Module D Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        ],
+        "productIds": [
+            "e261df79-15c1-4a90-a650-ca5671224241",
+            "e5acb6ff-49fc-45e9-986e-46325259d7bf",
+            "1b7cac38-834c-4daa-8408-c476dbbe6665",
+            "f59384c9-7087-44fb-b8cb-bc781d97fb73",
+            "7a452590-1826-4215-b9db-0ecbcbdd850e",
+            "0c5d3af3-ff82-4301-8750-c967a2d56750",
+            "5e2393a8-55e3-4430-be73-cdc079483990",
+            "c59881d6-5955-4fa7-9568-38226814673c",
+            "b03e36e1-dc17-42af-9b5c-09f8bbe3ce1a",
+            "852472e9-1f87-4eaa-9ca3-0cfbdfeb9559",
+            "c230ac8c-b9d8-4d61-84d0-ec7f32c758c8",
+            "e0bf1ece-9486-440b-a25c-1e195b622ea6"
+        ],
+        "categoryIds": [
+            "73a7ac40-2b28-4973-b371-10605bcbc123",
+            "0e6f721a-0eda-42bb-b3e6-f208566d48aa",
+            "cfd43643-31c3-476f-803b-acaa957318a9",
+            "c2579268-ec87-4508-9524-69be6892dce3",
+            "c5451bb8-a867-4702-a2bd-027ffb77873c",
+            "21021680-ec96-4ad6-b854-0df84444d883"
+        ]
+    },
+    {
+        "id": "a06a2138-3d8a-465a-949f-f058391d416e",
+        "name": "Annex V – Module F Conformity to type based on subsystem or safety component verification",
+        "legislativeAreaId": [
+            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        ],
+        "productIds": [
+            "e261df79-15c1-4a90-a650-ca5671224241",
+            "e5acb6ff-49fc-45e9-986e-46325259d7bf",
+            "1b7cac38-834c-4daa-8408-c476dbbe6665",
+            "f59384c9-7087-44fb-b8cb-bc781d97fb73",
+            "7a452590-1826-4215-b9db-0ecbcbdd850e",
+            "0c5d3af3-ff82-4301-8750-c967a2d56750",
+            "5e2393a8-55e3-4430-be73-cdc079483990",
+            "c59881d6-5955-4fa7-9568-38226814673c",
+            "b03e36e1-dc17-42af-9b5c-09f8bbe3ce1a",
+            "852472e9-1f87-4eaa-9ca3-0cfbdfeb9559",
+            "c230ac8c-b9d8-4d61-84d0-ec7f32c758c8",
+            "e0bf1ece-9486-440b-a25c-1e195b622ea6"
+        ],
+        "categoryIds": [
+            "73a7ac40-2b28-4973-b371-10605bcbc123",
+            "0e6f721a-0eda-42bb-b3e6-f208566d48aa",
+            "cfd43643-31c3-476f-803b-acaa957318a9",
+            "c2579268-ec87-4508-9524-69be6892dce3",
+            "c5451bb8-a867-4702-a2bd-027ffb77873c",
+            "21021680-ec96-4ad6-b854-0df84444d883"
+        ]
+    },
+    {
+        "id": "c0aedf9b-d653-4a76-8ed9-5880da372f1f",
+        "name": "Annex VI – Module G Conformity based on unit verification",
+        "legislativeAreaId": [
+            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        ],
+        "productIds": [
+            "e261df79-15c1-4a90-a650-ca5671224241",
+            "e5acb6ff-49fc-45e9-986e-46325259d7bf",
+            "1b7cac38-834c-4daa-8408-c476dbbe6665",
+            "f59384c9-7087-44fb-b8cb-bc781d97fb73",
+            "7a452590-1826-4215-b9db-0ecbcbdd850e",
+            "0c5d3af3-ff82-4301-8750-c967a2d56750",
+            "5e2393a8-55e3-4430-be73-cdc079483990",
+            "c59881d6-5955-4fa7-9568-38226814673c",
+            "b03e36e1-dc17-42af-9b5c-09f8bbe3ce1a",
+            "852472e9-1f87-4eaa-9ca3-0cfbdfeb9559",
+            "c230ac8c-b9d8-4d61-84d0-ec7f32c758c8",
+            "e0bf1ece-9486-440b-a25c-1e195b622ea6"
+        ],
+        "categoryIds": [
+            "73a7ac40-2b28-4973-b371-10605bcbc123",
+            "0e6f721a-0eda-42bb-b3e6-f208566d48aa",
+            "cfd43643-31c3-476f-803b-acaa957318a9",
+            "c2579268-ec87-4508-9524-69be6892dce3",
+            "c5451bb8-a867-4702-a2bd-027ffb77873c",
+            "21021680-ec96-4ad6-b854-0df84444d883"
+        ]
+    },
+    {
+        "id": "39ff3b85-f960-4b13-88b8-71fa3f8d4f1d",
+        "name": "Annex VII – Module H1 Conformity based on full quality assurance plus design examination",
+        "legislativeAreaId": [
+            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        ],
+        "productIds": [
+            "e261df79-15c1-4a90-a650-ca5671224241",
+            "e5acb6ff-49fc-45e9-986e-46325259d7bf",
+            "1b7cac38-834c-4daa-8408-c476dbbe6665",
+            "f59384c9-7087-44fb-b8cb-bc781d97fb73",
+            "7a452590-1826-4215-b9db-0ecbcbdd850e",
+            "0c5d3af3-ff82-4301-8750-c967a2d56750",
+            "5e2393a8-55e3-4430-be73-cdc079483990",
+            "c59881d6-5955-4fa7-9568-38226814673c",
+            "b03e36e1-dc17-42af-9b5c-09f8bbe3ce1a",
+            "852472e9-1f87-4eaa-9ca3-0cfbdfeb9559",
+            "c230ac8c-b9d8-4d61-84d0-ec7f32c758c8",
+            "e0bf1ece-9486-440b-a25c-1e195b622ea6"
+        ],
+        "categoryIds": [
+            "73a7ac40-2b28-4973-b371-10605bcbc123",
+            "0e6f721a-0eda-42bb-b3e6-f208566d48aa",
+            "cfd43643-31c3-476f-803b-acaa957318a9",
+            "c2579268-ec87-4508-9524-69be6892dce3",
+            "c5451bb8-a867-4702-a2bd-027ffb77873c",
+            "21021680-ec96-4ad6-b854-0df84444d883"
+        ]
+    },
+    {
+        "id": "bb6e56e7-8a21-4b8e-8f77-376e3212a06c",
+        "name": "Part 1 – Module B Type examination",
+        "legislativeAreaId": [
+            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        ],
+        "productIds": "",
+        "categoryIds": ""
+    },
+    {
+        "id": "66ec016e-d86d-4c0e-9f25-cf08312fe578",
+        "name": "Part 2 – Module C2 Conformity to type based on internal production control plus supervised product checks at random intervals",
+        "legislativeAreaId": [
+            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        ],
+        "productIds": "",
+        "categoryIds": ""
+    },
+    {
+        "id": "e6d3e851-8644-431d-bc74-3aaeca2be713",
+        "name": "Part 3 – Module D Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        ],
+        "productIds": "",
+        "categoryIds": ""
+    },
+    {
+        "id": "c58cf4bf-5529-4535-bd4c-9179ede42c66",
+        "name": "Part 4 – Module E Conformity to type based on product quality assurance",
+        "legislativeAreaId": [
+            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        ],
+        "productIds": "",
+        "categoryIds": ""
+    },
+    {
+        "id": "48286c4e-5f4d-4f41-9712-5588434f977f",
+        "name": "Part 5 – Module F Conformity to type based on product verification",
+        "legislativeAreaId": [
+            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        ],
+        "productIds": "",
+        "categoryIds": ""
+    },
+    {
+        "id": "bdf9e4a3-a9a8-4f91-a27d-1a3d1728bcbd",
+        "name": "Part 6 – Module G Conformity based on unit verification",
+        "legislativeAreaId": [
+            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        ],
+        "productIds": "",
+        "categoryIds": ""
+    },
+    {
+        "id": "1284df07-13b9-453d-b4a5-1842b0e4c22e",
+        "name": "Part 1 – Module B Type Examination",
+        "legislativeAreaId": [
+            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "e13d13e0-2ba9-48f8-b610-71e45f569c98",
+            "f68eeafc-3df1-4827-91ec-87474ea5c8d2",
+            "32708645-930a-48cd-9c92-ce52b8b675f7",
+            "6311172b-be1f-434e-ab2d-6dcb3e535237",
+            "a1ca6cd9-c8e4-438a-84c6-e31d030719d6",
+            "c9423861-68de-494a-b98d-85b999dd67db",
+            "72eab7af-5ca7-45f6-ab3e-8542259f307b",
+            "24f28f30-3942-40ff-a2d4-8c006ea43d42"
+        ]
+    },
+    {
+        "id": "253af46c-173e-4a30-81fb-80fca482f3fe",
+        "name": "Part 2 – Module C2 Conformity to type based on internal production control plus supervised product checks at random intervals",
+        "legislativeAreaId": [
+            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "e13d13e0-2ba9-48f8-b610-71e45f569c98",
+            "f68eeafc-3df1-4827-91ec-87474ea5c8d2",
+            "32708645-930a-48cd-9c92-ce52b8b675f7",
+            "6311172b-be1f-434e-ab2d-6dcb3e535237",
+            "a1ca6cd9-c8e4-438a-84c6-e31d030719d6",
+            "c9423861-68de-494a-b98d-85b999dd67db",
+            "72eab7af-5ca7-45f6-ab3e-8542259f307b",
+            "24f28f30-3942-40ff-a2d4-8c006ea43d42"
+        ]
+    },
+    {
+        "id": "c911e82c-a1c4-483b-877d-ff8f5a5b89e3",
+        "name": "Part 3 – Module D Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "e13d13e0-2ba9-48f8-b610-71e45f569c98",
+            "f68eeafc-3df1-4827-91ec-87474ea5c8d2",
+            "32708645-930a-48cd-9c92-ce52b8b675f7",
+            "6311172b-be1f-434e-ab2d-6dcb3e535237",
+            "a1ca6cd9-c8e4-438a-84c6-e31d030719d6",
+            "c9423861-68de-494a-b98d-85b999dd67db",
+            "72eab7af-5ca7-45f6-ab3e-8542259f307b",
+            "24f28f30-3942-40ff-a2d4-8c006ea43d42"
+        ]
+    },
+    {
+        "id": "10a71b68-1b21-46e2-9d95-628d0d04f075",
+        "name": "Part 4 – Module E Conformity to type based on product quality assurance",
+        "legislativeAreaId": [
+            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "e13d13e0-2ba9-48f8-b610-71e45f569c98",
+            "f68eeafc-3df1-4827-91ec-87474ea5c8d2",
+            "32708645-930a-48cd-9c92-ce52b8b675f7",
+            "6311172b-be1f-434e-ab2d-6dcb3e535237",
+            "a1ca6cd9-c8e4-438a-84c6-e31d030719d6",
+            "c9423861-68de-494a-b98d-85b999dd67db",
+            "72eab7af-5ca7-45f6-ab3e-8542259f307b",
+            "24f28f30-3942-40ff-a2d4-8c006ea43d42"
+        ]
+    },
+    {
+        "id": "f71ae5a5-5b1e-444d-8fbd-9417a0864d94",
+        "name": "Part 5 – Module G Conformity based on unit verification",
+        "legislativeAreaId": [
+            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "e13d13e0-2ba9-48f8-b610-71e45f569c98",
+            "f68eeafc-3df1-4827-91ec-87474ea5c8d2",
+            "32708645-930a-48cd-9c92-ce52b8b675f7",
+            "6311172b-be1f-434e-ab2d-6dcb3e535237",
+            "a1ca6cd9-c8e4-438a-84c6-e31d030719d6",
+            "c9423861-68de-494a-b98d-85b999dd67db",
+            "72eab7af-5ca7-45f6-ab3e-8542259f307b",
+            "24f28f30-3942-40ff-a2d4-8c006ea43d42"
+        ]
+    },
+    {
+        "id": "152fbc84-5946-46f7-a999-72e1bf9852c7",
+        "name": "Part 6 – Module H Conformity based on full quality assurance",
+        "legislativeAreaId": [
+            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "6311172b-be1f-434e-ab2d-6dcb3e535237"
+        ]
+    },
+    {
+        "id": "1dc494fe-1e35-40fb-9c51-3a36abbc7bb1",
+        "name": "Schedule 6 – Module B Type examination",
+        "legislativeAreaId": [
+            "8e686be5-727f-4d70-875f-58109fd03856"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "850c2596-d786-43f0-82a4-2f93da7a0965"
+        ]
+    },
+    {
+        "id": "28c0d155-5f8a-4a28-919d-e92d3567642f",
+        "name": "Module B (Paragraph 1) Type examination",
+        "legislativeAreaId": [
+            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "59f41f70-4ce2-4773-88d8-65344611418d",
+            "c41cdb43-7c3d-460a-84be-1c931fb12db0",
+            "74913dc5-96ac-4a7e-b8ab-9387882e6140",
+            "e7e41428-3ba7-4373-94b0-125d28200bcb",
+            "0c8753e6-ae64-4bad-9684-be4b93e36f9b",
+            "7a4950f0-336a-4c64-8c11-26f8488c7f45",
+            "76d75c6b-5b1e-4622-8c3e-741e797a975b"
+        ]
+    },
+    {
+        "id": "cdda1360-4b43-4a7d-a2d9-5213189806bf",
+        "name": "Module D (Paragraph 2) Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "59f41f70-4ce2-4773-88d8-65344611418d",
+            "c41cdb43-7c3d-460a-84be-1c931fb12db0",
+            "74913dc5-96ac-4a7e-b8ab-9387882e6140",
+            "e7e41428-3ba7-4373-94b0-125d28200bcb",
+            "0c8753e6-ae64-4bad-9684-be4b93e36f9b",
+            "7a4950f0-336a-4c64-8c11-26f8488c7f45",
+            "76d75c6b-5b1e-4622-8c3e-741e797a975b"
+        ]
+    },
+    {
+        "id": "2bc14898-bc8f-45f8-a5b2-634361b819b8",
+        "name": "Module D1 (Paragraph 3) Quality assurance of the production process",
+        "legislativeAreaId": [
+            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "59f41f70-4ce2-4773-88d8-65344611418d",
+            "c41cdb43-7c3d-460a-84be-1c931fb12db0",
+            "74913dc5-96ac-4a7e-b8ab-9387882e6140",
+            "e7e41428-3ba7-4373-94b0-125d28200bcb",
+            "0c8753e6-ae64-4bad-9684-be4b93e36f9b",
+            "7a4950f0-336a-4c64-8c11-26f8488c7f45"
+        ]
+    },
+    {
+        "id": "413ef6fa-e6dd-4f2a-9b53-21930eb7cbad",
+        "name": "Module F (Paragraph 4) Conformity to type based on product verification",
+        "legislativeAreaId": [
+            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "59f41f70-4ce2-4773-88d8-65344611418d",
+            "c41cdb43-7c3d-460a-84be-1c931fb12db0",
+            "74913dc5-96ac-4a7e-b8ab-9387882e6140",
+            "e7e41428-3ba7-4373-94b0-125d28200bcb",
+            "0c8753e6-ae64-4bad-9684-be4b93e36f9b",
+            "7a4950f0-336a-4c64-8c11-26f8488c7f45",
+            "76d75c6b-5b1e-4622-8c3e-741e797a975b"
+        ]
+    },
+    {
+        "id": "d0a6e0b0-d40b-4b29-a8d9-7bbb17bbad2e",
+        "name": "Module F1 (Paragraph 5) Conformity based on product verification",
+        "legislativeAreaId": [
+            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "59f41f70-4ce2-4773-88d8-65344611418d",
+            "c41cdb43-7c3d-460a-84be-1c931fb12db0",
+            "74913dc5-96ac-4a7e-b8ab-9387882e6140",
+            "e7e41428-3ba7-4373-94b0-125d28200bcb",
+            "0c8753e6-ae64-4bad-9684-be4b93e36f9b",
+            "7a4950f0-336a-4c64-8c11-26f8488c7f45"
+        ]
+    },
+    {
+        "id": "8e38110b-71fe-43bb-86ad-b6a2ddcb208d",
+        "name": "Module G (Paragraph 6) Conformity based on unit verification",
+        "legislativeAreaId": [
+            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "59f41f70-4ce2-4773-88d8-65344611418d",
+            "c41cdb43-7c3d-460a-84be-1c931fb12db0",
+            "74913dc5-96ac-4a7e-b8ab-9387882e6140",
+            "e7e41428-3ba7-4373-94b0-125d28200bcb",
+            "0c8753e6-ae64-4bad-9684-be4b93e36f9b",
+            "7a4950f0-336a-4c64-8c11-26f8488c7f45"
+        ]
+    },
+    {
+        "id": "ae7165cb-c681-4149-99ff-510b8d874bd9",
+        "name": "Module A2 Internal production control plus supervised instrument checks at random intervals",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "c275b78b-9fca-41ef-bab5-07843f853e75"
+        ],
+        "categoryIds": [
+            "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        ]
+    },
+    {
+        "id": "e22ac592-5836-4085-b167-bf6bfe5683c0",
+        "name": "Module B Type examination",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "00b51206-f885-42d3-af20-85a158bbb51a",
+            "bfede408-1331-4887-9263-d3c9cb57cf5d",
+            "e7843cf6-32b9-43d8-8a44-187f6000deec",
+            "88750f40-3ba8-4d3a-b927-6c72e79854f1",
+            "b5f56d9a-0fab-4238-b2d4-b65ebd1041c7",
+            "b2f9b136-58b8-4ee7-8d75-64ba94f599e7",
+            "0ac03a13-b728-4fd2-85d1-9e3714b62186",
+            "cfd63d73-a331-4a95-95c5-680ccecf52a1",
+            "aa4e2145-94c8-4e88-b072-d7733a4c3e0e",
+            "b6ac00c3-197a-4134-a457-d2d5a7cfe9f8",
+            "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
+            "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
+            "feda1b4d-efbf-474c-a14d-931f1a8112ca",
+            "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
+            "30f75726-1712-47e2-af17-af14601ae87d",
+            "887d7407-150a-4947-beeb-f7003b9528af",
+            "c56450c4-8993-41c1-8376-5f8875b24b2c",
+            "e80ed0c3-8921-41bf-a553-a531dd8a8464",
+            "0a98e53c-da6b-4c6e-bc6e-c567a5027ae1",
+            "c7b41e1b-ba34-4c7c-b83a-b69caf678a27",
+            "a1827ba5-12bf-426f-a5cf-e8783da1558a",
+            "1ce8b9ec-6403-4b9a-9e41-2cfc2fededf6",
+            "07c6b25f-366a-479a-92eb-0c733c5ec1d1",
+            "871ef6e7-8985-4af9-8dc9-2e73c4ac6830",
+            "9e58f6db-36d5-4fb4-958c-102ce4cc8d2d",
+            "ac70a10d-b899-447c-a8da-b76dea0a5274",
+            "c275b78b-9fca-41ef-bab5-07843f853e75"
+        ],
+        "categoryIds": [
+            "8c8ba0f1-3c74-400a-a9c8-9598afd1e81e",
+            "8a7bfd21-c76f-4734-b131-017b2b89f22a",
+            "56d0f247-49b5-4604-8e49-41a183c97ce7",
+            "9c41a73c-cdef-4f79-afd5-1ffb9b17038a",
+            "ec833bf0-0c3b-49cc-8658-8b0115084943",
+            "3aad4982-6876-4820-ad1f-90110eb3800f",
+            "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+            "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+            "3c21e03a-1a1b-40b5-acdd-ec8c998a2366",
+            "89c9f511-5147-466b-9a1c-85fe4ba2e174",
+            "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        ]
+    },
+    {
+        "id": "1768deda-37f5-40de-b01d-0fca8d175e95",
+        "name": "Module D Conformity to type based on quality assurance of the production process",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "00b51206-f885-42d3-af20-85a158bbb51a",
+            "bfede408-1331-4887-9263-d3c9cb57cf5d",
+            "e7843cf6-32b9-43d8-8a44-187f6000deec",
+            "88750f40-3ba8-4d3a-b927-6c72e79854f1",
+            "b5f56d9a-0fab-4238-b2d4-b65ebd1041c7",
+            "b2f9b136-58b8-4ee7-8d75-64ba94f599e7",
+            "0ac03a13-b728-4fd2-85d1-9e3714b62186",
+            "cfd63d73-a331-4a95-95c5-680ccecf52a1",
+            "aa4e2145-94c8-4e88-b072-d7733a4c3e0e",
+            "b6ac00c3-197a-4134-a457-d2d5a7cfe9f8",
+            "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
+            "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
+            "feda1b4d-efbf-474c-a14d-931f1a8112ca",
+            "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
+            "30f75726-1712-47e2-af17-af14601ae87d",
+            "887d7407-150a-4947-beeb-f7003b9528af",
+            "c56450c4-8993-41c1-8376-5f8875b24b2c",
+            "e80ed0c3-8921-41bf-a553-a531dd8a8464",
+            "0a98e53c-da6b-4c6e-bc6e-c567a5027ae1",
+            "c7b41e1b-ba34-4c7c-b83a-b69caf678a27",
+            "a1827ba5-12bf-426f-a5cf-e8783da1558a",
+            "1ce8b9ec-6403-4b9a-9e41-2cfc2fededf6",
+            "07c6b25f-366a-479a-92eb-0c733c5ec1d1",
+            "871ef6e7-8985-4af9-8dc9-2e73c4ac6830",
+            "9e58f6db-36d5-4fb4-958c-102ce4cc8d2d",
+            "ac70a10d-b899-447c-a8da-b76dea0a5274",
+            "c275b78b-9fca-41ef-bab5-07843f853e75"
+        ],
+        "categoryIds": [
+            "8c8ba0f1-3c74-400a-a9c8-9598afd1e81e",
+            "8a7bfd21-c76f-4734-b131-017b2b89f22a",
+            "56d0f247-49b5-4604-8e49-41a183c97ce7",
+            "9c41a73c-cdef-4f79-afd5-1ffb9b17038a",
+            "ec833bf0-0c3b-49cc-8658-8b0115084943",
+            "3aad4982-6876-4820-ad1f-90110eb3800f",
+            "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+            "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+            "3c21e03a-1a1b-40b5-acdd-ec8c998a2366",
+            "89c9f511-5147-466b-9a1c-85fe4ba2e174",
+            "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        ]
+    },
+    {
+        "id": "73a7e977-76e0-4ea2-b23a-e5f9ccf90b10",
+        "name": "Module D1 Quality assurance of the production process",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
+            "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
+            "feda1b4d-efbf-474c-a14d-931f1a8112ca",
+            "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
+            "30f75726-1712-47e2-af17-af14601ae87d",
+            "ac70a10d-b899-447c-a8da-b76dea0a5274",
+            "c275b78b-9fca-41ef-bab5-07843f853e75"
+        ],
+        "categoryIds": [
+            "3aad4982-6876-4820-ad1f-90110eb3800f",
+            "89c9f511-5147-466b-9a1c-85fe4ba2e174",
+            "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        ]
+    },
+    {
+        "id": "60189b59-43dc-46a5-98a2-e640deabaf5e",
+        "name": "Module E Conformity to type based on instrument quality assurance",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
+            "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
+            "feda1b4d-efbf-474c-a14d-931f1a8112ca",
+            "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
+            "30f75726-1712-47e2-af17-af14601ae87d",
+            "887d7407-150a-4947-beeb-f7003b9528af",
+            "c56450c4-8993-41c1-8376-5f8875b24b2c",
+            "e80ed0c3-8921-41bf-a553-a531dd8a8464",
+            "0a98e53c-da6b-4c6e-bc6e-c567a5027ae1",
+            "c7b41e1b-ba34-4c7c-b83a-b69caf678a27",
+            "c275b78b-9fca-41ef-bab5-07843f853e75"
+        ],
+        "categoryIds": [
+            "3aad4982-6876-4820-ad1f-90110eb3800f",
+            "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+            "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        ]
+    },
+    {
+        "id": "faeb122b-5ea5-44be-b50d-023a1d2d0815",
+        "name": "Module E1 Quality assurance of final instrument inspection and testing",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "c275b78b-9fca-41ef-bab5-07843f853e75"
+        ],
+        "categoryIds": [
+            "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        ]
+    },
+    {
+        "id": "f816268e-f543-4458-9d96-2e2d171a6c0f",
+        "name": "Module F Conformity to type based on product verification",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "00b51206-f885-42d3-af20-85a158bbb51a",
+            "bfede408-1331-4887-9263-d3c9cb57cf5d",
+            "e7843cf6-32b9-43d8-8a44-187f6000deec",
+            "88750f40-3ba8-4d3a-b927-6c72e79854f1",
+            "b5f56d9a-0fab-4238-b2d4-b65ebd1041c7",
+            "b2f9b136-58b8-4ee7-8d75-64ba94f599e7",
+            "0ac03a13-b728-4fd2-85d1-9e3714b62186",
+            "cfd63d73-a331-4a95-95c5-680ccecf52a1",
+            "aa4e2145-94c8-4e88-b072-d7733a4c3e0e",
+            "b6ac00c3-197a-4134-a457-d2d5a7cfe9f8",
+            "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
+            "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
+            "feda1b4d-efbf-474c-a14d-931f1a8112ca",
+            "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
+            "30f75726-1712-47e2-af17-af14601ae87d",
+            "887d7407-150a-4947-beeb-f7003b9528af",
+            "c56450c4-8993-41c1-8376-5f8875b24b2c",
+            "e80ed0c3-8921-41bf-a553-a531dd8a8464",
+            "0a98e53c-da6b-4c6e-bc6e-c567a5027ae1",
+            "c7b41e1b-ba34-4c7c-b83a-b69caf678a27",
+            "a1827ba5-12bf-426f-a5cf-e8783da1558a",
+            "1ce8b9ec-6403-4b9a-9e41-2cfc2fededf6",
+            "07c6b25f-366a-479a-92eb-0c733c5ec1d1",
+            "871ef6e7-8985-4af9-8dc9-2e73c4ac6830",
+            "9e58f6db-36d5-4fb4-958c-102ce4cc8d2d",
+            "ac70a10d-b899-447c-a8da-b76dea0a5274"
+        ],
+        "categoryIds": [
+            "8c8ba0f1-3c74-400a-a9c8-9598afd1e81e",
+            "8a7bfd21-c76f-4734-b131-017b2b89f22a",
+            "56d0f247-49b5-4604-8e49-41a183c97ce7",
+            "9c41a73c-cdef-4f79-afd5-1ffb9b17038a",
+            "ec833bf0-0c3b-49cc-8658-8b0115084943",
+            "3aad4982-6876-4820-ad1f-90110eb3800f",
+            "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+            "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+            "3c21e03a-1a1b-40b5-acdd-ec8c998a2366"
+        ]
+    },
+    {
+        "id": "c8766a28-9535-4e95-95bd-240940d5d34f",
+        "name": "Module F1 Conformity based on product verification",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": "",
+        "categoryIds": [
+            "3aad4982-6876-4820-ad1f-90110eb3800f",
+            "89c9f511-5147-466b-9a1c-85fe4ba2e174"
+        ]
+    },
+    {
+        "id": "8d3342e8-49d3-4efa-a6fb-21866ebf797a",
+        "name": "Module G Conformity based on unit verification",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "00b51206-f885-42d3-af20-85a158bbb51a",
+            "bfede408-1331-4887-9263-d3c9cb57cf5d",
+            "e7843cf6-32b9-43d8-8a44-187f6000deec",
+            "88750f40-3ba8-4d3a-b927-6c72e79854f1",
+            "b5f56d9a-0fab-4238-b2d4-b65ebd1041c7",
+            "b2f9b136-58b8-4ee7-8d75-64ba94f599e7",
+            "0ac03a13-b728-4fd2-85d1-9e3714b62186",
+            "cfd63d73-a331-4a95-95c5-680ccecf52a1",
+            "aa4e2145-94c8-4e88-b072-d7733a4c3e0e",
+            "b6ac00c3-197a-4134-a457-d2d5a7cfe9f8",
+            "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
+            "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
+            "feda1b4d-efbf-474c-a14d-931f1a8112ca",
+            "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
+            "30f75726-1712-47e2-af17-af14601ae87d",
+            "887d7407-150a-4947-beeb-f7003b9528af",
+            "c56450c4-8993-41c1-8376-5f8875b24b2c",
+            "e80ed0c3-8921-41bf-a553-a531dd8a8464",
+            "0a98e53c-da6b-4c6e-bc6e-c567a5027ae1",
+            "c7b41e1b-ba34-4c7c-b83a-b69caf678a27",
+            "a1827ba5-12bf-426f-a5cf-e8783da1558a",
+            "1ce8b9ec-6403-4b9a-9e41-2cfc2fededf6",
+            "07c6b25f-366a-479a-92eb-0c733c5ec1d1",
+            "871ef6e7-8985-4af9-8dc9-2e73c4ac6830",
+            "9e58f6db-36d5-4fb4-958c-102ce4cc8d2d",
+            "ac70a10d-b899-447c-a8da-b76dea0a5274"
+        ],
+        "categoryIds": [
+            "ec833bf0-0c3b-49cc-8658-8b0115084943",
+            "3aad4982-6876-4820-ad1f-90110eb3800f",
+            "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+            "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+            "89c9f511-5147-466b-9a1c-85fe4ba2e174"
+        ]
+    },
+    {
+        "id": "bd4ef09f-278f-4c74-8f4d-f253d66adbfa",
+        "name": "Module H Conformity based on full quality assurance",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "ac70a10d-b899-447c-a8da-b76dea0a5274",
+            "c275b78b-9fca-41ef-bab5-07843f853e75"
+        ],
+        "categoryIds": [
+            "89c9f511-5147-466b-9a1c-85fe4ba2e174",
+            "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        ]
+    },
+    {
+        "id": "c871a453-f001-4e47-a9d1-7cdf3804e010",
+        "name": "Module H1 Conformity based on full quality assurance plus design examination",
+        "legislativeAreaId": [
+            "92728722-d721-4da0-8d9a-f22f3829a551"
+        ],
+        "productIds": [
+            "00b51206-f885-42d3-af20-85a158bbb51a",
+            "bfede408-1331-4887-9263-d3c9cb57cf5d",
+            "e7843cf6-32b9-43d8-8a44-187f6000deec",
+            "88750f40-3ba8-4d3a-b927-6c72e79854f1",
+            "b5f56d9a-0fab-4238-b2d4-b65ebd1041c7",
+            "b2f9b136-58b8-4ee7-8d75-64ba94f599e7",
+            "0ac03a13-b728-4fd2-85d1-9e3714b62186",
+            "cfd63d73-a331-4a95-95c5-680ccecf52a1",
+            "aa4e2145-94c8-4e88-b072-d7733a4c3e0e",
+            "b6ac00c3-197a-4134-a457-d2d5a7cfe9f8",
+            "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
+            "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
+            "feda1b4d-efbf-474c-a14d-931f1a8112ca",
+            "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
+            "30f75726-1712-47e2-af17-af14601ae87d",
+            "887d7407-150a-4947-beeb-f7003b9528af",
+            "c56450c4-8993-41c1-8376-5f8875b24b2c",
+            "e80ed0c3-8921-41bf-a553-a531dd8a8464",
+            "0a98e53c-da6b-4c6e-bc6e-c567a5027ae1",
+            "c7b41e1b-ba34-4c7c-b83a-b69caf678a27",
+            "a1827ba5-12bf-426f-a5cf-e8783da1558a",
+            "1ce8b9ec-6403-4b9a-9e41-2cfc2fededf6",
+            "07c6b25f-366a-479a-92eb-0c733c5ec1d1",
+            "871ef6e7-8985-4af9-8dc9-2e73c4ac6830",
+            "9e58f6db-36d5-4fb4-958c-102ce4cc8d2d"
+        ],
+        "categoryIds": [
+            "8c8ba0f1-3c74-400a-a9c8-9598afd1e81e",
+            "8a7bfd21-c76f-4734-b131-017b2b89f22a",
+            "56d0f247-49b5-4604-8e49-41a183c97ce7",
+            "9c41a73c-cdef-4f79-afd5-1ffb9b17038a",
+            "ec833bf0-0c3b-49cc-8658-8b0115084943",
+            "3aad4982-6876-4820-ad1f-90110eb3800f",
+            "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+            "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+            "3c21e03a-1a1b-40b5-acdd-ec8c998a2366",
+            "76d75c6b-5b1e-4622-8c3e-741e797a975b"
+        ]
+    }
+]
