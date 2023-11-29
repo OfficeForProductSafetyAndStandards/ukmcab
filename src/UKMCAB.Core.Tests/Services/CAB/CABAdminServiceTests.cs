@@ -1,10 +1,8 @@
 ﻿using NUnit.Framework;
 using Moq;
-using Microsoft.Azure.Cosmos;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading;
 using System.Threading.Tasks;
 using UKMCAB.Core.Services.CAB;
 using Microsoft.ApplicationInsights;
@@ -13,8 +11,6 @@ using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
-using UKMCAB.Core.Security;
-using UKMCAB.Core.Tests.FakeRepositories;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -22,7 +18,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
     public class CABAdminServiceTests
     {     
         private Mock<ICABRepository> _mockCABRepository;
-        //private ICABRepository _cabRepository;
         private Mock<ICachedPublishedCABService> _mockCachedPublishedCAB;
         private Mock<ICachedSearchService> _mockCachedSearchService;
         private TelemetryClient _telemetryClient;
@@ -32,7 +27,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
         [SetUp] 
         public void Setup() {
             _mockCABRepository = new Mock<ICABRepository>();
-            //_cabRepository = new FakeCABRepository();
             _mockCachedPublishedCAB = new Mock<ICachedPublishedCABService>();
             _mockCachedSearchService = new Mock<ICachedSearchService>();
             _telemetryClient = new TelemetryClient();
@@ -41,85 +35,43 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _telemetryClient, _mockUserService.Object);
         }
 
-        [Test]  
-        public async Task FindAllCABManagementQueueDocumentsForUserRole_UKAS_ShouldReturnFilteredResults()
+        [Theory]
+        [TestCase("dsdds")]
+        public async Task FindAllCABManagementQueueDocumentsForUserRole_UKAS_ShouldReturnFilteredResults(string role)
         {
             // Arrange
-            var auditLog1 = new Audit { DateTime =  DateTime.Now, UserRole = Roles.UKAS.Id }; // UKAS audit log
-
-            var expectedUKASResults = new List<Document>
+            var auditLog1 = new Audit { DateTime =  DateTime.Now, UserRole = role }; // Role audit log
+            var expectedResults = new List<Document>
             {
-                new Document{AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
-                new Document{AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
-                new Document{AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Archived }
+                new() {AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
+                new() {AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
+                new() {AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Archived }
             };
-
-            _mockCABRepository.Setup(x => x.Query<Document>(It.Is<Expression<Func<Document, bool>>>(predicate =>
-                EvaluateDocumentPredicateForUKASRole(predicate, Roles.UKAS.Id))))
-            .ReturnsAsync(expectedUKASResults);
-
-
-            // Act
-            var ukasResults = await _sut.FindAllCABManagementQueueDocumentsForUserRole(Roles.UKAS.Id);
-
-
-            // Assert
-            //Assert.AreEqual(expectedResult, ukasResults);
-            CollectionAssert.AreEquivalent(expectedUKASResults, ukasResults);
-        }
-
-        [Test]  
-        public async Task FindAllCABManagementQueueDocumentsForUserRole_OPSS_ShouldReturnAllResults()
-        {
-            // Arrange
-            var auditLog1 = new Audit { DateTime =  DateTime.Now, UserRole = Roles.UKAS.Id }; // UKAS audit log
-            var auditLog2 = new Audit { DateTime =  DateTime.Now, UserRole = Roles.OPSS.Id }; // OPSS audit log
-
-            var expectedOPSSResults = new List<Document>
+            var auditLog2 = new Audit { DateTime =  DateTime.Now, UserRole = "other" }; 
+            var expectedOther = new List<Document>
             {
-                new Document{AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
-                new Document{AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
                 new Document{AuditLog = new List<Audit>{auditLog2}, StatusValue = Status.Draft },
-                new Document{AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Archived }
             };
 
             _mockCABRepository.Setup(x => x.Query<Document>(It.Is<Expression<Func<Document, bool>>>(predicate =>
-                EvaluateDocumentPredicateForOPSSRole(predicate, Roles.OPSS.Id))))
-            .ReturnsAsync(expectedOPSSResults);
-
-
+                    !EvaluateDocumentPredicateWithoutRole(predicate))))
+            .ReturnsAsync(expectedResults);
+            
+            _mockCABRepository.Setup(x => x.Query<Document>(It.Is<Expression<Func<Document, bool>>>(predicate =>
+                    EvaluateDocumentPredicateWithoutRole(predicate))))
+                .ReturnsAsync(expectedOther);
+            
             // Act
-            var opssResults = await _sut.FindAllCABManagementQueueDocumentsForUserRole(Roles.OPSS.Id);
-
+            var ukasResults = await _sut.FindAllCABManagementQueueDocumentsForUserRole(role);
 
             // Assert
-            CollectionAssert.AreEquivalent(expectedOPSSResults, opssResults);
+            CollectionAssert.AreEquivalent(expectedResults, ukasResults);
         }
 
-
-
-        private bool EvaluateDocumentPredicateForUKASRole(Expression<Func<Document, bool>> predicate, string userRole)
+        private bool EvaluateDocumentPredicateWithoutRole(Expression<Func<Document, bool>> predicate)
         {
             var body = predicate.Body as BinaryExpression;
-
-            if (userRole == Roles.UKAS.Id && body != null)
-            {
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool EvaluateDocumentPredicateForOPSSRole(Expression<Func<Document, bool>> predicate, string userRole)
-        {
-            var body = predicate.Body as BinaryExpression;
-
-            if (userRole == Roles.OPSS.Id && body != null)
-            {
-                return true;
-            }
-
-            return false;
+            return body != null && !body.ToString().Contains("LastUserGroup");
         }
     }
 }
