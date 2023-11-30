@@ -77,12 +77,12 @@ public class WorkflowTaskServiceTests
         Assert.AreEqual(task, returnedTask);
     }
 
-    private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User userAssigned, Guid? cabId = null)
+    private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User? userAssigned = null, Guid? cabId = null, bool completed = false)
     {
         var task = new WorkflowTask(_faker.Random.Guid(), TaskType.RequestToPublish, userSubmitter,
             forRoleId, userAssigned,
             DateTime.UtcNow, _faker.Random.Words(), _faker.Date.Past(), userSubmitter, _faker.Date.Past(), null, null,
-            false,
+            completed,
             cabId ?? _faker.Random.Guid()
         );
         return task;
@@ -198,7 +198,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByForRoleAndCompletedAsync(userAssigned.UserId, true);
+        var result = await _sut.GetAssignedToGroupForRoleIdAsync(userAssigned.UserId);
 
         // Arrange
         Assert.AreEqual(2, result.Count);
@@ -224,7 +224,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByForRoleAndCompletedAsync(userSubmitter.RoleId!, true);
+        var result = await _sut.GetAssignedToGroupForRoleIdAsync(userSubmitter.RoleId!);
 
         // Arrange
         Assert.AreEqual(2, result.Count);
@@ -233,6 +233,35 @@ public class WorkflowTaskServiceTests
             Assert.AreEqual(userSubmitter, task.Submitter);
         }
     }
+    
+    [Test]
+    public async Task TasksFound_GetCompletedForRoleIdAsync_ReturnsTasks()
+    {
+        // Arrange
+        var userSubmitter = CreateFakeUkasUser();
+        _mockWorkflowTaskRepository.Setup(r =>
+                r.QueryAsync(It.IsAny<Expression<Func<Data.Models.Workflow.WorkflowTask, bool>>>()))
+            .ReturnsAsync(new List<Data.Models.Workflow.WorkflowTask>
+            {
+                CreateValidTask(userSubmitter, Roles.OPSS.Id, CreateFakeOpssUser(), null, true)
+                    .MapToWorkflowTaskData(),
+                CreateValidTask(userSubmitter, Roles.OPSS.Id, null,Guid.NewGuid(), true)
+                    .MapToWorkflowTaskData(),
+            });
+
+        // Act
+        var result = await _sut.GetCompletedForRoleIdAsync(userSubmitter.RoleId!);
+
+        // Arrange
+        Assert.AreEqual(2, result.Count);
+        foreach (var task in result)
+        {
+            Assert.AreEqual(userSubmitter, task.Submitter);
+            Assert.AreEqual(Roles.OPSS.Id, task.ForRoleId);
+            Assert.True(task.Completed);
+        }
+    }
+
 
     [Test]
     public async Task TasksFound_GetByCabIdAsync_ReturnsTasks()
@@ -263,14 +292,14 @@ public class WorkflowTaskServiceTests
     private User CreateFakeUkasUser()
     {
         var ukasUser = new User(_faker.Random.Word(), _faker.Random.Word(), _faker.Random.Word(),
-            Roles.UKAS.ToString(), _faker.Internet.Email());
+            Roles.UKAS.ToString()!, _faker.Internet.Email());
         return ukasUser;
     }
 
     private User CreateFakeOpssUser()
     {
         var ukasUser = new User(_faker.Random.Word(), _faker.Random.Word(), _faker.Random.Word(),
-            Roles.OPSS.ToString(), _faker.Internet.Email());
+            Roles.OPSS.ToString()!, _faker.Internet.Email());
         return ukasUser;
     }
 }

@@ -1,6 +1,7 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Common.Extensions;
+using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
@@ -18,11 +19,11 @@ public class NotificationController : Controller
 {
     public const string AssignedToGroupTabName = "assigned-group";
     public const string LastUpdatedLabel = "Last updated";
-    
+
     private const string UnassignedTabName = "unassigned";
     private const string AssignedToMeTabName = "assigned-me";
     private const string CompletedTabName = "completed";
-    
+
     private const string LastUpdated = "LastUpdated";
     private const string From = "From";
     private const string Subject = "Subject";
@@ -85,13 +86,13 @@ public class NotificationController : Controller
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
         var resultsPerPage = 5;
         var skipTake = SkipTake.FromPage(pageNumber - 1, 5);
-        
+
         var unassigned = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
         var assignedToGroup =
-            await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id);
+            await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(role.Id);
         var completed =
-            await _workflowTaskService.GetByForRoleAndCompletedAsync(role.Id, true);
-        
+            await _workflowTaskService.GetCompletedForRoleIdAsync(role.Id);
+
         List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
             unAssignedItems =
                 await BuildTableItemsAsync(unassigned, sf, sd);
@@ -116,7 +117,9 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = unAssignedItems.Count,
                     TabId = UnassignedTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, BuildMobileSortOptions(UnassignedTabName,sf)),
+                },
+                new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
+                    BuildMobileSortOptions(UnassignedTabName, sf)),
                 UnassignedTabName,
                 "unassigned", unAssignedItems.Count, SentOnLabel),
             new NotificationsViewModelTable(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd),
@@ -127,7 +130,9 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = assignedToMe.Count,
                     TabId = AssignedToMeTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, BuildMobileSortOptions(AssignedToMeTabName,sf)),
+                },
+                new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
+                    BuildMobileSortOptions(AssignedToMeTabName, sf)),
                 AssignedToMeTabName, "assigned to me",
                 assignedToMe.Count, LastUpdatedLabel),
             new NotificationsViewModelTable(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
@@ -137,7 +142,9 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = assignedToGroup.Count,
                     TabId = AssignedToGroupTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, BuildMobileSortOptions(AssignedToGroupTabName,sf)),
+                },
+                new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
+                    BuildMobileSortOptions(AssignedToGroupTabName, sf)),
                 AssignedToGroupTabName, "assigned to " + role.Label, assignedToGroup.Count),
             new NotificationsViewModelTable(completedItems.Any(), sf, SortDirectionHelper.Get(sd),
                 completedItems.Skip(skipTake.Skip).Take(skipTake.Take),
@@ -147,7 +154,9 @@ public class NotificationController : Controller
                     ResultsPerPage = resultsPerPage,
                     Total = completed.Count,
                     TabId = CompletedTabName
-                }, new MobileSortTableViewModel(sf, SortDirectionHelper.Descending, BuildMobileSortOptions(CompletedTabName,sf)),
+                },
+                new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
+                    BuildMobileSortOptions(CompletedTabName, sf)),
                 CompletedTabName,
                 "completed", completedItems.Count, CompletedOn),
             role.Label
@@ -158,32 +167,33 @@ public class NotificationController : Controller
     private List<Tuple<string, string, bool>> BuildMobileSortOptions(string tabName, string sortField)
     {
         var items = new Dictionary<string, Tuple<string, string, bool>>();
-        items.Add(From,new(From, From, false));
-        items.Add(Subject,new(Subject, Subject,false));
+        items.Add(From, new(From, From, false));
+        items.Add(Subject, new(Subject, Subject, false));
         items.Add(CabNameValue, new(CabNameValue, CABNameLabel, false));
-    
+
         switch (tabName)
         {
             case AssignedToMeTabName:
                 items.Add(LastUpdated, new Tuple<string, string, bool>(LastUpdated, LastUpdatedLabel, false));
                 break;
             case UnassignedTabName:
-                items.Add(LastUpdated,new(LastUpdated, SentOnLabel,false));
+                items.Add(LastUpdated, new(LastUpdated, SentOnLabel, false));
                 break;
             case AssignedToGroupTabName:
-                items.Add(Assignee,new(Assignee, Assignee,false));
-                items.Add(LastUpdated,new(LastUpdated, LastUpdatedLabel,false));
+                items.Add(Assignee, new(Assignee, Assignee, false));
+                items.Add(LastUpdated, new(LastUpdated, LastUpdatedLabel, false));
                 break;
             case CompletedTabName:
-                items.Add(LastUpdated,new(LastUpdated, CompletedOn,false));
+                items.Add(LastUpdated, new(LastUpdated, CompletedOn, false));
                 break;
         }
-        
+
         if (items.ContainsKey(sortField))
         {
             var selectedItem = items[sortField];
             items[sortField] = new Tuple<string, string, bool>(selectedItem.Item1, selectedItem.Item2, true);
         }
+
         return items.Select(i => i.Value).ToList();
     }
 
@@ -199,15 +209,16 @@ public class NotificationController : Controller
                 DetailLink)>();
         foreach (var notification in tasks)
         {
-            Document? cab = null;
+            string? cabName = null;
             if (notification.CABId.HasValue)
             {
-                cab = await _cabAdminService.GetLatestDocumentAsync(notification.CABId.ToString()!);
+                var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(notification.CABId.ToString()!);
+                cabName = cabs.First().Name;
             }
 
             var item = (From: notification.Submitter.FirstAndLastName,
                 Subject: notification.TaskType.GetEnumDescription(),
-                CABName: cab?.Name,
+                CABName: cabName,
                 Assignee: notification.Assignee?.FirstAndLastName,
                 LastUpdated: notification.SentOn.ToStringBeisFormat(),
                 DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails,
