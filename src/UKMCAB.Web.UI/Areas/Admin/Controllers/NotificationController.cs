@@ -52,13 +52,13 @@ public class NotificationController : Controller
     }
 
     [HttpGet(Name = Routes.Notifications)]
-    public async Task<IActionResult> Index(string sf, string sd, int pageNumber = 1)
+    public async Task<IActionResult> Index(string sf, string sd, int? pageNumber = null)
     {
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var assignedToMe = await _workflowTaskService.GetByAssignedUserAsync(userId);
         var cacheKey = userId + "-assigned-to-me-notifications";
         if (assignedToMe.Any() && await _distCache.GetAsync<string?>(cacheKey) == null &&
-            string.IsNullOrWhiteSpace(sf) && string.IsNullOrWhiteSpace(sd) && pageNumber == 1)
+            string.IsNullOrWhiteSpace(sf) && string.IsNullOrWhiteSpace(sd) && pageNumber == null)
         {
             //Business rule redirect to assigned to me tab if items found
             await _distCache.SetAsync(cacheKey, assignedToMe.Count.ToString(), new TimeSpan(0, 0, 10, 0));
@@ -66,7 +66,7 @@ public class NotificationController : Controller
         }
 
         await _distCache.RemoveAsync(cacheKey);
-        var model = await CreateNotificationsViewModelAsync(assignedToMe, sf, sd, pageNumber, userId);
+        var model = await CreateNotificationsViewModelAsync(assignedToMe, sf, sd, pageNumber ?? 1);
         ModelState.Clear();
         return View(model);
     }
