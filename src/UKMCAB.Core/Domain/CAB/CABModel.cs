@@ -5,7 +5,7 @@ namespace UKMCAB.Core.Domain.CAB;
 public class CabModel
 {
     public Guid Id { get; set; }
-    public Status StatusValue { get; internal set; }
+    public Status StatusValue { get; set; }
     public SubStatus SubStatus { get; internal set; }
     public Guid CABId { get; set; }
     public string? Name { get; set; } = null!;

@@ -5,7 +5,7 @@ using UKMCAB.Data.Models;
 using FileUpload = UKMCAB.Core.Domain.FileUpload;
 
 namespace UKMCAB.Core.Mappers;
-internal static class CabModelMapper
+public static class CabModelMapper
 {
     public static CabModel MapToCabModel(this Document source)
     {
@@ -40,6 +40,9 @@ internal static class CabModelMapper
         dest.SupportingDocuments = supportingDocuments;
         dest.TestingLocations = source.TestingLocations;
         dest.UKASReference = source.UKASReference;
+        dest.URLSlug = source.URLSlug;
+        dest.CabNumber = source.CABNumber;
+        dest.AuditLog = source.AuditLog;
         return dest;
     }
 
@@ -121,7 +124,25 @@ internal static class CabModelMapper
 
         dest.TestingLocations = source.TestingLocations;
         if (source.UKASReference != null) dest.UKASReference = source.UKASReference;
+        dest.URLSlug = source.URLSlug;
+        dest.CABNumber = source.CABNumber;
+        if (source.AuditLog.Any())
+        {
+            foreach(var audit in source.AuditLog)
+            {
+                dest.AuditLog.Add(new Audit
+                {
+                    UserId = audit.UserId,
+                    UserName = audit.UserName,
+                    UserRole = audit.UserRole,
+                    DateTime = audit.DateTime,
+                    Action = audit.Action,
+                    Comment = audit.Comment,
+                    PublicComment = audit.PublicComment,
+                    IsUserInputComment = audit.IsUserInputComment
+                });
+            }
+        }
         return dest;
     }
-
 }

@@ -11,6 +11,8 @@ using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
+using UKMCAB.Core.Mappers;
+using System.Linq;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -43,19 +45,23 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var auditLog1 = new Audit { DateTime =  DateTime.Now, UserRole = role }; // Role audit log
             var expectedResults = new List<Document>
             {
-                new() {AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
-                new() {AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
-                new() {AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Archived }
+                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
+                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
+                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Archived }
             };
+
             var auditLog2 = new Audit { DateTime =  DateTime.Now, UserRole = "other" }; 
+
             var expectedOther = new List<Document>
             {
-                new Document{AuditLog = new List<Audit>{auditLog2}, StatusValue = Status.Draft },
+                new Document{
+                    id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), AuditLog = new List<Audit>{auditLog2}, StatusValue = Status.Draft 
+                }
             };
 
             _mockCABRepository.Setup(x => x.Query<Document>(It.Is<Expression<Func<Document, bool>>>(predicate =>
                     !EvaluateDocumentPredicateWithoutRole(predicate))))
-            .ReturnsAsync(expectedResults);
+                .ReturnsAsync(expectedResults);
             
             _mockCABRepository.Setup(x => x.Query<Document>(It.Is<Expression<Func<Document, bool>>>(predicate =>
                     EvaluateDocumentPredicateWithoutRole(predicate))))
@@ -64,9 +70,16 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var ukasResults = await _sut.FindAllCABManagementQueueDocumentsForUserRole(role);
 
+            var expectedResultsCABModel = expectedResults.Select(d => d.MapToCabModel()).ToList();
+            var expectedOtherCABModel = expectedOther.Select(d => d.MapToCabModel()).ToList();
+
             // Assert
-            CollectionAssert.AreEquivalent(expectedResults, ukasResults);
-            CollectionAssert.AreNotEquivalent(expectedOther, ukasResults);
+            Assert.AreEqual(ukasResults[0].CABId, expectedResultsCABModel[0].CABId);
+            Assert.AreEqual(ukasResults[1].CABId, expectedResultsCABModel[1].CABId);
+            Assert.AreEqual(ukasResults[2].CABId, expectedResultsCABModel[2].CABId);
+
+            Assert.AreNotEqual(ukasResults[0].CABId, expectedOtherCABModel[0].CABId);
+       
         }
 
         private bool EvaluateDocumentPredicateWithoutRole(Expression<Func<Document, bool>> predicate)
