@@ -2,6 +2,7 @@
 using Microsoft.Azure.Cosmos.Linq;
 using StackExchange.Redis;
 using UKMCAB.Common;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
 using UKMCAB.Core.Security;
@@ -18,6 +19,7 @@ using UKMCAB.Data.Search.Services;
 
 namespace UKMCAB.Core.Services.CAB
 {
+    //todo Change these methods to use CabModel as return value / params instead of Document
     public class CABAdminService : ICABAdminService
     {
         private readonly ICABRepository _cabRepository;
@@ -54,9 +56,9 @@ namespace UKMCAB.Core.Services.CAB
             return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList().Count > 0;
         }
 
-        public async Task<Document> FindPublishedDocumentByCABIdAsync(string id)
+        public async Task<Document?> FindPublishedDocumentByCABIdAsync(string id)
         {
-            var doc = await _cabRepository.Query<Document>(
+            List<Document> doc = await _cabRepository.Query<Document>(
                 d => d.StatusValue == Status.Published && d.CABId.Equals(id));
             return doc.Any() && doc.Count == 1 ? doc.First() : null;
         }
@@ -91,15 +93,15 @@ namespace UKMCAB.Core.Services.CAB
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             // if a newly create cab or a draft version exists this will be the latest version, there should be no more than one
-            if (documents.Any(d => d.StatusValue == Status.Draft))
+            if (documents.Any(d => d is { StatusValue: Status.Draft }))
             {
-                return documents.Single(d => d.StatusValue == Status.Draft);
+                return documents.Single(d => d is { StatusValue: Status.Draft });
             }
 
             // if no draft or created version exists then see if a published version exists, again should only ever be one
-            if (documents.Any(d => d.StatusValue == Status.Published))
+            if (documents.Any(d => d is { StatusValue: Status.Published }))
             {
-                return documents.Single(d => d.StatusValue == Status.Published);
+                return documents.Single(d => d is { StatusValue: Status.Published });
             }
 
             return null;
@@ -186,6 +188,26 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatsAsync();
 
             return draft;
+        }
+
+        /// <summary>
+        /// Updates document with Pending approval with audit action
+        /// </summary>
+        /// <param name="cabId">cabId to update</param>
+        /// <param name="status">status of Cab to get</param>
+        /// <param name="audit">Audit to log</param>
+        public async Task SetSubStatusToPendingApprovalAsync(Guid cabId, Status status, Audit audit)
+        {
+            var documents = await _cabRepository.Query<Document>(c => c.CABId == cabId.ToString() && c.Status == status.ToString());
+            if (documents.Count != 1)
+            {
+                throw new NotFoundException("Single Document not found to set to pending approval");
+            }
+
+            var document = documents.First();
+            document.SubStatus = SubStatus.PendingApproval;
+            document.AuditLog.Add(audit);
+            await _cabRepository.UpdateAsync(document);
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)

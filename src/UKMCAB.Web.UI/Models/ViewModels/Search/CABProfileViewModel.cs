@@ -5,7 +5,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
     public class CABProfileViewModel : ILayoutModel
     {
-        // ILayoutModel
         public string? Title => $"CAB profile - {Name}";
         public string? ReturnUrl { get; set; }
         public string? Status { get; set; }
@@ -14,11 +13,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? ArchiveReason { get; set; }
         public bool IsArchived { get; set; }
         public bool IsUnarchivedRequest { get; set; }
+        public bool RequiresUnarchiveApproval { get; set; }
         public bool IsPublished { get; set; }
         public bool HasDraft { get; set; }
         public AuditLogHistoryViewModel AuditLogHistory { get; set; }
 
         public string CABId { get; set; }
+        public string CABUrl { get; set; }
 
         // Publish attributes
         public DateTime? PublishedDate { get; set; }

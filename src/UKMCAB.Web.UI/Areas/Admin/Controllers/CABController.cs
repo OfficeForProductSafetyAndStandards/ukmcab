@@ -469,7 +469,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             };
             var userRoleId = Roles.List.First(r =>
                 r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-            await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail,
+            await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
                 _templateOptions.NotificationRequestToPublish, personalisation);
             if (publishModel.CabDetailsViewModel != null)
             {

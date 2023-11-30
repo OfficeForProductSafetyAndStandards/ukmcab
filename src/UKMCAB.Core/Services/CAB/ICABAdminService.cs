@@ -1,5 +1,4 @@
-﻿using UKMCAB.Core.Domain;
-using UKMCAB.Core.Domain.CAB;
+﻿using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 
@@ -12,7 +11,7 @@ namespace UKMCAB.Core.Services.CAB
             string? ukasReference);
 
         Task<bool> DocumentWithSameNameExistsAsync(Document document);
-        Task<Document> FindPublishedDocumentByCABIdAsync(string id);
+        Task<Document?> FindPublishedDocumentByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
         /// <summary>
         /// Find all Draft and Archived documents restricted by user role
@@ -26,6 +25,7 @@ namespace UKMCAB.Core.Services.CAB
         Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft,
             bool submitForApproval = false);
 
+        Task SetSubStatusToPendingApprovalAsync(Guid cabId, Status status, Audit audit);
         Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument);
         Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveInternalReason, string archivePublicReason);
         Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveInternalReason, string unarchivePublicReason);
