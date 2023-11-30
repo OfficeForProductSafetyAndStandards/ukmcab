@@ -25,10 +25,10 @@ public class WorkflowTaskService : IWorkflowTaskService
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
-    public async Task<List<WorkflowTask>> GetAssignedToGroupForRoleIdAsync(string roleId)
+    public async Task<List<WorkflowTask>> GetAssignedToGroupForRoleIdAsync(string roleId, string? userIdToExclude = null)
     {
         var items = await _workflowTaskRepository.QueryAsync(w =>
-            w.ForRoleId.ToLower() == roleId.ToLower() && w.Assignee != null &&
+            w.ForRoleId.ToLower() == roleId.ToLower() && w.Assignee != null && w.Assignee.Id != userIdToExclude &&
             !w.Completed);
 
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();

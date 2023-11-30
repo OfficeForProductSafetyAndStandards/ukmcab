@@ -5,7 +5,7 @@ namespace UKMCAB.Core.Services.Workflow;
 public interface IWorkflowTaskService
 {
     public Task<List<WorkflowTask>> GetUnassignedByForRoleIdAsync(string roleId);
-    public Task<List<WorkflowTask>> GetAssignedToGroupForRoleIdAsync(string roleId);
+    public Task<List<WorkflowTask>> GetAssignedToGroupForRoleIdAsync(string roleId, string? userIdToExclude = null);
     public Task<List<WorkflowTask>> GetByAssignedUserAsync(string userId);
     public Task<List<WorkflowTask>> GetCompletedForRoleIdAsync(string roleId);
     public Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId);

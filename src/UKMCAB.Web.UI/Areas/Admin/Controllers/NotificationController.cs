@@ -66,7 +66,7 @@ public class NotificationController : Controller
         }
 
         await _distCache.RemoveAsync(cacheKey);
-        var model = await CreateNotificationsViewModelAsync(assignedToMe, sf, sd, pageNumber);
+        var model = await CreateNotificationsViewModelAsync(assignedToMe, sf, sd, pageNumber, userId);
         ModelState.Clear();
         return View(model);
     }
@@ -75,7 +75,9 @@ public class NotificationController : Controller
         List<WorkflowTask> assignedToMe,
         string sf,
         string sd,
-        int pageNumber)
+        int pageNumber,
+        string? userId
+        )
     {
         if (string.IsNullOrWhiteSpace(sf) && string.IsNullOrWhiteSpace(sd))
         {
@@ -89,7 +91,7 @@ public class NotificationController : Controller
 
         var unassigned = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
         var assignedToGroup =
-            await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(role.Id);
+            await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(role.Id, userId);
         var completed =
             await _workflowTaskService.GetCompletedForRoleIdAsync(role.Id);
 
