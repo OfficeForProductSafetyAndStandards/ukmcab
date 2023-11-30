@@ -94,7 +94,7 @@ public class NotificationDetailsController : Controller
             Status = workFlowTask.Completed ? "Completed" :
                 workFlowTask.Assignee == null ? "Unassigned" : "Assigned",
             IsCompleted = workFlowTask.Completed,
-            IsAssigned =  workFlowTask.Assignee != null,
+            IsAssigned = workFlowTask.Assignee != null,
             From = workFlowTask.Submitter.FirstAndLastName,
             Subject = workFlowTask.TaskType.GetEnumDescription(),
             Reason = workFlowTask.Body,
@@ -110,21 +110,20 @@ public class NotificationDetailsController : Controller
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
-        
-        var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString()!);
-        
-        if (cabDetails?.Status == Status.Archived.ToString() || cabDetails?.Status == Status.Published.ToString())
-        {
-            notificationDetail.ViewLink = (cabDetails.Name,
-                Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
 
-        }
-        else if(cabDetails?.Status == Status.Draft.ToString())
+        var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
+        var cabDetails = cabs.First();
+        notificationDetail.ViewLink = workFlowTask.TaskType switch
         {
-            notificationDetail.ViewLink = (cabDetails.Name,
-                Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId }));
-        }
-    
+            TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish
+                or TaskType.UnarchiveDeclined or TaskType.CABPublished =>
+                (cabDetails.Name,
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId })),
+            _ =>
+                (cabDetails.Name,
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId })),
+        };
+
         return (notificationDetail, workFlowTask);
     }
 }

@@ -63,7 +63,9 @@ namespace UKMCAB.Core.Services.CAB
         public async Task<List<CabModel>> FindDocumentsByCABIdAsync(string id)
         {
             var documents = await FindAllDocumentsByCABIdAsync(id);
-            return documents.Select(document => document.MapToCabModel()).ToList();
+            return documents.Select(document => document.MapToCabModel())
+                .OrderByDescending(d => d.LastUpdatedUtc)
+                .ToList();
         }
 
         public async Task<List<Document>> FindAllDocumentsByCABURLAsync(string url)
