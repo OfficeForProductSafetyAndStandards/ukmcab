@@ -111,20 +111,17 @@ public class NotificationDetailsController : Controller
         };
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
         
-        var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString()!);
-        
-        if (cabDetails?.Status == Status.Archived.ToString() || cabDetails?.Status == Status.Published.ToString())
+        var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
+        var cabDetails= cabs.First();
+        notificationDetail.ViewLink = cabDetails.StatusValue switch
         {
-            notificationDetail.ViewLink = (cabDetails.Name,
-                Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
+            Status.Archived or Status.Published => (cabDetails.Name,
+                Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId })),
+            Status.Draft => (cabDetails.Name,
+                Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId })),
+            _ => notificationDetail.ViewLink
+        };
 
-        }
-        else if(cabDetails?.Status == Status.Draft.ToString())
-        {
-            notificationDetail.ViewLink = (cabDetails.Name,
-                Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId }));
-        }
-    
         return (notificationDetail, workFlowTask);
     }
 }
