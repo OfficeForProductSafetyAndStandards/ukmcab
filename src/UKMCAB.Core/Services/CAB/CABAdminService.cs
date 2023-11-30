@@ -4,6 +4,7 @@ using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
@@ -25,7 +26,7 @@ namespace UKMCAB.Core.Services.CAB
         private readonly TelemetryClient _telemetryClient;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient)
+            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient, IUserService userService)
         {
             _cabRepository = cabRepository;
             _cachedSearchService = cachedSearchService;
@@ -75,11 +76,22 @@ namespace UKMCAB.Core.Services.CAB
             return docs;
         }
 
-        public async Task<List<Document>> FindAllCABManagementQueueDocuments()
+
+        /// <inheritdoc />
+        public async Task<List<CabModel>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            var docs = await _cabRepository.Query<Document>(d =>
-                d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
-            return docs;
+            var docs = new List<Document>();
+
+            if (!string.IsNullOrWhiteSpace(userRole))
+            {
+                docs = await _cabRepository.Query<Document>(d => (d.LastUserGroup == userRole &&
+                d.StatusValue == Status.Draft) || d.StatusValue == Status.Archived);
+
+                return docs.Select(document => document.MapToCabModel()).ToList();
+            }
+
+            docs = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
+            return docs.Select(document => document.MapToCabModel()).ToList();
         }
 
         public async Task<Document?> GetLatestDocumentAsync(string cabId)

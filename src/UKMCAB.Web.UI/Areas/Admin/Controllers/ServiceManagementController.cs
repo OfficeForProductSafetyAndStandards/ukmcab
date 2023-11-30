@@ -6,7 +6,8 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
-using UKMCAB.Web.UI.Areas.Search.Controllers;
+using System.Security.Claims;
+using UKMCAB.Core.Security;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -31,10 +32,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpGet("service-management", Name = "service.management")]
         public async Task<IActionResult> ServiceManagement()
         {
+            var userAccount =
+                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                            .Value) ?? throw new InvalidOperationException("User account not found");
+
+            var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
+            var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
             return View(new InternalLandingPageViewModel
             {
-                TotalDraftCABs = await _cabAdminService.GetCABCountForStatusAsync(Status.Draft),
-                TotalCABsPendingApproval = await _cabAdminService.GetCABCountForSubStatusAsync(SubStatus.PendingApproval),
+                TotalDraftCABs = docs.Where(d => d.StatusValue == Status.Draft).Count(),
+                TotalCABsPendingApproval = docs.Where(d => d.SubStatus == SubStatus.PendingApproval).Count(),
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending)
             }); 
         }
