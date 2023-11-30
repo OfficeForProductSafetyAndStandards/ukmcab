@@ -41,8 +41,7 @@ public class NotificationController : Controller
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly ICABAdminService _cabAdminService;
     private readonly IDistCache _distCache;
-
-
+    
     public NotificationController(IWorkflowTaskService workflowTaskService, ICABAdminService cabAdminService,
         IDistCache distCache)
     {
@@ -66,7 +65,7 @@ public class NotificationController : Controller
         }
 
         await _distCache.RemoveAsync(cacheKey);
-        var model = await CreateNotificationsViewModelAsync(assignedToMe, sf, sd, pageNumber ?? 1);
+        var model = await CreateNotificationsViewModelAsync(assignedToMe, sf, sd, pageNumber ?? 1,userId);
         ModelState.Clear();
         return View(model);
     }
