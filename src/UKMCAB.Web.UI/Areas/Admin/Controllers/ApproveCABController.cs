@@ -94,7 +94,7 @@ public class ApproveCABController : Controller
     private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId)
     {
         var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
-        var task = tasks.First(t => t.TaskType == TaskType.RequestToPublish);
+        var task = tasks.First(t => t is { TaskType: TaskType.RequestToPublish, Completed: false });
         task.Completed = true;
         return await _workflowTaskService.UpdateAsync(task);
     }

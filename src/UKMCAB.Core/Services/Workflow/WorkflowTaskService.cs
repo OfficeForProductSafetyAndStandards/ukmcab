@@ -25,21 +25,28 @@ public class WorkflowTaskService : IWorkflowTaskService
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
-    public async Task<List<WorkflowTask>> GetByForRoleAndCompletedAsync(string assignedUserRole, bool completed = false)
+    public async Task<List<WorkflowTask>> GetAssignedToGroupForRoleIdAsync(string roleId)
     {
-        var items = (await _workflowTaskRepository.QueryAsync(w =>
-            w.ForRoleId.ToLower() == assignedUserRole.ToLower() && w.Assignee == null && w.Assigned == null &&
-            w.Completed == completed));
+        var items = await _workflowTaskRepository.QueryAsync(w =>
+            w.ForRoleId.ToLower() == roleId.ToLower() && w.Assignee != null &&
+            !w.Completed);
 
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
     public async Task<List<WorkflowTask>> GetByAssignedUserAsync(string userId)
     {
-        var items = (await _workflowTaskRepository.QueryAsync(w =>
-            w.Assignee != null && w.Assignee.Id == userId));
+        var items = await _workflowTaskRepository.QueryAsync(w =>
+            w.Assignee != null && w.Assignee.Id == userId && !w.Completed);
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
+
+    public async Task<List<WorkflowTask>> GetCompletedForRoleIdAsync(string roleId)
+    {
+        var items = await _workflowTaskRepository.QueryAsync(w => w.Completed && w.ForRoleId == roleId);
+        return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
+    }
+
     public async Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId)
     {
         var items = await _workflowTaskRepository.QueryAsync(w =>
