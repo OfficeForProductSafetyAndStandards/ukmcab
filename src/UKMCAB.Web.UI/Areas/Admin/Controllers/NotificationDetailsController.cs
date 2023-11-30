@@ -94,7 +94,7 @@ public class NotificationDetailsController : Controller
             Status = workFlowTask.Completed ? "Completed" :
                 workFlowTask.Assignee == null ? "Unassigned" : "Assigned",
             IsCompleted = workFlowTask.Completed,
-            IsAssigned =  workFlowTask.Assignee != null,
+            IsAssigned = workFlowTask.Assignee != null,
             From = workFlowTask.Submitter.FirstAndLastName,
             Subject = workFlowTask.TaskType.GetEnumDescription(),
             Reason = workFlowTask.Body,
@@ -110,16 +110,18 @@ public class NotificationDetailsController : Controller
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
-        
+
         var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
-        var cabDetails= cabs.First();
-        notificationDetail.ViewLink = cabDetails.StatusValue switch
+        var cabDetails = cabs.First();
+        notificationDetail.ViewLink = workFlowTask.TaskType switch
         {
-            Status.Archived or Status.Published => (cabDetails.Name,
-                Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId })),
-            Status.Draft => (cabDetails.Name,
-                Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId })),
-            _ => notificationDetail.ViewLink
+            TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish
+                or TaskType.UnarchiveDeclined or TaskType.CABPublished =>
+                (cabDetails.Name,
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId })),
+            _ =>
+                (cabDetails.Name,
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId })),
         };
 
         return (notificationDetail, workFlowTask);
