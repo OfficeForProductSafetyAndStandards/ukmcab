@@ -113,9 +113,9 @@
                 }
             </govuk-summary-list>
 
-            @if (Model.IsCompleted == false)
+            @if (!Model.IsCompleted)
             {
-                if (Model.IsAssigned == false)
+                if (!Model.IsAssigned)
                 {
                     <govuk-select name="SelectedAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-label--s" asp-for="SelectedAssignee">
                         <govuk-select-label>Select an assignee</govuk-select-label>
