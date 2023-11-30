@@ -72,10 +72,11 @@ public class DeclineCABController : Controller
             return View("~/Areas/Admin/Views/CAB/Decline.cshtml", vm);
         }
 
-        var currentUser =
-            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-        document.AuditLog.Add(new Audit(currentUser, nameof(AuditCABActions.CABDeclined)));
-        var submitTask = await MarkTaskAsCompleteAsync(cabId);
+        var user = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ?? throw new InvalidOperationException();
+        var userRoleId = Roles.List.First(r =>
+            r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        document.AuditLog.Add(new Audit(user, nameof(AuditCABActions.CABDeclined)));
+        var submitTask = await MarkTaskAsCompleteAsync(cabId, new User(user.Id, user.FirstName, user.Surname, userRoleId, user.EmailAddress ?? throw new InvalidOperationException()));
         await SendNotificationOfDeclineAsync(cabId, document.Name, submitTask.Submitter, vm.DeclineReason);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
@@ -84,12 +85,13 @@ public class DeclineCABController : Controller
     /// Mark incoming Request to publish task as completed
     /// </summary>
     /// <param name="cabId">Associated CAB</param>
-    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId)
+    /// <param name="userLastUpdatedBy"></param>
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
     {
         var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
-        var task = tasks.First(t => t.TaskType == TaskType.RequestToPublish);
-        task.Completed = true;
-        return await _workflowTaskService.UpdateAsync(task);
+        var task = tasks.First(t => t is { TaskType: TaskType.RequestToPublish, Completed: false });
+        await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
+        return task;
     }
 
     /// <summary>
