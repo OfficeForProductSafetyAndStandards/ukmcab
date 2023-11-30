@@ -72,11 +72,14 @@ public class ApproveCABController : Controller
         }
 
         document.CABNumber = vm.CABNumber;
-        await _cabAdminService.PublishDocumentAsync(
+        var user =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
-            throw new InvalidOperationException("User account not found"), document);
-        var submitTask = await MarkTaskAsCompleteAsync(cabId);
-        await SendNotificationOfApprovalAsync(cabId, document.Name, submitTask.Submitter);
+            throw new InvalidOperationException("User account not found");
+        var userRoleId = Roles.List.First(r =>
+            r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        await _cabAdminService.PublishDocumentAsync(user, document);
+        var submitTask = await MarkTaskAsCompleteAsync(cabId, new User(user.Id, user.FirstName, user.Surname, userRoleId, user.EmailAddress ?? throw new InvalidOperationException()));
+        await SendNotificationOfApprovalAsync(cabId, document.Name ?? throw new InvalidOperationException(), submitTask.Submitter);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
     
@@ -91,12 +94,13 @@ public class ApproveCABController : Controller
     /// Mark incoming Request to publish task as completed
     /// </summary>
     /// <param name="cabId">Associated CAB</param>
-    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId)
+    /// <param name="userLastUpdatedBy"></param>
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
     {
         var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
         var task = tasks.First(t => t is { TaskType: TaskType.RequestToPublish, Completed: false });
-        task.Completed = true;
-        return await _workflowTaskService.UpdateAsync(task);
+        await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
+        return task;
     }
 
     /// <summary>

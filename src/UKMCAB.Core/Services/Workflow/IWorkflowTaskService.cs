@@ -12,4 +12,5 @@ public interface IWorkflowTaskService
     public Task<WorkflowTask> GetAsync(Guid id);
     public Task<WorkflowTask> CreateAsync(WorkflowTask workflowTask);
     public Task<WorkflowTask> UpdateAsync(WorkflowTask workflowTask);
+    public Task MarkTaskAsCompletedAsync(Guid taskId, User userLastUpdatedBy);
 }

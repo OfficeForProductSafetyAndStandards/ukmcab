@@ -71,4 +71,13 @@ public class WorkflowTaskService : IWorkflowTaskService
         var task = workflowTask.MapToWorkflowTaskData();
         return (await _workflowTaskRepository.ReplaceAsync(task)).MapToWorkflowTaskModel();
     }
+
+    public async Task MarkTaskAsCompletedAsync(Guid taskId, User userLastUpdatedBy)
+    {
+        var task = await GetAsync(taskId);
+        task.LastUpdatedBy = userLastUpdatedBy;
+        task.LastUpdatedOn = DateTime.Now;
+        task.Completed = true;
+        await UpdateAsync(task);
+    }
 }
