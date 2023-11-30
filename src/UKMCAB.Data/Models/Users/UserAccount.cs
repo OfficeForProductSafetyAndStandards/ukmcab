@@ -41,7 +41,6 @@ public class UserAccount
     /// The Role Label from Roles.
     /// </summary>
     public string? Role { get; set; }
-
     public string? GetEmailAddress() => ContactEmailAddress ?? EmailAddress;
     public string Status
     {

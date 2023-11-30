@@ -42,7 +42,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.CABManagementItems = cabManagementItems.Any()
                 ? cabManagementItems.Select(cmi => new CABManagementItemViewModel
                 {
-                    Id = cmi.CABId,
+                    Id = cmi.CABId.ToString(),
                     Name = cmi.Name,
                     URLSlug = cmi.URLSlug,
                     CABNumber = cmi.CABNumber,

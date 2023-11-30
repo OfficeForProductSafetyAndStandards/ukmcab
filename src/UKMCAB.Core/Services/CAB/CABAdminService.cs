@@ -1,13 +1,10 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
-using StackExchange.Redis;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
-using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
-using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
@@ -79,14 +76,20 @@ namespace UKMCAB.Core.Services.CAB
 
 
         /// <inheritdoc />
-        public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
+        public async Task<List<CabModel>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            if(!string.IsNullOrWhiteSpace(userRole))
+            var docs = new List<Document>();
+
+            if (!string.IsNullOrWhiteSpace(userRole))
             {
-                return await _cabRepository.Query<Document>(d => (d.LastUserGroup == userRole &&
+                docs = await _cabRepository.Query<Document>(d => (d.LastUserGroup == userRole &&
                 d.StatusValue == Status.Draft) || d.StatusValue == Status.Archived);
+
+                return docs.Select(document => document.MapToCabModel()).ToList();
             }
-            return await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
+
+            docs = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
+            return docs.Select(document => document.MapToCabModel()).ToList();
         }
 
         public async Task<Document?> GetLatestDocumentAsync(string cabId)

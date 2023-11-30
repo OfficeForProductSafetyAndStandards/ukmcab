@@ -22,7 +22,7 @@ internal static class CabModelMapper
             source.Postcode, source.Country);
         dest.AppointmentDate = source.AppointmentDate;
         dest.BodyTypes = source.BodyTypes;
-        dest.CabId = source.CABId.ToGuid() ?? throw new Exception($"{nameof(source.CABId)} is not a guid (value:{source.CABId})");
+        dest.CABId = source.CABId.ToGuid() ?? throw new Exception($"{nameof(source.CABId)} is not a guid (value:{source.CABId})");
         dest.CabNumber = source.CABNumber;
         dest.CabNumberVisibility = source.CabNumberVisibility;
         dest.OrganisationContactDetails = new OrganisationContactDetails(source.Website, source.Email, source.Phone);
@@ -61,7 +61,7 @@ internal static class CabModelMapper
 
         dest.AppointmentDate = source.AppointmentDate;
         dest.BodyTypes = source.BodyTypes ;
-        dest.CABId = (source.CabId == Guid.Empty ? null : source.CabId.ToString()) ?? throw new InvalidOperationException();
+        dest.CABId = (source.CABId == Guid.Empty ? null : source.CABId.ToString()) ?? throw new InvalidOperationException();
         dest.CABNumber = source.CabNumber;
         dest.CabNumberVisibility = source.CabNumberVisibility;
         if (source.OrganisationContactDetails != null)
