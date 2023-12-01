@@ -25,19 +25,32 @@ public class WorkflowTaskService : IWorkflowTaskService
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
-    public async Task<List<WorkflowTask>> GetByForRoleAndCompletedAsync(string assignedUserRole, bool completed = false)
+    public async Task<List<WorkflowTask>> GetAssignedToGroupForRoleIdAsync(string roleId, string? userIdToExclude = null)
     {
-        var items = (await _workflowTaskRepository.QueryAsync(w =>
-            w.ForRoleId.ToLower() == assignedUserRole.ToLower() &&
-            w.Completed == completed));
+        var items = await _workflowTaskRepository.QueryAsync(w =>
+            w.ForRoleId.ToLower() == roleId.ToLower() && w.Assignee != null && w.Assignee.Id != userIdToExclude &&
+            !w.Completed);
 
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
     public async Task<List<WorkflowTask>> GetByAssignedUserAsync(string userId)
     {
-        var items = (await _workflowTaskRepository.QueryAsync(w =>
-            w.Assignee != null && w.Assignee.Id == userId));
+        var items = await _workflowTaskRepository.QueryAsync(w =>
+            w.Assignee != null && w.Assignee.Id == userId && !w.Completed);
+        return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
+    }
+
+    public async Task<List<WorkflowTask>> GetCompletedForRoleIdAsync(string roleId)
+    {
+        var items = await _workflowTaskRepository.QueryAsync(w => w.Completed && w.ForRoleId == roleId);
+        return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
+    }
+
+    public async Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId)
+    {
+        var items = await _workflowTaskRepository.QueryAsync(w =>
+            w.CabId.HasValue && w.CabId.Value == cabId);
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
@@ -57,5 +70,14 @@ public class WorkflowTaskService : IWorkflowTaskService
     {
         var task = workflowTask.MapToWorkflowTaskData();
         return (await _workflowTaskRepository.ReplaceAsync(task)).MapToWorkflowTaskModel();
+    }
+
+    public async Task MarkTaskAsCompletedAsync(Guid taskId, User userLastUpdatedBy)
+    {
+        var task = await GetAsync(taskId);
+        task.LastUpdatedBy = userLastUpdatedBy;
+        task.LastUpdatedOn = DateTime.Now;
+        task.Completed = true;
+        await UpdateAsync(task);
     }
 }

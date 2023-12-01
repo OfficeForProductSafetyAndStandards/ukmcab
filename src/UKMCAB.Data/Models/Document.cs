@@ -20,6 +20,9 @@ namespace UKMCAB.Data.Models
         // Used by the search index, saves a lot of effort to flatten the model in the data source
         public DateTime LastUpdatedDate => AuditLog.Any() ? AuditLog.Max(al => al.DateTime) : DateTime.MinValue;
 
+        /// <summary>
+        /// Last Audit Log entry using User Role Label
+        /// </summary>
         public string LastUserGroup =>
             AuditLog.Any() ? AuditLog.OrderBy(al => al.DateTime).Last().UserRole : string.Empty;
         

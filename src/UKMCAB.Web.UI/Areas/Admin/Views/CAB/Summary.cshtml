@@ -19,7 +19,15 @@
 }
 @if (Model.SubStatus == SubStatus.PendingApproval)
 {
-    <partial model="@("This CAB profile cannot be edited until it has been approved or declined.")" name="Partials/_PageContentBanner"/>
+    if (Model.CanPublish)
+    {
+        <partial model="@("This CAB profile cannot be edited until it has been approved or declined.")" name="Partials/_PageContentBanner"/>
+    }
+    else
+    {
+        /*Todo become User Group when ODG's*/ 
+        <partial model="@("This CAB is being reviewed by OPSS")" name="Partials/_PageContentBanner"/>
+    }
 }
 @if (Model.ShowError)
 {
@@ -448,7 +456,7 @@
         </div>
     </dl>
 </div>
-<div class="govuk-warning-text">
+<div class="govuk-warning-text govuk-!-margin-top-5">
     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
     <strong class="govuk-warning-text__text">
         <span class="govuk-warning-text__assistive">Warning</span>
@@ -458,7 +466,15 @@
         }
         else if (Model is { ValidCAB: false,CanPublish: true })
         {
-            <text>Provide all mandatory information before you are able to publish this record.</text>
+            //Not Valid CAB because of missing CAB Number for UKAS user
+            if (Model.SubStatus == SubStatus.PendingApproval)
+            {
+                <text>You need to enter all mandatory information before you can approve this CAB profile.</text>
+            }
+            else
+            {
+                <text>Provide all mandatory information before you are able to publish this record.</text>
+            }
         }
         else
         {
@@ -507,11 +523,12 @@
         </form>
     </div>
 }
-else if (Model.SubStatus == SubStatus.PendingApproval)
+else if (Model is { CanPublish: true ,SubStatus: SubStatus.PendingApproval })
 {
     <div>
         <div class="govuk-button-group">
-            <govuk-button-link asp-area="admin" asp-controller="ApproveCAB" asp-action="@nameof(ApproveCABController.Approve)" asp-route-id="@Model.CABId">Approve</govuk-button-link>
+            <govuk-button-link asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId">Approve</govuk-button-link>
+            <govuk-button-link class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
             <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
         </div>
     </div>

@@ -90,10 +90,13 @@ namespace UKMCAB.Data.Models
         public const string Saved = nameof(Saved);
         public const string Published = nameof(Published);
         public const string RePublished = nameof(RePublished);
-        public const string Archived = nameof(Archived);
-        public const string Unarchived = nameof(Unarchived);
-        public const string UnarchiveRequest = nameof(UnarchiveRequest);
-        public const string SubmittedForApproval = nameof(SubmittedForApproval);
+        public const string Archived = nameof(Archived); 
+        public const string Unarchived = nameof(Unarchived); // Used for a draft that is back from the dead
+        public const string UnarchiveRequest = nameof(UnarchiveRequest); //Used for CAB's that have been unarchived status archived (previous version)
+        public const string UnarchiveApprovalRequest = "Unarchive CAB approval request";
+        public const string SubmittedForApproval = "CAB Submitted for approval";
+        public const string CABApproved = "CAB Approved";
+        public const string CABDeclined = "CAB Declined";
     }
 
     public class AuditUserActions

@@ -6,8 +6,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 {
     public class AuditLogHistoryViewModel
     {
-        public readonly string[] PublicAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest };
-        public readonly string[] OPSSUserAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest, AuditCABActions.Saved, AuditCABActions.Unarchived, AuditCABActions.Created };
+        public readonly string[] PublicAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest, AuditCABActions.CABApproved, AuditCABActions.CABDeclined };
+        public readonly string[] OPSSUserAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest, AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved, AuditCABActions.CABDeclined };
 
 
         public const int resultsPerPage = 10;
@@ -42,7 +42,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         }
 
 
-        public AuditLogHistoryViewModel(IEnumerable<Document> documents, UserAccount userAccount, int pageNumber)
+        public AuditLogHistoryViewModel(IEnumerable<Document?> documents, UserAccount userAccount, int pageNumber)
         {
             IsOPSSUser = userAccount != null && userAccount.Role == Roles.OPSS.Id;
             OPSSUserId = IsOPSSUser ? userAccount.Id : string.Empty;
@@ -53,7 +53,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 
             var auditActionsToShow = IsOPSSUser ? OPSSUserAuditActionsToShow : PublicAuditActionsToShow;
 
-            var auditLog = documents.SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action)))).Distinct().ToList();
+            var auditLog = documents.SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action)))).ToList();
+
+            if (auditLog.Any())
+            {
+                auditLog = auditLog.GroupBy(a => new { a.Action, a.DateTime, a.UserId })
+                                .Select(g => g.First()).ToList();
+            }
 
             if ((pageNumber - 1) * resultsPerPage > auditLog.Count)
             {

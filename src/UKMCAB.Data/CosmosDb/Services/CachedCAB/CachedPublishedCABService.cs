@@ -52,23 +52,23 @@ namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
             return null;
         }
 
-        public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string cabId) => await _cache.GetOrCreateAsync(StringExt.Keyify(nameof(FindAllDocumentsByCABIdAsync), Key(cabId)), () =>  _cabRepository.Query<Document>(d => d.CABId.Equals(cabId)));
+        public async Task<List<Document?>> FindAllDocumentsByCABIdAsync(string cabId) => await _cache.GetOrCreateAsync(StringExt.Keyify(nameof(FindAllDocumentsByCABIdAsync), Key(cabId)), () =>  _cabRepository.Query<Document>(d => d.CABId.Equals(cabId)));
 
-        public async Task<Document> FindPublishedDocumentByCABIdAsync(string cabId) => await GetPublishedCABByIdAsync(cabId);
+        public async Task<Document?> FindPublishedDocumentByCABIdAsync(string cabId) => await GetPublishedCABByIdAsync(cabId);
 
-        public async Task<Document> FindDraftDocumentByCABIdAsync(string cabId) => await  GetDraftCABByIdAsync(cabId);
+        public async Task<Document?> FindDraftDocumentByCABIdAsync(string cabId) => await  GetDraftCABByIdAsync(cabId);
 
 
-        private async Task<Document> GetPublishedCABByIdAsync(string cabId)
+        private async Task<Document?> GetPublishedCABByIdAsync(string cabId)
         {
             var docs = await FindAllDocumentsByCABIdAsync(cabId);
-            return  docs.SingleOrDefault(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived);
+            return  docs.SingleOrDefault(d => d is { StatusValue: Status.Published or Status.Archived });
         }
 
-        private async Task<Document> GetDraftCABByIdAsync(string cabId)
+        private async Task<Document?> GetDraftCABByIdAsync(string cabId)
         {
             var docs = await FindAllDocumentsByCABIdAsync(cabId);
-            return docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
+            return docs.SingleOrDefault(d => d is { StatusValue: Status.Draft });
         }
 
         private static string Key(string id) => $"{KeyPrefix}{id}";

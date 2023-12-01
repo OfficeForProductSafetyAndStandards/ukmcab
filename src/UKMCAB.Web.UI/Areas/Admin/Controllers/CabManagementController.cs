@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
-using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
@@ -12,15 +13,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     public class CabManagementController : Controller
     {
         private readonly ICABAdminService _cabAdminService;
+        private readonly IUserService _userService;
 
         public static class Routes
         {
             public const string CABManagement = "admin.cab-management";
         }
 
-        public CabManagementController(ICABAdminService cabAdminService)
+        public CabManagementController(ICABAdminService cabAdminService, IUserService userService)
         {
             _cabAdminService = cabAdminService;
+            _userService = userService;
         }
 
         [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
@@ -31,11 +34,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 model.Sort = "lastupd-desc";
             }
 
-            var cabManagementItems = await _cabAdminService.FindAllCABManagementQueueDocuments();
+            var userAccount =
+                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                            .Value) ?? throw new InvalidOperationException("User account not found");
+            var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
+            var cabManagementItems = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
             model.CABManagementItems = cabManagementItems.Any()
                 ? cabManagementItems.Select(cmi => new CABManagementItemViewModel
                 {
-                    Id = cmi.CABId,
+                    Id = cmi.CABId.ToString(),
                     Name = cmi.Name,
                     URLSlug = cmi.URLSlug,
                     CABNumber = cmi.CABNumber,

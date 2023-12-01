@@ -5,7 +5,7 @@ using UKMCAB.Data.Models;
 using FileUpload = UKMCAB.Core.Domain.FileUpload;
 
 namespace UKMCAB.Core.Mappers;
-internal static class CabModelMapper
+public static class CabModelMapper
 {
     public static CabModel MapToCabModel(this Document source)
     {
@@ -22,7 +22,7 @@ internal static class CabModelMapper
             source.Postcode, source.Country);
         dest.AppointmentDate = source.AppointmentDate;
         dest.BodyTypes = source.BodyTypes;
-        dest.CabId = source.CABId.ToGuid() ?? throw new Exception($"{nameof(source.CABId)} is not a guid (value:{source.CABId})");
+        dest.CABId = source.CABId.ToGuid() ?? throw new Exception($"{nameof(source.CABId)} is not a guid (value:{source.CABId})");
         dest.CabNumber = source.CABNumber;
         dest.CabNumberVisibility = source.CabNumberVisibility;
         dest.OrganisationContactDetails = new OrganisationContactDetails(source.Website, source.Email, source.Phone);
@@ -40,6 +40,9 @@ internal static class CabModelMapper
         dest.SupportingDocuments = supportingDocuments;
         dest.TestingLocations = source.TestingLocations;
         dest.UKASReference = source.UKASReference;
+        dest.URLSlug = source.URLSlug;
+        dest.CabNumber = source.CABNumber;
+        dest.AuditLog = source.AuditLog;
         return dest;
     }
 
@@ -61,7 +64,7 @@ internal static class CabModelMapper
 
         dest.AppointmentDate = source.AppointmentDate;
         dest.BodyTypes = source.BodyTypes ;
-        dest.CABId = (source.CabId == Guid.Empty ? null : source.CabId.ToString()) ?? throw new InvalidOperationException();
+        dest.CABId = (source.CABId == Guid.Empty ? null : source.CABId.ToString()) ?? throw new InvalidOperationException();
         dest.CABNumber = source.CabNumber;
         dest.CabNumberVisibility = source.CabNumberVisibility;
         if (source.OrganisationContactDetails != null)
@@ -121,7 +124,25 @@ internal static class CabModelMapper
 
         dest.TestingLocations = source.TestingLocations;
         if (source.UKASReference != null) dest.UKASReference = source.UKASReference;
+        dest.URLSlug = source.URLSlug;
+        dest.CABNumber = source.CABNumber;
+        if (source.AuditLog.Any())
+        {
+            foreach(var audit in source.AuditLog)
+            {
+                dest.AuditLog.Add(new Audit
+                {
+                    UserId = audit.UserId,
+                    UserName = audit.UserName,
+                    UserRole = audit.UserRole,
+                    DateTime = audit.DateTime,
+                    Action = audit.Action,
+                    Comment = audit.Comment,
+                    PublicComment = audit.PublicComment,
+                    IsUserInputComment = audit.IsUserInputComment
+                });
+            }
+        }
         return dest;
     }
-
 }

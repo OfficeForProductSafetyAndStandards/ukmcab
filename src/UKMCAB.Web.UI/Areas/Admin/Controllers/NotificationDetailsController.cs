@@ -65,8 +65,8 @@ public class NotificationDetailsController : Controller
             return View(model);
         }
 
-        var userAccount = await _userService.GetAsync(model.SelectedAssignee);
-        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount?.FirstName, userAccount?.Surname, userAccount?.Role);
+        var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
+        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
         workFlowTask.Assigned = DateTime.Now;
         await _workflowTaskService.UpdateAsync(workFlowTask);
 
@@ -94,10 +94,10 @@ public class NotificationDetailsController : Controller
             Status = workFlowTask.Completed ? "Completed" :
                 workFlowTask.Assignee == null ? "Unassigned" : "Assigned",
             IsCompleted = workFlowTask.Completed,
-            IsAssigned =  workFlowTask.Assignee != null,
+            IsAssigned = workFlowTask.Assignee != null,
             From = workFlowTask.Submitter.FirstAndLastName,
             Subject = workFlowTask.TaskType.GetEnumDescription(),
-            Reason = workFlowTask.Reason,
+            Reason = workFlowTask.Body,
             SentOn = workFlowTask.SentOn.ToStringBeisFormat(),
             CompletedOn = workFlowTask.Completed ? workFlowTask.LastUpdatedOn.ToStringBeisFormat() : string.Empty,
             LastUpdated = workFlowTask.LastUpdatedOn.ToStringBeisFormat(),
@@ -110,10 +110,19 @@ public class NotificationDetailsController : Controller
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
-        
-        var cabDetails = await _cabAdminService.GetLatestDocumentAsync(workFlowTask.CABId.ToString()!);
-        notificationDetail.ViewLink = (cabDetails.Name,
-            Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId }));
+
+        var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
+        var cabDetails = cabs.First();
+        notificationDetail.ViewLink = workFlowTask.TaskType switch
+        {
+            TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish
+                or TaskType.UnarchiveDeclined or TaskType.CABPublished =>
+                (cabDetails.Name,
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId })),
+            _ =>
+                (cabDetails.Name,
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId })),
+        };
 
         return (notificationDetail, workFlowTask);
     }

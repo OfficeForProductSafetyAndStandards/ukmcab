@@ -37,7 +37,7 @@
                             <th scope="row" class="govuk-table__header">Date and time</th>
                             <td class="govuk-table__cell">@Model.Date @Model.Time</td>
                         </tr>
-                        @if (User.Identity.IsAuthenticated && User.IsInRole(Roles.OPSS.Id))
+                        @if (User.Identity.IsAuthenticated)
                         {
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header" style="width:30%">User</th>
@@ -54,7 +54,7 @@
                             <th scope="row" class="govuk-table__header">Action</th>
                             <td class="govuk-table__cell">@Model.Action</td>
                         </tr>
-                        @if (User.Identity.IsAuthenticated && User.IsInRole(Roles.OPSS.Id))
+                        @if (User.Identity.IsAuthenticated)
                         {
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header">Internal notes</th>

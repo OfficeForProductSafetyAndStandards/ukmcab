@@ -18,7 +18,7 @@
             <th scope="col" class="govuk-table__header">
                 <sort tab-to-show="@Model.TabName" target="CabName" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
             </th>
-            @if (Model.TabName.Equals(NotificationController.AssignedGroupTabName))
+            @if (Model.TabName.Equals(NotificationController.AssignedToGroupTabName))
             {
                 <th scope="col" class="govuk-table__header">
                     <sort tab-to-show="@Model.TabName" target="Assignee" sort="@Model.SortField" sort-direction="@Model.SortDirection">Assignee</sort>
@@ -47,9 +47,9 @@
                     <label aria-hidden="true">Subject</label>@item.Subject
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">CAB name</label>@item.CABName
+                    <label aria-hidden="true">CAB name</label>@item.CABName.Ellipsis(20)
                 </td>
-                @if (Model.TabName.Equals(NotificationController.AssignedGroupTabName))
+                @if (Model.TabName.Equals(NotificationController.AssignedToGroupTabName))
                 {
                     <td class="govuk-table__cell">
                         <label aria-hidden="true">Assignee</label>@item.Assignee

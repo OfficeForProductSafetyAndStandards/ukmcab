@@ -1,8 +1,10 @@
 ﻿using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
@@ -10,10 +12,12 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+
 // ReSharper disable SpecifyStringComparison - Not For Cosmos
 
 namespace UKMCAB.Core.Services.CAB
 {
+    //todo Change these methods to use CabModel as return value / params instead of Document
     public class CABAdminService : ICABAdminService
     {
         private readonly ICABRepository _cabRepository;
@@ -22,7 +26,7 @@ namespace UKMCAB.Core.Services.CAB
         private readonly TelemetryClient _telemetryClient;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient)
+            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient, IUserService userService)
         {
             _cabRepository = cabRepository;
             _cachedSearchService = cachedSearchService;
@@ -35,10 +39,10 @@ namespace UKMCAB.Core.Services.CAB
         {
             var documents = await _cabRepository.Query<Document>(d =>
                 (!string.IsNullOrWhiteSpace(cabNumber) &&
-                d.CABNumber!.Equals(cabNumber)) ||
+                 d.CABNumber!.Equals(cabNumber)) ||
                 (!string.IsNullOrWhiteSpace(ukasReference) && d.UKASReference.Equals(ukasReference)));
             //Do not identify same Cab Id as a duplicate
-            var documentsFound =  documents.Where(d => !d.CABId.Equals(cabId)).ToList();
+            var documentsFound = documents.Where(d => !d.CABId.Equals(cabId)).ToList();
             return documentsFound.Select(document => document.MapToCabModel()).ToList();
         }
 
@@ -50,18 +54,19 @@ namespace UKMCAB.Core.Services.CAB
             return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList().Count > 0;
         }
 
-        public async Task<Document> FindPublishedDocumentByCABIdAsync(string id)
+        public async Task<Document?> FindPublishedDocumentByCABIdAsync(string id)
         {
-            var doc = await _cabRepository.Query<Document>(
+            List<Document> doc = await _cabRepository.Query<Document>(
                 d => d.StatusValue == Status.Published && d.CABId.Equals(id));
             return doc.Any() && doc.Count == 1 ? doc.First() : null;
         }
 
-        private async Task<List<Document?>> FindAllDocumentsByCABIdAsync(string id)
+        public async Task<List<CabModel>> FindDocumentsByCABIdAsync(string id)
         {
-            List<Document?> docs = await _cabRepository.Query<Document>(d =>
-                d.CABId.Equals(id, StringComparison.CurrentCultureIgnoreCase));
-            return docs;
+            var documents = await FindAllDocumentsByCABIdAsync(id);
+            return documents.Select(document => document.MapToCabModel())
+                .OrderByDescending(d => d.LastUpdatedUtc)
+                .ToList();
         }
 
         public async Task<List<Document>> FindAllDocumentsByCABURLAsync(string url)
@@ -71,26 +76,37 @@ namespace UKMCAB.Core.Services.CAB
             return docs;
         }
 
-        public async Task<List<Document>> FindAllCABManagementQueueDocuments()
+
+        /// <inheritdoc />
+        public async Task<List<CabModel>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            var docs = await _cabRepository.Query<Document>(d =>
-                d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
-            return docs;
+            var docs = new List<Document>();
+
+            if (!string.IsNullOrWhiteSpace(userRole))
+            {
+                docs = await _cabRepository.Query<Document>(d => (d.LastUserGroup == userRole &&
+                d.StatusValue == Status.Draft) || d.StatusValue == Status.Archived);
+
+                return docs.Select(document => document.MapToCabModel()).ToList();
+            }
+
+            docs = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
+            return docs.Select(document => document.MapToCabModel()).ToList();
         }
 
         public async Task<Document?> GetLatestDocumentAsync(string cabId)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             // if a newly create cab or a draft version exists this will be the latest version, there should be no more than one
-            if (documents.Any(d => d.StatusValue == Status.Draft))
+            if (documents.Any(d => d is { StatusValue: Status.Draft }))
             {
-                return documents.Single(d => d.StatusValue == Status.Draft);
+                return documents.Single(d => d is { StatusValue: Status.Draft });
             }
 
             // if no draft or created version exists then see if a published version exists, again should only ever be one
-            if (documents.Any(d => d.StatusValue == Status.Published))
+            if (documents.Any(d => d is { StatusValue: Status.Published }))
             {
-                return documents.Single(d => d.StatusValue == Status.Published);
+                return documents.Single(d => d is { StatusValue: Status.Published });
             }
 
             return null;
@@ -179,6 +195,27 @@ namespace UKMCAB.Core.Services.CAB
             return draft;
         }
 
+        /// <summary>
+        /// Updates document with Pending approval with audit action
+        /// </summary>
+        /// <param name="cabId">cabId to update</param>
+        /// <param name="status">status of Cab to get</param>
+        /// <param name="audit">Audit to log</param>
+        public async Task SetSubStatusToPendingApprovalAsync(Guid cabId, Status status, Audit audit)
+        {
+            var documents =
+                await _cabRepository.Query<Document>(c => c.CABId == cabId.ToString() && c.Status == status.ToString());
+            if (documents.Count != 1)
+            {
+                throw new NotFoundException("Single Document not found to set to pending approval");
+            }
+
+            var document = documents.First();
+            document.SubStatus = SubStatus.PendingApproval;
+            document.AuditLog.Add(audit);
+            await _cabRepository.UpdateAsync(document);
+        }
+
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)
         {
             if (latestDocument.StatusValue == Status.Published)
@@ -202,6 +239,7 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             latestDocument.StatusValue = Status.Published;
+            latestDocument.SubStatus = SubStatus.None;
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
                 publishedOrArchivedDocument));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
@@ -235,7 +273,8 @@ namespace UKMCAB.Core.Services.CAB
             var archivedDoc = documents.SingleOrDefault(d => d is { StatusValue: Status.Archived });
             Guard.IsFalse(archivedDoc == null, $"Failed for find and archived version for CAB id: {cabId}");
             // Flag latest with unarchive audit entry
-            archivedDoc!.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnarchiveRequest, unarchiveInternalReason, unarchivePublicReason));
+            archivedDoc!.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnarchiveRequest, unarchiveInternalReason,
+                unarchivePublicReason));
             Guard.IsTrue(await _cabRepository.Update(archivedDoc),
                 $"Failed to update published version during draft publish, CAB Id: {archivedDoc.CABId}");
             await UpdateSearchIndex(archivedDoc);
@@ -257,7 +296,8 @@ namespace UKMCAB.Core.Services.CAB
             return archivedDoc;
         }
 
-        public async Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveInternalReason, string archivePublicReason)
+        public async Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId,
+            string archiveInternalReason, string archivePublicReason)
         {
             var docs = await FindAllDocumentsByCABIdAsync(CABId);
 
@@ -285,7 +325,8 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             publishedVersion.StatusValue = Status.Archived;
-            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.Archived, archiveInternalReason, archivePublicReason));
+            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.Archived, archiveInternalReason,
+                archivePublicReason));
             Guard.IsTrue(await _cabRepository.Update(publishedVersion),
                 $"Failed to archive published version, CAB Id: {CABId}");
 
@@ -296,13 +337,6 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatsAsync();
 
             return publishedVersion;
-        }
-
-        private async Task RefreshCaches(string cabId, string slug)
-        {
-            await _cachedSearchService.ClearAsync();
-            await _cachedSearchService.ClearAsync(cabId);
-            await _cachedPublishedCabService.ClearAsync(cabId, slug);
         }
 
         public async Task RecordStatsAsync()
@@ -323,5 +357,21 @@ namespace UKMCAB.Core.Services.CAB
 
         public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) =>
             _cabRepository.GetCABCountBySubStatusAsync(subStatus);
+        
+                
+        private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
+        {
+            List<Document> docs = await _cabRepository.Query<Document>(d =>
+                d.CABId.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+            return docs;
+        }
+
+        private async Task RefreshCaches(string cabId, string slug)
+        {
+            await _cachedSearchService.ClearAsync();
+            await _cachedSearchService.ClearAsync(cabId);
+            await _cachedPublishedCabService.ClearAsync(cabId, slug);
+        }
+
     }
 }

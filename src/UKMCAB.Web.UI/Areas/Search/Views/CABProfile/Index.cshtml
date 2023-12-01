@@ -1,5 +1,6 @@
 ﻿@using System.Net
 @using UKMCAB.Core.Domain;
+@using UKMCAB.Web.UI.Areas.Search.Controllers
 @model CABProfileViewModel
 @{
     ViewData["nav"] = "search";
@@ -91,11 +92,20 @@
                 @if (User.HasClaim(UKMCAB.Core.Security.Claims.CabEdit, "*")) // TODO:  purposefully disabled; need to figure out permissions first
                 {
                     <div id="admin-buttons-container">
-                        @if (Model.IsArchived && !Model.IsUnarchivedRequest)
+                        @if (Model is { IsArchived: true,IsUnarchivedRequest: false })
                         {
-                            <span>
-                                <a id="unarchive-button" class="govuk-button govuk-button--secondary" asp-area="Search" asp-controller="CABProfile" asp-action="UnarchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Unarchive</a>
-                            </span>
+                            if (Model.RequiresUnarchiveApproval)
+                            {
+                                <span>
+                                    <govuk-button-link class="govuk-button--secondary" asp-route="@RequestToUnarchiveCABController.Routes.RequestUnarchive" asp-route-cabUrl="@Model.CABUrl">Request to unarchive</govuk-button-link>
+                                </span>
+                            }
+                            else
+                            {
+                                <span>
+                                    <govuk-button-link class="govuk-button--secondary" asp-area="Search" asp-controller="CABProfile" asp-action="UnarchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Unarchive</govuk-button-link>
+                                </span>
+                            }
                         }
                         @if(Model.IsPublished)
                         {

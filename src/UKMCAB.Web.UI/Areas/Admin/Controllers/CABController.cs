@@ -6,6 +6,7 @@ using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core;
 using UKMCAB.Core.Domain.Workflow;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
@@ -375,12 +376,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) &&
                                        latest.StatusValue != Status.Published,
                 SubStatus = latest.SubStatus,
+                ValidCAB = latest.StatusValue != Status.Published
+                           && TryValidateModel(cabDetails)
+                           && TryValidateModel(cabContact)
+                           && TryValidateModel(cabBody)
             };
 
-            model.ValidCAB = latest.StatusValue != Status.Published
-                             && TryValidateModel(cabDetails)
-                             && TryValidateModel(cabContact)
-                             && TryValidateModel(cabBody);
             ModelState.Clear();
 
             return View(model);
@@ -468,16 +469,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             };
             var userRoleId = Roles.List.First(r =>
                 r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-            await _notificationClient.SendEmailAsync(_templateOptions.NotificationRequestToPublishEmail,
+            await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
                 _templateOptions.NotificationRequestToPublish, personalisation);
             if (publishModel.CabDetailsViewModel != null)
             {
                 await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish,
-                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId),
+                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId, userAccount.EmailAddress ?? throw new InvalidOperationException()),
                     Roles.OPSS.Id, null, null,
                     $"{userAccount.FirstName} {userAccount.Surname} from {Roles.NameFor(userRoleId)} has submitted a request to approve and publish {publishModel.CabDetailsViewModel.Name}.",
                     DateTime.Now,
-                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId), DateTime.Now,
+                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId,userAccount.EmailAddress ?? throw new InvalidOperationException()), DateTime.Now,
                     null, null,
                     false, Guid.Parse(publishModel.CABId ?? throw new InvalidOperationException())));
             }
