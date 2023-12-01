@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
@@ -38,7 +39,11 @@ public class NotificationDetailsController : Controller
     public async Task<IActionResult> Detail(Guid id)
     {
         var (notificationDetail, _) = await NotificationDetailsMapping(id);
-        return notificationDetail.IsSameUserGroup ? View(notificationDetail) : View("../../../../Pages/403");
+        if (notificationDetail.IsSameUserGroup)
+        {
+            return View(notificationDetail);
+        }
+        throw new PermissionDeniedException();
     }
 
 
