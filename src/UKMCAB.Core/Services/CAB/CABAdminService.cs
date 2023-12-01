@@ -111,7 +111,7 @@ namespace UKMCAB.Core.Services.CAB
 
             return null;
         }
-
+        
         public IAsyncEnumerable<string> GetAllCabIds()
         {
             return _cabRepository.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
@@ -200,18 +200,21 @@ namespace UKMCAB.Core.Services.CAB
         /// </summary>
         /// <param name="cabId">cabId to update</param>
         /// <param name="status">status of Cab to get</param>
-        /// <param name="audit">Audit to log</param>
-        public async Task SetSubStatusToPendingApprovalAsync(Guid cabId, Status status, Audit audit)
+        /// <param name="subStatus"></param>
+        /// <param name="lastUpdatedBy">User last updated by</param>
+        /// <param name="auditCabAction">Action to go in audit log</param>
+        public async Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, UserAccount lastUpdatedBy, string auditCabAction)
         {
             var documents =
                 await _cabRepository.Query<Document>(c => c.CABId == cabId.ToString() && c.Status == status.ToString());
             if (documents.Count != 1)
             {
-                throw new NotFoundException("Single Document not found to set to pending approval");
+                throw new NotFoundException("Single Document not found to set sub status");
             }
 
             var document = documents.First();
-            document.SubStatus = SubStatus.PendingApproval;
+            document.SubStatus = subStatus;
+            var audit = new Audit(lastUpdatedBy, auditCabAction);
             document.AuditLog.Add(audit);
             await _cabRepository.UpdateAsync(document);
         }
