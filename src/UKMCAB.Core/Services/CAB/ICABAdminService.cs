@@ -25,7 +25,8 @@ namespace UKMCAB.Core.Services.CAB
         Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft,
             bool submitForApproval = false);
 
-        Task SetSubStatusToPendingApprovalAsync(Guid cabId, Status status, Audit audit);
+        Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, UserAccount lastUpdatedBy,
+            string auditCabAction);
         Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument);
         Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveInternalReason, string archivePublicReason);
         Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveInternalReason, string unarchivePublicReason);
