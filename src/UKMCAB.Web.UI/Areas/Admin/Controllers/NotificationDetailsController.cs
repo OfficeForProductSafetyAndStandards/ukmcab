@@ -114,6 +114,10 @@ public class NotificationDetailsController : Controller
             SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
+        if (workFlowTask.Completed)
+        {
+            notificationDetail.UserGroup = workFlowTask.LastUpdatedBy.RoleId;
+        }
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
 
         var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
