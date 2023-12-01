@@ -6,8 +6,18 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 {
     public class AuditLogHistoryViewModel
     {
-        public readonly string[] PublicAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest, AuditCABActions.CABApproved, AuditCABActions.CABDeclined };
-        public readonly string[] OPSSUserAuditActionsToShow = { AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest, AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved, AuditCABActions.CABDeclined };
+        public readonly string[] PublicAuditActionsToShow =
+        {
+            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest,
+            AuditCABActions.CABApproved, AuditCABActions.CABDeclined
+        };
+
+        public readonly string[] OPSSUserAuditActionsToShow =
+        {
+            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest,
+            AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved,
+            AuditCABActions.CABDeclined, AuditCABActions.SubmittedForApproval, AuditCABActions.UnarchiveApprovalRequest
+        };
 
 
         public const int resultsPerPage = 10;
@@ -18,6 +28,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             {
                 audits = new List<Audit>();
             }
+
             AuditHistoryItems = audits
                 .OrderByDescending(al => al.DateTime)
                 .Skip((pageNumber - 1) * resultsPerPage)
@@ -48,24 +59,27 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             OPSSUserId = IsOPSSUser ? userAccount.Id : string.Empty;
 
             documents = documents
-                .Where(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived || d.StatusValue == Status.Historical)
+                .Where(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived ||
+                            d.StatusValue == Status.Historical)
                 .OrderBy(d => d.LastUpdatedDate);
 
             var auditActionsToShow = IsOPSSUser ? OPSSUserAuditActionsToShow : PublicAuditActionsToShow;
 
-            var auditLog = documents.SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action)))).ToList();
+            var auditLog = documents
+                .SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action))))
+                .ToList();
 
             if (auditLog.Any())
             {
                 auditLog = auditLog.GroupBy(a => new { a.Action, a.DateTime, a.UserId })
-                                .Select(g => g.First()).ToList();
+                    .Select(g => g.First()).ToList();
             }
 
             if ((pageNumber - 1) * resultsPerPage > auditLog.Count)
             {
                 pageNumber = 1;
             }
-            
+
             AuditHistoryItems = auditLog
                 .OrderByDescending(al => al.DateTime)
                 .Skip((pageNumber - 1) * resultsPerPage)
@@ -73,13 +87,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 .Select(al => new AuditHistoryItem
                 {
                     UserId = al.UserId,
-                    Username = al.UserName, 
+                    Username = al.UserName,
                     Usergroup = al.UserRole,
-                    DateAndTime = al.DateTime, 
+                    DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
                     InternalComment = al.Comment,
                     PublicComment = al.PublicComment,
-                    IsUserInputComment= al.IsUserInputComment
+                    IsUserInputComment = al.IsUserInputComment
                 });
 
             Pagination = new PaginationViewModel
@@ -90,7 +104,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 TabId = "history"
             };
         }
-
 
 
         private static string NormaliseAction(string action)
@@ -129,7 +142,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public bool IsOPSSUser { get; set; }
         public string OPSSUserId { get; set; }
 
-        public IEnumerable<AuditHistoryItem> AuditHistoryItems { get;}
+        public IEnumerable<AuditHistoryItem> AuditHistoryItems { get; }
 
         public PaginationViewModel Pagination { get; set; }
     }
