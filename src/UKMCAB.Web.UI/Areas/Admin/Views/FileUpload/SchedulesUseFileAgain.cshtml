@@ -1,0 +1,187 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using UKMCAB.Data
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileListViewModel
+@section BackButton
+    {
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (Model.IsFromSummary)
+                {
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                }
+                else
+                {
+                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                }
+            </div>
+        </div>
+    </div>
+}
+
+
+
+<div class="govuk-grid-row">
+    <form asp-asp-route="@FileUploadController.Routes.SchedulesList" method="post" enctype="multipart/form-data" novalidate>
+
+        <div class="govuk-grid-column-full">
+
+
+            @*<govuk-radios name="where-do-you-live">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--m">
+                        Files you have uploaded
+                    </govuk-radios-fieldset-legend>
+
+                    <govuk-radios-hint>
+                        Select one option.
+                    </govuk-radios-hint>
+
+                    <govuk-radios-error-message>
+                        Select the file you want to use again
+                    </govuk-radios-error-message>
+
+                    <govuk-radios-item value="england">England</govuk-radios-item>
+                    <govuk-radios-item value="scotland">Scotland</govuk-radios-item>
+                    <govuk-radios-item value="wales">Wales</govuk-radios-item>
+                    <govuk-radios-item value="northern-ireland">Northern Ireland</govuk-radios-item>
+                </govuk-radios-fieldset>
+            </govuk-radios>*@
+
+
+            
+                        
+                  
+                
+
+
+            <span class="govuk-caption-m">@Model.Title</span>
+            <h1 class="govuk-heading-l">@Model.Title</h1>
+            <p class="govuk-body govuk-!-padding-bottom-2">Select the file you want to use again.</p>
+
+            <div id="use-file-again-list-container">
+
+
+                <table class="govuk-table" id="files-uploaded-tableXXX" aria-describedby="files-uploaded-table-hint">
+
+
+
+
+
+                    <div class="govuk-form-group govuk-form-group--error">
+                        <fieldset class="govuk-fieldset" aria-describedby="whereDoYouLive-error">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                                <h1 class="govuk-fieldset__heading">
+                                    Files you have uploaded
+                                </h1>
+                            </legend>
+                            <p id="whereDoYouLive-error" class="govuk-error-message">
+                                <span class="govuk-visually-hidden">Error:</span> Select the country where you live
+                            </p>
+
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th scope="col" class="govuk-table__header width-one-twentieth">File</th>
+                                    <th scope="col" class="govuk-table__header width-three-fifth"></th>
+                                    <th scope="col" class="govuk-table__header ">Legislative area</th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+
+
+                    <div class="govuk-radios" data-module="govuk-radios">
+
+
+                                @if (!Model.UploadedFiles.Any())
+                                {
+                                    <tr class="govuk-table__row">
+                                        <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
+                                    </tr>
+                                }
+                                else
+                                {
+                                    for (int i = 0; i < Model.UploadedFiles.Count; i++)
+                                    {
+                                        var uploadedFile = Model.UploadedFiles[i];
+                                        var items = DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea?.Trim() ?? string.Empty))).ToList();
+
+                                        <span asp-validation-for="UploadedFiles[i].Label"></span>
+                                        <tr id="" style="borderx: 2px red solid; padding-top:10px" >
+                                            <td colspan="2" style="borderx: 2px blue solid" class="ukmcab-padding-top-10">
+                                                <div class="checkboxes-itemX govuk-checkboxes--small">
+
+                                                    <div class="govuk-radios__item">
+                                                        <input class="govuk-radios__input" asp-for="FileToUseAgain" type="radio" value="@i">
+                                                        <label class="govuk-label govuk-radios__label" for="whereDoYouLive">
+                                                            <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
+                                                        </label>
+                                                    </div>
+
+
+
+                                                        @*<input class="govuk-radios__inputx" type="radio" asp-for="UploadedFiles[i].IsSelected" value="@i" />*@
+                                                    <input type="hidden" asp-for="UploadedFiles[i].FileIndex" value="@i" />
+                                                </div>
+                                            </td>
+                                            <td id="uploaded-file-name-tdX">
+                                                <p class="govuk-body"></p>
+                                            </td>
+                                        </tr>
+
+                                        <tr class="govuk-table__row">
+                                            <td class="govuk-table__cell">
+                                                
+                                            </td>
+                                            <td class="govuk-table__cell uploaded-file-attributeXXX">
+                                                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
+                                            <label class="govuk-label govuk-label--s desktop-no-display">File</label>
+                                                    <p class="govuk-body file-label">@uploadedFile.Label</p>
+
+                                                    <input asp-for="UploadedFiles[i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
+                                                    <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
+                                                    <input asp-for="UploadedFiles[i].LegislativeArea" type="hidden" value="@uploadedFile.LegislativeArea">
+                                                    <input asp-for="UploadedFiles[i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
+                                                </div>
+                                            </td>
+
+                                            <td class="govuk-table__cell uploaded-file-attribute">
+                                        <label class="govuk-label govuk-label--s desktop-no-display">Legislative area</label>
+                                                <p class="govuk-body file-legislative-area">
+                                                      @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
+                                                </p>
+                                            </td>
+
+                                        </tr>
+                                        
+                                    }
+
+                                }
+                                </div>
+                            </tbody>
+
+
+
+
+
+
+
+
+
+                        </fieldset>
+                    </div>
+
+
+
+
+
+
+
+
+                </table>
+            </div>
+        </div>
+    </form>
+
+
+</div>

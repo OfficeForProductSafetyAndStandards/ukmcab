@@ -28,6 +28,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     {
         public const string UploadTitle = "Product schedules upload";
         public const string ListTitle = "Product schedules uploaded";
+        public const string UseFileAgainTitle = "Use file again";
         public static readonly string[] AcceptedFileExtensions = new[] { ".pdf" };
         public const int MaxFileCount = 35;
         public static readonly Dictionary<string, string> AcceptedFileExtensionsContentTypes = new()

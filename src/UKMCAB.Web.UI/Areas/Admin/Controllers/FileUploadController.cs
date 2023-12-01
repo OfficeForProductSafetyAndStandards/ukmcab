@@ -21,7 +21,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IFileStorage _fileStorage;
         private readonly IUserService _userService;
 
-        public FileUploadController(ICABAdminService cabAdminService, IFileStorage fileStorage, IUserService userService)
+        public static class Routes
+        {
+            public const string SchedulesList = "file-upload.schedules-list";
+        }
+
+            public FileUploadController(ICABAdminService cabAdminService, IFileStorage fileStorage, IUserService userService)
         {
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
@@ -176,7 +181,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("admin/cab/schedules-list/{id}")]
+        [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
         public async Task<IActionResult> SchedulesList(string id, bool fromSummary)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -196,7 +201,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost]
-        [Route("admin/cab/schedules-list/{id}")]
+        [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
         public async Task<IActionResult> SchedulesList(string id, string submitType, FileUploadViewModel model, bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -383,6 +388,46 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             });
         }
 
+        
+        
+        
+        
+        
+        
+        
+        
+        [HttpGet("admin/cab/schedules-use-file-again/{id}")]
+        public async Task<IActionResult> SchedulesUseFileAgain(string id, bool fromSummary)
+        {
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+            // Pre-populate model for edit
+            //if (latestVersion.Schedules != null && latestVersion.Schedules.Count >= SchedulesOptions.MaxFileCount)
+            //{
+            //    return RedirectToAction("SchedulesList", fromSummary ? new { id, fromSummary = "true" } : new { id });
+            //}
+
+            //var model = new FileUploadViewModel
+            //{
+            //    Title = SchedulesOptions.UploadTitle,
+            //    UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea }).ToList() ?? new List<FileViewModel>(),
+            //    CABId = id
+            //};
+            //model.IsFromSummary = fromSummary;
+            //model.DocumentStatus = latestVersion.StatusValue;
+
+            return View(new FileListViewModel
+            {
+                Title = SchedulesOptions.UseFileAgainTitle,
+                UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>(),
+                CABId = id,
+                IsFromSummary = fromSummary,
+                DocumentStatus = latestVersion.StatusValue
+            });
+        }
         private List<FileViewModel> GetSelectedFileViewModels(List<FileViewModel> filesInViewModel)
         {
 
