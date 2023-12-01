@@ -109,11 +109,15 @@ public class NotificationDetailsController : Controller
             AssignedOn =
                 workFlowTask.Assigned != null ? workFlowTask.Assigned.Value.ToStringBeisFormat() : string.Empty,
             SelectAssignee = assigneeList,
-            UserGroup = group,
+            UserGroup = Roles.NameFor(group),
             IsSameUserGroup = group.ToLowerInvariant().Trim().Equals(workFlowTask.ForRoleId.ToLowerInvariant().Trim()),
             SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
+        if (workFlowTask.Completed)
+        {
+            notificationDetail.UserGroup = Roles.NameFor(workFlowTask.LastUpdatedBy.RoleId);
+        }
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
 
         var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
