@@ -6,7 +6,6 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
-using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 
@@ -38,8 +37,8 @@ public class NotificationDetailsController : Controller
     [HttpGet("details/{id}", Name = Routes.NotificationDetails)]
     public async Task<IActionResult> Detail(Guid id)
     {
-        var vm = await NotificationDetailsMapping(id);
-        return View(vm.Item1);
+        var (notificationDetail, _) = await NotificationDetailsMapping(id);
+        return notificationDetail.IsSameUserGroup ? View(notificationDetail) : View("../../../../Pages/403");
     }
 
 
@@ -106,6 +105,7 @@ public class NotificationDetailsController : Controller
                 workFlowTask.Assigned != null ? workFlowTask.Assigned.Value.ToStringBeisFormat() : string.Empty,
             SelectAssignee = assigneeList,
             UserGroup = group,
+            IsSameUserGroup = group.ToLowerInvariant().Trim().Equals(workFlowTask.ForRoleId.ToLowerInvariant().Trim()),
             SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
