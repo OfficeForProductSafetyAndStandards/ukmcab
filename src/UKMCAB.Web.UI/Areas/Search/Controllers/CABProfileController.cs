@@ -147,7 +147,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
             var hasDraft = fullHistory.Any(d => d.StatusValue == Status.Draft);
 
-            var userAccount = User != null && User.Identity.IsAuthenticated
+            var userAccount = User.Identity is { IsAuthenticated: true }
                 ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
                 : null;
             var history = new AuditLogHistoryViewModel(fullHistory, userAccount, pagenumber);
@@ -156,7 +156,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
-                RequiresUnarchiveApproval = !string.Equals(userAccount.Role,Roles.OPSS.Label,StringComparison.CurrentCultureIgnoreCase),
+                RequiresUnarchiveApproval = userAccount != null && !string.Equals(userAccount.Role,Roles.OPSS.Label,StringComparison.CurrentCultureIgnoreCase),
                 IsPublished = isPublished,
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,
