@@ -249,6 +249,10 @@ public class NotificationController : Controller
                 return sd == SortDirectionHelper.Ascending
                     ? items.OrderBy(i => i.CABName).ToList()
                     : items.OrderByDescending(i => i.CABName).ToList();
+            case { } str when str.Equals(nameof(itemForNameOf.Assignee), StringComparison.CurrentCultureIgnoreCase):
+                return sd == SortDirectionHelper.Ascending
+                    ? items.OrderBy(i => i.Assignee).ToList()
+                    : items.OrderByDescending(i => i.Assignee).ToList();
             case { } str when str.Equals(nameof(itemForNameOf.LastUpdated), StringComparison.CurrentCultureIgnoreCase):
                 return sd == SortDirectionHelper.Ascending
                     ? items.OrderBy(i => i.LastUpdated).ToList()
