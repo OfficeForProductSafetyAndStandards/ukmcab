@@ -122,7 +122,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         document.CABNumber, document.UKASReference);
                 if (duplicateDocuments.Any())
                 {
-                    if (model.CABNumber != null && duplicateDocuments.Any(d => d.CabNumber.DoesEqual(model.CABNumber)))
+                    if (model.CABNumber != null && duplicateDocuments.Any(d => d.CABNumber.DoesEqual(model.CABNumber)))
                     {
                         ModelState.AddModelError(nameof(model.CABNumber), "This CAB number already exists\r\n\r\n");
                     }
