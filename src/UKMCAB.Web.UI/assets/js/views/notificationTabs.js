@@ -8,7 +8,7 @@ let notificationTabs = (function () {
                 const urlParams = new URLSearchParams(window.location.search);
                 const pageNumberKey = 'pagenumber';
                 const pageNumber = urlParams.get(pageNumberKey);
-                if (pageNumber !== undefined && pageNumber !== "1")
+                if (pageNumber !== undefined && pageNumber !== null && pageNumber !== "1")
                 {
                     window.location.search = pageNumberKey +"=1"
                 }
