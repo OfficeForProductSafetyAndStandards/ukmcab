@@ -214,7 +214,7 @@ public class NotificationController : Controller
             if (notification.CABId.HasValue)
             {
                 var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(notification.CABId.ToString()!);
-                cabName = cabs.First().Name;
+                cabName = cabs.FirstOrDefault()?.Name;
             }
 
             var item = (From: notification.Submitter.FirstAndLastName,
