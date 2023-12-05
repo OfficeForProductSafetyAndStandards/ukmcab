@@ -9,6 +9,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public List<FileViewModel>? UploadedFiles { get; set; }
         public IFormFile? File { get; set; }
         public List<IFormFile>? Files { get; set; }
+        public string? FileToUseAgain { get; set; }
     }
 
     public class FileViewModel

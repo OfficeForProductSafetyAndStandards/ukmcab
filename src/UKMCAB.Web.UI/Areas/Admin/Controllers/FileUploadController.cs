@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Utilities;
 using System.Collections.Generic;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
@@ -182,18 +183,39 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
-        public async Task<IActionResult> SchedulesList(string id, bool fromSummary)
+        public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? fileIndexToDuplicate)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
+
+            var uploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>();
+
+            if (uploadedFiles != null && int.TryParse(fileIndexToDuplicate, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count) 
+            {
+                var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
+                var uploadedFileToDuplicate = new FileViewModel
+                {
+                    FileName = selectedViewModel.FileName,
+                    Label = selectedViewModel.FileName,
+                    LegislativeArea = string.Empty,
+                    IsSelected = false,
+                    IsDuplicated = true,
+                };
+
+                uploadedFiles.Add(uploadedFileToDuplicate);
+            }
+
+
+
+
             // Pre-populate model for edit
             return View(new FileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
-                UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim()}).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = uploadedFiles,
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
@@ -212,63 +234,48 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             latestDocument.Schedules ??= new List<FileUpload>();
 
-            // TODO: Consider moving this code out to a method reusable for the supporting docs and call on all selected files to remove in batch.
-
             var filesInViewModel = model.UploadedFiles ?? new List<FileViewModel>();
-            
-            var selectedViewModels = GetSelectedFileViewModels(filesInViewModel);
 
-            AddSelectAFileModelStateError(submitType, selectedViewModels);
-
-            //if ((submitType == Constants.SubmitType.Remove || submitType == Constants.SubmitType.UseFileAgain) && !selectedViewModels.Any())
-            //{
-            //    ModelState.AddModelError("remove-or-use-it-again-btn-group", "Select a file to remove or use it again.");
-            //}
-            var selectedFileUploads = GetUploadedFilesFromFileViewModel(selectedViewModels, latestDocument);
-
-            //if (selectedViewModels.Any())
-            //{              
-
-            //    foreach(var fileVM in selectedViewModels)
-            //    {
-            //        if (!fileVM.IsDuplicated)
-            //        {
-            //            selectedFileUploads.Add(latestDocument.Schedules[fileVM.FileIndex]);
-            //        }
-
-            //    }               
-            //}
-
-            
-
-            if (selectedFileUploads.Any() && submitType != null && submitType.Equals(Constants.SubmitType.Remove))
+            if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain) && model.FileToUseAgain == null)
             {
-                //foreach (var fileToRemove in selectedFileUploads)
-                //{
-                //    latestDocument.Schedules.Remove(fileToRemove);
-                //}
-
-                //var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                //await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-
-                RemoveSelectedUploadedFilesFromDocument(submitType, selectedFileUploads, latestDocument);
-
-                var currentlyUploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
-
-                var unsavedFileViewModels = model.UploadedFiles.Where(u => u.IsDuplicated && !u.IsSelected).ToList();
-
-                currentlyUploadedFileViewModels.AddRange(unsavedFileViewModels);
-
-                return View(new FileListViewModel
-                {
-                    Title = SchedulesOptions.ListTitle,
-                    //UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>(),
-                    UploadedFiles = currentlyUploadedFileViewModels,
-                    CABId = id,
-                    IsFromSummary = fromSummary,
-                    DocumentStatus = latestDocument.StatusValue
-                });
+                ModelState.AddModelError(nameof(model.FileToUseAgain), "Select the file you want to use again");
+                return RedirectToAction("SchedulesUseFileAgain", "FileUpload", new { id, fromSummary });
             }
+
+
+                if (submitType != null && submitType.Equals(Constants.SubmitType.Remove))
+            {
+                var selectedViewModels = GetSelectedFileViewModels(filesInViewModel);
+                //if (!selectedFileUploads.Any())
+                if (!selectedViewModels.Any())
+                {
+                    AddSelectAFileModelStateError(submitType, selectedViewModels);
+                }
+                else
+                {
+                    var selectedFileUploads = GetSelectedFilesFromLatestDocumentOrEmptyList(selectedViewModels, latestDocument);
+                    if (selectedFileUploads.Any())
+                    {
+                        RemoveSelectedUploadedFilesFromDocument(submitType, selectedFileUploads, latestDocument);
+                    }                    
+
+                    var currentlyUploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
+
+                    var unsavedFileViewModels = model.UploadedFiles.Where(u => u.IsDuplicated && !u.IsSelected).ToList();
+
+                    currentlyUploadedFileViewModels.AddRange(unsavedFileViewModels);
+
+                    return View(new FileListViewModel
+                    {
+                        Title = SchedulesOptions.ListTitle,
+                        UploadedFiles = currentlyUploadedFileViewModels,
+                        CABId = id,
+                        IsFromSummary = fromSummary,
+                        DocumentStatus = latestDocument.StatusValue
+                    });
+                }
+            }
+
 
 
             if (model.UploadedFiles != null && model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
@@ -284,8 +291,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     index++;
                 }
             }
-
-            
 
             if(filesInViewModel.Any())
             {
@@ -335,29 +340,27 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
                 }
                
-                if (submitType == Constants.SubmitType.UseFileAgain)
-                {
-                    // TODO: Implement version for UseFileAgain
-                    //return model.IsFromSummary ?
-                    //    RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
-                    //    RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
+                //if (submitType == Constants.SubmitType.UseFileAgain)
+                //{
+                //    var selectedViewModel = new FileViewModel();
 
-                    //var selectedViewModels = model.UploadedFiles.Where(f => f.IsSelected);
+                //    if (int.TryParse(model.FileToUseAgain, out var fileToUseAgainIndex))
+                //    {
+                //        selectedViewModel = model.UploadedFiles[fileToUseAgainIndex];
+                //    }
+                    
+                //    var uploadedFileToDuplicate = new FileViewModel
+                //    {
+                //        FileName = selectedViewModel.FileName,
+                //        Label = selectedViewModel.FileName,
+                //        LegislativeArea = string.Empty,
+                //        IsSelected = false,
+                //        IsDuplicated = true,
+                //    };
 
-                    foreach (var file in selectedViewModels)
-                    {
-                        var duplicateFile = new FileViewModel
-                        {
-                            FileName = file.FileName,
-                            Label = file.FileName,
-                            LegislativeArea = string.Empty,
-                            IsSelected = false,
-                            IsDuplicated = true,
-                        };
+                //    duplicatedFiles.Add(uploadedFileToDuplicate);
 
-                        duplicatedFiles.Add(duplicateFile);
-                    }
-                }
+                //}
 
                 if (submitType == Constants.SubmitType.Save)
                 {
@@ -380,7 +383,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
-                //UploadedFiles = model.UploadedFiles, 
                 UploadedFiles = updatedUploadedFiles,
                 CABId = id,
                 IsFromSummary = fromSummary,
@@ -404,22 +406,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-            // Pre-populate model for edit
-            //if (latestVersion.Schedules != null && latestVersion.Schedules.Count >= SchedulesOptions.MaxFileCount)
-            //{
-            //    return RedirectToAction("SchedulesList", fromSummary ? new { id, fromSummary = "true" } : new { id });
-            //}
 
-            //var model = new FileUploadViewModel
-            //{
-            //    Title = SchedulesOptions.UploadTitle,
-            //    UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea }).ToList() ?? new List<FileViewModel>(),
-            //    CABId = id
-            //};
-            //model.IsFromSummary = fromSummary;
-            //model.DocumentStatus = latestVersion.StatusValue;
-
-            return View(new FileListViewModel
+            return View(new FileUploadViewModel
             {
                 Title = SchedulesOptions.UseFileAgainTitle,
                 UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>(),
@@ -427,13 +415,42 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
             });
+        } 
+
+        [HttpPost("admin/cab/schedules-use-file-again/{id}")]
+        public async Task<IActionResult> SchedulesUseFileAgain(string id, string submitType, FileUploadViewModel model, bool fromSummary)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+            latestDocument.Schedules ??= new List<FileUpload>();
+
+            var filesInViewModel = model.UploadedFiles ?? new List<FileViewModel>();
+
+            if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain) && model.FileToUseAgain == null)
+            {
+                ModelState.AddModelError(nameof(model.FileToUseAgain), "Select the file you want to use again");
+                return View(new FileUploadViewModel
+                {
+                    Title = SchedulesOptions.UseFileAgainTitle,
+                    UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>(),
+                    CABId = id,
+                    IsFromSummary = fromSummary,
+                    DocumentStatus = latestDocument.StatusValue
+                });
+            }
+
+            return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, fileIndexToDuplicate = model.FileToUseAgain});
         }
         private List<FileViewModel> GetSelectedFileViewModels(List<FileViewModel> filesInViewModel)
         {
 
             return filesInViewModel.Where(f => f.IsSelected).ToList() ?? new List<FileViewModel>();
         }
-        private List<FileUpload> GetUploadedFilesFromFileViewModel(IEnumerable<FileViewModel> selectedViewModels, Document latestDocument)
+        private List<FileUpload> GetSelectedFilesFromLatestDocumentOrEmptyList(IEnumerable<FileViewModel> selectedViewModels, Document latestDocument)
         {
             List<FileUpload> selectedFileUploads = new List<FileUpload>();
 
@@ -456,9 +473,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private void AddSelectAFileModelStateError(string submitType, IEnumerable<FileViewModel> selectedViewModels)
         {
-            if ((submitType == Constants.SubmitType.Remove || submitType == Constants.SubmitType.UseFileAgain) && !selectedViewModels.Any())
+            if ((submitType == Constants.SubmitType.Remove) && !selectedViewModels.Any())
             {
-                ModelState.AddModelError("remove-or-use-it-again-btn-group", "Select a file to remove or use it again.");
+                ModelState.AddModelError("remove-or-use-it-again-btn-group", "Select a file to remove");
             }
         }
 
@@ -477,18 +494,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
 
         }
-
-
-
-
-
-
-
-
-
-
-
-
 
         private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
