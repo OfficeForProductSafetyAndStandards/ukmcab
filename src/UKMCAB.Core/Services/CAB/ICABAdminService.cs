@@ -25,11 +25,10 @@ namespace UKMCAB.Core.Services.CAB
         Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft,
             bool submitForApproval = false);
 
-        Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, UserAccount lastUpdatedBy,
-            string auditCabAction);
+        Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, Audit audit);
         Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument);
-        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string archiveInternalReason, string archivePublicReason);
-        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string unarchiveInternalReason, string unarchivePublicReason);
+        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string? archiveInternalReason, string archivePublicReason);
+        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason, string unarchivePublicReason);
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
         Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown);

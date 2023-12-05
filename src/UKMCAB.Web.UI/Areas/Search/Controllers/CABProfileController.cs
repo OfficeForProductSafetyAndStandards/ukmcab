@@ -277,7 +277,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         [HttpPost]
         [Route("search/cab-profile/archive/submit-js")]
-        public async Task<IActionResult> ArchiveJs(string CABId, string archiveInternalReason, string archivePublicReason)
+        public async Task<IActionResult> ArchiveJs(string CABId, string? archiveInternalReason, string archivePublicReason)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(CABId);
             if (cabDocument == null)
@@ -370,7 +370,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         [HttpPost]
         [Route("search/cab-profile/unarchive/submit-js")]
-        public async Task<IActionResult> UnarchiveJs(string CABId, string UnarchiveInternalReason, string UnarchivePublicReason)
+        public async Task<IActionResult> UnarchiveJs(string CABId, string? UnarchiveInternalReason, string UnarchivePublicReason)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(CABId);
             if (cabDocument == null)
