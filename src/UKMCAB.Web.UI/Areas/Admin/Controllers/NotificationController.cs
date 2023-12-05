@@ -94,16 +94,16 @@ public class NotificationController : Controller
         var completed =
             await _workflowTaskService.GetCompletedForRoleIdAsync(role.Id);
 
-        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
             unAssignedItems =
                 await BuildTableItemsAsync(unassigned, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
             assignedToMeItems =
                 await BuildTableItemsAsync(assignedToMe, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
             assignedToGroupItems =
                 await BuildTableItemsAsync(assignedToGroup, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
             completedItems =
                 await BuildTableItemsAsync(completed, sf, sd);
 
@@ -198,7 +198,7 @@ public class NotificationController : Controller
         return items.Select(i => i.Value).ToList();
     }
 
-    private async Task<List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string?
+    private async Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string?
             DetailLink)>>
         BuildTableItemsAsync(
             IEnumerable<WorkflowTask> tasks,
@@ -206,7 +206,7 @@ public class NotificationController : Controller
             string? sd)
     {
         var items =
-            new List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string?
+            new List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string?
                 DetailLink)>();
         foreach (var notification in tasks)
         {
@@ -221,7 +221,7 @@ public class NotificationController : Controller
                 Subject: notification.TaskType.GetEnumDescription(),
                 CABName: cabName,
                 Assignee: notification.Assignee?.FirstAndLastName,
-                LastUpdated: notification.SentOn.ToStringBeisFormat(),
+                LastUpdated: notification.SentOn,
                 DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails,
                     new { id = notification.Id.ToString() }));
             items.Add(item);
