@@ -61,7 +61,8 @@ public class DeclineCABController : Controller
 
     [HttpPost("{cabId}")]
     public async Task<IActionResult> DeclinePostAsync(Guid cabId,
-        [Bind(nameof(DeclineCABViewModel.DeclineReason))] DeclineCABViewModel vm)
+        [Bind(nameof(DeclineCABViewModel.DeclineReason))]
+        DeclineCABViewModel vm)
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
@@ -78,13 +79,13 @@ public class DeclineCABController : Controller
             throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        await _cabAdminService.SetSubStatusAsync(cabId, Status.Draft, SubStatus.None,
+            new Audit(user, AuditCABActions.CABDeclined, vm.DeclineReason));
 
-        await _cabAdminService.SetSubStatusAsync(cabId, Status.Draft, SubStatus.None, user,
-            AuditCABActions.CABDeclined);
-        var submitter = new User(user.Id, user.FirstName, user.Surname, userRoleId,
-            user.EmailAddress ?? throw new InvalidOperationException());
-        await MarkTaskAsCompleteAsync(cabId, submitter);
-        await SendNotificationOfDeclineAsync(cabId, document.Name, submitter, vm.DeclineReason);
+        var submitTask = await MarkTaskAsCompleteAsync(cabId,
+            new User(user.Id, user.FirstName, user.Surname, userRoleId,
+                user.EmailAddress ?? throw new InvalidOperationException()));
+        await SendNotificationOfDeclineAsync(cabId, document.Name, submitTask.Submitter, vm.DeclineReason);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
@@ -93,14 +94,12 @@ public class DeclineCABController : Controller
     /// </summary>
     /// <param name="cabId">Associated CAB</param>
     /// <param name="userLastUpdatedBy"></param>
-    private async Task MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
     {
         var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
-        var task = tasks.FirstOrDefault(t => t is { TaskType: TaskType.RequestToPublish, Completed: false });
-        if (task != null)
-        {
-            await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
-        }
+        var task = tasks.First(t => t is { TaskType: TaskType.RequestToPublish, Completed: false });
+        await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
+        return task;
     }
 
     /// <summary>
@@ -119,7 +118,7 @@ public class DeclineCABController : Controller
             {
                 "CABUrl",
                 UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId }))
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
             },
             { "DeclineReason", declineReason }
         };

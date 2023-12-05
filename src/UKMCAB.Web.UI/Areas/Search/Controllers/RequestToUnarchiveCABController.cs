@@ -79,7 +79,7 @@ public class RequestToUnarchiveCABController : Controller
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
-        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived, SubStatus.PendingApproval, currentUser, AuditCABActions.UnarchiveApprovalRequest);
+        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived, SubStatus.PendingApproval, new Audit(currentUser, AuditCABActions.UnarchiveApprovalRequest));
         
         await _workflowTaskService.CreateAsync(new WorkflowTask(
             Guid.NewGuid(),

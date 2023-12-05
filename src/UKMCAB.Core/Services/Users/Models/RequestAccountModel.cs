@@ -8,5 +8,5 @@ public class RequestAccountModel
     public string Surname { get; set; } = null!;
     public string Organisation { get; set; } = null!;
     public string ContactEmailAddress { get; set; } = null!;
-    public string Comments { get; set; } = null!;
+    public string? Comments { get; set; }
 }

@@ -167,6 +167,7 @@ namespace UKMCAB.Core.Services.CAB
             if (submitForApproval)
             {
                 draft.SubStatus = SubStatus.PendingApproval;
+                draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
             }
 
             if (draft.StatusValue == Status.Published)
@@ -194,9 +195,8 @@ namespace UKMCAB.Core.Services.CAB
         /// <param name="cabId">cabId to update</param>
         /// <param name="status">status of Cab to get</param>
         /// <param name="subStatus"></param>
-        /// <param name="lastUpdatedBy">User last updated by</param>
-        /// <param name="auditCabAction">Action to go in audit log</param>
-        public async Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, UserAccount lastUpdatedBy, string auditCabAction)
+        /// <param name="audit">audit log to save</param>
+        public async Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, Audit audit)
         {
             var documents =
                 await _cabRepository.Query<Document>(c => c.CABId == cabId.ToString() && c.Status == status.ToString());
@@ -207,7 +207,6 @@ namespace UKMCAB.Core.Services.CAB
 
             var document = documents.First();
             document.SubStatus = subStatus;
-            var audit = new Audit(lastUpdatedBy, auditCabAction);
             document.AuditLog.Add(audit);
             await _cabRepository.UpdateAsync(document);
         }
@@ -256,7 +255,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId,
-            string unarchiveInternalReason, string unarchivePublicReason)
+            string? unarchiveInternalReason, string unarchivePublicReason)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             var draft = documents.SingleOrDefault(d => d is { StatusValue: Status.Draft });
@@ -293,7 +292,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId,
-            string archiveInternalReason, string archivePublicReason)
+            string? archiveInternalReason, string archivePublicReason)
         {
             var docs = await FindAllDocumentsByCABIdAsync(CABId);
 
