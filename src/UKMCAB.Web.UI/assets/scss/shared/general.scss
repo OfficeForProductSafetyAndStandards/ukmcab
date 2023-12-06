@@ -26,24 +26,6 @@
     border: #bfc1c3 1px solid;
 }
 
-.ukmcab-checkboxes__input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    zoom: 1;
-    opacity: 1;
-}
-
-.ukmcab-checkboxes__input:checked + .item-label::after, .item-label.not-checked::after {
-    zoom: 1;
-    filter: alpha(opacity=100);
-    opacity: 1;
-}
-
-.ukmcab-checkboxes__input:focus + .item-label::before {
-    outline: #ffbf47 2px solid
-}
-
 .ukmcab-float__clear {
     clear: both;
 }
