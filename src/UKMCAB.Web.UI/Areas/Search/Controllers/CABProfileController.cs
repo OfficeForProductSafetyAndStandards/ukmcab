@@ -292,7 +292,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     var cabCreatorInfo = await _userService.GetAsync(CabCreatorUserId);
                     await SubmitEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
                     
-                    //TODO -- approver
                     var submitter = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userAccount.Role ?? throw new InvalidOperationException(),
                         userAccount.EmailAddress ?? throw new InvalidOperationException());
                     
