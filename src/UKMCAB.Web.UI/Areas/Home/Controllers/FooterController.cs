@@ -63,7 +63,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             return View(new ContactUsViewModel{ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl) });
         }
 
-        [HttpPost("/contact-us",Name = Routes.ContactUs)]
+        [HttpPost("/contact-us", Name = Routes.ContactUs)]
         public async Task<IActionResult> ContactUs(ContactUsViewModel model)
         {
             if (ModelState.IsValid)
