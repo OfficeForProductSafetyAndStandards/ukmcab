@@ -9,10 +9,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public readonly string[] PublicAuditActionsToShow =
         {
             AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest,
-            AuditCABActions.CABApproved, AuditCABActions.CABDeclined
         };
 
-        public readonly string[] OPSSUserAuditActionsToShow =
+        public readonly string[] LoggedInUserAuditActionsToShow =
         {
             AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest,
             AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved,
@@ -53,17 +52,14 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         }
 
 
-        public AuditLogHistoryViewModel(IEnumerable<Document?> documents, UserAccount? userAccount, int pageNumber)
+        public AuditLogHistoryViewModel(IEnumerable<Document?> documents, int pageNumber, bool showLoggedInAuditActions = false)
         {
-            IsOPSSUser = userAccount != null && userAccount.Role == Roles.OPSS.Id;
-            OPSSUserId = IsOPSSUser ? userAccount.Id : string.Empty;
-
             documents = documents
                 .Where(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived ||
                             d.StatusValue == Status.Historical)
                 .OrderBy(d => d.LastUpdatedDate);
 
-            var auditActionsToShow = IsOPSSUser ? OPSSUserAuditActionsToShow : PublicAuditActionsToShow;
+            var auditActionsToShow = showLoggedInAuditActions ? LoggedInUserAuditActionsToShow : PublicAuditActionsToShow;
 
             var auditLog = documents
                 .SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action))))

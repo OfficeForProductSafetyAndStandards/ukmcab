@@ -162,7 +162,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var userAccount = User.Identity is { IsAuthenticated: true }
                 ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
                 : null;
-            var history = new AuditLogHistoryViewModel(fullHistory, userAccount, pagenumber);
+            var history = new AuditLogHistoryViewModel(fullHistory, pagenumber, userAccount != null);
 
             var cab = new CABProfileViewModel
             {
