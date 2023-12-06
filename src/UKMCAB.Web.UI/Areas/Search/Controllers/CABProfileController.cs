@@ -16,6 +16,7 @@ using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
 using UKMCAB.Web.UI.Helpers;
@@ -277,43 +278,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveInternalReason,
-                model.ArchivePublicReason);
+                // await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveInternalReason,
+                //     model.ArchivePublicReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
                     [AiTracking.Metadata.CabName] = cabDocument.Name
                 }));
-                var CabCreator = cabDocument?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Created);
-                var CabCreatorUserId = CabCreator?.UserId;   
-                
-                if (!string.IsNullOrEmpty(CabCreatorUserId))
-                {
-                    var cabCreatorInfo = await _userService.GetAsync(CabCreatorUserId);
-                    await SubmitEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
-                    
-                    var submitter = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userAccount.Role ?? throw new InvalidOperationException(),
-                        userAccount.EmailAddress ?? throw new InvalidOperationException());
-                    
-                    var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname, cabCreatorInfo.Role ?? throw new InvalidOperationException(),
-                        cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
-                    
-                    await _workflowTaskService.CreateAsync(
-                        new WorkflowTask( Guid.NewGuid(), 
-                            TaskType.DraftCabDeletedFromArchiving,
-                            submitter,
-                            userAccount.Role, 
-                            assignee,
-                            DateTime.Now, 
-                            $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived.",
-                            DateTime.Now,
-                            submitter, 
-                            DateTime.Now,
-                            false, 
-                            null,
-                            true, 
-                           Guid.Parse(cabDocument.CABId)));
-                }
+                await SendNotifications(userAccount, cabDocument);
 
                 return RedirectToAction("Index", new { id = cabDocument.URLSlug, returnUrl = model.ReturnURL });
             }
@@ -322,6 +294,42 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(model);
         }
 
+       private async Task SendNotifications(UserAccount userAccount, Document cabDocument )
+            {
+                var CabCreator = cabDocument?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Created);
+                var CabCreatorUserId = CabCreator?.UserId;
+
+                if (!string.IsNullOrEmpty(CabCreatorUserId))
+                {
+                    var cabCreatorInfo = await _userService.GetAsync(CabCreatorUserId);
+                    await SubmitEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
+
+                    var submitter = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
+                        userAccount.Role ?? throw new InvalidOperationException(),
+                        userAccount.EmailAddress ?? throw new InvalidOperationException());
+
+                    var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname,
+                        cabCreatorInfo.Role ?? throw new InvalidOperationException(),
+                        cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
+
+                    await _workflowTaskService.CreateAsync(
+                        new WorkflowTask(Guid.NewGuid(),
+                            TaskType.DraftCabDeletedFromArchiving,
+                            submitter,
+                            userAccount.Role,
+                            assignee,
+                            DateTime.Now,
+                            $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived.",
+                            DateTime.Now,
+                            submitter,
+                            DateTime.Now,
+                            false,
+                            null,
+                            true,
+                            Guid.Parse(cabDocument.CABId)));
+                }
+            }
+    
         private async Task SubmitEmailForDeleteDraftAsync(string cabName, string receiverEmailAddress)
         {
             var personalisation = new Dictionary<string, dynamic>
