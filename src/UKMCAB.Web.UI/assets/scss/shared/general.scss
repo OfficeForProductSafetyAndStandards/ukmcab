@@ -105,7 +105,9 @@
 }
 
 
-@include govuk-media-query($until: tablet) {
+//@include govuk-media-query($until: tablet) {}
+
+@media (max-width: 908px) {
 
     .ukmcab-padding-left-10 {
         padding-left: 0 !important;

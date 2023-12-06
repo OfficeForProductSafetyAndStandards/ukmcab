@@ -27,7 +27,7 @@
     </div>
 }
 
-<div class="govuk-grid-row">
+<div id="schedule-list-container" class="govuk-grid-row">
 
     @if (newFile)
     {
@@ -132,7 +132,7 @@
                                             <p class="govuk-error-message">
                                                 <span asp-validation-for="UploadedFiles[i].Label" class="govuk-error-message"></span>
                                             </p>
-                                            <input asp-for="UploadedFiles[i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
+                                            <input style="width:100%" asp-for="UploadedFiles[i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
                                             <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
                                             <input asp-for="UploadedFiles[i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
                                         </div>
