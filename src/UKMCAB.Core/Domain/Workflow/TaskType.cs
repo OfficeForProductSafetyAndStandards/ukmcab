@@ -20,5 +20,7 @@ public enum TaskType
     CABDeclined,
     UnarchiveApproved,
     UnarchiveDeclined,
-    UserAccountApproved
+    UserAccountApproved,
+    [Description("Draft CAB deleted")]
+    DraftCabDeletedFromArchiving
 }
