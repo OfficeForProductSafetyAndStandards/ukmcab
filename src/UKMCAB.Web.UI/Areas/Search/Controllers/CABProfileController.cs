@@ -304,15 +304,23 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (!string.IsNullOrEmpty(cabCreatorUserId))
             {
                 var cabCreatorInfo = await _userService.GetAsync(cabCreatorUserId);
-                await SubmitEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
+                await SendEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
+
+                var archiverRoleId = Roles.List.First(r =>
+                        r.Label != null &&
+                        r.Label.Equals(archiverAccount.Role, StringComparison.CurrentCultureIgnoreCase))
+                    .Id;
 
                 var submitter = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
-                    archiverAccount.Role ?? throw new InvalidOperationException(),
-                    archiverAccount.EmailAddress ?? throw new InvalidOperationException());
+                    archiverRoleId, archiverAccount.EmailAddress ?? throw new InvalidOperationException());
+
+                var cabCreatorRoleId = Roles.List.First(r =>
+                        r.Label != null &&
+                        r.Label.Equals(archiverAccount.Role, StringComparison.CurrentCultureIgnoreCase))
+                    .Id;
 
                 var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname,
-                    cabCreatorInfo.Role ?? throw new InvalidOperationException(),
-                    cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
+                    cabCreatorRoleId, cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
 
                 await _workflowTaskService.CreateAsync(
                     new WorkflowTask(Guid.NewGuid(),
@@ -332,7 +340,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
         }
 
-        private async Task SubmitEmailForDeleteDraftAsync(string cabName, string receiverEmailAddress)
+        private async Task SendEmailForDeleteDraftAsync(string cabName, string receiverEmailAddress)
         {
             var personalisation = new Dictionary<string, dynamic>
             {
