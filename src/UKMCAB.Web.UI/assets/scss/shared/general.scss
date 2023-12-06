@@ -18,6 +18,10 @@
     word-wrap: break-word;
 }
 
+.govuk-colour-green {
+    color: govuk-colour("green");
+}
+
 .ukmcab-border {
     border: #bfc1c3 1px solid;
 }
@@ -103,9 +107,6 @@
 .ukmcab-padding-left-40 {
     padding-left: 40px !important;
 }
-
-
-//@include govuk-media-query($until: tablet) {}
 
 @media (max-width: 908px) {
 

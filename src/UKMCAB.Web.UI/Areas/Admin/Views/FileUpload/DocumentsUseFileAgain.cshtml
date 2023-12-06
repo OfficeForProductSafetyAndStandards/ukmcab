@@ -13,7 +13,7 @@
                 }
                 else
                 {
-                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
                 }
             </div>
         </div>
@@ -22,13 +22,13 @@
 
 <div class="govuk-grid-row">
 
-    @using (Html.BeginForm("SchedulesUseFileAgain", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
+    @using (Html.BeginForm("DocumentsUseFileAgain", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
     {
         <div class="govuk-grid-column-full">
 
             <partial name="Partials/_ValidationSummary" model="null" />
 
-            <div>
+            <div >
                 <span class="govuk-caption-m">@Model.Title</span>
                 <h1 class="govuk-heading-l">@Model.Title</h1>
                 <p id="selectFileToUseAgainHint" class="govuk-body govuk-!-padding-bottom-2">Select the file you want to use again.</p>
@@ -37,9 +37,9 @@
 
             @if (!Model.UploadedFiles.Any())
             {
-                <p class="govuk-body">0 file uploaded</p>
+                    <p class="govuk-body">0 file uploaded</p>
             }
-            else
+            else 
             {
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.FileToUseAgain))">
                     <fieldset class="govuk-fieldset" aria-describedby="selectFileToUseAgainHint">
@@ -52,11 +52,11 @@
                         <p class="govuk-error-message">
                             <span asp-validation-for="FileToUseAgain" class="govuk-error-message"></span>
                         </p>
-
+                        
                         @* Header *@
                         <div>
                             <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display"><h3 class="govuk-heading-s">File</h3></div>
-                            <div class="ukmcab-float__left"><h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Legislative area</h3></div>
+                            <div class="ukmcab-float__left"><h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Category</h3></div>
                         </div>
 
                         <div class="ukmcab-float__left width-full"><hr class="ukmcab-border" /></div>
@@ -66,23 +66,24 @@
                             @for (int i = 0; i < Model.UploadedFiles.Count; i++)
                             {
                                 var uploadedFile = Model.UploadedFiles[i];
-                                var items = DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea?.Trim() ?? string.Empty))).ToList();
+                                var items = DataConstants.Lists.DocumentCategories.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Category?.Trim() ?? string.Empty))).ToList();
 
                                 <div class="govuk-radios__item ukmcab-padding-bottom-10">
                                     <div class="row">
                                         <div class="width-one-tenth">
-
+                                            
                                             <input asp-for="UploadedFiles[i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
                                             <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
-                                            <input asp-for="UploadedFiles[i].LegislativeArea" type="hidden" value="@uploadedFile.LegislativeArea">
+                                            <input asp-for="UploadedFiles[i].Category" type="hidden" value="@uploadedFile.Category">
                                             <input asp-for="UploadedFiles[i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
                                         </div>
                                         <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
                                             <input class="govuk-radios__input" asp-for="FileToUseAgain" type="radio" value="@i">
                                             <label class="govuk-label govuk-radios__label" asp-for="FileToUseAgain">
-                                                <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
+                                                <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@uploadedFile.FileName</a>
                                             </label>
                                         </div>
+
                                         <div class="width-one-fifth ukmcab-float__left">
                                             <label class="govuk-label break-word"></label>
                                         </div>
@@ -97,12 +98,12 @@
                                     </div>
 
                                     <div class="width-three-tenth ukmcab-float__left ukmcab-padding-left-40">
-                                        <label class="govuk-label govuk-label--s desktop-no-display">Legislative area</label>
+                                        <label class="govuk-label govuk-label--s desktop-no-display">Category</label>
                                         <p class="govuk-body">
-                                            @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
+                                            @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.Category), uploadedFile.Category, @Constants.NotAssigned)
                                         </p>
                                     </div>
-
+                                    
                                 </div>
                                 <div class="ukmcab-float__left width-full"><hr class="ukmcab-border" /></div>
                             }
@@ -110,23 +111,27 @@
                     </fieldset>
                 </div>
             }
-        </div>
 
-        <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-button-group ukmcab-padding-top-50">
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain" type="submit">
-                    Use file again
-                </button>
+    </div>
+
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-button-group ukmcab-padding-top-50">
+            <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain" type="submit">
+                Use file again
+            </button>
+
+
+
                 @if (Model.IsFromSummary)
                 {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
-            </div>
         </div>
+    </div>
 
     }
 

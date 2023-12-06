@@ -20,6 +20,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? Label { get; set; }
         public string? LegislativeArea { get; set; }
         public string? Category { get; set; }
+        public DateTime? UploadDateTime { get; set; }
         public int FileIndex { get; set; }
         public bool IsSelected { get; set; } = false;
         public bool IsDuplicated { get; set; } = false;

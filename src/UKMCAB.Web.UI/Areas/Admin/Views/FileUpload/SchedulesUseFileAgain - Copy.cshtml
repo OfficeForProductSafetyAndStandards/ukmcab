@@ -2,7 +2,6 @@
 @using UKMCAB.Data
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileUploadViewModel
-@*@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileListViewModel*@
 @section BackButton
 {
     <div class="govuk-width-container">
@@ -111,7 +110,7 @@
 
                                             <td class="govuk-table__cell uploaded-file-attribute">
                                                 <label class="govuk-label govuk-label--s desktop-no-display">Legislative area</label>
-                                                <p class="govuk-body file-legislative-area">
+                                                <p class="govuk-body">
                                                                 @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
                                                 </p>
                                             </td>
