@@ -296,19 +296,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(model);
         }
 
-        private async Task SendNotifications(UserAccount userAccount, Document cabDocument)
+        private async Task SendNotifications(UserAccount archiverAccount, Document cabDocument)
         {
-            var CabCreator = cabDocument?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Created);
-            var CabCreatorUserId = CabCreator?.UserId;
+            var cabCreator = cabDocument?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Created);
+            var cabCreatorUserId = cabCreator?.UserId;
 
-            if (!string.IsNullOrEmpty(CabCreatorUserId))
+            if (!string.IsNullOrEmpty(cabCreatorUserId))
             {
-                var cabCreatorInfo = await _userService.GetAsync(CabCreatorUserId);
+                var cabCreatorInfo = await _userService.GetAsync(cabCreatorUserId);
                 await SubmitEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
 
-                var submitter = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
-                    userAccount.Role ?? throw new InvalidOperationException(),
-                    userAccount.EmailAddress ?? throw new InvalidOperationException());
+                var submitter = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
+                    archiverAccount.Role ?? throw new InvalidOperationException(),
+                    archiverAccount.EmailAddress ?? throw new InvalidOperationException());
 
                 var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname,
                     cabCreatorInfo.Role ?? throw new InvalidOperationException(),
@@ -318,7 +318,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     new WorkflowTask(Guid.NewGuid(),
                         TaskType.DraftCabDeletedFromArchiving,
                         submitter,
-                        userAccount.Role,
+                        archiverAccount.Role,
                         assignee,
                         DateTime.Now,
                         $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",
