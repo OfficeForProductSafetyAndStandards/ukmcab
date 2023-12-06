@@ -2,13 +2,6 @@
 @using UKMCAB.Data
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileListViewModel
-@{
-    var newFile = false;
-    if (Model.UploadedFiles != null && Model.UploadedFiles.Any(f => f.IsDuplicated) && ViewData.ModelState.IsValid)
-    {
-        newFile = true;
-    }
-}
 @section BackButton
 {
     <div class="govuk-width-container">
@@ -29,7 +22,7 @@
 
 <div id="schedule-list-container" class="govuk-grid-row">
 
-    @if (newFile)
+    @if (Model.UploadedFiles != null && Model.UploadedFiles.Any(f => f.IsDuplicated) && ViewData.ModelState.IsValid)
     {
            <div class="govuk-width-container">
                 <div class="govuk-grid-row">
@@ -163,7 +156,6 @@
                     </fieldset>
                 </div>
             }
-
 
         <div class="govuk-grid-column-one-half">
             @if (Model.UploadedFiles.Any())

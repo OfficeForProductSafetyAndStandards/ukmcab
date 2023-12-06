@@ -112,7 +112,6 @@
                                                 {
                                                     <label class="govuk-body govuk-!-font-weight-bold govuk-colour-green">New</label>
                                                 }
-
                                             </div>
                                         </div>
                                     </div>
@@ -151,7 +150,6 @@
                                                 }
                                             </select>
                                         </div>
-
                                     </div>
                                     <div class="ukmcab-float__left width-full"><hr class="ukmcab-border" /></div>
                                 }
@@ -159,7 +157,6 @@
                         </fieldset>
                     </div>
                 }
-
 
                 <div class="govuk-grid-column-one-half">
                     @if (Model.UploadedFiles.Any())
@@ -173,13 +170,11 @@
                     }
                 </div>
 
-
                 <div class="govuk-grid-column-one-half ukmcab-text-aligin-right">
                     <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
                         @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file" , "Upload a file")
                     </button>
                 </div>
-
 
                 <div class="govuk-grid-column-two-thirds">
                     <div class="govuk-button-group ukmcab-padding-top-50">
@@ -203,154 +198,4 @@
 
         </form>
     </div>
-
-
-
-
-
-
-
-
-    @*
-    <form method="post" enctype="multipart/form-data" novalidate>
-        <div class="govuk-grid-column-full">
-            <input type="hidden" asp-for="IsFromSummary" />
-            <span class="govuk-caption-m">@Model.Title</span>
-            <h1 class="govuk-heading-l">@Model.Title</h1>
-            <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to @DocumentsOptions.MaxFileCount Word, Excel or PDF documents.</p>
-
-            <div id="file-upload-list-container">
-                <h3 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--s" for="files-uploaded-table">
-                        Files you have uploaded
-                    </label>
-                </h3>
-                <div class="govuk-hint" id="files-uploaded-table-hint">
-                    Select a category for the file.
-                </div>
-                <table class="govuk-table" id="doc-list-files-uploaded-table" aria-describedby="files-uploaded-table-hint">
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header width-one-twentieth">File</th>
-                            <th scope="col" class="govuk-table__header width-three-fifth"></th>
-                            <th scope="col" class="govuk-table__header">Category</th>
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @if (!Model.UploadedFiles.Any())
-                        {
-                            <tr class="govuk-table__row">
-                                <td class="govuk-table__cell" colspan="3">0 file uploaded</td>
-                            </tr>
-                        }
-                        else
-                        {
-                            for (int i = 0; i < Model.UploadedFiles.Count; i++)
-                            {
-                                var uploadedFile = Model.UploadedFiles[i];
-                                var items = DataConstants.Lists.DocumentCategories.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Category?.Trim() ?? string.Empty))).ToList();
-
-                                <tr id="uploaded-file-name-tr">
-                                    <td>
-                                        <div class="checkboxes-itemX govuk-checkboxes--small">
-                                            <input class="file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected" />
-                                            <input type="hidden" asp-for="UploadedFiles[i].FileIndex" value="@i" />
-                                        </div>
-                                    </td>
-                                    <td id="uploaded-file-name-td">
-                                        <p class="govuk-body"><span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@uploadedFile.FileName</a></p>
-                                    </td>
-                                </tr>
-
-                                //ROW 2:
-                                <tr class="govuk-table__row" id="document-list-row" style="vertical-align: bottom">
-                                    <td></td>
-                                    <td class="govuk-table__cell uploaded-file-attribute">
-                                        <govuk-input asp-for="UploadedFiles[i].Label" type="text" id="UploadedFiles[@i].Label" value="@uploadedFile.Label" aria-required="true" maxlength="150">
-                                            <govuk-input-label class="govuk-label govuk-label--s">File</govuk-input-label>
-                                        </govuk-input>
-                                        <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName" />
-                                        <input asp-for="UploadedFiles[i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
-                                    </td>
-                                    <td class="govuk-table__cell uploaded-file-attribute">
-                                        <govuk-select id="UploadedFiles[@i].Category" asp-for="UploadedFiles[i].Category">
-                                            <govuk-select-label class="govuk-label govuk-label--s">Category</govuk-select-label>
-                                            <govuk-select-item value="">Not assigned</govuk-select-item>
-                                            @foreach (var la in items)
-                                            {
-                                                if (la.Selected)
-                                                {
-                                                    <govuk-select-item value="@la.Value" selected="true">@la.Text</govuk-select-item>
-                                                }
-                                                else
-                                                {
-                                                    <govuk-select-item value="@la.Value">@la.Text</govuk-select-item>
-                                                }
-                                            }
-                                        </govuk-select>
-                                    </td>
-
-                                </tr>
-                            }
-                        }
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-
-        BUTTONS
-
-        <div class="govuk-grid-column-full">
-            <p class="govuk-error-message">
-                <span name="remove-or-use-it-again-btn-group" class="govuk-error-message">@Html.ValidationMessage("remove-or-use-it-again-btn-group", "")</span>
-            </p>
-        </div>
-        <div class="govuk-grid-column-one-half">
-            @if (Model.UploadedFiles.Any())
-            {
-                <div class="govuk-button-group">
-                    <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove" />
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">
-                        Use file again
-                    </button>
-                </div>
-            }
-        </div>
-
-        @if (Model.UploadedFiles.Count < DocumentsOptions.MaxFileCount)
-        {
-            <div class="govuk-grid-column-one-half ukmcab-text-aligin-right">
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
-                    @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file" , "Upload a file")
-                </button>
-            </div>
-        }
-
-        <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-button-group ukmcab-padding-top-50">
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                    @Html.Conditional(Model.UploadedFiles.Any(), "Save and continue", "Save")
-                </button>
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
-                    Save as draft
-                </button>
-
-                @if (Model.IsFromSummary)
-                {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
-                else
-                {
-                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
-            </div>
-        </div>
-
-    </form>
-
-
-    *@
-
-
 </div>

@@ -19,7 +19,7 @@
 }
 
 .govuk-colour-green {
-    color: govuk-colour("green");
+    color: govuk-colour("green") !important;
 }
 
 .ukmcab-border {
@@ -134,7 +134,6 @@
         padding-right: 0 !important;
     }
 }
-
 
 .ukmcab-padding-right-10 {
     padding-right: 10px !important;

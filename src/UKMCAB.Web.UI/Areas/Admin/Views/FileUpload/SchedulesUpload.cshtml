@@ -109,7 +109,7 @@
                         </fieldset>
                     </div>
                 }
-                
+
                 @if (Model.UploadedFiles.Any())
                 {
                     <div class="govuk-button-group">
@@ -127,7 +127,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="schedule-upload-form" class="js-submit-once" method="post" enctype="multipart/form-data" novalidate>
-          
+
             <input type="hidden" asp-for="IsFromSummary" />
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "File")">
                 <label class="govuk-label govuk-!-font-weight-bold" asp-for="Files">

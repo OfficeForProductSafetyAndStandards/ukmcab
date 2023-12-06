@@ -3,7 +3,7 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileUploadViewModel
 @section BackButton
-{
+    {
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -28,7 +28,7 @@
 
             <partial name="Partials/_ValidationSummary" model="null" />
 
-            <div >
+            <div>
                 <span class="govuk-caption-m">@Model.Title</span>
                 <h1 class="govuk-heading-l">@Model.Title</h1>
                 <p id="selectFileToUseAgainHint" class="govuk-body govuk-!-padding-bottom-2">Select the file you want to use again.</p>
@@ -37,9 +37,9 @@
 
             @if (!Model.UploadedFiles.Any())
             {
-                    <p class="govuk-body">0 file uploaded</p>
+                <p class="govuk-body">0 file uploaded</p>
             }
-            else 
+            else
             {
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.FileToUseAgain))">
                     <fieldset class="govuk-fieldset" aria-describedby="selectFileToUseAgainHint">
@@ -52,7 +52,7 @@
                         <p class="govuk-error-message">
                             <span asp-validation-for="FileToUseAgain" class="govuk-error-message"></span>
                         </p>
-                        
+
                         @* Header *@
                         <div>
                             <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display"><h3 class="govuk-heading-s">File</h3></div>
@@ -69,9 +69,10 @@
                                 var items = DataConstants.Lists.DocumentCategories.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Category?.Trim() ?? string.Empty))).ToList();
 
                                 <div class="govuk-radios__item ukmcab-padding-bottom-10">
+                                    @* Row 1*@
                                     <div class="row">
                                         <div class="width-one-tenth">
-                                            
+
                                             <input asp-for="UploadedFiles[i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
                                             <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
                                             <input asp-for="UploadedFiles[i].Category" type="hidden" value="@uploadedFile.Category">
@@ -90,7 +91,7 @@
                                     </div>
                                 </div>
 
-                                @*Row 2*@
+                                @* Row 2*@
                                 <div class="row">
                                     <div class="width-three-fifth ukmcab-float__left ukmcab-padding-left-35 ukmcab-padding-bottom-15">
                                         <label class="govuk-label govuk-label--s desktop-no-display">File</label>
@@ -103,7 +104,6 @@
                                             @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.Category), uploadedFile.Category, @Constants.NotAssigned)
                                         </p>
                                     </div>
-                                    
                                 </div>
                                 <div class="ukmcab-float__left width-full"><hr class="ukmcab-border" /></div>
                             }
@@ -111,27 +111,24 @@
                     </fieldset>
                 </div>
             }
+        </div>
 
-    </div>
-
-    <div class="govuk-grid-column-two-thirds">
-        <div class="govuk-button-group ukmcab-padding-top-50">
-            <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain" type="submit">
-                Use file again
-            </button>
-
-
+        <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-button-group ukmcab-padding-top-50">
+                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain" type="submit">
+                    Use file again
+                </button>
 
                 @if (Model.IsFromSummary)
                 {
-                <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {
                     <a asp-area="admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
+            </div>
         </div>
-    </div>
 
     }
 
