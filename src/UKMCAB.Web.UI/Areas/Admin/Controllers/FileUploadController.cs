@@ -249,7 +249,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 //if (!selectedFileUploads.Any())
                 if (!selectedViewModels.Any())
                 {
-                    AddSelectAFileModelStateError(submitType, selectedViewModels);
+                    AddSelectAFileModelStateError(submitType, nameof(model.UploadedFiles), selectedViewModels);
                 }
                 else
                 {
@@ -261,7 +261,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                     var currentlyUploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
 
-                    var unsavedFileViewModels = model.UploadedFiles.Where(u => u.IsDuplicated && !u.IsSelected).ToList();
+                    var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected).Select(s => new FileViewModel { FileName = s.FileName, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>(); ;
 
                     currentlyUploadedFileViewModels.AddRange(unsavedFileViewModels);
 
@@ -386,7 +386,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 UploadedFiles = updatedUploadedFiles,
                 CABId = id,
                 IsFromSummary = fromSummary,
-                DocumentStatus = latestDocument.StatusValue
+                DocumentStatus = latestDocument.StatusValue,
+                IsValidState = ModelState.IsValid
             });
         }
 
@@ -471,11 +472,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
 
-        private void AddSelectAFileModelStateError(string submitType, IEnumerable<FileViewModel> selectedViewModels)
+        private void AddSelectAFileModelStateError(string submitType, string modelKey, IEnumerable<FileViewModel> selectedViewModels)
         {
             if ((submitType == Constants.SubmitType.Remove) && !selectedViewModels.Any())
             {
-                ModelState.AddModelError("remove-or-use-it-again-btn-group", "Select a file to remove");
+                ModelState.AddModelError(modelKey, "Select a file to remove");
             }
         }
 
