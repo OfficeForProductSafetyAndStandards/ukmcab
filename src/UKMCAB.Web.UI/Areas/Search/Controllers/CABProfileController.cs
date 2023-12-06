@@ -13,12 +13,12 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data;
-using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
+using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
@@ -319,7 +319,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                             userAccount.Role,
                             assignee,
                             DateTime.Now,
-                            $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived.",
+                            $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",
                             DateTime.Now,
                             submitter,
                             DateTime.Now,
@@ -335,10 +335,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var personalisation = new Dictionary<string, dynamic>
             {
                 { "CABName", cabName },
-                {
-                    "NotificationsURL", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                        Url.RouteUrl(Admin.Controllers.NotificationController.Routes.Notifications))
-                },
+                {"ContactSupportURL",UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    Url.RouteUrl( FooterController.Routes.ContactUs))},
+                { "NotificationsURL", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(Admin.Controllers.NotificationController.Routes.Notifications))}
             };
 
             await _notificationClient.SendEmailAsync(receiverEmailAddress,

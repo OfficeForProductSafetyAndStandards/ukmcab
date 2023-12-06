@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using CsvHelper.Configuration.Attributes;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core;
@@ -12,6 +13,12 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
     {
         private readonly IAsyncNotificationClient _asyncNotificationClient;
         private readonly CoreEmailTemplateOptions _templateOptions;
+
+        public static class Routes
+        {
+            public const string ContactUs = "footer.contact-us";
+        }
+
         public FooterController(IAsyncNotificationClient asyncNotificationClient, IOptions<CoreEmailTemplateOptions> templateOptions)
         {
             _asyncNotificationClient = asyncNotificationClient;
@@ -50,15 +57,13 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             return View(model);
         }
 
-
-        [Route("/contact-us")]
+        [HttpGet("/contact-us", Name = Routes.ContactUs) ]
         public IActionResult ContactUs(string? returnUrl)
         {
             return View(new ContactUsViewModel{ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl) });
         }
 
-        [HttpPost]
-        [Route("/contact-us")]
+        [HttpPost("/contact-us",Name = Routes.ContactUs)]
         public async Task<IActionResult> ContactUs(ContactUsViewModel model)
         {
             if (ModelState.IsValid)
