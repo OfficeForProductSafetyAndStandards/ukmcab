@@ -306,18 +306,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 var cabCreatorInfo = await _userService.GetAsync(cabCreatorUserId);
                 await SendEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
 
-                var archiverRoleId = Roles.List.First(r =>
-                        r.Label != null &&
-                        r.Label.Equals(archiverAccount.Role, StringComparison.CurrentCultureIgnoreCase))
-                    .Id;
+                var archiverRoleId =  Roles.RoleId(archiverAccount.Role)?? throw new InvalidOperationException();
 
-                var submitter = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
+                var archiver = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
                     archiverRoleId, archiverAccount.EmailAddress ?? throw new InvalidOperationException());
 
-                var cabCreatorRoleId = Roles.List.First(r =>
-                        r.Label != null &&
-                        r.Label.Equals(archiverAccount.Role, StringComparison.CurrentCultureIgnoreCase))
-                    .Id;
+                var cabCreatorRoleId = Roles.RoleId(cabCreatorInfo.Role)?? throw new InvalidOperationException();
 
                 var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname,
                     cabCreatorRoleId, cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
@@ -325,13 +319,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 await _workflowTaskService.CreateAsync(
                     new WorkflowTask(Guid.NewGuid(),
                         TaskType.DraftCabDeletedFromArchiving,
-                        submitter,
+                        archiver,
                         archiverAccount.Role,
                         assignee,
                         DateTime.Now,
                         $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",
                         DateTime.Now,
-                        submitter,
+                        archiver,
                         DateTime.Now,
                         false,
                         null,
