@@ -26,7 +26,8 @@ namespace UKMCAB.Core.Services.CAB
         private readonly TelemetryClient _telemetryClient;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient, IUserService userService)
+            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient,
+            IUserService userService)
         {
             _cabRepository = cabRepository;
             _cachedSearchService = cachedSearchService;
@@ -78,12 +79,14 @@ namespace UKMCAB.Core.Services.CAB
             if (!string.IsNullOrWhiteSpace(userRole))
             {
                 docs = await _cabRepository.Query<Document>(d => (d.LastUserGroup == userRole &&
-                d.StatusValue == Status.Draft) || d.StatusValue == Status.Archived);
+                                                                  d.StatusValue == Status.Draft) ||
+                                                                 d.StatusValue == Status.Archived);
 
                 return docs.Select(document => document.MapToCabModel()).ToList();
             }
 
-            docs = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
+            docs = await _cabRepository.Query<Document>(d =>
+                d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
             return docs.Select(document => document.MapToCabModel()).ToList();
         }
 
@@ -104,7 +107,7 @@ namespace UKMCAB.Core.Services.CAB
 
             return null;
         }
-        
+
         public IAsyncEnumerable<string> GetAllCabIds()
         {
             return _cabRepository.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
@@ -173,7 +176,7 @@ namespace UKMCAB.Core.Services.CAB
             if (draft.StatusValue == Status.Published)
             {
                 draft.StatusValue = Status.Draft;
-                draft.AuditLog = new List<Audit> { new Audit(userAccount, AuditCABActions.Created) };
+                draft.AuditLog = new List<Audit> { new(userAccount, AuditCABActions.Created) };
                 draft = await _cabRepository.CreateAsync(draft);
             }
             else if (draft.StatusValue == Status.Draft)
@@ -270,16 +273,16 @@ namespace UKMCAB.Core.Services.CAB
             // Flag latest with unarchive audit entry
             archivedDoc!.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnarchiveRequest, unarchiveInternalReason,
                 unarchivePublicReason));
-            Guard.IsTrue(await _cabRepository.Update(archivedDoc),
-                $"Failed to update published version during draft publish, CAB Id: {archivedDoc.CABId}");
+            await _cabRepository.UpdateAsync(archivedDoc);
             await UpdateSearchIndex(archivedDoc);
 
-            // Create new draft from latest with unarchive entry and reset audit
+            // Create new draft or publish from latest with unarchive entry and reset audit
             archivedDoc.StatusValue = Status.Draft;
+            archivedDoc.SubStatus = SubStatus.None;
             archivedDoc.id = string.Empty;
             archivedDoc.AuditLog = new List<Audit>
             {
-                new Audit(userAccount, AuditCABActions.Unarchived)
+                new(userAccount, AuditCABActions.Unarchived)
             };
             archivedDoc = await _cabRepository.CreateAsync(archivedDoc);
             await UpdateSearchIndex(archivedDoc);
@@ -352,8 +355,8 @@ namespace UKMCAB.Core.Services.CAB
 
         public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) =>
             _cabRepository.GetCABCountBySubStatusAsync(subStatus);
-        
-                
+
+
         private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {
             List<Document> docs = await _cabRepository.Query<Document>(d =>
@@ -367,6 +370,5 @@ namespace UKMCAB.Core.Services.CAB
             await _cachedSearchService.ClearAsync(cabId);
             await _cachedPublishedCabService.ClearAsync(cabId, slug);
         }
-
     }
 }

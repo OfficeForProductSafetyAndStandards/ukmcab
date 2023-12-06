@@ -64,7 +64,7 @@ public class RequestToUnarchiveCABController : Controller
     }
 
     [HttpPost("{cabUrl}", Name = Routes.RequestUnarchive)]
-    public async Task<IActionResult> Index(string cabUrl, RequestToUnarchiveCABViewModel vm)
+    public async Task<IActionResult> Index(RequestToUnarchiveCABViewModel vm)
     {
         if (!ModelState.IsValid)
         {
