@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
@@ -10,9 +11,10 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
-namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
+namespace UKMCAB.Web.UI.Areas.Admin.Controllers.Unarchive;
 
 [Area("admin"), Route("admin/cab/unarchive/approve"), Authorize]
 public class ApproveUnarchiveCABController : Controller
@@ -22,18 +24,21 @@ public class ApproveUnarchiveCABController : Controller
     private readonly IAsyncNotificationClient _notificationClient;
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
+    private readonly TelemetryClient _telemetryClient;
 
     public ApproveUnarchiveCABController(
         ICABAdminService cabAdminService,
         IUserService userService,
         IAsyncNotificationClient notificationClient,
         IOptions<CoreEmailTemplateOptions> templateOptions,
-        IWorkflowTaskService workflowTaskService)
+        IWorkflowTaskService workflowTaskService, 
+        TelemetryClient telemetryClient)
     {
         _cabAdminService = cabAdminService;
         _userService = userService;
         _notificationClient = notificationClient;
         _workflowTaskService = workflowTaskService;
+        _telemetryClient = telemetryClient;
         _templateOptions = templateOptions.Value;
     }
 
@@ -66,7 +71,7 @@ public class ApproveUnarchiveCABController : Controller
     }
 
     [HttpPost("{cabUrl}", Name = Routes.Approve)]
-    public async Task<IActionResult> ApprovePostAsync(ApproveUnarchiveCABViewModel vm)
+    public async Task<IActionResult> ApprovePostAsync(string cabUrl, ApproveUnarchiveCABViewModel vm)
     {
         if (!ModelState.IsValid)
         {
@@ -80,10 +85,32 @@ public class ApproveUnarchiveCABController : Controller
         var submitter = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
-        
+        await Unarchive(cabUrl, currentUser, vm.IsPublish!.Value);
+
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
-    
+
+    /// <summary>
+    /// Unarchive and save as draft then publish if publish is true
+    /// </summary>
+    /// <param name="cabUrl"></param>
+    /// <param name="currentUser"></param>
+    /// <param name="publish">publish flag</param>
+    private async Task Unarchive(string cabUrl, UserAccount currentUser, bool publish)
+    {
+        var document = await GetArchivedDocumentAsync(cabUrl);
+        var latestDocument = await _cabAdminService.UnarchiveDocumentAsync(currentUser, document.CABId, null, null);
+        _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
+        {
+            [AiTracking.Metadata.CabId] = document.CABId,
+            [AiTracking.Metadata.CabName] = document.Name!
+        }));
+        if (publish)
+        {
+            await _cabAdminService.PublishDocumentAsync(currentUser, latestDocument);
+        }
+    }
+
     /// <summary>
     /// Get the Archived document
     /// </summary>

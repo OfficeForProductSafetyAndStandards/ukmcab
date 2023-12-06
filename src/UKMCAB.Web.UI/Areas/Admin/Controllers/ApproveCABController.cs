@@ -59,7 +59,6 @@ public class ApproveCABController : Controller
     }
 
     [HttpPost("{cabId}", Name = Routes.Approve)]
-    [HttpPost("{cabId}", Name = Routes.Approve)]
     public async Task<IActionResult> ApprovePostAsync(Guid cabId,
         [Bind(nameof(ApproveCABViewModel.CABNumber))] ApproveCABViewModel vm)
     {
