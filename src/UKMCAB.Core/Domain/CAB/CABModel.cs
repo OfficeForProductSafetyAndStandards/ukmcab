@@ -9,7 +9,7 @@ public class CabModel
     public SubStatus SubStatus { get; internal set; }
     public Guid CABId { get; set; }
     public string? Name { get; set; } = null!;
-    public string? CabNumber { get; set; }
+    public string? CABNumber { get; set; }
     public string? CabNumberVisibility { get; set; }
     public DateTime LastUpdatedUtc { get; set; }
     public DateTime? AppointmentDate { get; set; }
@@ -40,7 +40,7 @@ public class CabModel
     public string? RandomSort { get; set; } = null!;
 
     public string URLSlug { get; set; } = string.Empty;
-    public string? CABNumber { get; set; }
+ 
     public string Status => StatusValue.ToString();
 
     // New audit

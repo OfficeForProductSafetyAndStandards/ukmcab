@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
@@ -6,7 +7,6 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
-using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 
@@ -38,8 +38,12 @@ public class NotificationDetailsController : Controller
     [HttpGet("details/{id}", Name = Routes.NotificationDetails)]
     public async Task<IActionResult> Detail(Guid id)
     {
-        var vm = await NotificationDetailsMapping(id);
-        return View(vm.Item1);
+        var (notificationDetail, _) = await NotificationDetailsMapping(id);
+        if (notificationDetail.IsSameUserGroup)
+        {
+            return View(notificationDetail);
+        }
+        throw new PermissionDeniedException();
     }
 
 
@@ -105,10 +109,15 @@ public class NotificationDetailsController : Controller
             AssignedOn =
                 workFlowTask.Assigned != null ? workFlowTask.Assigned.Value.ToStringBeisFormat() : string.Empty,
             SelectAssignee = assigneeList,
-            UserGroup = group,
+            UserGroup = Roles.NameFor(group),
+            IsSameUserGroup = group.ToLowerInvariant().Trim().Equals(workFlowTask.ForRoleId.ToLowerInvariant().Trim()),
             SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
             SelectedAssigneeId = workFlowTask.Assignee?.UserId,
         };
+        if (workFlowTask.Completed)
+        {
+            notificationDetail.UserGroup = Roles.NameFor(workFlowTask.LastUpdatedBy.RoleId);
+        }
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
 
         var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);

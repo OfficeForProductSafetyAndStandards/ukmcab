@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
-using UKMCAB.Core;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
@@ -11,7 +10,6 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
@@ -60,10 +58,11 @@ public class ApproveCABController : Controller
         return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
     }
 
-    [HttpPost("{cabId}")]
-    public async Task<IActionResult> ApprovePostAsync(Guid cabId, [Bind(nameof(ApproveCABViewModel.CABNumber))] ApproveCABViewModel vm)
+    [HttpPost("{cabId}", Name = Routes.Approve)]
+    public async Task<IActionResult> ApprovePostAsync(Guid cabId,
+        [Bind(nameof(ApproveCABViewModel.CABNumber))] ApproveCABViewModel vm)
     {
-       var document = await GetDocumentAsync(cabId);
+        var document = await GetDocumentAsync(cabId);
         ModelState.Remove(nameof(ApproveCABViewModel.CABName));
         if (!ModelState.IsValid)
         {
@@ -78,11 +77,14 @@ public class ApproveCABController : Controller
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
         await _cabAdminService.PublishDocumentAsync(user, document);
-        var submitTask = await MarkTaskAsCompleteAsync(cabId, new User(user.Id, user.FirstName, user.Surname, userRoleId, user.EmailAddress ?? throw new InvalidOperationException()));
-        await SendNotificationOfApprovalAsync(cabId, document.Name ?? throw new InvalidOperationException(), submitTask.Submitter);
+        var submitTask = await MarkTaskAsCompleteAsync(cabId,
+            new User(user.Id, user.FirstName, user.Surname, userRoleId,
+                user.EmailAddress ?? throw new InvalidOperationException()));
+        await SendNotificationOfApprovalAsync(cabId, document.Name ?? throw new InvalidOperationException(),
+            submitTask.Submitter);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
-    
+
     private async Task<Document> GetDocumentAsync(Guid cabId)
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString()) ??
@@ -123,24 +125,26 @@ public class ApproveCABController : Controller
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
             _templateOptions.NotificationCabApproved, personalisation);
         var user =
-            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ?? throw new InvalidOperationException();
-        var approver = new User(user.Id, user.FirstName, user.Surname, user.Role ?? throw new InvalidOperationException(),
+            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
+            throw new InvalidOperationException();
+        var approver = new User(user.Id, user.FirstName, user.Surname,
+            user.Role ?? throw new InvalidOperationException(),
             user.EmailAddress ?? throw new InvalidOperationException());
         await _workflowTaskService.CreateAsync(
-            new WorkflowTask(Guid.NewGuid(), 
-            TaskType.CABPublished,
-            approver, 
-            // Approver becomes the submitter for Approved CAB Notification
-            submitter.RoleId, 
-            submitter,
-            DateTime.Now, 
-            $"The request to publish CAB {cabName} has been approved.",
-            DateTime.Now,
-            approver, 
-            DateTime.Now,
-            true, 
-            null,
-            true, 
-            cabId));
+            new WorkflowTask(Guid.NewGuid(),
+                TaskType.CABPublished,
+                approver,
+                // Approver becomes the submitter for Approved CAB Notification
+                submitter.RoleId,
+                submitter,
+                DateTime.Now,
+                $"The request to publish CAB {cabName} has been approved.",
+                DateTime.Now,
+                approver,
+                DateTime.Now,
+                true,
+                null,
+                true,
+                cabId));
     }
 }

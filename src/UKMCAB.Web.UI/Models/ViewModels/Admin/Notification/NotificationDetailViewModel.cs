@@ -24,5 +24,6 @@ public record NotificationDetailViewModel : ILayoutModel
     public string SelectedAssignee { get; set; }
     public string? SelectedAssigneeId { get; set; }
     public string? UserGroup { get; set; }
+    public bool IsSameUserGroup { get; init; }
     public string? Title { get; }
 }

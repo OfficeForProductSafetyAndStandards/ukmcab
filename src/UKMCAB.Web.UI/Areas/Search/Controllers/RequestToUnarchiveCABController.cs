@@ -64,7 +64,7 @@ public class RequestToUnarchiveCABController : Controller
     }
 
     [HttpPost("{cabUrl}", Name = Routes.RequestUnarchive)]
-    public async Task<IActionResult> Index(string cabUrl, RequestToUnarchiveCABViewModel vm)
+    public async Task<IActionResult> Index(RequestToUnarchiveCABViewModel vm)
     {
         if (!ModelState.IsValid)
         {
@@ -79,8 +79,7 @@ public class RequestToUnarchiveCABController : Controller
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
-        await _cabAdminService.SetSubStatusToPendingApprovalAsync(vm.CabId, Status.Archived,
-            new Audit(currentUser, AuditCABActions.UnarchiveApprovalRequest));
+        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived, SubStatus.PendingApproval, new Audit(currentUser, AuditCABActions.UnarchiveApprovalRequest));
         
         await _workflowTaskService.CreateAsync(new WorkflowTask(
             Guid.NewGuid(),

@@ -3,16 +3,22 @@ using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.Security.Claims;
 using System.Xml;
+using Microsoft.Extensions.Options;
+using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Core.Domain.Workflow;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
+using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data;
-using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Storage;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
+using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
@@ -29,6 +35,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly TelemetryClient _telemetryClient;
         private readonly IFeedService _feedService;
         private readonly IUserService _userService;
+        private readonly CoreEmailTemplateOptions _templateOptions;
+        private readonly IAsyncNotificationClient _notificationClient;
+        private readonly IWorkflowTaskService _workflowTaskService;
 
         public static class Routes
         {
@@ -41,7 +50,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         public CABProfileController(ICachedPublishedCABService cachedPublishedCabService,
             ICABAdminService cabAdminService, IFileStorage fileStorage, TelemetryClient telemetryClient,
-            IFeedService feedService, IUserService userService)
+            IFeedService feedService, IUserService userService, IOptions<CoreEmailTemplateOptions> templateOptions,
+            IAsyncNotificationClient notificationClient, IWorkflowTaskService workflowTaskService)
         {
             _cachedPublishedCabService = cachedPublishedCabService;
             _cabAdminService = cabAdminService;
@@ -49,6 +59,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             _telemetryClient = telemetryClient;
             _feedService = feedService;
             _userService = userService;
+            _templateOptions = templateOptions.Value;
+            _notificationClient = notificationClient;
+            _workflowTaskService = workflowTaskService;
         }
 
         [HttpGet("~/__subscriptions/__inbound/cab/{id}", Name = Routes.TrackInboundLinkCabDetails)]
@@ -139,7 +152,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
 
-            var isUnarchivedRequest = auditLogOrdered.Any(al => al.Action == AuditCABActions.UnarchiveRequest); //todo should be notifications
+            var isUnarchivedRequest =
+                auditLogOrdered.Any(al => al.Action == AuditCABActions.UnarchiveRequest); //todo should be notifications
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit = isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
             var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
@@ -147,16 +161,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
             var hasDraft = fullHistory.Any(d => d.StatusValue == Status.Draft);
 
-            var userAccount = User != null && User.Identity.IsAuthenticated
+            var userAccount = User.Identity is { IsAuthenticated: true }
                 ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
                 : null;
-            var history = new AuditLogHistoryViewModel(fullHistory, userAccount, pagenumber);
+            var history = new AuditLogHistoryViewModel(fullHistory, pagenumber, userAccount != null);
 
             var cab = new CABProfileViewModel
             {
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
-                RequiresUnarchiveApproval = !string.Equals(userAccount.Role,Roles.OPSS.Label,StringComparison.CurrentCultureIgnoreCase),
+                RequiresUnarchiveApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
+                    StringComparison.CurrentCultureIgnoreCase),
                 IsPublished = isPublished,
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,
@@ -232,6 +247,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return cab;
         }
 
+        #region ArchiveCAB
+
         [HttpGet]
         [Route("search/archive-cab/{id}")]
         public async Task<IActionResult> ArchiveCAB(string id, string? returnUrl)
@@ -263,21 +280,85 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveInternalReason, model.ArchivePublicReason);
+                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveInternalReason,
+                    model.ArchivePublicReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
                     [AiTracking.Metadata.CabName] = cabDocument.Name
                 }));
+                await SendNotifications(userAccount, cabDocument);
+
                 return RedirectToAction("Index", new { id = cabDocument.URLSlug, returnUrl = model.ReturnURL });
             }
+
             model.Name = cabDocument.Name ?? string.Empty;
             return View(model);
         }
 
+        private async Task SendNotifications(UserAccount archiverAccount, Document cabDocument)
+        {
+            var cabCreator = cabDocument?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Created);
+            var cabCreatorUserId = cabCreator?.UserId;
+
+            if (!string.IsNullOrEmpty(cabCreatorUserId))
+            {
+                var cabCreatorInfo = await _userService.GetAsync(cabCreatorUserId);
+                await SendEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
+
+                var archiverRoleId =  Roles.RoleId(archiverAccount.Role)?? throw new InvalidOperationException();
+
+                var archiver = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
+                    archiverRoleId, archiverAccount.EmailAddress ?? throw new InvalidOperationException());
+
+                var cabCreatorRoleId = Roles.RoleId(cabCreatorInfo.Role)?? throw new InvalidOperationException();
+
+                var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname,
+                    cabCreatorRoleId, cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
+
+                await _workflowTaskService.CreateAsync(
+                    new WorkflowTask(Guid.NewGuid(),
+                        TaskType.DraftCabDeletedFromArchiving,
+                        archiver,
+                        archiverAccount.Role,
+                        assignee,
+                        DateTime.Now,
+                        $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",
+                        DateTime.Now,
+                        archiver,
+                        DateTime.Now,
+                        false,
+                        null,
+                        true,
+                        Guid.Parse(cabDocument.CABId)));
+            }
+        }
+
+        private async Task SendEmailForDeleteDraftAsync(string cabName, string receiverEmailAddress)
+        {
+            var personalisation = new Dictionary<string, dynamic>
+            {
+                { "CABName", cabName },
+                {
+                    "ContactSupportURL", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(FooterController.Routes.ContactUs))
+                },
+                {
+                    "NotificationsURL", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(Admin.Controllers.NotificationController.Routes.Notifications))
+                }
+            };
+
+            await _notificationClient.SendEmailAsync(receiverEmailAddress,
+                _templateOptions.NotificationDraftCabDeleted, personalisation);
+        }
+
+        #endregion
+
         [HttpPost]
         [Route("search/cab-profile/archive/submit-js")]
-        public async Task<IActionResult> ArchiveJs(string CABId, string archiveInternalReason, string archivePublicReason)
+        public async Task<IActionResult> ArchiveJs(string CABId, string? archiveInternalReason,
+            string archivePublicReason)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(CABId);
             if (cabDocument == null)
@@ -296,7 +377,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     var userAccount =
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                             .Value);
-                    await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, archiveInternalReason, archivePublicReason);
+                    await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, archiveInternalReason,
+                        archivePublicReason);
                     _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                     {
                         [AiTracking.Metadata.CabId] = CABId,
@@ -354,7 +436,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UnarchiveDocumentAsync(userAccount, cabDocument.CABId, model.UnarchiveInternalReason, model.UnarchivePublicReason);
+                await _cabAdminService.UnarchiveDocumentAsync(userAccount, cabDocument.CABId,
+                    model.UnarchiveInternalReason, model.UnarchivePublicReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
@@ -370,7 +453,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         [HttpPost]
         [Route("search/cab-profile/unarchive/submit-js")]
-        public async Task<IActionResult> UnarchiveJs(string CABId, string UnarchiveInternalReason, string UnarchivePublicReason)
+        public async Task<IActionResult> UnarchiveJs(string CABId, string? UnarchiveInternalReason,
+            string UnarchivePublicReason)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(CABId);
             if (cabDocument == null)
@@ -389,7 +473,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     var userAccount =
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                             .Value);
-                    await _cabAdminService.UnarchiveDocumentAsync(userAccount, CABId, UnarchiveInternalReason, UnarchivePublicReason);
+                    await _cabAdminService.UnarchiveDocumentAsync(userAccount, CABId, UnarchiveInternalReason,
+                        UnarchivePublicReason);
                     _telemetryClient.TrackEvent(AiTracking.Events.CabUnarchived, HttpContext.ToTrackingMetadata(new()
                     {
                         [AiTracking.Metadata.CabId] = CABId
@@ -488,7 +573,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
-        public async Task<IActionResult> CABHistoryDetails(string date, string time, string username, string userId, string userGroup, string auditAction, string internalComment, string? publicComment, string? returnUrl, bool isUserInputComment)        
+        public async Task<IActionResult> CABHistoryDetails(string date, string time, string username, string userId,
+            string userGroup, string auditAction, string internalComment, string? publicComment, string? returnUrl,
+            bool isUserInputComment)
         {
             var auditHistoryItemViewModel = new AuditHistoryItemViewModel
             {

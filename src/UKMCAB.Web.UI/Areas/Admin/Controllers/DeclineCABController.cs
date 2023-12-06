@@ -60,7 +60,9 @@ public class DeclineCABController : Controller
     }
 
     [HttpPost("{cabId}")]
-    public async Task<IActionResult> DeclinePostAsync(Guid cabId, [Bind( nameof(DeclineCABViewModel.DeclineReason))] DeclineCABViewModel vm)
+    public async Task<IActionResult> DeclinePostAsync(Guid cabId,
+        [Bind(nameof(DeclineCABViewModel.DeclineReason))]
+        DeclineCABViewModel vm)
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
@@ -72,11 +74,17 @@ public class DeclineCABController : Controller
             return View("~/Areas/Admin/Views/CAB/Decline.cshtml", vm);
         }
 
-        var user = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ?? throw new InvalidOperationException();
+        var user =
+            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
+            throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-        document.AuditLog.Add(new Audit(user, nameof(AuditCABActions.CABDeclined)));
-        var submitTask = await MarkTaskAsCompleteAsync(cabId, new User(user.Id, user.FirstName, user.Surname, userRoleId, user.EmailAddress ?? throw new InvalidOperationException()));
+        await _cabAdminService.SetSubStatusAsync(cabId, Status.Draft, SubStatus.None,
+            new Audit(user, AuditCABActions.CABDeclined, vm.DeclineReason));
+
+        var submitTask = await MarkTaskAsCompleteAsync(cabId,
+            new User(user.Id, user.FirstName, user.Surname, userRoleId,
+                user.EmailAddress ?? throw new InvalidOperationException()));
         await SendNotificationOfDeclineAsync(cabId, document.Name, submitTask.Submitter, vm.DeclineReason);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
@@ -110,7 +118,7 @@ public class DeclineCABController : Controller
             {
                 "CABUrl",
                 UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId }))
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
             },
             { "DeclineReason", declineReason }
         };

@@ -8,7 +8,7 @@ namespace UKMCAB.Data.Models
     {
         public Audit() { }
 
-        public Audit(string userId, string username, string userrole, DateTime date, string action, string comment = null, string publicComment = null, bool isUserInputComment = true)
+        public Audit(string userId, string username, string userrole, DateTime date, string action, string? comment = null, string publicComment = null, bool isUserInputComment = true)
         {
             UserId = userId;
             UserName = username;
@@ -20,7 +20,7 @@ namespace UKMCAB.Data.Models
             IsUserInputComment = isUserInputComment;
         }
 
-        public Audit(UserAccount? userAccount, string action, string comment = null, string publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
+        public Audit(UserAccount? userAccount, string action, string? comment = null, string publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
 
         public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document? previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
         {
@@ -93,7 +93,7 @@ namespace UKMCAB.Data.Models
         public const string Archived = nameof(Archived); 
         public const string Unarchived = nameof(Unarchived); // Used for a draft that is back from the dead
         public const string UnarchiveRequest = nameof(UnarchiveRequest); //Used for CAB's that have been unarchived status archived (previous version)
-        public const string UnarchiveApprovalRequest = "Unarchive CAB approval request";
+        public const string UnarchiveApprovalRequest = "Unarchive CAB approval request"; // Ukas request for unarchive
         public const string SubmittedForApproval = "CAB Submitted for approval";
         public const string CABApproved = "CAB Approved";
         public const string CABDeclined = "CAB Declined";

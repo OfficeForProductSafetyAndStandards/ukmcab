@@ -94,16 +94,16 @@ public class NotificationController : Controller
         var completed =
             await _workflowTaskService.GetCompletedForRoleIdAsync(role.Id);
 
-        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
             unAssignedItems =
                 await BuildTableItemsAsync(unassigned, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
             assignedToMeItems =
                 await BuildTableItemsAsync(assignedToMe, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
             assignedToGroupItems =
                 await BuildTableItemsAsync(assignedToGroup, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string? DetailLink)>
+        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
             completedItems =
                 await BuildTableItemsAsync(completed, sf, sd);
 
@@ -198,7 +198,7 @@ public class NotificationController : Controller
         return items.Select(i => i.Value).ToList();
     }
 
-    private async Task<List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string?
+    private async Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string?
             DetailLink)>>
         BuildTableItemsAsync(
             IEnumerable<WorkflowTask> tasks,
@@ -206,7 +206,7 @@ public class NotificationController : Controller
             string? sd)
     {
         var items =
-            new List<(string From, string Subject, string? CABName, string? Assignee, string LastUpdated, string?
+            new List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string?
                 DetailLink)>();
         foreach (var notification in tasks)
         {
@@ -214,14 +214,14 @@ public class NotificationController : Controller
             if (notification.CABId.HasValue)
             {
                 var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(notification.CABId.ToString()!);
-                cabName = cabs.First().Name;
+                cabName = cabs.FirstOrDefault()?.Name;
             }
 
             var item = (From: notification.Submitter.FirstAndLastName,
                 Subject: notification.TaskType.GetEnumDescription(),
                 CABName: cabName,
                 Assignee: notification.Assignee?.FirstAndLastName,
-                LastUpdated: notification.SentOn.ToStringBeisFormat(),
+                LastUpdated: notification.SentOn,
                 DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails,
                     new { id = notification.Id.ToString() }));
             items.Add(item);
@@ -249,6 +249,10 @@ public class NotificationController : Controller
                 return sd == SortDirectionHelper.Ascending
                     ? items.OrderBy(i => i.CABName).ToList()
                     : items.OrderByDescending(i => i.CABName).ToList();
+            case { } str when str.Equals(nameof(itemForNameOf.Assignee), StringComparison.CurrentCultureIgnoreCase):
+                return sd == SortDirectionHelper.Ascending
+                    ? items.OrderBy(i => i.Assignee).ToList()
+                    : items.OrderByDescending(i => i.Assignee).ToList();
             case { } str when str.Equals(nameof(itemForNameOf.LastUpdated), StringComparison.CurrentCultureIgnoreCase):
                 return sd == SortDirectionHelper.Ascending
                     ? items.OrderBy(i => i.LastUpdated).ToList()
