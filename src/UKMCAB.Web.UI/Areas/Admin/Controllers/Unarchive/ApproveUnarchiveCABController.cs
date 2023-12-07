@@ -75,6 +75,8 @@ public class ApproveUnarchiveCABController : Controller
     [HttpPost("{cabUrl}", Name = Routes.Approve)]
     public async Task<IActionResult> ApprovePostAsync(string cabUrl, ApproveUnarchiveCABViewModel vm)
     {
+        ModelState.Remove(nameof(vm.SubmitterGroup));
+        ModelState.Remove(nameof(vm.SubmitterFirstAndLastName));
         if (!ModelState.IsValid)
         {
             return View("~/Areas/Admin/Views/CAB/Unarchive/Approve.cshtml", vm);
@@ -84,6 +86,10 @@ public class ApproveUnarchiveCABController : Controller
                           throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        if (userRoleId != Roles.OPSS.Id)
+        {
+            throw new PermissionDeniedException("User Permission denied to approve an unarchive request");
+        }
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
@@ -176,7 +182,7 @@ public class ApproveUnarchiveCABController : Controller
                 submitter,
                 DateTime.Now,
                 publish
-                    ? "The request to unarchive and publish CAB {cabName} has been approved."
+                    ? $"The request to unarchive and publish CAB {cabName} has been approved."
                     : $"The request to unarchive CAB {cabName} has been approved and it has been saved as a draft.",
                 DateTime.Now,
                 approver,
