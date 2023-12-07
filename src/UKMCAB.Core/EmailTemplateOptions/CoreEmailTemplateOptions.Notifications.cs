@@ -8,4 +8,6 @@ public partial class CoreEmailTemplateOptions
     public string NotificationCabDeclined { get; set; } = null!;
     public string NotificationUnarchiveForApproval { get; set; } = null!;
     public string NotificationDraftCabDeleted { get; set; } = null!;
+    public string NotificationUnarchiveApproved { get; set; } = null!;
+    public string NotificationUnarchiveDeclined { get; set; } = null!;
 }
