@@ -12,6 +12,7 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.Unarchive;
@@ -31,7 +32,7 @@ public class ApproveUnarchiveCABController : Controller
         IUserService userService,
         IAsyncNotificationClient notificationClient,
         IOptions<CoreEmailTemplateOptions> templateOptions,
-        IWorkflowTaskService workflowTaskService, 
+        IWorkflowTaskService workflowTaskService,
         TelemetryClient telemetryClient)
     {
         _cabAdminService = cabAdminService;
@@ -55,15 +56,16 @@ public class ApproveUnarchiveCABController : Controller
         {
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
         }
-        
+
         var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(document.CABId));
-        var task = tasks.First(t => t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish && !t.Completed);
+        var task = tasks.First(t =>
+            t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish && !t.Completed);
         var vm = new ApproveUnarchiveCABViewModel(
             "Approve unarchive CAB",
-            document.Name ?? throw new InvalidOperationException(), 
+            document.Name ?? throw new InvalidOperationException(),
             document.URLSlug,
-            Guid.Parse(document.CABId), 
-            task.Submitter.UserGroup, 
+            Guid.Parse(document.CABId),
+            task.Submitter.UserGroup,
             task.Submitter.FirstAndLastName,
             task.TaskType == TaskType.RequestToUnarchiveForPublish);
 
@@ -82,11 +84,12 @@ public class ApproveUnarchiveCABController : Controller
                           throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-        var submitter = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
+        var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
         await Unarchive(cabUrl, currentUser, vm.IsPublish!.Value);
-
+        var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
+        await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.IsPublish.Value);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
@@ -121,5 +124,66 @@ public class ApproveUnarchiveCABController : Controller
         var documents = await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl);
         var archivedDocument = documents.First(d => d.StatusValue == Status.Archived);
         return archivedDocument;
+    }
+
+    /// <summary>
+    /// Mark incoming Request to unarchive task as completed
+    /// </summary>
+    /// <param name="cabId">Associated CAB</param>
+    /// <param name="userLastUpdatedBy"></param>
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
+    {
+        var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
+        var task = tasks.First(t => t is
+        {
+            TaskType: TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish, Completed: false
+        });
+        await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
+        return task;
+    }
+
+    /// <summary>
+    /// Sends an email and notification for approved unarchive
+    /// </summary>
+    /// <param name="cabId">CAB id</param>
+    /// <param name="cabName">Name of CAB</param>
+    /// <param name="submitter"></param>
+    /// <param name="approver"></param>
+    /// <param name="publish"></param>
+    private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter, User approver, bool publish)
+    {
+        var personalisation = new Dictionary<string, dynamic?>
+        {
+            { "CABName", cabName },
+            {
+                "CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    publish
+                        ? Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId })
+                        : Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
+            },
+            { "Publish", publish },
+            { "Draft", !publish }, //No if else in Notify only if
+        };
+        await _notificationClient.SendEmailAsync(submitter.EmailAddress,
+            _templateOptions.NotificationCabApproved, personalisation);
+        
+        await _workflowTaskService.CreateAsync(
+            new WorkflowTask(Guid.NewGuid(),
+                publish ? TaskType.RequestToUnarchiveForPublishApproved : TaskType.RequestToUnarchiveForDraftApproved,
+                approver,
+                // Approver becomes the submitter for Approved Notification
+                submitter.RoleId,
+                submitter,
+                DateTime.Now,
+                publish
+                    ? "The request to unarchive and publish CAB {cabName} has been approved."
+                    : $"The request to unarchive CAB {cabName} has been approved and it has been saved as a draft.",
+                DateTime.Now,
+                approver,
+                DateTime.Now,
+                true,
+                null,
+                true,
+                cabId));
     }
 }

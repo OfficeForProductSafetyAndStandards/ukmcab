@@ -18,8 +18,12 @@ public enum TaskType
     CABPublished,
     [Description("CAB declined")]
     CABDeclined,
-    UnarchiveApproved,
-    UnarchiveDeclined,
+    [Description("CAB published")]
+    RequestToUnarchiveForPublishApproved,
+    [Description("CAB unarchived")]
+    RequestToUnarchiveForDraftApproved,
+    [Description("Unarchive CAB request declined")]
+    RequestToUnarchiveDeclined,
     UserAccountApproved,
     [Description("Draft CAB deleted")]
     DraftCabDeletedFromArchiving
