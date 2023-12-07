@@ -276,7 +276,7 @@ namespace UKMCAB.Core.Services.CAB
             await _cabRepository.UpdateAsync(archivedDoc);
             await UpdateSearchIndex(archivedDoc);
 
-            // Create new draft or publish from latest with unarchive entry and reset audit
+            // Create new draft from latest with unarchive entry and reset audit
             archivedDoc.StatusValue = Status.Draft;
             archivedDoc.SubStatus = SubStatus.None;
             archivedDoc.id = string.Empty;
