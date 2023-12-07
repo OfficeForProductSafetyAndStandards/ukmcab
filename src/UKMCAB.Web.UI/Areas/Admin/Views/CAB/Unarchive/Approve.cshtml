@@ -1,4 +1,4 @@
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.ApproveUnarchiveCABViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unarchive.ApproveUnarchiveCABViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Approve request to unarchive CAB @Model.CABName</h1>
@@ -10,7 +10,6 @@
         <form id="approveunarchivecabform" method="post">
             <input type="hidden" asp-for="CabId"/>
             <input type="hidden" asp-for="CABName"/>
-            <input type="hidden" asp-for="SubmitterFirstAndLastName"/>
             <govuk-radios asp-for="IsPublish">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--s">

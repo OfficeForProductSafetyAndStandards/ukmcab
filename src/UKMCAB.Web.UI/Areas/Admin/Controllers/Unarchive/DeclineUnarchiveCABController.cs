@@ -18,39 +18,36 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unarchive;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.Unarchive;
 
-[Area("admin"), Route("admin/cab/unarchive/approve"), Authorize]
-public class ApproveUnarchiveCABController : Controller
+[Area("admin"), Route("admin/cab/unarchive/decline"), Authorize]
+public class DeclineUnarchiveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly IUserService _userService;
     private readonly IAsyncNotificationClient _notificationClient;
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
-    private readonly TelemetryClient _telemetryClient;
 
-    public ApproveUnarchiveCABController(
+    public DeclineUnarchiveCABController(
         ICABAdminService cabAdminService,
         IUserService userService,
         IAsyncNotificationClient notificationClient,
         IOptions<CoreEmailTemplateOptions> templateOptions,
-        IWorkflowTaskService workflowTaskService,
-        TelemetryClient telemetryClient)
+        IWorkflowTaskService workflowTaskService)
     {
         _cabAdminService = cabAdminService;
         _userService = userService;
         _notificationClient = notificationClient;
         _workflowTaskService = workflowTaskService;
-        _telemetryClient = telemetryClient;
         _templateOptions = templateOptions.Value;
     }
 
     public static class Routes
     {
-        public const string Approve = "cab.unarchive.approve";
+        public const string Decline = "cab.unarchive.decline";
     }
 
-    [HttpGet("{cabUrl}", Name = Routes.Approve)]
-    public async Task<IActionResult> ApproveAsync(string cabUrl)
+    [HttpGet("{cabUrl}", Name = Routes.Decline)]
+    public async Task<IActionResult> DeclineAsync(string cabUrl)
     {
         var document = await GetArchivedDocumentAsync(cabUrl);
         if (document.StatusValue != Status.Archived || document.SubStatus != SubStatus.PendingApproval)
@@ -59,26 +56,23 @@ public class ApproveUnarchiveCABController : Controller
         }
 
         var task = await GetWorkflowTaskAsync(document.CABId);
-        var vm = new ApproveUnarchiveCABViewModel(
-            "Approve unarchive CAB",
+        var vm = new DeclineUnarchiveCABViewModel(
+            "Decline unarchive CAB",
             document.Name ?? throw new InvalidOperationException(),
             document.URLSlug,
             Guid.Parse(document.CABId),
-            task.Submitter.UserGroup,
-            task.Submitter.FirstAndLastName,
-            task.TaskType == TaskType.RequestToUnarchiveForPublish);
+            task.Submitter.UserGroup);
 
-        return View("~/Areas/Admin/Views/CAB/Unarchive/Approve.cshtml", vm);
+        return View("~/Areas/Admin/Views/CAB/Unarchive/Decline.cshtml", vm);
     }
-    
-    [HttpPost("{cabUrl}", Name = Routes.Approve)]
-    public async Task<IActionResult> ApprovePostAsync(string cabUrl, ApproveUnarchiveCABViewModel vm)
+
+    [HttpPost("{cabUrl}", Name = Routes.Decline)]
+    public async Task<IActionResult> DeclinePostAsync(string cabUrl, DeclineUnarchiveCABViewModel vm)
     {
         ModelState.Remove(nameof(vm.SubmitterGroup));
-        ModelState.Remove(nameof(vm.SubmitterFirstAndLastName));
         if (!ModelState.IsValid)
         {
-            return View("~/Areas/Admin/Views/CAB/Unarchive/Approve.cshtml", vm);
+            return View("~/Areas/Admin/Views/CAB/Unarchive/Decline.cshtml", vm);
         }
 
         var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
@@ -87,44 +81,22 @@ public class ApproveUnarchiveCABController : Controller
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
         if (userRoleId != Roles.OPSS.Id)
         {
-            throw new PermissionDeniedException("User Permission denied to approve an unarchive request");
+            throw new PermissionDeniedException("User Permission denied to decline an unarchive request");
         }
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
-        await Unarchive(cabUrl, currentUser, vm.IsPublish!.Value);
-        var requestTask = await MarkTaskAsCompleteAsync(vm.CabId.ToString(), approver);
-        await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.IsPublish.Value);
+        var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
+        await SendNotificationOfDeclineAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.Reason!);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
-
+    
     private async Task<WorkflowTask> GetWorkflowTaskAsync(string cabId)
     {
         var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(cabId));
         var task = tasks.First(t =>
             t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish && !t.Completed);
         return task;
-    }
-
-    /// <summary>
-    /// Unarchive and save as draft then publish if publish is true
-    /// </summary>
-    /// <param name="cabUrl"></param>
-    /// <param name="currentUser"></param>
-    /// <param name="publish">publish flag</param>
-    private async Task Unarchive(string cabUrl, UserAccount currentUser, bool publish)
-    {
-        var document = await GetArchivedDocumentAsync(cabUrl);
-        var latestDocument = await _cabAdminService.UnarchiveDocumentAsync(currentUser, document.CABId, null, null);
-        _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
-        {
-            [AiTracking.Metadata.CabId] = document.CABId,
-            [AiTracking.Metadata.CabName] = document.Name!
-        }));
-        if (publish)
-        {
-            await _cabAdminService.PublishDocumentAsync(currentUser, latestDocument);
-        }
     }
 
     /// <summary>
@@ -144,54 +116,50 @@ public class ApproveUnarchiveCABController : Controller
     /// </summary>
     /// <param name="cabId">Associated CAB</param>
     /// <param name="userLastUpdatedBy"></param>
-    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(string cabId, User userLastUpdatedBy)
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
     {
-        var task = await GetWorkflowTaskAsync(cabId);
+        var task = await GetWorkflowTaskAsync(cabId.ToString());
         await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
         return task;
     }
 
     /// <summary>
-    /// Sends an email and notification for approved unarchive
+    /// Sends an email and notification for declined unarchive
     /// </summary>
     /// <param name="cabId">CAB id</param>
     /// <param name="cabName">Name of CAB</param>
     /// <param name="submitter"></param>
-    /// <param name="approver"></param>
-    /// <param name="publish"></param>
-    private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter, User approver, bool publish)
+    /// <param name="decliner"></param>
+    /// <param name="reason"></param>
+    private async Task SendNotificationOfDeclineAsync(Guid cabId, string cabName, User submitter, User decliner, string reason)
     {
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", cabName },
             {
-                "CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                    publish
-                        ? Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId })
-                        : Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
+                "CABUrl",
+                UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId }))
             },
-            { "Publish", publish },
-            { "Draft", !publish }, //No if else in Notify only if
+            { "Reason", reason }
         };
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
-            _templateOptions.NotificationUnarchiveApproved, personalisation);
+            _templateOptions.NotificationUnarchiveDeclined, personalisation);
         
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(Guid.NewGuid(),
-                publish ? TaskType.RequestToUnarchiveForPublishApproved : TaskType.RequestToUnarchiveForDraftApproved,
-                approver,
+               TaskType.RequestToUnarchiveDeclined,
+                decliner,
                 // Approver becomes the submitter for Approved Notification
                 submitter.RoleId,
                 submitter,
                 DateTime.Now,
-                publish
-                    ? $"The request to unarchive and publish CAB {cabName} has been approved."
-                    : $"The request to unarchive CAB {cabName} has been approved and it has been saved as a draft.",
+                $"The request to unarchive CAB {cabName} has been declined.",
                 DateTime.Now,
-                approver,
+                decliner,
                 DateTime.Now,
-                true,
-                null,
+                false,
+                reason,
                 true,
                 cabId));
     }
