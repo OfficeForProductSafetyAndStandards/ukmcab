@@ -250,15 +250,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private async Task<CABProfileViewModel> GetUnarchiveRequestInformation(CABProfileViewModel profileViewModel)
         {
             var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(profileViewModel.CABId));
-            var task = tasks.First(t =>
+            var task = tasks.FirstOrDefault(t =>
                 t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish &&
                 !t.Completed);
 
-            if (task != null)
-            {
-                profileViewModel.UnarchiveRequestor = task.Submitter;
-                profileViewModel.UnarchiveReason = task.Body;
-            }
+            profileViewModel.UnarchiveRequestor = task?.Submitter;
+            profileViewModel.UnarchiveReason = task?.Body;
 
             return profileViewModel;
         }
