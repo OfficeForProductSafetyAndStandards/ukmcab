@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Core.Domain.Workflow;
+using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
@@ -53,5 +54,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public CABDocumentsViewModel ProductSchedules { get; set; }
         public CABDocumentsViewModel SupportingDocuments { get; set; }
         public FeedLinksViewModel FeedLinksViewModel { get; set; }
+        
+        public User? UnarchiveRequestor { get; set; }
+        public string? UnarchiveReason { get; set; }
     }
 }

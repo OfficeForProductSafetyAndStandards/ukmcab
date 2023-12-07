@@ -87,6 +87,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
 
             var cab = await GetCabProfileViewModel(cabDocument, returnUrl, pagenumber);
+            cab = await GetUnarchiveRequestInformation(cab);
 
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
             {
@@ -170,13 +171,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
-                RequiresUnarchiveApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
-                    StringComparison.CurrentCultureIgnoreCase),
+                RequiresUnarchiveApproval = userAccount != null && Roles.IsUkasUser(userAccount.Role),
                 IsPublished = isPublished,
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,
                 ArchivedDate = isArchived && archiveAudit != null
-                    ? archiveAudit.DateTime.ToString("dd MMM yyyy")
+                    ? archiveAudit.DateTime.ToStringBeisFormat()
                     : string.Empty,
                 ArchiveReason = isArchived && archiveAudit != null ? archiveAudit.Comment : string.Empty,
                 AuditLogHistory = history,
@@ -247,6 +247,22 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return cab;
         }
 
+        private async Task<CABProfileViewModel> GetUnarchiveRequestInformation(CABProfileViewModel profileViewModel)
+        {
+            var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(profileViewModel.CABId));
+            var task = tasks.First(t =>
+                t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish &&
+                !t.Completed);
+
+            if (task != null)
+            {
+                profileViewModel.UnarchiveRequestor = task.Submitter;
+                profileViewModel.UnarchiveReason = task.Body;
+            }
+
+            return profileViewModel;
+        }
+
         #region ArchiveCAB
 
         [HttpGet]
@@ -306,12 +322,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 var cabCreatorInfo = await _userService.GetAsync(cabCreatorUserId);
                 await SendEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
 
-                var archiverRoleId =  Roles.RoleId(archiverAccount.Role)?? throw new InvalidOperationException();
+                var archiverRoleId = Roles.RoleId(archiverAccount.Role) ?? throw new InvalidOperationException();
 
                 var archiver = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
                     archiverRoleId, archiverAccount.EmailAddress ?? throw new InvalidOperationException());
 
-                var cabCreatorRoleId = Roles.RoleId(cabCreatorInfo.Role)?? throw new InvalidOperationException();
+                var cabCreatorRoleId = Roles.RoleId(cabCreatorInfo.Role) ?? throw new InvalidOperationException();
 
                 var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname,
                     cabCreatorRoleId, cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
