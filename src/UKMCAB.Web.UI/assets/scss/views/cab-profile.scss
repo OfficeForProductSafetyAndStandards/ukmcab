@@ -15,6 +15,10 @@
         margin-bottom: 10px;
     }
 
+    .govuk-tabs__panel{
+        padding: 0 !important;
+    }
+    
     #admin-buttons-container {
         display: block;
         float: right;
@@ -127,7 +131,6 @@
 
             .cab-detail-section {
                 padding: 10px 0 40px;
-
                 .govuk-summary-list {
                     border-top: 1px solid #b1b4b6;
 
@@ -146,6 +149,10 @@
                         }
                     }
                 }
+            }
+
+            .cab-detail-section:last-child  {
+                padding: 10px 0 0 !important;
             }
         }
     }

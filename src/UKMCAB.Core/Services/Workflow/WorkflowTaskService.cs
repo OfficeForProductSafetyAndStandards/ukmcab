@@ -46,12 +46,13 @@ public class WorkflowTaskService : IWorkflowTaskService
         var items = await _workflowTaskRepository.QueryAsync(w => w.Completed && w.ForRoleId == roleId);
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
-
+    
+    /// <inheritdoc />
     public async Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId)
     {
         var items = await _workflowTaskRepository.QueryAsync(w =>
             w.CabId.HasValue && w.CabId.Value == cabId);
-        return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
+        return items.Select(w => w.MapToWorkflowTaskModel()).OrderByDescending(t => t.LastUpdatedOn).ToList();
     }
 
     public async Task<WorkflowTask> GetAsync(Guid id)

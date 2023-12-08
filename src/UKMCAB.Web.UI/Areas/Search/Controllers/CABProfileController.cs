@@ -87,6 +87,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
 
             var cab = await GetCabProfileViewModel(cabDocument, returnUrl, pagenumber);
+            cab = await GetUnarchiveRequestInformation(cab);
 
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
             {
@@ -176,7 +177,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,
                 ArchivedDate = isArchived && archiveAudit != null
-                    ? archiveAudit.DateTime.ToString("dd MMM yyyy")
+                    ? archiveAudit.DateTime.ToStringBeisFormat()
                     : string.Empty,
                 ArchiveReason = isArchived && archiveAudit != null ? archiveAudit.Comment : string.Empty,
                 AuditLogHistory = history,
@@ -247,6 +248,21 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return cab;
         }
 
+        private async Task<CABProfileViewModel> GetUnarchiveRequestInformation(CABProfileViewModel profileViewModel)
+        {
+            var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(profileViewModel.CABId));
+            var task = tasks.FirstOrDefault(t =>
+                t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish &&
+                !t.Completed);
+
+            profileViewModel.UnarchiverFirstAndLastName = task?.Submitter.FirstAndLastName;
+            profileViewModel.UnarchiverUserGroup = task?.Submitter.UserGroup;
+            profileViewModel.UnarchiveReason = task?.Body;
+            profileViewModel.UnarchiveTaskType = task?.TaskType;
+
+            return profileViewModel;
+        }
+
         #region ArchiveCAB
 
         [HttpGet]
@@ -306,12 +322,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 var cabCreatorInfo = await _userService.GetAsync(cabCreatorUserId);
                 await SendEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
 
-                var archiverRoleId =  Roles.RoleId(archiverAccount.Role)?? throw new InvalidOperationException();
+                var archiverRoleId = Roles.RoleId(archiverAccount.Role) ?? throw new InvalidOperationException();
 
                 var archiver = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
                     archiverRoleId, archiverAccount.EmailAddress ?? throw new InvalidOperationException());
 
-                var cabCreatorRoleId = Roles.RoleId(cabCreatorInfo.Role)?? throw new InvalidOperationException();
+                var cabCreatorRoleId = Roles.RoleId(cabCreatorInfo.Role) ?? throw new InvalidOperationException();
 
                 var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname,
                     cabCreatorRoleId, cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
@@ -320,7 +336,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     new WorkflowTask(Guid.NewGuid(),
                         TaskType.DraftCabDeletedFromArchiving,
                         archiver,
-                        archiverAccount.Role,
+                        assignee.RoleId,
                         assignee,
                         DateTime.Now,
                         $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",

@@ -1,0 +1,26 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unarchive.DeclineUnarchiveCABViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Decline request to unarchive CAB @Model.CABName</h1>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+        <form id="decline-unarchive-cab-form" method="post">
+            <input type="hidden" asp-for="CabId"/>
+            <input type="hidden" asp-for="CABName"/>
+            <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
+                <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                    Reason
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                   Enter the reason for declining the request to unarchive this CAB.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+            <govuk-warning-text icon-fallback-text="Warning">The CAB will remain archived and @Model.SubmitterGroup will be notified.</govuk-warning-text>
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Decline</govuk-button>
+                <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
