@@ -171,7 +171,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
-                RequiresUnarchiveApproval = userAccount != null && Roles.IsUkasUser(userAccount.Role),
+                RequiresUnarchiveApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
+                    StringComparison.CurrentCultureIgnoreCase),
                 IsPublished = isPublished,
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,
@@ -256,6 +257,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             profileViewModel.UnarchiveRequestor = task?.Submitter;
             profileViewModel.UnarchiveReason = task?.Body;
+            profileViewModel.UnarchiveTaskType = task?.TaskType;
 
             return profileViewModel;
         }

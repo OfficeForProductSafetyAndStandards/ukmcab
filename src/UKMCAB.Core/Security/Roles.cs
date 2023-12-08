@@ -16,26 +16,4 @@ public static class Roles
             .Id;
         return roleId;
     }
-
-    public static bool IsOpssUser(string? role)
-    {
-        if (string.IsNullOrWhiteSpace(role))
-        {
-            return false;
-        }
-
-        return string.Equals(role, OPSS.Label, StringComparison.CurrentCultureIgnoreCase)
-               || string.Equals(role, OPSS.Id, StringComparison.CurrentCultureIgnoreCase);
-    }
-
-    public static bool IsUkasUser(string? role)
-    {
-        if (string.IsNullOrWhiteSpace(role))
-        {
-            return false;
-        }
-
-        return string.Equals(role, UKAS.Label, StringComparison.CurrentCultureIgnoreCase)
-               || string.Equals(role, UKAS.Id, StringComparison.CurrentCultureIgnoreCase);
-    }
 }
