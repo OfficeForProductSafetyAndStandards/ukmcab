@@ -292,7 +292,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {
                         foreach (var uploadedLabel in duplicatedLabels)
                         {
-                            if (string.IsNullOrWhiteSpace(uploadedFile.Label) && uploadedFile.Label!.Equals(uploadedLabel) && uploadedFile.IsDuplicated)
+                            if (!string.IsNullOrWhiteSpace(uploadedFile.Label) && uploadedFile.Label.Equals(uploadedLabel) && uploadedFile.IsDuplicated)
                             {
                                 ModelState.AddModelError($"UploadedFiles[{index}].Label", "A file already exists with this title. Change the title or upload a different file.");
                             }
