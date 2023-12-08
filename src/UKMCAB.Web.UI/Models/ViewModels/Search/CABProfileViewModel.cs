@@ -55,7 +55,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public CABDocumentsViewModel SupportingDocuments { get; set; }
         public FeedLinksViewModel FeedLinksViewModel { get; set; }
         
-        public User? UnarchiveRequestor { get; set; }
+        public string? UnarchiverFirstAndLastName { get; set; }
+        public string? UnarchiverUserGroup { get; set; }
         public string? UnarchiveReason { get; set; }
         
         public TaskType? UnarchiveTaskType { get; set; } 

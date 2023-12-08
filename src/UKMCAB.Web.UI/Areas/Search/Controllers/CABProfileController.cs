@@ -255,7 +255,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish &&
                 !t.Completed);
 
-            profileViewModel.UnarchiveRequestor = task?.Submitter;
+            profileViewModel.UnarchiverFirstAndLastName = task?.Submitter.FirstAndLastName;
+            profileViewModel.UnarchiverUserGroup = task?.Submitter.UserGroup;
             profileViewModel.UnarchiveReason = task?.Body;
             profileViewModel.UnarchiveTaskType = task?.TaskType;
 

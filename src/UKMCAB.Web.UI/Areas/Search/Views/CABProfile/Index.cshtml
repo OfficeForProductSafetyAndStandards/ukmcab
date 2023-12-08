@@ -406,11 +406,11 @@
                 var archiveDetails = string.Empty;
                 if (Model.UnarchiveTaskType == TaskType.RequestToUnarchiveForDraft)
                 {
-                    archiveDetails = $"{Model.UnarchiveRequestor?.FirstAndLastName} from {Model.UnarchiveRequestor?.UserGroup} has requested that this CAB is unarchived and saved as draft for the following reason:";
+                    archiveDetails = $"{Model.UnarchiverFirstAndLastName} from {Model.UnarchiverUserGroup} has requested that this CAB is unarchived and saved as draft for the following reason:";
                 }
                 else if (Model.UnarchiveTaskType == TaskType.RequestToUnarchiveForPublish)
                 {
-                    archiveDetails = $"{Model.UnarchiveRequestor?.FirstAndLastName} from {Model.UnarchiveRequestor?.UserGroup} has requested that this CAB is unarchived and published for the following reason:";
+                    archiveDetails = $"{Model.UnarchiverFirstAndLastName} from {Model.UnarchiverUserGroup} has requested that this CAB is unarchived and published for the following reason:";
                 }
 
                 @archiveDetails
