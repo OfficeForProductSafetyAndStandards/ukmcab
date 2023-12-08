@@ -333,7 +333,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     new WorkflowTask(Guid.NewGuid(),
                         TaskType.DraftCabDeletedFromArchiving,
                         archiver,
-                        archiverAccount.Role,
+                        assignee.RoleId,
                         assignee,
                         DateTime.Now,
                         $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",
