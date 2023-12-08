@@ -187,7 +187,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var uploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>();
 
-            if (uploadedFiles != null && int.TryParse(fileIndexToDuplicate, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count)
+            if (latestVersion.Schedules != null && int.TryParse(fileIndexToDuplicate, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count)
             {
                 var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
                 var uploadedFileToDuplicate = new FileViewModel
@@ -246,7 +246,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var selectedFileUploads = GetSelectedFilesFromLatestDocumentOrEmptyList(selectedViewModels, latestDocument.Schedules);
                     if (selectedFileUploads.Any())
                     {
-                        RemoveSelectedUploadedFilesFromDocument(submitType, selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
+                        await RemoveSelectedUploadedFilesFromDocument(submitType, selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
@@ -280,7 +280,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            if (filesInViewModel.Any())
+            if (filesInViewModel.Any() && model.UploadedFiles != null)
             {
                 var duplicatedLabels = model.UploadedFiles.GroupBy(x => x.Label).Where(g => g.Count() > 1)
                                         .Select(y => y.Key).ToList();
@@ -292,7 +292,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {
                         foreach (var uploadedLabel in duplicatedLabels)
                         {
-                            if (uploadedFile.Label.Equals(uploadedLabel) && uploadedFile.IsDuplicated)
+                            if (string.IsNullOrWhiteSpace(uploadedFile.Label) && uploadedFile.Label!.Equals(uploadedLabel) && uploadedFile.IsDuplicated)
                             {
                                 ModelState.AddModelError($"UploadedFiles[{index}].Label", "A file already exists with this title. Change the title or upload a different file.");
                             }
@@ -386,8 +386,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             latestDocument.Schedules ??= new List<FileUpload>();
 
-            var filesInViewModel = model.UploadedFiles ?? new List<FileViewModel>();
-
             if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain) && model.FileToUseAgain == null)
             {
                 ModelState.AddModelError(nameof(model.FileToUseAgain), "Select the file you want to use again");
@@ -429,23 +427,21 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
         private void AddSelectAFileModelStateError(string submitType, string modelKey, IEnumerable<FileViewModel> selectedViewModels)
         {
-            if ((submitType == Constants.SubmitType.Remove) && !selectedViewModels.Any())
+            if (submitType == Constants.SubmitType.Remove && !selectedViewModels.Any())
             {
                 ModelState.AddModelError(modelKey, "Select a file to remove");
             }
         }
         private async Task RemoveSelectedUploadedFilesFromDocument(string submitType, List<FileUpload> selectedFileUploads, Document latestDocument, string docType)
         {
-            var currentlyUploadedFiles = new List<FileViewModel>();
-
-            if (docType.Equals(nameof(latestDocument.Schedules)))
+            if (latestDocument.Schedules != null && docType.Equals(nameof(latestDocument.Schedules)))
             {
                 foreach (var fileToRemove in selectedFileUploads)
                 {
                     latestDocument.Schedules.Remove(fileToRemove);
                 }
             }
-            else if (docType.Equals(nameof(latestDocument.Documents)))
+            else if (latestDocument.Documents != null && docType.Equals(nameof(latestDocument.Documents)))
             {
                 foreach (var fileToRemove in selectedFileUploads)
                 {
@@ -459,7 +455,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
             var newSchedules = new List<FileUpload>();
-            if (fileViewModels != null)
+            if (fileViewModels != null && latestDocument.Schedules != null)
             {
                 foreach (var fileViewModel in fileViewModels)
                 {
@@ -468,7 +464,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {
                         FileName = fileViewModel.FileName,
                         BlobName = current.BlobName,
-                        Label = fileViewModel.Label,
+                        Label = fileViewModel.Label!,
                         LegislativeArea = fileViewModel.LegislativeArea,
                         UploadDateTime = current.UploadDateTime
                     });
@@ -630,7 +626,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var uploadedFiles = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>();
 
-            if (uploadedFiles != null && int.TryParse(fileIndexToDuplicate, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count)
+            if (latestDocument.Documents != null && int.TryParse(fileIndexToDuplicate, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count)
             {
                 var selectedViewModel = latestDocument.Documents[fileToUseAgainIndex];
                 var uploadedFileToDuplicate = new FileViewModel
@@ -689,7 +685,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var selectedFileUploads = GetSelectedFilesFromLatestDocumentOrEmptyList(selectedViewModels, latestDocument.Documents);
                     if (selectedFileUploads.Any())
                     {
-                        RemoveSelectedUploadedFilesFromDocument(submitType, selectedFileUploads, latestDocument, nameof(latestDocument.Documents));
+                        await RemoveSelectedUploadedFilesFromDocument(submitType, selectedFileUploads, latestDocument, nameof(latestDocument.Documents));
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>();
@@ -722,7 +718,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            if (filesInViewModel.Any())
+            if (filesInViewModel.Any() && model.UploadedFiles != null)
             {
                 var duplicatedLabels = model.UploadedFiles.GroupBy(x => x.Label).Where(g => g.Count() > 1)
                                         .Select(y => y.Key).ToList();

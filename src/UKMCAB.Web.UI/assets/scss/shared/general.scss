@@ -18,10 +18,6 @@
     word-wrap: break-word;
 }
 
-.govuk-colour-green {
-    color: govuk-colour("green") !important;
-}
-
 .ukmcab-border {
     border: #bfc1c3 1px solid;
 }
@@ -153,17 +149,17 @@
     padding-top: 50px !important;
 }
 
-.ukmcab-text-aligin-left {
+.ukmcab-text-align-left {
     text-align: left !important;
 }
 
-.ukmcab-text-aligin-centre--mobile {
+.ukmcab-text-align-centre--mobile {
     @include govuk-media-query($until: tablet) {
         text-align: center !important;
     }
 }
 
-.ukmcab-text-aligin-right {
+.ukmcab-text-align-right {
     text-align: right !important;
 }
 
@@ -263,16 +259,4 @@
 
 .width-full {
     width: 100% !important;
-}
-
-.test-border-red {
-    border: 2px solid red;
-}
-
-.test-border-green {
-    border: 2px solid green;
-}
-
-.test-border-blue {
-    border: 2px solid blue;
 }

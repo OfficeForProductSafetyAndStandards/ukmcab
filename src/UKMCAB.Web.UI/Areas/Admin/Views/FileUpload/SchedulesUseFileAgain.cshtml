@@ -1,5 +1,4 @@
-﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
-@using UKMCAB.Data
+﻿@using UKMCAB.Data
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileUploadViewModel
 @section BackButton
@@ -32,10 +31,12 @@
                 <span class="govuk-caption-m">@Model.Title</span>
                 <h1 class="govuk-heading-l">@Model.Title</h1>
                 <p id="selectFileToUseAgainHint" class="govuk-body govuk-!-padding-bottom-2">Select the file you want to use again.</p>
-
+                <h2 class="govuk-heading-s">
+                    Files you have uploaded
+                </h2>
             </div>
 
-            @if (!Model.UploadedFiles.Any())
+            @if (Model.UploadedFiles == null || !Model.UploadedFiles.Any())
             {
                 <p class="govuk-body">0 file uploaded</p>
             }
@@ -43,11 +44,6 @@
             {
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.FileToUseAgain))">
                     <fieldset class="govuk-fieldset" aria-describedby="selectFileToUseAgainHint">
-                        <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                            <h2 class="govuk-heading-s">
-                                Files you have uploaded
-                            </h2>
-                        </legend>
 
                         <p class="govuk-error-message">
                             <span asp-validation-for="FileToUseAgain" class="govuk-error-message"></span>
@@ -66,16 +62,15 @@
                             @for (int i = 0; i < Model.UploadedFiles.Count; i++)
                             {
                                 var uploadedFile = Model.UploadedFiles[i];
-                                var items = DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea?.Trim() ?? string.Empty))).ToList();
-
+                                
                                 <div class="govuk-radios__item ukmcab-padding-bottom-10">
                                     <div class="row">
                                         <div class="width-one-tenth">
 
-                                            <input asp-for="UploadedFiles[i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
-                                            <input asp-for="UploadedFiles[i].FileName" type="hidden" value="@uploadedFile.FileName">
-                                            <input asp-for="UploadedFiles[i].LegislativeArea" type="hidden" value="@uploadedFile.LegislativeArea">
-                                            <input asp-for="UploadedFiles[i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
+                                            <input asp-for="UploadedFiles![i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
+                                            <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
+                                            <input asp-for="UploadedFiles![i].LegislativeArea" type="hidden" value="@uploadedFile.LegislativeArea">
+                                            <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
                                         </div>
                                         <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
                                             <input class="govuk-radios__input" asp-for="FileToUseAgain" type="radio" value="@i">
@@ -102,7 +97,6 @@
                                             @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
                                         </p>
                                     </div>
-
                                 </div>
                                 <div class="ukmcab-float__left width-full"><hr class="ukmcab-border" /></div>
                             }
