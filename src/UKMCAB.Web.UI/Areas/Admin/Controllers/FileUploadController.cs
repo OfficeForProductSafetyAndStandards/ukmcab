@@ -246,7 +246,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var selectedFileUploads = GetSelectedFilesFromLatestDocumentOrEmptyList(selectedViewModels, latestDocument.Schedules);
                     if (selectedFileUploads.Any())
                     {
-                        await RemoveSelectedUploadedFilesFromDocument(submitType, selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
+                        await RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
@@ -432,7 +432,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ModelState.AddModelError(modelKey, "Select a file to remove");
             }
         }
-        private async Task RemoveSelectedUploadedFilesFromDocument(string submitType, List<FileUpload> selectedFileUploads, Document latestDocument, string docType)
+        private async Task RemoveSelectedUploadedFilesFromDocumentAsync(List<FileUpload> selectedFileUploads, Document latestDocument, string docType)
         {
             if (latestDocument.Schedules != null && docType.Equals(nameof(latestDocument.Schedules)))
             {
@@ -685,7 +685,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var selectedFileUploads = GetSelectedFilesFromLatestDocumentOrEmptyList(selectedViewModels, latestDocument.Documents);
                     if (selectedFileUploads.Any())
                     {
-                        await RemoveSelectedUploadedFilesFromDocument(submitType, selectedFileUploads, latestDocument, nameof(latestDocument.Documents));
+                        await RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Documents));
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>();
