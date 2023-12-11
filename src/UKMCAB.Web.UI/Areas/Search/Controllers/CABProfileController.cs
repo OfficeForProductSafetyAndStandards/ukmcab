@@ -255,8 +255,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish &&
                 !t.Completed);
 
+            int? summaryBreak = task?.Body.Length > 60 ? task.Body.Substring(0, 60).LastIndexOf(" ", StringComparison.Ordinal) : null;
             profileViewModel.UnarchiverFirstAndLastName = task?.Submitter.FirstAndLastName;
             profileViewModel.UnarchiverUserGroup = task?.Submitter.UserGroup;
+            profileViewModel.UnarchiveReasonSummary = summaryBreak.HasValue ? task?.Body.Substring(0, summaryBreak.Value) : null;
             profileViewModel.UnarchiveReason = task?.Body;
             profileViewModel.UnarchiveTaskType = task?.TaskType;
 

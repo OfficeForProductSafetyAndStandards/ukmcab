@@ -103,7 +103,7 @@
                                 <govuk-button-link class="govuk-button--secondary" asp-route="@RequestToUnarchiveCABController.Routes.RequestUnarchive" asp-route-cabUrl="@Model.CABUrl">Request to unarchive</govuk-button-link>
                             </span>
                         }
-                        else if(Model.UnarchiveTaskType == null)
+                        else if (Model.UnarchiveTaskType == null)
                         {
                             <span>
                                 <govuk-button-link class="govuk-button--secondary" asp-area="Search" asp-controller="CABProfile" asp-action="UnarchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Unarchive</govuk-button-link>
@@ -416,9 +416,23 @@
                 @archiveDetails
             }
         </p>
-        <p class='govuk-body'>
-            @Model.UnarchiveReason
-        </p>
+        @if (!string.IsNullOrWhiteSpace(Model.UnarchiveReasonSummary))
+        {
+            <govuk-details>
+                <govuk-details-summary>
+                    @Model.UnarchiveReasonSummary
+                </govuk-details-summary>
+                <govuk-details-text>
+                    @Model.UnarchiveReason
+                </govuk-details-text>
+            </govuk-details>
+        }
+        else
+        {
+            <p class='govuk-body'>
+                @Model.UnarchiveReason
+            </p>
+        }
     </div>
 
     <div class="govuk-button-group">
