@@ -15,19 +15,10 @@
     {
         reviewDate = revwDate.ToString("d MMM yyyy");
     }
-
 }
 @if (Model.SubStatus == SubStatus.PendingApproval)
 {
-    if (Model.CanPublish)
-    {
-        <partial model="@("This CAB profile cannot be edited until it has been approved or declined.")" name="Partials/_PageContentBanner"/>
-    }
-    else
-    {
-        /*Todo become User Group when ODG's*/ 
-        <partial model="@("This CAB is being reviewed by OPSS")" name="Partials/_PageContentBanner"/>
-    }
+    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 @if (Model.ShowError)
 {
@@ -424,7 +415,7 @@
     </div>
 </dl>
 
-<div class="cab-summary-detail">
+<div class="cab-summary-detail govuk-!-margin-bottom-5">
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row govuk-!-padding-top-5">
             <dt class="govuk-summary-list__key">
@@ -456,32 +447,28 @@
         </div>
     </dl>
 </div>
-<div class="govuk-warning-text govuk-!-margin-top-5">
-    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-    <strong class="govuk-warning-text__text">
-        <span class="govuk-warning-text__assistive">Warning</span>
-        @if (Model is { ValidCAB: true,CanPublish: true })
-        {
+
+@if (Model is { ValidCAB: true, CanPublish: true })
+{
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
             <text>Once published this record will be visible to the public.</text>
-        }
-        else if (Model is { ValidCAB: false,CanPublish: true })
-        {
-            //Not Valid CAB because of missing CAB Number for UKAS user
-            if (Model.SubStatus == SubStatus.PendingApproval)
-            {
-                <text>You need to enter all mandatory information before you can approve this CAB profile.</text>
-            }
-            else
-            {
-                <text>Provide all mandatory information before you are able to publish this record.</text>
-            }
-        }
-        else
-        {
-            <text>CABs that are submitted for approval cannot be edited until they have been approved or declined.</text>
-        }
-    </strong>
-</div>
+        </strong>
+    </div>
+}
+else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None })
+{
+    <div class="govuk-warning-text govuk-!-margin-top-5">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            <text>Provide all mandatory information before you are able to publish this record.</text>
+        </strong>
+    </div>
+}
+
 
 @if (Model.SubStatus == SubStatus.None)
 {
@@ -523,7 +510,7 @@
         </form>
     </div>
 }
-else if (Model is { CanPublish: true ,SubStatus: SubStatus.PendingApproval })
+else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApproval })
 {
     <div>
         <div class="govuk-button-group">
