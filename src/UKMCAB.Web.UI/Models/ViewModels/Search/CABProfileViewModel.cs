@@ -57,6 +57,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         
         public string? UnarchiverFirstAndLastName { get; set; }
         public string? UnarchiverUserGroup { get; set; }
+        public string? UnarchiveReasonSummary { get; set; }
         public string? UnarchiveReason { get; set; }
         
         public TaskType? UnarchiveTaskType { get; set; } 
