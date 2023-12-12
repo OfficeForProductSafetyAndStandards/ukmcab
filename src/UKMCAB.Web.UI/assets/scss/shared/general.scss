@@ -1,13 +1,13 @@
 ﻿.desktop-no-display {
-  @include govuk-media-query($from: tablet) {
-    display: none !important;
-  }
+    @include govuk-media-query($from: tablet) {
+        display: none !important;
+    }
 }
 
 .mobile-no-display {
-  @include govuk-media-query($until: tablet) {
-    display: none !important;
-  }
+    @include govuk-media-query($until: tablet) {
+        display: none !important;
+    }
 }
 
 .app-no-display {
@@ -18,36 +18,203 @@
     word-wrap: break-word;
 }
 
-.ukmcab-padding-bottom-5{
-    padding-bottom: 5px;
+.ukmcab-border {
+    border: #bfc1c3 1px solid;
+}
+
+.ukmcab-float__clear {
+    clear: both;
+}
+
+.ukmcab-float__left {
+    float: left;
+}
+
+.ukmcab-float__right {
+    float: right;
+}
+
+.ukmcab-padding-bottom-5 {
+    padding-bottom: 5px !important;
 }
 
 .ukmcab-padding-bottom-10 {
-    padding-bottom: 10px;
+    padding-bottom: 10px !important;
+}
+
+.ukmcab-padding-bottom-15 {
+    padding-bottom: 15px !important;
 }
 
 .ukmcab-padding-bottom-20 {
-    padding-bottom: 20px;
+    padding-bottom: 20px !important;
 }
 
 .ukmcab-padding-bottom-30 {
-    padding-bottom: 30px;
+    padding-bottom: 30px !important;
+}
+
+.ukmcab-padding-bottom-35 {
+    padding-bottom: 35px !important;
+}
+
+.ukmcab-padding-bottom-40 {
+    padding-bottom: 40px !important;
+}
+
+.ukmcab-padding-bottom-50 {
+    padding-bottom: 50px !important;
+}
+
+.ukmcab-padding-left-10 {
+    padding-left: 10px !important;
+}
+
+.ukmcab-padding-left-20 {
+    padding-left: 20px !important;
+}
+
+.ukmcab-padding-left-30 {
+    padding-left: 30px !important;
+}
+
+.ukmcab-padding-left-35 {
+    padding-left: 35px !important;
+}
+
+.ukmcab-padding-left-40 {
+    padding-left: 40px !important;
+}
+
+@media (max-width: 908px) {
+
+    .ukmcab-padding-left-10 {
+        padding-left: 0 !important;
+    }
+
+    .ukmcab-padding-left-20 {
+        padding-left: 0 !important;
+    }
+
+    .ukmcab-padding-left-30 {
+        padding-left: 0 !important;
+    }
+
+    .ukmcab-padding-left-35 {
+        padding-left: 0 !important;
+    }
+
+    .ukmcab-padding-left-40 {
+        padding-left: 0 !important;
+    }
+
+    .ukmcab-padding-right-10 {
+        padding-right: 0 !important;
+    }
+}
+
+.ukmcab-padding-right-10 {
+    padding-right: 10px !important;
 }
 
 .ukmcab-padding-top-5 {
-    padding-top: 5px;
+    padding-top: 5px !important;
 }
 
 .ukmcab-padding-top-10 {
-    padding-top: 10px;
+    padding-top: 10px !important;
+}
+
+.ukmcab-padding-top-15 {
+    padding-top: 15px !important;
 }
 
 .ukmcab-padding-top-20 {
-    padding-top: 20px;
+    padding-top: 20px !important;
 }
 
 .ukmcab-padding-top-30 {
-    padding-top: 30px;
+    padding-top: 30px !important;
+}
+
+.ukmcab-padding-top-35 {
+    padding-top: 35px !important;
+}
+
+.ukmcab-padding-top-40 {
+    padding-top: 40px !important;
+}
+
+.ukmcab-padding-top-50 {
+    padding-top: 50px !important;
+}
+
+.ukmcab-text-align-left {
+    text-align: left !important;
+}
+
+.ukmcab-text-align-centre--mobile {
+    @include govuk-media-query($until: tablet) {
+        text-align: center !important;
+    }
+}
+
+.ukmcab-text-align-right {
+    text-align: right !important;
+}
+
+.ukmcab-min-width__350 {
+    min-width: 350px;
+}
+
+.width-one-tenth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-one-tenth {
+        width: 10% !important;
+    }
+}
+
+.width-three-tenth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-three-tenth {
+        width: 30% !important;
+    }
+}
+
+.width-seven-tenth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-seven-tenth {
+        width: 70% !important;
+    }
+}
+
+.width-one-twentieth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-one-twentieth {
+        width: 5% !important;
+    }
+}
+
+.width-thirteen-twentieth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-thirteen-twentieth {
+        width: 65% !important;
+    }
 }
 
 .width-one-fifth {
@@ -70,12 +237,26 @@
     }
 }
 
-.width-one-tenth {
+.width-three-fifth {
     width: 100% !important;
 }
 
 @media (min-width: 40.0625em) {
-    .width-one-tenth {
-        width: 10% !important;
+    .width-three-fifth {
+        width: 60% !important;
     }
+}
+
+.width-four-fifth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-four-fifth {
+        width: 80% !important;
+    }
+}
+
+.width-full {
+    width: 100% !important;
 }

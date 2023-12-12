@@ -10,7 +10,7 @@ import "./views/mobile-sort.js";
 import "./views/cab-profile.js";
 import "./views/search.js";
 import "./views/notificationTabs.js";
-
+import "./views/file-upload.js";
 import "../scss/main.scss";
 
 

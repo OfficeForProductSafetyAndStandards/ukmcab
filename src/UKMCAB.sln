@@ -35,17 +35,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{1D2146B5-D
 		NuGetPackageSourceSetup.md = NuGetPackageSourceSetup.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Web.UI.Tests", "UKMCAB.Web.UI.Tests\UKMCAB.Web.UI.Tests.csproj", "{47CC3489-92AB-4B26-AD63-1332F507A342}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Web.UI.Tests", "UKMCAB.Web.UI.Tests\UKMCAB.Web.UI.Tests.csproj", "{47CC3489-92AB-4B26-AD63-1332F507A342}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Core.Tests", "UKMCAB.Core.Tests\UKMCAB.Core.Tests.csproj", "{6FD50B29-41E8-4FD0-BC6B-7E8F3359818B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Core.Tests", "UKMCAB.Core.Tests\UKMCAB.Core.Tests.csproj", "{6FD50B29-41E8-4FD0-BC6B-7E8F3359818B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Common.Tests", "UKMCAB.Common.Tests\UKMCAB.Common.Tests.csproj", "{6591CAA0-AA9B-41AC-93DB-ECD9F12E228A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Common.Tests", "UKMCAB.Common.Tests\UKMCAB.Common.Tests.csproj", "{6591CAA0-AA9B-41AC-93DB-ECD9F12E228A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Data.Tests", "UKMCAB.Data.Tests\UKMCAB.Data.Tests.csproj", "{F2CD8EA5-FA9D-44A2-A2F1-295090E84A5F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Data.Tests", "UKMCAB.Data.Tests\UKMCAB.Data.Tests.csproj", "{F2CD8EA5-FA9D-44A2-A2F1-295090E84A5F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Infrastructure.Tests", "UKMCAB.Infrastructure.Tests\UKMCAB.Infrastructure.Tests.csproj", "{6332E037-69B8-4FD6-A8B6-F1490858892A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Infrastructure.Tests", "UKMCAB.Infrastructure.Tests\UKMCAB.Infrastructure.Tests.csproj", "{6332E037-69B8-4FD6-A8B6-F1490858892A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Web.Tests", "UKMCAB.Web.Tests\UKMCAB.Web.Tests.csproj", "{669114EE-C869-4E0B-B002-FDB532737BF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Web.Tests", "UKMCAB.Web.Tests\UKMCAB.Web.Tests.csproj", "{669114EE-C869-4E0B-B002-FDB532737BF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
