@@ -1,55 +1,72 @@
 ﻿.cab-summary-header-list {
 
-    .cab-summary-list {
-        .cab-summary-header {
-            position: relative;
+  .cab-summary-list {
+    .cab-summary-header {
+      position: relative;
 
-            h3 {
-                padding-bottom: 0;
-                margin: 0;
-                vertical-align: bottom;
-            }
-        }
-        .govuk-summary-list__value {
-            padding-right: 0;
-        }
-        .cab-result-status-label {
-            float: right;
-            border: 1px hidden;
-            padding: 0 5px;
-            font-weight: 600;
-            margin-left: 10px;
-            margin-bottom: 5px;
-
-            &.cab-result-completed {
-                background-color: rgb(29, 112, 184);
-                color: white;
-            }
-
-            &.cab-result-not-completed {
-                background-color: rgba(248, 152, 128,0.5);
-                color: darkred;
-            }
-        }
+      h3 {
+        padding-bottom: 0;
+        margin: 0;
+        vertical-align: bottom;
+      }
     }
 
-    .govuk-summary-list {
-        @media (min-width: 40.0625em) {
-            margin-bottom: 0;
-
-            dt {
-                width: 40%;
-            }
-        }
+    .govuk-summary-list__value {
+      padding-right: 0;
+      @include govuk-media-query($until: tablet) {
+        margin-bottom: 50px;
+      }
     }
+
+    .cab-result-status-label {
+      float: right;
+      border: 1px hidden;
+      padding: 0 5px;
+      font-weight: 600;
+      margin-left: 10px;
+      margin-bottom: 5px;
+
+      &.cab-result-completed {
+        background-color: rgb(29, 112, 184);
+        color: white;
+      }
+
+      &.cab-result-not-completed {
+        background-color: rgba(248, 152, 128, 0.5);
+        color: darkred;
+      }
+
+      @include govuk-media-query($until: tablet) {
+        &.cab-details-result-status-label {
+          margin-top: 0px !important;
+        }
+        margin-top: 15px;
+      }
+    }
+  }
+
+  .govuk-summary-list {
+    @media (min-width: 40.0625em) {
+      margin-bottom: 0;
+      clear: both;
+      dt {
+        width: 40%;
+      }
+    }
+    @include govuk-media-query($until: tablet) {
+      .cab-summary-header {
+        float: left;
+      }
+    }
+  }
 }
 
 .cab-confirmation-banner {
-    word-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .cab-summary-schedule-item {
-    @include govuk-media-query($until: tablet) {
-        padding: 0 0 12px 0;
-    }
+  @include govuk-media-query($until: tablet) {
+    padding: 0 0 12px 0;
+  }
 }

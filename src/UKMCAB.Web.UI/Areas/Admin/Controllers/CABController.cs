@@ -379,7 +379,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ValidCAB = latest.StatusValue != Status.Published
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
-                           && TryValidateModel(cabBody)
+                           && TryValidateModel(cabBody),
+                TitleHint = "Create a CAB",
+                Title = User.IsInRole(Roles.OPSS.Id) ? 
+                    latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing" 
+                    : "Check details before submitting for approval"
             };
 
             ModelState.Clear();
