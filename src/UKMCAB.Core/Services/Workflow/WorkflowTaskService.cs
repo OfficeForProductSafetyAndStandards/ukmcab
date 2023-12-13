@@ -55,6 +55,14 @@ public class WorkflowTaskService : IWorkflowTaskService
         return items.Select(w => w.MapToWorkflowTaskModel()).OrderByDescending(t => t.LastUpdatedOn).ToList();
     }
 
+    public async Task<List<WorkflowTask>> GetByCabIdAndTaskTypeAsync(Guid cabId, List<TaskType> taskTypes)
+    {
+        var taskTypesToSearch = taskTypes.Select(t => t.ToString());
+        var items = await _workflowTaskRepository.QueryAsync(w =>
+            w.CabId.HasValue && w.CabId.Value == cabId && taskTypesToSearch.Contains(w.TaskType));
+        return items.Select(w => w.MapToWorkflowTaskModel()).OrderByDescending(t => t.LastUpdatedOn).ToList();
+    }
+
     public async Task<WorkflowTask> GetAsync(Guid id)
     {
         var task = await _workflowTaskRepository.GetAsync(id.ToString());
