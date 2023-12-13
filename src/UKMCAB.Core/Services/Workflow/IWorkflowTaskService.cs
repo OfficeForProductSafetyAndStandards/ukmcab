@@ -10,11 +10,18 @@ public interface IWorkflowTaskService
     public Task<List<WorkflowTask>> GetCompletedForRoleIdAsync(string roleId);
 
     /// <summary>
-    /// Get tasks by CabId and order by last updated date descending
+    /// Get tasks by CabId and ordered by last updated date descending
     /// </summary>
     /// <param name="cabId">cab to search for</param>
     /// <returns>Ordered tasks found</returns>
     public Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId);
+    
+    /// <summary>
+    /// Get tasks by CabId and task type ordered by last updated date descending
+    /// </summary>
+    /// <param name="cabId">cab to search for</param>
+    /// <returns>Ordered tasks found</returns>
+    public Task<List<WorkflowTask>> GetByCabIdAndTaskTypeAsync(Guid cabId, List<TaskType> taskTypes);
 
     public Task<WorkflowTask> GetAsync(Guid id);
     public Task<WorkflowTask> CreateAsync(WorkflowTask workflowTask);

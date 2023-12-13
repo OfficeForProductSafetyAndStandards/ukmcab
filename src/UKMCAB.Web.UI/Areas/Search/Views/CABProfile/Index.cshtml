@@ -97,7 +97,7 @@
                 <div id="admin-buttons-container">
                     @if (Model is { IsArchived: true, IsUnarchivedRequest: false })
                     {
-                        if (Model.RequiresUnarchiveApproval)
+                        if (Model.ShowRequestToUnarchive)
                         {
                             <span>
                                 <govuk-button-link class="govuk-button--secondary" asp-route="@RequestToUnarchiveCABController.Routes.RequestUnarchive" asp-route-cabUrl="@Model.CABUrl">Request to unarchive</govuk-button-link>

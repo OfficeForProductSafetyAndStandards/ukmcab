@@ -86,7 +86,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 return NotFound();
             }
 
-            var cab = await GetCabProfileViewModel(cabDocument, returnUrl, pagenumber);
+            var userAccount = User.Identity is { IsAuthenticated: true }
+                ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
+                : null;
+            var unarchiveNotifications = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
+                cabDocument.CABId.ToGuid()!.Value,
+                new List<TaskType> { TaskType.RequestToUnarchiveForDraft, TaskType.RequestToUnarchiveForPublish });
+            var requireApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
+                StringComparison.CurrentCultureIgnoreCase);
+            var cab = await GetCabProfileViewModel(
+                cabDocument, 
+                returnUrl, 
+                userAccount != null,
+                requireApproval && (!unarchiveNotifications.Any() || unarchiveNotifications.All(t => t.Completed)),
+                pagenumber);
             cab = await GetUnarchiveRequestInformation(cab);
 
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
@@ -105,7 +118,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument != null)
             {
-                var cab = await GetCabProfileViewModel(cabDocument, null, 0);
+                var cab = await GetCabProfileViewModel(cabDocument, null, true, false, 0);
                 return View("Index", cab);
             }
             else
@@ -147,8 +160,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
         }
 
-        private async Task<CABProfileViewModel> GetCabProfileViewModel(Document cabDocument, string returnUrl,
-            int pagenumber = 1)
+        private async Task<CABProfileViewModel> GetCabProfileViewModel(Document cabDocument, string? returnUrl,
+            bool loggedIn = false, bool showRequestToUnarchive = false, int pagenumber = 1)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
@@ -162,17 +175,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
             var hasDraft = fullHistory.Any(d => d.StatusValue == Status.Draft);
 
-            var userAccount = User.Identity is { IsAuthenticated: true }
-                ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
-                : null;
-            var history = new AuditLogHistoryViewModel(fullHistory, pagenumber, userAccount != null);
+            var history = new AuditLogHistoryViewModel(fullHistory, pagenumber, loggedIn);
 
             var cab = new CABProfileViewModel
             {
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
-                RequiresUnarchiveApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
-                    StringComparison.CurrentCultureIgnoreCase),
+                ShowRequestToUnarchive = showRequestToUnarchive,
                 IsPublished = isPublished,
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,
@@ -255,10 +264,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish &&
                 !t.Completed);
 
-            int? summaryBreak = task?.Body.Length > 60 ? task.Body.Substring(0, 60).LastIndexOf(" ", StringComparison.Ordinal) : null;
+            int? summaryBreak = task?.Body.Length > 60
+                ? task.Body.Substring(0, 60).LastIndexOf(" ", StringComparison.Ordinal)
+                : null;
             profileViewModel.UnarchiverFirstAndLastName = task?.Submitter.FirstAndLastName;
             profileViewModel.UnarchiverUserGroup = task?.Submitter.UserGroup;
-            profileViewModel.UnarchiveReasonSummary = summaryBreak.HasValue ? task?.Body.Substring(0, summaryBreak.Value) : null;
+            profileViewModel.UnarchiveReasonSummary =
+                summaryBreak.HasValue ? task?.Body.Substring(0, summaryBreak.Value) : null;
             profileViewModel.UnarchiveReason = task?.Body;
             profileViewModel.UnarchiveTaskType = task?.TaskType;
 
