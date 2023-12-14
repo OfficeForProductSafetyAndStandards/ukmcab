@@ -121,7 +121,7 @@
 
                                 @*Row 2: Inputbox Row*@
                                 <div class="row">
-                                    <div class="width-three-fifth ukmcab-padding-left-35 ukmcab-padding-bottom-15 ukmcab-float__left">
+                                    <div class="width-three-fifth ukmcab-padding-right-10 ukmcab-padding-left-35 ukmcab-padding-bottom-15 ukmcab-float__left">
                                         <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
                                             <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Label">File</label>
                                             <p class="govuk-error-message">
@@ -130,6 +130,7 @@
                                             <input asp-for="UploadedFiles![i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
                                             <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
                                             <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
+                                            <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                         </div>
                                     </div>
 
@@ -168,9 +169,7 @@
             {
                 <div class="govuk-button-group">
                     <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove" />
-                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesUseFileAgain" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">
-                        Use file again
-                    </a>
+                    <button class="button-link govuk-link" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
                 </div>
             }
         </div>
@@ -192,15 +191,9 @@
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft
                 </button>
-
-                @if (Model.IsFromSummary)
-                {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
-                else
-                {
-                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
+                <button class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Cancel">
+                    Cancel
+                </button>
             </div>
         </div>
     </form>

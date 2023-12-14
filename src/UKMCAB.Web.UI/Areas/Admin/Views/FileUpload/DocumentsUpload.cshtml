@@ -98,6 +98,7 @@
                                                 <input asp-for="UploadedFiles![i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
                                                 <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
                                                 <input asp-for="UploadedFiles![i].Category" type="hidden" value="@uploadedFile.Category">
+                                                <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                             </div>
                                         </div>
 
