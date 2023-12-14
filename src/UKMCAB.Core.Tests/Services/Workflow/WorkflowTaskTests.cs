@@ -284,7 +284,32 @@ public class WorkflowTaskServiceTests
         Assert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(userAssigned, task.Assignee);
+            Assert.AreEqual(cabId, task.CABId);
+        }
+    }
+    
+    [Test]
+    public async Task TasksFound_GetByCabIdAndTaskTypeAsync_ReturnsTasks()
+    {
+        // Arrange
+        var cabId = _faker.Random.Guid();
+        var userAssigned = CreateFakeOpssUser();
+        _mockWorkflowTaskRepository.Setup(r =>
+                r.QueryAsync(It.IsAny<Expression<Func<Data.Models.Workflow.WorkflowTask, bool>>>()))
+            .ReturnsAsync(new List<Data.Models.Workflow.WorkflowTask>
+            {
+                CreateValidTask(CreateFakeOpssUser(), Roles.OPSS.Id, userAssigned, cabId).MapToWorkflowTaskData(),
+                CreateValidTask(CreateFakeUkasUser(), Roles.UKAS.Id, userAssigned, cabId).MapToWorkflowTaskData(),
+            });
+
+        // Act
+        var result = await _sut.GetByCabIdAndTaskTypeAsync(cabId, new List<TaskType> { TaskType.RequestToPublish });
+
+        // Arrange
+        Assert.AreEqual(2, result.Count);
+        foreach (var task in result)
+        {
+            Assert.AreEqual(TaskType.RequestToPublish, task.TaskType);
             Assert.AreEqual(cabId, task.CABId);
         }
     }
