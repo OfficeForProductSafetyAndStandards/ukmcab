@@ -1,91 +1,94 @@
 ﻿.ukmcab-table {
-    table-layout: fixed;
-    
-    thead {
-        @include govuk-media-query($until: tablet) {
-            display: none;
-        }
+  table-layout: fixed;
+
+  thead {
+    @include govuk-media-query($until: tablet) {
+      display: none;
+    }
+  }
+
+  tr {
+    @include govuk-media-query($until: tablet) {
+      border-bottom: 1px solid #b1b4b6;
     }
 
-    tr {
+    td {
+      padding: 20px 10px 20px 0;
+      overflow-wrap: break-word;
+
+      @include govuk-media-query($until: tablet) {
+        display: block;
+        border-bottom: none;
+        overflow-wrap: break-word;
+      }
+
+      label {
+        display: none;
+
         @include govuk-media-query($until: tablet) {
-            border-bottom: 1px solid #b1b4b6;
+          display: block;
+          font-weight: 600;
+          padding-bottom: 10px;
         }
-
-        td {
-            padding: 20px 10px 20px 0;
-            overflow-wrap: break-word;
-
-            @include govuk-media-query($until: tablet) {
-                display: block;
-                border-bottom: none;
-                overflow-wrap: break-word;
-            }
-
-            label {
-                display: none;
-
-                @include govuk-media-query($until: tablet) {
-                    display: block;
-                    font-weight: 600;
-                    padding-bottom: 10px;
-                }
-            }
-        }
+      }
     }
+  }
+
+  margin-bottom: 30px !important;
+  
 }
 
 
 .ukmcab-table--2-col {
-    table-layout: fixed;
+  table-layout: fixed;
 
-    thead {
+  thead {
+    @include govuk-media-query($until: tablet) {
+      display: none;
+    }
+  }
+
+  tr {
+
+    th {
+      overflow-wrap: break-word;
+
+      @include govuk-media-query($until: tablet) {
+        display: block;
+        border-bottom: none;
+        overflow-wrap: break-word;
+      }
+
+      label {
+        display: none;
+
         @include govuk-media-query($until: tablet) {
-            display: none;
+          display: block;
+          font-weight: 600;
+          padding-bottom: 10px;
         }
+      }
     }
 
-    tr {
+    td {
+      overflow-wrap: break-word;
 
-        th {
-            overflow-wrap: break-word;
+      @include govuk-media-query($until: tablet) {
+        display: block;
+        border-bottom: none;
+        overflow-wrap: break-word;
+        padding: 0 10px 20px 0;
+      }
 
-            @include govuk-media-query($until: tablet) {
-                display: block;
-                border-bottom: none;
-                overflow-wrap: break-word;
-            }
+      label {
+        display: none;
 
-            label {
-                display: none;
-
-                @include govuk-media-query($until: tablet) {
-                    display: block;
-                    font-weight: 600;
-                    padding-bottom: 10px;
-                }
-            }
+        @include govuk-media-query($until: tablet) {
+          display: block;
+          font-weight: 600;
+          padding-bottom: 10px;
         }
-
-        td {
-            overflow-wrap: break-word;
-
-            @include govuk-media-query($until: tablet) {
-                display: block;
-                border-bottom: none;
-                overflow-wrap: break-word;
-                padding: 0 10px 20px 0;
-            }
-
-            label {
-                display: none;
-
-                @include govuk-media-query($until: tablet) {
-                    display: block;
-                    font-weight: 600;
-                    padding-bottom: 10px;
-                }
-            }
-        }
+      }
     }
+  }
 }

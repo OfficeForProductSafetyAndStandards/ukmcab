@@ -14,10 +14,8 @@ using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.Security;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels;
-using System.Text.Encodings.Web;
 using Microsoft.IdentityModel.Tokens;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
-using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Areas.Admin.Controllers;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers

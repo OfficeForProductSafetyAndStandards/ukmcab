@@ -14,7 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? ArchiveReason { get; set; }
         public bool IsArchived { get; set; }
         public bool IsUnarchivedRequest { get; set; }
-        public bool RequiresUnarchiveApproval { get; set; }
+        public bool ShowRequestToUnarchive { get; set; }
         public bool IsPublished { get; set; }
         public bool HasDraft { get; set; }
         public AuditLogHistoryViewModel AuditLogHistory { get; set; }
