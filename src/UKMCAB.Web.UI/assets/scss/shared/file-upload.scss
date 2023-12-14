@@ -1,4 +1,4 @@
-﻿.remove-file-button-link {
+﻿.button-link {
     @include govuk-font($size: 19, $line-height: 19px);
     align-items: normal;
     border: none;
@@ -10,6 +10,7 @@
     text-align: left;
     color: $govuk-link-colour;
     vertical-align: bottom;
+    text-decoration: underline;
 
     @include govuk-media-query($until: tablet) {
         padding: 12px 0 12px 0;

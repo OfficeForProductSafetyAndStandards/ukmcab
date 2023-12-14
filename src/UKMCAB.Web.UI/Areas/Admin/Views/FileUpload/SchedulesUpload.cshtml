@@ -91,6 +91,7 @@
                                                 <p class="govuk-body file-label">@uploadedFile.Label</p>
                                                 <input asp-for="UploadedFiles![i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
                                                 <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
+                                                <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                                 <input asp-for="UploadedFiles![i].LegislativeArea" type="hidden" value="@uploadedFile.LegislativeArea">
                                             </div>
                                         </div>
