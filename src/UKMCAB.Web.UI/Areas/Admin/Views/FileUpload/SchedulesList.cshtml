@@ -169,7 +169,7 @@
             {
                 <div class="govuk-button-group">
                     <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove" />
-                    <button class="button-link govuk-link" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Use file again</button>
+                    <button class="button-link govuk-link" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
                 </div>
             }
         </div>
@@ -191,16 +191,9 @@
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft
                 </button>
-
-                <button class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Cancel">Cancel New</button>
-                @if (Model.IsFromSummary)
-                {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
-                else
-                {
-                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
+                <button class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Cancel">
+                    Cancel
+                </button>
             </div>
         </div>
     </form>
