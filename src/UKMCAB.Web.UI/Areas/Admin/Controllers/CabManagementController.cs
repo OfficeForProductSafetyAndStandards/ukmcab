@@ -73,23 +73,23 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
                 case "number-desc":
-                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.CABNumber).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.CABNumber).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
                 case "number":
-                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.CABNumber).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.CABNumber).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
                 case "name-desc":
-                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.Name).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.Name).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
                 case "name":
-                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Name).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Name).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
                 case "lastupd":
-                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.LastUpdated).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.LastUpdated).ThenBy(cmi => cmi.CABNumber).ToList();
                     break;
                 case "lastupd-desc":
                 default:
-                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.LastUpdated).ToList();
+                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.LastUpdated).ThenBy(cmi => cmi.CABNumber).ToList();
                     break;
             }
             model.Pagination = new PaginationViewModel
