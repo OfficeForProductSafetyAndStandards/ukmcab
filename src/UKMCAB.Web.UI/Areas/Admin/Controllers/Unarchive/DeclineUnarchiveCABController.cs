@@ -69,7 +69,6 @@ public class DeclineUnarchiveCABController : Controller
     [HttpPost("{cabUrl}", Name = Routes.Decline)]
     public async Task<IActionResult> DeclinePostAsync(string cabUrl, DeclineUnarchiveCABViewModel vm)
     {
-        ModelState.Remove(nameof(vm.SubmitterGroup));
         if (!ModelState.IsValid)
         {
             return View("~/Areas/Admin/Views/CAB/Unarchive/Decline.cshtml", vm);

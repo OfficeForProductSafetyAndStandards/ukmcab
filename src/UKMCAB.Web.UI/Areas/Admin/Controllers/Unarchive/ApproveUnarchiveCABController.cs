@@ -74,8 +74,6 @@ public class ApproveUnarchiveCABController : Controller
     [HttpPost("{cabUrl}", Name = Routes.Approve)]
     public async Task<IActionResult> ApprovePostAsync(string cabUrl, ApproveUnarchiveCABViewModel vm)
     {
-        ModelState.Remove(nameof(vm.SubmitterGroup));
-        ModelState.Remove(nameof(vm.SubmitterFirstAndLastName));
         if (!ModelState.IsValid)
         {
             return View("~/Areas/Admin/Views/CAB/Unarchive/Approve.cshtml", vm);
