@@ -1,6 +1,7 @@
 ﻿@using UKMCAB.Data
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileListViewModel
+
 @section BackButton
 {
     <div class="govuk-width-container">
@@ -48,7 +49,7 @@
     <form method="post" enctype="multipart/form-data" novalidate>
         <div class="govuk-grid-column-full">
 
-            <partial name="Partials/_ValidationSummary" model="null" />
+            <partial name="Partials/_ValidationSummary" model="null"/>
 
             <div>
                 <span class="govuk-caption-m">@Model.Title</span>
@@ -58,23 +59,27 @@
                 <h2 class="govuk-heading-s">
                     Files you have uploaded
                 </h2>
-                
-                <div id="enter-file-title-hint" class="govuk-hint">
-                    Enter a clear and relevant title for the file. This will be shown to the public.
-                </div>
+                @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
+                {
+                    <div id="enter-file-title-hint" class="govuk-hint">
+                        Enter a clear and relevant title for the file. This will be shown to the public.
+                    </div>
+                }
             </div>
 
             @if (Model.UploadedFiles == null || !Model.UploadedFiles.Any())
             {
                 @* Header*@
                 <div style="margin-bottom:0">
-                    <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display"><h3 class="govuk-heading-s">File</h3></div>
-                    <div class="ukmcab-float__left"><h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Legislative area</h3></div>
-                    <div class="ukmcab-float__clear width-full"><hr class="ukmcab-border" /></div>
+                    <div class="ukmcab-float__clear width-full">
+                        <hr class="ukmcab-border"/>
+                    </div>
                 </div>
 
                 <p class="govuk-label ukmcab-float__left ukmcab-padding-top-10">0 files uploaded</p>
-                <div class="ukmcab-float__left width-full ukmcab-padding-bottom-40"><hr class="ukmcab-border" /></div>
+                <div class="ukmcab-float__left width-full ukmcab-padding-bottom-40">
+                    <hr class="ukmcab-border"/>
+                </div>
             }
             else
             {
@@ -86,9 +91,15 @@
 
                         @* Header*@
                         <div>
-                            <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display"><h3 class="govuk-heading-s">File</h3></div>
-                            <div class="ukmcab-float__left"><h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Legislative area</h3></div>
-                            <div class="ukmcab-float__clear width-full"><hr class="ukmcab-border" /></div>
+                            <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display">
+                                <h3 class="govuk-heading-s">File</h3>
+                            </div>
+                            <div class="ukmcab-float__left">
+                                <h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Legislative area</h3>
+                            </div>
+                            <div class="ukmcab-float__clear width-full">
+                                <hr class="ukmcab-border"/>
+                            </div>
                         </div>
 
                         <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
@@ -102,11 +113,11 @@
                                     @*Row 1: Checkbox Row*@
                                     <div class="row">
                                         <div class="width-one-tenth">
-                                            <input type="hidden" asp-for="UploadedFiles![i].FileIndex" value="@i" />
+                                            <input type="hidden" asp-for="UploadedFiles![i].FileIndex" value="@i"/>
                                         </div>
 
                                         <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
-                                            <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected" />
+                                            <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected"/>
                                             <label class="govuk-label govuk-checkboxes__label" asp-for="UploadedFiles![i].IsSelected">
                                                 <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
                                             </label>
@@ -156,7 +167,9 @@
                                     </div>
 
                                 </div>
-                                <div class="ukmcab-float__left width-full"><hr class="ukmcab-border" /></div>
+                                <div class="ukmcab-float__left width-full">
+                                    <hr class="ukmcab-border"/>
+                                </div>
                             }
                         </div>
                     </fieldset>
@@ -168,7 +181,7 @@
             @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
             {
                 <div class="govuk-button-group">
-                    <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove" />
+                    <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove"/>
                     <button class="button-link govuk-link" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
                 </div>
             }
@@ -178,7 +191,7 @@
         {
             <div class="govuk-grid-column-one-third ukmcab-text-align-rightx">
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
-                    @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file" , "Upload a file")
+                    @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file", "Upload a file")
                 </button>
             </div>
         }
