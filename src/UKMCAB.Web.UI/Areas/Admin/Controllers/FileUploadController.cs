@@ -230,7 +230,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 await AbortFileUploadAndReturnAsync(submitType, model, latestDocument, nameof(latestDocument.Schedules));
 
-                if (model.IsFromSummary)
+                if (fromSummary)
                 {
                     return RedirectToAction("Summary", "CAB", new { id });
                 }
@@ -703,7 +703,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 await AbortFileUploadAndReturnAsync(submitType, model, latestDocument, nameof(latestDocument.Documents));
 
-                if (model.IsFromSummary)
+                if (fromSummary)
                 {
                     return RedirectToAction("Summary", "CAB", new { id });
                 }
