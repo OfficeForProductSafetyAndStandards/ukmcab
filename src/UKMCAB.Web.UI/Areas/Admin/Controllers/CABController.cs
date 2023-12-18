@@ -365,7 +365,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new CABSummaryViewModel
             {
                 CABId = latest.CABId,
-                CabUrl = latest.URLSlug,
                 CabDetailsViewModel = cabDetails,
                 CabContactViewModel = cabContact,
                 CabBodyDetailsViewModel = cabBody,

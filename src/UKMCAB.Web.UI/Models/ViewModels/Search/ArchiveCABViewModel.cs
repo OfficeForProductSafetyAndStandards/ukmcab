@@ -16,6 +16,5 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public bool HasDraft { get; set; }
 
         public string? Title => "Archive CAB profile";
-        public string CabUrl { get; set; }
     }
 }
