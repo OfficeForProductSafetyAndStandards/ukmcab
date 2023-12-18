@@ -44,7 +44,7 @@
                     @item.From.Ellipsis(20)
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">Subject</label>@item.Subject
+                    <label aria-hidden="true">Subject</label>@item.Subject.Ellipsis(20)
                 </td>
                 <td class="govuk-table__cell">
                     <label aria-hidden="true">CAB name</label>@item.CABName.Ellipsis(20)
@@ -52,7 +52,7 @@
                 @if (Model.TabName.Equals(NotificationController.AssignedToGroupTabName))
                 {
                     <td class="govuk-table__cell">
-                        <label aria-hidden="true">Assignee</label>@item.Assignee
+                        <label aria-hidden="true">Assignee</label>@item.Assignee.Ellipsis(20)
                     </td>
                 }
                 <td class="govuk-table__cell">
