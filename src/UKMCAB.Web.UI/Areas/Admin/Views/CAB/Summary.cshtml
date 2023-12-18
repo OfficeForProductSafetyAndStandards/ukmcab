@@ -500,7 +500,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
                 }
                 else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
                 {
-                    <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-cabUrl="@Model.CabUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {

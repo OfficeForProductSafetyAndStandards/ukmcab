@@ -84,7 +84,7 @@
                                         <label aria-hidden="true">Cab name</label>
                                         @if (cab.Status == Status.Archived.ToString())
                                         {
-                                            <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-cabUrl="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
+                                            <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
                                         }
                                         else
                                         {
