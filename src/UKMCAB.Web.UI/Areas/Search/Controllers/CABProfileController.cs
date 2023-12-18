@@ -72,11 +72,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return RedirectToRoute(Routes.CabDetails, new { id });
         }
 
-        [HttpGet("search/cab-profile/{cabUrl}", Name = Routes.CabDetails)]
-        public async Task<IActionResult> Index(string cabUrl, string? returnUrl, int pagenumber = 1)
+        [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
+        public async Task<IActionResult> Index(string id, string? returnUrl, int pagenumber = 1)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(cabUrl);
-            if (cabDocument != null && !cabUrl.Equals(cabDocument.URLSlug))
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
+            if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
             {
                 return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl });
             }
@@ -104,7 +104,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
             {
-                [AiTracking.Metadata.CabId] = cabDocument.CABId,
+                [AiTracking.Metadata.CabId] = id,
                 [AiTracking.Metadata.CabName] = cab.Name
             }));
 
@@ -294,7 +294,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(new ArchiveCABViewModel
             {
                 CABId = cabDocument.CABId,
-                CabUrl = cabDocument.URLSlug,
                 Name = cabDocument.Name,
                 ReturnURL = returnUrl,
                 HasDraft = draft != null
@@ -466,7 +465,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(new UnarchiveCABViewModel
             {
                 CABId = id,
-                CabUrl = cabDocument.URLSlug,
                 CABName = cabDocument.Name,
                 ReturnURL = returnUrl
             });

@@ -21,8 +21,8 @@
                             {
                                 var cab = await cabs.FindPublishedDocumentByCABIdAsync(item.CabId.ToString());
                                 <li class="search-result-list-item">
-                                    <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-cabUrl="@cab.URLSlug" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @cab.Name</span></a>
-                                    <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-cabUrl="@cab.URLSlug" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></h3>
+                                    <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.CABId" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @cab.Name</span></a>
+                                    <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" asp-route-returnUrl="@Context.Request.GetEncodedPathAndQuery()" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></h3>
                                     <ul class="search-result-list-item-details">
                                         <li class="search-result-list-item-detail">@Html.Conditional(!string.IsNullOrWhiteSpace(cab.GetAddress()), cab.GetAddress(), @Constants.NotProvided)</li>
                                         <li class="search-result-list-item-detail">Body type: @cab.BodyTypes.Sentenceify(Constants.NotProvided)</li>
@@ -94,8 +94,8 @@
                             {
                                 var cab = await cabs.FindPublishedDocumentByCABIdAsync(item.CabId.ToString());
                                 <li class="search-result-list-item">
-                                    <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-cabUrl="@cab.URLSlug" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @cab.Name</span></a>
-                                    <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-cabUrl="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></h3>
+                                    <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.CABId" class="search-result-list-item-arrow"><span class="govuk-visually-hidden">More information on @cab.Name</span></a>
+                                    <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" class="govuk-link govuk-link--no-visited-state">@cab.Name</a></h3>
                                     <ul class="search-result-list-item-details">
                                         <li class="search-result-list-item-detail">@Html.Conditional(!string.IsNullOrWhiteSpace(cab.GetAddress()), cab.GetAddress(), @Constants.NotProvided)</li>
                                         <li class="search-result-list-item-detail">Body type: @cab.BodyTypes.Sentenceify(Constants.NotProvided)</li>
