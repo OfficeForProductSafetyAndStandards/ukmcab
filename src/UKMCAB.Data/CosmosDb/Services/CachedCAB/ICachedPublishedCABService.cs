@@ -4,7 +4,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
 {
     public interface ICachedPublishedCABService
     {
-        Task<Document?> FindPublishedDocumentByCABURLAsync(string url);
+        Task<Document?> FindPublishedDocumentByCABURLOrGuidAsync(string url);
         Task<Document?> FindPublishedDocumentByCABIdAsync(string id);
 
         Task<List<Document?>> FindAllDocumentsByCABIdAsync(string cabId);

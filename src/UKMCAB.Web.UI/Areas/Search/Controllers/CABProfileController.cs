@@ -75,7 +75,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
         public async Task<IActionResult> Index(string id, string? returnUrl, int pagenumber = 1)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
             {
                 return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl });
@@ -283,7 +283,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search/archive-cab/{cabUrl}")]
         public async Task<IActionResult> ArchiveCAB(string cabUrl, string? returnUrl)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(cabUrl);
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(cabUrl);
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {cabUrl}");
             if (cabDocument.StatusValue != Status.Published)
             {
@@ -304,7 +304,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search/archive-cab/{cabUrl}")]
         public async Task<IActionResult> ArchiveCAB(string cabUrl, ArchiveCABViewModel model)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(cabUrl);
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(cabUrl);
            
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {cabUrl}");
             if (ModelState.IsValid)
@@ -455,7 +455,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search/unarchive-cab/{id}")]
         public async Task<IActionResult> UnarchiveCAB(string id, string? returnUrl)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
             if (cabDocument.StatusValue != Status.Archived)
             {
@@ -474,7 +474,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [Route("search/unarchive-cab/{id}")]
         public async Task<IActionResult> UnarchiveCAB(string id, UnarchiveCABViewModel model)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             Guard.IsTrue(cabDocument != null, $"No archived document found for CAB URL: {id}");
             if (ModelState.IsValid)
             {
