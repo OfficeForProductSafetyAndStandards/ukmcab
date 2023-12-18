@@ -2,7 +2,7 @@
 @model ArchiveCABViewModel
 @{
     ViewData["nav"] = "search";
-    var returnUrl = WebUtility.UrlEncode(Model.ReturnURL);
+    var returnUrl =Model.ReturnURL;
 }
 
 @section BackButton

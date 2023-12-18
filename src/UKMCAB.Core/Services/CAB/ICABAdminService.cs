@@ -19,7 +19,7 @@ namespace UKMCAB.Core.Services.CAB
         /// <param name="userRole"></param>
         /// <returns>If null userRole returns all documents</returns>
         Task<List<CabModel>> FindAllCABManagementQueueDocumentsForUserRole(String userRole);
-        Task<Document?> GetLatestDocumentAsync(string id);
+        Task<Document?> GetLatestDocumentAsync(string cabId);
         Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document, bool saveAsDraft = false);
 
         Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft,

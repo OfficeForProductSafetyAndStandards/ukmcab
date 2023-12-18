@@ -95,8 +95,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var requireApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
                 StringComparison.CurrentCultureIgnoreCase);
             var cab = await GetCabProfileViewModel(
-                cabDocument, 
-                returnUrl, 
+                cabDocument,
+                returnUrl,
                 userAccount != null,
                 requireApproval && (!unarchiveNotifications.Any() || unarchiveNotifications.All(t => t.Completed)),
                 pagenumber);
@@ -280,20 +280,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         #region ArchiveCAB
 
         [HttpGet]
-        [Route("search/archive-cab/{id}")]
-        public async Task<IActionResult> ArchiveCAB(string id, string? returnUrl)
+        [Route("search/archive-cab/{cabUrl}")]
+        public async Task<IActionResult> ArchiveCAB(string cabUrl, string? returnUrl)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
-            Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(cabUrl);
+            Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {cabUrl}");
             if (cabDocument.StatusValue != Status.Published)
             {
-                return RedirectToAction("Index", new { url = id, returnUrl });
+                return RedirectToAction("Index", new { url = cabUrl, returnUrl });
             }
 
-            var draft = await _cachedPublishedCabService.FindDraftDocumentByCABIdAsync(id);
+            var draft = await _cachedPublishedCabService.FindDraftDocumentByCABIdAsync(cabDocument.CABId);
             return View(new ArchiveCABViewModel
             {
-                CABId = id,
+                CABId = cabDocument.CABId,
                 Name = cabDocument.Name,
                 ReturnURL = returnUrl,
                 HasDraft = draft != null
@@ -301,23 +301,31 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpPost]
-        [Route("search/archive-cab/{id}")]
-        public async Task<IActionResult> ArchiveCAB(string id, ArchiveCABViewModel model)
+        [Route("search/archive-cab/{cabUrl}")]
+        public async Task<IActionResult> ArchiveCAB(string cabUrl, ArchiveCABViewModel model)
         {
-            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(id);
-            Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLAsync(cabUrl);
+           
+            Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {cabUrl}");
             if (ModelState.IsValid)
             {
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                //Get draft before archiving deletes it
+                var draft = await _cachedPublishedCabService.FindDraftDocumentByCABIdAsync(cabDocument.CABId); 
                 await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveInternalReason,
                     model.ArchivePublicReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
-                    [AiTracking.Metadata.CabId] = id,
+                    [AiTracking.Metadata.CabId] = cabUrl,
                     [AiTracking.Metadata.CabName] = cabDocument.Name
                 }));
-                await SendNotifications(userAccount, cabDocument);
+            
+                if (draft != null)
+                {
+                    await SendDraftCabDeletedNotification(userAccount, cabDocument,
+                        draft.AuditLog.First(al => al.Action == AuditCABActions.Created).UserId);
+                }
 
                 return RedirectToAction("Index", new { id = cabDocument.URLSlug, returnUrl = model.ReturnURL });
             }
@@ -326,42 +334,48 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(model);
         }
 
-        private async Task SendNotifications(UserAccount archiverAccount, Document cabDocument)
+        /// <summary>
+        /// Sends a notification when archived and an associated draft is deleted.
+        /// </summary>
+        /// <param name="archiverAccount"></param>
+        /// <param name="cabDocument"></param>
+        /// <param name="draftUserId"></param>
+        /// <exception cref="InvalidOperationException"></exception>
+        private async Task SendDraftCabDeletedNotification(UserAccount archiverAccount, Document cabDocument,
+            string draftUserId)
         {
-            var cabCreator = cabDocument?.AuditLog?.FirstOrDefault(al => al.Action == AuditCABActions.Created);
-            var cabCreatorUserId = cabCreator?.UserId;
-
-            if (!string.IsNullOrEmpty(cabCreatorUserId))
+            var draftCreator = await _userService.GetAsync(draftUserId);
+            if (draftCreator == null)
             {
-                var cabCreatorInfo = await _userService.GetAsync(cabCreatorUserId);
-                await SendEmailForDeleteDraftAsync(cabDocument.Name, cabCreatorInfo.EmailAddress);
-
-                var archiverRoleId = Roles.RoleId(archiverAccount.Role) ?? throw new InvalidOperationException();
-
-                var archiver = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
-                    archiverRoleId, archiverAccount.EmailAddress ?? throw new InvalidOperationException());
-
-                var cabCreatorRoleId = Roles.RoleId(cabCreatorInfo.Role) ?? throw new InvalidOperationException();
-
-                var assignee = new User(cabCreatorInfo.Id, cabCreatorInfo.FirstName, cabCreatorInfo.Surname,
-                    cabCreatorRoleId, cabCreatorInfo.EmailAddress ?? throw new InvalidOperationException());
-
-                await _workflowTaskService.CreateAsync(
-                    new WorkflowTask(Guid.NewGuid(),
-                        TaskType.DraftCabDeletedFromArchiving,
-                        archiver,
-                        assignee.RoleId,
-                        assignee,
-                        DateTime.Now,
-                        $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",
-                        DateTime.Now,
-                        archiver,
-                        DateTime.Now,
-                        false,
-                        null,
-                        true,
-                        Guid.Parse(cabDocument.CABId)));
+                return;
             }
+            await SendEmailForDeleteDraftAsync(cabDocument.Name!, draftCreator.EmailAddress!);
+
+            var archiverRoleId = Roles.RoleId(archiverAccount.Role) ?? throw new InvalidOperationException();
+
+            var archiver = new User(archiverAccount.Id, archiverAccount.FirstName, archiverAccount.Surname,
+                archiverRoleId, archiverAccount.EmailAddress ?? throw new InvalidOperationException());
+
+            var cabCreatorRoleId = Roles.RoleId(draftCreator.Role) ?? throw new InvalidOperationException();
+
+            var assignee = new User(draftCreator.Id, draftCreator.FirstName, draftCreator.Surname,
+                cabCreatorRoleId, draftCreator.EmailAddress ?? throw new InvalidOperationException());
+
+            await _workflowTaskService.CreateAsync(
+                new WorkflowTask(Guid.NewGuid(),
+                    TaskType.DraftCabDeletedFromArchiving,
+                    archiver,
+                    assignee.RoleId,
+                    assignee,
+                    DateTime.Now,
+                    $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",
+                    DateTime.Now,
+                    archiver,
+                    DateTime.Now,
+                    false,
+                    null,
+                    true,
+                    Guid.Parse(cabDocument.CABId)));
         }
 
         private async Task SendEmailForDeleteDraftAsync(string cabName, string receiverEmailAddress)
