@@ -15,5 +15,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? UnarchivePublicReason { get; set; }
 
         public string? Title => "Unarchive CAB profile";
+        public string CabUrl { get; set; }
     }
 }

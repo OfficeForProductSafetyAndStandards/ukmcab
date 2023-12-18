@@ -20,5 +20,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CanPublish { get; set; }
         public bool CanSubmitForApproval { get; set; }
         public bool CanEdit { get; set; }
+        public string CabUrl { get; set; }
     }
 }
