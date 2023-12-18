@@ -16,9 +16,16 @@ namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
             _cache = cache;
             _cabRepository = cabRepository;
         }
-        public async Task<Document> FindPublishedDocumentByCABURLAsync(string url) => await _cache.GetOrCreateAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLAsync), Key(url)), () => GetPublishedCABByURLAsync(url));
-
-        private async Task<Document?> GetPublishedCABByURLAsync(string url)
+        
+        /// <summary>
+        /// Check if url is a guid and gets published cab by cab id or url slug
+        /// Adds to cache if new or retrieves from cache if exists
+        /// </summary>
+        /// <param name="url">url or cab id!</param>
+        /// <returns>Found document or null</returns>
+        public async Task<Document> FindPublishedDocumentByCABURLOrGuidAsync(string url) => await _cache.GetOrCreateAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLOrGuidAsync), Key(url)), () => GetPublishedCABByURLOrGuidAsync(url));
+        
+        private async Task<Document?> GetPublishedCABByURLOrGuidAsync(string url)
         {
             // Is url a guid
             if (Guid.TryParse(url, out var result))
@@ -80,7 +87,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
             await foreach (var cab in cabs)
             {
                 _ = await FindAllDocumentsByCABIdAsync(cab.id); 
-                _ = await FindPublishedDocumentByCABURLAsync(cab.slug);
+                _ = await FindPublishedDocumentByCABURLOrGuidAsync(cab.slug);
                 count++;
             }
             return count;
@@ -90,8 +97,8 @@ namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
         { 
             await _cache.RemoveAsync(Key(id));
             await _cache.RemoveAsync(Key(slug));
-            await _cache.RemoveAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLAsync), Key(slug)));
-            await _cache.RemoveAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLAsync), Key(id)));
+            await _cache.RemoveAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLOrGuidAsync), Key(slug)));
+            await _cache.RemoveAsync(StringExt.Keyify(nameof(FindPublishedDocumentByCABURLOrGuidAsync), Key(id)));
             await _cache.RemoveAsync(StringExt.Keyify(nameof(FindAllDocumentsByCABIdAsync), Key(id)));
         } 
     }
