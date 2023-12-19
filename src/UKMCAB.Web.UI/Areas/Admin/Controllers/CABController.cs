@@ -4,7 +4,6 @@ using System.Net;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
-using UKMCAB.Core;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
@@ -14,7 +13,6 @@ using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Helpers;
-using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
