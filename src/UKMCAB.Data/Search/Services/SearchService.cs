@@ -137,6 +137,11 @@ namespace UKMCAB.Data.Search.Services
                 var userGroups = string.Join(" or ", options.UserGroupsFilter.Select(ug => $"LastUserGroup eq '{ug}'"));
                 filters.Add($"({userGroups})");
             }
+            
+            if (options.InternalSearch && !options.IsOPSSUser)
+            {
+                filters.Add(" not (LastUserGroup eq 'opss' and StatusValue eq '20') ");
+            }
 
             return filters.Count > 1 ? $"({string.Join(" and ", filters)})" : filters.FirstOrDefault() ?? string.Empty;
         }
