@@ -281,13 +281,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         [HttpGet]
         [Route("search/archive-cab/{cabUrl}")]
-        public async Task<IActionResult> ArchiveCAB(string cabUrl, string? returnUrl)
+        public async Task<IActionResult> ArchiveCAB(string cabUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(cabUrl);
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {cabUrl}");
             if (cabDocument.StatusValue != Status.Published)
             {
-                return RedirectToAction("Index", new { url = cabUrl, returnUrl });
+                return RedirectToAction("Index", new { url = cabUrl });
             }
 
             var draft = await _cachedPublishedCabService.FindDraftDocumentByCABIdAsync(cabDocument.CABId);
@@ -295,7 +295,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 CABId = cabDocument.CABId,
                 Name = cabDocument.Name,
-                ReturnURL = returnUrl,
+                ReturnURL = null,
                 HasDraft = draft != null
             });
         }
@@ -317,7 +317,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     model.ArchivePublicReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
-                    [AiTracking.Metadata.CabId] = cabUrl,
+                    [AiTracking.Metadata.CabId] = cabDocument.CABId,
                     [AiTracking.Metadata.CabName] = cabDocument.Name
                 }));
             
@@ -327,7 +327,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                         draft.AuditLog.First(al => al.Action == AuditCABActions.Created).UserId);
                 }
 
-                return RedirectToAction("Index", new { id = cabDocument.URLSlug, returnUrl = model.ReturnURL });
+                return RedirectToAction("Index", new { id = cabDocument.URLSlug });
             }
 
             model.Name = cabDocument.Name ?? string.Empty;
