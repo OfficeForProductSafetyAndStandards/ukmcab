@@ -295,7 +295,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 CABId = cabDocument.CABId,
                 Name = cabDocument.Name,
-                ReturnURL = null,
                 HasDraft = draft != null
             });
         }
