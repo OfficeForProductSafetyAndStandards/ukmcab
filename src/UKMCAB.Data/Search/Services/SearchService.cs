@@ -138,6 +138,7 @@ namespace UKMCAB.Data.Search.Services
                 filters.Add($"({userGroups})");
             }
             
+            // if internal search (user logged in) and non opss user (ukas user) the exclude opss draft cab
             if (options.InternalSearch && !options.IsOPSSUser)
             {
                 filters.Add(" not (LastUserGroup eq 'opss' and StatusValue eq '20') ");
