@@ -79,7 +79,7 @@
     },
     {
         "id": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
-        "name": "Noise Emmision",
+        "name": "Noise Emission",
         "regulation": "The Noise Emission in the Environment by Equipment for use Outdoors Regulations 2001",
         "purposeOfAppointment": ""
     },
@@ -135,6 +135,42 @@
         "id": "92728722-d721-4da0-8d9a-f22f3829a551",
         "name": "Measuring instruments",
         "regulation": "Measuring Instruments Regulations",
+        "purposeOfAppointment": ""
+    },
+    {
+        "id": "8256e281-9ec9-436b-8357-bd4792deab01",
+        "name": "Construction products",
+        "regulation": "",
+        "purposeOfAppointment": ""
+    },
+    {
+        "id": "33edda98-3de6-4d12-9a09-36408324e062",
+        "name": "Marine equipment",
+        "regulation": "",
+        "purposeOfAppointment": ""
+    },
+    {
+        "id": "044e7556-27d3-43c7-83bb-45e80277e0c6",
+        "name": "Medical devices",
+        "regulation": "",
+        "purposeOfAppointment": ""
+    },
+    {
+        "id": "87f42cf5-1ada-417f-a699-072ea9bb9ce2",
+        "name": "Personal protective equipment",
+        "regulation": "",
+        "purposeOfAppointment": ""
+    },
+    {
+        "id": "eb2e7f0b-4f7a-424b-a77a-e39579a724eb",
+        "name": "Railway Interoperability",
+        "regulation": "",
+        "purposeOfAppointment": ""
+    },
+    {
+        "id": "a91f9447-7be9-4fac-8ae6-553a89084799",
+        "name": "Transportable pressure equipment",
+        "regulation": "",
         "purposeOfAppointment": ""
     }
 ]
