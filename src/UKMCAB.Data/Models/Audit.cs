@@ -97,6 +97,7 @@ namespace UKMCAB.Data.Models
         public const string SubmittedForApproval = "CAB Submitted for approval";
         public const string CABApproved = "CAB Approved";
         public const string CABDeclined = "CAB Declined";
+        public const string DraftDeleted = "Draft deleted";
     }
 
     public class AuditUserActions

@@ -135,6 +135,7 @@ builder.Services.Configure<AntiforgeryOptions>(options => options.Cookie.Name = 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped<IValidator<CABDetailsViewModel>, CABDetailsViewModelValidator>();
+builder.Services.AddScoped<IValidator<DeleteCABViewModel>, DeleteCABViewModelValidator>();
 
 // =================================================================================================
 
