@@ -12,6 +12,7 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
@@ -25,6 +26,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IWorkflowTaskService _workflowTaskService;
         private readonly IAsyncNotificationClient _notificationClient;
         private readonly CoreEmailTemplateOptions _templateOptions;
+        private readonly IDistCache _distCache;
 
         public static class Routes
         {
@@ -37,20 +39,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         public CABController(ICABAdminService cabAdminService, IUserService userService,
             IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient,
-            IOptions<CoreEmailTemplateOptions> templateOptions)
+            IOptions<CoreEmailTemplateOptions> templateOptions, IDistCache distCache)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
             _workflowTaskService = workflowTaskService;
             _notificationClient = notificationClient;
+            _distCache = distCache;
             _templateOptions = templateOptions.Value;
         }
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
         public async Task<IActionResult> About(string id, bool fromSummary)
         {
-            var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
-                        new CABDetailsViewModel { IsNew = true };
+            var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x ?? throw new InvalidOperationException()));
             model.IsFromSummary = fromSummary;
             return View(model);
         }
@@ -355,7 +357,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-
+            //Check Edit lock
+            var userIdWithLock = await _distCache.GetAsync<string>($"CabEditLock_{latest.CABId}");
+            
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest);
             var cabContact = new CABContactViewModel(latest);
@@ -381,11 +385,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 TitleHint = "Create a CAB",
                 Title = User.IsInRole(Roles.OPSS.Id) ? 
                     latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing" 
-                    : "Check details before submitting for approval"
+                    : "Check details before submitting for approval",
+                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock)
             };
 
             ModelState.Clear();
-
+            //Lock Record for edit
+            await _distCache.SetAddAsync($"CabEditLock_{latest.CABId}", User.GetUserId()!);
             return View(model);
         }
 
@@ -440,8 +446,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            publishModel.ShowError = true;
-            return View(publishModel);
+            throw new InvalidOperationException("Submit/Save CAB failed");
         }
 
 
@@ -493,7 +498,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
                     summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);
-                    summaryViewModel.CanEdit = summaryViewModel.SubStatus != SubStatus.PendingApproval;
+                    summaryViewModel.CanEdit = summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval;
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
                 {

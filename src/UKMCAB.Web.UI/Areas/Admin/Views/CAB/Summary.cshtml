@@ -20,24 +20,6 @@
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
-@if (Model.ShowError)
-{
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-error-summary" data-module="govuk-error-summary">
-                <div role="alert">
-                    <div class="govuk-warning-text">
-                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                        <strong class="govuk-warning-text__text">
-                            <span class="govuk-warning-text__assistive">Warning</span>
-                            There is a problem, please try again
-                        </strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">@Model.TitleHint</span>
