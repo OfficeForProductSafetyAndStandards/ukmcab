@@ -475,11 +475,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 _templateOptions.NotificationRequestToPublish, personalisation);
             if (publishModel.CabDetailsViewModel != null)
             {
-                await _workflowTaskService.CreateAsync(new WorkflowTask(Guid.NewGuid(), TaskType.RequestToPublish,
+                await _workflowTaskService.CreateAsync(new WorkflowTask(TaskType.RequestToPublish,
                     new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId, userAccount.EmailAddress ?? throw new InvalidOperationException()),
                     Roles.OPSS.Id, null, null,
                     $"{userAccount.FirstName} {userAccount.Surname} from {Roles.NameFor(userRoleId)} has submitted a request to approve and publish {publishModel.CabDetailsViewModel.Name}.",
-                    DateTime.Now,
                     new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId,userAccount.EmailAddress ?? throw new InvalidOperationException()), DateTime.Now,
                     null, null,
                     false, Guid.Parse(publishModel.CABId ?? throw new InvalidOperationException())));

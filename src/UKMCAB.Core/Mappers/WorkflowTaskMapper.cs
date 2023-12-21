@@ -9,7 +9,6 @@ public static class WorkflowTaskMapper
     {
         TaskType taskType = Enum.Parse<TaskType>(source.TaskType);
         WorkflowTask task = new WorkflowTask(
-            Guid.Parse(source.Id),
             taskType, 
             new User(source.Submitter.Id, source.Submitter.FirstName, source.Submitter.Surname, source.Submitter.Role, source.Submitter.EmailAddress),
             source.ForRoleId,
@@ -18,7 +17,6 @@ public static class WorkflowTaskMapper
                 : null,
             source.Assigned,
             source.Reason,
-            source.SentOn,
             new User(source.LastUpdatedBy.Id, source.LastUpdatedBy.FirstName, source.LastUpdatedBy.Surname,
                 source.LastUpdatedBy.Role, source.LastUpdatedBy.EmailAddress),
             source.LastUpdatedOn,
@@ -26,6 +24,8 @@ public static class WorkflowTaskMapper
             source.DeclineReason,
             source.Completed,
             source.CabId);
+        task.Id = Guid.Parse(source.Id);
+        task.SentOn = source.SentOn;
         return task;
     }
 

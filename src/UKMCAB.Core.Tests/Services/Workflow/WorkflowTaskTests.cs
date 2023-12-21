@@ -31,18 +31,17 @@ public class WorkflowTaskServiceTests
     public async Task ValidId_GetAsync_ReturnsTask()
     {
         // Arrange
-        var guid = _faker.Random.Guid();
-        var task = new WorkflowTask(guid, TaskType.UserAccountRequest, CreateFakeOpssUser(),
+        var task = new WorkflowTask(TaskType.UserAccountRequest, CreateFakeOpssUser(),
             Roles.OPSS.Id, null,
-            null, _faker.Random.Words(), _faker.Date.Past(), CreateFakeOpssUser(), _faker.Date.Past(), null, null,
+            null, _faker.Random.Words(), CreateFakeOpssUser(), _faker.Date.Past(), null, null,
             false,
             _faker.Random.Guid()
         );
-        _mockWorkflowTaskRepository.Setup(r => r.GetAsync(guid.ToString()))
+        _mockWorkflowTaskRepository.Setup(r => r.GetAsync(It.IsAny<string>()))
             .ReturnsAsync(task.MapToWorkflowTaskData());
 
         // Act
-        var result = await _sut.GetAsync(guid);
+        var result = await _sut.GetAsync(Guid.NewGuid());
 
         // Assert
         Assert.AreEqual(task, result);
@@ -77,11 +76,12 @@ public class WorkflowTaskServiceTests
         Assert.AreEqual(task, returnedTask);
     }
 
-    private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User? userAssigned = null, Guid? cabId = null, bool completed = false)
+    private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User? userAssigned = null,
+        Guid? cabId = null, bool completed = false)
     {
-        var task = new WorkflowTask(_faker.Random.Guid(), TaskType.RequestToPublish, userSubmitter,
+        var task = new WorkflowTask(TaskType.RequestToPublish, userSubmitter,
             forRoleId, userAssigned,
-            DateTime.UtcNow, _faker.Random.Words(), _faker.Date.Past(), userSubmitter, _faker.Date.Past(), null, null,
+            DateTime.UtcNow, _faker.Random.Words(), userSubmitter, _faker.Date.Past(), null, null,
             completed,
             cabId ?? _faker.Random.Guid()
         );
@@ -93,11 +93,12 @@ public class WorkflowTaskServiceTests
     {
         // Arrange
         var ukasUser = CreateFakeUkasUser();
-        var task = new WorkflowTask(Guid.Empty, TaskType.RequestToPublish, ukasUser, Roles.OPSS.Id,
+        var task = new WorkflowTask(TaskType.RequestToPublish, ukasUser, Roles.OPSS.Id,
             null,
-            null, _faker.Random.Words(), _faker.Date.Past(), ukasUser, _faker.Date.Past(), null, null, false,
+            null, _faker.Random.Words(), ukasUser, _faker.Date.Past(), null, null, false,
             _faker.Random.Guid()
         );
+        task.Id = Guid.Empty;
         _mockWorkflowTaskRepository.Setup(r => r.CreateAsync(It.IsAny<Data.Models.Workflow.WorkflowTask>()))
             .ThrowsAsync(new InvalidOperationException());
 
@@ -110,9 +111,9 @@ public class WorkflowTaskServiceTests
     {
         // Arrange
         var ukasUser = CreateFakeUkasUser();
-        var task = new WorkflowTask(_faker.Random.Guid(), TaskType.RequestToPublish, ukasUser,
+        var task = new WorkflowTask(TaskType.RequestToPublish, ukasUser,
             Roles.OPSS.Id, null,
-            null, _faker.Random.Words(), _faker.Date.Past(), ukasUser, _faker.Date.Past(), null, null, false,
+            null, _faker.Random.Words(), ukasUser, _faker.Date.Past(), null, null, false,
             _faker.Random.Guid()
         );
 
@@ -146,11 +147,14 @@ public class WorkflowTaskServiceTests
     {
         // Arrange
         var ukasUser = CreateFakeUkasUser();
-        var task = new WorkflowTask(Guid.Empty, TaskType.RequestToPublish, ukasUser, Roles.UKAS.Id,
+        var task = new WorkflowTask(TaskType.RequestToPublish, ukasUser, Roles.UKAS.Id,
             null,
-            null, _faker.Random.Words(), _faker.Date.Past(), ukasUser, _faker.Date.Past(), null, null, false,
+            null, _faker.Random.Words(), ukasUser, _faker.Date.Past(), null, null, false,
             _faker.Random.Guid()
-        );
+        )
+        {
+            Id = Guid.Empty
+        };
         _mockWorkflowTaskRepository.Setup(r => r.ReplaceAsync(It.IsAny<Data.Models.Workflow.WorkflowTask>()))
             .ThrowsAsync(new InvalidOperationException());
 
@@ -233,7 +237,7 @@ public class WorkflowTaskServiceTests
             Assert.AreEqual(userSubmitter, task.Submitter);
         }
     }
-    
+
     [Test]
     public async Task TasksFound_GetCompletedForRoleIdAsync_ReturnsTasks()
     {
@@ -245,7 +249,7 @@ public class WorkflowTaskServiceTests
             {
                 CreateValidTask(userSubmitter, Roles.OPSS.Id, CreateFakeOpssUser(), null, true)
                     .MapToWorkflowTaskData(),
-                CreateValidTask(userSubmitter, Roles.OPSS.Id, null,Guid.NewGuid(), true)
+                CreateValidTask(userSubmitter, Roles.OPSS.Id, null, Guid.NewGuid(), true)
                     .MapToWorkflowTaskData(),
             });
 
@@ -287,7 +291,7 @@ public class WorkflowTaskServiceTests
             Assert.AreEqual(cabId, task.CABId);
         }
     }
-    
+
     [Test]
     public async Task TasksFound_GetByCabIdAndTaskTypeAsync_ReturnsTasks()
     {
