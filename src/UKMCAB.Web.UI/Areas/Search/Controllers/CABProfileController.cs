@@ -361,14 +361,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 cabCreatorRoleId, draftCreator.EmailAddress ?? throw new InvalidOperationException());
 
             await _workflowTaskService.CreateAsync(
-                new WorkflowTask(Guid.NewGuid(),
+                new WorkflowTask(
                     TaskType.DraftCabDeletedFromArchiving,
                     archiver,
                     assignee.RoleId,
                     assignee,
                     DateTime.Now,
                     $"The draft record for {cabDocument.Name} has been deleted because the CAB profile was archived. Contact UKMCAB support if you need the draft record to be added to the service again.",
-                    DateTime.Now,
                     archiver,
                     DateTime.Now,
                     false,

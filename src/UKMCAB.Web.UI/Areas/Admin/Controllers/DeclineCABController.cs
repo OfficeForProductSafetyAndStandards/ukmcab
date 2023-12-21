@@ -131,7 +131,7 @@ public class DeclineCABController : Controller
             user.Role ?? throw new InvalidOperationException(),
             user.EmailAddress ?? throw new InvalidOperationException());
         await _workflowTaskService.CreateAsync(
-            new WorkflowTask(Guid.NewGuid(),
+            new WorkflowTask(
                 TaskType.CABDeclined,
                 approver,
                 // Approver becomes the submitter for Declined CAB Notification
@@ -139,7 +139,6 @@ public class DeclineCABController : Controller
                 submitter,
                 DateTime.Now,
                 $"The request to approve CAB {cabName} has been declined for the following reason: {declineReason}.",
-                DateTime.Now,
                 approver,
                 DateTime.Now,
                 false,
