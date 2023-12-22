@@ -4,6 +4,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABSummaryViewModel: ILayoutModel
     {
+        public Status Status { get; set; }
         public SubStatus SubStatus { get; set; }
         public string? CABId { get; set; }
         public CABDetailsViewModel? CabDetailsViewModel { get; set; }
@@ -20,5 +21,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CanPublish { get; set; }
         public bool CanSubmitForApproval { get; set; }
         public bool CanEdit { get; set; }
-    }
+        public bool IsOPSSOrInCreatorUserGroup { get; set; }
+}
 }
