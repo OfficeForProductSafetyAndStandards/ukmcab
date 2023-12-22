@@ -20,6 +20,11 @@
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
+else if (Model.IsEditLocked)
+{
+    <partial model="@("This CAB profile cannot be edited as it's being edited by another user.")" name="Partials/_PageContentBanner"/>
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">@Model.TitleHint</span>
@@ -37,7 +42,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.CanEdit)
+            @if (Model.ShowEditActions)
             {
                 <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -142,7 +147,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.CanEdit)
+            @if (Model.ShowEditActions)
             {
                 <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -247,7 +252,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.CanEdit)
+            @if (Model.ShowEditActions)
             {
                 <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -333,7 +338,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.CanEdit)
+            @if (Model.ShowEditActions)
             {
                 <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -386,7 +391,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.CanEdit)
+            @if (Model.ShowEditActions)
             {
                 <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -451,58 +456,59 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
     </div>
 }
 
-
-@if (Model.SubStatus == SubStatus.None)
+@if (!Model.IsEditLocked)
 {
-    <div>
-        <form method="post">
-            <input type="hidden" asp-for="CABId"/>
-            <div class="govuk-button-group">
-                @if (Model.CanPublish)
-                {
-                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
-                        Publish
+    @if (Model.SubStatus == SubStatus.None)
+    {
+        <div>
+            <form method="post">
+                <input type="hidden" asp-for="CABId"/>
+                <div class="govuk-button-group">
+                    @if (Model.CanPublish)
+                    {
+                        <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                            Publish
+                        </button>
+                    }
+
+                    @if (Model.CanSubmitForApproval)
+                    {
+                        <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.SubmitForApproval" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                            Submit for approval
+                        </button>
+                    }
+
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
+                        Save as draft
                     </button>
-                }
 
-                @if (Model.CanSubmitForApproval)
-                {
-                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.SubmitForApproval" @(!Model.ValidCAB ? "disabled" : string.Empty)>
-                        Submit for approval
-                    </button>
-                }
-
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
-                    Save as draft
-                </button>
-
-                @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
-                {
-                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
-                else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
-                {
-                    <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
-                else
-                {
-                    <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
-            </div>
-        </form>
-    </div>
-}
-else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApproval })
-{
-    <div>
-        <div class="govuk-button-group">
-            <govuk-button-link asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId">Approve</govuk-button-link>
-            <govuk-button-link class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
-            <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
+                    {
+                        <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
+                    else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                    {
+                        <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
+                    else
+                    {
+                        <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
+                </div>
+            </form>
         </div>
-    </div>
+    }
+    else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApproval })
+    {
+        <div>
+            <div class="govuk-button-group">
+                <govuk-button-link asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId">Approve</govuk-button-link>
+                <govuk-button-link class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
+                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </div>
+    }
 }
-
 </fieldset>
 </div>
 </div>

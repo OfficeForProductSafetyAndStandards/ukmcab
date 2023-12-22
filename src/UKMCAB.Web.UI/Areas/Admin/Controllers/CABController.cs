@@ -52,7 +52,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
         public async Task<IActionResult> About(string id, bool fromSummary)
         {
-            var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x ?? throw new InvalidOperationException()));
+            var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
+                        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+                        new CABDetailsViewModel { IsNew = true };
             model.IsFromSummary = fromSummary;
             return View(model);
         }
@@ -357,8 +359,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
+            
+            //Todo - Edit lock will move to single edit button action
             //Check Edit lock
-            var userIdWithLock = await _distCache.GetAsync<string>($"CabEditLock_{latest.CABId}");
+            var editLockCacheKey = string.Format(Constants.EditLockCacheKey, latest.CABId);
+            var userIdWithLock = await _distCache.GetAsync<string>(editLockCacheKey);
             
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest);
@@ -386,12 +391,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Title = User.IsInRole(Roles.OPSS.Id) ? 
                     latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing" 
                     : "Check details before submitting for approval",
-                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock)
+                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock
             };
 
             ModelState.Clear();
+            
+            //Todo - Edit lock will move to single edit button action
             //Lock Record for edit
-            await _distCache.SetAddAsync($"CabEditLock_{latest.CABId}", User.GetUserId()!);
+            if (string.IsNullOrWhiteSpace(userIdWithLock))
+            {
+                await _distCache.SetAsync(editLockCacheKey, User.GetUserId()!, TimeSpan.FromHours(1));
+            }
+
             return View(model);
         }
 
@@ -404,7 +415,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-
+            
+            //Remove Edit lock on action
+            _distCache.Remove(string.Format(Constants.EditLockCacheKey, latest.CABId));
             if (submitType == Constants.SubmitType.Save)
             {
                 var userAccount =
@@ -446,7 +459,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            throw new InvalidOperationException("Submit/Save CAB failed");
+            throw new InvalidOperationException("CAB invalid");
         }
 
 
@@ -498,7 +511,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
                     summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);
-                    summaryViewModel.CanEdit = summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval;
+                    summaryViewModel.ShowEditActions = !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval;
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
                 {

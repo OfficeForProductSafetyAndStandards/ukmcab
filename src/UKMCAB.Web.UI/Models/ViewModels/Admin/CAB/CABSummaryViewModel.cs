@@ -18,8 +18,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CABNameAlreadyExists { get; set; }
         public bool CanPublish { get; set; }
         public bool CanSubmitForApproval { get; set; }
-        public bool CanEdit { get; set; }
-        
+        public bool ShowEditActions { get; set; }
         public bool IsEditLocked { get; set; }
         
     }
