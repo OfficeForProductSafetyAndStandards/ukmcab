@@ -17,5 +17,6 @@
         public bool InternalSearch { get; set; }
 
         public List<string> Select { get; set; } = new List<string>();
+        public bool IsOPSSUser { get; set; }
     }
 }

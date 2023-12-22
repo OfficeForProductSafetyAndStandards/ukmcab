@@ -146,7 +146,7 @@ public class DeclineUnarchiveCABController : Controller
             _templateOptions.NotificationUnarchiveDeclined, personalisation);
         
         await _workflowTaskService.CreateAsync(
-            new WorkflowTask(Guid.NewGuid(),
+            new WorkflowTask(
                TaskType.RequestToUnarchiveDeclined,
                 decliner,
                 // Approver becomes the submitter for Approved Notification
@@ -154,7 +154,6 @@ public class DeclineUnarchiveCABController : Controller
                 submitter,
                 DateTime.Now,
                 $"The request to unarchive CAB {cabName} has been declined.",
-                DateTime.Now,
                 decliner,
                 DateTime.Now,
                 false,

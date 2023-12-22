@@ -71,10 +71,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
 
             var internalSearch = User != null && User.Identity.IsAuthenticated;
-            model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
-            var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
             model.InternalSearch = internalSearch;
             model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
+            model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
+            var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
+            
             await SetFacetOptions(model);
 
             model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
@@ -144,8 +145,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
                 StatusesFilter = model.Statuses,
                 UserGroupsFilter = model.UserGroups,
+                IsOPSSUser = model.IsOPSSUser,
                 Select = _select,
-                InternalSearch = internalSearch
+                InternalSearch = internalSearch,                
             };
             configure?.Invoke(opt);
             return await cachedSearchService.QueryAsync(opt);

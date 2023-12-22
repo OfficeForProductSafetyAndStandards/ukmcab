@@ -175,7 +175,7 @@ public class ApproveUnarchiveCABController : Controller
             _templateOptions.NotificationUnarchiveApproved, personalisation);
         
         await _workflowTaskService.CreateAsync(
-            new WorkflowTask(Guid.NewGuid(),
+            new WorkflowTask(
                 publish ? TaskType.RequestToUnarchiveForPublishApproved : TaskType.RequestToUnarchiveForDraftApproved,
                 approver,
                 // Approver becomes the submitter for Approved Notification
@@ -185,7 +185,6 @@ public class ApproveUnarchiveCABController : Controller
                 publish
                     ? $"The request to unarchive and publish CAB {cabName} has been approved."
                     : $"The request to unarchive CAB {cabName} has been approved and it has been saved as a draft.",
-                DateTime.Now,
                 approver,
                 DateTime.Now,
                 true,

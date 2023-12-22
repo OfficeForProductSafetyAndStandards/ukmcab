@@ -82,14 +82,12 @@ public class RequestToUnarchiveCABController : Controller
         await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived, SubStatus.PendingApproval, new Audit(currentUser, AuditCABActions.UnarchiveApprovalRequest));
         
         await _workflowTaskService.CreateAsync(new WorkflowTask(
-            Guid.NewGuid(),
             vm.IsPublish!.Value ? TaskType.RequestToUnarchiveForPublish : TaskType.RequestToUnarchiveForDraft,
             submitter,
             Roles.OPSS.Id,
             null,
             null,
             vm.Reason!,
-            DateTime.Now,
             submitter,
             DateTime.Now,
             null,
