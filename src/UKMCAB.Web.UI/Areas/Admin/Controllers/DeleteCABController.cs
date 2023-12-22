@@ -10,6 +10,8 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
+using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
@@ -77,18 +79,11 @@ public class DeleteCABController : Controller
 
         EnsureCabStatusIsDraft(document);
 
-        var user = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ?? throw new InvalidOperationException();
-        var userRoleId = Roles.List.First(r => r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        var deleter = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ?? throw new InvalidOperationException();
+        var creator = await _userService.GetAsync(document.AuditLog.OrderBy(x => x.DateTime).First().UserId) ?? throw new InvalidOperationException();
 
-        await _cabAdminService.DeleteDraftDocumentAsync(user, cabId, vm.DeleteReason);
-
-        // TODO:
-
-        //var submitTask = await MarkTaskAsCompleteAsync(cabId,
-        //    new User(user.Id, user.FirstName, user.Surname, userRoleId,
-        //        user.EmailAddress ?? throw new InvalidOperationException()));
-
-        //await SendNotificationOfDeclineAsync(cabId, document.Name, submitTask.Submitter, vm.DeleteReason);
+        await _cabAdminService.DeleteDraftDocumentAsync(deleter, cabId, vm.DeleteReason);
+        await SendNotificationOfDeletionAsync(Guid.Parse(document.CABId), document.Name!, deleter, creator!, vm.DeleteReason);
 
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
@@ -101,62 +96,52 @@ public class DeleteCABController : Controller
         }
     }
 
-    ///// <summary>
-    ///// Mark incoming Request to publish task as completed
-    ///// </summary>
-    ///// <param name="cabId">Associated CAB</param>
-    ///// <param name="userLastUpdatedBy"></param>
-    //private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
-    //{
-    //    var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
-    //    var task = tasks.First(t => t is { TaskType: TaskType.RequestToPublish, Completed: false });
-    //    await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
-    //    return task;
-    //}
+    /// <summary>
+    /// Sends an email and notification for a deleted cab.
+    /// </summary>
+    /// <param name="cabName">Name of CAB</param>
+    /// <param name="deleterAccount"></param>
+    /// <param name="draftCreator"></param>
+    /// <param name="deleteReason"></param>
+    private async Task SendNotificationOfDeletionAsync(Guid cabId, string cabName, UserAccount deleterAccount, UserAccount draftCreator, string? deleteReason)
+    {
+        var deleterRoleId = Roles.RoleId(deleterAccount.Role) ?? throw new InvalidOperationException();
 
-    ///// <summary>
-    ///// Sends an email and notification for declined cab
-    ///// </summary>
-    ///// <param name="cabId">CAB id</param>
-    ///// <param name="cabName">Name of CAB</param>
-    ///// <param name="submitter"></param>
-    ///// <param name="declineReason"></param>
-    //private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, User submitter, string declineReason)
-    //{
-    //    if (cabName == null) throw new ArgumentNullException(nameof(cabName));
-    //    var personalisation = new Dictionary<string, dynamic?>
-    //    {
-    //        { "CABName", cabName },
-    //        {
-    //            "CABUrl",
-    //            UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-    //                Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
-    //        },
-    //        { "DeclineReason", declineReason }
-    //    };
-    //    await _notificationClient.SendEmailAsync(submitter.EmailAddress,
-    //        _templateOptions.NotificationCabDeclined, personalisation);
-    //    var user =
-    //        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
-    //        throw new InvalidOperationException();
-    //    var approver = new User(user.Id, user.FirstName, user.Surname,
-    //        user.Role ?? throw new InvalidOperationException(),
-    //        user.EmailAddress ?? throw new InvalidOperationException());
-    //    await _workflowTaskService.CreateAsync(
-    //        new WorkflowTask(Guid.NewGuid(),
-    //            TaskType.CABDeclined,
-    //            approver,
-    //            // Approver becomes the submitter for Declined CAB Notification
-    //            submitter.RoleId,
-    //            submitter,
-    //            DateTime.Now,
-    //            $"The request to approve CAB {cabName} has been declined for the following reason: {declineReason}.",
-    //            DateTime.Now,
-    //            approver,
-    //            DateTime.Now,
-    //            false,
-    //            declineReason,
-    //            true,
-    //            cabId));
-    //}
+        var deleter = new User(deleterAccount.Id, deleterAccount.FirstName, deleterAccount.Surname,
+            deleterRoleId, deleterAccount.EmailAddress ?? throw new InvalidOperationException());
+
+        var cabCreatorRoleId = Roles.RoleId(draftCreator.Role) ?? throw new InvalidOperationException();
+
+        var assignee = new User(draftCreator.Id, draftCreator.FirstName, draftCreator.Surname,
+            cabCreatorRoleId, draftCreator.EmailAddress ?? throw new InvalidOperationException());
+
+        var personalisation = new Dictionary<string, dynamic?>
+        {
+            { "CABName", cabName },
+            { "Name", deleter.FirstAndLastName },
+            { "UserGroup", Roles.NameFor(deleter.RoleId) },
+            { "DeleteReason", deleteReason ?? string.Empty },
+            {
+                "NotificationsURL", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    Url.RouteUrl(Admin.Controllers.NotificationController.Routes.Notifications))
+            }
+        };
+        await _notificationClient.SendEmailAsync(draftCreator.EmailAddress,
+            _templateOptions.NotificationDraftCabDeleted, personalisation);
+
+        await _workflowTaskService.CreateAsync(
+            new WorkflowTask(
+                TaskType.DraftCabDeletedFromArchiving,
+                deleter,
+                assignee.RoleId,
+                assignee,
+                DateTime.Now,
+                $"The draft record for {cabName} has been deleted. Reason: {deleteReason}",
+                deleter,
+                DateTime.Now,
+                false,
+                null,
+                true,
+                cabId));
+    }
 }

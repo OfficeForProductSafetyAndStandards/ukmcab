@@ -214,7 +214,8 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             // Delete the draft CAB record and update the search index & caches.
-            await _cabRepository.Delete(draft);
+            Guard.IsTrue(await _cabRepository.Delete(draft),
+                    $"Failed to delete draft version, CAB Id: {cabId}");
             await _cachedSearchService.RemoveFromIndexAsync(draft.id);
             await RefreshCaches(draft.CABId, draft.URLSlug);
             await RecordStatsAsync();

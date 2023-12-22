@@ -392,7 +392,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
 
             await _notificationClient.SendEmailAsync(receiverEmailAddress,
-                _templateOptions.NotificationDraftCabDeleted, personalisation);
+                _templateOptions.NotificationDraftCabDeletedFromArchiving, personalisation);
         }
 
         #endregion
