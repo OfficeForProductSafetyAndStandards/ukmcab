@@ -16,9 +16,14 @@
         reviewDate = revwDate.ToString("d MMM yyyy");
     }
 }
+
 @if (Model.SubStatus == SubStatus.PendingApproval)
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
+}
+else if(!Model.CanEdit)
+{
+    <partial model="@("This CAB profile cannot be edited as it's been created by an OPSS user.")" name="Partials/_PageContentBanner" />
 }
 @if (Model.ShowError)
 {
@@ -468,9 +473,8 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
         </strong>
     </div>
 }
-
-
-@if (Model.SubStatus == SubStatus.None)
+            
+@if (Model.CanEdit)
 {
     <div>
         <form method="post">

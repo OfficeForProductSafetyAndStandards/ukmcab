@@ -356,6 +356,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
+            //
+            var UserInCreatorUserGroup = User.IsInRole(latest.AuditLog.First(al => al.Action == AuditCABActions.Created).UserRole);
+
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest);
             var cabContact = new CABContactViewModel(latest);
@@ -373,15 +376,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     : WebUtility.UrlDecode(returnUrl),
                 CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) &&
                                        latest.StatusValue != Status.Published,
+                Status = latest.StatusValue,
                 SubStatus = latest.SubStatus,
                 ValidCAB = latest.StatusValue != Status.Published
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
                            && TryValidateModel(cabBody),
                 TitleHint = "Create a CAB",
-                Title = User.IsInRole(Roles.OPSS.Id) ? 
-                    latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing" 
-                    : "Check details before submitting for approval"
+                Title = User.IsInRole(Roles.OPSS.Id) ?
+                    latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
+                    : UserInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
+                IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || UserInCreatorUserGroup
             };
 
             ModelState.Clear();
@@ -490,10 +495,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (context.Result is ViewResult viewResult)
             {
                 if (viewResult.Model is CABSummaryViewModel summaryViewModel)
-                {
+                {   
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
-                    summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);
-                    summaryViewModel.CanEdit = summaryViewModel.SubStatus != SubStatus.PendingApproval;
+                    summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);                                       
+                    summaryViewModel.CanEdit = summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
                 {
