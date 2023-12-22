@@ -21,7 +21,7 @@
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
-else if(!Model.CanEdit)
+else if(!Model.ShowEditActions)
 {
     <partial model="@("This CAB profile cannot be edited as it's been created by an OPSS user.")" name="Partials/_PageContentBanner" />
 }
@@ -461,7 +461,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
     </div>
 }
             
-@if (Model.CanEdit && !Model.IsEditLocked)
+@if (Model.ShowEditActions && !Model.IsEditLocked)
 {
     @if (Model.SubStatus == SubStatus.None)
     {
