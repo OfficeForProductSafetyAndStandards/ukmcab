@@ -461,7 +461,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
     </div>
 }
             
-@if (Model.ShowEditActions && !Model.IsEditLocked)
+@if (Model.ShowEditActions)
 {
     @if (Model.SubStatus == SubStatus.None)
     {
