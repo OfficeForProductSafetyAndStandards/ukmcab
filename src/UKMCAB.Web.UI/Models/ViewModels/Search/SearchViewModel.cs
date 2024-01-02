@@ -43,7 +43,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FilterViewModel? RegisteredOfficeLocationOptions { get; set; }
         public FilterViewModel? LegislativeAreaOptions { get; set; }
         public FilterViewModel? StatusOptions { get; set; }
-        public FilterViewModel? LastUserGroupOptions { get; set; }
+        public FilterViewModel? CreatedByUserGroupOptions { get; set; }
 
         public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && InternalSearch ? Statuses.Length : 0) + (UserGroups != null && InternalSearch ? UserGroups.Length : 0);
 
