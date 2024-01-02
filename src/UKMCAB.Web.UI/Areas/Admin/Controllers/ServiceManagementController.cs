@@ -40,25 +40,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
             var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var userRole = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
             var unassignedNotifications = await _workflowTaskService.GetUnassignedByForRoleIdAsync(userRole.Id);
             var assignedNotifications =
-                await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(userRole.Id, userId);
-            var assignedNotificationToSpecificUser = await _workflowTaskService.GetByAssignedUserAsync(userId);
+                await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(userRole.Id, userAccount.Id);
+            var assignedNotificationToSpecificUser = await _workflowTaskService.GetByAssignedUserAsync(userAccount.Id);
             
             return View(new InternalLandingPageViewModel
             {
                 TotalDraftCABs = docs.Where(d => d.StatusValue == Status.Draft).Count(),
                 TotalCABsPendingApproval = docs.Where(d => d.SubStatus == SubStatus.PendingApproval).Count(),
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending),
-                UnassignedNotification = unassignedNotifications.Count > 0
+                UnassignedNotification = unassignedNotifications.Any()  
                     ? unassignedNotifications.Count.ToString()
                     : string.Empty,
-                AssignedNotification = assignedNotifications.Count > 0
+                AssignedNotification = assignedNotifications.Any()
                     ? assignedNotifications.Count.ToString()
                     : string.Empty,
-                AssignedToMeNotification = assignedNotificationToSpecificUser.Count > 0
+                AssignedToMeNotification = assignedNotificationToSpecificUser.Any()
                     ? assignedNotificationToSpecificUser.Count.ToString()
                     : string.Empty
             });
