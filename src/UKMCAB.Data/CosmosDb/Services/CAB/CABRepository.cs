@@ -48,7 +48,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             {
                 foreach (var document in items)
                 {
-                    if (document.AuditLog != null && document.AuditLog.Any())
+                    if (document.AuditLog.Any())
                     {
                         await UpdateCreatedByUserGroup(document);
                     }
@@ -60,7 +60,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         {
             foreach (var auditLog in document.AuditLog)
             {
-                if (auditLog.Action == AuditCABActions.Created)
+                if (auditLog.Action == AuditCABActions.Created && string.IsNullOrWhiteSpace(document.CreatedByUserGroup))
                 {
                     document.CreatedByUserGroup = auditLog.UserRole;
                     await UpdateAsync(document);
