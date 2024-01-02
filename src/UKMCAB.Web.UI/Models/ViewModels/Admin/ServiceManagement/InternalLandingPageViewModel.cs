@@ -5,9 +5,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement
     public class InternalLandingPageViewModel : SearchViewModel
     {
         public override string? Title => Constants.PageTitle.Home;
-        public int TotalDraftCABs { get; set; }
-        public int TotalCABsPendingApproval { get; set; }
-        public int TotalAccountRequests { get; set; }
-       
+        public int TotalDraftCABs { get; init; }
+        public int TotalCABsPendingApproval { get; init; }
+        public int TotalAccountRequests { get; init; }
+        public string? UnassignedNotification { get; init; }
+        public string? AssignedNotification { get; init; }
+        public string? AssignedToMeNotification { get; init; }
     }
 }
