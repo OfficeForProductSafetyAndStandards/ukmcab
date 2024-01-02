@@ -14,6 +14,8 @@ public static class Constants
     public const string AnalyticsOptInCookieName = "accept_analytics_cookies";
 
     public const string DateTimeFormat = "dd/MM/yyyy HH:mm";
+    
+    public const string EditLockCacheKey = "CabEditLock_{0}";
 
     public class PageTitle
     {
