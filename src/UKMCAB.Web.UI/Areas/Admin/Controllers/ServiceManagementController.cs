@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using UKMCAB.Core.Services.Users;
-using UKMCAB.Core.Services;
-using UKMCAB.Core.Services.CAB;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
-using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.Users;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.CAB;
+using UKMCAB.Core.Services.Users;
+using UKMCAB.Core.Services.Workflow;
+using UKMCAB.Data.Models.Users;
+using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -16,16 +15,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     {
         private readonly ICABAdminService _cabAdminService;
         private readonly IUserService _userService;
+        private readonly IWorkflowTaskService _workflowTaskService;
 
         public static class Routes
         {
             public const string ServiceManagement = "service.management";
         }
 
-        public ServiceManagementController(ICABAdminService cabAdminService, IUserService userService)
+        public ServiceManagementController(ICABAdminService cabAdminService, IUserService userService,
+            IWorkflowTaskService workflowTaskService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
+            _workflowTaskService = workflowTaskService;
         }
 
 
@@ -33,17 +35,32 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> ServiceManagement()
         {
             var userAccount =
-                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-                            .Value) ?? throw new InvalidOperationException("User account not found");
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                    .Value) ?? throw new InvalidOperationException("User account not found");
 
             var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
             var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userRole = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
+            var unassignedNotifications = await _workflowTaskService.GetUnassignedByForRoleIdAsync(userRole.Id);
+            var assignedNotifications =
+                await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(userRole.Id, userId);
+            var assignedNotificationToSpecificUser = await _workflowTaskService.GetByAssignedUserAsync("userId");
             return View(new InternalLandingPageViewModel
             {
                 TotalDraftCABs = docs.Where(d => d.StatusValue == Status.Draft).Count(),
                 TotalCABsPendingApproval = docs.Where(d => d.SubStatus == SubStatus.PendingApproval).Count(),
-                TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending)
-            }); 
+                TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending),
+                UnassignedNotification = unassignedNotifications.Count > 0
+                    ? unassignedNotifications.Count.ToString()
+                    : string.Empty,
+                AssignedNotification = assignedNotifications.Count > 0
+                    ? assignedNotifications.Count.ToString()
+                    : string.Empty,
+                AssignedToMeNotification = assignedNotificationToSpecificUser.Count > 0
+                    ? assignedNotificationToSpecificUser.Count.ToString()
+                    : string.Empty
+            });
         }
     }
 }
