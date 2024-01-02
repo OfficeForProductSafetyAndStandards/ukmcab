@@ -46,6 +46,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var assignedNotifications =
                 await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(userRole.Id, userId);
             var assignedNotificationToSpecificUser = await _workflowTaskService.GetByAssignedUserAsync(userId);
+            
             return View(new InternalLandingPageViewModel
             {
                 TotalDraftCABs = docs.Where(d => d.StatusValue == Status.Draft).Count(),
