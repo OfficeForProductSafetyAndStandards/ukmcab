@@ -25,7 +25,8 @@ namespace UKMCAB.Data.Models
         /// </summary>
         public string LastUserGroup =>
             AuditLog.Any() ? AuditLog.OrderBy(al => al.DateTime).Last().UserRole : string.Empty;
-        
+        public string CreatedByUserGroup { get; set; } = string.Empty;
+
         // About
         public string CABId { get; set; } = string.Empty;
         public string? Name { get; set; } = string.Empty;

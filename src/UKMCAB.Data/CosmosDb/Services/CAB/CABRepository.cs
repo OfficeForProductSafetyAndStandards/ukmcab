@@ -36,7 +36,36 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 }
             }
 
+            await UpdateCreatedByUserGroupForCABsInReleaseV2_3(items);
+
             return force;
+        }
+
+        private async Task UpdateCreatedByUserGroupForCABsInReleaseV2_3(List<Document>? items)
+        {
+            if (items != null && items.Any() &&
+                            DataConstants.Version.Number.Equals("v2-3"))
+            {
+                foreach (var document in items)
+                {
+                    if (document.AuditLog != null && document.AuditLog.Any())
+                    {
+                        await UpdateCreatedByUserGroup(document);
+                    }
+                }
+            }
+        }
+
+        private async Task UpdateCreatedByUserGroup(Document document)
+        {
+            foreach (var auditLog in document.AuditLog)
+            {
+                if (auditLog.Action == AuditCABActions.Created)
+                {
+                    document.CreatedByUserGroup = auditLog.UserRole;
+                    await UpdateAsync(document);
+                }
+            }
         }
 
         public async Task<Document> CreateAsync(Document document)
