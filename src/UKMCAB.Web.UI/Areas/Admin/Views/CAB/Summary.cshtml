@@ -21,7 +21,7 @@
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
-else if (!Model.ShowEditActions)
+else if (!Model.ShowIncorrectGroupMessage)
 {
     <partial model="@("This CAB profile cannot be edited as it's been created by an OPSS user.")" name="Partials/_PageContentBanner"/>
 }

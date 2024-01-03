@@ -402,7 +402,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             //Todo - Edit lock will move to single edit button action
             //Lock Record for edit
-            if (string.IsNullOrWhiteSpace(userIdWithLock))
+            if (string.IsNullOrWhiteSpace(userIdWithLock) && latest.StatusValue == Status.Draft)
             {
                 await _distCache.SetAsync(editLockCacheKey, User.GetUserId()!, TimeSpan.FromHours(1));
             }
@@ -515,7 +515,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {   
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
                     summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);                                       
-                    summaryViewModel.ShowEditActions = summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.ShowEditActions = !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.ShowIncorrectGroupMessage = summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
                 {
