@@ -33,7 +33,10 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     foreach (var document in items)
                     {
                         document.Version = DataConstants.Version.Number;
-                        UpdateCreatedByUserGroup(document);
+                        if (string.IsNullOrWhiteSpace(document.CreatedByUserGroup))
+                        {
+                            UpdateCreatedByUserGroup(document);
+                        }
                         await UpdateAsync(document);
                     }
                 }
@@ -43,11 +46,8 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         }
         private void UpdateCreatedByUserGroup(Document document)
         {
-            if (string.IsNullOrWhiteSpace(document.CreatedByUserGroup))
-            {
-                var userRole = document.AuditLog.Any() ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole : string.Empty;
-                document.CreatedByUserGroup = userRole;
-            }
+            var userRole = document.AuditLog.Any() ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole : string.Empty;
+            document.CreatedByUserGroup = userRole;
         }
 
         public async Task<Document> CreateAsync(Document document)
