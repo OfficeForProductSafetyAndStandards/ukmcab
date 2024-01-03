@@ -51,15 +51,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 TotalDraftCABs = docs.Where(d => d.StatusValue == Status.Draft).Count(),
                 TotalCABsPendingApproval = docs.Where(d => d.SubStatus == SubStatus.PendingApproval).Count(),
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending),
-                UnassignedNotification = unassignedNotifications.Any()  
-                    ? unassignedNotifications.Count.ToString()
-                    : string.Empty,
-                AssignedNotification = assignedNotifications.Any()
-                    ? assignedNotifications.Count.ToString()
-                    : string.Empty,
-                AssignedToMeNotification = assignedNotificationToSpecificUser.Any()
-                    ? assignedNotificationToSpecificUser.Count.ToString()
-                    : string.Empty
+                UnassignedNotification = unassignedNotifications.Count,
+                AssignedNotification = assignedNotifications.Count,
+                AssignedToMeNotification = assignedNotificationToSpecificUser.Count
             });
         }
     }
