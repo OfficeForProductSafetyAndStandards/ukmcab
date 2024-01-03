@@ -42,7 +42,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? PointOfContactName { get; set; }
         public string? PointOfContactEmail { get; set; }
         public string? PointOfContactPhone { get; set; }
-        public bool IsPointOfContactPublicDisplay { get; set; }
+        public bool? IsPointOfContactPublicDisplay { get; set; }
 
         public string? RegisteredOfficeLocation { get; set; }
         // Body details

@@ -26,7 +26,8 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
 
-            if (items.Any() && items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+            if (items!= null && items.Any() && items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
             {
                 foreach (var document in items)
                 {
