@@ -78,7 +78,7 @@ namespace UKMCAB.Core.Services.CAB
 
             if (!string.IsNullOrWhiteSpace(userRole))
             {
-                docs = await _cabRepository.Query<Document>(d => (d.LastUserGroup == userRole &&
+                docs = await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
                                                                   d.StatusValue == Status.Draft) ||
                                                                  d.StatusValue == Status.Archived);
 
@@ -141,6 +141,7 @@ namespace UKMCAB.Core.Services.CAB
                 Status = document.Status,
                 StatusValue = ((int)document.StatusValue).ToString(),
                 LastUserGroup = document.LastUserGroup,
+                CreatedByUserGroup = document.CreatedByUserGroup,
                 Name = document.Name,
                 CABId = document.CABId,
                 CABNumber = document.CABNumber,

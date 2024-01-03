@@ -4,7 +4,7 @@ public class DataConstants
 {
     public static class Version
     {
-        public const string Number = "v2-2";
+        public const string Number = "v2-3";
     }
 
     public static class CosmosDb

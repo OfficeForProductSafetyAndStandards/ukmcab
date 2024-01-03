@@ -73,5 +73,8 @@ namespace UKMCAB.Data.Search.Models
 
         [SimpleField(IsSortable = true)]
         public string RandomSort { get; set; }
+
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
+        public string CreatedByUserGroup { get; set; }
     }
 }
