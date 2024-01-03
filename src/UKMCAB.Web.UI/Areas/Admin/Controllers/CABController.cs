@@ -362,10 +362,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             //Todo - Edit lock will move to single edit button action
             //Check Edit lock
-            var editLockCacheKey = string.Format(Constants.EditLockCacheKey, latest.CABId);
-            var userIdWithLock = await _distCache.GetAsync<string>(editLockCacheKey);
-            
-            var UserInCreatorUserGroup = User.IsInRole(latest.AuditLog.First(al => al.Action == AuditCABActions.Created).UserRole);
+            var cabsWithEditLock = await _distCache.GetAsync<Dictionary<string,string>?>(Constants.EditLockCacheKey) ?? new ();
+            var userIdWithLock = cabsWithEditLock.GetValueOrDefault(latest.CABId);
+            var userInCreatorUserGroup = User.IsInRole(latest.AuditLog.First(al => al.Action == AuditCABActions.Created).UserRole);
 
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest);
@@ -393,8 +392,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 TitleHint = "Create a CAB",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
                     latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
-                    : UserInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
-                IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || UserInCreatorUserGroup,
+                    : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
+                IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
                 IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock
             };
 
@@ -404,7 +403,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             //Lock Record for edit
             if (string.IsNullOrWhiteSpace(userIdWithLock) && latest.StatusValue == Status.Draft)
             {
-                await _distCache.SetAsync(editLockCacheKey, User.GetUserId()!, TimeSpan.FromHours(1));
+                cabsWithEditLock.Add(latest.CABId, User.GetUserId()!);
+                await _distCache.SetAsync(Constants.EditLockCacheKey, cabsWithEditLock, TimeSpan.FromHours(1));
             }
 
             return View(model);

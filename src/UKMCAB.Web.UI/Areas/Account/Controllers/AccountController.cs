@@ -15,6 +15,7 @@ using UKMCAB.Web.Security;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels;
 using Microsoft.IdentityModel.Tokens;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Areas.Admin.Controllers;
 
@@ -29,7 +30,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         private readonly TelemetryClient _telemetry;
         private readonly IUserAccountRepository _userAccounts;
         private readonly IUserService _users;
-        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor, IWebHostEnvironment environment, IUserAccountRepository userAccounts)
+        private readonly IDistCache _distCache;
+        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor, IWebHostEnvironment environment, IUserAccountRepository userAccounts, IDistCache distCache)
         {
             _logger = logger;
             _telemetry = telemetry;
@@ -37,6 +39,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             _secureTokenProcessor = secureTokenProcessor;
             _environment = environment;
             _userAccounts = userAccounts;
+            _distCache = distCache;
         }
 
         [AllowAnonymous]
@@ -217,6 +220,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [HttpGet("logout", Name = Routes.Logout), AllowAnonymous]
         public async Task<IActionResult> Logout(string? redirectUrib64 = null)
         {
+            await ClearCabEditLockAsync();
+
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             _logger.LogInformation("User logged out.");
             _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
@@ -329,6 +334,17 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 LastLogonUtc = userAccount.LastLogonUtc,
                 IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
             });
+        }
+        
+        private async Task ClearCabEditLockAsync()
+        {
+            var cabsWithEditLock = await _distCache.GetAsync<Dictionary<string,string>?>(Constants.EditLockCacheKey);
+            var cabEditLockFound = cabsWithEditLock?.FirstOrDefault(i => i.Value.Equals(User.GetUserId())).Key ?? null;
+            if (cabsWithEditLock != null && cabEditLockFound != null)
+            {
+                cabsWithEditLock.Remove(cabEditLockFound);
+                await _distCache.SetAsync(Constants.EditLockCacheKey, cabsWithEditLock);
+            }
         }
 
         public static class Routes

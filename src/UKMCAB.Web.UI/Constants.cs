@@ -15,7 +15,7 @@ public static class Constants
 
     public const string DateTimeFormat = "dd/MM/yyyy HH:mm";
     
-    public const string EditLockCacheKey = "CabEditLock_{0}";
+    public const string EditLockCacheKey = "CabEditLock";
 
     public class PageTitle
     {

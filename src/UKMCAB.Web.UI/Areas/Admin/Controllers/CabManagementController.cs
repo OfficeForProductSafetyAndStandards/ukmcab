@@ -4,6 +4,7 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
@@ -14,21 +15,25 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     {
         private readonly ICABAdminService _cabAdminService;
         private readonly IUserService _userService;
+        private readonly IDistCache _distCache;
 
         public static class Routes
         {
             public const string CABManagement = "admin.cab-management";
         }
 
-        public CabManagementController(ICABAdminService cabAdminService, IUserService userService)
+        public CabManagementController(ICABAdminService cabAdminService, IUserService userService, IDistCache distCache)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
+            _distCache = distCache;
         }
 
         [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
         public async Task<IActionResult> CABManagement(CABManagementViewModel model)
         {
+            await ClearCabEditLockAsync();
+
             if (string.IsNullOrEmpty(model.Sort))
             {
                 model.Sort = "lastupd-desc";
@@ -55,6 +60,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             FilterSortAndPaginateItems(model);
 
             return View(model);
+        }
+
+        private async Task ClearCabEditLockAsync()
+        {
+            var cabsWithEditLock = await _distCache.GetAsync<Dictionary<string,string>?>(Constants.EditLockCacheKey);
+            var cabEditLockFound = cabsWithEditLock?.FirstOrDefault(i => i.Value.Equals(User.GetUserId())).Key ?? null;
+            if (cabsWithEditLock != null && cabEditLockFound != null)
+            {
+                cabsWithEditLock.Remove(cabEditLockFound);
+                await _distCache.SetAsync(Constants.EditLockCacheKey, cabsWithEditLock);
+            }
         }
 
         private void FilterSortAndPaginateItems(CABManagementViewModel model)
