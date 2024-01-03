@@ -1,13 +1,11 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Common.Extensions;
-using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
-using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
@@ -20,8 +18,8 @@ public class NotificationController : Controller
     public const string AssignedToGroupTabName = "assigned-group";
     public const string LastUpdatedLabel = "Last updated";
 
-    private const string UnassignedTabName = "unassigned";
-    private const string AssignedToMeTabName = "assigned-me";
+    public const string UnassignedTabName = "unassigned";
+    public const string AssignedToMeTabName = "assigned-me";
     private const string CompletedTabName = "completed";
 
     private const string LastUpdated = "LastUpdated";
