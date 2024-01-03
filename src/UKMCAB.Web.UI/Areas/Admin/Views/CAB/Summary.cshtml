@@ -235,7 +235,7 @@ else if (Model.IsEditLocked)
                 Display of point of contact details
             </dt>
             <dd class="govuk-summary-list__value">
-                @(Model.CabContactViewModel.IsPointOfContactPublicDisplay ? "Public" : "Restricted")
+                @(Model.CabContactViewModel.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted")
             </dd>
         </div>
         <div class="govuk-summary-list__row">
