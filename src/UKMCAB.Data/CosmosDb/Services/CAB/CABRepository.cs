@@ -26,37 +26,43 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
 
-            if (items != null && items.Any() &&
-                items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
+            if (items != null && items.Any())
             {
-                foreach (var document in items)
+                if (items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
                 {
-                    document.Version = DataConstants.Version.Number;
-                    await Update(document);
+                    await UpdateCABsToCurrentVersionNumberAsync(items);
+                }
+
+                if (DataConstants.Version.Number.Equals("v2-3"))
+                {
+                    await UpdateCABsCreatedByUserGroupFieldAsync(items);
                 }
             }
-
-            await UpdateCreatedByUserGroupForCABsInReleaseV2_3(items);
 
             return force;
         }
 
-        private async Task UpdateCreatedByUserGroupForCABsInReleaseV2_3(List<Document>? items)
+        private async Task UpdateCABsToCurrentVersionNumberAsync(List<Document> items)
         {
-            if (items != null && items.Any() &&
-                            DataConstants.Version.Number.Equals("v2-3"))
+            foreach (var document in items)
             {
-                foreach (var document in items)
+                document.Version = DataConstants.Version.Number;
+                await UpdateAsync(document);
+            }
+        }
+
+        private async Task UpdateCABsCreatedByUserGroupFieldAsync(List<Document> items)
+        {
+            foreach (var document in items)
+            {
+                if (document.AuditLog.Any())
                 {
-                    if (document.AuditLog.Any())
-                    {
-                        await UpdateCreatedByUserGroup(document);
-                    }
+                    await UpdateCreatedByUserGroupAsync(document);
                 }
             }
         }
 
-        private async Task UpdateCreatedByUserGroup(Document document)
+        private async Task UpdateCreatedByUserGroupAsync(Document document)
         {
             foreach (var auditLog in document.AuditLog)
             {
