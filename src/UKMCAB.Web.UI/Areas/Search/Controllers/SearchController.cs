@@ -44,7 +44,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.TestingLocations),
             nameof(CABIndexItem.LegislativeAreas),
             nameof(CABIndexItem.LastUpdatedDate),
-            nameof(CABIndexItem.LastUserGroup)
+            nameof(CABIndexItem.LastUserGroup),
+            nameof(CABIndexItem.CreatedByUserGroup),
         };
 
         public static class Routes
@@ -209,7 +210,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (model.InternalSearch)
             {
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "Status", facets.StatusValue, model.Statuses);
-                model.LastUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User groups", facets.LastUserGroup, model.UserGroups);
+                model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User groups", facets.CreatedByUserGroup, model.UserGroups);
             }
         }
 
