@@ -55,12 +55,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? PointOfContactName { get; set; }
         public string? PointOfContactEmail { get; set; }
         public string? PointOfContactPhone { get; set; }
-        public bool IsPointOfContactPublicDisplay { get; set; }
+        [Required(ErrorMessage = "Select who should see the point of contact details")]
+        public bool? IsPointOfContactPublicDisplay { get; set; }
         [Required(ErrorMessage = "Enter a registered office location")]
         public string? RegisteredOfficeLocation { get; set; }
 
         public string? Title => "Contact details";
 
-        public string[] FieldOrder => new[] { nameof(AddressLine1), nameof(TownCity), nameof(Postcode), nameof(Country), nameof(Email), nameof(Phone), nameof(RegisteredOfficeLocation) };
+        public string[] FieldOrder => new[] { nameof(AddressLine1), nameof(TownCity), nameof(Postcode), nameof(Country), nameof(Email), nameof(Phone), nameof(IsPointOfContactPublicDisplay), nameof(RegisteredOfficeLocation) };
     }
 }
