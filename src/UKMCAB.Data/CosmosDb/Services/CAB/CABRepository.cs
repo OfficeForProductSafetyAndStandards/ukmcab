@@ -30,47 +30,23 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             {
                 if (items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
                 {
-                    await UpdateCABsToCurrentVersionNumberAsync(items);
-                }
-
-                if (DataConstants.Version.Number.Equals("v2-3"))
-                {
-                    await UpdateCABsCreatedByUserGroupFieldAsync(items);
+                    foreach (var document in items)
+                    {
+                        document.Version = DataConstants.Version.Number;
+                        UpdateCreatedByUserGroup(document);
+                        await UpdateAsync(document);
+                    }
                 }
             }
 
             return force;
         }
-
-        private async Task UpdateCABsToCurrentVersionNumberAsync(List<Document> items)
+        private void UpdateCreatedByUserGroup(Document document)
         {
-            foreach (var document in items)
+            if (string.IsNullOrWhiteSpace(document.CreatedByUserGroup))
             {
-                document.Version = DataConstants.Version.Number;
-                await UpdateAsync(document);
-            }
-        }
-
-        private async Task UpdateCABsCreatedByUserGroupFieldAsync(List<Document> items)
-        {
-            foreach (var document in items)
-            {
-                if (document.AuditLog.Any())
-                {
-                    await UpdateCreatedByUserGroupAsync(document);
-                }
-            }
-        }
-
-        private async Task UpdateCreatedByUserGroupAsync(Document document)
-        {
-            foreach (var auditLog in document.AuditLog)
-            {
-                if (auditLog.Action == AuditCABActions.Created && string.IsNullOrWhiteSpace(document.CreatedByUserGroup))
-                {
-                    document.CreatedByUserGroup = auditLog.UserRole;
-                    await UpdateAsync(document);
-                }
+                var userRole = document.AuditLog.Any() ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole : string.Empty;
+                document.CreatedByUserGroup = userRole;
             }
         }
 
