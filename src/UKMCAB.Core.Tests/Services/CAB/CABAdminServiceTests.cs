@@ -85,7 +85,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
         private bool EvaluateDocumentPredicateWithoutRole(Expression<Func<Document, bool>> predicate)
         {
             var body = predicate.Body as BinaryExpression;
-            return body != null && !body.ToString().Contains("LastUserGroup");
+            return body != null && !body.ToString().Contains("CreatedByUserGroup");
         }
     }
 }
