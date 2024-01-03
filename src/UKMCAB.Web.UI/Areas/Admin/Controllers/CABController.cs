@@ -364,7 +364,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             //Check Edit lock
             var cabsWithEditLock = await _distCache.GetAsync<Dictionary<string,string>?>(Constants.EditLockCacheKey) ?? new ();
             var userIdWithLock = cabsWithEditLock.GetValueOrDefault(latest.CABId);
-            var userInCreatorUserGroup = User.IsInRole(latest.AuditLog.First(al => al.Action == AuditCABActions.Created).UserRole);
+            var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
 
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest);
