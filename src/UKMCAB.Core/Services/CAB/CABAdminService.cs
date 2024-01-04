@@ -126,6 +126,8 @@ namespace UKMCAB.Core.Services.CAB
             document.CABId ??= Guid.NewGuid().ToString();
             document.AuditLog.Add(auditItem);
             document.StatusValue = Status.Draft;
+            document.CreatedByUserGroup = userAccount.Role!.ToLower();
+
             var rv = await _cabRepository.CreateAsync(document);
 
             await RecordStatsAsync();
@@ -178,6 +180,7 @@ namespace UKMCAB.Core.Services.CAB
             {
                 draft.StatusValue = Status.Draft;
                 draft.AuditLog = new List<Audit> { new(userAccount, AuditCABActions.Created) };
+                draft.CreatedByUserGroup = userAccount.Role!.ToLower();
                 draft = await _cabRepository.CreateAsync(draft);
             }
             else if (draft.StatusValue == Status.Draft)
@@ -285,6 +288,8 @@ namespace UKMCAB.Core.Services.CAB
             {
                 new(userAccount, AuditCABActions.Unarchived)
             };
+            archivedDoc.CreatedByUserGroup = userAccount.Role!.ToLower();
+
             archivedDoc = await _cabRepository.CreateAsync(archivedDoc);
             await UpdateSearchIndex(archivedDoc);
 
