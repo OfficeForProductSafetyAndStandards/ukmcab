@@ -15,18 +15,21 @@ public class EditLockService : IEditLockService
         _items = _distCache.Get<Dictionary<string, string>?>(EditLockCacheKey) ?? new Dictionary<string, string>();
     }
 
+    ///<inheritdoc />
     public async Task<string?> LockExistsForCabAsync(string cabId)
     {
         var cabsWithEditLock = await _distCache.GetAsync<Dictionary<string, string>?>(EditLockCacheKey) ?? new();
         return cabsWithEditLock.GetValueOrDefault(cabId);
     }
-
+   
+    ///<inheritdoc />
     public async Task SetAsync(string cabId, string userId)
     {
         _items.Add(cabId, userId);
         await _distCache.SetAsync(EditLockCacheKey, _items, _cacheDuration);
     }
-
+    
+    ///<inheritdoc />
     public async Task RemoveEditLockForUserAsync(string userId)
     {
         var cabEditLockFound = _items.FirstOrDefault(i => i.Value.Equals(userId)).Key ?? null;
