@@ -15,25 +15,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     {
         private readonly ICABAdminService _cabAdminService;
         private readonly IUserService _userService;
-        private readonly IDistCache _distCache;
+        private readonly IEditLockService _editLockService;
 
         public static class Routes
         {
             public const string CABManagement = "admin.cab-management";
         }
 
-        public CabManagementController(ICABAdminService cabAdminService, IUserService userService, IDistCache distCache)
+        public CabManagementController(ICABAdminService cabAdminService, IUserService userService, IEditLockService editLockService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
-            _distCache = distCache;
+            _editLockService = editLockService;
         }
 
         [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
         public async Task<IActionResult> CABManagement(CABManagementViewModel model)
         {
-            await ClearCabEditLockAsync();
-
+            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
             if (string.IsNullOrEmpty(model.Sort))
             {
                 model.Sort = "lastupd-desc";
@@ -61,18 +60,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return View(model);
         }
-
-        private async Task ClearCabEditLockAsync()
-        {
-            var cabsWithEditLock = await _distCache.GetAsync<Dictionary<string,string>?>(Constants.EditLockCacheKey);
-            var cabEditLockFound = cabsWithEditLock?.FirstOrDefault(i => i.Value.Equals(User.GetUserId())).Key ?? null;
-            if (cabsWithEditLock != null && cabEditLockFound != null)
-            {
-                cabsWithEditLock.Remove(cabEditLockFound);
-                await _distCache.SetAsync(Constants.EditLockCacheKey, cabsWithEditLock);
-            }
-        }
-
         private void FilterSortAndPaginateItems(CABManagementViewModel model)
         {
             if (!string.IsNullOrEmpty(model.Filter))

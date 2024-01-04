@@ -15,6 +15,7 @@ using UKMCAB.Web.Security;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels;
 using Microsoft.IdentityModel.Tokens;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Areas.Admin.Controllers;
@@ -30,8 +31,15 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         private readonly TelemetryClient _telemetry;
         private readonly IUserAccountRepository _userAccounts;
         private readonly IUserService _users;
-        private readonly IDistCache _distCache;
-        public AccountController(ILogger<AccountController> logger, TelemetryClient telemetry, IUserService users, ISecureTokenProcessor secureTokenProcessor, IWebHostEnvironment environment, IUserAccountRepository userAccounts, IDistCache distCache)
+        private readonly IEditLockService _editLockService;
+
+        public AccountController(ILogger<AccountController> logger,
+            TelemetryClient telemetry,
+            IUserService users,
+            ISecureTokenProcessor secureTokenProcessor,
+            IWebHostEnvironment environment,
+            IUserAccountRepository userAccounts,
+            IEditLockService editLockService)
         {
             _logger = logger;
             _telemetry = telemetry;
@@ -39,7 +47,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             _secureTokenProcessor = secureTokenProcessor;
             _environment = environment;
             _userAccounts = userAccounts;
-            _distCache = distCache;
+            _editLockService = editLockService;
         }
 
         [AllowAnonymous]
@@ -55,6 +63,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     Reason = envelope.UserAccountLockReason,
                 });
             }
+
             return Redirect("/");
         }
 
@@ -67,6 +76,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             {
                 return RedirectToRoute(Routes.Login);
             }
+
             if (userAccount.IsLocked)
             {
                 return RedirectToRoute(Routes.Locked, new { id });
@@ -89,6 +99,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             {
                 return RedirectToRoute(Routes.Login);
             }
+
             if (userAccount.IsLocked)
             {
                 return RedirectToRoute(Routes.Locked, new { id });
@@ -104,11 +115,18 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     newUserAccount.ContactEmailAddress = model.ContactEmailAddress;
 
                     await _users.UpdateUser(newUserAccount, newUserAccount);
-                    _telemetry.TrackEvent(AiTracking.Events.UserEditedProfile, HttpContext.ToTrackingMetadata(new Dictionary<string, string>
-                    {
-                        {"Original user account values", $"FirstName: {userAccount.FirstName}, Surname: {userAccount.Surname}, ContactEmail: {userAccount.ContactEmailAddress}"},
-                        {"New user account values", $"FirstName: {newUserAccount.FirstName}, Surname: {newUserAccount.Surname}, ContactEmail: {newUserAccount.ContactEmailAddress}"},
-                    }));
+                    _telemetry.TrackEvent(AiTracking.Events.UserEditedProfile, HttpContext.ToTrackingMetadata(
+                        new Dictionary<string, string>
+                        {
+                            {
+                                "Original user account values",
+                                $"FirstName: {userAccount.FirstName}, Surname: {userAccount.Surname}, ContactEmail: {userAccount.ContactEmailAddress}"
+                            },
+                            {
+                                "New user account values",
+                                $"FirstName: {newUserAccount.FirstName}, Surname: {newUserAccount.Surname}, ContactEmail: {newUserAccount.ContactEmailAddress}"
+                            },
+                        }));
 
                     TempData.Add("Edit", true);
                 }
@@ -131,7 +149,10 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
                     var userId = $"fake_{Guid.NewGuid()}";
-                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId), new Claim(Claims.IsFakeUser, "1") }, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity =
+                        new ClaimsIdentity(
+                            new[] { new Claim(ClaimTypes.NameIdentifier, userId), new Claim(Claims.IsFakeUser, "1") },
+                            CookieAuthenticationDefaults.AuthenticationScheme);
                     var acc = new UserAccount
                     {
                         Id = userId,
@@ -142,7 +163,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
 
                     SignInHelper.AddClaims(acc, claimsIdentity);
 
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties { IsPersistent = false, });
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity), new AuthenticationProperties { IsPersistent = false, });
 
                     return Redirect("/");
                 }
@@ -175,7 +197,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 switch (envelope.Status)
                 {
                     case UserAccountStatus.Unknown:
-                        var token = _secureTokenProcessor.Enclose(new RequestAccountTokenDescriptor(id, User.FindFirstValue(ClaimTypes.Email)));
+                        var token = _secureTokenProcessor.Enclose(
+                            new RequestAccountTokenDescriptor(id, User.FindFirstValue(ClaimTypes.Email)));
                         redirectUri = Url.RouteUrl(Routes.RequestAccount, new { tok = token });
                         break;
 
@@ -187,7 +210,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                             {
                                 Title = "Account not approved",
                                 Heading = "Account not approved",
-                                Body = "You have already requested an account. You will receive an email when your request has been reviewed.",
+                                Body =
+                                    "You have already requested an account. You will receive an email when your request has been reviewed.",
                                 ViewName = "Message",
                             })
                         });
@@ -201,7 +225,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                         throw new Exception("Active user accounts should not be processed by this block");
 
                     default:
-                        throw new NotSupportedException($"The user account status '{envelope.Status}' is not supported.");
+                        throw new NotSupportedException(
+                            $"The user account status '{envelope.Status}' is not supported.");
                 }
 
                 if (redirectUri != null)
@@ -220,16 +245,16 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [HttpGet("logout", Name = Routes.Logout), AllowAnonymous]
         public async Task<IActionResult> Logout(string? redirectUrib64 = null)
         {
-            await ClearCabEditLockAsync();
-
+            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             _logger.LogInformation("User logged out.");
             _telemetry.TrackEvent(AiTracking.Events.Logout, HttpContext.ToTrackingMetadata());
-            
+
             if (User.HasClaim(x => x.Type == Claims.IsOneLoginUser))
             {
                 var authProperties = new AuthenticationProperties();
-                Indeed.If(redirectUrib64 != null, () => authProperties.Items.Add("redirect", Base64UrlEncoder.Decode(redirectUrib64)));
+                Indeed.If(redirectUrib64 != null,
+                    () => authProperties.Items.Add("redirect", Base64UrlEncoder.Decode(redirectUrib64)));
                 await HttpContext.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, authProperties);
                 return new EmptyResult();
             }
@@ -257,7 +282,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 }
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
-                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) }, CookieAuthenticationDefaults.AuthenticationScheme);
+                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
+                        CookieAuthenticationDefaults.AuthenticationScheme);
                     var acc = await _userAccounts.GetAsync(userId);
                     if (acc != null)
                     {
@@ -265,7 +291,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                     }
 
                     var authProperties = new AuthenticationProperties { IsPersistent = false, };
-                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity), authProperties);
                     return RedirectToRoute(Routes.Login);
                 }
                 else
@@ -282,7 +309,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [AllowAnonymous, HttpGet("request-account", Name = Routes.RequestAccount)]
         public async Task<IActionResult> RequestAccount(string tok)
         {
-            var descriptor = _secureTokenProcessor.Disclose<RequestAccountTokenDescriptor>(tok) ?? throw new DomainException("The token did not deserialize successfully");
+            var descriptor = _secureTokenProcessor.Disclose<RequestAccountTokenDescriptor>(tok) ??
+                             throw new DomainException("The token did not deserialize successfully");
             return View(new RequestAccountViewModel { ContactEmailAddress = descriptor.EmailAddress, Token = tok });
         }
 
@@ -291,7 +319,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         {
             if (ModelState.IsValid)
             {
-                var descriptor = _secureTokenProcessor.Disclose<RequestAccountTokenDescriptor>(model.Token) ?? throw new DomainException("The token did not deserialize successfully");
+                var descriptor = _secureTokenProcessor.Disclose<RequestAccountTokenDescriptor>(model.Token) ??
+                                 throw new DomainException("The token did not deserialize successfully");
                 await _users.SubmitRequestAccountAsync(new RequestAccountModel
                 {
                     SubjectId = descriptor.SubjectId,
@@ -304,6 +333,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 });
                 return RedirectToRoute(Routes.RequestAccountSuccess);
             }
+
             return View(model);
         }
 
@@ -319,6 +349,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             {
                 return RedirectToRoute(Routes.Login);
             }
+
             if (userAccount.IsLocked)
             {
                 return RedirectToRoute(Routes.Locked, new { id });
@@ -334,17 +365,6 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 LastLogonUtc = userAccount.LastLogonUtc,
                 IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
             });
-        }
-        
-        private async Task ClearCabEditLockAsync()
-        {
-            var cabsWithEditLock = await _distCache.GetAsync<Dictionary<string,string>?>(Constants.EditLockCacheKey);
-            var cabEditLockFound = cabsWithEditLock?.FirstOrDefault(i => i.Value.Equals(User.GetUserId())).Key ?? null;
-            if (cabsWithEditLock != null && cabEditLockFound != null)
-            {
-                cabsWithEditLock.Remove(cabEditLockFound);
-                await _distCache.SetAsync(Constants.EditLockCacheKey, cabsWithEditLock);
-            }
         }
 
         public static class Routes
@@ -369,7 +389,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             if (ReferenceEquals(x, null)) return false;
             if (ReferenceEquals(y, null)) return false;
             if (x.GetType() != y.GetType()) return false;
-            return x.FirstName == y.FirstName && x.Surname == y.Surname && x.ContactEmailAddress == y.ContactEmailAddress;
+            return x.FirstName == y.FirstName && x.Surname == y.Surname &&
+                   x.ContactEmailAddress == y.ContactEmailAddress;
         }
 
         public int GetHashCode(UserAccount obj)
