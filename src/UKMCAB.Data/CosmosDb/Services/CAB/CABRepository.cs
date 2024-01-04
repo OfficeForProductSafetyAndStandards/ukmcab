@@ -26,17 +26,26 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             _container = database.GetContainer(DataConstants.CosmosDb.Container);
             var items = await Query<Document>(_container, document => true);
 
-            if (items != null && items.Any() &&
-                items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
+            // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
+            if (items!= null && items.Any() && items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
             {
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
-                    await Update(document);
+                    if (string.IsNullOrWhiteSpace(document.CreatedByUserGroup))
+                    {
+                        UpdateCreatedByUserGroup(document);
+                    }
+                    await UpdateAsync(document);
                 }
             }
 
             return force;
+        }
+        private void UpdateCreatedByUserGroup(Document document)
+        {
+            var userRole = document.AuditLog.Any() ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole : string.Empty;
+            document.CreatedByUserGroup = userRole;
         }
 
         public async Task<Document> CreateAsync(Document document)
