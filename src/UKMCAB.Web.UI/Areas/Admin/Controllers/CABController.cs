@@ -26,7 +26,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IWorkflowTaskService _workflowTaskService;
         private readonly IAsyncNotificationClient _notificationClient;
         private readonly CoreEmailTemplateOptions _templateOptions;
-        private readonly IDistCache _distCache;
+        private readonly IEditLockService _editLockService;
 
         public static class Routes
         {
@@ -37,15 +37,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CabSummary = "cab.summary";
         }
 
-        public CABController(ICABAdminService cabAdminService, IUserService userService,
-            IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient,
-            IOptions<CoreEmailTemplateOptions> templateOptions, IDistCache distCache)
+        public CABController(
+            ICABAdminService cabAdminService, 
+            IUserService userService,
+            IWorkflowTaskService workflowTaskService, 
+            IAsyncNotificationClient notificationClient,
+            IOptions<CoreEmailTemplateOptions> templateOptions,
+            IEditLockService editLockService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
             _workflowTaskService = workflowTaskService;
             _notificationClient = notificationClient;
-            _distCache = distCache;
+            _editLockService = editLockService;
             _templateOptions = templateOptions.Value;
         }
 
@@ -362,11 +366,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             //Todo - Edit lock will move to single edit button action
             //Check Edit lock
-            var editLockCacheKey = string.Format(Constants.EditLockCacheKey, latest.CABId);
-            var userIdWithLock = await _distCache.GetAsync<string>(editLockCacheKey);
-            
-            var UserInCreatorUserGroup = User.IsInRole(latest.AuditLog.OrderBy(al => al.DateTime).First().UserRole);
-            
+            var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
+            var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
 
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest);
@@ -394,8 +395,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 TitleHint = "Create a CAB",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
                     latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
-                    : UserInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
-                IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || UserInCreatorUserGroup,
+                    : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
+                IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
                 IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock
             };
 
@@ -405,7 +406,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             //Lock Record for edit
             if (string.IsNullOrWhiteSpace(userIdWithLock) && latest.StatusValue == Status.Draft)
             {
-                await _distCache.SetAsync(editLockCacheKey, User.GetUserId()!, TimeSpan.FromHours(1));
+                await _editLockService.SetAsync(latest.CABId, User.GetUserId()!);
             }
 
             return View(model);
@@ -421,8 +422,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
             
-            //Remove Edit lock on action
-            _distCache.Remove(string.Format(Constants.EditLockCacheKey, latest.CABId));
             if (submitType == Constants.SubmitType.Save)
             {
                 var userAccount =
