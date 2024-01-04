@@ -6,12 +6,13 @@ public class EditLockService : IEditLockService
 {
     private const string EditLockCacheKey = "CabEditLock";
     private readonly IDistCache _distCache;
-    private readonly Dictionary<string, string> _items = new();
+    private readonly Dictionary<string, string> _items;
     private readonly TimeSpan _cacheDuration = TimeSpan.FromHours(1);
 
     public EditLockService(IDistCache distCache)
     {
         _distCache = distCache;
+        _items = _distCache.Get<Dictionary<string, string>?>(EditLockCacheKey) ?? new Dictionary<string, string>();
     }
 
     public async Task<string?> LockExistsForCabAsync(string cabId)
