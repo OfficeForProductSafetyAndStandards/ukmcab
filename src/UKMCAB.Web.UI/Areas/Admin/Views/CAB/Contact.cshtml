@@ -166,24 +166,27 @@
                     </h3>
                     <input asp-for="PointOfContactPhone" class="govuk-input govuk-!-width-full" autocomplete="pointofcontactphone" />
                 </div>
-                
-                <div class="govuk-form-group">
+
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IsPointOfContactPublicDisplay))">
                     <h3 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--s" asp-for="IsPointOfContactPublicDisplay">
-                            Select an option for display of point of contact details
+                            Who should see the point of contact details?
                         </label>
                     </h3>
-                    <div class="govuk-radios" data-module="govuk-radios">
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="IsPointOfContactPublicDisplay" class="govuk-error-message"></span>
+                    </p>
+                    <div class="govuk-radios" data-module="govuk-radios" id="IsPointOfContactPublicDisplay">
                         <div class="govuk-radios__item">
-                            <input class="govuk-radios__input" id="PublicDisplay" asp-for="IsPointOfContactPublicDisplay" type="radio" value="true">
+                            <input class="govuk-radios__input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.IsPointOfContactPublicDisplay))" id="PublicDisplay" asp-for="IsPointOfContactPublicDisplay" type="radio" value="true">
                             <label class="govuk-label govuk-radios__label" for="PublicDisplay">
-                                Display publicly for all users
+                                All users
                             </label>
                         </div>
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="InternalDisplay" asp-for="IsPointOfContactPublicDisplay" type="radio" value="false">
                             <label class="govuk-label govuk-radios__label" for="InternalDisplay">
-                                Restrict and display only for internal users
+                                Internal users
                             </label>
                         </div>
                     </div>
