@@ -13,7 +13,7 @@ namespace UKMCAB.Core.Tests.Services.CAB;
 public class EditLockServiceTests
 {
     private readonly Mock<IDistCache> _distCache = new();
-    private IEditLockService _sut;
+    private IEditLockService _sut = null!;
     private readonly Faker _faker = new();
 
     [SetUp]
@@ -49,8 +49,11 @@ public class EditLockServiceTests
     [Test]
     public async Task UserNotFound_RemoveEditLockForUserAsync_CacheNotSet()
     {
-        await _sut.RemoveEditLockForUserAsync(_faker.Random.Word());
-        _distCache.VerifyNoOtherCalls();
+        var userId = _faker.Random.Word();
+        await _sut.RemoveEditLockForUserAsync(userId);
+        _distCache.Verify(
+            c => c.SetAsync(userId, It.IsAny<object>(), It.IsAny<TimeSpan?>(), It.IsAny<int>()),
+            Times.Never);
     }
 
     [Test]
@@ -61,7 +64,8 @@ public class EditLockServiceTests
         await _sut.SetAsync(testCabId, testUserId);
         await _sut.RemoveEditLockForUserAsync(testUserId);
         _distCache.Verify(
-            c => c.SetAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(d => !d.ContainsKey(testCabId)), TimeSpan.FromHours(1), -1),
+            c => c.SetAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(d => !d.ContainsKey(testCabId)),
+                TimeSpan.FromHours(1), -1),
             Times.Once);
     }
 }
