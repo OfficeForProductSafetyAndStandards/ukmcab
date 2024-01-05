@@ -15,7 +15,7 @@
             }
             else
             {
-                <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-back-link">Back</a>
+                <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@cabId" class="govuk-back-link">Back</a>
             }
         </div>
     </div>
@@ -193,7 +193,7 @@
                     }                   
                     else
                     {
-                        <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@cabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }
                 </div>
             </fieldset>
