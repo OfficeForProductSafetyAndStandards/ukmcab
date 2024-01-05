@@ -56,6 +56,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
                         new CABDetailsViewModel { IsNew = true };
             model.IsFromSummary = fromSummary;
+            model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
+
             return View(model);
         }
 
@@ -161,6 +163,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             model.DocumentStatus = document?.StatusValue ?? Status.Draft;
+            model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
             return View(model);
         }
 

@@ -47,6 +47,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsNew { get; set; }
 
         public bool IsCabNumberDisabled { get; set; }
+
+        public bool IsOPSSUser { get; set; }
     }
 
     public class CABDetailsViewModelValidator : AbstractValidator<CABDetailsViewModel>
@@ -64,6 +66,14 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
                     return model.SubmitType == Constants.SubmitType.Save || !isOpssUser || cabNumber.IsNotNullOrEmpty();
                 })
                 .WithMessage("Enter a CAB number");
+
+            RuleFor(x => x.CabNumberVisibility)
+              .Must((model, CabNumberVisibility) =>
+              {
+                  var isOpssUser = httpContextAccessor?.HttpContext?.User?.IsInRole(Core.Security.Roles.OPSS.Id) ?? false;
+                  return model.SubmitType == Constants.SubmitType.Save || !isOpssUser || CabNumberVisibility.IsNotNullOrEmpty();
+              })
+              .WithMessage("Select who should see the CAB number");
         }
     }
 }
