@@ -85,8 +85,7 @@ public class NotificationController : Controller
         }
 
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
-        var resultsPerPage = 10;
-        var skipTake = SkipTake.FromPage(pageNumber - 1, resultsPerPage);
+        var skipTake = SkipTake.FromPage(pageNumber - 1, Constants.RowsPerPage);
 
         var unassignedTask = _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
         var assignedToGroupTask =
@@ -114,7 +113,7 @@ public class NotificationController : Controller
                 (await unAssignedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = (await unAssignedItemsTask).Count,
                     TabId = UnassignedTabName
                 },
@@ -128,7 +127,7 @@ public class NotificationController : Controller
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = assignedToMe.Count,
                     TabId = AssignedToMeTabName
                 },
@@ -140,7 +139,7 @@ public class NotificationController : Controller
                 (await assignedToGroupItemsTask).Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = (await assignedToGroupItemsTask).Count,
                     TabId = AssignedToGroupTabName
                 },
@@ -153,7 +152,7 @@ public class NotificationController : Controller
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = (await completedItemsTask).Count,
                     TabId = CompletedTabName
                 },
