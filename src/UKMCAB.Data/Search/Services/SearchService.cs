@@ -20,7 +20,7 @@ namespace UKMCAB.Data.Search.Services
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
-                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0" },
+                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0", $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0"},
                 Filter = internalSearch ? "" : "StatusValue eq '30'"
             });
 
@@ -33,6 +33,7 @@ namespace UKMCAB.Data.Search.Services
                 result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
                 result.StatusValue = GetFacetList(facets[nameof(result.StatusValue)]);
                 result.CreatedByUserGroup = GetFacetList(facets[nameof(result.CreatedByUserGroup)]);
+                result.SubStatus = GetFacetList(facets[nameof(result.SubStatus)]);
             }
 
             return result;
@@ -136,6 +137,11 @@ namespace UKMCAB.Data.Search.Services
             {
                  var userGroups = string.Join(" or ", options.UserGroupsFilter.Select(ug => $"CreatedByUserGroup eq '{ug}'"));
                  filters.Add($"({userGroups})");
+            }
+            if (options.InternalSearch && options.SubStatusesFilter != null && options.SubStatusesFilter.Any())
+            {
+                var subStatuses = string.Join(" or ", options.SubStatusesFilter.Select(st => $"SubStatus eq '{st}'"));
+                filters.Add($"({subStatuses})");
             }
 
             // if internal search (user logged in) and non opss user (ukas user) then exclude opss draft cab from search

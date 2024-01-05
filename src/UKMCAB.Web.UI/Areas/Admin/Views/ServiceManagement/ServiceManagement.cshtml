@@ -103,8 +103,8 @@
                 </tr>
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__cell">
-                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement">
-                            Awaiting approval
+                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@SearchController.Routes.Search" asp-route-SubStatuses="1" asp-route-filterPath="/">
+                            Pending approval
                         </a>
                     </th>
                     <td class="govuk-table__cell">@Model.TotalCABsPendingApproval</td>

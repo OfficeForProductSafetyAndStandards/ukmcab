@@ -39,6 +39,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                 var statusInt = int.Parse(label);
                 return ((Status)statusInt).ToString();
             }
+            if (prefix.Equals("substatuses", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var subStatusInt = int.Parse(label);
+                return ((SubStatus)subStatusInt).ToString();
+            }
             if (prefix.Equals("usergroups", StringComparison.CurrentCultureIgnoreCase))
             {
                 return label.ToUpper();

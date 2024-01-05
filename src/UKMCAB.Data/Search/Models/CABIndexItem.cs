@@ -12,6 +12,11 @@ namespace UKMCAB.Data.Search.Models
         [SimpleField]
         public string Status { get; set; }
         [SearchableField(IsFacetable = true, IsFilterable = true)]
+        public string SubStatus { get; set; }
+        [SimpleField]
+        public string SubStatusName { get; set; }
+
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string LastUserGroup { get; set; }
 
         [SimpleField]
