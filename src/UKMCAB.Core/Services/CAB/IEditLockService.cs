@@ -23,4 +23,11 @@ public interface IEditLockService
     /// <param name="userId">User to clear lock for</param>
     /// <returns></returns>
     Task RemoveEditLockForUserAsync(string userId);
+    
+    /// <summary>
+    /// Remove cabId from edit lock
+    /// </summary>
+    /// <param name="cabId">Cab to clear lock for</param>
+    /// <returns></returns>
+    Task RemoveEditLockForCabAsync(string cabId);
 }

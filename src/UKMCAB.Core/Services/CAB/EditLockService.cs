@@ -39,4 +39,15 @@ public class EditLockService : IEditLockService
             await _distCache.SetAsync(EditLockCacheKey, _items);
         }
     }
+
+    ///<inheritdoc />
+    public async Task RemoveEditLockForCabAsync(string cabId)
+    {
+        var cabEditLockFound = _items.ContainsKey(cabId);
+        if (cabEditLockFound)
+        {
+            _items.Remove(cabId);
+            await _distCache.SetAsync(EditLockCacheKey, _items);
+        }
+    }
 }
