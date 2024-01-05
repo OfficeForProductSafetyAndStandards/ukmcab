@@ -60,7 +60,7 @@ public class UserAdminController : Controller
 
     private async Task<IActionResult> UserListAsync(int page, bool isLocked, UserAccountLockReason? lockReason, string title, string? sortField = null, string? sortDirection = null)
     {
-        var options = new UserAccountListOptions(SkipTake.FromPage(page-1,20), new SortBy(sortField, sortDirection ?? SortDirectionHelper.Descending), isLocked, lockReason, null);
+        var options = new UserAccountListOptions(SkipTake.FromPage(page-1,10), new SortBy(sortField, sortDirection ?? SortDirectionHelper.Descending), isLocked, lockReason, null);
         var accounts = await _userService.ListAsync(options);
         var pendingAccountsCount = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending);
 
@@ -92,7 +92,7 @@ public class UserAdminController : Controller
             Pagination = new PaginationViewModel
             {
                 PageNumber = page,
-                ResultsPerPage = 20,
+                ResultsPerPage = 10 ,
                 ResultType = string.Empty,
                 Total = await _userService.UserCountAsync(lockReason, isLocked)
             }
@@ -242,7 +242,7 @@ public class UserAdminController : Controller
     public async Task<IActionResult> AccountRequestList(int pageNumber = 1, [FromQuery(Name = "sf")] string? sortField = null, [FromQuery(Name = "sd")] string? sortDirection = null)
     {
         var count = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending);
-        var pendingAccounts = await _userService.ListRequestsAsync(new UserAccountRequestListOptions(SkipTake.FromPage(pageNumber - 1, 20), new SortBy(sortField, sortDirection ?? SortDirectionHelper.Descending), UserAccountRequestStatus.Pending));
+        var pendingAccounts = await _userService.ListRequestsAsync(new UserAccountRequestListOptions(SkipTake.FromPage(pageNumber - 1, 10), new SortBy(sortField, sortDirection ?? SortDirectionHelper.Descending), UserAccountRequestStatus.Pending));
         return View(new AccountRequestListViewModel
         {
             UserAccountRequests = pendingAccounts.ToList(),
@@ -254,7 +254,7 @@ public class UserAdminController : Controller
                 Total = count,
                 PageNumber = pageNumber,
                 ResultType = string.Empty,
-                ResultsPerPage = 20
+                ResultsPerPage = 10
             },
             SortField = sortField ?? nameof(UserAccountRequest.CreatedUtc),
             SortDirection = sortDirection ?? SortDirectionHelper.Descending,
