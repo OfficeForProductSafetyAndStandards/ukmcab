@@ -24,7 +24,7 @@
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__cell">
                     <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.UnassignedTabName" asp-route-pagenumber="1"  >
-                            Unassigned
+                            @("Assigned to " + Model.UserRoleLabel)
                         </a>
                     </th>
                     <td class="govuk-table__cell">@Model.UnassignedNotification</td>
@@ -32,7 +32,7 @@
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__cell">
                         <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.AssignedToGroupTabName" asp-route-pagenumber="1">
-                            Assigned
+                            @("Assigned to another " + Model.UserRoleLabel + " user")
                         </a>
                     </th>
                     <td class="govuk-table__cell">@Model.AssignedNotification</td>
