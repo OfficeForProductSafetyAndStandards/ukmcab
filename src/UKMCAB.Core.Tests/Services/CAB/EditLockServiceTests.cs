@@ -60,16 +60,23 @@ public class EditLockServiceTests
     [Test]
     public async Task UserFound_RemoveEditLockForUserAsync_CacheSetWithoutKey()
     {
-        var testCabId = _faker.Random.Word();
+        var testCabIds = _faker.Make(3, () => _faker.Random.Word());
         var testUserId = _faker.Random.Word();
-        await _sut.SetAsync(testCabId, testUserId);
+        foreach (var id in testCabIds)
+        {
+            await _sut.SetAsync(id, testUserId);
+        }
+
         await _sut.RemoveEditLockForUserAsync(testUserId);
-        _distCache.Verify(
-            c => c.SetAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(d => d.ContainsKey(testCabId)),
-                TimeSpan.FromHours(1), -1),
-            Times.Never);
+        foreach (var id in testCabIds)
+        {
+            _distCache.Verify(
+                c => c.SetAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(d => d.ContainsKey(id)),
+                    TimeSpan.FromHours(1), -1),
+                Times.Never);
+        }
     }
-    
+
     [Test]
     public async Task CabNotFound_RemoveEditLockForCabAsync_CacheNotSet()
     {

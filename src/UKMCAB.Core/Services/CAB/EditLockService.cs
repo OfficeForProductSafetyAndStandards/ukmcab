@@ -32,10 +32,13 @@ public class EditLockService : IEditLockService
     ///<inheritdoc />
     public async Task RemoveEditLockForUserAsync(string userId)
     {
-        var cabEditLockFound = _items.FirstOrDefault(i => i.Value.Equals(userId)).Key ?? null;
-        if (cabEditLockFound != null)
+        var cabEditLocksFound = _items.Where(i => i.Value.Equals(userId)).ToList();
+        if (cabEditLocksFound.Any())
         {
-            _items.Remove(cabEditLockFound);
+            foreach (var keyValuePair in cabEditLocksFound)
+            {
+                _items.Remove(keyValuePair.Key);
+            }
             await _distCache.SetAsync(EditLockCacheKey, _items);
         }
     }
