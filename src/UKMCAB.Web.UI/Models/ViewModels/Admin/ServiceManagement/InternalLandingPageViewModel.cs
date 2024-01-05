@@ -11,5 +11,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement
         public int UnassignedNotification { get; init; }
         public int AssignedNotification { get; init; }
         public int AssignedToMeNotification { get; init; }
+        public string? UserRoleLabel { get; init; }
     }
 }
