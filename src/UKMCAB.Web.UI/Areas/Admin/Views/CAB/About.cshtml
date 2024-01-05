@@ -68,17 +68,19 @@
 
                 </div>
 
+                @if (Model.IsOPSSUser)
+                {
+                    <div class="govuk-form-group">
+                        <h3 class="govuk-label-wrapper">
+                            <label class="govuk-label govuk-label--s" asp-for="CabNumberVisibility">Who should see the CAB number?</label>
+                        </h3>
+                        <p class="govuk-error-message">
+                            <span asp-validation-for="CabNumberVisibility" class="govuk-error-message"></span>
+                        </p>
+                        <select class="govuk-select" asp-for="CabNumberVisibility" asp-items="new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label))"></select>
+                    </div>
+                }
 
-                <div class="govuk-form-group">
-                    <h3 class="govuk-label-wrapper">
-                        <label class="govuk-label govuk-label--s" asp-for="CabNumberVisibility">Select an option for display of the CAB number</label>
-                    </h3>
-                    <p class="govuk-error-message">
-                        <span class="govuk-error-message"></span>
-                    </p>
-                    <select class="govuk-select" asp-for="CabNumberVisibility" asp-items="new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label))"></select>
-                </div>
-                
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AppointmentDate))">
                     <fieldset class="govuk-fieldset" role="group" aria-describedby="appointment-date-hint">
                         <h3 class="govuk-label-wrapper">

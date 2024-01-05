@@ -45,9 +45,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? CabNumberVisibility { get; set; }
         public string? SubmitType { get; set; }
         public bool IsNew { get; set; }
-
         public bool IsCabNumberDisabled { get; set; }
-
+        public bool IsCabNumberVisible { get; set; }
         public bool IsOPSSUser { get; set; }
     }
 

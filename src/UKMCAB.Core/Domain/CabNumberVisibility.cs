@@ -6,10 +6,11 @@ namespace UKMCAB.Core.Domain;
 
 public static class CabNumberVisibility
 {
-    public static CabNumberVisibilityOption Public { get; } = new(null, "Display for all users");
+    public static CabNumberVisibilityOption Default { get; } = new(null, "Select an option");
+    public static CabNumberVisibilityOption Public { get; } = new("public", "Display for all users");
     public static CabNumberVisibilityOption Internal { get; } = new("internal", "Display for internal users");
     public static CabNumberVisibilityOption Private { get; } = new("private", "Display for internal users excluding UKAS");
-    public static CabNumberVisibilityOption[] Options { get; } = new[] { Public, Internal, Private };
+    public static CabNumberVisibilityOption[] Options { get; } = new[] { Default, Public, Internal, Private };
     public static CabNumberVisibilityOption Get(string? id) => Options.FirstOrDefault(x => x.Id == id) ?? Public;
 
     public static string Display(string? optionId, ClaimsPrincipal principal, string? cabNumber) => CanDisplay(optionId, principal) ? cabNumber.Clean() : null;
