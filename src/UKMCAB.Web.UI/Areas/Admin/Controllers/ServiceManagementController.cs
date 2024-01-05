@@ -53,7 +53,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending),
                 UnassignedNotification = unassignedNotifications.Count,
                 AssignedNotification = assignedNotifications.Count,
-                AssignedToMeNotification = assignedNotificationToSpecificUser.Count
+                AssignedToMeNotification = assignedNotificationToSpecificUser.Count,
+                UserRoleLabel = userRole.Label
             });
         }
     }
