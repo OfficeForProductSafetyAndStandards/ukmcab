@@ -85,8 +85,7 @@ public class NotificationController : Controller
         }
 
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
-        var resultsPerPage = 10;
-        var skipTake = SkipTake.FromPage(pageNumber - 1, resultsPerPage);
+        var skipTake = SkipTake.FromPage(pageNumber - 1, Constants.RowsPerPage);
 
         var unassignedTask = _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
         var assignedToGroupTask =
@@ -114,51 +113,53 @@ public class NotificationController : Controller
                 (await unAssignedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = (await unAssignedItemsTask).Count,
                     TabId = UnassignedTabName
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(UnassignedTabName, sf)),
                 UnassignedTabName,
-                "unassigned", (await unAssignedItemsTask).Count, SentOnLabel),
+                $"There are no notifications assigned to {role.Label}", 
+                (await unAssignedItemsTask).Count, SentOnLabel),
             new NotificationsViewModelTable((await assignedToMeItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
                 (await assignedToMeItemsTask).Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = assignedToMe.Count,
                     TabId = AssignedToMeTabName
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(AssignedToMeTabName, sf)),
-                AssignedToMeTabName, "assigned to me",
+                AssignedToMeTabName, "There are no notifications assigned to you",
                 assignedToMe.Count, LastUpdatedLabel),
             new NotificationsViewModelTable((await assignedToGroupItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
                 (await assignedToGroupItemsTask).Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = (await assignedToGroupItemsTask).Count,
                     TabId = AssignedToGroupTabName
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(AssignedToGroupTabName, sf)),
-                AssignedToGroupTabName, "assigned to " + role.Label, (await assignedToGroupTask).Count),
+                AssignedToGroupTabName, $"There are no notifications assigned to another {role.Label} user",
+                (await assignedToGroupTask).Count),
             new NotificationsViewModelTable((await completedItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
                 (await completedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = (await completedItemsTask).Count,
                     TabId = CompletedTabName
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(CompletedTabName, sf)),
                 CompletedTabName,
-                "completed", (await completedItemsTask).Count, CompletedOn),
+                "There are no completed notifications", (await completedItemsTask).Count, CompletedOn),
             role.Label
         );
         return model;
