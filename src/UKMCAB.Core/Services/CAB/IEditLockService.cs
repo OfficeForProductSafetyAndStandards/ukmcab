@@ -25,7 +25,7 @@ public interface IEditLockService
     Task RemoveEditLockForUserAsync(string userId);
     
     /// <summary>
-    /// Remove cabId from edit lock
+    /// Remove cab from edit lock
     /// </summary>
     /// <param name="cabId">Cab to clear lock for</param>
     /// <returns></returns>
