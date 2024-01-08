@@ -15,6 +15,13 @@
     {
         reviewDate = revwDate.ToString("d MMM yyyy");
     }
+
+    var isPointOfContactPublicDisplay = string.Empty;
+
+    if (Model.CabContactViewModel.IsPointOfContactPublicDisplay != null)
+    {
+        isPointOfContactPublicDisplay = Model.CabContactViewModel.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted";
+    }
 }
 
 @if (Model.SubStatus == SubStatus.PendingApproval)
@@ -230,7 +237,7 @@ else if (Model.IsEditLocked)
                 Display of point of contact details
             </dt>
             <dd class="govuk-summary-list__value">
-                @(Model.CabContactViewModel.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted")
+                @Html.ValueOrNotProvided(isPointOfContactPublicDisplay)
             </dd>
         </div>
         <div class="govuk-summary-list__row">
@@ -482,7 +489,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
 
                 @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
                 {
-                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
                 {

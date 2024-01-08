@@ -145,6 +145,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
                 StatusesFilter = model.Statuses,
+                SubStatusesFilter = model.SubStatuses,
                 UserGroupsFilter = model.UserGroups,
                 IsOPSSUser = model.IsOPSSUser,
                 Select = _select,
@@ -209,8 +210,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
             if (model.InternalSearch)
             {
-                model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "Status", facets.StatusValue, model.Statuses);
+                model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
                 model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User groups", facets.CreatedByUserGroup, model.UserGroups);
+                model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", facets.SubStatus, model.SubStatuses);
             }
         }
 
