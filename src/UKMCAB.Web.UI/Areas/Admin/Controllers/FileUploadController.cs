@@ -127,7 +127,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion, false);
             TempData[Constants.TempDraftKey] = $"Draft record saved for {latestVersion.Name} <br>CAB number {latestVersion.CABNumber}";
-            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = latestVersion.CABId });
         }
 
         private string GetContentType(IFormFile? file, Dictionary<string, string> acceptedFileExtensionsContentTypes)
@@ -236,7 +236,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("CABManagement", "CABManagement", new { Area = "admin" });
+                    return RedirectToAction("CABManagement", "CABManagement", new { Area = "admin", unlockCab = id });
                 }
             }
 
@@ -567,7 +567,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private IActionResult SaveDraft(Document document)
         {
             TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
-            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = document.CABId });
         }
 
         [HttpGet]
@@ -709,7 +709,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    return RedirectToAction("CABManagement", "CABManagement", new { Area = "admin" });
+                    return RedirectToAction("CABManagement", "CABManagement", new { Area = "admin", unlockCAb = latestDocument.CABId });
                 }
             }
 

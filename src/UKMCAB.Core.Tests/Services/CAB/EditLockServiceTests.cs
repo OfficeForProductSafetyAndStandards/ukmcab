@@ -49,22 +49,54 @@ public class EditLockServiceTests
     [Test]
     public async Task UserNotFound_RemoveEditLockForUserAsync_CacheNotSet()
     {
+        _distCache.Invocations.Clear();
         var userId = _faker.Random.Word();
         await _sut.RemoveEditLockForUserAsync(userId);
         _distCache.Verify(
-            c => c.SetAsync(userId, It.IsAny<object>(), It.IsAny<TimeSpan?>(), It.IsAny<int>()),
+            c => c.SetAsync(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<TimeSpan?>(), It.IsAny<int>()),
             Times.Never);
     }
 
     [Test]
     public async Task UserFound_RemoveEditLockForUserAsync_CacheSetWithoutKey()
     {
+        var testCabIds = _faker.Make(3, () => _faker.Random.Word());
+        var testUserId = _faker.Random.Word();
+        foreach (var id in testCabIds)
+        {
+            await _sut.SetAsync(id, testUserId);
+        }
+
+        await _sut.RemoveEditLockForUserAsync(testUserId);
+        foreach (var id in testCabIds)
+        {
+            _distCache.Verify(
+                c => c.SetAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(d => d.ContainsKey(id)),
+                    TimeSpan.FromHours(1), -1),
+                Times.Never);
+        }
+    }
+
+    [Test]
+    public async Task CabNotFound_RemoveEditLockForCabAsync_CacheNotSet()
+    {
+        _distCache.Invocations.Clear();
+        var cabId = _faker.Random.Word();
+        await _sut.RemoveEditLockForCabAsync(cabId);
+        _distCache.Verify(
+            c => c.SetAsync(It.IsAny<string>(), It.IsAny<object>(), It.IsAny<TimeSpan?>(), It.IsAny<int>()),
+            Times.Never);
+    }
+
+    [Test]
+    public async Task CabFound_RemoveEditLockForCabAsync_CacheSetWithoutKey()
+    {
         var testCabId = _faker.Random.Word();
         var testUserId = _faker.Random.Word();
         await _sut.SetAsync(testCabId, testUserId);
-        await _sut.RemoveEditLockForUserAsync(testUserId);
+        await _sut.RemoveEditLockForCabAsync(testCabId);
         _distCache.Verify(
-            c => c.SetAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(d => !d.ContainsKey(testCabId)),
+            c => c.SetAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(d => !d.ContainsValue(testCabId)),
                 TimeSpan.FromHours(1), -1),
             Times.Once);
     }
