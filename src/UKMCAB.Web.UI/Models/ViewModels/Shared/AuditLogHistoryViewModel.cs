@@ -36,7 +36,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 {
                     UserId = al.UserId,
                     Username = al.UserName,
-                    UserGroup = al.UserRole,
+                    UserGroup =  Roles.NameFor(al.UserRole),
                     DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
                     InternalComment = al.Comment
