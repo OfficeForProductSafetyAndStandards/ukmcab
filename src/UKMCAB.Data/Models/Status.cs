@@ -12,6 +12,9 @@
     public enum SubStatus
     {
         None,
-        PendingApproval
+        PendingApproval,
+        PendingApprovalToArchive,
+        PendingApprovalToUnarchivePublish,
+        PendingApprovalToUnarchive
     }
 }
