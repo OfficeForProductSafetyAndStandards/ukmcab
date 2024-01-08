@@ -84,8 +84,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 {
                     UserId = al.UserId,
                     Username = al.UserName,
-                    UserGroup = Roles.List.First(r =>
-                        r.Label != null && r.Label.Equals(al.UserRole, StringComparison.CurrentCultureIgnoreCase)).Label,
+                    UserGroup = Roles.NameFor(al.UserRole),
                     DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
                     InternalComment = al.Comment,

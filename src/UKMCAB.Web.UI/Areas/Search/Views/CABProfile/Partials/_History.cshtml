@@ -55,7 +55,7 @@
                                         <a asp-area="admin" asp-controller="UserAdmin" asp-action="UserAccount" asp-route-id="@auditHistoryItem.UserId" asp-route-returnUrl="@returnUrl" class="govuk-link">@auditHistoryItem.Username</a>
                                     }
                                 </td>
-                                <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@auditHistoryItem.UserGroup.ToUpper()</td>
+                                <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@auditHistoryItem.UserGroup</td>
                                 <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
                                 <td class="govuk-table__cell">
                                     <label aria-hidden="true">Reason</label>
