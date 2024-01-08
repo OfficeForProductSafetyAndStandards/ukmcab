@@ -55,24 +55,20 @@
                                         <a asp-area="admin" asp-controller="UserAdmin" asp-action="UserAccount" asp-route-id="@auditHistoryItem.UserId" asp-route-returnUrl="@returnUrl" class="govuk-link">@auditHistoryItem.Username</a>
                                     }
                                 </td>
-                                <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@auditHistoryItem.Usergroup.ToUpper()</td>
+                                <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@auditHistoryItem.UserGroup.ToUpper()</td>
                                 <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
                                 <td class="govuk-table__cell">
                                     <label aria-hidden="true">Reason</label>
                                     @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment))
                                     {
-                                        var isUserInputComment = true;
-                                        if (auditHistoryItem.IsUserInputComment == null || auditHistoryItem.IsUserInputComment == false)
+                                        var isUserInputComment = auditHistoryItem.IsUserInputComment is not (null or false);
+                                        var parms = new Dictionary<string, string?>
                                         {
-                                            isUserInputComment = false;
-                                        }
-                                        var parms = new Dictionary<string, string>
-                                        {
-                                            { "date", @auditHistoryItem.Date },
-                                            { "time", @auditHistoryItem.Time },
-                                            { "username", @auditHistoryItem.Username },
+                                            { "date", auditHistoryItem.Date },
+                                            { "time", auditHistoryItem.Time },
+                                            { "username", auditHistoryItem.Username },
                                             { "userId", auditHistoryItem.UserId},
-                                            { "userGroup", auditHistoryItem.Usergroup},
+                                            { "userGroup", auditHistoryItem.UserGroup},
                                             { "auditAction", auditHistoryItem.Action },
                                             { "internalComment", auditHistoryItem.InternalComment },
                                             { "publicComment", auditHistoryItem.PublicComment },
@@ -98,10 +94,10 @@
                                     <label aria-hidden="true">Reason</label>
                                     @if (!string.IsNullOrWhiteSpace(auditHistoryItem.PublicComment))
                                     {
-                                        var parms = new Dictionary<string, string>
+                                        var parms = new Dictionary<string, string?>
                                         {
-                                            { "date", @auditHistoryItem.Date },
-                                            { "time", @auditHistoryItem.Time },                                            
+                                            { "date", auditHistoryItem.Date },
+                                            { "time", auditHistoryItem.Time },                                            
                                             { "auditAction", auditHistoryItem.Action },                                        
                                             { "publicComment", auditHistoryItem.PublicComment },
                                             { "returnUrl", returnUrl },
