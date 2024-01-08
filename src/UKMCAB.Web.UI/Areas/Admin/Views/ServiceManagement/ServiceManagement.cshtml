@@ -21,18 +21,30 @@
                     </a>
                 </caption>
                 <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">Unassigned</th>
-                        <td class="govuk-table__cell">123</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">Assigned</th>
-                        <td class="govuk-table__cell">123</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">Assigned to me</th>
-                        <td class="govuk-table__cell">123</td>
-                    </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.UnassignedTabName" asp-route-pagenumber="1"  >
+                            @("Assigned to " + Model.UserRoleLabel)
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell">@Model.UnassignedNotification</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.AssignedToGroupTabName" asp-route-pagenumber="1">
+                            @("Assigned to another " + Model.UserRoleLabel + " user")
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell">@Model.AssignedNotification</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.AssignedToMeTabName">
+                            Assigned to me
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell">@Model.AssignedToMeNotification</td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -47,7 +59,7 @@
 
                     <div id="search-keyword-container">
                         <div id="search-filter-keywords">
-                            <fieldset aria-describe="search the conformity assessment body databaase using keywords or search terms">
+                            <fieldset aria-describe="search the conformity assessment body database using keywords or search terms">
                                 <h2 class="govuk-heading-m">
                                     <a class="govuk-link govuk-link--no-visited-state" asp-route="@SearchController.Routes.Search">
                                         Search for a CAB
@@ -57,7 +69,7 @@
                                     Search for a CAB
                                 </label>
                                 <div id="search-filter-keywords-input-container">
-                                    <input type="text" asp-for="Keywords" class="govuk-input search-box" />
+                                    <input type="text" asp-for="Keywords" class="govuk-input search-box"/>
                                     <button id="search-keyword-button" type="submit">Search</button>
                                 </div>
                             </fieldset>
@@ -81,30 +93,30 @@
                     </a>
                 </caption>
                 <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement" asp-route-filter="draft">
-                                Draft
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell">@Model.TotalDraftCABs</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement">
-                                Awaiting approval
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell">@Model.TotalCABsPendingApproval</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@CABController.Routes.CreateNewCab">
-                                Create a CAB
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell"></td>
-                    </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement" asp-route-filter="draft">
+                            Draft
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell">@Model.TotalDraftCABs</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@SearchController.Routes.Search" asp-route-SubStatuses="1" asp-route-filterPath="/">
+                            Pending approval
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell">@Model.TotalCABsPendingApproval</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@CABController.Routes.CreateNewCab">
+                            Create a CAB
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell"></td>
+                </tr>
                 </tbody>
             </table>
         </div>
@@ -121,14 +133,14 @@
                         </a>
                     </caption>
                     <tbody class="govuk-table__body">
-                        <tr class="govuk-table__row">
-                            <th scope="row" class="govuk-table__cell">
-                                <a class="govuk-link govuk-link--no-visited-state" asp-route="@UserAdminController.Routes.UserAccountRequestsList">
-                                    Account requests
-                                </a>
-                            </th>
-                            <td class="govuk-table__cell">@Model.TotalAccountRequests</td>
-                        </tr>
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__cell">
+                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@UserAdminController.Routes.UserAccountRequestsList">
+                                Account requests
+                            </a>
+                        </th>
+                        <td class="govuk-table__cell">@Model.TotalAccountRequests</td>
+                    </tr>
                     </tbody>
                 </table>
             </div>

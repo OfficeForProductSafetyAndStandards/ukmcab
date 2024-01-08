@@ -15,29 +15,28 @@
     {
         reviewDate = revwDate.ToString("d MMM yyyy");
     }
+
+    var isPointOfContactPublicDisplay = string.Empty;
+
+    if (Model.CabContactViewModel.IsPointOfContactPublicDisplay != null)
+    {
+        isPointOfContactPublicDisplay = Model.CabContactViewModel.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted";
+    }
 }
+
 @if (Model.SubStatus == SubStatus.PendingApproval)
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner" />
 }
-@if (Model.ShowError)
+else if (!Model.EditByGroupPermitted)
 {
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-error-summary" data-module="govuk-error-summary">
-                <div role="alert">
-                    <div class="govuk-warning-text">
-                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                        <strong class="govuk-warning-text__text">
-                            <span class="govuk-warning-text__assistive">Warning</span>
-                            There is a problem, please try again
-                        </strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <partial model="@("This CAB profile cannot be edited as it's been created by an OPSS user.")" name="Partials/_PageContentBanner" />
 }
+else if (Model.IsEditLocked)
+{
+    <partial model="@("This CAB profile cannot be edited as it's being edited by another user.")" name="Partials/_PageContentBanner" />
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">@Model.TitleHint</span>
@@ -55,7 +54,7 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @if (Model.CanEdit)
+                        @if (Model.ShowEditActions)
                         {
                             <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
@@ -160,7 +159,7 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @if (Model.CanEdit)
+                        @if (Model.ShowEditActions)
                         {
                             <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
@@ -243,7 +242,7 @@
                             Display of point of contact details
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @(Model.CabContactViewModel.IsPointOfContactPublicDisplay ? "Public" : "Restricted")
+                            @Html.ValueOrNotProvided(isPointOfContactPublicDisplay)
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -265,7 +264,7 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @if (Model.CanEdit)
+                        @if (Model.ShowEditActions)
                         {
                             <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
@@ -351,7 +350,7 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @if (Model.CanEdit)
+                        @if (Model.ShowEditActions)
                         {
                             <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
@@ -404,7 +403,7 @@
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @if (Model.CanEdit)
+                        @if (Model.ShowEditActions)
                         {
                             <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
@@ -469,8 +468,7 @@
                 </div>
             }
 
-
-            @if (Model.SubStatus == SubStatus.None)
+            @if (Model is { ShowEditActions: true, SubStatus: SubStatus.None })
             {
                 <div>
                     <form method="post">
@@ -501,7 +499,7 @@
 
                             @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
                             {
-                                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                             }
                             else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
                             {
@@ -525,7 +523,6 @@
                     </div>
                 </div>
             }
-
         </fieldset>
     </div>
 </div>

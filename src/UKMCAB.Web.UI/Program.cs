@@ -112,6 +112,7 @@ builder.Services.AddSingleton<IWorkflowTaskRepository, WorkflowTaskRepository>()
 builder.Services.AddSingleton<IWorkflowTaskService, WorkflowTaskService>();
 builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
+builder.Services.AddSingleton<IEditLockService, EditLockService>();
 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IFeedService, FeedService>();

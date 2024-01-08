@@ -1,12 +1,5 @@
 
 #service-management-page {
-    /* Display set to none to hide Notification section until the Notification part of the app has been developed.
-      Uncomment line 44 as well
-  */
-    #notifications {
-        display: none;
-    }
-
     tbody{
 
         th{
@@ -47,8 +40,7 @@
         }
 
         #search-for-a-cab, #manage-users {
-            // Uncomment when Notification section is re-instated
-            //float: right;
+            float: right;
 
             table {
                 width: 100%;

@@ -4,6 +4,7 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
@@ -14,21 +15,27 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     {
         private readonly ICABAdminService _cabAdminService;
         private readonly IUserService _userService;
+        private readonly IEditLockService _editLockService;
 
         public static class Routes
         {
             public const string CABManagement = "admin.cab-management";
         }
 
-        public CabManagementController(ICABAdminService cabAdminService, IUserService userService)
+        public CabManagementController(ICABAdminService cabAdminService, IUserService userService, IEditLockService editLockService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
+            _editLockService = editLockService;
         }
 
         [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
-        public async Task<IActionResult> CABManagement(CABManagementViewModel model)
+        public async Task<IActionResult> CABManagement(CABManagementViewModel model, [FromQuery] string? unlockCab)
         {
+            if (!string.IsNullOrWhiteSpace(unlockCab))
+            {
+                await _editLockService.RemoveEditLockForCabAsync(unlockCab);
+            }
             if (string.IsNullOrEmpty(model.Sort))
             {
                 model.Sort = "lastupd-desc";
@@ -56,7 +63,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return View(model);
         }
-
         private void FilterSortAndPaginateItems(CABManagementViewModel model)
         {
             if (!string.IsNullOrEmpty(model.Filter))

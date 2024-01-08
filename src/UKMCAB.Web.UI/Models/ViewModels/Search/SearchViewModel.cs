@@ -21,6 +21,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         /// </remarks>
         public static string GetKeywordsQueryStringKey() => nameof(Keywords);
         public string? ReturnUrl { get; set; }
+        public string? FilterPath { get; set; }
         public bool InternalSearch { get; set; }
         public bool IsOPSSUser { get; set; }
 
@@ -35,6 +36,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string[]? LegislativeAreas { get; set; }
         public string[]? Statuses { get; set; }
         public string[]? UserGroups { get; set; }
+        public string[]? SubStatuses { get; set; }
         public string? Sort { get; set; }
         public int PageNumber { get; set; } = 1;
 
@@ -43,9 +45,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FilterViewModel? RegisteredOfficeLocationOptions { get; set; }
         public FilterViewModel? LegislativeAreaOptions { get; set; }
         public FilterViewModel? StatusOptions { get; set; }
-        public FilterViewModel? LastUserGroupOptions { get; set; }
+        public FilterViewModel? CreatedByUserGroupOptions { get; set; }
+        public FilterViewModel? SubStatusOptions { get; set; }
 
-        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && InternalSearch ? Statuses.Length : 0) + (UserGroups != null && InternalSearch ? UserGroups.Length : 0);
+        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && InternalSearch ? Statuses.Length : 0) + (SubStatuses != null && InternalSearch ? SubStatuses.Length : 0) + (UserGroups != null && InternalSearch ? UserGroups.Length : 0);
 
         public Dictionary<string, string[]> SelectedFilters => new Dictionary<string, string[]>
         {
@@ -54,11 +57,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             { nameof(LegislativeAreas), LegislativeAreas ?? Array.Empty<string>() },
             { nameof(Statuses), Statuses ?? Array.Empty<string>() },
             { nameof(UserGroups), UserGroups ?? Array.Empty<string>() },
+            { nameof(SubStatuses), SubStatuses ?? Array.Empty<string>() },
         };
 
         public string StatusLabel(string status)
         {
             return ((Status)int.Parse(status)).ToString();
+        }
+        public string SubStatusLabel(string substatus)
+        {
+            return ((SubStatus)int.Parse(substatus)).ToString();
         }
 
         public string UserGroupLabel(string userGroup)

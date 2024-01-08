@@ -8,6 +8,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         {
             Name = cab.Name;
             Status = cab.Status;
+            SubStatusName = cab.SubStatusName;
             CABId = cab.CABId;
             URLSlug = cab.URLSlug;
             Address = StringExt.Join(", ", cab.AddressLine1, cab.AddressLine2, cab.TownCity, cab.County, cab.Postcode, cab.Country);
@@ -15,7 +16,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             RegisteredOfficeLocation = cab.RegisteredOfficeLocation;
             RegisteredTestLocation = ListItems(cab.TestingLocations);
             LegislativeArea = ListItems(cab.LegislativeAreas);
-            UserGroup = cab.LastUserGroup;
+            UserGroup = cab.CreatedByUserGroup;
         }
 
         private string? ListItems(IEnumerable<string> list)
@@ -29,6 +30,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
         public string? Name { get; set; }
         public string Status { get; set; }
+        public string SubStatusName { get; set; }
         public string CABId { get; set; }
         public string URLSlug { get; set; }
         public string? Address { get; set; }

@@ -12,6 +12,7 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
@@ -25,6 +26,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IWorkflowTaskService _workflowTaskService;
         private readonly IAsyncNotificationClient _notificationClient;
         private readonly CoreEmailTemplateOptions _templateOptions;
+        private readonly IEditLockService _editLockService;
 
         public static class Routes
         {
@@ -35,14 +37,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CabSummary = "cab.summary";
         }
 
-        public CABController(ICABAdminService cabAdminService, IUserService userService,
-            IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient,
-            IOptions<CoreEmailTemplateOptions> templateOptions)
+        public CABController(
+            ICABAdminService cabAdminService, 
+            IUserService userService,
+            IWorkflowTaskService workflowTaskService, 
+            IAsyncNotificationClient notificationClient,
+            IOptions<CoreEmailTemplateOptions> templateOptions,
+            IEditLockService editLockService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
             _workflowTaskService = workflowTaskService;
             _notificationClient = notificationClient;
+            _editLockService = editLockService;
             _templateOptions = templateOptions.Value;
         }
 
@@ -50,6 +57,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> About(string id, bool fromSummary)
         {
             var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
+                        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
                         new CABDetailsViewModel { IsNew = true };
             model.IsFromSummary = fromSummary;
             return View(model);
@@ -149,10 +157,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId })
                             : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
                     }
-                    else
-                    {
-                        return SaveDraft(document);
-                    }
+
+                    return SaveDraft(document);
                 }
             }
 
@@ -355,6 +361,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
+            
+            //Todo - Edit lock will move to single edit button action
+            //Check Edit lock
+            var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
+            var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
 
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest);
@@ -373,18 +384,28 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     : WebUtility.UrlDecode(returnUrl),
                 CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) &&
                                        latest.StatusValue != Status.Published,
+                Status = latest.StatusValue,
                 SubStatus = latest.SubStatus,
                 ValidCAB = latest.StatusValue != Status.Published
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
                            && TryValidateModel(cabBody),
                 TitleHint = "Create a CAB",
-                Title = User.IsInRole(Roles.OPSS.Id) ? 
-                    latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing" 
-                    : "Check details before submitting for approval"
+                Title = User.IsInRole(Roles.OPSS.Id) ?
+                    latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
+                    : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
+                IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
+                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock
             };
 
             ModelState.Clear();
+            
+            //Todo - Edit lock will move to single edit button action
+            //Lock Record for edit
+            if (string.IsNullOrWhiteSpace(userIdWithLock) && latest.StatusValue == Status.Draft)
+            {
+                await _editLockService.SetAsync(latest.CABId, User.GetUserId()!);
+            }
 
             return View(model);
         }
@@ -398,14 +419,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-
+            
             if (submitType == Constants.SubmitType.Save)
             {
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
                     userAccount ?? throw new InvalidOperationException(), latest);
-                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+                return RedirectToCabManagementWithUnlockCab(latest.CABId);
             }
 
             var publishModel = new CABSummaryViewModel
@@ -440,8 +461,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            publishModel.ShowError = true;
-            return View(publishModel);
+            throw new InvalidOperationException("CAB invalid");
         }
 
 
@@ -490,10 +510,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (context.Result is ViewResult viewResult)
             {
                 if (viewResult.Model is CABSummaryViewModel summaryViewModel)
-                {
+                {   
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
-                    summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);
-                    summaryViewModel.CanEdit = summaryViewModel.SubStatus != SubStatus.PendingApproval;
+                    summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);                                       
+                    summaryViewModel.ShowEditActions = !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
                 {
@@ -514,7 +535,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             TempData[Constants.TempDraftKey] =
                 $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
-            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            return RedirectToCabManagementWithUnlockCab(document.CABId);
+        }
+
+        private RedirectToActionResult RedirectToCabManagementWithUnlockCab(string cabId)
+        {
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = cabId });
         }
     }
 }
