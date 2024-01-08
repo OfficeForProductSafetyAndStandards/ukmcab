@@ -30,9 +30,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
-        public async Task<IActionResult> CABManagement(CABManagementViewModel model)
+        public async Task<IActionResult> CABManagement(CABManagementViewModel model, [FromQuery] string? unlockCab)
         {
-            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
+            if (!string.IsNullOrWhiteSpace(unlockCab))
+            {
+                await _editLockService.RemoveEditLockForCabAsync(unlockCab);
+            }
             if (string.IsNullOrEmpty(model.Sort))
             {
                 model.Sort = "lastupd-desc";

@@ -157,10 +157,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId })
                             : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
                     }
-                    else
-                    {
-                        return SaveDraft(document);
-                    }
+
+                    return SaveDraft(document);
                 }
             }
 
@@ -428,7 +426,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
                     userAccount ?? throw new InvalidOperationException(), latest);
-                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+                return RedirectToCabManagementWithUnlockCab(latest.CABId);
             }
 
             var publishModel = new CABSummaryViewModel
@@ -537,7 +535,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             TempData[Constants.TempDraftKey] =
                 $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
-            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            return RedirectToCabManagementWithUnlockCab(document.CABId);
+        }
+
+        private RedirectToActionResult RedirectToCabManagementWithUnlockCab(string cabId)
+        {
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = cabId });
         }
     }
 }
