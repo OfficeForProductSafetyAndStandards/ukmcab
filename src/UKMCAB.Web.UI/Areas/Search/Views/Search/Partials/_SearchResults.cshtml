@@ -28,11 +28,26 @@
                 foreach (var filter in filterOption.Value)
                 {
                     var term = $"&{filterOption.Key}={WebUtility.UrlEncode(filter).Replace("%3A", "%3a")}";
-                    var filterPath = baseFilterPath.Replace(term, string.Empty);
-                    var label = filterOption.Key == "Statuses" ? Model.StatusLabel(filter) : filter;
-                    if (filterOption.Key == "UserGroups")
+                    var filterPath = Model.FilterPath != null ? Model.FilterPath : baseFilterPath.Replace(term, string.Empty);
+                    string label = string.Empty;
+
+                    switch (filterOption.Key)
                     {
-                        label = label.ToUpper();
+                        case "Statuses":
+                            label = Model.StatusLabel(filter);
+                            break;
+
+                        case "SubStatuses":
+                            label = Model.SubStatusLabel(filter);
+                            break;
+
+                        case "UserGroups":
+                            label = label.ToUpper();
+                            break;                   
+
+                        default:
+                            label = filter;
+                            break;
                     }
                     <a href="@filterPath" class="search-result-filter-link">@label&nbsp;&nbsp;x</a>
                }

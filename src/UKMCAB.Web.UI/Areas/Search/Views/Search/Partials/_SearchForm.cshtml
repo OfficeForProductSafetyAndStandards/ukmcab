@@ -39,6 +39,7 @@
                 @if (Model.InternalSearch)
                 {
                     <partial name="Partials/_SearchFilter" model="Model.StatusOptions" />
+                    <partial name="Partials/_SearchFilter" model="Model.SubStatusOptions" />
                     <partial name="Partials/_SearchFilter" model="Model.CreatedByUserGroupOptions" />
                 }
                 <div id="search-filter-button-wrapper">
