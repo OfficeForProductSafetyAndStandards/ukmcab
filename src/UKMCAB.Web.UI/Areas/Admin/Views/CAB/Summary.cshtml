@@ -1,8 +1,10 @@
-﻿@using UKMCAB.Core.Domain;
+﻿@using System.Net;
+@using UKMCAB.Core.Domain;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
 @{
+    var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
     string appointmentDate = Constants.NotProvided;
     string reviewDate = Constants.NotProvided;
 
@@ -40,8 +42,14 @@ else if (Model.IsEditLocked)
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">@Model.TitleHint</span>
-        <h1 class="govuk-heading-l">@Model.Title</h1>
+        <h1 class="govuk-heading-l">@Model.CabDetailsViewModel.Name</h1>
     </div>
+    @if (!Model.SectionEditEnabled)
+    {
+        <div class="width-three-tenth ukmcab-float__right ukmcab-text-align-right ukmcab-padding-right-10 ukmcab-padding-top-20">
+            <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-enableSectionEdit="@true" asp-route-returnUrl="@returnUrl">Edit</a>
+        </div>
+    }    
 </div>
 <div class="govuk-grid-row">
 <div class="govuk-grid-column-full">

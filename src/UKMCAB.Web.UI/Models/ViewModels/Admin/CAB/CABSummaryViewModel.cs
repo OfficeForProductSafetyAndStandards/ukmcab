@@ -23,5 +23,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsOPSSOrInCreatorUserGroup { get; set; }
         public bool IsEditLocked { get; set; }
         public bool EditByGroupPermitted { get; set; }
+        public bool SectionEditEnabled { get; set; }
     }
 }

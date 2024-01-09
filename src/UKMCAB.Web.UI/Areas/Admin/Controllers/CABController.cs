@@ -154,7 +154,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     if (submitType == Constants.SubmitType.Continue)
                     {
                         return !model.IsNew
-                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId })
+                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId, enableSectionEdit = true })
                             : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
                     }
 
@@ -242,7 +242,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary
-                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId })
+                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, enableSectionEdit = true })
                         : RedirectToAction("SchedulesUpload", "FileUpload",
                             new { Area = "admin", id = latestDocument.CABId });
                 }
@@ -338,7 +338,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary
-                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId })
+                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, enableSectionEdit = true })
                         : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
                 }
 
@@ -354,7 +354,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid() });
 
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
-        public async Task<IActionResult> Summary(string id, string? returnUrl)
+        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? enableSectionEdit)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -390,12 +390,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
                            && TryValidateModel(cabBody),
-                TitleHint = "Create a CAB",
+                TitleHint = "CAB Profile",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
                     latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
-                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock
+                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
+                SectionEditEnabled = enableSectionEdit ?? false
             };
 
             ModelState.Clear();
@@ -513,7 +514,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {   
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
                     summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);                                       
-                    summaryViewModel.ShowEditActions = !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.ShowEditActions = summaryViewModel.SectionEditEnabled && !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                     summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)

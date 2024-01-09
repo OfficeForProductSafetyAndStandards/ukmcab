@@ -232,7 +232,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (fromSummary)
                 {
-                    return RedirectToAction("Summary", "CAB", new { id });
+                    return RedirectToAction("Summary", "CAB", new { id, enableSectionEdit = true });
                 }
                 else
                 {
@@ -293,7 +293,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary ?
-                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId }) :
+                        RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, enableSectionEdit = true }) :
                         RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
                 }
 
@@ -705,7 +705,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (fromSummary)
                 {
-                    return RedirectToAction("Summary", "CAB", new { id });
+                    return RedirectToAction("Summary", "CAB", new { id, enableSectionEdit = true });
                 }
                 else
                 {
@@ -764,7 +764,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId });
+                    return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, enableSectionEdit = true });
                 }
 
                 if (submitType == Constants.SubmitType.Save)
