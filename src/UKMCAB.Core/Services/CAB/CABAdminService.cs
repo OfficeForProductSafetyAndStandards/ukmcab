@@ -173,7 +173,7 @@ namespace UKMCAB.Core.Services.CAB
         {
             if (submitForApproval)
             {
-                draft.SubStatus = SubStatus.PendingApproval;
+                draft.SubStatus = SubStatus.PendingApprovalToPublish;
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
             }
 
