@@ -96,8 +96,18 @@ else if (Model.IsEditLocked)
                 }
             </dd>
         </div>
-
-        @if (Model.CanSubmitForApproval)
+        @if (CabNumberVisibility.CanDisplay(Model.CabDetailsViewModel.CabNumberVisibility, User))
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    CAB number
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.CabDetailsViewModel.CABNumber
+                </dd>
+            </div>
+        }
+        else if (Model.CanSubmitForApproval)
         {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
@@ -108,21 +118,6 @@ else if (Model.IsEditLocked)
                 </dd>
             </div>
         }
-        else
-        {
-            if (CabNumberVisibility.CanDisplay(Model.CabDetailsViewModel.CabNumberVisibility, User))
-            {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        CAB number
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.CabDetailsViewModel.CABNumber
-                    </dd>
-                </div>
-            }
-        }
-
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
                 Appointment date (optional)

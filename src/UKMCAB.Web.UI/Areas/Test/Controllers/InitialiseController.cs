@@ -1,14 +1,11 @@
 ﻿using Microsoft.ApplicationInsights;
-using Microsoft.AspNetCore.Authorization;
-using UKMCAB.Core.Security;
 using UKMCAB.Data;
 using UKMCAB.Infrastructure.Logging;
 using LogEntry = UKMCAB.Infrastructure.Logging.Models.LogEntry;
 
 namespace UKMCAB.Web.UI.Areas.Test.Controllers
 {
-    [Route("api/[controller]")]
-    [Authorize(Policy = Policies.SuperAdmin)]
+    [Route("api/[controller]")]    
     [ApiController]
     public class InitialiseController : Controller
     {
@@ -16,40 +13,47 @@ namespace UKMCAB.Web.UI.Areas.Test.Controllers
         private readonly TelemetryClient _temClient;
         private readonly ILogger<InitialiseController> _logger;
         private readonly ILoggingService _loggingService;
+        private readonly IConfiguration _configuration;
+        private readonly IWebHostEnvironment _environment;
 
-        public InitialiseController(IInitialiseDataService initialiseDataService, TelemetryClient temClient, ILogger<InitialiseController> logger, ILoggingService loggingService)
+        public InitialiseController(IInitialiseDataService initialiseDataService, TelemetryClient temClient, ILogger<InitialiseController> logger, ILoggingService loggingService, IConfiguration configuration, IWebHostEnvironment environment)
         {
             _initialiseDataService = initialiseDataService;
             _temClient = temClient;
             _logger = logger;
             _loggingService = loggingService;
+            _configuration = configuration;
+            _environment = environment;
         }
 
         [HttpPost]
         public async Task<IActionResult> Post()
         {
-            var cutOffDate = new DateTime(2023, 5, 27);
-
-            _ = Task.Run(async () =>
+            // check if force initialise data appsetting is enabled and environment is non production
+            if (Convert.ToBoolean(_configuration["ForceInitialiseData"]) && !_environment.IsProduction())
             {
-                try
+                _ = Task.Run(async () =>
                 {
-                    _temClient.TrackEvent("init_started");
-                    if (DateTime.UtcNow < cutOffDate)
+                    try
                     {
-                        await _initialiseDataService.InitialiseAsync(true);
+                        _temClient.TrackEvent("init_started");
+                        await _initialiseDataService.InitialiseAsync(true);                        
+                        _temClient.TrackEvent("init_complete");
                     }
-                    _temClient.TrackEvent("init_complete");
-                }
-                catch (Exception e)
-                {
-                    _temClient.TrackException(e);
-                    _logger.LogError(e, "Initialisation failed");
-                    _loggingService.Log(new LogEntry(e));
-                }
-            });
-
-            return Accepted();
+                    catch (Exception e)
+                    {
+                        _temClient.TrackException(e);
+                        _logger.LogError(e, "Initialisation failed");
+                        _loggingService.Log(new LogEntry(e));
+                    }
+                });
+                return Accepted();
+            }
+            else
+            {
+                await Task.CompletedTask;
+                return NoContent();
+            }           
         }
     }
 }

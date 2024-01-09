@@ -1,16 +1,30 @@
+@using UKMCAB.Core.Domain;
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.ApproveCABViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Approve CAB @Model.CABName</h1>
-    </div>
+        <h1 class="govuk-heading-l">Approve CAB @Model.CabName</h1>
+    </div>    
     <div class="govuk-grid-column-two-thirds">
         <form id="approvecabform" method="post">
-            <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CABNumber))">
-                <govuk-input asp-for="CABNumber" label-class="govuk-label--s">
-                    <govuk-input-label is-page-heading="false">CAB number</govuk-input-label>
+            <div class="govuk-!-width-two-thirds">
+                <govuk-input asp-for="CABNumber">
+                    <govuk-input-label class="govuk-label--s">CAB number</govuk-input-label>                   
                 </govuk-input>
+                <govuk-select name="CabNumberVisibility" label-class="govuk-label--s" asp-for="CabNumberVisibility">
+                    <govuk-select-label>Who should see the CAB number?</govuk-select-label>                   
+                    @foreach (var item in new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label)))
+                    {
+                        if (item.Value == Model.CabNumberVisibility)
+                        {
+                            <govuk-select-item value="@item.Value" selected>@item.Text</govuk-select-item>
+                        }
+                        else
+                        {
+                            <govuk-select-item value="@item.Value">@item.Text</govuk-select-item>
+                        }
+                    }
+                </govuk-select>
             </div>
-
             <govuk-warning-text icon-fallback-text="Warning">Approved CABs will be published and the user group will be notified.</govuk-warning-text>
             <div class="govuk-button-group">
                 <govuk-button type="submit">Approve</govuk-button>
