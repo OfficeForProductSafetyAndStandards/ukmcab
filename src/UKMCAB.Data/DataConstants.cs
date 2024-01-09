@@ -36,6 +36,14 @@ public class DataConstants
         public const string A2ZSort = "a2z";
         public const string Z2ASort = "z2a";
     }
+    public static class CabNumberVisibilityOptions
+    {
+        public const string Default = null;
+        public const string Public = "public";
+        public const string Internal = "internal";
+        public const string Private = "private";
+    }
+
     public static class Lists
     {
         public static readonly List<string> DocumentCategories = new()

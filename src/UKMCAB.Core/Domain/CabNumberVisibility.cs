@@ -1,15 +1,17 @@
 ﻿using System.Security.Claims;
 using UKMCAB.Common;
 using UKMCAB.Core.Security;
+using UKMCAB.Data;
 
 namespace UKMCAB.Core.Domain;
 
 public static class CabNumberVisibility
 {
-    public static CabNumberVisibilityOption Public { get; } = new(null, "Display for all users");
-    public static CabNumberVisibilityOption Internal { get; } = new("internal", "Display for internal users");
-    public static CabNumberVisibilityOption Private { get; } = new("private", "Display for internal users excluding UKAS");
-    public static CabNumberVisibilityOption[] Options { get; } = new[] { Public, Internal, Private };
+    public static CabNumberVisibilityOption Default { get; } = new(DataConstants.CabNumberVisibilityOptions.Default, "Select an option");
+    public static CabNumberVisibilityOption Public { get; } = new(DataConstants.CabNumberVisibilityOptions.Public, "Display for all users");
+    public static CabNumberVisibilityOption Internal { get; } = new(DataConstants.CabNumberVisibilityOptions.Internal, "Display for internal users");
+    public static CabNumberVisibilityOption Private { get; } = new(DataConstants.CabNumberVisibilityOptions.Private, "Display for internal users excluding UKAS");
+    public static CabNumberVisibilityOption[] Options { get; } = new[] { Default, Public, Internal, Private };
     public static CabNumberVisibilityOption Get(string? id) => Options.FirstOrDefault(x => x.Id == id) ?? Public;
 
     public static string Display(string? optionId, ClaimsPrincipal principal, string? cabNumber) => CanDisplay(optionId, principal) ? cabNumber.Clean() : null;
