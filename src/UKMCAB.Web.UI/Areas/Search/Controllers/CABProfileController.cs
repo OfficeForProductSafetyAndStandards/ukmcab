@@ -112,13 +112,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("profile/draft/{id:guid}", Name = Routes.CabDraftProfile), Authorize]
-        public async Task<IActionResult> DraftAsync(string id)
+        public async Task<IActionResult> DraftAsync(string id, int pagenumber = 1)
         {
             var cabDocument = await _cachedPublishedCabService.FindDraftDocumentByCABIdAsync(id);
 
             if (cabDocument != null)
             {
-                var cab = await GetCabProfileViewModel(cabDocument, null, true, false, 0);
+                var cab = await GetCabProfileViewModel(cabDocument, null, true,false, pagenumber);
                 return View("Index", cab);
             }
             else
