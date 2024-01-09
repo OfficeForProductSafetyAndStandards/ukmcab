@@ -21,3 +21,12 @@
         border-color: govuk-colour("dark-grey");
     }
 }
+
+.desktop-no-display {
+    .cab-status-tag--pending-approval {
+        margin-left: 0 !important;
+    }
+    .cab-detail-date-meta{
+        margin-bottom: 20px !important;
+    }
+}

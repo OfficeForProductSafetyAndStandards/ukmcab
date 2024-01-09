@@ -77,7 +77,12 @@
         <div class="cab-detail-date-meta">
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5 govuk-!-margin-top-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Html.Conditional(Model.IsPublished, "cab-status-tag--published", "cab-status-tag--archived")">@Model.Status</strong><strong class="cab-status-tag cab-status-tag--pending-approval">@Model.SubStatus</strong></span>
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Html.Conditional(Model.IsPublished, "cab-status-tag--published", "cab-status-tag--archived")">@Model.Status</strong></span>
+        </div>
+        <div>
+            <span class="govuk-caption-m govuk-!-display-inline-block">
+                <strong class="cab-status-tag cab-status-tag--pending-approval">@Model.SubStatus</strong>
+            </span>
         </div>
     </div>
 
@@ -125,15 +130,13 @@
     </div>
 </div>
 <div class="govuk-grid-row">
-
     <div class="govuk-grid-column-full mobile-no-display">
         <div class="cab-detail-date-meta">
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block">Status: <strong class="cab-status-tag @Html.Conditional(Model.IsPublished, "cab-status-tag--published", "cab-status-tag--archived")">@Model.Status</strong><strong class="cab-status-tag cab-status-tag--pending-approval">@Model.SubStatus</strong></span>
+            <span class="govuk-caption-m govuk-!-display-inline-block">Status: <strong class="cab-status-tag @Html.Conditional(Model.IsPublished, "cab-status-tag--published", "cab-status-tag--archived")">@Model.Status</strong> <strong class="cab-status-tag cab-status-tag--pending-approval">@Model.SubStatus</strong></span>
         </div>
     </div>
-
 </div>
 
 <div class="govuk-grid-row">
