@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
 using UKMCAB.Core.Security;
 using UKMCAB.Data;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
@@ -212,7 +213,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
                 model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User groups", facets.CreatedByUserGroup, model.UserGroups);
-                model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", facets.SubStatus, model.SubStatuses);
+                var pendingApprovalSubStatus = facets.SubStatus.Where(s => s != ((int)SubStatus.None).ToString()).ToList();
+                model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
             }
         }
 

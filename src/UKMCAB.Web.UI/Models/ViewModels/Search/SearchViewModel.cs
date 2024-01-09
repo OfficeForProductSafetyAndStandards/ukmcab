@@ -66,7 +66,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         }
         public string SubStatusLabel(string substatus)
         {
-            return ((SubStatus)int.Parse(substatus)).ToString();
+            var subStatus = ((SubStatus)int.Parse(substatus)).ToString() ?? string.Empty;
+            return string.Join(" ", System.Text.RegularExpressions.Regex.Split(subStatus, @"(?<!^)(?=[A-Z])")).ToSentenceCase()!;
         }
 
         public string UserGroupLabel(string userGroup)
