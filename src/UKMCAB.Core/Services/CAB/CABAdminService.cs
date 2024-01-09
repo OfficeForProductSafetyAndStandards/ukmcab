@@ -211,6 +211,10 @@ namespace UKMCAB.Core.Services.CAB
             Guard.IsTrue(previous == null || !string.IsNullOrEmpty(deleteReason),
                 $"The delete reason must be specified when an earlier document version exists.");
 
+            // Delete the draft CAB record.
+            Guard.IsTrue(await _cabRepository.Delete(draft),
+                    $"Failed to delete draft version, CAB Id: {cabId}");
+
             // Add audit log entry to previous version, if one exists.
             if (previous != null)
             {
@@ -218,9 +222,7 @@ namespace UKMCAB.Core.Services.CAB
                 await _cabRepository.UpdateAsync(previous);
             }
 
-            // Delete the draft CAB record and update the search index & caches.
-            Guard.IsTrue(await _cabRepository.Delete(draft),
-                    $"Failed to delete draft version, CAB Id: {cabId}");
+            // Update the search index & caches
             await _cachedSearchService.RemoveFromIndexAsync(draft.id);
             await RefreshCaches(draft.CABId, draft.URLSlug);
             await RecordStatsAsync();

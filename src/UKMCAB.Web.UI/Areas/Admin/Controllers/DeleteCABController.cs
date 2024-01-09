@@ -115,11 +115,13 @@ public class DeleteCABController : Controller
         var assignee = new User(draftCreator.Id, draftCreator.FirstName, draftCreator.Surname,
             cabCreatorRoleId, draftCreator.EmailAddress ?? throw new InvalidOperationException());
 
+        var userGroup = Roles.NameFor(deleter.RoleId);
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", cabName },
-            { "Name", deleter.FirstAndLastName },
-            { "UserGroup", Roles.NameFor(deleter.RoleId) },
+            { "UserGroup", userGroup },
+            { "HasDeleteReason", !string.IsNullOrEmpty(deleteReason) },
+            { "HasNoDeleteReason", string.IsNullOrEmpty(deleteReason) },
             { "DeleteReason", deleteReason ?? string.Empty },
             {
                 "NotificationsURL", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
@@ -136,12 +138,12 @@ public class DeleteCABController : Controller
                 assignee.RoleId,
                 assignee,
                 DateTime.Now,
-                $"The draft record for {cabName} has been deleted. Reason: {deleteReason}",
+                deleteReason ?? $"{userGroup} has deleted CAB {cabName}",
                 deleter,
                 DateTime.Now,
                 false,
                 null,
                 true,
-                cabId));
+                deleteReason != null ? cabId : null));
     }
 }
