@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data;
+﻿using UKMCAB.Common.Extensions;
+using UKMCAB.Data;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
@@ -66,7 +67,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         }
         public string SubStatusLabel(string substatus)
         {
-            return ((SubStatus)int.Parse(substatus)).ToString();
+            return ((SubStatus)int.Parse(substatus)).GetEnumDescription();
         }
 
         public string UserGroupLabel(string userGroup)

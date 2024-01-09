@@ -7,7 +7,7 @@
 <div id="search-results-list-column" class="govuk-grid-column-two-thirds govuk-body">
 
     <div class="search-results-pagination-container search-results-pagination-container-top">
-        <partial name="Partials/_Pagination" model="Model.Pagination" />
+        <partial name="Partials/_Pagination" model="Model.Pagination"/>
     </div>
 
     <div id="search-results-mobile-filters">
@@ -43,14 +43,15 @@
 
                         case "UserGroups":
                             label = label.ToUpper();
-                            break;                   
+                            break;
 
                         default:
                             label = filter;
                             break;
                     }
+
                     <a href="@filterPath" class="search-result-filter-link">@label&nbsp;&nbsp;x</a>
-               }
+                }
             }
         </div>
     }
@@ -81,13 +82,21 @@
                     <li class="search-result-list-item">
                         @if (Model.InternalSearch && searchResult.Status == Status.Draft.ToString())
                         {
-                            <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@searchResult.CABId" asp-route-returnUrl="@Model.ReturnUrl" class="search-result-list-item-arrow" name="@searchResult.Name"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
-                            <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@searchResult.CABId" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
+                            <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@searchResult.CABId" asp-route-returnUrl="@Model.ReturnUrl" class="search-result-list-item-arrow" name="@searchResult.Name">
+                                <span class="govuk-visually-hidden">More information on @searchResult.Name</span>
+                            </a>
+                            <h3 class="govuk-heading-m search-result-list-item-link">
+                                <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@searchResult.CABId" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a>
+                            </h3>
                         }
                         else
                         {
-                            <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="search-result-list-item-arrow" name="@searchResult.Name"><span class="govuk-visually-hidden">More information on @searchResult.Name</span></a>
-                            <h3 class="govuk-heading-m search-result-list-item-link"><a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a></h3>
+                            <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="search-result-list-item-arrow" name="@searchResult.Name">
+                                <span class="govuk-visually-hidden">More information on @searchResult.Name</span>
+                            </a>
+                            <h3 class="govuk-heading-m search-result-list-item-link">
+                                <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@searchResult.URLSlug" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">@searchResult.Name</a>
+                            </h3>
                         }
                         <ul class="search-result-list-item-details">
                             @if (Model.InternalSearch)
@@ -95,6 +104,10 @@
                                 <li class="search-result-list-item-detail">
                                     <div class="search-result-label">
                                         Status: <span class="search-result-status-label search-result-@searchResult.Status.ToLower()">@searchResult.Status</span>
+                                        @if (string.IsNullOrWhiteSpace(searchResult.SubStatusName))
+                                        {
+                                            <span class="search-result-status-label search-result-pending-approval">@searchResult.SubStatusName</span>
+                                        }
                                     </div>
                                     @if (Model.IsOPSSUser && searchResult.Status == Status.Draft.ToString())
                                     {
@@ -118,7 +131,9 @@
     else
     {
         <div id="search-no-results-container" aria-describe="Results of search of conformity assessment bodies returned no results">
-            <p class="govuk-body"><a name="no-results">There are no matching results.</a></p>
+            <p class="govuk-body">
+                <a name="no-results">There are no matching results.</a>
+            </p>
             <p class="govuk-body">Please try:</p>
             <ul class="govuk-list govuk-list--bullet">
                 <li>removing filters</li>
@@ -130,7 +145,7 @@
     }
 
     <div class="search-results-pagination-container">
-        <partial name="Partials/_Pagination" model="Model.Pagination" />
+        <partial name="Partials/_Pagination" model="Model.Pagination"/>
     </div>
 
 </div>
