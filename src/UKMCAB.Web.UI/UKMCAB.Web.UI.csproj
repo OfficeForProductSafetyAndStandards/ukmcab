@@ -55,6 +55,7 @@
     <PackageReference Include="morelinq" Version="3.4.2" />
     <PackageReference Include="Polly" Version="7.2.4" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
+    <PackageReference Include="System.Text.Json" Version="8.0.0" />
     <PackageReference Include="UKMCAB.Subscriptions.Core" Version="1.1.26" />
     <PackageReference Include="YamlDotNet" Version="13.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
