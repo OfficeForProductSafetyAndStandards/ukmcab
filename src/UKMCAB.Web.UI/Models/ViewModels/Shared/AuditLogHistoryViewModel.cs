@@ -36,7 +36,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 {
                     UserId = al.UserId,
                     Username = al.UserName,
-                    Usergroup = al.UserRole,
+                    UserGroup =  Roles.NameFor(al.UserRole),
                     DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
                     InternalComment = al.Comment
@@ -84,7 +84,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 {
                     UserId = al.UserId,
                     Username = al.UserName,
-                    Usergroup = al.UserRole,
+                    UserGroup = Roles.NameFor(al.UserRole),
                     DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
                     InternalComment = al.Comment,
@@ -149,12 +149,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public DateTime DateAndTime { get; set; }
         public string Date => DateAndTime.ToString("dd/MM/yyyy");
         public string Time => DateAndTime.ToString("HH:mm");
-        public string Username { get; set; }
-        public string UserId { get; set; }
-        public string Usergroup { get; set; }
-        public string Action { get; set; }
-        public string InternalComment { get; set; }
-        public string PublicComment { get; set; }
-        public bool? IsUserInputComment { get; set; }
+        public string? Username { get; init; }
+        public string? UserId { get; init; }
+        public string? UserGroup { get; init; }
+        public string? Action { get; init; }
+        public string? InternalComment { get; init; }
+        public string? PublicComment { get; init; }
+        public bool? IsUserInputComment { get; init; }
     }
 }

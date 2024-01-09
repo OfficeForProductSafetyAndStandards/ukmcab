@@ -5,6 +5,7 @@ using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Workflow;
+using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Domain;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
@@ -37,15 +38,16 @@ public class NotificationController : Controller
     }
 
     private readonly IWorkflowTaskService _workflowTaskService;
-    private readonly ICABAdminService _cabAdminService;
     private readonly IDistCache _distCache;
+    private readonly ICachedPublishedCABService _cachedPublishedCABService;
     
     public NotificationController(IWorkflowTaskService workflowTaskService, ICABAdminService cabAdminService,
-        IDistCache distCache)
+        IDistCache distCache, 
+        ICachedPublishedCABService cachedPublishedCABService)
     {
         _workflowTaskService = workflowTaskService;
-        _cabAdminService = cabAdminService;
         _distCache = distCache;
+        _cachedPublishedCABService = cachedPublishedCABService;
     }
 
     [HttpGet(Name = Routes.Notifications)]
@@ -83,81 +85,81 @@ public class NotificationController : Controller
         }
 
         var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
-        var resultsPerPage = 5;
-        var skipTake = SkipTake.FromPage(pageNumber - 1, 5);
+        var skipTake = SkipTake.FromPage(pageNumber - 1, Constants.RowsPerPage);
 
-        var unassigned = await _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
-        var assignedToGroup =
-            await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(role.Id, userId);
-        var completed =
-            await _workflowTaskService.GetCompletedForRoleIdAsync(role.Id);
+        var unassignedTask = _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
+        var assignedToGroupTask =
+            _workflowTaskService.GetAssignedToGroupForRoleIdAsync(role.Id, userId);
+        var completedTask =
+            _workflowTaskService.GetCompletedForRoleIdAsync(role.Id);
 
-        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
-            unAssignedItems =
-                await BuildTableItemsAsync(unassigned, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
-            assignedToMeItems =
-                await BuildTableItemsAsync(assignedToMe, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
-            assignedToGroupItems =
-                await BuildTableItemsAsync(assignedToGroup, sf, sd);
-        List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>
-            completedItems =
-                await BuildTableItemsAsync(completed, sf, sd);
-
+        Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
+            unAssignedItemsTask =
+                BuildTableItemsAsync(await unassignedTask, sf, sd);
+        Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
+            assignedToMeItemsTask =
+                BuildTableItemsAsync(assignedToMe, sf, sd);
+        Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
+            assignedToGroupItemsTask =
+                BuildTableItemsAsync(await assignedToGroupTask, sf, sd);
+        Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
+            completedItemsTask =
+                BuildTableItemsAsync(await completedTask, sf, sd);
 
         var model = new NotificationsViewModel
         (
             Constants.PageTitle.Notifications,
-            new NotificationsViewModelTable(unAssignedItems.Any(), sf, sd,
-                unAssignedItems.Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
+            new NotificationsViewModelTable((await unAssignedItemsTask).Any(), sf, sd,
+                (await unAssignedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
-                    Total = unAssignedItems.Count,
+                    ResultsPerPage = Constants.RowsPerPage,
+                    Total = (await unAssignedItemsTask).Count,
                     TabId = UnassignedTabName
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(UnassignedTabName, sf)),
                 UnassignedTabName,
-                "unassigned", unAssignedItems.Count, SentOnLabel),
-            new NotificationsViewModelTable(assignedToMeItems.Any(), sf, SortDirectionHelper.Get(sd),
-                assignedToMeItems.Skip(skipTake.Skip).Take(skipTake.Take),
+                $"There are no notifications assigned to {role.Label}", 
+                (await unAssignedItemsTask).Count, SentOnLabel),
+            new NotificationsViewModelTable((await assignedToMeItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
+                (await assignedToMeItemsTask).Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
+                    ResultsPerPage = Constants.RowsPerPage,
                     Total = assignedToMe.Count,
                     TabId = AssignedToMeTabName
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(AssignedToMeTabName, sf)),
-                AssignedToMeTabName, "assigned to me",
+                AssignedToMeTabName, "There are no notifications assigned to you",
                 assignedToMe.Count, LastUpdatedLabel),
-            new NotificationsViewModelTable(assignedToGroupItems.Any(), sf, SortDirectionHelper.Get(sd),
-                assignedToGroupItems.Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
+            new NotificationsViewModelTable((await assignedToGroupItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
+                (await assignedToGroupItemsTask).Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
-                    Total = assignedToGroup.Count,
+                    ResultsPerPage = Constants.RowsPerPage,
+                    Total = (await assignedToGroupItemsTask).Count,
                     TabId = AssignedToGroupTabName
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(AssignedToGroupTabName, sf)),
-                AssignedToGroupTabName, "assigned to " + role.Label, assignedToGroup.Count),
-            new NotificationsViewModelTable(completedItems.Any(), sf, SortDirectionHelper.Get(sd),
-                completedItems.Skip(skipTake.Skip).Take(skipTake.Take),
+                AssignedToGroupTabName, $"There are no notifications assigned to another {role.Label} user",
+                (await assignedToGroupTask).Count),
+            new NotificationsViewModelTable((await completedItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
+                (await completedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take),
                 new PaginationViewModel
                 {
                     PageNumber = pageNumber,
-                    ResultsPerPage = resultsPerPage,
-                    Total = completed.Count,
+                    ResultsPerPage = Constants.RowsPerPage,
+                    Total = (await completedItemsTask).Count,
                     TabId = CompletedTabName
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(CompletedTabName, sf)),
                 CompletedTabName,
-                "completed", completedItems.Count, CompletedOn),
+                "There are no completed notifications", (await completedItemsTask).Count, CompletedOn),
             role.Label
         );
         return model;
@@ -211,8 +213,8 @@ public class NotificationController : Controller
             string? cabName = null;
             if (notification.CABId.HasValue)
             {
-                var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(notification.CABId.ToString()!);
-                cabName = cabs.FirstOrDefault()?.Name;
+                 var cabs = await _cachedPublishedCABService.FindAllDocumentsByCABIdAsync(notification.CABId.ToString()!);
+                 cabName = cabs.FirstOrDefault()?.Name;
             }
 
             var item = (From: notification.Submitter.FirstAndLastName,

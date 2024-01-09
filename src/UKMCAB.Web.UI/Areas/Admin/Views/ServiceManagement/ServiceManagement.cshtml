@@ -12,7 +12,7 @@
         <h1 class="govuk-heading-l">Manage the service</h1>
     </div>
 
-    <div id="notifications" class="govuk-grid-column-one-third">
+    <div id="notifications" class="govuk-grid-column-one-half">
         <div>
             <table class="govuk-table">
                 <caption class="govuk-table__caption govuk-table__caption--m">
@@ -24,7 +24,7 @@
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__cell">
                     <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.UnassignedTabName" asp-route-pagenumber="1"  >
-                            Unassigned
+                            @("Assigned to " + Model.UserRoleLabel)
                         </a>
                     </th>
                     <td class="govuk-table__cell">@Model.UnassignedNotification</td>
@@ -32,7 +32,7 @@
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__cell">
                         <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.AssignedToGroupTabName" asp-route-pagenumber="1">
-                            Assigned
+                            @("Assigned to another " + Model.UserRoleLabel + " user")
                         </a>
                     </th>
                     <td class="govuk-table__cell">@Model.AssignedNotification</td>
@@ -51,9 +51,6 @@
     </div>
 
     <div id="search-for-a-cab" class="govuk-grid-column-one-half">
-        <div class="service-management-col-width-65-percent">
-
-
             <form id="search-results-form" asp-route="@SearchController.Routes.Search" method="get" novalidate>
                 <div id="search-results" class="govuk-grid-row">
 
@@ -77,11 +74,9 @@
                     </div>
                 </div>
             </form>
-        </div>
-
     </div>
 
-    <div class="govuk-grid-column-one-third">
+    <div class="govuk-grid-column-one-half">
         <div id="manage-cabs">
 
             <table class="govuk-table">
@@ -125,7 +120,6 @@
     @if (User.HasClaim(Claims.UserManagement))
     {
         <div id="manage-users" class="govuk-grid-column-one-half">
-            <div class="service-management-col-width-65-percent">
                 <table class="govuk-table">
                     <caption class="govuk-table__caption govuk-table__caption--m">
                         <a class="govuk-link govuk-link--no-visited-state" asp-route="@UserAdminController.Routes.UserAccountRequestsList">
@@ -143,7 +137,6 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
         </div>
     }
 </div>
