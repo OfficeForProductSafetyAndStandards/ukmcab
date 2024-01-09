@@ -15,4 +15,9 @@
         color: govuk-colour("dark-grey");
         border-color: govuk-colour("dark-grey");
     }
+    &.cab-status-tag--pending-approval {
+        background-color:  govuk-colour("yellow");
+        color: govuk-colour("dark-grey");
+        border-color: govuk-colour("dark-grey");
+    }
 }

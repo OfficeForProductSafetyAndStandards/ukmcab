@@ -6,6 +6,7 @@ using System.Xml;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
@@ -213,6 +214,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                 Status = cabDocument.Status,
+                SubStatus = cabDocument.SubStatus.GetEnumDescription(),
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
                 ProductSchedules = new CABDocumentsViewModel
                 {
