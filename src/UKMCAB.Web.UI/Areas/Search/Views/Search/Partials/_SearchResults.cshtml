@@ -104,7 +104,7 @@
                                 <li class="search-result-list-item-detail">
                                     <div class="search-result-label">
                                         Status: <span class="search-result-status-label search-result-@searchResult.Status.ToLower()">@searchResult.Status</span>
-                                        @if (string.IsNullOrWhiteSpace(searchResult.SubStatusName))
+                                        @if (!string.IsNullOrWhiteSpace(searchResult.SubStatusName))
                                         {
                                             <span class="search-result-status-label search-result-pending-approval">@searchResult.SubStatusName</span>
                                         }

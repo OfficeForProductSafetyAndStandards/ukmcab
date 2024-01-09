@@ -24,6 +24,6 @@ public static class EnumExtension
             return attribute.Description;
         }
 
-        throw new ArgumentException("Not found.", nameof(enumValue));
+        return null!;
     }
 }
