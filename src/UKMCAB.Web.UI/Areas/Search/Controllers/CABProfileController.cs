@@ -118,7 +118,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (cabDocument != null)
             {
-                var cab = await GetCabProfileViewModel(cabDocument, null, true,false, pagenumber);
+                var cab = await GetCabProfileViewModel(cabDocument, null, true, false, pagenumber);
                 return View("Index", cab);
             }
             else
@@ -133,7 +133,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
             if (cabDocument == null)
             {
-                throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
+                throw new NotFoundException($"The CAB with the following CAB url count not be found: {id}");
             }
 
             var feed = _feedService.GetSyndicationFeed(cabDocument.Name, Request, cabDocument, Url);
