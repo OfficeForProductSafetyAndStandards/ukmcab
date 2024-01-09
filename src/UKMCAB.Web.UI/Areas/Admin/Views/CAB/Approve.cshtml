@@ -3,29 +3,27 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Approve CAB @Model.CabName</h1>
-    </div>
-    <div class="govuk-grid-column-two-thirds">
-        <partial name="Partials/_ValidationSummary" model="null" />
-    </div>
+    </div>    
     <div class="govuk-grid-column-two-thirds">
         <form id="approvecabform" method="post">
             <div class="govuk-!-width-two-thirds">
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CABNumber))">
-                    <label class=" govuk-label govuk-label--s" asp-for="CABNumber">
-                        CAB number
-                    </label>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="CABNumber" class="govuk-error-message"></span>
-                    </p>
-                    <input asp-for="CABNumber" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.CABNumber))" autocomplete="cabnumber" aria-required="true"/>
-                </div>              
-                <div class="govuk-form-group  @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CabNumberVisibility))">
-                    <label class="govuk-label govuk-label--s" asp-for="CabNumberVisibility">Who should see the CAB number?</label>
-                    <p class="govuk-error-message">
-                        <span asp-validation-for="CabNumberVisibility" class="govuk-error-message"></span>
-                    </p>
-                    <select class="govuk-select" asp-for="CabNumberVisibility" asp-items="new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label))"></select>
-                </div>
+                <govuk-input asp-for="CABNumber">
+                    <govuk-input-label class="govuk-label--s">CAB number</govuk-input-label>                   
+                </govuk-input>
+                <govuk-select name="CabNumberVisibility" label-class="govuk-label--s" asp-for="CabNumberVisibility">
+                    <govuk-select-label>Who should see the CAB number?</govuk-select-label>                   
+                    @foreach (var item in new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label)))
+                    {
+                        if (item.Value == Model.CabNumberVisibility)
+                        {
+                            <govuk-select-item value="@item.Value" selected>@item.Text</govuk-select-item>
+                        }
+                        else
+                        {
+                            <govuk-select-item value="@item.Value">@item.Text</govuk-select-item>
+                        }
+                    }
+                </govuk-select>
             </div>
             <govuk-warning-text icon-fallback-text="Warning">Approved CABs will be published and the user group will be notified.</govuk-warning-text>
             <div class="govuk-button-group">

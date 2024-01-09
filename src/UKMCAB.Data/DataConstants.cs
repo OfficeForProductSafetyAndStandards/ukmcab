@@ -38,7 +38,7 @@ public class DataConstants
     }
     public static class CabNumberVisibilityOptions
     {
-        public const string Default = "none";
+        public const string Default = null;
         public const string Public = "public";
         public const string Internal = "internal";
         public const string Private = "private";

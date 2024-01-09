@@ -70,7 +70,7 @@
 
                 @if (Model.IsOPSSUser)
                 {
-                    <div class="govuk-form-group">
+                    <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CabNumberVisibility))">
                         <h3 class="govuk-label-wrapper">
                             <label class="govuk-label govuk-label--s" asp-for="CabNumberVisibility">Who should see the CAB number?</label>
                         </h3>
