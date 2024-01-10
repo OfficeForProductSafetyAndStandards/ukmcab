@@ -374,6 +374,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var cabDetails = new CABDetailsViewModel(latest);
             var cabContact = new CABContactViewModel(latest);
             var cabBody = new CABBodyDetailsViewModel(latest);
+            var auditLogOrdered = latest.AuditLog.OrderBy(a => a.DateTime).ToList();
+            var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
             var model = new CABSummaryViewModel
             {
                 CABId = latest.CABId,
@@ -393,13 +395,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
                            && TryValidateModel(cabBody),
-                TitleHint = "CAB Profile",
+                TitleHint = "CAB profile",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
                     latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
                 IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
-                SectionEditEnabled = enableSectionEdit ?? false
+                SectionEditEnabled = enableSectionEdit ?? false,
+                LastModifiedDate = latest.LastUpdatedDate,
+                PublishedDate = publishedAudit?.DateTime ?? null,
             };
 
             ModelState.Clear();
