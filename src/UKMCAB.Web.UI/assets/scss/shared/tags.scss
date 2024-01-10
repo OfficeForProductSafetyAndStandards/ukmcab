@@ -15,15 +15,10 @@
         color: govuk-colour("dark-grey");
         border-color: govuk-colour("dark-grey");
     }
-    &.cab-status-tag--pending-approval {
-        background-color:  govuk-colour("yellow");
-        color: govuk-colour("dark-grey");
-        border-color: govuk-colour("dark-grey");
-    }
 }
 
 .desktop-no-display {
-    .cab-status-tag--pending-approval {
+    .govuk-tag--yellow {
         margin-left: 0 !important;
     }
     .cab-detail-date-meta{

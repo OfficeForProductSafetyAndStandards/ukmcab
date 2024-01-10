@@ -13,6 +13,7 @@ namespace UKMCAB.Data.Models
 
     public enum SubStatus
     {
+        [Description("None")]
         None,
         [Description("Pending approval to publish")]
         PendingApprovalToPublish,
