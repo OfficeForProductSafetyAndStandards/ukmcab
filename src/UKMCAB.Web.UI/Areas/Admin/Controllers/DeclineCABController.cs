@@ -50,7 +50,7 @@ public class DeclineCABController : Controller
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(cabId) ??
                        throw new InvalidOperationException("CAB not found");
-        if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApproval)
+        if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
         {
             throw new PermissionDeniedException("CAB status needs to be Pending Approval for decline");
         }

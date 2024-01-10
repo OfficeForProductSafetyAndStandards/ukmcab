@@ -48,8 +48,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             return View(new InternalLandingPageViewModel
             {
-                TotalDraftCABs = docs.Where(d => d.StatusValue == Status.Draft).Count(),
-                TotalCABsPendingApproval = docs.Where(d => d.SubStatus == SubStatus.PendingApproval).Count(),
+                TotalDraftCABs = docs.Count(d => d.StatusValue == Status.Draft),
+                TotalCABsPendingApproval = docs.Count(d => d.SubStatus != SubStatus.None),
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending),
                 UnassignedNotification = unassignedNotifications.Count,
                 AssignedNotification = assignedNotifications.Count,

@@ -403,7 +403,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                            && TryValidateModel(cabBody),
                 TitleHint = "Create a CAB",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
-                    latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
+                    latest.SubStatus == SubStatus.PendingApprovalToPublish ? "Check details before approving or declining" : "Check details before publishing"
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
                 IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock
@@ -524,8 +524,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {   
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
                     summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);                                       
-                    summaryViewModel.ShowEditActions = !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
-                    summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.ShowEditActions = !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
                 {

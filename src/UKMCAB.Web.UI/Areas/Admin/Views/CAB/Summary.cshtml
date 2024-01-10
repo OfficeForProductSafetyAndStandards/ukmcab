@@ -24,7 +24,7 @@
     }
 }
 
-@if (Model.SubStatus == SubStatus.PendingApproval)
+@if (Model.SubStatus == SubStatus.PendingApprovalToPublish)
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
@@ -508,7 +508,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
         </form>
     </div>
 }
-else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApproval })
+else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish })
 {
     <div>
         <div class="govuk-button-group">

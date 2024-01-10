@@ -48,7 +48,7 @@ public class ApproveCABController : Controller
     public async Task<IActionResult> ApproveAsync(Guid cabId)
     {
         var document = await GetDocumentAsync(cabId);
-        if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApproval)
+        if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
         {
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
         }

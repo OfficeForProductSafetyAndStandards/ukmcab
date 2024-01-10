@@ -31,6 +31,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             nameof(CABIndexItem.CABId),
             nameof(CABIndexItem.Status),
+            nameof(CABIndexItem.SubStatus),
             nameof(CABIndexItem.Name),
             nameof(CABIndexItem.URLSlug),
             nameof(CABIndexItem.AddressLine1),
