@@ -77,9 +77,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             model.InternalSearch = internalSearch;
             model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
-            var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
             
-            await SetFacetOptions(model);
+            await SetFacetOptions(model, model.SelectAllPendingApproval);
+
+            var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
 
             model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
 
@@ -201,7 +202,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return string.IsNullOrEmpty(model.Keywords) ? "UKMCAB search results" : $"UKMCAB search results for \"{model.Keywords.Trim()}\"";
         }
 
-        private async Task SetFacetOptions(SearchViewModel model)
+        private async Task SetFacetOptions(SearchViewModel model, bool? selectAllPendingApproval)
         {
             var facets = await _cachedSearchService.GetFacetsAsync(model.InternalSearch);
 
@@ -215,6 +216,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
                 model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User groups", facets.CreatedByUserGroup, model.UserGroups);
                 var pendingApprovalSubStatus = facets.SubStatus.Where(s => s != ((int)SubStatus.None).ToString()).ToList();
+                if (selectAllPendingApproval == true)
+                {
+                    model.SubStatuses = pendingApprovalSubStatus.ToArray();
+                } 
                 model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
             }
         }
