@@ -32,6 +32,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? Name { get; set; }
         public DateTime? AppointmentDate { get; set; }
         public DateTime? ReviewDate { get; set; }
+        
+        public bool IsOPSSUser { get; init; }
 
         public string? UKASReferenceNumber { get; set; }
 

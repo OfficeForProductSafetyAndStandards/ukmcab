@@ -26,5 +26,7 @@ public enum TaskType
     RequestToUnarchiveDeclined,
     UserAccountApproved,
     [Description("Draft CAB deleted")]
-    DraftCabDeletedFromArchiving
+    DraftCabDeletedFromArchiving,
+    [Description("Draft CAB deleted")]
+    DraftCabDeleted
 }

@@ -409,11 +409,11 @@
         </div>
     </div>
 </div>
-@if (Model.UnarchiveTaskType != null)
+@if (Model is { UnarchiveTaskType: not null, IsOPSSUser: true } )
 {
     <div class="govuk-form-group">
         <p class='govuk-body'>
-            <strong class="govuk-body govuk-!-font-weight-bold">CAB unarchive request</strong>
+            <strong class="govuk-body govuk-!-font-weight-bold">Request to unarchive CAB</strong>
         </p>
         <p class='govuk-body'>
             @{

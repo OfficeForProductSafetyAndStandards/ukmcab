@@ -54,8 +54,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? Phone { get; set; }
         public string? PointOfContactName { get; set; }
         public string? PointOfContactEmail { get; set; }
-        public string? PointOfContactPhone { get; set; }
-        [Required(ErrorMessage = "Select who should see the point of contact details")]
+        public string? PointOfContactPhone { get; set; }       
         public bool? IsPointOfContactPublicDisplay { get; set; }
         [Required(ErrorMessage = "Enter a registered office location")]
         public string? RegisteredOfficeLocation { get; set; }

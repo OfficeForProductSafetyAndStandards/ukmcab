@@ -318,6 +318,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
+            if (submitType == Constants.SubmitType.Continue)
+            {
+                if((!string.IsNullOrWhiteSpace(model.PointOfContactName) || !string.IsNullOrWhiteSpace(model.PointOfContactEmail) || !string.IsNullOrWhiteSpace(model.PointOfContactPhone)) && !model.IsPointOfContactPublicDisplay.HasValue)
+                {
+                    ModelState.AddModelError("IsPointOfContactPublicDisplay", "Select who should see the point of contact details");
+                }
+            }
+
             if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
             {
                 latestDocument.AddressLine1 = model.AddressLine1;
