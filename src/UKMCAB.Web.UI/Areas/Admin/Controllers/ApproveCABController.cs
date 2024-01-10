@@ -129,6 +129,11 @@ public class ApproveCABController : Controller
         };
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
             _templateOptions.NotificationCabApproved, personalisation);
+
+        // send email to submitter group email 
+        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+            _templateOptions.NotificationCabApproved, personalisation);
+
         var user =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
             throw new InvalidOperationException();

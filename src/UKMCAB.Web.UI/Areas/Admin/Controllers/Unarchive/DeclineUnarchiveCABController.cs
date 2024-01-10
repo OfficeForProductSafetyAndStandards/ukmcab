@@ -144,7 +144,10 @@ public class DeclineUnarchiveCABController : Controller
         };
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
             _templateOptions.NotificationUnarchiveDeclined, personalisation);
-        
+
+        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+           _templateOptions.NotificationUnarchiveDeclined, personalisation);
+
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
                TaskType.RequestToUnarchiveDeclined,

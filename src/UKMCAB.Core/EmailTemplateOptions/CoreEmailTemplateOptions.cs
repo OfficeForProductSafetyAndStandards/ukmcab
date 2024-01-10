@@ -24,4 +24,6 @@ public partial class CoreEmailTemplateOptions
     public string AccountUnlocked { get; set; } = null!;
     public string AccountArchived { get; set; } = null!;
     public string AccountUnarchived { get; set; } = null!;
+
+    public string UkasGroupEmail { get; set; } = null!;
 }

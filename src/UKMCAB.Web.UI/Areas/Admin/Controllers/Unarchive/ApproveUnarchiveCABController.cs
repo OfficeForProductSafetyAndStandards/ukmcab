@@ -173,7 +173,10 @@ public class ApproveUnarchiveCABController : Controller
         };
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
             _templateOptions.NotificationUnarchiveApproved, personalisation);
-        
+
+        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+           _templateOptions.NotificationUnarchiveApproved, personalisation);
+
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
                 publish ? TaskType.RequestToUnarchiveForPublishApproved : TaskType.RequestToUnarchiveForDraftApproved,
