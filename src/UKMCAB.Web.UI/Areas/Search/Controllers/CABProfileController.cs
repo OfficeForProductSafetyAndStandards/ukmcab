@@ -242,6 +242,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     }).ToList() ?? new List<FileUpload>(),
                     DocumentType = DataConstants.Storage.Documents
                 },
+                GovernmentUserNotes = new UserNotesViewModel(cabDocument.GovernmentUserNotes, pagenumber),
                 FeedLinksViewModel = new FeedLinksViewModel
                 {
                     FeedUrl = Url.RouteUrl(Routes.CabFeed, new { id = cabDocument.CABId }),
