@@ -124,6 +124,11 @@ public class DeclineCABController : Controller
         };
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
             _templateOptions.NotificationCabDeclined, personalisation);
+
+        // send email to submitter group email 
+        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+            _templateOptions.NotificationCabDeclined, personalisation);
+
         var user =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
             throw new InvalidOperationException();
