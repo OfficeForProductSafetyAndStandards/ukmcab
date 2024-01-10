@@ -197,6 +197,37 @@ namespace UKMCAB.Core.Services.CAB
             return draft;
         }
 
+        public async Task DeleteDraftDocumentAsync(UserAccount userAccount, Guid cabId, string? deleteReason)
+        {
+            var documents = await FindAllDocumentsByCABIdAsync(cabId.ToString());
+            var draft = documents.SingleOrDefault(d => d is { StatusValue: Status.Draft });
+            if (draft == null)
+            {
+                // An accidental double submit might cause this action to be repeated so just return without doing anything.
+                return;
+            }
+
+            var previous = documents.OrderByDescending(x => x.LastUpdatedDate).FirstOrDefault(d => d.id != draft.id);
+            Guard.IsTrue(previous == null || !string.IsNullOrEmpty(deleteReason),
+                $"The delete reason must be specified when an earlier document version exists.");
+
+            // Delete the draft CAB record.
+            Guard.IsTrue(await _cabRepository.Delete(draft),
+                    $"Failed to delete draft version, CAB Id: {cabId}");
+
+            // Add audit log entry to previous version, if one exists.
+            if (previous != null)
+            {
+                previous.AuditLog.Add(new Audit(userAccount, AuditCABActions.DraftDeleted, deleteReason));
+                await _cabRepository.UpdateAsync(previous);
+            }
+
+            // Update the search index & caches
+            await _cachedSearchService.RemoveFromIndexAsync(draft.id);
+            await RefreshCaches(draft.CABId, draft.URLSlug);
+            await RecordStatsAsync();
+        }
+
         /// <summary>
         /// Updates document with Pending approval with audit action
         /// </summary>

@@ -487,6 +487,11 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
                     Save as draft
                 </button>
 
+                @if (Model.CabDetailsViewModel.DocumentStatus == Status.Draft)
+                {
+                    <govuk-button-link class="govuk-button--warning" asp-area="admin" asp-controller="cab" asp-action="delete" asp-route-id="@Model.CABId">Delete draft</govuk-button-link>
+                }
+
                 @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
                 {
                     <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>

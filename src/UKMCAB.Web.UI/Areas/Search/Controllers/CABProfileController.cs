@@ -167,7 +167,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
 
             var isUnarchivedRequest =
-                auditLogOrdered.Any(al => al.Action == AuditCABActions.UnarchiveRequest); //todo should be notifications
+                auditLogOrdered.Last().Action == AuditCABActions.UnarchiveRequest; //todo should be notifications
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit = isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
             var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
@@ -392,7 +392,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
 
             await _notificationClient.SendEmailAsync(receiverEmailAddress,
-                _templateOptions.NotificationDraftCabDeleted, personalisation);
+                _templateOptions.NotificationDraftCabDeletedFromArchiving, personalisation);
         }
 
         #endregion
