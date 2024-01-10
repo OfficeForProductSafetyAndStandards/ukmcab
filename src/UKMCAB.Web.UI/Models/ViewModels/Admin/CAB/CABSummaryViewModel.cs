@@ -6,6 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     {
         public Status Status { get; set; }
         public SubStatus SubStatus { get; set; }
+        public string? SubStatusName { get; set; }
         public string? CABId { get; set; }
         public CABDetailsViewModel? CabDetailsViewModel { get; set; }
         public CABContactViewModel? CabContactViewModel { get; set; }
