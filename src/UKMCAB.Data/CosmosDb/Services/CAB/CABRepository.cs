@@ -27,7 +27,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             var items = await Query<Document>(_container, document => true);
 
             // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-            if (items.Any() && items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true))
+            if (items.Any() && (force || items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true)))
             {
                 foreach (var document in items)
                 {
@@ -36,6 +36,13 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     {
                         UpdateCreatedByUserGroup(document);
                     }
+
+                    // for old records if cab number exists and cabnumber visibility is empty/null then update to public
+                    if(!string.IsNullOrWhiteSpace(document.CABNumber) && string.IsNullOrWhiteSpace(document.CabNumberVisibility))
+                    {   
+                        UpdateCabNumberVisibilityNullToPublic(document);
+                    }
+
                     await UpdateAsync(document);
                 }
             }
@@ -46,6 +53,11 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         {
             var userRole = document.AuditLog.Any() ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole : string.Empty;
             document.CreatedByUserGroup = userRole;
+        }
+
+        private void UpdateCabNumberVisibilityNullToPublic(Document document)
+        {           
+            document.CabNumberVisibility = DataConstants.CabNumberVisibilityOptions.Public;
         }
 
         public async Task<Document> CreateAsync(Document document)
