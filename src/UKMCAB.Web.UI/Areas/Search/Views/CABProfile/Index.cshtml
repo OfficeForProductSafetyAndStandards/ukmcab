@@ -54,19 +54,7 @@
 </div>
 @if (Model.IsArchived)
 {
-    <div class="govuk-notification-banner" role="region"
-         aria-labelledby="govuk-notification-banner-title"
-         data-module="govuk-notification-banner">
-        <div class="govuk-notification-banner__content">
-
-            <div class="govuk-warning-text">
-                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">
-                    <p class="govuk-notification-banner__heading">Archived on @Model.ArchivedDate</p>
-                </strong>
-            </div>
-        </div>
-    </div>
+    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 
 <div class="govuk-grid-row">
