@@ -191,6 +191,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ArchiveReason = isArchived && archiveAudit != null ? archiveAudit.Comment : string.Empty,
                 AuditLogHistory = history,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/" : WebUtility.UrlDecode(returnUrl),
+                IsOPSSUser =  User.IsInRole(Roles.OPSS.Id),
                 CABId = cabDocument.CABId,
                 CABUrl = cabDocument.URLSlug,
                 PublishedDate = publishedAudit?.DateTime ?? null,
