@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Core.Domain;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
@@ -47,30 +48,34 @@ public class ApproveCABController : Controller
     public async Task<IActionResult> ApproveAsync(Guid cabId)
     {
         var document = await GetDocumentAsync(cabId);
-        if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApproval)
+        if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
         {
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
         }
 
         var model = new ApproveCABViewModel("Approve CAB",
-            document.Name ?? throw new InvalidOperationException());
+             document.Name ?? throw new InvalidOperationException());
 
         return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
     }
 
     [HttpPost("{cabId}", Name = Routes.Approve)]
     public async Task<IActionResult> ApprovePostAsync(Guid cabId,
-        [Bind(nameof(ApproveCABViewModel.CABNumber))] ApproveCABViewModel vm)
+        [Bind(nameof(ApproveCABViewModel.CABNumber), nameof(CabNumberVisibility))] ApproveCABViewModel vm)
     {
         var document = await GetDocumentAsync(cabId);
-        ModelState.Remove(nameof(ApproveCABViewModel.CABName));
+        ModelState.Remove(nameof(ApproveCABViewModel.CabName));
+
         if (!ModelState.IsValid)
         {
             vm.Title = "Approve CAB";
+            vm.CabName = document.Name??string.Empty;
+
             return View("~/Areas/Admin/Views/CAB/Approve.cshtml", vm);
         }
 
         document.CABNumber = vm.CABNumber;
+        document.CabNumberVisibility  = vm.CabNumberVisibility;
         var user =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
             throw new InvalidOperationException("User account not found");

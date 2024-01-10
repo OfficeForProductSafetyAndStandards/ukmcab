@@ -6,6 +6,7 @@ using System.Xml;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
@@ -112,13 +113,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("profile/draft/{id:guid}", Name = Routes.CabDraftProfile), Authorize]
-        public async Task<IActionResult> DraftAsync(string id)
+        public async Task<IActionResult> DraftAsync(string id, int pagenumber = 1)
         {
             var cabDocument = await _cachedPublishedCabService.FindDraftDocumentByCABIdAsync(id);
 
             if (cabDocument != null)
             {
-                var cab = await GetCabProfileViewModel(cabDocument, null, true, false, 0);
+                var cab = await GetCabProfileViewModel(cabDocument, null, true, false, pagenumber);
                 return View("Index", cab);
             }
             else
@@ -133,7 +134,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id);
             if (cabDocument == null)
             {
-                throw new NotFoundException($"The CAB with the following CAB url cound not be found: {id}");
+                throw new NotFoundException($"The CAB with the following CAB url count not be found: {id}");
             }
 
             var feed = _feedService.GetSyndicationFeed(cabDocument.Name, Request, cabDocument, Url);
@@ -167,7 +168,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
 
             var isUnarchivedRequest =
-                auditLogOrdered.Any(al => al.Action == AuditCABActions.UnarchiveRequest); //todo should be notifications
+                auditLogOrdered.Last().Action == AuditCABActions.UnarchiveRequest; //todo should be notifications
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit = isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
             var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
@@ -191,6 +192,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ArchiveReason = isArchived && archiveAudit != null ? archiveAudit.Comment : string.Empty,
                 AuditLogHistory = history,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/" : WebUtility.UrlDecode(returnUrl),
+                IsOPSSUser =  User.IsInRole(Roles.OPSS.Id),
                 CABId = cabDocument.CABId,
                 CABUrl = cabDocument.URLSlug,
                 PublishedDate = publishedAudit?.DateTime ?? null,
@@ -213,6 +215,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                 Status = cabDocument.Status,
+                SubStatus = cabDocument.SubStatus.GetEnumDescription(),
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
                 ProductSchedules = new CABDocumentsViewModel
                 {
@@ -392,7 +395,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
 
             await _notificationClient.SendEmailAsync(receiverEmailAddress,
-                _templateOptions.NotificationDraftCabDeleted, personalisation);
+                _templateOptions.NotificationDraftCabDeletedFromArchiving, personalisation);
         }
 
         #endregion

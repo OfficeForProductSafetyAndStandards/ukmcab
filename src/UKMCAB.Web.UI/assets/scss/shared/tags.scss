@@ -16,3 +16,12 @@
         border-color: govuk-colour("dark-grey");
     }
 }
+
+.desktop-no-display {
+    .govuk-tag--yellow {
+        margin-left: 0 !important;
+    }
+    .cab-detail-date-meta{
+        margin-bottom: 20px !important;
+    }
+}
