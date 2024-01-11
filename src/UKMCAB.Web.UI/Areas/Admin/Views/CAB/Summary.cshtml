@@ -64,14 +64,22 @@ else if (Model.IsEditLocked)
         <h1 class="govuk-heading-l">@Model.CabDetailsViewModel.Name</h1>
     </div>
 
-    <div class="govuk-grid-column-full ukmcab-padding-bottom-10 desktop-no-display">
+    <div class="govuk-grid-column-full desktop-no-display">
         <div class="cab-detail-date-meta">
             @if (Model.PublishedDate.HasValue)
             {
                 <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")</span>
             }
             <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag cab-status cab-status-tag--draft">@Model.Status</strong></span>
+            <div>
+                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag cab-status cab-status-tag--draft">@Model.Status</strong></span>
+                @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
+                {
+                    <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-7">
+                        <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
+                    </span>
+                }
+            </div>
         </div>
     </div>
 
@@ -95,7 +103,15 @@ else if (Model.IsEditLocked)
                 <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")</span>
             }
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block">Status: <strong class="cab-status-tag cab-status cab-status-tag--draft">@Model.Status</strong></span>
+            <div class="govuk-!-margin-bottom-5">
+                <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag cab-status cab-status-tag--draft">@Model.Status</strong></span>
+                @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
+                {
+                    <span class="govuk-caption-m govuk-!-display-inline-block">
+                        <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
+                    </span>
+                }
+            </div>
         </div>
     </div>
 </div>
