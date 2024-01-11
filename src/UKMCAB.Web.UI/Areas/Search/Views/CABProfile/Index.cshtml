@@ -47,15 +47,15 @@
 }
 
 <div id="cab-profile-page">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <partial name="Partials/_ValidationSummary" model="null" />
-        </div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="null"/>
     </div>
-    @if (Model.IsArchived)
-    {
-        <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner" />
-    }
+</div>
+@if (Model.IsArchived)
+{
+    <partial model="@("Archived on " + Model.ArchivedDate)" name="Partials/_PageContentBanner"/>
+}
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-one-half">
