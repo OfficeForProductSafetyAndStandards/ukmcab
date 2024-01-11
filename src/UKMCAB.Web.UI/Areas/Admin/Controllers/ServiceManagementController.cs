@@ -16,6 +16,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly ICABAdminService _cabAdminService;
         private readonly IUserService _userService;
         private readonly IWorkflowTaskService _workflowTaskService;
+        private readonly IEditLockService _editLockService;
 
         public static class Routes
         {
@@ -23,11 +24,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         public ServiceManagementController(ICABAdminService cabAdminService, IUserService userService,
-            IWorkflowTaskService workflowTaskService)
+            IWorkflowTaskService workflowTaskService, IEditLockService editLockService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
             _workflowTaskService = workflowTaskService;
+            _editLockService = editLockService;
         }
 
 
@@ -37,7 +39,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userAccount =
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                     .Value) ?? throw new InvalidOperationException("User account not found");
-
+            await _editLockService.RemoveEditLockForUserAsync(userAccount.Id);
             var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
             var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
             var userRole = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;

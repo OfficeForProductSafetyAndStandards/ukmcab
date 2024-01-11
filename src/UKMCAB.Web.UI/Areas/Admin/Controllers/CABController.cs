@@ -420,7 +420,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             //Todo - Edit lock will move to single edit button action
             //Lock Record for edit
-            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed && latest.StatusValue == Status.Draft)
+            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed && latest.StatusValue is Status.Draft or Status.Published)
             {
                 await _editLockService.SetAsync(latest.CABId, User.GetUserId()!);
             }
@@ -466,6 +466,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     _ = await _cabAdminService.PublishDocumentAsync(
                         userAccount ?? throw new InvalidOperationException(), latest);
+                    await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
                 }
 

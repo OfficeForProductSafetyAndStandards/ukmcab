@@ -96,7 +96,7 @@ else if (Model.IsEditLocked)
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full ukmcab-padding-bottom-30 mobile-no-display">
+    <div class="govuk-grid-column-full ukmcab-padding-bottom-10 mobile-no-display">
         <div class="cab-detail-date-meta">
             @if (Model.PublishedDate.HasValue)
             {
@@ -571,7 +571,7 @@ else if (Model.IsEditLocked)
                             }
                             else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
                             {
-                                <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                                <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                             }
                             else
                             {

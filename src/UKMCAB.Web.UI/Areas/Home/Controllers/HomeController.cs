@@ -1,5 +1,6 @@
 ﻿using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels;
@@ -12,16 +13,19 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
     public class HomeController : Controller
     {
         private readonly ISecureTokenProcessor _secureTokenProcessor;
+        private readonly IEditLockService _editLockService;
 
-        public HomeController(ISecureTokenProcessor secureTokenProcessor)
+        public HomeController(ISecureTokenProcessor secureTokenProcessor, IEditLockService editLockService)
         {
             _secureTokenProcessor = secureTokenProcessor;
+            _editLockService = editLockService;
         }
 
         [Route("/about")]
-        public IActionResult About()
+        public async Task<IActionResult> About()
         {
-            var model = new BasicPageModel()
+            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
+            var model = new BasicPageModel
             {
                 Title = Constants.PageTitle.About
             };
@@ -29,9 +33,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         }
 
         [Route("/help")]
-        public IActionResult Help()
+        public async Task<IActionResult> Help()
         {
-            var model = new BasicPageModel()
+            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
+            var model = new BasicPageModel
             {
                 Title = Constants.PageTitle.Help
             };
@@ -46,8 +51,9 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         }
 
         [Route("/updates", Name = Routes.Updates)]
-        public IActionResult Updates()
+        public async Task<IActionResult> Updates()
         {
+            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
             var model = new UpdatesViewModel
             {
                 FeedLinksViewModel = new FeedLinksViewModel()
