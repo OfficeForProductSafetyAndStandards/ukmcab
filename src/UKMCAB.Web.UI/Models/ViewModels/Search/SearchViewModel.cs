@@ -4,7 +4,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
-    public class SearchViewModel: ILayoutModel
+    public class SearchViewModel : ILayoutModel
     {
         /// <summary>
         ///     Defines the list of properties that are not filters; such as paging or sorting info
@@ -27,7 +27,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public bool IsOPSSUser { get; set; }
 
         // ILayout
-        public virtual string? Title => Keywords.IsNotNullOrEmpty()? Keywords: "Search";
+        public virtual string? Title => Keywords.IsNotNullOrEmpty() ? Keywords : "Search";
 
 
         // Form fields
@@ -40,6 +40,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string[]? SubStatuses { get; set; }
         public string? Sort { get; set; }
         public int PageNumber { get; set; } = 1;
+        public bool SelectAllPendingApproval { get; set; }
 
         // Form elements
         public FilterViewModel? BodyTypeOptions { get; set; }
