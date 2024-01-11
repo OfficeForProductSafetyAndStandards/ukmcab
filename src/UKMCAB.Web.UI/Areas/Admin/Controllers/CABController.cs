@@ -15,6 +15,7 @@ using UKMCAB.Data.Models.Users;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Common.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -318,6 +319,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
+            if (submitType == Constants.SubmitType.Continue)
+            {
+                if((!string.IsNullOrWhiteSpace(model.PointOfContactName) || !string.IsNullOrWhiteSpace(model.PointOfContactEmail) || !string.IsNullOrWhiteSpace(model.PointOfContactPhone)) && !model.IsPointOfContactPublicDisplay.HasValue)
+                {
+                    ModelState.AddModelError("IsPointOfContactPublicDisplay", "Select who should see the point of contact details");
+                }
+            }
+
             if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
             {
                 latestDocument.AddressLine1 = model.AddressLine1;
@@ -391,13 +400,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                        latest.StatusValue != Status.Published,
                 Status = latest.StatusValue,
                 SubStatus = latest.SubStatus,
+                SubStatusName = latest.SubStatus.GetEnumDescription(),
                 ValidCAB = latest.StatusValue != Status.Published
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
                            && TryValidateModel(cabBody),
                 TitleHint = "CAB profile",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
-                    latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
+                    latest.SubStatus == SubStatus.PendingApprovalToPublish ? "Check details before approving or declining" : "Check details before publishing"
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
                 IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
@@ -521,8 +531,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {   
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
                     summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);                                       
-                    summaryViewModel.ShowEditActions = summaryViewModel.SectionEditEnabled && !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
-                    summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.ShowEditActions = summaryViewModel.SectionEditEnabled && !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
                 {

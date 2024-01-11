@@ -1,7 +1,9 @@
 ﻿@using System.Net
 @using Microsoft.EntityFrameworkCore
+@using UKMCAB.Common.Extensions
 @using UKMCAB.Core.Domain;
 @using UKMCAB.Core.Domain.Workflow
+@using UKMCAB.Data.Models
 @using UKMCAB.Web.UI.Areas.Search.Controllers
 @model CABProfileViewModel
 @{
@@ -52,19 +54,7 @@
 </div>
 @if (Model.IsArchived)
 {
-    <div class="govuk-notification-banner" role="region"
-         aria-labelledby="govuk-notification-banner-title"
-         data-module="govuk-notification-banner">
-        <div class="govuk-notification-banner__content">
-
-            <div class="govuk-warning-text">
-                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                <strong class="govuk-warning-text__text">
-                    <p class="govuk-notification-banner__heading">Archived on @Model.ArchivedDate</p>
-                </strong>
-            </div>
-        </div>
-    </div>
+    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 
 <div class="govuk-grid-row">
@@ -79,6 +69,14 @@
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Html.Conditional(Model.IsPublished, "cab-status-tag--published", "cab-status-tag--archived")">@Model.Status</strong></span>
         </div>
+        @if (!string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
+        {
+            <div class="govuk-!-margin-bottom-5">
+                <span class="govuk-caption-m govuk-!-display-inline-block">
+                    <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatus</strong>
+                </span>
+            </div>
+        }
     </div>
 
     <div class="govuk-grid-column-one-half">
@@ -125,15 +123,19 @@
     </div>
 </div>
 <div class="govuk-grid-row">
-
     <div class="govuk-grid-column-full mobile-no-display">
         <div class="cab-detail-date-meta">
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block">Status: <strong class="cab-status-tag @Html.Conditional(Model.IsPublished, "cab-status-tag--published", "cab-status-tag--archived")">@Model.Status</strong></span>
+            <span class="govuk-caption-m govuk-!-display-inline-block">
+                Status: <strong class="cab-status-tag @Html.Conditional(Model.IsPublished, "cab-status-tag--published", "cab-status-tag--archived")">@Model.Status</strong>
+                @if (!string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
+                {
+                    <strong class="cab-status-tag govuk-tag--yellow">@Model.SubStatus</strong>
+                }
+            </span>
         </div>
     </div>
-
 </div>
 
 <div class="govuk-grid-row">
@@ -395,11 +397,11 @@
         </div>
     </div>
 </div>
-@if (Model.UnarchiveTaskType != null)
+@if (Model is { UnarchiveTaskType: not null, IsOPSSUser: true } )
 {
     <div class="govuk-form-group">
         <p class='govuk-body'>
-            <strong class="govuk-body govuk-!-font-weight-bold">CAB unarchive request</strong>
+            <strong class="govuk-body govuk-!-font-weight-bold">Request to unarchive CAB</strong>
         </p>
         <p class='govuk-body'>
             @{
