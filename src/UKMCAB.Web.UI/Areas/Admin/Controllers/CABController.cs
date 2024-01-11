@@ -157,7 +157,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     if (submitType == Constants.SubmitType.Continue)
                     {
                         return !model.IsNew
-                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId, enableSectionEdit = true })
+                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId, subSectionEditAllowed = true })
                             : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
                     }
 
@@ -246,7 +246,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary
-                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, enableSectionEdit = true })
+                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
                         : RedirectToAction("SchedulesUpload", "FileUpload",
                             new { Area = "admin", id = latestDocument.CABId });
                 }
@@ -350,7 +350,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary
-                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, enableSectionEdit = true })
+                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
                         : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
                 }
 
@@ -366,7 +366,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid() });
 
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
-        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? enableSectionEdit)
+        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -411,7 +411,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
                 IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
-                SectionEditEnabled = enableSectionEdit ?? false,
+                SubSectionEditAllowed = subSectionEditAllowed ?? false,
                 LastModifiedDate = latest.LastUpdatedDate,
                 PublishedDate = publishedAudit?.DateTime ?? null,
             };
@@ -420,7 +420,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             //Todo - Edit lock will move to single edit button action
             //Lock Record for edit
-            if (string.IsNullOrWhiteSpace(userIdWithLock) && latest.StatusValue == Status.Draft)
+            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed && latest.StatusValue == Status.Draft)
             {
                 await _editLockService.SetAsync(latest.CABId, User.GetUserId()!);
             }
@@ -531,7 +531,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {   
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
                     summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);                                       
-                    summaryViewModel.ShowEditActions = summaryViewModel.SectionEditEnabled && !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.ShowEditActions = summaryViewModel.SubSectionEditAllowed && !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                     summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
