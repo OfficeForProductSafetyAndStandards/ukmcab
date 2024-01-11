@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
@@ -42,7 +43,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             if (prefix.Equals("substatuses", StringComparison.CurrentCultureIgnoreCase))
             {
                 var subStatusInt = int.Parse(label);
-                return ((SubStatus)subStatusInt).ToString();
+                return ((SubStatus)subStatusInt).GetEnumDescription();
             }
             if (prefix.Equals("usergroups", StringComparison.CurrentCultureIgnoreCase))
             {

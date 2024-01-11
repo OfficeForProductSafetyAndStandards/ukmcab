@@ -15,6 +15,7 @@ using UKMCAB.Data.Models.Users;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Common.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -397,6 +398,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                        latest.StatusValue != Status.Published,
                 Status = latest.StatusValue,
                 SubStatus = latest.SubStatus,
+                SubStatusName = latest.SubStatus.GetEnumDescription(),
                 ValidCAB = latest.StatusValue != Status.Published
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
