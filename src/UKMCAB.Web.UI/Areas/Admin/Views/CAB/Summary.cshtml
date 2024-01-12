@@ -570,7 +570,7 @@ else if (Model.IsEditLocked)
                             }
                             else
                             {
-                                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                                <a href="@Model.ReturnUrl&unlockCab=@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                             }
                         </div>
                     </form>
