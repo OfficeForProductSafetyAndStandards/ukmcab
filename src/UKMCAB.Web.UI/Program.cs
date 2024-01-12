@@ -115,6 +115,7 @@ builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(bu
 builder.Services.AddSingleton<IEditLockService, EditLockService>();
 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
+builder.Services.AddTransient<IUserNoteService, UserNoteService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
 
 builder.Services.AddCustomHttpErrorHandling();

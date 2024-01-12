@@ -3,18 +3,22 @@
     using UKMCAB.Core.Security;
     using UKMCAB.Data.Models;
 
-    public class UserNotesViewModel
+    public class UserNoteListViewModel
     {
         public const int resultsPerPage = 10;
 
-        public UserNotesViewModel(List<UserNote> userNotes, int pageNumber)
+        public UserNoteListViewModel(Guid cabDocumentId, List<UserNote> userNotes, int pageNumber)
         {
+            CabDocumentId = cabDocumentId;
+
             UserNoteItems = userNotes
                 .OrderByDescending(u => u.DateTime)
                 .Skip((pageNumber - 1) * resultsPerPage)
                 .Take(resultsPerPage)
-                .Select(u => new UserNoteItemViewModel
+                .Select(u => new UserNoteListItemViewModel
                 {
+                    Id = u.Id,
+                    CabDocumentId = cabDocumentId,
                     UserId = u.UserId,
                     UserName = u.UserName,
                     UserGroup = Roles.NameFor(u.UserRole),
@@ -31,7 +35,9 @@
             };
         }
 
-        public IEnumerable<UserNoteItemViewModel> UserNoteItems { get; }
+        public Guid CabDocumentId { get; set; }
+
+        public IEnumerable<UserNoteListItemViewModel> UserNoteItems { get; }
 
         public PaginationViewModel Pagination { get; set; }
     }

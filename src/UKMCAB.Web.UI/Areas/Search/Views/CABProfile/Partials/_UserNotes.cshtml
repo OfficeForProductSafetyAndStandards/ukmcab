@@ -1,0 +1,57 @@
+﻿@using Microsoft.AspNetCore.Http
+@using UKMCAB.Web.UI.Models.ViewModels.Shared;
+@model UserNoteListViewModel
+
+@{
+    // Note: The returnUrl here is different to the returnUrl passed into the main CAB profile screen.
+    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
+}
+
+<div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="usernotes">
+    <div class="cab-detail-section">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-three-quarters">
+                <h2 class="govuk-heading-l">Government user notes</h2>
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+                <govuk-button-link class="govuk-button--secondary" asp-area="Search" asp-controller="UserNote" asp-action="Create"
+                    asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-returnUrl="@returnUrl">Add Note</govuk-button-link>
+            </div>
+        </div>
+        
+        @if (!Model.UserNoteItems.Any())
+        { 
+            <p class="govuk-body">@Constants.None</p>
+        }
+        else
+        {
+            <table class="govuk-table ukmcab-table">
+                <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Date and time</th>
+                            <th scope="col" class="govuk-table__header">User</th>
+                            <th scope="col" class="govuk-table__header">User group</th>
+                            <th scope="col" class="govuk-table__header">Note</th>
+                        </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    @foreach (var userNote in Model.UserNoteItems)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@userNote.DateAndTime.ToStringBeisFormat()</td>
+                            <td class="govuk-table__cell"><label aria-hidden="true">User</label><text>@userNote.UserName</text></td>
+                            <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@userNote.UserGroup</td>
+                            <td class="govuk-table__cell"><label aria-hidden="true">Note</label>
+                                <a class="govuk-link" asp-area="search" asp-controller="UserNote" asp-action="View"
+                                   asp-route-cabDocumentId="@userNote.CabDocumentId" asp-route-userNoteId="@userNote.Id" asp-route-returnUrl="@returnUrl">View</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+            <div id="cab-management-pagination-container">
+                <partial name="Partials/_Pagination" model="Model.Pagination" />
+            </div>
+        }
+    </div>
+</div>

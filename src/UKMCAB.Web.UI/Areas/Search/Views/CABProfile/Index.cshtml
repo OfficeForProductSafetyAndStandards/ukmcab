@@ -158,6 +158,14 @@
                         </a>
                     </li>
                 }
+                    @if (User.Identity.IsAuthenticated /*todo: OPSS and OGP only */)
+                    {
+                        <li class="govuk-tabs__list-item">
+                            <a class="govuk-tabs__tab" href="#usernotes">
+                                Government user notes
+                            </a>
+                        </li>
+                    }
                 <li class="govuk-tabs__list-item @Html.Conditional(Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected")">
                     <a class="govuk-tabs__tab" href="#history">
                         History
@@ -388,6 +396,11 @@
             @if (User.Identity.IsAuthenticated /*todo: what claim?*/)
             {
                 <partial name="Partials/_Documents" model="Model.SupportingDocuments"/>
+            }
+
+            @if (User.Identity.IsAuthenticated /*todo: lock down to OPPS & OGD */)
+            {
+                <partial name="Partials/_UserNotes" model="Model.GovernmentUserNotes" />
             }
 
             <partial name="Partials/_History" model="Model.AuditLogHistory"/>
