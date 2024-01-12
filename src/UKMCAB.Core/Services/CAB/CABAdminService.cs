@@ -248,6 +248,8 @@ namespace UKMCAB.Core.Services.CAB
             document.SubStatus = subStatus;
             document.AuditLog.Add(audit);
             await _cabRepository.UpdateAsync(document);
+            await UpdateSearchIndex(document);
+            await RefreshCaches(document.CABId, document.URLSlug);
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)
