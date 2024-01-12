@@ -10,12 +10,6 @@
     }
 }
 
-.ukmcab-full-width--mobile {
-    @include govuk-media-query($until: tablet) {
-        width: 100% !important;
-    }
-}
-
 .app-no-display {
     display: none !important;
 }
