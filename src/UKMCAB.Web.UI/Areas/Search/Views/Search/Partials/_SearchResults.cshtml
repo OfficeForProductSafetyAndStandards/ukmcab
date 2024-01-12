@@ -104,10 +104,10 @@
                             {
                                 <li class="search-result-list-item-detail">
                                     <div class="search-result-label">
-                                        Status: <span class="search-result-status-label search-result-@searchResult.Status.ToLower()">@searchResult.Status</span>
+                                        Status: <span class="search-result-status-label search-result-@searchResult.Status.ToLower() govuk-!-display-inline-block govuk-!-margin-top-1 govuk-!-margin-bottom-1">@searchResult.Status</span>
                                         @if (!string.IsNullOrWhiteSpace(searchResult.SubStatusName) && searchResult.SubStatusName != SubStatus.None.GetEnumDescription())
                                         {
-                                            <span class="search-result-status-label govuk-tag--yellow">@searchResult.SubStatusName</span>
+                                            <span class="search-result-status-label govuk-tag--yellow govuk-!-display-inline-block govuk-!-margin-top-2 govuk-!-margin-bottom-2 govuk-!-margin-left-0">@searchResult.SubStatusName</span>
                                         }
                                     </div>
                                     @if (Model.IsOPSSUser && searchResult.Status == Status.Draft.ToString())
