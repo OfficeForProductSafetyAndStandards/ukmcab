@@ -15,13 +15,13 @@ namespace UKMCAB.Data.Models
     {
         [Description("None")]
         None,
-        [Description("Pending approval to publish")]
+        [Description("Pending approval to publish CAB")]
         PendingApprovalToPublish,
-        [Description("Pending approval to archive")]
+        [Description("Pending approval to archive CAB")]
         PendingApprovalToArchive,
-        [Description("Pending approval to publish")]
+        [Description("Pending approval to unarchive and publish CAB")]
         PendingApprovalToUnarchivePublish,
-        [Description("Pending approval to unarchive")]
+        [Description("Pending approval to unarchive CAB as draft")]
         PendingApprovalToUnarchive
     }
 }
