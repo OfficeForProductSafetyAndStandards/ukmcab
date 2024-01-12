@@ -51,9 +51,14 @@
         <partial name="Partials/_ValidationSummary" model="null"/>
     </div>
 </div>
-@if (Model.IsArchived)
+
+@if (Model is { IsArchived: true, UnarchiveTaskType: null } )
 {
     <partial model="@("Archived on " + Model.ArchivedDate)" name="Partials/_PageContentBanner"/>
+}
+else if (Model is { IsArchived: true, UnarchiveTaskType: not null })
+{
+    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 
 <div class="govuk-grid-row">
