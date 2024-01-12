@@ -126,7 +126,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 case AuditUserActions.UnarchiveAccountRequest:
                     return "User account unarchived";
                 case AuditUserActions.ChangeOfContactEmailAddress:
-                    return "Change email";
+                    return "Change contact email";
                 case AuditUserActions.ChangeOfOrganisation:
                     return "Change organisation";
                 case AuditUserActions.ChangeOfRole:
