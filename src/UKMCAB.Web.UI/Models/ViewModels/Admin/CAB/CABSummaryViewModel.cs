@@ -26,6 +26,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool EditByGroupPermitted { get; set; }
         public bool SubSectionEditAllowed { get; set; }
         public DateTime? PublishedDate { get; set; }
-        public DateTime? LastModifiedDate { get; set; }
+        public DateTime LastModifiedDate { get; set; }
     }
 }

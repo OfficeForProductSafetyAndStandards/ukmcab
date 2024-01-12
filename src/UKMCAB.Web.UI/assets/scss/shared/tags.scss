@@ -4,10 +4,6 @@
     font-weight: 600;
     margin-left: 10px;
 
-    @include govuk-media-query($until: tablet) {
-        margin-left: 0 !important;
-    }
-
     &.cab-status-tag--published {
         background-color: #cce2d8;
         color: govuk-colour("green");
@@ -28,7 +24,7 @@
 }
 
 .desktop-no-display {
-    .govuk-tag--yellow {
+    .govuk-tag--yellow.cab-status-tag {
         margin-left: 0 !important;
     }
     .cab-detail-date-meta{

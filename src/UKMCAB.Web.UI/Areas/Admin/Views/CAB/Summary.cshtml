@@ -26,11 +26,9 @@
     }
 }
 
-@section BackButton
-    {
-    <div class="govuk-width-container ">
+<div class="govuk-width-container ">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
+            <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20" style="">
                 @if (string.IsNullOrWhiteSpace(returnUrl))
                 {
                     <govuk-back-link asp-route="@CabManagementController.Routes.CABManagement" />
@@ -43,7 +41,6 @@
             </div>
         </div>
     </div>
-}
 
 @if (Model.SubStatus == SubStatus.PendingApprovalToPublish)
 {
@@ -70,7 +67,7 @@ else if (Model.IsEditLocked)
             {
                 <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")</span>
             }
-            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
+            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
             <div>
                 <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag cab-status cab-status-tag--draft">@Model.Status</strong></span>
                 @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
@@ -102,8 +99,7 @@ else if (Model.IsEditLocked)
             {
                 <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")</span>
             }
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <div class="govuk-!-margin-bottom-5">
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
                 <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag cab-status cab-status-tag--draft">@Model.Status</strong></span>
                 @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
                 {
@@ -111,7 +107,6 @@ else if (Model.IsEditLocked)
                         <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
                     </span>
                 }
-            </div>
         </div>
     </div>
 </div>
