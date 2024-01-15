@@ -1,5 +1,4 @@
-﻿@using System.Net;
-@using UKMCAB.Core.Domain;
+﻿@using UKMCAB.Core.Domain;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
@@ -82,7 +81,7 @@ else if (Model.IsEditLocked)
 
     <div class="govuk-grid-column-one-half">
         <div class="govuk-!-margin-right-3">
-            @if (!Model.SubSectionEditAllowed && Model.SubStatus == SubStatus.None)
+            @if (Model is { SubSectionEditAllowed: false, SubStatus: SubStatus.None, IsEditLocked: false })
             {
                 <div class="ukmcab-full-width--mobile ukmcab-float__right ukmcab-text-align-right ukmcab-padding-top-30">
                     <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="@true" asp-route-returnUrl="@returnUrl">Edit</a>
@@ -570,7 +569,7 @@ else if (Model.IsEditLocked)
                             }
                             else
                             {
-                                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                                <a href="@Model.ReturnUrl&unlockCab=@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                             }
                         </div>
                     </form>

@@ -151,7 +151,7 @@
                                             <p class="govuk-error-message">
                                                 <span asp-validation-for="UploadedFiles![i].Category" class="govuk-error-message"></span>
                                             </p>
-                                            <select id="UploadedFiles[@i].Category" name="UploadedFiles[@i].Category" class="govuk-select @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
+                                            <select id="UploadedFiles[@i].Category" name="UploadedFiles[@i].Category" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
                                                 <option value="">Not assigned</option>
                                                 @foreach (var cat in items)
                                                 {

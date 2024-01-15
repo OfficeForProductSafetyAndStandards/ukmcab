@@ -4,6 +4,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
 using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
@@ -28,6 +29,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly BasicAuthenticationOptions _basicAuthOptions;
         private readonly TelemetryClient _telemetry;
         private readonly IOptionsMonitor<OpenIdConnectOptions> _options;
+        private readonly IEditLockService _editLockService;
         private static readonly List<string> _select = new()
         {
             nameof(CABIndexItem.CABId),
@@ -55,9 +57,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             public const string Search = "search.index";
             public const string SearchFeed = "search.feed";
         }
-        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry, IOptionsMonitor<OpenIdConnectOptions> options)
+        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry, IOptionsMonitor<OpenIdConnectOptions> options, IEditLockService editLockService)
         {
             _options = options;
+            _editLockService = editLockService;
             _cachedSearchService = cachedSearchService;
             _feedService = feedService;
             _basicAuthOptions = basicAuthOptions;
@@ -66,7 +69,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
 
         [Route("/", Name = Routes.Search)]
-        public async Task<IActionResult> Index(SearchViewModel model, string? state = null)
+        public async Task<IActionResult> Index(SearchViewModel model, string? unlockCab, string? state = null)
         {
             if (state != null)
             {
@@ -77,7 +80,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             model.InternalSearch = internalSearch;
             model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
-            
+            if (internalSearch && !string.IsNullOrWhiteSpace(unlockCab))
+            {
+                await _editLockService.RemoveEditLockForCabAsync(unlockCab);
+            }
             await SetFacetOptions(model, model.SelectAllPendingApproval);
 
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
