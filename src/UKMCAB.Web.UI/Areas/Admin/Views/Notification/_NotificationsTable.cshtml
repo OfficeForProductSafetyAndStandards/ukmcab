@@ -24,6 +24,7 @@
                     <sort tab-to-show="@Model.TabName" target="Assignee" sort="@Model.SortField" sort-direction="@Model.SortDirection">Assignee</sort>
                 </th>
             }
+
             <th scope="col" class="govuk-table__header">
                 <sort tab-to-show="@Model.TabName" target="LastUpdated" sort="@Model.SortField" sort-direction="@Model.SortDirection">@Model.LastUpdatedLabel</sort>
             </th>
@@ -44,7 +45,7 @@
                     @item.From.Ellipsis(20)
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">Subject</label>@item.Subject.Ellipsis(20)
+                    <label aria-hidden="true">Subject</label>@(Model.TabName.Equals(NotificationController.AssignedToGroupTabName) ? item.Subject.Ellipsis(18) : item.Subject.Ellipsis(20))
                 </td>
                 <td class="govuk-table__cell">
                     <label aria-hidden="true">CAB name</label>@item.CABName.Ellipsis(20)
