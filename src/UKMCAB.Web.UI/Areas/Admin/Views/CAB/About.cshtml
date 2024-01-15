@@ -77,7 +77,7 @@
                         <p class="govuk-error-message">
                             <span asp-validation-for="CabNumberVisibility" class="govuk-error-message"></span>
                         </p>
-                        <select class="govuk-select" asp-for="CabNumberVisibility" asp-items="new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label))"></select>
+                        <select class="govuk-select govuk-!-width-full" asp-for="CabNumberVisibility" asp-items="new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label))"></select>
                     </div>
                 }
 
