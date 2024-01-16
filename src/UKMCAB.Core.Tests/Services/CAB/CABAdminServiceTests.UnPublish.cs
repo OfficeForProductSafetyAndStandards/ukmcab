@@ -21,7 +21,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
     [TestFixture]
     public partial class CABAdminServiceTests
     {
-        [Theory]
+        [Test]
         public Task DocumentNotFound_UnpublishDocumentAsync_ThrowsException()
         {
             // Arrange
@@ -34,7 +34,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             return Task.CompletedTask;
         }
 
-        [Theory]
+        [Test]
         public Task IncorrectStatus_UnpublishDocumentAsync_ThrowsException()
         {
             // Arrange
@@ -53,7 +53,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             return Task.CompletedTask;
         }
 
-        [Theory]
+        [Test]
         public Task DraftFailsToDelete_UnpublishDocumentAsync_ThrowsException()
         {
             // Arrange
@@ -81,7 +81,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             return Task.CompletedTask;
         }
 
-        [Theory]
+        [Test]
         public async Task DocumentFound_UnpublishDocumentAsync_CabUpdated()
         {
             // Arrange
@@ -107,7 +107,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.VerifyNoOtherCalls();
         }
         
-        [Theory]
+        [Test]
         public async Task DocumentFound_UnpublishDocumentAsync_CabUpdatesStatuses()
         {
             // Arrange
