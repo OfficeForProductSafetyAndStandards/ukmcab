@@ -149,7 +149,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
         }
 
-        [TestCase]
+        [Test]
         public async Task DeleteDraftDocumentAsync_ShouldResetSubstatusOnPreviousVersionIfCreatedViaRequestToUnarchive()
         {
             // Arrange
