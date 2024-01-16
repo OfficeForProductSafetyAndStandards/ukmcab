@@ -21,7 +21,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
     [TestFixture]
     public partial class CABAdminServiceTests
     {     
-        [Theory]
+        [Test]
         public async Task DeleteDraftDocumentAsync_ShouldDoNothingIfDraftCabNotFound()
         {
             // Arrange
@@ -36,7 +36,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
         }
 
-        [Theory]
+        [Test]
         public Task DeleteDraftDocumentAsync_ShouldErrorIfDeleteReasonIsBlankAndCabHasPublishedVersion()
         {
             // Arrange
@@ -57,7 +57,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             return Task.CompletedTask;
         }
 
-        [Theory]
+        [Test]
         public Task DeleteDraftDocumentAsync_ShouldErrorIfRepositoryDeleteReturnsFalse()
         {
             // Arrange
@@ -85,7 +85,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             return Task.CompletedTask;
         }
 
-        [Theory]
+        [Test]
         public async Task DeleteDraftDocumentAsync_ShouldUpdateSearchIndexAndCachesIfDeleteSuccessful()
         {
             // Arrange
@@ -108,7 +108,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCachedPublishedCAB.Verify(x => x.ClearAsync(cabId.ToString(), "urlSlug"), Times.Once);
         }
 
-        [Theory]
+        [Test]
         public async Task DeleteDraftDocumentAsync_ShouldAddEntryToAuditLogIfCabHasPublishedVersion()
         {
             // Arrange
@@ -129,7 +129,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 x.AuditLog.Count == 1 && x.AuditLog.First().Action == AuditCABActions.DraftDeleted)), Times.Once);
         }
 
-        [TestCase]
+        [Test]
         public async Task DeleteDraftDocumentAsync_ShouldNotAddEntryToAuditLogIfCabHasNoPublishedVersion()
         {
             // Arrange
