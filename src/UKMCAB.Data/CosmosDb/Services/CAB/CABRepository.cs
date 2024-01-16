@@ -106,7 +106,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 $"The CAB document was not updated; http status={response.StatusCode}");
         }
 
-        public async Task<bool> Delete(Document document)
+        public async Task<bool> DeleteAsync(Document document)
         {
             var response = await _container.DeleteItemAsync<Document>(document.id, new PartitionKey(document.CABId));
             return response.StatusCode == HttpStatusCode.NoContent;
