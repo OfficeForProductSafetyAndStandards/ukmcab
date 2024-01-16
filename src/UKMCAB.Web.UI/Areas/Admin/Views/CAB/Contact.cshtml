@@ -202,7 +202,7 @@
                 <p class="govuk-error-message">
                     <span asp-validation-for="RegisteredOfficeLocation" class="govuk-error-message"></span>
                 </p>
-                <select class="govuk-select @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, nameof(Model.RegisteredOfficeLocation))" asp-for="RegisteredOfficeLocation"
+                <select class="govuk-select govuk-!-width-two-thirds @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, nameof(Model.RegisteredOfficeLocation))" asp-for="RegisteredOfficeLocation"
                         asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(Model.RegisteredOfficeLocation)))">
                     <option value="">Choose location</option>
                 </select>
