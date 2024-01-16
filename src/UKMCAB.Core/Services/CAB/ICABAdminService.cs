@@ -27,7 +27,7 @@ namespace UKMCAB.Core.Services.CAB
 
         Task DeleteDraftDocumentAsync(UserAccount userAccount, Guid cabId, string? deleteReason);
         Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, Audit audit);
-        Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument);
+        Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument, string? publishInternalReason = default(string), string? publishPublicReason = default(string));
         Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string? archiveInternalReason, string archivePublicReason);
         Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason, string unarchivePublicReason);
         IAsyncEnumerable<string> GetAllCabIds();

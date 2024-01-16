@@ -16,6 +16,8 @@ using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
+using UKMCAB.Web.UI.Models.ViewModels.Search;
+using CsvHelper.Configuration.Attributes;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -36,6 +38,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CabPublishedConfirmation = "cab.published.confirmation";
             public const string CabSubmittedForApprovalConfirmation = "cab.submitted-for-approval.confirmation";
             public const string CabSummary = "cab.summary";
+            public const string CabPublish = "cab.publish";
         }
 
         public CABController(
@@ -417,7 +420,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             };
 
             ModelState.Clear();
-            
+
             //Todo - Edit lock will move to single edit button action
             //Lock Record for edit
             if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed && latest.StatusValue is Status.Draft or Status.Published)
@@ -463,11 +466,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
                 if (submitType == Constants.SubmitType.Continue) // publish
-                {
-                    _ = await _cabAdminService.PublishDocumentAsync(
-                        userAccount ?? throw new InvalidOperationException(), latest);
+                {   
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
-                    return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
+                    return RedirectToRoute(Routes.CabPublish, new { id = latest.CABId });
                 }
 
                 if (submitType == Constants.SubmitType.SubmitForApproval)
@@ -481,6 +482,48 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             throw new InvalidOperationException("CAB invalid");
+        }
+
+        [HttpGet("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        public async Task<IActionResult> Publish(string id, string? returnUrl)
+        {
+            var latest = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latest == null || latest.StatusValue != Status.Draft) // Implies no document or document in draft mode
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            return View(new PublishCABViewModel
+            {
+                CABId = id,
+                CABName = latest.Name,
+                ReturnURL = returnUrl
+            });
+        }
+
+        [HttpPost("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        public async Task<IActionResult> Publish(PublishCABViewModel model)
+        {
+            var latest = await _cabAdminService.GetLatestDocumentAsync(model.CABId ?? throw new InvalidOperationException());
+            if (latest == null || latest.StatusValue != Status.Draft) // Implies no document or document in draft mode
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            if (ModelState.IsValid)
+            {
+
+                var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
+
+                _ = await _cabAdminService.PublishDocumentAsync(
+                            userAccount ?? throw new InvalidOperationException(), latest, model.PublishInternalReason, model.PublishPublicReason);
+
+                return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
+            }
+
+            model.CABName = latest.Name;
+            return View(model);
+
         }
 
 

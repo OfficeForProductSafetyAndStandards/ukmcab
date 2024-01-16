@@ -252,7 +252,7 @@ namespace UKMCAB.Core.Services.CAB
             await RefreshCaches(document.CABId, document.URLSlug);
         }
 
-        public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)
+        public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument, string? publishInternalReason = default(string), string? publishPublicReason = default(string))
         {
             if (latestDocument.StatusValue == Status.Published)
             {
@@ -276,8 +276,7 @@ namespace UKMCAB.Core.Services.CAB
 
             latestDocument.StatusValue = Status.Published;
             latestDocument.SubStatus = SubStatus.None;
-            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
-                publishedOrArchivedDocument));
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument, publishedOrArchivedDocument, publishInternalReason, publishPublicReason));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             await _cabRepository.UpdateAsync(latestDocument);
 
