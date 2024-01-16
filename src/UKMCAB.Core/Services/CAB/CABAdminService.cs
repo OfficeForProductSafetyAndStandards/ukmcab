@@ -215,11 +215,17 @@ namespace UKMCAB.Core.Services.CAB
             Guard.IsTrue(await _cabRepository.DeleteAsync(draft),
                     $"Failed to delete draft version, CAB Id: {cabId}");
 
-            // Add audit log entry to previous version, if one exists.
+            // Make updates to previous cab version, if one exists.
             if (previous != null)
             {
+                // Add audit log entry to previous version.
                 previous.AuditLog.Add(new Audit(userAccount, AuditCABActions.DraftDeleted, deleteReason));
+
+                // Ensure substatus is set to None. Needed when deleting a draft created as a result of a request to unarchive.
+                previous.SubStatus = SubStatus.None;
+
                 await _cabRepository.UpdateAsync(previous);
+                await UpdateSearchIndex(previous);
             }
 
             // Update the search index & caches
