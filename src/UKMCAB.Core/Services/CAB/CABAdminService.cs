@@ -301,7 +301,7 @@ namespace UKMCAB.Core.Services.CAB
             var publishedVersion = docs.SingleOrDefault(d => d.StatusValue == Status.Published);
             
             Guard.IsTrue(publishedVersion != null,
-                $"Submitted document for un publishing not found, CAB Id: {cabId}");
+                $"Submitted document for unpublishing not found, CAB Id: {cabId}");
 
             var draft = docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
             if (draft != null)
