@@ -142,7 +142,7 @@ public class ApproveCABController : Controller
             user.EmailAddress ?? throw new InvalidOperationException());
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
-                TaskType.CABPublished,
+                TaskType.CABApproved,
                 approver,
                 // Approver becomes the submitter for Approved CAB Notification
                 submitter.RoleId,

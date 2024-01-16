@@ -15,7 +15,7 @@ public enum TaskType
     [Description("Approve account request")]
     UserAccountRequest,
     [Description("CAB approved")]
-    CABPublished,
+    CABApproved,
     [Description("CAB declined")]
     CABDeclined,
     [Description("CAB published")]
