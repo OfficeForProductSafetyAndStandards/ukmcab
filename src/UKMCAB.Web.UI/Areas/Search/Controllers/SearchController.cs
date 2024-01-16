@@ -4,7 +4,9 @@ using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.Extensions.Options;
 using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Subscriptions.Core.Integration.CabService;
@@ -27,10 +29,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly BasicAuthenticationOptions _basicAuthOptions;
         private readonly TelemetryClient _telemetry;
         private readonly IOptionsMonitor<OpenIdConnectOptions> _options;
+        private readonly IEditLockService _editLockService;
         private static readonly List<string> _select = new()
         {
             nameof(CABIndexItem.CABId),
             nameof(CABIndexItem.Status),
+            nameof(CABIndexItem.SubStatus),
             nameof(CABIndexItem.Name),
             nameof(CABIndexItem.URLSlug),
             nameof(CABIndexItem.AddressLine1),
@@ -53,9 +57,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             public const string Search = "search.index";
             public const string SearchFeed = "search.feed";
         }
-        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry, IOptionsMonitor<OpenIdConnectOptions> options)
+        public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry, IOptionsMonitor<OpenIdConnectOptions> options, IEditLockService editLockService)
         {
             _options = options;
+            _editLockService = editLockService;
             _cachedSearchService = cachedSearchService;
             _feedService = feedService;
             _basicAuthOptions = basicAuthOptions;
@@ -64,7 +69,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
 
         [Route("/", Name = Routes.Search)]
-        public async Task<IActionResult> Index(SearchViewModel model, string? state = null)
+        public async Task<IActionResult> Index(SearchViewModel model, string? unlockCab, string? state = null)
         {
             if (state != null)
             {
@@ -75,9 +80,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             model.InternalSearch = internalSearch;
             model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
+            if (internalSearch && !string.IsNullOrWhiteSpace(unlockCab))
+            {
+                await _editLockService.RemoveEditLockForCabAsync(unlockCab);
+            }
+            await SetFacetOptions(model, model.SelectAllPendingApproval);
+
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
-            
-            await SetFacetOptions(model);
 
             model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
 
@@ -199,7 +208,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return string.IsNullOrEmpty(model.Keywords) ? "UKMCAB search results" : $"UKMCAB search results for \"{model.Keywords.Trim()}\"";
         }
 
-        private async Task SetFacetOptions(SearchViewModel model)
+        private async Task SetFacetOptions(SearchViewModel model, bool? selectAllPendingApproval)
         {
             var facets = await _cachedSearchService.GetFacetsAsync(model.InternalSearch);
 
@@ -212,7 +221,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
                 model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User groups", facets.CreatedByUserGroup, model.UserGroups);
-                model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", facets.SubStatus, model.SubStatuses);
+                var pendingApprovalSubStatus = facets.SubStatus.Where(s => s != ((int)SubStatus.None).ToString()).ToList();
+                if (selectAllPendingApproval == true)
+                {
+                    model.SubStatuses = pendingApprovalSubStatus.ToArray();
+                } 
+                model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
             }
         }
 

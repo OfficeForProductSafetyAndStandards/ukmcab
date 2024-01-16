@@ -15,6 +15,7 @@ using UKMCAB.Data.Models.Users;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Common.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -156,7 +157,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     if (submitType == Constants.SubmitType.Continue)
                     {
                         return !model.IsNew
-                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId })
+                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId, subSectionEditAllowed = true })
                             : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
                     }
 
@@ -245,7 +246,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary
-                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId })
+                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
                         : RedirectToAction("SchedulesUpload", "FileUpload",
                             new { Area = "admin", id = latestDocument.CABId });
                 }
@@ -349,7 +350,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return model.IsFromSummary
-                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId })
+                        ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
                         : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
                 }
 
@@ -365,7 +366,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid() });
 
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
-        public async Task<IActionResult> Summary(string id, string? returnUrl)
+        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -382,6 +383,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var cabDetails = new CABDetailsViewModel(latest);
             var cabContact = new CABContactViewModel(latest);
             var cabBody = new CABBodyDetailsViewModel(latest);
+            var auditLogOrdered = latest.AuditLog.OrderBy(a => a.DateTime).ToList();
+            var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
             var model = new CABSummaryViewModel
             {
                 CABId = latest.CABId,
@@ -397,23 +400,27 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                        latest.StatusValue != Status.Published,
                 Status = latest.StatusValue,
                 SubStatus = latest.SubStatus,
+                SubStatusName = latest.SubStatus.GetEnumDescription(),
                 ValidCAB = latest.StatusValue != Status.Published
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
                            && TryValidateModel(cabBody),
-                TitleHint = "Create a CAB",
+                TitleHint = "CAB profile",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
-                    latest.SubStatus == SubStatus.PendingApproval ? "Check details before approving or declining" : "Check details before publishing"
+                    latest.SubStatus == SubStatus.PendingApprovalToPublish ? "Check details before approving or declining" : "Check details before publishing"
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
-                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock
+                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
+                SubSectionEditAllowed = subSectionEditAllowed ?? false,
+                LastModifiedDate = latest.LastUpdatedDate,
+                PublishedDate = publishedAudit?.DateTime ?? null,
             };
 
             ModelState.Clear();
             
             //Todo - Edit lock will move to single edit button action
             //Lock Record for edit
-            if (string.IsNullOrWhiteSpace(userIdWithLock) && latest.StatusValue == Status.Draft)
+            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed && latest.StatusValue is Status.Draft or Status.Published)
             {
                 await _editLockService.SetAsync(latest.CABId, User.GetUserId()!);
             }
@@ -459,6 +466,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     _ = await _cabAdminService.PublishDocumentAsync(
                         userAccount ?? throw new InvalidOperationException(), latest);
+                    await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
                 }
 
@@ -524,8 +532,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {   
                     summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
                     summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);                                       
-                    summaryViewModel.ShowEditActions = !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
-                    summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApproval && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.ShowEditActions = summaryViewModel.SubSectionEditAllowed && !summaryViewModel.IsEditLocked && summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
+                    summaryViewModel.EditByGroupPermitted = summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish && (summaryViewModel.Status == Status.Published ||summaryViewModel.IsOPSSOrInCreatorUserGroup);
                 }
                 else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
                 {

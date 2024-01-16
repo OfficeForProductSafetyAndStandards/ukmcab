@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Data.Models
+﻿using System.ComponentModel;
+
+namespace UKMCAB.Data.Models
 {
     public enum Status
     {
@@ -11,7 +13,15 @@
 
     public enum SubStatus
     {
+        [Description("None")]
         None,
-        PendingApproval
+        [Description("Pending approval to publish CAB")]
+        PendingApprovalToPublish,
+        [Description("Pending approval to archive CAB")]
+        PendingApprovalToArchive,
+        [Description("Pending approval to unarchive and publish CAB")]
+        PendingApprovalToUnarchivePublish,
+        [Description("Pending approval to unarchive CAB as draft")]
+        PendingApprovalToUnarchive
     }
 }

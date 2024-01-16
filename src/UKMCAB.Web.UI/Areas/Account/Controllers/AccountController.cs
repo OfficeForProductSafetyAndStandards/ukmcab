@@ -350,6 +350,8 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 return RedirectToRoute(Routes.Login);
             }
 
+            await _editLockService.RemoveEditLockForUserAsync(userAccount.Id);
+
             if (userAccount.IsLocked)
             {
                 return RedirectToRoute(Routes.Locked, new { id });

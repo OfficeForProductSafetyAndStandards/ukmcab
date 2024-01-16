@@ -6,6 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     {
         public Status Status { get; set; }
         public SubStatus SubStatus { get; set; }
+        public string? SubStatusName { get; set; }
         public string? CABId { get; set; }
         public CABDetailsViewModel? CabDetailsViewModel { get; set; }
         public CABContactViewModel? CabContactViewModel { get; set; }
@@ -23,5 +24,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsOPSSOrInCreatorUserGroup { get; set; }
         public bool IsEditLocked { get; set; }
         public bool EditByGroupPermitted { get; set; }
+        public bool SubSectionEditAllowed { get; set; }
+        public DateTime? PublishedDate { get; set; }
+        public DateTime LastModifiedDate { get; set; }
     }
 }

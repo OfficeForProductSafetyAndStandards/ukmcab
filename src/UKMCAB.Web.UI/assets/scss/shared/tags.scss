@@ -15,4 +15,19 @@
         color: govuk-colour("dark-grey");
         border-color: govuk-colour("dark-grey");
     }
+
+    &.cab-status-tag--draft {
+        background-color: lightblue;
+        color: govuk-colour("dark-blue");
+        border-color: govuk-colour("dark-blue");
+    }
+}
+
+.desktop-no-display {
+    .govuk-tag--yellow {
+        margin-left: 0 !important;
+    }
+    .cab-detail-date-meta{
+        margin-bottom: 20px !important;
+    }
 }

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
@@ -20,35 +21,50 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                 .Replace(" ", string.Empty);
         }
 
-        private static string SanitiseLabel(string prefix, string label)
+        private static string SanitiseLabel(string prefix, string value)
         {
             if (prefix.Equals("bodytypes", StringComparison.CurrentCultureIgnoreCase))
             {
-                switch (label)
+                switch (value)
                 {
                     case "third-country-body":
                         return "Third country body";
                     case "Overseas Body":
                         return "Overseas body";
                     default:
-                        return label;
+                        return value;
                 }
             }
             if (prefix.Equals("statuses", StringComparison.CurrentCultureIgnoreCase))
             {
-                var statusInt = int.Parse(label);
+                var statusInt = int.Parse(value);
                 return ((Status)statusInt).ToString();
             }
             if (prefix.Equals("substatuses", StringComparison.CurrentCultureIgnoreCase))
             {
-                var subStatusInt = int.Parse(label);
-                return ((SubStatus)subStatusInt).ToString();
+                var subStatus = Enum.Parse<SubStatus>(value);
+          
+                switch (subStatus)
+                {
+                    case SubStatus.None:
+                        return subStatus.GetEnumDescription();;
+                    case SubStatus.PendingApprovalToPublish:
+                        return "To publish CAB";
+                    case SubStatus.PendingApprovalToArchive:
+                        return "To archive CAB";
+                    case SubStatus.PendingApprovalToUnarchivePublish:
+                        return "To unarchive and publish CAB";
+                    case SubStatus.PendingApprovalToUnarchive:
+                        return "To unarchive CAB as draft";
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(value));
+                }
             }
             if (prefix.Equals("usergroups", StringComparison.CurrentCultureIgnoreCase))
             {
-                return label.ToUpper();
+                return value.ToUpper();
             }
-            return label;
+            return value;
         }
 
 

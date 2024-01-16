@@ -50,7 +50,12 @@ public class DeclineUnarchiveCABController : Controller
     public async Task<IActionResult> DeclineAsync(string cabUrl)
     {
         var document = await GetArchivedDocumentAsync(cabUrl);
-        if (document.StatusValue != Status.Archived || document.SubStatus != SubStatus.PendingApproval)
+        var unarchiveStatuses = new List<SubStatus>()
+        {
+            SubStatus.PendingApprovalToUnarchive,
+            SubStatus.PendingApprovalToUnarchivePublish
+        };
+        if (document.StatusValue != Status.Archived || !unarchiveStatuses.Contains(document.SubStatus))
         {
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
         }
@@ -144,7 +149,10 @@ public class DeclineUnarchiveCABController : Controller
         };
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
             _templateOptions.NotificationUnarchiveDeclined, personalisation);
-        
+
+        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+           _templateOptions.NotificationUnarchiveDeclined, personalisation);
+
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
                TaskType.RequestToUnarchiveDeclined,

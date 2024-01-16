@@ -173,7 +173,7 @@ namespace UKMCAB.Core.Services.CAB
         {
             if (submitForApproval)
             {
-                draft.SubStatus = SubStatus.PendingApproval;
+                draft.SubStatus = SubStatus.PendingApprovalToPublish;
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
             }
 
@@ -212,14 +212,20 @@ namespace UKMCAB.Core.Services.CAB
                 $"The delete reason must be specified when an earlier document version exists.");
 
             // Delete the draft CAB record.
-            Guard.IsTrue(await _cabRepository.Delete(draft),
+            Guard.IsTrue(await _cabRepository.DeleteAsync(draft),
                     $"Failed to delete draft version, CAB Id: {cabId}");
 
-            // Add audit log entry to previous version, if one exists.
+            // Make updates to previous cab version, if one exists.
             if (previous != null)
             {
+                // Add audit log entry to previous version.
                 previous.AuditLog.Add(new Audit(userAccount, AuditCABActions.DraftDeleted, deleteReason));
+
+                // Ensure substatus is set to None. Needed when deleting a draft created as a result of a request to unarchive.
+                previous.SubStatus = SubStatus.None;
+
                 await _cabRepository.UpdateAsync(previous);
+                await UpdateSearchIndex(previous);
             }
 
             // Update the search index & caches
@@ -248,6 +254,8 @@ namespace UKMCAB.Core.Services.CAB
             document.SubStatus = subStatus;
             document.AuditLog.Add(audit);
             await _cabRepository.UpdateAsync(document);
+            await UpdateSearchIndex(document);
+            await RefreshCaches(document.CABId, document.URLSlug);
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument)
@@ -291,6 +299,34 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatsAsync();
 
             return latestDocument;
+        }
+
+        public async Task UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? internalReason)
+        {
+            var docs = await FindAllDocumentsByCABIdAsync(cabId);
+            var publishedVersion = docs.SingleOrDefault(d => d.StatusValue == Status.Published);
+            
+            Guard.IsTrue(publishedVersion != null,
+                $"Submitted document for unpublishing not found, CAB Id: {cabId}");
+
+            var draft = docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
+            if (draft != null)
+            {
+                Guard.IsTrue(await _cabRepository.DeleteAsync(draft),
+                    $"Failed to delete draft version before unpublish, CAB Id: {cabId}");
+                await _cachedSearchService.RemoveFromIndexAsync(draft.id);
+            }
+
+            publishedVersion!.StatusValue = Status.Historical;
+            publishedVersion.SubStatus = SubStatus.None;
+            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnPublish, internalReason));
+            await _cabRepository.UpdateAsync(publishedVersion);
+
+            await UpdateSearchIndex(publishedVersion);
+
+            await RefreshCaches(publishedVersion.CABId, publishedVersion.URLSlug);
+
+            await RecordStatsAsync();
         }
 
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId,
@@ -355,7 +391,7 @@ namespace UKMCAB.Core.Services.CAB
             var draft = docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
             if (draft != null)
             {
-                Guard.IsTrue(await _cabRepository.Delete(draft),
+                Guard.IsTrue(await _cabRepository.DeleteAsync(draft),
                     $"Failed to delete draft version before archive, CAB Id: {CABId}");
                 await _cachedSearchService.RemoveFromIndexAsync(draft.id);
             }

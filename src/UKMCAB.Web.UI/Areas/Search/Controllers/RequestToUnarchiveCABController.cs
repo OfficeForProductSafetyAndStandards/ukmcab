@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core.Domain.Workflow;
@@ -29,7 +28,8 @@ public class RequestToUnarchiveCABController : Controller
     }
 
     public RequestToUnarchiveCABController(ICABAdminService cabAdminService, IWorkflowTaskService workflowTaskService,
-        IUserService userService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> options)
+        IUserService userService, IAsyncNotificationClient notificationClient,
+        IOptions<CoreEmailTemplateOptions> options)
     {
         _cabAdminService = cabAdminService;
         _workflowTaskService = workflowTaskService;
@@ -42,6 +42,10 @@ public class RequestToUnarchiveCABController : Controller
     public async Task<IActionResult> IndexAsync(string cabUrl)
     {
         var archivedDocument = await GetArchivedDocumentAsync(cabUrl);
+        if (archivedDocument.SubStatus != SubStatus.None)
+        {
+            return RedirectToRoute(CABProfileController.Routes.CabDetails, new { id = archivedDocument.CABId });
+        }
         var vm =
             new RequestToUnarchiveCABViewModel(archivedDocument.Name ?? throw new InvalidOperationException(),
                 archivedDocument.URLSlug, Guid.Parse(archivedDocument.CABId))
@@ -79,8 +83,10 @@ public class RequestToUnarchiveCABController : Controller
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
-        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived, SubStatus.PendingApproval, new Audit(currentUser, AuditCABActions.UnarchiveApprovalRequest));
-        
+        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived,
+            vm.IsPublish!.Value ? SubStatus.PendingApprovalToUnarchivePublish : SubStatus.PendingApprovalToUnarchive,
+            new Audit(currentUser, AuditCABActions.UnarchiveApprovalRequest));
+
         await _workflowTaskService.CreateAsync(new WorkflowTask(
             vm.IsPublish!.Value ? TaskType.RequestToUnarchiveForPublish : TaskType.RequestToUnarchiveForDraft,
             submitter,
@@ -98,8 +104,10 @@ public class RequestToUnarchiveCABController : Controller
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", vm.CABName },
-            {"CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = vm.CabId }))},
+            {
+                "CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = vm.CabId }))
+            },
             { "UserGroup", Roles.NameFor(submitter.RoleId) },
             { "Name", submitter.FirstAndLastName },
             { "Published", vm.IsPublish },

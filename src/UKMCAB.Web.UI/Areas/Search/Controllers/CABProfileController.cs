@@ -6,6 +6,7 @@ using System.Xml;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
@@ -38,6 +39,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly CoreEmailTemplateOptions _templateOptions;
         private readonly IAsyncNotificationClient _notificationClient;
         private readonly IWorkflowTaskService _workflowTaskService;
+        private readonly IEditLockService _editLockService;
 
         public static class Routes
         {
@@ -51,7 +53,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public CABProfileController(ICachedPublishedCABService cachedPublishedCabService,
             ICABAdminService cabAdminService, IFileStorage fileStorage, TelemetryClient telemetryClient,
             IFeedService feedService, IUserService userService, IOptions<CoreEmailTemplateOptions> templateOptions,
-            IAsyncNotificationClient notificationClient, IWorkflowTaskService workflowTaskService)
+            IAsyncNotificationClient notificationClient, IWorkflowTaskService workflowTaskService, IEditLockService editLockService)
         {
             _cachedPublishedCabService = cachedPublishedCabService;
             _cabAdminService = cabAdminService;
@@ -62,6 +64,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             _templateOptions = templateOptions.Value;
             _notificationClient = notificationClient;
             _workflowTaskService = workflowTaskService;
+            _editLockService = editLockService;
         }
 
         [HttpGet("~/__subscriptions/__inbound/cab/{id}", Name = Routes.TrackInboundLinkCabDetails)]
@@ -73,7 +76,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
-        public async Task<IActionResult> Index(string id, string? returnUrl, int pagenumber = 1)
+        public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, int pagenumber = 1)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
@@ -84,6 +87,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (cabDocument == null || (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated))
             {
                 return NotFound();
+            }
+            
+            if (!string.IsNullOrWhiteSpace(unlockCab))
+            {
+                await _editLockService.RemoveEditLockForCabAsync(unlockCab);
             }
 
             var userAccount = User.Identity is { IsAuthenticated: true }
@@ -191,6 +199,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ArchiveReason = isArchived && archiveAudit != null ? archiveAudit.Comment : string.Empty,
                 AuditLogHistory = history,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? "/" : WebUtility.UrlDecode(returnUrl),
+                IsOPSSUser =  User.IsInRole(Roles.OPSS.Id),
                 CABId = cabDocument.CABId,
                 CABUrl = cabDocument.URLSlug,
                 PublishedDate = publishedAudit?.DateTime ?? null,
@@ -213,6 +222,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                 Status = cabDocument.Status,
+                SubStatus = cabDocument.SubStatus.GetEnumDescription(),
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
                 ProductSchedules = new CABDocumentsViewModel
                 {
