@@ -19,78 +19,8 @@ using UKMCAB.Data.Models.Users;
 namespace UKMCAB.Core.Tests.Services.CAB
 {
     [TestFixture]
-    public class CABAdminServiceTests
+    public partial class CABAdminServiceTests
     {     
-        private Mock<ICABRepository> _mockCABRepository;
-        private Mock<ICachedPublishedCABService> _mockCachedPublishedCAB;
-        private Mock<ICachedSearchService> _mockCachedSearchService;
-        private TelemetryClient _telemetryClient;
-        private Mock<IUserService> _mockUserService;
-        private ICABAdminService _sut;
-        private readonly Faker _faker = new();
-
-        [SetUp] 
-        public void Setup() {
-            _mockCABRepository = new Mock<ICABRepository>();
-            _mockCachedPublishedCAB = new Mock<ICachedPublishedCABService>();
-            _mockCachedSearchService = new Mock<ICachedSearchService>();
-            _telemetryClient = new TelemetryClient();
-            _mockUserService = new Mock<IUserService>();
-
-            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _telemetryClient, _mockUserService.Object);
-        }
-
-        [Theory]
-        [TestCase("ukas")]
-        public async Task FindAllCABManagementQueueDocumentsForUserRole_UKAS_ShouldReturnFilteredResults(string role)
-        {
-            // Arrange
-            var auditLog1 = new Audit { DateTime =  DateTime.Now, UserRole = role }; // Role audit log
-            var expectedResults = new List<Document>
-            {
-                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
-                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Draft },
-                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), AuditLog = new List<Audit>{auditLog1}, StatusValue = Status.Archived }
-            };
-
-            var auditLog2 = new Audit { DateTime =  DateTime.Now, UserRole = "other" }; 
-
-            var expectedOther = new List<Document>
-            {
-                new Document{
-                    id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), AuditLog = new List<Audit>{auditLog2}, StatusValue = Status.Draft 
-                }
-            };
-
-            _mockCABRepository.Setup(x => x.Query<Document>(It.Is<Expression<Func<Document, bool>>>(predicate =>
-                    !EvaluateDocumentPredicateWithoutRole(predicate))))
-                .ReturnsAsync(expectedResults);
-            
-            _mockCABRepository.Setup(x => x.Query<Document>(It.Is<Expression<Func<Document, bool>>>(predicate =>
-                    EvaluateDocumentPredicateWithoutRole(predicate))))
-                .ReturnsAsync(expectedOther);
-            
-            // Act
-            var ukasResults = await _sut.FindAllCABManagementQueueDocumentsForUserRole(role);
-
-            var expectedResultsCABModel = expectedResults.Select(d => d.MapToCabModel()).ToList();
-            var expectedOtherCABModel = expectedOther.Select(d => d.MapToCabModel()).ToList();
-
-            // Assert
-            Assert.AreEqual(ukasResults[0].CABId, expectedResultsCABModel[0].CABId);
-            Assert.AreEqual(ukasResults[1].CABId, expectedResultsCABModel[1].CABId);
-            Assert.AreEqual(ukasResults[2].CABId, expectedResultsCABModel[2].CABId);
-
-            Assert.AreNotEqual(ukasResults[0].CABId, expectedOtherCABModel[0].CABId);
-       
-        }
-
-        private bool EvaluateDocumentPredicateWithoutRole(Expression<Func<Document, bool>> predicate)
-        {
-            var body = predicate.Body as BinaryExpression;
-            return body != null && !body.ToString().Contains("CreatedByUserGroup");
-        }
-
         [TestCase]
         public async Task DeleteDraftDocumentAsync_ShouldDoNothingIfDraftCabNotFound()
         {
@@ -107,7 +37,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
         }
 
         [TestCase]
-        public async Task DeleteDraftDocumentAsync_ShouldErrorIfDeleteReasonIsBlankAndCabHasPublishedVersion()
+        public Task DeleteDraftDocumentAsync_ShouldErrorIfDeleteReasonIsBlankAndCabHasPublishedVersion()
         {
             // Arrange
             _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
@@ -124,10 +54,11 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             _mockCABRepository.Verify(x => x.Delete(It.IsAny<Document>()), Times.Never);
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
+            return Task.CompletedTask;
         }
 
         [TestCase]
-        public async Task DeleteDraftDocumentAsync_ShouldErrorIfRepositoryDeleteReturnsFalse()
+        public Task DeleteDraftDocumentAsync_ShouldErrorIfRepositoryDeleteReturnsFalse()
         {
             // Arrange
             _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
@@ -151,6 +82,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCachedSearchService.Verify(x => x.ClearAsync(), Times.Never);
             _mockCachedSearchService.Verify(x => x.ClearAsync(It.IsAny<string>()), Times.Never);
             _mockCachedPublishedCAB.Verify(x => x.ClearAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+            return Task.CompletedTask;
         }
 
         [TestCase]

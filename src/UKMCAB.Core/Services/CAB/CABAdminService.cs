@@ -295,6 +295,33 @@ namespace UKMCAB.Core.Services.CAB
             return latestDocument;
         }
 
+        public async Task UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? internalReason)
+        {
+            var docs = await FindAllDocumentsByCABIdAsync(cabId);
+            var publishedVersion = docs.SingleOrDefault(d => d.StatusValue == Status.Published);
+            
+            Guard.IsTrue(publishedVersion != null,
+                $"Submitted document for un publishing not found, CAB Id: {cabId}");
+
+            var draft = docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
+            if (draft != null)
+            {
+                Guard.IsTrue(await _cabRepository.Delete(draft),
+                    $"Failed to delete draft version before unpublish, CAB Id: {cabId}");
+                await _cachedSearchService.RemoveFromIndexAsync(draft.id);
+            }
+
+            publishedVersion!.StatusValue = Status.Historical;
+            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnPublish, internalReason));
+            await _cabRepository.UpdateAsync(publishedVersion);
+
+            await UpdateSearchIndex(publishedVersion);
+
+            await RefreshCaches(publishedVersion.CABId, publishedVersion.URLSlug);
+
+            await RecordStatsAsync();
+        }
+
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId,
             string? unarchiveInternalReason, string unarchivePublicReason)
         {
