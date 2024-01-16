@@ -4,17 +4,17 @@
 
 @{
     // Note: The returnUrl here is different to the returnUrl passed into the main CAB profile screen.
-    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}";
+    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}#usernotes";
 }
 
-<div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="usernotes">
+<div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden govuk-body" id="usernotes">
     <div class="cab-detail-section">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-three-quarters">
                 <h2 class="govuk-heading-l">Government user notes</h2>
             </div>
             <div class="govuk-grid-column-one-quarter">
-                <govuk-button-link class="govuk-button--secondary" asp-area="Search" asp-controller="UserNote" asp-action="Create"
+                <govuk-button-link class="govuk-button--secondary ukmcab-float__right" asp-area="Search" asp-controller="UserNote" asp-action="Create"
                     asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-returnUrl="@returnUrl">Add Note</govuk-button-link>
             </div>
         </div>

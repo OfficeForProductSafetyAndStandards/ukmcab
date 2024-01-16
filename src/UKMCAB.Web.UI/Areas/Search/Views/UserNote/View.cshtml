@@ -1,4 +1,5 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Shared.UserNoteViewModel
+﻿@using UKMCAB.Core.Security;
+@model UKMCAB.Web.UI.Models.ViewModels.Shared.UserNoteViewModel
 
 @section BackButton
 {
@@ -17,8 +18,8 @@
         <table class="govuk-table ukmcab-table--2-col">
             <tbody class="govuk-table__body">
                 <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header">Date and time</th>
-                    <td class="govuk-table__cell">@Model.DateAndTime.ToStringBeisFormat()</td>
+                    <th scope="row" class="govuk-table__header govuk-!-width-one-quarter">Date and time</th>
+                    <td class="govuk-table__cell govuk-!-width-three-quarters">@Model.DateAndTime.ToStringBeisFormat()</td>
                 </tr>
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header" style="width:30%">User</th>
@@ -26,7 +27,7 @@
                 </tr>
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header">User group</th>
-                    <td class="govuk-table__cell">@Model.UserGroup</td>
+                    <td class="govuk-table__cell">@Roles.NameFor(Model.UserGroup)</td>
                 </tr>
                 <tr class="govuk-table__row">
                     <th scope="row" class="govuk-table__header">Note</th>
@@ -37,19 +38,22 @@
     </div>
 </div>
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <govuk-warning-text icon-fallback-text="Warning">It is not possible to recover a note once it has been deleted.</govuk-warning-text>
+@if (Model.IsOPSSOrInCreatorUserGroup)
+{
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+            <govuk-warning-text icon-fallback-text="Warning">It is not possible to recover a note once it has been deleted.</govuk-warning-text>
 
-        <form id="deletegovernmentusernoteform" method="post" asp-action="Delete">
-            <input type="hidden" asp-for="CabDocumentId" />
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="ReturnUrl" />
+            <form id="deletegovernmentusernoteform" method="post" asp-action="Delete">
+                <input type="hidden" asp-for="CabDocumentId" />
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ReturnUrl" />
 
-            <div class="govuk-button-group">
-                <input type="submit" name="upvote" value="Delete" class="govuk-button govuk-button--warning" />
-                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-            </div>
-        </form>
+                <div class="govuk-button-group">
+                    <input type="submit" name="upvote" value="Delete" class="govuk-button govuk-button--warning" />
+                    <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
+}

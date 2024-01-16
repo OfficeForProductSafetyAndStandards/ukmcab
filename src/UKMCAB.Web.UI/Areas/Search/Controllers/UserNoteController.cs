@@ -1,26 +1,14 @@
+using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Notify.Interfaces;
-using UKMCAB.Core.Domain.Workflow;
-using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
-using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
-using UKMCAB.Web.UI.Areas.Admin.Controllers;
-using UKMCAB.Web.UI.Models.ViewModels.Search.RequestToUnarchiveCAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
-using System.Linq;
-using UKMCAB.Core.Domain.CAB;
-using Microsoft.AspNetCore.Authorization;
-using Org.BouncyCastle.Asn1.Ocsp;
-using UKMCAB.Common;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers;
 
-[Area("search"), Route("search/governmentusernote"), Authorize]
+[Area("search"), Route("search/governmentusernote"), Authorize(Policy = Policies.GovernmentUserNotes)]
 public class UserNoteController : Controller
 {
     private readonly IUserNoteService _userNoteService;
@@ -44,11 +32,6 @@ public class UserNoteController : Controller
     {
         UserNote userNote = await _userNoteService.GetUserNote(cabDocumentId, userNoteId);
 
-        if (userNote == null)
-        {
-            //TODO guard in service or check here instead???
-        }
-
         var vm = new UserNoteViewModel()
         {
             Title = "Government user note",
@@ -60,6 +43,7 @@ public class UserNoteController : Controller
             UserGroup = userNote.UserRole,
             Note = userNote.Note,
             ReturnUrl = returnUrl,
+            IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || User.IsInRole(userNote.UserRole),
         };
 
         return View(vm);

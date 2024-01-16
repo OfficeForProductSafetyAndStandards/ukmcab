@@ -27,8 +27,8 @@
            
             UserNote userNote = cab.GovernmentUserNotes.Where(u => u.Id == userNoteId).FirstOrDefault();
 
-            Guard.IsNotNull(userNote,
-               $"Retrieval of UserNote failed. UserNote not found. ID: {userNoteId}.");
+            Guard.IsNotNull(userNote, () => new Exception(
+               $"UserNote not found. UserNote ID: {userNoteId}."));
 
             return userNote;
         }
@@ -73,8 +73,8 @@
 
             var cab = results.FirstOrDefault();
 
-            Guard.IsNotNull(cab,
-               $"Retrieval of UserNote failed. CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.");
+            Guard.IsNotNull(cab, () => new Exception(
+               $"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId."));
 
             return cab;
         }

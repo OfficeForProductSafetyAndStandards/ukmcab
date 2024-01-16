@@ -19,6 +19,7 @@ public static class ClaimsIssuer
                 new(Claims.CabEdit, "*"), // can edit any cab
                 new(Claims.CabCanApprove, "*"), // can edit any cab
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
+                new(Claims.CabGovernmentUserNotes, string.Empty), // can view/add Government user notes on cabs
                 new(Claims.UserManagement, string.Empty), // can manage users
             };
         }

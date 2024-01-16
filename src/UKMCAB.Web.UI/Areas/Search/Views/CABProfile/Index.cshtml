@@ -2,6 +2,7 @@
 @using Microsoft.EntityFrameworkCore
 @using UKMCAB.Core.Domain;
 @using UKMCAB.Core.Domain.Workflow
+@using UKMCAB.Core.Security;
 @using UKMCAB.Web.UI.Areas.Search.Controllers
 @model CABProfileViewModel
 @{
@@ -138,7 +139,7 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <div class="govuk-tabs cab-tabs" data-module="govuk-tabs">
+        <div class="govuk-tabs cab-tabs tabs-pagenumber-reset" data-module="govuk-tabs">
             <ul class="govuk-tabs__list">
                 <li class="govuk-tabs__list-item @Html.Conditional(!Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected")">
                     <a class="govuk-tabs__tab" href="#details">
@@ -158,14 +159,14 @@
                         </a>
                     </li>
                 }
-                    @if (User.Identity.IsAuthenticated /*todo: OPSS and OGP only */)
-                    {
-                        <li class="govuk-tabs__list-item">
-                            <a class="govuk-tabs__tab" href="#usernotes">
-                                Government user notes
-                            </a>
-                        </li>
-                    }
+                @if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabGovernmentUserNotes))
+                {
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#usernotes">
+                            Government user notes
+                        </a>
+                    </li>
+                }
                 <li class="govuk-tabs__list-item @Html.Conditional(Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected")">
                     <a class="govuk-tabs__tab" href="#history">
                         History
@@ -398,7 +399,7 @@
                 <partial name="Partials/_Documents" model="Model.SupportingDocuments"/>
             }
 
-            @if (User.Identity.IsAuthenticated /*todo: lock down to OPPS & OGD */)
+            @if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabGovernmentUserNotes))
             {
                 <partial name="Partials/_UserNotes" model="Model.GovernmentUserNotes" />
             }
