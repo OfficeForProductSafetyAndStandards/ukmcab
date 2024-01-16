@@ -212,7 +212,7 @@ namespace UKMCAB.Core.Services.CAB
                 $"The delete reason must be specified when an earlier document version exists.");
 
             // Delete the draft CAB record.
-            Guard.IsTrue(await _cabRepository.Delete(draft),
+            Guard.IsTrue(await _cabRepository.DeleteAsync(draft),
                     $"Failed to delete draft version, CAB Id: {cabId}");
 
             // Add audit log entry to previous version, if one exists.
@@ -306,7 +306,7 @@ namespace UKMCAB.Core.Services.CAB
             var draft = docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
             if (draft != null)
             {
-                Guard.IsTrue(await _cabRepository.Delete(draft),
+                Guard.IsTrue(await _cabRepository.DeleteAsync(draft),
                     $"Failed to delete draft version before unpublish, CAB Id: {cabId}");
                 await _cachedSearchService.RemoveFromIndexAsync(draft.id);
             }
@@ -384,7 +384,7 @@ namespace UKMCAB.Core.Services.CAB
             var draft = docs.SingleOrDefault(d => d.StatusValue == Status.Draft);
             if (draft != null)
             {
-                Guard.IsTrue(await _cabRepository.Delete(draft),
+                Guard.IsTrue(await _cabRepository.DeleteAsync(draft),
                     $"Failed to delete draft version before archive, CAB Id: {CABId}");
                 await _cachedSearchService.RemoveFromIndexAsync(draft.id);
             }

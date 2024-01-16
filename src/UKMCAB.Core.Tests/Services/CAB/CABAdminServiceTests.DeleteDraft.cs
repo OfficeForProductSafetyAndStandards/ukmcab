@@ -21,7 +21,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
     [TestFixture]
     public partial class CABAdminServiceTests
     {     
-        [TestCase]
+        [Theory]
         public async Task DeleteDraftDocumentAsync_ShouldDoNothingIfDraftCabNotFound()
         {
             // Arrange
@@ -32,11 +32,11 @@ namespace UKMCAB.Core.Tests.Services.CAB
             await _sut.DeleteDraftDocumentAsync(new UserAccount(), Guid.NewGuid(), _faker.Random.Word());
 
             // Assert
-            _mockCABRepository.Verify(x => x.Delete(It.IsAny<Document>()), Times.Never);
+            _mockCABRepository.Verify(x => x.DeleteAsync(It.IsAny<Document>()), Times.Never);
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
         }
 
-        [TestCase]
+        [Theory]
         public Task DeleteDraftDocumentAsync_ShouldErrorIfDeleteReasonIsBlankAndCabHasPublishedVersion()
         {
             // Arrange
@@ -52,12 +52,12 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Assert
             Assert.AreEqual("The delete reason must be specified when an earlier document version exists.", exception.Message);
 
-            _mockCABRepository.Verify(x => x.Delete(It.IsAny<Document>()), Times.Never);
+            _mockCABRepository.Verify(x => x.DeleteAsync(It.IsAny<Document>()), Times.Never);
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
             return Task.CompletedTask;
         }
 
-        [TestCase]
+        [Theory]
         public Task DeleteDraftDocumentAsync_ShouldErrorIfRepositoryDeleteReturnsFalse()
         {
             // Arrange
@@ -67,7 +67,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new Document { id = "2", StatusValue = Status.Draft },
                 });
 
-            _mockCABRepository.Setup(x => x.Delete(It.Is<Document>(x => x.id == "2" && x.StatusValue == Status.Draft)))
+            _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "2" && x.StatusValue == Status.Draft)))
                 .ReturnsAsync(false);
 
             // Act
@@ -85,7 +85,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             return Task.CompletedTask;
         }
 
-        [TestCase]
+        [Theory]
         public async Task DeleteDraftDocumentAsync_ShouldUpdateSearchIndexAndCachesIfDeleteSuccessful()
         {
             // Arrange
@@ -95,7 +95,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new Document { id = "1", CABId = cabId.ToString(), StatusValue = Status.Draft, URLSlug = "urlSlug" },
                 });
 
-            _mockCABRepository.Setup(x => x.Delete(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Draft)))
+            _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Draft)))
                 .ReturnsAsync(true);
 
             // Act
@@ -108,7 +108,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCachedPublishedCAB.Verify(x => x.ClearAsync(cabId.ToString(), "urlSlug"), Times.Once);
         }
 
-        [TestCase]
+        [Theory]
         public async Task DeleteDraftDocumentAsync_ShouldAddEntryToAuditLogIfCabHasPublishedVersion()
         {
             // Arrange
@@ -118,7 +118,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new Document { id = "2", StatusValue = Status.Draft },
                 });
 
-            _mockCABRepository.Setup(x => x.Delete(It.Is<Document>(x => x.id == "2" && x.StatusValue == Status.Draft)))
+            _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "2" && x.StatusValue == Status.Draft)))
                 .ReturnsAsync(true);
 
             // Act
@@ -138,7 +138,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new Document { id = "1", StatusValue = Status.Draft },
                 });
 
-            _mockCABRepository.Setup(x => x.Delete(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Draft)))
+            _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Draft)))
                 .ReturnsAsync(true);
 
             // Act
