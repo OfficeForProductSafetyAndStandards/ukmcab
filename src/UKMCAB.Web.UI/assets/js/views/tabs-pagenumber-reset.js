@@ -1,6 +1,6 @@
-let notificationTabs = (function () {
+let tabsPageNumberReset = (function () {
     'use strict';
-    let tabs = document.querySelectorAll("div.notifications-tabs a.govuk-tabs__tab");
+    let tabs = document.querySelectorAll("div.tabs-pagenumber-reset a.govuk-tabs__tab");
 
     function init() {
         if (tabs) {
@@ -21,4 +21,4 @@ let notificationTabs = (function () {
     };
 })();
 
-notificationTabs.init();
+tabsPageNumberReset.init();

@@ -12,7 +12,7 @@
  
 <div class="govuk-grid-row">
     <div class="govuk-body govuk-grid-column-full">
-        <govuk-tabs class="notifications-tabs" title=" ">
+        <govuk-tabs class="notifications-tabs tabs-pagenumber-reset" title=" ">
             <govuk-tabs-item id="Unassigned" label='@("Assigned to "+  Model.UserGroup + " (" + Model.UnassignedTable.TotalCount + ")")' asp-route="@NotificationController.Routes.Notifications">
                 <partial name="_NotificationsTable" model="@Model.UnassignedTable"/>
             </govuk-tabs-item>

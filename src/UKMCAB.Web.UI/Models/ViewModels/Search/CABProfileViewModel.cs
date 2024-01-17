@@ -58,7 +58,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public CABDocumentsViewModel ProductSchedules { get; set; }
         public CABDocumentsViewModel SupportingDocuments { get; set; }
         public FeedLinksViewModel FeedLinksViewModel { get; set; }
-        
+        public UserNoteListViewModel GovernmentUserNotes { get; set; }
+
         public string? UnarchiverFirstAndLastName { get; set; }
         public string? UnarchiverUserGroup { get; set; }
         public string? UnarchiveReasonSummary { get; set; }
