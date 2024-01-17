@@ -399,6 +399,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) &&
                                        latest.StatusValue != Status.Published,
                 Status = latest.StatusValue,
+                StatusCssStyle = CssClassUtils.CabStatusStyle(latest.StatusValue),
                 SubStatus = latest.SubStatus,
                 SubStatusName = latest.SubStatus.GetEnumDescription(),
                 ValidCAB = latest.StatusValue != Status.Published
