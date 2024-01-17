@@ -69,6 +69,8 @@ namespace UKMCAB.Data.Models
 
         public string DocumentLabels => string.Join(", ", Documents?.Select(doc => doc.Label) ?? new List<string>());
 
+        public List<UserNote> GovernmentUserNotes { get; set; } = new();
+
         public string HiddenText { get; set; } = string.Empty;
         public string RandomSort { get; set; } = string.Empty;
         public string LegacyCabId { get; set; } = string.Empty;

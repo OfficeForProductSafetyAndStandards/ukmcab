@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core.Domain.Workflow;
@@ -43,6 +42,10 @@ public class RequestToUnarchiveCABController : Controller
     public async Task<IActionResult> IndexAsync(string cabUrl)
     {
         var archivedDocument = await GetArchivedDocumentAsync(cabUrl);
+        if (archivedDocument.SubStatus != SubStatus.None)
+        {
+            return RedirectToRoute(CABProfileController.Routes.CabDetails, new { id = archivedDocument.CABId });
+        }
         var vm =
             new RequestToUnarchiveCABViewModel(archivedDocument.Name ?? throw new InvalidOperationException(),
                 archivedDocument.URLSlug, Guid.Parse(archivedDocument.CABId))

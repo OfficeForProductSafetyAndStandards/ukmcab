@@ -1,0 +1,41 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Shared.UserNoteCreateViewModel
+
+@section BackButton
+{
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="@Model.ReturnUrl" class="govuk-back-link">Back</a>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m govuk-!-margin-bottom-3">Government user note</span>
+        <h1 class="govuk-heading-l">Government user note</h1>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+        <form id="createusernoteform" method="post">
+            <input type="hidden" asp-for="Title" />
+            <input type="hidden" asp-for="CabDocumentId" />
+            <input type="hidden" asp-for="ReturnUrl" />
+
+            
+            <govuk-character-count asp-for="Note" max-length="1000">
+                <govuk-character-count-label class="govuk-label--s" is-page-heading="false">
+                    Note
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    These notes will be only be seen by government users that are signed in to the UKMCAB service.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Save</govuk-button>
+                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

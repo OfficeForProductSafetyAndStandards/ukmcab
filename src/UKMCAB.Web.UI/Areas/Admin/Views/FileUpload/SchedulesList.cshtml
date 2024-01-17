@@ -146,8 +146,8 @@
                                 </div>
 
                                 @*Row 2: Inputbox Row*@
-                                <div class="row">
-                                    <div class="width-three-fifth ukmcab-padding-right-10 ukmcab-padding-left-35 ukmcab-padding-bottom-15 ukmcab-float__left">
+                                <div class="document-list">
+                                    <div class="document-item width-three-fifth ukmcab-padding-right-10 ukmcab-padding-left-35 ukmcab-float__left">
                                         <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
                                             <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Label">File</label>
                                             <p class="govuk-error-message">
@@ -160,12 +160,12 @@
                                         </div>
                                     </div>
 
-                                    <div class="width-three-tenth ukmcab-padding-left-40 ukmcab-float__left govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
+                                    <div class="document-item width-three-tenth ukmcab-padding-left-40 ukmcab-float__left govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].LegislativeArea">Legislative area</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles![i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
-                                        <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
+                                        <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
                                             <option value="">Not assigned</option>
                                             @foreach (var la in items)
                                             {
