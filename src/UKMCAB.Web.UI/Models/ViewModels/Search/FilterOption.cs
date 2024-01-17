@@ -46,8 +46,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
           
                 switch (subStatus)
                 {
-                    case SubStatus.None:
-                        return subStatus.GetEnumDescription();;
                     case SubStatus.PendingApprovalToPublish:
                         return "To publish CAB";
                     case SubStatus.PendingApprovalToArchive:
@@ -57,7 +55,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                     case SubStatus.PendingApprovalToUnarchive:
                         return "To unarchive CAB as draft";
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(value));
+                        return subStatus.GetEnumDescription();
                 }
             }
             if (prefix.Equals("usergroups", StringComparison.CurrentCultureIgnoreCase))
