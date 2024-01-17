@@ -59,19 +59,9 @@ namespace UKMCAB.Data.Models
                 }
                 foreach (var removedSchedule in removedSchedules)
                 {
-                    if(newSchedules.Any(s => s.FileName.Equals(removedSchedule.FileName, StringComparison.OrdinalIgnoreCase)))
-                    {
-                        sb.AppendFormat(
-                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the Product schedules page.</p>",
-                        ScheduleLink($"replaced-file/{publishedDocument.CABId}", removedSchedule.FileName), removedSchedule.Label);
-                    }
-                    else
-                    {
-                        sb.AppendFormat(
+                    sb.AppendFormat(
                         "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the Product schedules page.</p>",
                         ScheduleLink(publishedDocument.CABId, removedSchedule.FileName), removedSchedule.Label);
-                    }
-                    
                 }
                 PublicComment = HttpUtility.HtmlEncode(sb.ToString());
             }
