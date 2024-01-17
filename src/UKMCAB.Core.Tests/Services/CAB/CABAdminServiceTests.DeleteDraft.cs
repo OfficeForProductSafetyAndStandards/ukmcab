@@ -15,6 +15,7 @@ using UKMCAB.Core.Mappers;
 using System.Linq;
 using Bogus;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -146,6 +147,30 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
+        }
+
+        [Test]
+        public async Task DeleteDraftDocumentAsync_ShouldResetSubstatusOnPreviousVersionIfCreatedViaRequestToUnarchive()
+        {
+            // Arrange
+            var cabId = Guid.NewGuid();
+            _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
+                .ReturnsAsync(new List<Document>() {
+                    new Document { id = "1", StatusValue = Status.Archived, SubStatus = SubStatus.PendingApprovalToUnarchive, AuditLog = new List<Audit> { } },
+                    new Document { id = "2", StatusValue = Status.Draft },
+                });
+
+            _mockCABRepository.Setup(x => x.DeleteAsync(It.Is<Document>(x => x.id == "2" && x.StatusValue == Status.Draft)))
+                .ReturnsAsync(true);
+
+            // Act
+            await _sut.DeleteDraftDocumentAsync(new UserAccount(), cabId, _faker.Random.Word());
+
+            // Assert
+            _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Archived &&
+                x.SubStatus == SubStatus.None && x.SubStatusName == "None")), Times.Once);
+
+            _mockCachedSearchService.Verify(x => x.ReIndexAsync(It.Is<CABIndexItem>(x => x.id == "1" && x.SubStatus == ((int)SubStatus.None).ToString())), Times.Once);
         }
     }
 }
