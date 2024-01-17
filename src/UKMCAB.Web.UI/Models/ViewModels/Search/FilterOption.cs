@@ -55,7 +55,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                     case SubStatus.PendingApprovalToUnarchive:
                         return "To unarchive CAB as draft";
                     default:
-                        return subStatus.GetEnumDescription();;
+                        return subStatus.GetEnumDescription();
                 }
             }
             if (prefix.Equals("usergroups", StringComparison.CurrentCultureIgnoreCase))
