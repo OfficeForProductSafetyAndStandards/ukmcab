@@ -59,13 +59,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     isValidFile = false;
                 }
 
-                currentDocuments ??= new List<FileUpload>();
+                //currentDocuments ??= new List<FileUpload>();
 
-                if (currentDocuments.Any(s => s.FileName.Equals(file.FileName)))
-                {
-                    ModelState.AddModelError("File", $"{file.FileName} has already been uploaded. Select the existing file and the Use file again option, or upload a different file.");
-                    isValidFile = false;
-                }
+                //if (currentDocuments.Any(s => s.FileName.Equals(file.FileName)))
+                //{
+                //    ModelState.AddModelError("File", $"{file.FileName} has already been uploaded. Select the existing file and the Use file again option, or upload a different file.");
+                //    isValidFile = false;
+                //}
             }
             return isValidFile;
         }
@@ -222,26 +222,30 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private async Task UploadAndReplaceWithValidatedFile(FileUploadViewModel model, Document? latestDocument, List<FileUpload>? latestUploadedFiles, IFormFile? file, string contentType, string directoryName)
         {
-            var replacementUploadedSchedule = await _fileStorage.UploadCABFile(latestDocument.CABId, file.FileName, file.FileName, directoryName,
+            //SOLUTION FOR COPYING ORIGINAL FILE INTO A NEW REPLACED_FILES FOLDER
+            //if (latestUploadedFiles.Any(f => f.FileName.Equals(file.FileName)))
+            //{
+            //    var fileWithSameFilename = latestUploadedFiles.FirstOrDefault(f => f.FileName.Equals(file.FileName));
+
+            //    //TODO - Remove variable name
+            //    var replacedfile = await _fileStorage.CopyCABFileToReplacedFolder(latestDocument.CABId, file.FileName, directoryName, fileWithSameFilename.Label);
+            //}
+
+            var newFileName = AppendDateTimeToFileName(DateTime.UtcNow, file.FileName);
+
+            var replacementUploadedSchedule = await _fileStorage.UploadCABFile(latestDocument.CABId, file.FileName, newFileName, directoryName,
                 file.OpenReadStream(), contentType);
+            //var replacementUploadedSchedule = await _fileStorage.UploadCABFile(latestDocument.CABId, file.FileName, file.FileName, directoryName,
+            //    file.OpenReadStream(), contentType);
             if (latestDocument.Schedules != null && int.TryParse(model.IndexofSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestUploadedFiles.Count)
             {
                 var scheduleToReplace = latestUploadedFiles[indexOfFileToReplace];
                 
-                var sb = new StringBuilder();
-                var oldFileLink = $"/search/cab-schedule-view/{latestDocument.CABId}?file={scheduleToReplace.FileName}&filetype=schedules";
-                var newFileLink = $"/search/cab-schedule-view/{latestDocument.CABId}?file={replacementUploadedSchedule.FileName}&filetype=schedules";
-
-                sb.AppendFormat("<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">Old file</a></p>", oldFileLink);
-                sb.AppendFormat("<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">New file</a></p>", newFileLink);
-
                 scheduleToReplace.FileName = replacementUploadedSchedule.FileName;
                 scheduleToReplace.BlobName = replacementUploadedSchedule.BlobName;
                 scheduleToReplace.UploadDateTime = replacementUploadedSchedule.UploadDateTime;
 
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                var auditLog = new Audit(userAccount, AuditCABActions.Created, null, HttpUtility.HtmlEncode(sb.ToString()), false);
-                latestDocument.AuditLog.Add(auditLog);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
             }
         }
@@ -290,6 +294,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             return RedirectToAction("DocumentsList", "FileUpload", new { id, fromSummary, fileIndexToDuplicate = model.IndexofSelectedFile });
+        }
+
+        private static string AppendDateTimeToFileName(DateTime date, string fileName)
+        {
+            string extension = System.IO.Path.GetExtension(fileName);
+            string formattedDateTime = date.ToString("yyyyMMddHHmmss");
+
+            string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fileName);
+
+            string newFileName = $"{fileNameWithoutExtension}-{formattedDateTime}{extension}";
+
+            return newFileName;
         }
     }
 }

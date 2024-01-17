@@ -1,6 +1,9 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Azure.Storage.Blobs.Specialized;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Microsoft.Extensions.Configuration;
+using System.Reflection.Emit;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data.Storage
@@ -12,6 +15,7 @@ namespace UKMCAB.Data.Storage
         Task<bool> DeleteCABSchedule(string blobName);
 
         Task<FileDownload> DownloadBlobStream(string blobPath);
+        Task<FileUpload> CopyCABFileToReplacedFolder(string cabId, string fileName, string directoryName, string label);
     }
 
     public class FileStorageService : IFileStorage
@@ -75,6 +79,36 @@ namespace UKMCAB.Data.Storage
         {
             var result = await _client.DeleteBlobIfExistsAsync(blobName, DeleteSnapshotsOption.IncludeSnapshots);  // let exceptions propagate
             return result.Value;
+        }
+
+        public async Task<FileUpload> CopyCABFileToReplacedFolder(string cabId, string fileName, string directoryName, string label)
+        {
+            var blobName = $"{cabId}/{directoryName}/{fileName}";
+            var blob = _client.GetBlobClient(blobName);
+           
+ 
+            var blobExists = await blob.ExistsAsync();
+            if (blobExists.HasValue && blobExists.Value)
+            {
+                var replacedBlobName = $"{cabId}/{directoryName}/replaced_files/{fileName}";
+                var destinationBlob = _client.GetBlockBlobClient(replacedBlobName);
+                var status = await destinationBlob.StartCopyFromUriAsync(blob.Uri);
+                var response = await status.WaitForCompletionAsync();
+
+                if (response.GetRawResponse().Status == 200)
+                {
+                    return new FileUpload
+                    {
+                        Label = label,
+                        FileName = fileName,
+                        BlobName = replacedBlobName,
+                        UploadDateTime = DateTime.UtcNow
+                    };
+                }
+                
+            }
+
+            throw new Exception("CopyCABFileToReplacedFolder::File copy failed.");
         }
     }
 }
