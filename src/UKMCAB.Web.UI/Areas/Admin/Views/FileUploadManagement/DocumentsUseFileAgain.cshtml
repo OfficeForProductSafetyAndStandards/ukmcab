@@ -22,7 +22,7 @@
 
 <div class="govuk-grid-row">
 
-    @using (Html.BeginForm("DocumentsUseFileAgain", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
+    @using (Html.BeginForm("DocumentsUseFileAgain", "FileUploadManagement", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
     {
         <div class="govuk-grid-column-full">
 
