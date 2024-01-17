@@ -9,6 +9,7 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Areas.Admin.Controllers;
+using UKMCAB.Web.UI.Models.ViewModels.Search.RequestToUnpublishCAB;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers;
 
@@ -86,7 +87,7 @@ public class RequestToUnpublishCABController : Controller
             new Audit(currentUser, vm.IsUnpublish!.Value ? AuditCABActions.UnpublishApprovalRequest : AuditCABActions.ArchiveApprovalRequest));
 
         await _workflowTaskService.CreateAsync(new WorkflowTask(
-            vm.IsPublish!.Value ? TaskType.RequestToUnpublishForPublish : TaskType.RequestToUnpublishForDraft,
+            vm.IsUnpublish!.Value ? TaskType.RequestToUnpublish : TaskType.RequestToArchive,
             submitter,
             Roles.OPSS.Id,
             null,
@@ -101,19 +102,19 @@ public class RequestToUnpublishCABController : Controller
         ));
         var personalisation = new Dictionary<string, dynamic?>
         {
-            { "CABName", vm.CABName },
+            { "CABName", vm.CabName },
             {
                 "CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
                     Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = vm.CabId }))
             },
             { "UserGroup", Roles.NameFor(submitter.RoleId) },
             { "Name", submitter.FirstAndLastName },
-            { "Published", vm.IsPublish },
-            { "Draft", !vm.IsPublish }, //No if else in Notify only if
+            { "Unpublish", vm.IsUnpublish },
+            { "Draft", !vm.IsUnpublish }, //No if else in Notify only if
             { "Reason", vm.Reason }
         };
-        await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
-            _templateOptions.NotificationUnpublishForApproval, personalisation);
+        // await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
+        //     _templateOptions.NotificationUnpublishForApproval, personalisation);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 }

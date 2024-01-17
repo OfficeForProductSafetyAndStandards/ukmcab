@@ -93,7 +93,7 @@ namespace UKMCAB.Data.Models
         public const string Archived = nameof(Archived); 
         public const string Unarchived = nameof(Unarchived); // Used on a draft that has been unarchived
         public const string UnarchiveRequest = nameof(UnarchiveRequest); //Used for CAB's that have been unarchived (previous and new draft version)
-        public const string UnarchiveApprovalRequest = "Request to archive"; // Ukas request for unarchive
+        public const string UnarchiveApprovalRequest = "Request to unarchive"; // Ukas request for unarchive
         public const string SubmittedForApproval = "Submitted for OPSS approval"; // UKAS request to publish
         public const string CABApproved = "CAB Approved";
         public const string CABDeclined = "CAB Declined";
