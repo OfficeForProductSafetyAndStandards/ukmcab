@@ -37,10 +37,10 @@
                 </h2>
             </div>
 
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.FileToUseAgain))">
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IndexofSelectedFile))">
                 <fieldset class="govuk-fieldset" aria-describedby="selectFileToUseAgainHint">
                     <p class="govuk-error-message">
-                        <span asp-validation-for="FileToUseAgain" class="govuk-error-message"></span>
+                        <span asp-validation-for="IndexofSelectedFile" class="govuk-error-message"></span>
                     </p>
 
                     @* Header *@
@@ -73,8 +73,8 @@
                                         <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
                                     </div>
                                     <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
-                                        <input class="govuk-radios__input" asp-for="FileToUseAgain" type="radio" value="@i">
-                                        <label class="govuk-label govuk-radios__label" asp-for="FileToUseAgain">
+                                        <input class="govuk-radios__input" asp-for="IndexofSelectedFile" type="radio" value="@i">
+                                        <label class="govuk-label govuk-radios__label" asp-for="IndexofSelectedFile">
                                             <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@uploadedFile.FileName</a>
                                         </label>
                                     </div>

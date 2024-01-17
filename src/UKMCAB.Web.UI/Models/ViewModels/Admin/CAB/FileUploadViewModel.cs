@@ -9,7 +9,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public List<FileViewModel>? UploadedFiles { get; set; }
         public IFormFile? File { get; set; }
         public List<IFormFile>? Files { get; set; }
-        public string? FileToUseAgain { get; set; }
+        public string? IndexofSelectedFile { get; set; }
     }
 
     public class FileViewModel
@@ -24,6 +24,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public int FileIndex { get; set; }
         public bool IsSelected { get; set; } = false;
         public bool IsDuplicated { get; set; } = false;
+        public bool IsReplaced { get; set; } = false;
     }
 
     public static class SchedulesOptions
@@ -31,6 +32,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public const string UploadTitle = "Product schedules upload";
         public const string ListTitle = "Product schedules uploaded";
         public const string UseFileAgainTitle = "Use file again";
+        public const string ReplaceFile = "Replace product schedule";
         public static readonly string[] AcceptedFileExtensions = new[] { ".pdf" };
         public const int MaxFileCount = 35;
         public static readonly Dictionary<string, string> AcceptedFileExtensionsContentTypes = new()

@@ -20,7 +20,7 @@ namespace UKMCAB.Data.Models
             IsUserInputComment = isUserInputComment;
         }
 
-        public Audit(UserAccount? userAccount, string action, string? comment = null, string publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
+        public Audit(UserAccount? userAccount, string action, string? comment = null, string publicComment = null, bool isUserInputComment = true) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment, isUserInputComment) { }
 
         public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document? previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
         {

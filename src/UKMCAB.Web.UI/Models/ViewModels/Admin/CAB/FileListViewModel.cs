@@ -6,5 +6,6 @@
         public string? CABId { get; set; }        
         public List<FileViewModel>? UploadedFiles { get; set; }
         public bool? IsValidState { get; set; }
+        public string? SuccessBannerTitle { get; set; }
     }
 }

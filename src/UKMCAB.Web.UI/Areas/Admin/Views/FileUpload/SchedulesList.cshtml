@@ -1,7 +1,22 @@
 ﻿@using UKMCAB.Data
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileListViewModel
-
+@{
+    var showBanner = false;
+    var successBannerContent = "The file has been used again";
+    if(Model.UploadedFiles != null)
+    {
+        if (Model.UploadedFiles.Any(f => f.IsDuplicated))
+        {
+            showBanner = true;
+        }
+        else if (Model.UploadedFiles.Any(f => f.IsReplaced))
+        {
+            showBanner = true;
+            successBannerContent = "The replacement file has been uploaded";
+        }
+    } 
+}
 @section BackButton
 {
     <div class="govuk-width-container">
@@ -22,7 +37,7 @@
 
 <div id="schedule-list-container" class="govuk-grid-row">
 
-    @if (Model.UploadedFiles != null && Model.UploadedFiles.Any(f => f.IsDuplicated) && ViewData.ModelState.IsValid)
+    @if (showBanner && ViewData.ModelState.IsValid)
     {
         <div class="govuk-width-container">
             <div class="govuk-grid-row">
@@ -37,7 +52,7 @@
                         </div>
                         <div class="govuk-notification-banner__content">
                             <h3 class="govuk-notification-banner__heading">
-                                The file has been used again
+                                @successBannerContent
                             </h3>
                         </div>
                     </div>
@@ -121,7 +136,7 @@
                                             <label class="govuk-label govuk-checkboxes__label" asp-for="UploadedFiles![i].IsSelected">
                                                 <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
                                             </label>
-                                            @if (uploadedFile.IsDuplicated)
+                                            @if (uploadedFile.IsDuplicated || uploadedFile.IsReplaced)
                                             {
                                                 <label class="govuk-body govuk-!-font-weight-bold govuk-colour-green">New</label>
                                             }
@@ -182,7 +197,8 @@
             {
                 <div class="govuk-button-group">
                     <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove"/>
-                    <button class="button-link govuk-link" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
+                    <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
+                    <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
                 </div>
             }
         </div>
