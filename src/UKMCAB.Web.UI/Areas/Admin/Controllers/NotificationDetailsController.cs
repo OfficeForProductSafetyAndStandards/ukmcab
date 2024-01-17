@@ -125,7 +125,7 @@ public class NotificationDetailsController : Controller
         notificationDetail.ViewLink = workFlowTask.TaskType switch
         {
             TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish
-                or TaskType.RequestToUnarchiveDeclined or TaskType.CABApproved =>
+                or TaskType.RequestToUnarchiveDeclined or TaskType.CABPublished =>
                 (cabDetails.Name,
                     Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId })),
             _ =>

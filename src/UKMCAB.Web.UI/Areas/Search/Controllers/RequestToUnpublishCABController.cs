@@ -24,7 +24,7 @@ public class RequestToUnpublishCABController : Controller
 
     public static class Routes
     {
-        public const string RequestUnpublish = "cab.request.Unpublish";
+        public const string RequestUnpublish = "cab.request.unpublish";
     }
 
     public RequestToUnpublishCABController(ICABAdminService cabAdminService, IWorkflowTaskService workflowTaskService,
