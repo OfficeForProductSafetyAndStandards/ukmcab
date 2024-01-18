@@ -8,7 +8,7 @@ namespace UKMCAB.Data.Models
     {
         public Audit() { }
 
-        public Audit(string userId, string username, string userrole, DateTime date, string action, string? comment = null, string publicComment = null, bool isUserInputComment = true)
+        public Audit(string userId, string username, string userrole, DateTime date, string action, string? comment = null, string? publicComment = null, bool isUserInputComment = true)
         {
             UserId = userId;
             UserName = username;
@@ -20,9 +20,9 @@ namespace UKMCAB.Data.Models
             IsUserInputComment = isUserInputComment;
         }
 
-        public Audit(UserAccount? userAccount, string action, string? comment = null, string publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
+        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
 
-        public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document? previousDocument = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action)
+        public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document? previousDocument = null, string? comment = null, string? publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment)
         {
             var sb = new StringBuilder();
             if (previousDocument == null)
@@ -65,7 +65,14 @@ namespace UKMCAB.Data.Models
                 }
             }
 
-            Comment = HttpUtility.HtmlEncode(sb.ToString());
+            if (sb.Length > 0)
+            {
+                sb.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+            }
+
+            comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
+
+            Comment = string.Join("", comment, HttpUtility.HtmlEncode(sb.ToString()));
             IsUserInputComment = false;
         }
 
@@ -92,13 +99,14 @@ namespace UKMCAB.Data.Models
         public const string RePublished = nameof(RePublished);
         public const string Archived = nameof(Archived); 
         public const string Unarchived = nameof(Unarchived); // Used on a draft that has been unarchived
-        public const string UnarchivedToDraft = nameof(UnarchivedToDraft); //Used for CAB's that have been unarchived (previous and new draft version)
-        public const string UnarchiveApprovalRequest = "Request to archive"; // Ukas request for unarchive
-        public const string SubmittedForApproval = "Submitted for OPSS approval";
+        public const string UnarchiveRequest = nameof(UnarchiveRequest); //Used for CAB's that have been unarchived (previous and new draft version)
+        public const string UnarchiveApprovalRequest = "Request to unarchive"; // Ukas request for unarchive
+        public const string SubmittedForApproval = "Submitted for OPSS approval"; // UKAS request to publish
         public const string CABApproved = "CAB Approved";
         public const string CABDeclined = "CAB Declined";
         public const string DraftDeleted = "Draft deleted";
-        public const string UnPublish = "Request to unpublish";
+        public const string UnpublishApprovalRequest = "Request to unpublish"; // UKAS request to un publish and create draft
+        public const string ArchiveApprovalRequest = "Request to archive"; // UKAS request to archive
     }
 
     public class AuditUserActions
