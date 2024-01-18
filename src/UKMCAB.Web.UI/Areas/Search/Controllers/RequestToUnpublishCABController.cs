@@ -111,7 +111,7 @@ public class RequestToUnpublishCABController : Controller
             { "UserGroup", Roles.NameFor(submitter.RoleId) },
             { "Name", submitter.FirstAndLastName },
             { "Unpublish", vm.IsUnpublish },
-            { "Draft", !vm.IsUnpublish }, //No if else in Notify only if
+            { "Archive", !vm.IsUnpublish }, //No if else in Notify only if
             { "Reason", vm.Reason }
         };
         // await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,

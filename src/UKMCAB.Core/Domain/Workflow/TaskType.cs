@@ -29,6 +29,7 @@ public enum TaskType
     DraftCabDeletedFromArchiving,
     [Description("Draft CAB deleted")]
     DraftCabDeleted,
+    [Description("Unpublish CAB request")]
     RequestToUnpublish,
     RequestToArchive
 }
