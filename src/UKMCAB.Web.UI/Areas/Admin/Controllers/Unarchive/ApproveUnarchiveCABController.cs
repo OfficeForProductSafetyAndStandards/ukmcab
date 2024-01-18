@@ -17,7 +17,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unarchive;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.Unarchive;
 
-[Area("admin"), Route("admin/cab/unarchive/approve"), Authorize]
+[Area("admin"), Route("admin/cab/unarchive/approve"), Authorize(Policies.ApproveRequests)]
 public class ApproveUnarchiveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
@@ -87,10 +87,7 @@ public class ApproveUnarchiveCABController : Controller
                           throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-        if (userRoleId != Roles.OPSS.Id)
-        {
-            throw new PermissionDeniedException("User Permission denied to approve an unarchive request");
-        }
+
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());

@@ -319,7 +319,7 @@ namespace UKMCAB.Core.Services.CAB
 
             publishedVersion!.StatusValue = Status.Historical;
             publishedVersion.SubStatus = SubStatus.None;
-            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnPublish, internalReason));
+            publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnpublishApprovalRequest, internalReason));
             await _cabRepository.UpdateAsync(publishedVersion);
 
             await UpdateSearchIndex(publishedVersion);
