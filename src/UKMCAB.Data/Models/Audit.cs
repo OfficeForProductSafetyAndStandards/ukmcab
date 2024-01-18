@@ -65,7 +65,14 @@ namespace UKMCAB.Data.Models
                 }
             }
 
-            Comment = HttpUtility.HtmlEncode(sb.ToString());
+            if (sb.Length > 0)
+            {
+                sb.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+            }
+
+            comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
+
+            Comment = string.Join("", comment, HttpUtility.HtmlEncode(sb.ToString()));
             IsUserInputComment = false;
         }
 

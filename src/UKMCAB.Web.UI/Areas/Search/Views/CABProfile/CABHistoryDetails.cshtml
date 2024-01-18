@@ -3,6 +3,8 @@
 @using UKMCAB.Core.Security;
 @using UKMCAB.Web.UI.Areas.Admin.Controllers;
 @using UKMCAB.Web.UI.Areas.Search.Controllers;
+@using UKMCAB.Data.Models;
+
 @model UKMCAB.Web.UI.Models.ViewModels.Shared.AuditHistoryItemViewModel;
 @{
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery);
@@ -57,7 +59,7 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <tr class="govuk-table__row">
-                                <th scope="row" class="govuk-table__header">User notes</th>
+                                <th scope="row" class="govuk-table__header">@(Model.Action == AuditCABActions.Published ? "User notes and changes" : "User notes")</th>
                                 <td class="govuk-table__cell">
                                     @if (Model.IsUserInputComment)
                                     {
