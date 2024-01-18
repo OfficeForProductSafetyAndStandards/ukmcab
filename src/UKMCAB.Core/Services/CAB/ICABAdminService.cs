@@ -38,7 +38,7 @@ namespace UKMCAB.Core.Services.CAB
         /// <param name="archiveInternalReason">Reason for unpublish</param>
         /// <returns></returns>
         Task UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? archiveInternalReason);
-        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason, string unarchivePublicReason);
+        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas);
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
         Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown);

@@ -330,7 +330,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId,
-            string? unarchiveInternalReason, string unarchivePublicReason)
+            string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             var draft = documents.SingleOrDefault(d => d is { StatusValue: Status.Draft });
@@ -356,7 +356,11 @@ namespace UKMCAB.Core.Services.CAB
             {
                 new(userAccount, AuditCABActions.Unarchived)
             };
-            archivedDoc.CreatedByUserGroup = userAccount.Role!.ToLower();
+
+            if (!requestedByUkas)
+            {
+                archivedDoc.CreatedByUserGroup = userAccount.Role!.ToLower();
+            }
 
             archivedDoc = await _cabRepository.CreateAsync(archivedDoc);
             await UpdateSearchIndex(archivedDoc);

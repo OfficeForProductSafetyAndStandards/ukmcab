@@ -27,14 +27,14 @@
 
 <div class="govuk-width-container ">
         <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20" style="">
+            <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
                 @if (string.IsNullOrWhiteSpace(returnUrl))
                 {
-                    <govuk-back-link asp-route="@CabManagementController.Routes.CABManagement" />
+                    <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement" />
                 }
                 else
                 {
-                    <govuk-back-link href="@returnUrl" />
+                    <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId" />
                 }
 
             </div>
