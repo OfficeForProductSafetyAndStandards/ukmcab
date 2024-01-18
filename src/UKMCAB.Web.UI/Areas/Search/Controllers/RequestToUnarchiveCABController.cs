@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core.Domain.Workflow;
@@ -13,7 +14,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search.RequestToUnarchiveCAB;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers;
 
-[Area("search"), Route("search/request-to-unarchive/")]
+[Area("search"), Route("search/request-to-unarchive/"), Authorize]
 public class RequestToUnarchiveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
