@@ -223,6 +223,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
                 Status = cabDocument.Status,
                 SubStatus = cabDocument.SubStatus.GetEnumDescription(),
+                StatusCssStyle = CssClassUtils.CabStatusStyle(cabDocument.StatusValue),
                 LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
                 ProductSchedules = new CABDocumentsViewModel
                 {
@@ -252,6 +253,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     }).ToList() ?? new List<FileUpload>(),
                     DocumentType = DataConstants.Storage.Documents
                 },
+                GovernmentUserNotes = new UserNoteListViewModel(new Guid(cabDocument.id), cabDocument.GovernmentUserNotes, pagenumber),
                 FeedLinksViewModel = new FeedLinksViewModel
                 {
                     FeedUrl = Url.RouteUrl(Routes.CabFeed, new { id = cabDocument.CABId }),
@@ -283,7 +285,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 summaryBreak.HasValue ? task?.Body.Substring(0, summaryBreak.Value) : null;
             profileViewModel.UnarchiveReason = task?.Body;
             profileViewModel.UnarchiveTaskType = task?.TaskType;
-
             return profileViewModel;
         }
 
@@ -489,7 +490,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 await _cabAdminService.UnarchiveDocumentAsync(userAccount, cabDocument.CABId,
-                    model.UnarchiveInternalReason, model.UnarchivePublicReason);
+                    model.UnarchiveInternalReason, model.UnarchivePublicReason, false);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
@@ -526,7 +527,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                             .Value);
                     await _cabAdminService.UnarchiveDocumentAsync(userAccount, CABId, UnarchiveInternalReason,
-                        UnarchivePublicReason);
+                        UnarchivePublicReason, false);
                     _telemetryClient.TrackEvent(AiTracking.Events.CabUnarchived, HttpContext.ToTrackingMetadata(new()
                     {
                         [AiTracking.Metadata.CabId] = CABId

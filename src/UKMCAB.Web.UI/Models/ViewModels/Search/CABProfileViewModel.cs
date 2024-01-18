@@ -9,6 +9,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? Title => $"CAB profile - {Name}";
         public string? ReturnUrl { get; set; }
         public string? Status { get; set; }
+        public string? StatusCssStyle { get; init; }
         public string? SubStatus { get; set; }
         public string? ArchivedBy { get; set; }
         public string? ArchivedDate { get; set; }
@@ -57,7 +58,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public CABDocumentsViewModel ProductSchedules { get; set; }
         public CABDocumentsViewModel SupportingDocuments { get; set; }
         public FeedLinksViewModel FeedLinksViewModel { get; set; }
-        
+        public UserNoteListViewModel GovernmentUserNotes { get; set; }
+
         public string? UnarchiverFirstAndLastName { get; set; }
         public string? UnarchiverUserGroup { get; set; }
         public string? UnarchiveReasonSummary { get; set; }

@@ -5,6 +5,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     public class CABSummaryViewModel: ILayoutModel
     {
         public Status Status { get; set; }
+        public string? StatusCssStyle { get; init; }
         public SubStatus SubStatus { get; set; }
         public string? SubStatusName { get; set; }
         public string? CABId { get; set; }

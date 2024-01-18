@@ -9,8 +9,8 @@ public static class CabNumberVisibility
 {
     public static CabNumberVisibilityOption Default { get; } = new(DataConstants.CabNumberVisibilityOptions.Default, "Select an option");
     public static CabNumberVisibilityOption Public { get; } = new(DataConstants.CabNumberVisibilityOptions.Public, "Display for all users");
-    public static CabNumberVisibilityOption Internal { get; } = new(DataConstants.CabNumberVisibilityOptions.Internal, "Display for internal users");
-    public static CabNumberVisibilityOption Private { get; } = new(DataConstants.CabNumberVisibilityOptions.Private, "Display for internal users excluding UKAS");
+    public static CabNumberVisibilityOption Internal { get; } = new(DataConstants.CabNumberVisibilityOptions.Internal, "Display for all signed-in users");
+    public static CabNumberVisibilityOption Private { get; } = new(DataConstants.CabNumberVisibilityOptions.Private, "Display for government users only");
     public static CabNumberVisibilityOption[] Options { get; } = new[] { Default, Public, Internal, Private };
     public static CabNumberVisibilityOption Get(string? id) => Options.FirstOrDefault(x => x.Id == id) ?? Public;
 

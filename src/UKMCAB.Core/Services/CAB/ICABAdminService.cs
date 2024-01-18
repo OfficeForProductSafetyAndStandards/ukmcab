@@ -29,7 +29,16 @@ namespace UKMCAB.Core.Services.CAB
         Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, Audit audit);
         Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument, string? publishInternalReason = default(string), string? publishPublicReason = default(string));
         Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string? archiveInternalReason, string archivePublicReason);
-        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason, string unarchivePublicReason);
+        
+        /// <summary>
+        /// Un-publishes a CAB. Status becomes Historical and the CAB is not visible to users.
+        /// </summary>
+        /// <param name="userAccount">User un-publishing</param>
+        /// <param name="cabId">Cab to unpublish</param>
+        /// <param name="archiveInternalReason">Reason for unpublish</param>
+        /// <returns></returns>
+        Task UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? archiveInternalReason);
+        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas);
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
         Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown);

@@ -377,7 +377,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
             
-            //Todo - Edit lock will move to single edit button action
             //Check Edit lock
             var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
@@ -402,6 +401,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) &&
                                        latest.StatusValue != Status.Published,
                 Status = latest.StatusValue,
+                StatusCssStyle = CssClassUtils.CabStatusStyle(latest.StatusValue),
                 SubStatus = latest.SubStatus,
                 SubStatusName = latest.SubStatus.GetEnumDescription(),
                 ValidCAB = latest.StatusValue != Status.Published
@@ -420,8 +420,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             };
 
             ModelState.Clear();
-
-            //Todo - Edit lock will move to single edit button action
+            
             //Lock Record for edit
             if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed && latest.StatusValue is Status.Draft or Status.Published)
             {

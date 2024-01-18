@@ -1,4 +1,5 @@
 ﻿@using UKMCAB.Core.Domain;
+@using UKMCAB.Data.Models
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABDetailsViewModel
 @{
     var id = this.Url.ActionContext.HttpContext.Request.RouteValues.GetValueOrDefault("id").ToString();
@@ -61,7 +62,7 @@
                     </p>
                     <input asp-for="CABNumber" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.CABNumber))" autocomplete="cabnumber" aria-required="true" disabled="@Model.IsCabNumberDisabled" />
                 
-                    @if (Model.IsCabNumberDisabled)
+                    @if (Model.IsCabNumberDisabled && Model.DocumentStatus != Status.Published)
                     {
                         <p class="govuk-body-s govuk-!-margin-top-1">CAB number assigned on approval</p>
                     }
