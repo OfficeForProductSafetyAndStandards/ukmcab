@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using System.Web;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
@@ -177,7 +176,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
-        public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? IndexofSelectedFile, string? fromAction)
+        public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? indexOfSelectedFile, string? fromAction)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
@@ -187,7 +186,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var uploadedFiles = new List<FileViewModel>();
 
-            if (fromAction == nameof(FileUploadManagementController.ReplaceFile) && latestVersion.Schedules != null && int.TryParse(IndexofSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestVersion.Schedules.Count)
+            if (fromAction == nameof(FileUploadManagementController.SchedulesReplaceFile) && latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestVersion.Schedules.Count)
             {
                 for (int i = 0; i < latestVersion.Schedules.Count; i++)
                 {
@@ -197,23 +196,39 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     uploadedFiles.Add(uploadedfile);
                 }
 
-                var viewModel = new FileListViewModel
+                var showBanner = false;
+                var successBannerContent = "The file has been used again";
+                if (uploadedFiles != null)
+                {
+                    if (uploadedFiles.Any(f => f.IsDuplicated))
                     {
+                        showBanner = true;
+                    }
+                    else if (uploadedFiles.Any(f => f.IsReplaced))
+                    {
+                        showBanner = true;
+                        successBannerContent = "The replacement file has been uploaded";
+                    }
+                }
+
+                var viewModel = new FileListViewModel
+                {
                         Title = SchedulesOptions.ListTitle,
                         UploadedFiles = uploadedFiles,
                         CABId = id,
                         IsFromSummary = fromSummary,
                         DocumentStatus = latestVersion.StatusValue,
                         IsValidState = ModelState.IsValid,
-                        SuccessBannerTitle = "The replacement file has been uploaded"
-                    };
+                        SuccessBannerTitle = successBannerContent,
+                        ShowBanner = showBanner
+                };
                 
                 return View(viewModel);
             }
 
             uploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>();
 
-            if (fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain) && latestVersion.Schedules != null && int.TryParse(IndexofSelectedFile, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count)
+            if (fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain) && latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count)
             {
                 var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
                 var uploadedFileToDuplicate = new FileViewModel
@@ -336,7 +351,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 
                 if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
                 {
-                    return RedirectToAction("ReplaceFile", "FileUploadManagement", new { id, fromSummary });
+                    return RedirectToAction("SchedulesReplaceFile", "FileUploadManagement", new { id, fromSummary });
                 }
             }
 
@@ -759,6 +774,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain))
                 {
                     return RedirectToAction("DocumentsUseFileAgain", "FileUploadManagement", new { id, fromSummary });
+                }
+
+                if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
+                {
+                    return RedirectToAction("DocumentsReplaceFile", "FileUploadManagement", new { id, fromSummary });
                 }
             }
 

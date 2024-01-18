@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using System.Web;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
@@ -17,26 +17,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly ICABAdminService _cabAdminService;
         private readonly IFileStorage _fileStorage;
         private readonly IUserService _userService;
+        private readonly IFileUploadUtils _fileUploadUtils;
 
-        public FileUploadManagementController(ICABAdminService cabAdminService, IFileStorage fileStorage, IUserService userService)
+        public FileUploadManagementController(ICABAdminService cabAdminService, IFileStorage fileStorage, IUserService userService, IFileUploadUtils fileUploadUtils)
         {
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
             _userService = userService;
+            _fileUploadUtils = fileUploadUtils;
         }
 
-        private string GetContentType(IFormFile? file, Dictionary<string, string> acceptedFileExtensionsContentTypes)
-        {
-            if (file == null)
-            {
-                return string.Empty;
-            }
-
-            return acceptedFileExtensionsContentTypes.SingleOrDefault(ct =>
-                    ct.Key.Equals(Path.GetExtension(file.FileName), StringComparison.InvariantCultureIgnoreCase)).Value;
-        }
-
-        private bool ValidateUploadFile(IFormFile? file, string contentType, string acceptedFileTypes, List<FileUpload> currentDocuments)
+        private bool ValidateUploadFile(IFormFile? file, string contentType, string acceptedFileTypes)
         {
             var isValidFile = true;
 
@@ -146,8 +137,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
-        [HttpGet("admin/cab/replace-file/{id}")]
-        public async Task<IActionResult> ReplaceFile(string id, bool fromSummary)
+        [HttpGet("admin/cab/schedules-replace-file/{id}")]
+        public async Task<IActionResult> SchedulesReplaceFile(string id, bool fromSummary)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
@@ -165,8 +156,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             });
         }
 
-        [HttpPost("admin/cab/replace-file/{id}")]
-        public async Task<IActionResult> ReplaceFile(string id, string submitType, FileUploadViewModel model, bool fromSummary)
+        [HttpPost("admin/cab/schedules-replace-file/{id}")]
+        public async Task<IActionResult> SchedulesReplaceFile(string id, string submitType, FileUploadViewModel model, bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
 
@@ -174,8 +165,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-            var schedules = latestDocument.Schedules;
-            schedules ??= new List<FileUpload>();
 
             if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile) && model.IndexofSelectedFile == null)
             {
@@ -188,11 +177,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
             {
                 var file = model.File;
-                var contentType = GetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes);
+                var contentType = _fileUploadUtils.GetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes);
 
-                if (ValidateUploadFile(file, contentType, SchedulesOptions.AcceptedFileTypes, schedules))
+                if (ValidateUploadFile(file, contentType, SchedulesOptions.AcceptedFileTypes))
                 {
-                    await UploadAndReplaceWithValidatedFile(model, latestDocument, schedules, file, contentType, DataConstants.Storage.Schedules);
+                    await UploadAndReplaceWithValidatedFile(model, latestDocument, file, contentType, DataConstants.Storage.Schedules);
                 }
             }
 
@@ -205,23 +194,90 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestDocument.CABId });
                 }
 
-                return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, model.IndexofSelectedFile, fromAction = "ReplaceFile" });
+                return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, model.IndexofSelectedFile, fromAction = "SchedulesReplaceFile" });
             }
 
             model.Title = SchedulesOptions.ReplaceFile;
             return View(model);
         }
 
-        private async Task UploadAndReplaceWithValidatedFile(FileUploadViewModel model, Document? latestDocument, List<FileUpload>? latestUploadedFiles, IFormFile? file, string contentType, string directoryName)
+        [HttpGet("admin/cab/documents-replace-file/{id}")]
+        public async Task<IActionResult> DocumentsReplaceFile(string id, bool fromSummary)
+        {
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestVersion == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            return View(new FileUploadViewModel
+            {
+                Title = DocumentsOptions.ReplaceFile,
+                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category}).ToList() ?? new List<FileViewModel>(),
+                CABId = id,
+                IsFromSummary = fromSummary,
+                DocumentStatus = latestVersion.StatusValue
+            });
+        }
+
+        [HttpPost("admin/cab/documents-replace-file/{id}")]
+        public async Task<IActionResult> DocumentsReplaceFile(string id, string submitType, FileUploadViewModel model, bool fromSummary)
+        {
+            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+
+            if (latestVersion == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile) && model.IndexofSelectedFile == null)
+            {
+                if (model.CABId != null && model.IndexofSelectedFile == null)
+                {
+                    ModelState.AddModelError(nameof(model.IndexofSelectedFile), "Select the file you want to replace");
+                }
+            }
+
+            if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
+            {
+                var file = model.File;
+                var contentType = _fileUploadUtils.GetContentType(file, DocumentsOptions.AcceptedFileExtensionsContentTypes);
+
+                if (ValidateUploadFile(file, contentType, DocumentsOptions.AcceptedFileTypes))
+                {
+                    await UploadAndReplaceWithValidatedFile(model, latestVersion, file, contentType, DataConstants.Storage.Documents);
+                }
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
+                {
+                    return model.IsFromSummary ?
+                            RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestVersion.CABId, subSectionEditAllowed = true }) :
+                            RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestVersion.CABId });
+                }
+
+                return RedirectToAction("DocumentsList", "FileUpload", new { id, fromSummary, model.IndexofSelectedFile, fromAction = "DocumentsReplaceFile" });
+            }
+
+            model.Title = DocumentsOptions.ReplaceFile;
+            return View(model);
+        }
+
+        private async Task UploadAndReplaceWithValidatedFile(FileUploadViewModel model, Document? latestDocument, IFormFile? file, string contentType, string directoryName)
         {
             var newFileName = AppendDateTimeToFileName(DateTime.UtcNow, file.FileName);
 
             var replacementUploadedSchedule = await _fileStorage.UploadCABFile(latestDocument.CABId, file.FileName, newFileName, directoryName,
                 file.OpenReadStream(), contentType);
 
-            if (latestDocument.Schedules != null && int.TryParse(model.IndexofSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestUploadedFiles.Count)
+            var latestFileUploads = new List<FileUpload>();
+            latestFileUploads = directoryName == DataConstants.Storage.Schedules ? latestDocument.Schedules : latestDocument.Documents;
+
+            if (latestFileUploads != null && int.TryParse(model.IndexofSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestFileUploads.Count)
             {
-                var scheduleToReplace = latestUploadedFiles[indexOfFileToReplace];
+                var scheduleToReplace = latestFileUploads[indexOfFileToReplace];
                 
                 scheduleToReplace.FileName = replacementUploadedSchedule.FileName;
                 scheduleToReplace.BlobName = replacementUploadedSchedule.BlobName;

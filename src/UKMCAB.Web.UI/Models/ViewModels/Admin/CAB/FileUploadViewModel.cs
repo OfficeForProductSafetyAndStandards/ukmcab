@@ -46,6 +46,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     {
         public const string UploadTitle = "Upload the supporting documents";
         public const string ListTitle = "Supporting documents uploaded";
+        public const string ReplaceFile = "Replace supporting document";
         public static readonly string[] AcceptedFileExtensions = new[] { ".doc", ".docx", ".xls", ".xlsx", ".pdf" };
         public const int MaxFileCount = 10;
         public static readonly Dictionary<string, string> AcceptedFileExtensionsContentTypes = new()

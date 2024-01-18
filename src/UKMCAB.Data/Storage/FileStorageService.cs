@@ -1,9 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
-using Azure.Storage.Blobs.Specialized;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow;
 using Microsoft.Extensions.Configuration;
-using System.Reflection.Emit;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data.Storage

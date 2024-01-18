@@ -1,22 +1,7 @@
 ﻿@using UKMCAB.Data
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileListViewModel
-@{
-    var showBanner = false;
-    var successBannerContent = "The file has been used again";
-    if(Model.UploadedFiles != null)
-    {
-        if (Model.UploadedFiles.Any(f => f.IsDuplicated))
-        {
-            showBanner = true;
-        }
-        else if (Model.UploadedFiles.Any(f => f.IsReplaced))
-        {
-            showBanner = true;
-            successBannerContent = "The replacement file has been uploaded";
-        }
-    } 
-}
+
 @section BackButton
 {
     <div class="govuk-width-container">
@@ -37,7 +22,7 @@
 
 <div id="schedule-list-container" class="govuk-grid-row">
 
-    @if (showBanner && ViewData.ModelState.IsValid)
+    @if (Model.ShowBanner && ViewData.ModelState.IsValid)
     {
         <div class="govuk-width-container">
             <div class="govuk-grid-row">
@@ -52,7 +37,7 @@
                         </div>
                         <div class="govuk-notification-banner__content">
                             <h3 class="govuk-notification-banner__heading">
-                                @successBannerContent
+                                @Model.SuccessBannerTitle
                             </h3>
                         </div>
                     </div>

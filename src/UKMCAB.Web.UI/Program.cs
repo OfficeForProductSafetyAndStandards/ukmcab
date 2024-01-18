@@ -122,6 +122,7 @@ builder.Services.AddSingleton<IEditLockService, EditLockService>();
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
+builder.Services.AddTransient<IFileUploadUtils, FileUploadUtils>();
 
 builder.Services.AddCustomHttpErrorHandling();
 builder.Services.AddGovUkFrontend();
