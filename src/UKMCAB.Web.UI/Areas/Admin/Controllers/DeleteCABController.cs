@@ -133,7 +133,7 @@ public class DeleteCABController : Controller
 
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
-                TaskType.DraftCabDeletedFromArchiving,
+                TaskType.DraftCabDeleted,
                 deleter,
                 assignee.RoleId,
                 assignee,
