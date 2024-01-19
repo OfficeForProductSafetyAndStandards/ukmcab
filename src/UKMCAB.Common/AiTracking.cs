@@ -16,6 +16,7 @@ public static class AiTracking
         public const string CabCreated = "app_cab_created";
         public const string CabUpdated = "app_cab_updated";
         public const string CabArchived = "app_cab_archived";
+        public const string CabUnpublished = "app_cab_unpublished";
         public const string CabUnarchived = "app_cab_unarchived";
         public const string CabViewed = "app_cab_viewed";
         public const string CabViewedViaSubscriptionsEmail = "app_cab_viewed_subs_inbound";
