@@ -576,7 +576,7 @@ else if (Model.IsEditLocked)
 
             @if (Model is { ShowEditActions: true, SubStatus: SubStatus.None })
             {
-                <div>
+                <div class="govuk-!-margin-top-5">
                     <form method="post">
                         <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="CABId" />
