@@ -7,6 +7,7 @@ using UKMCAB.Data;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
@@ -17,17 +18,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly ICABAdminService _cabAdminService;
         private readonly IFileStorage _fileStorage;
         private readonly IUserService _userService;
+        private readonly IFileUploadUtils _fileUploadUtils;
 
         public static class Routes
         {
             public const string SchedulesList = "file-upload.schedules-list";
         }
 
-        public FileUploadController(ICABAdminService cabAdminService, IFileStorage fileStorage, IUserService userService)
+        public FileUploadController(ICABAdminService cabAdminService, IFileStorage fileStorage, IUserService userService, IFileUploadUtils fileUploadUtils)
         {
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
             _userService = userService;
+            _fileUploadUtils = fileUploadUtils;
         }
 
         [HttpGet("admin/cab/schedules-upload/{id}")]
@@ -77,7 +80,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 foreach (var file in model.Files)
                 {
-                    var contentType = GetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes);
+                    var contentType = _fileUploadUtils.GetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes);
 
                     if (ValidateUploadFile(file, contentType, SchedulesOptions.AcceptedFileTypes, latestVersion.Schedules))
                     {
@@ -129,47 +132,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = latestVersion.CABId });
         }
 
-        private string GetContentType(IFormFile? file, Dictionary<string, string> acceptedFileExtensionsContentTypes)
-        {
-            if (file == null)
-            {
-                return string.Empty;
-            }
-
-            return acceptedFileExtensionsContentTypes.SingleOrDefault(ct =>
-                    ct.Key.Equals(Path.GetExtension(file.FileName), StringComparison.InvariantCultureIgnoreCase)).Value;
-        }
-
         private bool ValidateUploadFile(IFormFile? file, string contentType, string acceptedFileTypes, List<FileUpload> currentDocuments)
         {
-            var isValidFile = true;
 
-            if (file == null)
+            var isValidFile = _fileUploadUtils.ValidateUploadFileAndAddAnyModelStateError(ModelState, file, contentType, SchedulesOptions.AcceptedFileTypes);
+
+            currentDocuments ??= new List<FileUpload>();
+
+            if (currentDocuments.Any(s => s.FileName.Equals(file.FileName)))
             {
-                ModelState.AddModelError("File", $"Select a {acceptedFileTypes} file 10 megabytes or less.");
-                return false;
-            }
-            else
-            {
-                if (file.Length > 10485760)
-                {
-                    ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Select a {acceptedFileTypes} file 10 megabytes or less.");
-                    isValidFile = false;
-                }
-
-                if (string.IsNullOrWhiteSpace(contentType))
-                {
-                    ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Files must be in {acceptedFileTypes} format to be uploaded.");
-                    isValidFile = false;
-                }
-
-                currentDocuments ??= new List<FileUpload>();
-
-                if (currentDocuments.Any(s => s.FileName.Equals(file.FileName)))
-                {
-                    ModelState.AddModelError("File", $"{file.FileName} has already been uploaded. Select the existing file and the Use file again option, or upload a different file.");
-                    isValidFile = false;
-                }
+                ModelState.AddModelError("File", $"{file.FileName} has already been uploaded. Select the existing file and the Use file again option, or upload a different file.");
+                isValidFile = false;
             }
             return isValidFile;
         }
@@ -311,10 +284,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    var selectedFileUploads = GetSelectedFilesFromLatestDocumentOrReturnEmptyList(selectedViewModels, latestDocument.Schedules);
-                    if (selectedFileUploads.Any())
+                    var fileUploadsInLatestDocumentMatchingUserSelection = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(selectedViewModels, latestDocument.Schedules);
+                    if (fileUploadsInLatestDocumentMatchingUserSelection.Any())
                     {
-                        await RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
+                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                        await _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsInLatestDocumentMatchingUserSelection, latestDocument, nameof(latestDocument.Schedules), userAccount);
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
@@ -343,7 +317,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, User.IsInRole(Roles.UKAS.Id) && submitType == Constants.SubmitType.Save);
                 }
-                
+
                 if (submitType == Constants.SubmitType.UploadAnother)
                 {
                     return model.IsFromSummary ?
@@ -367,7 +341,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     return RedirectToAction("SchedulesUseFileAgain", "FileUploadManagement", new { id, fromSummary });
                 }
-                
+
                 if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
                 {
                     return RedirectToAction("SchedulesReplaceFile", "FileUploadManagement", new { id, fromSummary });
@@ -427,23 +401,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return filesInViewModel.Where(f => f.IsSelected).ToList() ?? new List<FileViewModel>();
         }
-        private List<FileUpload> GetSelectedFilesFromLatestDocumentOrReturnEmptyList(IEnumerable<FileViewModel> selectedViewModels, List<FileUpload> uploadedFiles)
-        {
-            List<FileUpload> selectedFileUploads = new();
-
-            if (selectedViewModels.Any())
-            {
-                foreach (var fileVM in selectedViewModels)
-                {
-                    if (!fileVM.IsDuplicated)
-                    {
-                        selectedFileUploads.Add(uploadedFiles[fileVM.FileIndex]);
-                    }
-                }
-            }
-
-            return selectedFileUploads;
-        }
         private void AddSelectAFileModelStateError(string submitType, string modelKey, IEnumerable<FileViewModel> selectedViewModels)
         {
             if (submitType == Constants.SubmitType.Remove && !selectedViewModels.Any())
@@ -451,33 +408,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ModelState.AddModelError(modelKey, "Select a file to remove");
             }
         }
-        private async Task RemoveSelectedUploadedFilesFromDocumentAsync(List<FileUpload> selectedFileUploads, Document latestDocument, string docType)
-        {
-            if (latestDocument.Schedules != null && docType.Equals(nameof(latestDocument.Schedules)))
-            {
-                foreach (var fileToRemove in selectedFileUploads)
-                {
-                    latestDocument.Schedules.Remove(fileToRemove);
-                }
-            }
-            else if (latestDocument.Documents != null && docType.Equals(nameof(latestDocument.Documents)))
-            {
-                foreach (var fileToRemove in selectedFileUploads)
-                {
-                    latestDocument.Documents.Remove(fileToRemove);
-                }
-            }
-
-            var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-        }
 
         private async Task AbortFileUploadAndReturnAsync(string submitType, FileUploadViewModel model, Document latestDocument, string docType)
         {
             if (submitType != null && submitType.Equals(Constants.SubmitType.Cancel))
             {
                 var incompleteFileUploads = new List<FileViewModel>();
-                
+
                 if (latestDocument.Schedules != null && docType.Equals(nameof(latestDocument.Schedules)))
                 {
                     if (model.UploadedFiles != null)
@@ -485,10 +422,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         incompleteFileUploads = model.UploadedFiles.Where(f => string.IsNullOrWhiteSpace(f.LegislativeArea)).ToList();
                     }
 
-                    var selectedFileUploads = GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Schedules);
+                    var selectedFileUploads = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Schedules);
                     if (selectedFileUploads.Any())
                     {
-                        await RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
+                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                        await _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Schedules), userAccount);
                     }
                 }
                 else if (latestDocument.Documents != null && docType.Equals(nameof(latestDocument.Documents)))
@@ -497,10 +435,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {
                         incompleteFileUploads = model.UploadedFiles.Where(f => string.IsNullOrWhiteSpace(f.Category)).ToList();
                     }
-                    var selectedFileUploads = GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Documents);
+                    var selectedFileUploads = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Documents);
                     if (selectedFileUploads.Any())
                     {
-                        await RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Documents));
+                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                        await _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Documents), userAccount);
                     }
                 }
             }
@@ -629,7 +568,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 foreach (var file in model.Files)
                 {
-                    var contentType = GetContentType(file, DocumentsOptions.AcceptedFileExtensionsContentTypes);
+                    var contentType = _fileUploadUtils.GetContentType(file, DocumentsOptions.AcceptedFileExtensionsContentTypes);
 
                     if (ValidateUploadFile(file, contentType, DocumentsOptions.AcceptedFileTypes, latestVersion.Documents))
                     {
@@ -757,10 +696,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    var fileUploadsMatchingSelectedFiles = GetSelectedFilesFromLatestDocumentOrReturnEmptyList(FilesSelectedInViewModel, latestDocument.Documents);
+                    var fileUploadsMatchingSelectedFiles = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(FilesSelectedInViewModel, latestDocument.Documents);
                     if (fileUploadsMatchingSelectedFiles.Any())
                     {
-                        await RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsMatchingSelectedFiles, latestDocument, nameof(latestDocument.Documents));
+                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                        await _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsMatchingSelectedFiles, latestDocument, nameof(latestDocument.Documents), userAccount);
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>();

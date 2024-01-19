@@ -27,32 +27,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _fileUploadUtils = fileUploadUtils;
         }
 
-        private bool ValidateUploadFile(IFormFile? file, string contentType, string acceptedFileTypes)
-        {
-            var isValidFile = true;
-
-            if (file == null)
-            {
-                ModelState.AddModelError("File", $"Select a {acceptedFileTypes} file 10 megabytes or less.");
-                return false;
-            }
-            else
-            {
-                if (file.Length > 10485760)
-                {
-                    ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Select a {acceptedFileTypes} file 10 megabytes or less.");
-                    isValidFile = false;
-                }
-
-                if (string.IsNullOrWhiteSpace(contentType))
-                {
-                    ModelState.AddModelError("File", $"{file.FileName} can't be uploaded. Files must be in {acceptedFileTypes} format to be uploaded.");
-                    isValidFile = false;
-                }
-            }
-            return isValidFile;
-        }
-
         [HttpGet("admin/cab/schedules-use-file-again/{id}")]
         public async Task<IActionResult> SchedulesUseFileAgain(string id, bool fromSummary)
         {
@@ -98,44 +72,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, model.IndexofSelectedFile, fromAction = nameof(SchedulesUseFileAgain) });
         }
-        private List<FileUpload> GetSelectedFilesFromLatestDocumentOrReturnEmptyList(IEnumerable<FileViewModel> selectedViewModels, List<FileUpload> uploadedFiles)
-        {
-            List<FileUpload> selectedFileUploads = new();
-
-            if (selectedViewModels.Any())
-            {
-                foreach (var fileVM in selectedViewModels)
-                {
-                    if (!fileVM.IsDuplicated)
-                    {
-                        selectedFileUploads.Add(uploadedFiles[fileVM.FileIndex]);
-                    }
-                }
-            }
-
-            return selectedFileUploads;
-        }
-        
-        private async Task RemoveSelectedUploadedFilesFromDocumentAsync(List<FileUpload> selectedFileUploads, Document latestDocument, string docType)
-        {
-            if (latestDocument.Schedules != null && docType.Equals(nameof(latestDocument.Schedules)))
-            {
-                foreach (var fileToRemove in selectedFileUploads)
-                {
-                    latestDocument.Schedules.Remove(fileToRemove);
-                }
-            }
-            else if (latestDocument.Documents != null && docType.Equals(nameof(latestDocument.Documents)))
-            {
-                foreach (var fileToRemove in selectedFileUploads)
-                {
-                    latestDocument.Documents.Remove(fileToRemove);
-                }
-            }
-
-            var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-        }
 
         [HttpGet("admin/cab/schedules-replace-file/{id}")]
         public async Task<IActionResult> SchedulesReplaceFile(string id, bool fromSummary)
@@ -179,7 +115,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var file = model.File;
                 var contentType = _fileUploadUtils.GetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes);
 
-                if (ValidateUploadFile(file, contentType, SchedulesOptions.AcceptedFileTypes))
+                if (_fileUploadUtils.ValidateUploadFileAndAddAnyModelStateError(ModelState, file, contentType, SchedulesOptions.AcceptedFileTypes))
                 {
                     await UploadAndReplaceWithValidatedFile(model, latestDocument, file, contentType, DataConstants.Storage.Schedules);
                 }
@@ -243,7 +179,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var file = model.File;
                 var contentType = _fileUploadUtils.GetContentType(file, DocumentsOptions.AcceptedFileExtensionsContentTypes);
 
-                if (ValidateUploadFile(file, contentType, DocumentsOptions.AcceptedFileTypes))
+                if (_fileUploadUtils.ValidateUploadFileAndAddAnyModelStateError(ModelState, file, contentType, DocumentsOptions.AcceptedFileTypes))
                 {
                     await UploadAndReplaceWithValidatedFile(model, latestVersion, file, contentType, DataConstants.Storage.Documents);
                 }
