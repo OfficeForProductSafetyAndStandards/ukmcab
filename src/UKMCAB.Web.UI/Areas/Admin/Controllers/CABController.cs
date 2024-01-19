@@ -535,14 +535,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [Authorize(Policy = Policies.GovernmentUserNotes)]
         [HttpGet("admin/cab/governmentusernotes/{cabId}/{cabDocumentId}", Name = Routes.CabGovernmentUserNotes)]
-        public async Task<IActionResult> GovernmentUserNotes(Guid cabId, Guid cabDocumentId, int pagenumber = 1)
+        public async Task<IActionResult> GovernmentUserNotes(Guid cabId, Guid cabDocumentId, string returnUrl, int pagenumber = 1)
         {
             var userNotes = await _userNoteService.GetAllUserNotesForCabDocumentId(cabDocumentId);
             var model = new GovernmentUserNotesViewModel
             {
                 CABId = cabId,
-                GovernmentUserNotes = new UserNoteListViewModel(cabDocumentId, userNotes, pagenumber)
-            };
+                GovernmentUserNotes = new UserNoteListViewModel(cabDocumentId, userNotes, pagenumber),
+                ReturnUrl = returnUrl,
+        };
             
             return View(model);
         }

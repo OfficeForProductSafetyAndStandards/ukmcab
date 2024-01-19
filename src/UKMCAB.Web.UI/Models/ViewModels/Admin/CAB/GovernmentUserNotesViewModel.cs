@@ -9,5 +9,7 @@
         public Guid CABId { get; set; }
 
         public UserNoteListViewModel GovernmentUserNotes { get; set; }
+
+        public string ReturnUrl { get; set; }
     }
 }

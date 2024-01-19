@@ -1,4 +1,5 @@
-﻿@using UKMCAB.Core.Domain;
+﻿@using System.Net;
+@using UKMCAB.Core.Domain;
 @using UKMCAB.Core.Security;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
@@ -538,8 +539,12 @@ else if (Model.IsEditLocked)
                                     <p>There are no notes</p>
                                 }
 
-                                <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId" 
-                                    asp-route-cabDocumentId="@Model.Id" class="govuk-link govuk-link--no-visited-state">
+                                @{
+                                    var userNotesReturnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+                                }
+
+                                <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
+                                    asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl" class="govuk-link govuk-link--no-visited-state">
                                     View government user notes (@Model.GovernmentUserNoteCount)
                                 </a>
                             </dd>
