@@ -6,8 +6,7 @@ public record ApproveUnpublishCABViewModel(
     string CabUrl,
     Guid CabId,
     string SubmitterGroup,
-    string SubmitterFirstAndLastName,
-    bool UnpublishRequested) : BasicPageModel(Title)
+    string SubmitterFirstAndLastName) : BasicPageModel(Title)
 {
     public string? Reason { get; set; }
 }
