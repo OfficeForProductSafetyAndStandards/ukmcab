@@ -701,7 +701,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     UploadedFiles = uploadedFileViewModels,
                     CABId = id,
                     IsFromSummary = fromSummary,
-                    DocumentStatus = latestDocument.StatusValue
+                    DocumentStatus = latestDocument.StatusValue,
                     SuccessBannerTitle = successBannerContent,
                     ShowBanner = showBanner
                 };
