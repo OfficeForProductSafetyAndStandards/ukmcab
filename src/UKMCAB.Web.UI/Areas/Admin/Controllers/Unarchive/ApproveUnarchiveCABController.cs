@@ -13,12 +13,11 @@ using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unarchive;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.Unarchive;
 
-[Area("admin"), Route("admin/cab/unarchive/approve"), Authorize]
+[Area("admin"), Route("admin/cab/unarchive/approve"), Authorize(Policies.ApproveRequests)]
 public class ApproveUnarchiveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
@@ -88,14 +87,11 @@ public class ApproveUnarchiveCABController : Controller
                           throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-        if (userRoleId != Roles.OPSS.Id)
-        {
-            throw new PermissionDeniedException("User Permission denied to approve an unarchive request");
-        }
+
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
-        await Unarchive(cabUrl, currentUser, vm.IsPublish!.Value);
+        await Unarchive(cabUrl, currentUser, vm.IsPublish!.Value, true);
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId.ToString(), approver);
         await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.IsPublish.Value);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
@@ -115,10 +111,11 @@ public class ApproveUnarchiveCABController : Controller
     /// <param name="cabUrl"></param>
     /// <param name="currentUser"></param>
     /// <param name="publish">publish flag</param>
-    private async Task Unarchive(string cabUrl, UserAccount currentUser, bool publish)
+    /// <param name="requestedByUkas">requested by ukas</param>
+    private async Task Unarchive(string cabUrl, UserAccount currentUser, bool publish, bool requestedByUkas)
     {
         var document = await GetArchivedDocumentAsync(cabUrl);
-        var latestDocument = await _cabAdminService.UnarchiveDocumentAsync(currentUser, document.CABId, null, null);
+        var latestDocument = await _cabAdminService.UnarchiveDocumentAsync(currentUser, document.CABId, null, null, requestedByUkas);
         _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
         {
             [AiTracking.Metadata.CabId] = document.CABId,

@@ -18,7 +18,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unarchive;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.Unarchive;
 
-[Area("admin"), Route("admin/cab/unarchive/decline"), Authorize]
+[Area("admin"), Route("admin/cab/unarchive/decline"), Authorize(Policies.ApproveRequests)]
 public class DeclineUnarchiveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;

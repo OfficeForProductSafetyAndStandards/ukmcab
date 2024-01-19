@@ -7,7 +7,6 @@ import "./shared/feed-links";
 import "./views/body-details.js";
 import "./views/cab-management.js";
 import "./views/mobile-sort.js";
-import "./views/cab-profile.js";
 import "./views/search.js";
 import "./views/tabs-pagenumber-reset.js";
 import "./views/file-upload.js";
