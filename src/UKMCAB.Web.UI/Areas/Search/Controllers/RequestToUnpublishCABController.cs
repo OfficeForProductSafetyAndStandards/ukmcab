@@ -83,7 +83,7 @@ public class RequestToUnpublishCABController : Controller
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
-        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived,
+        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Published,
             vm.IsUnpublish!.Value ? SubStatus.PendingApprovalToUnpublish : SubStatus.PendingApprovalToArchive,
             new Audit(currentUser, vm.IsUnpublish!.Value ? AuditCABActions.UnpublishApprovalRequest : AuditCABActions.ArchiveApprovalRequest));
 
@@ -111,11 +111,11 @@ public class RequestToUnpublishCABController : Controller
             { "UserGroup", Roles.NameFor(submitter.RoleId) },
             { "Name", submitter.FirstAndLastName },
             { "Unpublish", vm.IsUnpublish },
-            { "Draft", !vm.IsUnpublish }, //No if else in Notify only if
+            { "Archive", !vm.IsUnpublish }, //No if else in Notify only if
             { "Reason", vm.Reason }
         };
-        // await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
-        //     _templateOptions.NotificationUnpublishForApproval, personalisation);
+        await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
+            _templateOptions.NotificationRequestToUnpublishCab, personalisation);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 }
