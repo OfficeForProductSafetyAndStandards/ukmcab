@@ -10,15 +10,13 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unarchive;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unpublish;
 
-namespace UKMCAB.Web.UI.Areas.Admin.Controllers.Unarchive;
+namespace UKMCAB.Web.UI.Areas.Admin.Controllers.Unpublish;
 
-[Area("admin"), Route("admin/cab/unarchive/decline"), Authorize(Policies.ApproveRequests)]
-public class DeclineUnarchiveCABController : Controller
+[Area("admin"), Route("admin/cab/unpublish/decline"), Authorize(Policies.ApproveRequests)]
+public class DeclineUnpublishCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly IUserService _userService;
@@ -26,7 +24,7 @@ public class DeclineUnarchiveCABController : Controller
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
 
-    public DeclineUnarchiveCABController(
+    public DeclineUnpublishCABController(
         ICABAdminService cabAdminService,
         IUserService userService,
         IAsyncNotificationClient notificationClient,
@@ -42,58 +40,51 @@ public class DeclineUnarchiveCABController : Controller
 
     public static class Routes
     {
-        public const string Decline = "cab.unarchive.decline";
+        public const string Decline = "cab.unpublish.decline";
     }
 
     [HttpGet("{cabUrl}", Name = Routes.Decline)]
     public async Task<IActionResult> DeclineAsync(string cabUrl)
     {
         var document = await GetArchivedDocumentAsync(cabUrl);
-        var unarchiveStatuses = new List<SubStatus>()
+        var unpublishStatuses = new List<SubStatus>()
         {
-            SubStatus.PendingApprovalToUnarchive,
-            SubStatus.PendingApprovalToUnarchivePublish
+            SubStatus.PendingApprovalToUnpublish,
+            SubStatus.PendingApprovalToArchive
         };
-        if (document.StatusValue != Status.Archived || !unarchiveStatuses.Contains(document.SubStatus))
+        if (document.StatusValue != Status.Published || !unpublishStatuses.Contains(document.SubStatus))
         {
-            throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
-        }       
+            throw new PermissionDeniedException("CAB status needs to be Published and Submitted for approval");
+        }
 
         var task = await GetWorkflowTaskAsync(document.CABId);
-        var vm = new DeclineUnarchiveCABViewModel(
-            "Decline unarchive CAB",
+        var vm = new DeclineUnpublishCABViewModel(
+            "Decline unpublish CAB",
             document.Name ?? throw new InvalidOperationException(),
             document.URLSlug,
             Guid.Parse(document.CABId),
             task.Submitter.UserGroup);
 
-        return View("~/Areas/Admin/Views/CAB/Unarchive/Decline.cshtml", vm);
+        return View("~/Areas/Admin/Views/CAB/unpublish/Decline.cshtml", vm);
     }
 
     [HttpPost("{cabUrl}", Name = Routes.Decline)]
-    public async Task<IActionResult> DeclinePostAsync(string cabUrl, DeclineUnarchiveCABViewModel vm)
+    public async Task<IActionResult> DeclinePostAsync(string cabUrl, DeclineUnpublishCABViewModel vm)
     {
         if (!ModelState.IsValid)
         {
-            return View("~/Areas/Admin/Views/CAB/Unarchive/Decline.cshtml", vm);
+            return View("~/Areas/Admin/Views/CAB/unpublish/Decline.cshtml", vm);
         }
 
         var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
                           throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-        if (userRoleId != Roles.OPSS.Id)
-        {
-            throw new PermissionDeniedException("User Permission denied to decline an unarchive request");
-        }
+
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
-
-        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived, SubStatus.None,
-        new Audit(currentUser, AuditCABActions.UnArchiveApprovalRequestDeclined, vm.Reason, null));
-
         await SendNotificationOfDeclineAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.Reason!);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
@@ -102,7 +93,7 @@ public class DeclineUnarchiveCABController : Controller
     {
         var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(cabId));
         var task = tasks.First(t =>
-            t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish && !t.Completed);
+            t.TaskType is TaskType.RequestToArchive or TaskType.RequestToUnpublish && !t.Completed);
         return task;
     }
 
@@ -119,7 +110,7 @@ public class DeclineUnarchiveCABController : Controller
     }
 
     /// <summary>
-    /// Mark incoming Request to unarchive task as completed
+    /// Mark incoming Request to unpublish task as completed
     /// </summary>
     /// <param name="cabId">Associated CAB</param>
     /// <param name="userLastUpdatedBy"></param>
@@ -131,7 +122,7 @@ public class DeclineUnarchiveCABController : Controller
     }
 
     /// <summary>
-    /// Sends an email and notification for declined unarchive
+    /// Sends an email and notification for declined unpublish
     /// </summary>
     /// <param name="cabId">CAB id</param>
     /// <param name="cabName">Name of CAB</param>
@@ -150,26 +141,26 @@ public class DeclineUnarchiveCABController : Controller
             },
             { "Reason", reason }
         };
-        await _notificationClient.SendEmailAsync(submitter.EmailAddress,
-            _templateOptions.NotificationUnarchiveDeclined, personalisation);
-
-        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
-           _templateOptions.NotificationUnarchiveDeclined, personalisation);
-
-        await _workflowTaskService.CreateAsync(
-            new WorkflowTask(
-               TaskType.RequestToUnarchiveDeclined,
-                decliner,
-                // Approver becomes the submitter for Approved Notification
-                submitter.RoleId,
-                submitter,
-                DateTime.Now,
-                $"The request to unarchive CAB {cabName} has been declined.",
-                decliner,
-                DateTime.Now,
-                false,
-                reason,
-                true,
-                cabId));
+        // await _notificationClient.SendEmailAsync(submitter.EmailAddress,
+        //     _templateOptions.NotificationunpublishDeclined, personalisation);
+        //
+        // await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+        //    _templateOptions.NotificationunpublishDeclined, personalisation);
+        //
+        // await _workflowTaskService.CreateAsync(
+        //     new WorkflowTask(
+        //        TaskType.RequestTounpublishDeclined,
+        //         decliner,
+        //         // Approver becomes the submitter for Approved Notification
+        //         submitter.RoleId,
+        //         submitter,
+        //         DateTime.Now,
+        //         $"The request to unpublish CAB {cabName} has been declined.",
+        //         decliner,
+        //         DateTime.Now,
+        //         false,
+        //         reason,
+        //         true,
+        //         cabId));
     }
 }

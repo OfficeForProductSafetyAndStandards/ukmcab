@@ -4,6 +4,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABSummaryViewModel: ILayoutModel
     {
+        public string? Id { get; set; }
         public Status Status { get; set; }
         public string? StatusCssStyle { get; init; }
         public SubStatus SubStatus { get; set; }
@@ -28,5 +29,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool SubSectionEditAllowed { get; set; }
         public DateTime? PublishedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
+        public int GovernmentUserNoteCount { get; set; }
+        public DateTime? LastGovermentUserNoteDate { get; set; }
     }
 }

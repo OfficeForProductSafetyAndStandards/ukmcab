@@ -8,15 +8,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
     {
         public readonly string[] PublicAuditActionsToShow =
         {
-            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest,
+            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchivedToDraft,
         };
 
         public readonly string[] LoggedInUserAuditActionsToShow =
         {
-            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchiveRequest,
+            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchivedToDraft,
             AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved,
             AuditCABActions.CABDeclined, AuditCABActions.SubmittedForApproval, AuditCABActions.UnarchiveApprovalRequest,
-            AuditCABActions.DraftDeleted
+            AuditCABActions.DraftDeleted, AuditCABActions.UnArchiveApprovalRequestDeclined
         };
 
 
@@ -107,9 +107,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         {
             switch (action)
             {
-                // CAB audit mappings
-                case AuditCABActions.UnarchiveRequest:
-                    return "Unarchive request";
                 // User audit mappings
                 case AuditUserActions.UserAccountRequest:
                     return "User access request";

@@ -11,4 +11,5 @@ public partial class CoreEmailTemplateOptions
     public string NotificationDraftCabDeletedFromArchiving { get; set; } = null!;
     public string NotificationUnarchiveApproved { get; set; } = null!;
     public string NotificationUnarchiveDeclined { get; set; } = null!;
+    public string NotificationRequestToUnpublishCab { get; set; } = null!;
 }
