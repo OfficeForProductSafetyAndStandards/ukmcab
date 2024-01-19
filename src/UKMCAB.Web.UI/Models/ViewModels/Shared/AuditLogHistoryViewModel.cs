@@ -107,9 +107,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         {
             switch (action)
             {
-                // CAB audit mappings
-                case AuditCABActions.UnarchivedToDraft:
-                    return "Unarchived to draft"; 
                 // User audit mappings
                 case AuditUserActions.UserAccountRequest:
                     return "User access request";
