@@ -1,4 +1,6 @@
-﻿@using UKMCAB.Core.Domain;
+﻿@using System.Net;
+@using UKMCAB.Core.Domain;
+@using UKMCAB.Core.Security;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
@@ -476,7 +478,7 @@ else if (Model.IsEditLocked)
                 </div>
             </dl>
 
-            <div class="cab-summary-detail govuk-!-margin-bottom-5">
+            <div class="cab-summary-detail">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row govuk-!-padding-top-5">
                         <dt class="govuk-summary-list__key">
@@ -509,9 +511,51 @@ else if (Model.IsEditLocked)
                 </dl>
             </div>
 
+            @if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabGovernmentUserNotes))
+            {
+                <dl class="govuk-summary-list cab-summary-list">
+                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                        <dt class="govuk-summary-list__key">
+                            <div class="cab-summary-header  govuk-!-padding-top-5">
+                                <h3 class="govuk-heading-l">Government user notes</h3>
+                            </div>
+                        </dt>
+                    </div>
+                </dl>
+
+                <div class="cab-summary-detail">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                            <dt class="govuk-summary-list__key">
+                                Notes
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @if (Model.GovernmentUserNoteCount > 0)
+                                {
+                                    <p>Last note added: @Model.LastGovermentUserNoteDate?.ToStringBeisFormat()</p>
+                                }
+                                else
+                                {
+                                    <p>There are no notes</p>
+                                }
+
+                                @{
+                                    var userNotesReturnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+                                }
+
+                                <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
+                                    asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl" class="govuk-link govuk-link--no-visited-state">
+                                    View government user notes (@Model.GovernmentUserNoteCount)
+                                </a>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            }
+            
             @if (Model is { ValidCAB: true, CanPublish: true })
             {
-                <div class="govuk-warning-text">
+                <div class="govuk-warning-text govuk-!-margin-top-5">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
@@ -532,8 +576,9 @@ else if (Model.IsEditLocked)
 
             @if (Model is { ShowEditActions: true, SubStatus: SubStatus.None })
             {
-                <div>
+                <div class="govuk-!-margin-top-5">
                     <form method="post">
+                        <input type="hidden" asp-for="Id" />
                         <input type="hidden" asp-for="CABId" />
                         <div class="govuk-button-group">
                             @if (Model.CanPublish)
