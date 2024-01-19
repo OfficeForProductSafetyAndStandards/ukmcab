@@ -342,7 +342,7 @@ namespace UKMCAB.Core.Services.CAB
             var archivedDoc = documents.SingleOrDefault(d => d is { StatusValue: Status.Archived });
             Guard.IsFalse(archivedDoc == null, $"Failed for find and archived version for CAB id: {cabId}");
             // Flag latest with unarchive audit entry
-            archivedDoc!.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnarchiveRequest, unarchiveInternalReason,
+            archivedDoc!.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnarchivedToDraft, unarchiveInternalReason,
                 unarchivePublicReason));
             await _cabRepository.UpdateAsync(archivedDoc);
             await UpdateSearchIndex(archivedDoc);
