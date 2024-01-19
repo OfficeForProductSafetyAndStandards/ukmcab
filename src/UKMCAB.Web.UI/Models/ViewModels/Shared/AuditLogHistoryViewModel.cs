@@ -16,7 +16,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchivedToDraft,
             AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved,
             AuditCABActions.CABDeclined, AuditCABActions.SubmittedForApproval, AuditCABActions.UnarchiveApprovalRequest,
-            AuditCABActions.DraftDeleted
+            AuditCABActions.DraftDeleted, AuditCABActions.UnArchiveApprovalRequestDeclined
         };
 
 

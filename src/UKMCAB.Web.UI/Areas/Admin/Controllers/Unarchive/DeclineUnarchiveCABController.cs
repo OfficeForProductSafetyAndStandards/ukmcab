@@ -1,5 +1,4 @@
 using System.Security.Claims;
-using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
@@ -58,7 +57,7 @@ public class DeclineUnarchiveCABController : Controller
         if (document.StatusValue != Status.Archived || !unarchiveStatuses.Contains(document.SubStatus))
         {
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
-        }
+        }       
 
         var task = await GetWorkflowTaskAsync(document.CABId);
         var vm = new DeclineUnarchiveCABViewModel(
@@ -91,6 +90,10 @@ public class DeclineUnarchiveCABController : Controller
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
+
+        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Archived, SubStatus.None,
+        new Audit(currentUser, AuditCABActions.UnArchiveApprovalRequestDeclined, vm.Reason, null));
+
         await SendNotificationOfDeclineAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.Reason!);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
