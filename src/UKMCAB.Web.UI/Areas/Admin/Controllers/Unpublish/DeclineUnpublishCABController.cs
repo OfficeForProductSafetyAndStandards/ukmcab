@@ -80,10 +80,7 @@ public class DeclineUnpublishCABController : Controller
                           throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-        if (userRoleId != Roles.OPSS.Id)
-        {
-            throw new PermissionDeniedException("User Permission denied to decline an unpublish request");
-        }
+
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
