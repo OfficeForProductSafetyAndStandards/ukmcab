@@ -86,6 +86,11 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireClaim(Claims.CabGovernmentUserNotes);
     });
+    options.AddPolicy(Policies.ApproveRequests, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.CabCanApprove);
+    });
 });
 
 builder.Services.AddControllersWithViews();

@@ -19,6 +19,8 @@ namespace UKMCAB.Data.Models
         PendingApprovalToPublish,
         [Description("Pending approval to archive CAB")]
         PendingApprovalToArchive,
+        [Description("Pending approval to unpublish CAB")]
+        PendingApprovalToUnpublish,
         [Description("Pending approval to unarchive and publish CAB")]
         PendingApprovalToUnarchivePublish,
         [Description("Pending approval to unarchive CAB as draft")]
