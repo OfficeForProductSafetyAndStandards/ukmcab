@@ -16,6 +16,7 @@ using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -28,6 +29,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IAsyncNotificationClient _notificationClient;
         private readonly CoreEmailTemplateOptions _templateOptions;
         private readonly IEditLockService _editLockService;
+        private readonly IUserNoteService _userNoteService;
 
         public static class Routes
         {
@@ -36,6 +38,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CabPublishedConfirmation = "cab.published.confirmation";
             public const string CabSubmittedForApprovalConfirmation = "cab.submitted-for-approval.confirmation";
             public const string CabSummary = "cab.summary";
+            public const string CabGovernmentUserNotes = "cab.governmentusernotes";
         }
 
         public CABController(
@@ -44,7 +47,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             IWorkflowTaskService workflowTaskService, 
             IAsyncNotificationClient notificationClient,
             IOptions<CoreEmailTemplateOptions> templateOptions,
-            IEditLockService editLockService)
+            IEditLockService editLockService,
+            IUserNoteService userNoteService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
@@ -52,6 +56,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _notificationClient = notificationClient;
             _editLockService = editLockService;
             _templateOptions = templateOptions.Value;
+            _userNoteService = userNoteService;
         }
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
@@ -387,6 +392,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
             var model = new CABSummaryViewModel
             {
+                Id = latest.id,
                 CABId = latest.CABId,
                 CabDetailsViewModel = cabDetails,
                 CabContactViewModel = cabContact,
@@ -415,6 +421,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 SubSectionEditAllowed = subSectionEditAllowed ?? false,
                 LastModifiedDate = latest.LastUpdatedDate,
                 PublishedDate = publishedAudit?.DateTime ?? null,
+                GovernmentUserNoteCount = latest.GovernmentUserNotes?.Count ?? 0,
+                LastGovermentUserNoteDate = latest.GovernmentUserNotes.OrderByDescending(u => u.DateTime).FirstOrDefault()?.DateTime,
             };
 
             ModelState.Clear();
@@ -482,6 +490,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             throw new InvalidOperationException("CAB invalid");
+        }
+
+        [Authorize(Policy = Policies.GovernmentUserNotes)]
+        [HttpGet("admin/cab/governmentusernotes/{cabId}/{cabDocumentId}", Name = Routes.CabGovernmentUserNotes)]
+        public async Task<IActionResult> GovernmentUserNotes(Guid cabId, Guid cabDocumentId, int pagenumber = 1)
+        {
+            var userNotes = await _userNoteService.GetAllUserNotesForCabDocumentId(cabDocumentId);
+            var model = new GovernmentUserNotesViewModel
+            {
+                CABId = cabId,
+                GovernmentUserNotes = new UserNoteListViewModel(cabDocumentId, userNotes, pagenumber)
+            };
+            
+            return View(model);
         }
 
 

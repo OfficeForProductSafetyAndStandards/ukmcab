@@ -21,6 +21,13 @@
             _cachedPublishedCabService = cachedPublishedCabService;
         }
 
+        public async Task<List<UserNote>> GetAllUserNotesForCabDocumentId(Guid cabDocumentId)
+        {
+            Document cab = await GetCabDocumentByCabDocumentId(cabDocumentId);
+
+            return cab.GovernmentUserNotes;
+        }
+
         public async Task<UserNote> GetUserNote(Guid cabDocumentId, Guid userNoteId)
         {
             Document cab = await GetCabDocumentByCabDocumentId(cabDocumentId);

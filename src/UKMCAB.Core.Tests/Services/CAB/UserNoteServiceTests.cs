@@ -33,6 +33,33 @@
         }
 
         [Test]
+        public async Task UserNoteService_GetAllUserNotesForCabDocumentId_ShouldReturnAllUserNotesForThatCabDocument()
+        {
+            // Arrange
+            var cabDocumentId = Guid.NewGuid();
+            _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
+                .ReturnsAsync(new List<Document>() {
+                    new Document { id = cabDocumentId.ToString(),
+                        GovernmentUserNotes = new List<UserNote> {
+                            new UserNote { Id = Guid.NewGuid(), Note = "First user note" },
+                            new UserNote { Id = Guid.NewGuid(), Note = "Second user note" },
+                            new UserNote { Id = Guid.NewGuid(), Note = "Third user note" },
+                        }
+                    },
+                });
+
+            // Act
+            var userNotes = await _userNoteService.GetAllUserNotesForCabDocumentId(cabDocumentId);
+
+            // Assert
+            Assert.IsNotNull(userNotes);
+            Assert.AreEqual(3, userNotes.Count());
+            Assert.AreEqual("First user note", userNotes.ElementAt(0).Note);
+            Assert.AreEqual("Second user note", userNotes.ElementAt(1).Note);
+            Assert.AreEqual("Third user note", userNotes.ElementAt(2).Note);
+        }
+
+        [Test]
         public async Task UserNoteService_GetUserNote_ShouldReturnUserNoteWithMatchingId()
         {
             // Arrange
