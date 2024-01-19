@@ -331,7 +331,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 });
             }
 
-            return RedirectToAction("DocumentsList", "FileUpload", new { id, fromSummary, fileIndexToDuplicate = model.IndexofSelectedFile });
+            return RedirectToAction("DocumentsList", "FileUpload", new { id, fromSummary, model.IndexofSelectedFile, fromAction = nameof(DocumentsUseFileAgain) });
         }
 
         private static string AppendDateTimeToFileName(DateTime date, string fileName)

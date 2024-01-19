@@ -25,7 +25,7 @@
     {
         <div class="govuk-grid-column-full">
 
-            <partial name="Partials/_ValidationSummary" model="null"/>
+            <partial name="Partials/_ValidationSummary" model="null" />
 
             <div>
                 <span class="govuk-caption-m">@Model.Title</span>
@@ -35,7 +35,6 @@
                     Files you have uploaded
                 </h2>
             </div>
-
 
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IndexofSelectedFile))">
                 <fieldset class="govuk-fieldset" aria-describedby="selectFileToReplaceHint">
@@ -55,7 +54,7 @@
                     </div>
 
                     <div class="ukmcab-float__left width-full">
-                        <hr class="ukmcab-border"/>
+                        <hr class="ukmcab-border" />
                     </div>
 
                     <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
@@ -72,7 +71,7 @@
                                         <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
                                         <input asp-for="UploadedFiles![i].Category" type="hidden" value="@uploadedFile.Category">
                                         <input asp-for="UploadedFiles![i].IsReplaced" type="hidden" value="@uploadedFile.IsReplaced">
-                                        <input asp-for="CABId" type="hidden"/>
+                                        <input asp-for="CABId" type="hidden" />
                                     </div>
                                     <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
                                         <input class="govuk-radios__input" asp-for="IndexofSelectedFile" type="radio" value="@i">
@@ -101,7 +100,7 @@
                                 </div>
                             </div>
                             <div class="ukmcab-float__left width-full">
-                                <hr class="ukmcab-border"/>
+                                <hr class="ukmcab-border" />
                             </div>
                         }
                     </div>
@@ -111,7 +110,7 @@
 
         <div class="govuk-grid-column-two-thirds">
             <input type="hidden" asp-for="IsFromSummary" />
-            
+
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "File")">
                 <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
                     Select PDF file

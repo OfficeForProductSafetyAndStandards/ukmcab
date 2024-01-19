@@ -184,75 +184,94 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            var uploadedFiles = new List<FileViewModel>();
+            var uploadedFileViewModels = new List<FileViewModel>();
 
-            if (fromAction == nameof(FileUploadManagementController.SchedulesReplaceFile) && latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestVersion.Schedules.Count)
+            if (fromAction == nameof(FileUploadManagementController.SchedulesReplaceFile) || fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain))
             {
-                for (int i = 0; i < latestVersion.Schedules.Count; i++)
+                if (fromAction == nameof(FileUploadManagementController.SchedulesReplaceFile) && latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestVersion.Schedules.Count)
                 {
-                    var s = latestVersion.Schedules[i];
-                    var uploadedfile = new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea };
-                    uploadedfile.IsReplaced = i == indexOfFileToReplace;
-                    uploadedFiles.Add(uploadedfile);
+                    UpdateFileVMIsReplacedPropertyAndLoad(latestVersion.Schedules, uploadedFileViewModels, indexOfFileToReplace);
                 }
 
-                var showBanner = false;
-                var successBannerContent = "The file has been used again";
-                if (uploadedFiles != null)
+                if (fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain) && latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var fileToUseAgainIndex) && fileToUseAgainIndex < latestVersion.Schedules.Count)
                 {
-                    if (uploadedFiles.Any(f => f.IsDuplicated))
-                    {
-                        showBanner = true;
-                    }
-                    else if (uploadedFiles.Any(f => f.IsReplaced))
-                    {
-                        showBanner = true;
-                        successBannerContent = "The replacement file has been uploaded";
-                    }
+                    uploadedFileViewModels = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>();
+
+                    var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
+                    AddSelectedVMToUploadedFileViewModels(uploadedFileViewModels, selectedViewModel);
                 }
 
+                UpdateShowBannerAndSuccessBanner(uploadedFileViewModels, out bool showBanner, out string successBannerContent);
                 var viewModel = new FileListViewModel
                 {
-                        Title = SchedulesOptions.ListTitle,
-                        UploadedFiles = uploadedFiles,
-                        CABId = id,
-                        IsFromSummary = fromSummary,
-                        DocumentStatus = latestVersion.StatusValue,
-                        IsValidState = ModelState.IsValid,
-                        SuccessBannerTitle = successBannerContent,
-                        ShowBanner = showBanner
+                    Title = SchedulesOptions.ListTitle,
+                    UploadedFiles = uploadedFileViewModels,
+                    CABId = id,
+                    IsFromSummary = fromSummary,
+                    DocumentStatus = latestVersion.StatusValue,
+                    SuccessBannerTitle = successBannerContent,
+                    ShowBanner = showBanner
                 };
-                
+
                 return View(viewModel);
             }
 
-            uploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>();
-
-            if (fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain) && latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count)
-            {
-                var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
-                var uploadedFileToDuplicate = new FileViewModel
-                {
-                    FileName = selectedViewModel.FileName,
-                    UploadDateTime = selectedViewModel.UploadDateTime,
-                    Label = selectedViewModel.FileName,
-                    LegislativeArea = string.Empty,
-                    IsSelected = false,
-                    IsDuplicated = true,
-                };
-
-                uploadedFiles.Add(uploadedFileToDuplicate);
-            }
+            uploadedFileViewModels = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>();
 
             // Pre-populate model for edit
             return View(new FileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
-                UploadedFiles = uploadedFiles,
+                UploadedFiles = uploadedFileViewModels,
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
             });
+        }
+
+        private static void AddSelectedVMToUploadedFileViewModels(List<FileViewModel> uploadedFileViewModels, FileUpload selectedViewModel)
+        {
+            var uploadedFileToDuplicate = new FileViewModel
+            {
+                FileName = selectedViewModel.FileName,
+                UploadDateTime = selectedViewModel.UploadDateTime,
+                Label = selectedViewModel.FileName,
+                LegislativeArea = string.Empty,
+                Category = string.Empty,
+                IsSelected = false,
+                IsDuplicated = true,
+            };
+
+            uploadedFileViewModels.Add(uploadedFileToDuplicate);
+        }
+
+        private static void UpdateShowBannerAndSuccessBanner(List<FileViewModel>? uploadedFiles, out bool showBanner, out string successBannerContent)
+        {
+            showBanner = false;
+            successBannerContent = "The file has been used again";
+            if (uploadedFiles != null)
+            {
+                if (uploadedFiles.Any(f => f.IsDuplicated))
+                {
+                    showBanner = true;
+                }
+                else if (uploadedFiles.Any(f => f.IsReplaced))
+                {
+                    showBanner = true;
+                    successBannerContent = "The replacement file has been uploaded";
+                }
+            }
+        }
+
+        private static void UpdateFileVMIsReplacedPropertyAndLoad(List<FileUpload> latestFileUploads, List<FileViewModel> uploadedFiles, int indexOfFileToReplace)
+        {
+            for (int i = 0; i < latestFileUploads.Count; i++)
+            {
+                var s = latestFileUploads[i];
+                var uploadedfile = new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea, Category = s.Category };
+                uploadedfile.IsReplaced = i == indexOfFileToReplace;
+                uploadedFiles.Add(uploadedfile);
+            }
         }
 
         [HttpPost]
@@ -361,8 +380,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 UploadedFiles = model.UploadedFiles,
                 CABId = id,
                 IsFromSummary = fromSummary,
-                DocumentStatus = latestDocument.StatusValue,
-                IsValidState = ModelState.IsValid
+                DocumentStatus = latestDocument.StatusValue
             });
         }
 
@@ -650,7 +668,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/documents-list/{id}")]
-        public async Task<IActionResult> DocumentsList(string id, bool fromSummary, string? fileIndexToDuplicate)
+        public async Task<IActionResult> DocumentsList(string id, bool fromSummary, string? indexOfSelectedFile, string? fromAction)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -658,29 +676,46 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            var uploadedFiles = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>();
+            var uploadedFileViewModels = new List<FileViewModel>();
 
-            if (latestDocument.Documents != null && int.TryParse(fileIndexToDuplicate, out var fileToUseAgainIndex) && fileToUseAgainIndex < uploadedFiles.Count)
+            if (fromAction == nameof(FileUploadManagementController.DocumentsReplaceFile) || fromAction == nameof(FileUploadManagementController.DocumentsUseFileAgain))
             {
-                var selectedViewModel = latestDocument.Documents[fileToUseAgainIndex];
-                var uploadedFileToDuplicate = new FileViewModel
+                if (fromAction == nameof(FileUploadManagementController.DocumentsReplaceFile) && latestDocument.Documents != null && int.TryParse(indexOfSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestDocument.Documents.Count)
                 {
-                    FileName = selectedViewModel.FileName,
-                    UploadDateTime = selectedViewModel.UploadDateTime,
-                    Label = selectedViewModel.FileName,
-                    Category = string.Empty,
-                    IsSelected = false,
-                    IsDuplicated = true,
+                    UpdateFileVMIsReplacedPropertyAndLoad(latestDocument.Documents, uploadedFileViewModels, indexOfFileToReplace);
+                }
+
+                if (fromAction == nameof(FileUploadManagementController.DocumentsUseFileAgain) && latestDocument.Documents != null && int.TryParse(indexOfSelectedFile, out var fileToUseAgainIndex) && fileToUseAgainIndex < latestDocument.Documents.Count)
+                {
+                    uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>();
+
+                    var selectedViewModel = latestDocument.Documents[fileToUseAgainIndex];
+                    AddSelectedVMToUploadedFileViewModels(uploadedFileViewModels, selectedViewModel);
+                }
+
+                UpdateShowBannerAndSuccessBanner(uploadedFileViewModels, out bool showBanner, out string successBannerContent);
+
+                var viewModel = new FileListViewModel
+                {
+                    Title = DocumentsOptions.ListTitle,
+                    UploadedFiles = uploadedFileViewModels,
+                    CABId = id,
+                    IsFromSummary = fromSummary,
+                    DocumentStatus = latestDocument.StatusValue
+                    SuccessBannerTitle = successBannerContent,
+                    ShowBanner = showBanner
                 };
 
-                uploadedFiles.Add(uploadedFileToDuplicate);
+                return View(viewModel);
             }
 
-            // Pre-populate model for edit
+            uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>();
+
+            //Pre - populate model for edit
             return View(new FileListViewModel
             {
                 Title = DocumentsOptions.ListTitle,
-                UploadedFiles = uploadedFiles,
+                UploadedFiles = uploadedFileViewModels,
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestDocument.StatusValue
@@ -788,8 +823,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 UploadedFiles = model.UploadedFiles ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
-                DocumentStatus = latestDocument.StatusValue,
-                IsValidState = ModelState.IsValid
+                DocumentStatus = latestDocument.StatusValue
             });
         }
 
