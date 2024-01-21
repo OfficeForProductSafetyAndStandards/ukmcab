@@ -67,9 +67,7 @@ public class ApproveUnpublishCABController : Controller
             "Approve unpublish CAB",
             document.Name ?? throw new InvalidOperationException(),
             document.URLSlug,
-            Guid.Parse(document.CABId),
-            task.Submitter.UserGroup,
-            task.Submitter.FirstAndLastName);
+            Guid.Parse(document.CABId));
 
         return View("~/Areas/Admin/Views/CAB/unpublish/Approve.cshtml", vm);
     }
@@ -90,10 +88,11 @@ public class ApproveUnpublishCABController : Controller
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
-        await Unpublish(cabUrl, currentUser);
+      
         var task = await GetWorkflowTaskAsync(vm.CabId);
         var submitter = await _userService.GetAsync(task.Submitter.UserId);
-        var document = await GetPublishedDocumentAsync(cabUrl);
+        var document = await GetPublishedDocumentAsync(cabUrl);  
+        await Unpublish(cabUrl, currentUser);
         bool unpublishAndCreateDraft = task.TaskType == TaskType.RequestToUnpublish;
         if (unpublishAndCreateDraft)
         {
@@ -101,7 +100,7 @@ public class ApproveUnpublishCABController : Controller
         }
         else
         {
-            await _cabAdminService.ArchiveDocumentAsync(currentUser, vm.CabId.ToString(), null, vm.Reason);
+            await _cabAdminService.ArchiveDocumentAsync(submitter!, vm.CabId.ToString(), null, vm.Reason!);
         }
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
         await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, unpublishAndCreateDraft);
