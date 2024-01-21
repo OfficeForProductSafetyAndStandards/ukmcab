@@ -313,7 +313,7 @@ namespace UKMCAB.Core.Services.CAB
             return latestDocument;
         }
 
-        public async Task UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? internalReason)
+        public async Task<Document> UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? internalReason)
         {
             var docs = await FindAllDocumentsByCABIdAsync(cabId);
             var publishedVersion = docs.SingleOrDefault(d => d.StatusValue == Status.Published);
@@ -340,6 +340,7 @@ namespace UKMCAB.Core.Services.CAB
             await RefreshCaches(publishedVersion.CABId, publishedVersion.URLSlug);
 
             await RecordStatsAsync();
+            return publishedVersion;
         }
 
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId,
@@ -394,7 +395,7 @@ namespace UKMCAB.Core.Services.CAB
             var publishedVersion = docs.SingleOrDefault(d => d.StatusValue == Status.Published);
             if (publishedVersion == null)
             {
-                // An accidental double sumbmit might cause this action to be repeated so just return the already archived doc.
+                // An accidental double submit might cause this action to be repeated so just return the already archived doc.
                 var latest = await GetLatestDocumentAsync(CABId);
                 if (latest == null || latest.StatusValue == Status.Archived)
                 {

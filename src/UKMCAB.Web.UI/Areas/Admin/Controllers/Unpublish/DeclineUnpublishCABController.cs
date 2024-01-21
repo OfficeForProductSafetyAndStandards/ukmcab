@@ -46,8 +46,8 @@ public class DeclineUnpublishCABController : Controller
     [HttpGet("{cabUrl}", Name = Routes.Decline)]
     public async Task<IActionResult> DeclineAsync(string cabUrl)
     {
-        var document = await GetArchivedDocumentAsync(cabUrl);
-        var unpublishStatuses = new List<SubStatus>()
+        var document = (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new [] { Status.Published })).First();
+        var unpublishStatuses = new List<SubStatus>
         {
             SubStatus.PendingApprovalToUnpublish,
             SubStatus.PendingApprovalToArchive
@@ -84,6 +84,8 @@ public class DeclineUnpublishCABController : Controller
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
+        await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Published, SubStatus.None,
+            new Audit(currentUser, AuditCABActions.UnpublishApprovalRequestDeclined, vm.Reason, null));
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
         await SendNotificationOfDeclineAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.Reason!);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
@@ -95,18 +97,6 @@ public class DeclineUnpublishCABController : Controller
         var task = tasks.First(t =>
             t.TaskType is TaskType.RequestToArchive or TaskType.RequestToUnpublish && !t.Completed);
         return task;
-    }
-
-    /// <summary>
-    /// Get the Archived document
-    /// </summary>
-    /// <param name="cabUrl">url slug to get</param>
-    /// <returns>document with archived status</returns>
-    private async Task<Document> GetArchivedDocumentAsync(string cabUrl)
-    {
-        var documents = await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl);
-        var archivedDocument = documents.First(d => d.StatusValue == Status.Archived);
-        return archivedDocument;
     }
 
     /// <summary>

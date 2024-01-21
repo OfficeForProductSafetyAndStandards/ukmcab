@@ -12,7 +12,7 @@ namespace UKMCAB.Core.Services.CAB
 
         Task<bool> DocumentWithSameNameExistsAsync(Document document);
         Task<List<CabModel>> FindDocumentsByCABIdAsync(string id);
-        Task<List<Document>> FindAllDocumentsByCABURLAsync(string id, Status[]? statusToRetrieve = null);
+        Task<List<Document>> FindAllDocumentsByCABURLAsync(string id, Status[]? statusesToRetrieve = null);
         /// <summary>
         /// Find all Draft and Archived documents restricted by user role
         /// </summary>
@@ -36,8 +36,8 @@ namespace UKMCAB.Core.Services.CAB
         /// <param name="userAccount">User un-publishing</param>
         /// <param name="cabId">Cab to unpublish</param>
         /// <param name="archiveInternalReason">Reason for unpublish</param>
-        /// <returns></returns>
-        Task UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? archiveInternalReason);
+        /// <returns>Historical Document</returns>
+        Task<Document> UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? archiveInternalReason);
         Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas);
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();

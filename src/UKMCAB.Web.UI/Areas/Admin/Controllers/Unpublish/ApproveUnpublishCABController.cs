@@ -51,7 +51,7 @@ public class ApproveUnpublishCABController : Controller
     [HttpGet("{cabUrl}", Name = Routes.Approve)]
     public async Task<IActionResult> ApproveAsync(string cabUrl)
     {
-        var document = await GetPublishedDocumentAsync(cabUrl);
+        var document = (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new [] { Status.Published })).First();
         var unpublishStatuses = new List<SubStatus>()
         {
             SubStatus.PendingApprovalToUnpublish,
@@ -78,31 +78,33 @@ public class ApproveUnpublishCABController : Controller
         {
             return View("~/Areas/Admin/Views/CAB/unpublish/Approve.cshtml", vm);
         }
-    
+
         var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
                           throw new InvalidOperationException();
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-    
+
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
-      
+
         var task = await GetWorkflowTaskAsync(vm.CabId);
         var submitter = await _userService.GetAsync(task.Submitter.UserId);
-        var document = await GetPublishedDocumentAsync(cabUrl);  
-        await Unpublish(cabUrl, currentUser);
+        var document = (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new [] { Status.Published })).First();
         bool unpublishAndCreateDraft = task.TaskType == TaskType.RequestToUnpublish;
         if (unpublishAndCreateDraft)
         {
-            await _cabAdminService.CreateDocumentAsync(submitter!, document, true);
+            var historical = await _cabAdminService.UnPublishDocumentAsync(currentUser, document.CABId, vm.Reason);
+            await _cabAdminService.CreateDocumentAsync(submitter!, historical, true);
         }
         else
         {
             await _cabAdminService.ArchiveDocumentAsync(submitter!, vm.CabId.ToString(), null, vm.Reason!);
         }
+
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
-        await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, unpublishAndCreateDraft);
+        await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver,
+            unpublishAndCreateDraft);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
@@ -112,34 +114,6 @@ public class ApproveUnpublishCABController : Controller
         var task = tasks.First(t =>
             t.TaskType is TaskType.RequestToArchive or TaskType.RequestToUnpublish && !t.Completed);
         return task;
-    }
-
-    /// <summary>
-    /// Unpublish
-    /// </summary>
-    /// <param name="cabUrl"></param>
-    /// <param name="currentUser"></param>
-    private async Task Unpublish(string cabUrl, UserAccount currentUser)
-    {
-        var document = await GetPublishedDocumentAsync(cabUrl);
-        await _cabAdminService.UnPublishDocumentAsync(currentUser, document.CABId, null);
-        _telemetryClient.TrackEvent(AiTracking.Events.CabUnpublished, HttpContext.ToTrackingMetadata(new()
-        {
-            [AiTracking.Metadata.CabId] = document.CABId,
-            [AiTracking.Metadata.CabName] = document.Name!
-        }));
-    }
-
-    /// <summary>
-    /// Get the Published document
-    /// </summary>
-    /// <param name="cabUrl">url slug to get</param>
-    /// <returns>document with published status</returns>
-    private async Task<Document> GetPublishedDocumentAsync(string cabUrl)
-    {
-        var documents = await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl);
-        var publishedDocument = documents.First(d => d.StatusValue == Status.Published);
-        return publishedDocument;
     }
 
     /// <summary>
@@ -169,7 +143,9 @@ public class ApproveUnpublishCABController : Controller
         {
             { "CABName", cabName },
             {
-                "CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request, Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
+                "CABUrl",
+                UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
             },
             { "Unpublish", unpublish }
         };
