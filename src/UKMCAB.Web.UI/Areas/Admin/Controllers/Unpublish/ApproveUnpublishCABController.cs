@@ -62,9 +62,8 @@ public class ApproveUnpublishCABController : Controller
             throw new PermissionDeniedException("CAB status needs to be Published and Submitted for approval");
         }
 
-        var task = await GetWorkflowTaskAsync(Guid.Parse(document.CABId));
         var vm = new ApproveUnpublishCABViewModel(
-            "Approve unpublish CAB",
+            $"Unpublish CAB {document.Name}",
             document.Name ?? throw new InvalidOperationException(),
             document.URLSlug,
             Guid.Parse(document.CABId));

@@ -12,7 +12,7 @@ namespace UKMCAB.Core.Services.CAB
 
         Task<bool> DocumentWithSameNameExistsAsync(Document document);
         Task<List<CabModel>> FindDocumentsByCABIdAsync(string id);
-        Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
+        Task<List<Document>> FindAllDocumentsByCABURLAsync(string id, Status[]? statusToRetrieve = null);
         /// <summary>
         /// Find all Draft and Archived documents restricted by user role
         /// </summary>
