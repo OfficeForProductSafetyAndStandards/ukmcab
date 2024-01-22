@@ -83,9 +83,6 @@ public static class GovukOneLoginExtensions
             options.Events.OnRedirectToIdentityProviderForSignOut = async context =>
             {
                 var uri = context.HttpContext.RequestServices.GetRequiredService<IAppHost>().GetBaseUri();
-                var editLockService = context.HttpContext.RequestServices.GetRequiredService<IEditLockService>();
-                var userId = context.HttpContext.User.GetUserId();
-                await editLockService.RemoveEditLockForUserAsync(userId!);
                 context.ProtocolMessage.PostLogoutRedirectUri = uri.ToString();
             };
 
@@ -94,7 +91,7 @@ public static class GovukOneLoginExtensions
                 ctx.Response.Redirect(ctx.Properties.Items.Get("redirect") ?? "/");
                 ctx.HandleResponse();
                 return Task.CompletedTask;
-            };
+            }; 
 
             options.Events.OnRemoteFailure = ctx =>
             {
