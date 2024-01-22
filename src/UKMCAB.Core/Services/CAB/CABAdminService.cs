@@ -124,8 +124,7 @@ namespace UKMCAB.Core.Services.CAB
             return _cabRepository.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
         }
 
-        public async Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document,
-            bool saveAsDraft = false)
+        public async Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document)
         {
             var documentExists =
                 await FindOtherDocumentsByCabNumberOrUkasReference(document.CABId, document.CABNumber,
@@ -140,7 +139,7 @@ namespace UKMCAB.Core.Services.CAB
             document.CreatedByUserGroup = userAccount.Role!.ToLower();
 
             var rv = await _cabRepository.CreateAsync(document);
-
+            await UpdateSearchIndex(rv);
             await RecordStatsAsync();
 
             return rv;
