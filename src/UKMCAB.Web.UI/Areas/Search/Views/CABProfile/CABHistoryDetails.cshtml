@@ -74,7 +74,16 @@
                         }
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">Reason</th>
-                            <td class="govuk-table__cell">@HttpUtility.HtmlDecode(@Model.PublicComment)</td>
+                            <td class="govuk-table__cell">
+                                @if (Model.IsUserInputComment || !Model.PublicComment.Contains("Changes:"))
+                                {
+                                    @HttpUtility.HtmlDecode(@Model.PublicComment);
+                                }
+                                else
+                                {
+                                    @Html.Raw(HttpUtility.HtmlDecode(@Model.PublicComment));
+                                }
+                            </td>
                         </tr>
                     </tbody>
                 </table>

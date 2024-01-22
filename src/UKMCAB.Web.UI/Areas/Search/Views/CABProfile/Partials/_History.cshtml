@@ -59,7 +59,7 @@
                                 <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
                                 <td class="govuk-table__cell">
                                     <label aria-hidden="true">Reason</label>
-                                    @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment))
+                                    @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment) || !string.IsNullOrWhiteSpace(auditHistoryItem.PublicComment))
                                     {
                                         var isUserInputComment = auditHistoryItem.IsUserInputComment is not (null or false);
                                         var parms = new Dictionary<string, string?>
