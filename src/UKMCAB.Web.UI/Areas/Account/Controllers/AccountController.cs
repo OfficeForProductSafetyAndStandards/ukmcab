@@ -189,6 +189,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             {
                 await _users.UpdateLastLogonDate(id);
                 _telemetry.TrackEvent(AiTracking.Events.LoginSuccess, HttpContext.ToTrackingMetadata());
+                await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
                 return RedirectToRoute(ServiceManagementController.Routes.ServiceManagement);
             }
             else // log-out the user and redirect somewhere...

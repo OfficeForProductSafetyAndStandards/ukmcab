@@ -7,7 +7,8 @@ public class EditLockService : IEditLockService
     private const string EditLockCacheKey = "CabEditLock";
     private readonly IDistCache _distCache;
     private readonly Dictionary<string, string> _items;
-    private readonly TimeSpan _cacheDuration = TimeSpan.FromHours(1);
+    private readonly TimeSpan _cacheDuration =
+        TimeSpan.FromMinutes(Common.ApplicationConstants.SessionTimeoutDuration);
 
     public EditLockService(IDistCache distCache)
     {
@@ -25,8 +26,10 @@ public class EditLockService : IEditLockService
     ///<inheritdoc />
     public async Task SetAsync(string cabId, string userId)
     {
-        _items.Add(cabId, userId);
-        await _distCache.SetAsync(EditLockCacheKey, _items, _cacheDuration);
+        if (_items.TryAdd(cabId, userId))
+        {
+            await _distCache.SetAsync(EditLockCacheKey, _items, _cacheDuration);
+        }
     }
     
     ///<inheritdoc />
