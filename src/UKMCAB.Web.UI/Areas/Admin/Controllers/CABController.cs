@@ -484,6 +484,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         userAccount ?? throw new InvalidOperationException(), latest, true);
                     await SendNotificationForApproveCab(userAccount,
                         latest.Name ?? throw new InvalidOperationException(), publishModel);
+
+                    await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
+
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
                 }
             }

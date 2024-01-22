@@ -26,8 +26,10 @@ public class EditLockService : IEditLockService
     ///<inheritdoc />
     public async Task SetAsync(string cabId, string userId)
     {
-        _items.Add(cabId, userId);
-        await _distCache.SetAsync(EditLockCacheKey, _items, _cacheDuration);
+        if (_items.TryAdd(cabId, userId))
+        {
+            await _distCache.SetAsync(EditLockCacheKey, _items, _cacheDuration);
+        }
     }
     
     ///<inheritdoc />
