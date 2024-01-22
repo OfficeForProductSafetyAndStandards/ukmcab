@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using UKMCAB.Common;
 using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 
 namespace UKMCAB.Web.Security;
@@ -82,6 +83,9 @@ public static class GovukOneLoginExtensions
             options.Events.OnRedirectToIdentityProviderForSignOut = async context =>
             {
                 var uri = context.HttpContext.RequestServices.GetRequiredService<IAppHost>().GetBaseUri();
+                var editLockService = context.HttpContext.RequestServices.GetRequiredService<IEditLockService>();
+                var userId = context.HttpContext.User.GetUserId();
+                await editLockService.RemoveEditLockForUserAsync(userId!);
                 context.ProtocolMessage.PostLogoutRedirectUri = uri.ToString();
             };
 
