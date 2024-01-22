@@ -7,7 +7,8 @@ public class EditLockService : IEditLockService
     private const string EditLockCacheKey = "CabEditLock";
     private readonly IDistCache _distCache;
     private readonly Dictionary<string, string> _items;
-    private readonly TimeSpan _cacheDuration = TimeSpan.FromHours(1);
+    private readonly TimeSpan _cacheDuration =
+        TimeSpan.FromMinutes(Common.ApplicationConstants.SessionTimeoutDuration);
 
     public EditLockService(IDistCache distCache)
     {
