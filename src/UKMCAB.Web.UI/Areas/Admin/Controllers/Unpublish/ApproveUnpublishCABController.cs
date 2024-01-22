@@ -95,7 +95,7 @@ public class ApproveUnpublishCABController : Controller
         if (unpublishAndCreateDraft)
         {
             var historical = await _cabAdminService.UnPublishDocumentAsync(currentUser, document.CABId, vm.Reason);
-            await _cabAdminService.CreateDocumentAsync(submitter!, historical, true);
+            await _cabAdminService.CreateDocumentAsync(submitter!, historical);
         }
         else
         {

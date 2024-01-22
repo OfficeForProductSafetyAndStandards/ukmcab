@@ -159,8 +159,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             .Value) ?? throw new InvalidOperationException("User account not found");
                     var createdDocument = !model.IsNew
                         ? await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, document)
-                        : await _cabAdminService.CreateDocumentAsync(userAccount, document,
-                            submitType == Constants.SubmitType.Save);
+                        : await _cabAdminService.CreateDocumentAsync(userAccount, document);
 
                     if (submitType == Constants.SubmitType.Continue)
                     {

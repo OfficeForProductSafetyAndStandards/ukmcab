@@ -29,8 +29,11 @@ public enum TaskType
     DraftCabDeletedFromArchiving,
     [Description("Draft CAB deleted")]
     DraftCabDeleted,
+    //Request to Unpublish / Archive
+    [Description("Archive CAB request")]
+    RequestToArchive,
     [Description("Unpublish CAB request")]
     RequestToUnpublish,
-    [Description("Archive CAB request")]
-    RequestToArchive
+    [Description("Unpublish CAB request declined")]
+    RequestToUnpublishDeclined,
 }

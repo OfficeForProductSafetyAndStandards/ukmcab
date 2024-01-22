@@ -160,7 +160,7 @@ public class DeclineUnarchiveCABController : Controller
             new WorkflowTask(
                TaskType.RequestToUnarchiveDeclined,
                 decliner,
-                // Approver becomes the submitter for Approved Notification
+                // Approver becomes the submitter for Declined Notification
                 submitter.RoleId,
                 submitter,
                 DateTime.Now,
