@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using UKMCAB.Common;
 using UKMCAB.Core.Security;
+using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 
 namespace UKMCAB.Web.Security;
@@ -90,7 +91,7 @@ public static class GovukOneLoginExtensions
                 ctx.Response.Redirect(ctx.Properties.Items.Get("redirect") ?? "/");
                 ctx.HandleResponse();
                 return Task.CompletedTask;
-            };
+            }; 
 
             options.Events.OnRemoteFailure = ctx =>
             {
