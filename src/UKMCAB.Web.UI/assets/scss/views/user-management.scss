@@ -187,6 +187,10 @@
                 display: inline;
             }
 
+            @include govuk-media-query($until: mobile) {               
+                width: 100%;
+            }
+
             &:before {
                 content: none;
             }
