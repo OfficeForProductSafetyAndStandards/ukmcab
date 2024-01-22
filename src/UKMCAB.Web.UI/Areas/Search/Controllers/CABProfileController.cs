@@ -543,5 +543,25 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             return View(auditHistoryItemViewModel);
         }
+        
+        [HttpPost("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
+        public async Task<IActionResult> CABHistoryDetails(AuditHistoryItemViewModel auditHistoryItemViewModel, bool isUserInputComment)
+        {
+            //var auditHistoryItemViewModel = new AuditHistoryItemViewModel
+            //{
+            //    Date = date,
+            //    Time = time,
+            //    Username = username,
+            //    UserId = userId,
+            //    Usergroup = userGroup,
+            //    Action = auditAction,
+            //    InternalComment = internalComment,
+            //    PublicComment = publicComment ?? Constants.NotProvided,
+            //    ReturnUrl = WebUtility.UrlDecode(returnUrl),
+            //    IsUserInputComment = isUserInputComment
+            //};
+
+            return View(auditHistoryItemViewModel);
+        }
     }
 }
