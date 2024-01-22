@@ -24,6 +24,7 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
+using System.Text.Json;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -523,45 +524,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
-        public async Task<IActionResult> CABHistoryDetails(string date, string time, string username, string userId,
-            string userGroup, string auditAction, string internalComment, string? publicComment, string? returnUrl,
-            bool isUserInputComment)
+        public IActionResult CABHistoryDetails()
         {
-            var auditHistoryItemViewModel = new AuditHistoryItemViewModel
-            {
-                Date = date,
-                Time = time,
-                Username = username,
-                UserId = userId,
-                Usergroup = userGroup,
-                Action = auditAction,
-                InternalComment = internalComment,
-                PublicComment = publicComment ?? Constants.NotProvided,
-                ReturnUrl = WebUtility.UrlDecode(returnUrl),
-                IsUserInputComment = isUserInputComment
-            };
+             var auditHistoryItemViewModel = TempData.ContainsKey("auditHistoryData") 
+                ? JsonSerializer.Deserialize<AuditHistoryItemViewModel>(TempData.Peek("auditHistoryData") as string)
+                : new AuditHistoryItemViewModel();
 
             return View(auditHistoryItemViewModel);
         }
-        
-        [HttpPost("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
-        public async Task<IActionResult> CABHistoryDetails(AuditHistoryItemViewModel auditHistoryItemViewModel, bool isUserInputComment)
-        {
-            //var auditHistoryItemViewModel = new AuditHistoryItemViewModel
-            //{
-            //    Date = date,
-            //    Time = time,
-            //    Username = username,
-            //    UserId = userId,
-            //    Usergroup = userGroup,
-            //    Action = auditAction,
-            //    InternalComment = internalComment,
-            //    PublicComment = publicComment ?? Constants.NotProvided,
-            //    ReturnUrl = WebUtility.UrlDecode(returnUrl),
-            //    IsUserInputComment = isUserInputComment
-            //};
 
-            return View(auditHistoryItemViewModel);
+        [HttpPost("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
+        public IActionResult CABHistoryDetails(AuditHistoryItemViewModel auditHistoryItemViewModel)
+        {
+                TempData["auditHistoryData"] = JsonSerializer.Serialize(auditHistoryItemViewModel);
+                return RedirectToAction(nameof(CABHistoryDetails));
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿@using System.Web
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Net
+@using UKMCAB.Web.UI.Models.ViewModels.Shared;
 @model UKMCAB.Web.UI.Models.ViewModels.Shared.AuditLogHistoryViewModel
 @{
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery + "#history");
@@ -43,10 +44,7 @@
                         @for (int i = 0; i < Model.AuditHistoryItems.Count(); i++)
                         {
                             var auditHistoryItem = Model.AuditHistoryItems.ToList()[i];
-                            @*
-                        }
-                        @foreach (var auditHistoryItem in Model.AuditHistoryItems)
-                        { *@
+                            
                             @if (User.Identity.IsAuthenticated)
                             {
                                 <tr class="govuk-table__row">
@@ -68,27 +66,19 @@
                                         <label aria-hidden="true">Reason</label>
                                         @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment))
                                         {
-                                            var isUserInputComment = auditHistoryItem.IsUserInputComment is not (null or false);
-                                            var parms = new Dictionary<string, string?>
+                                            var auditHistoryItemVM = new AuditHistoryItemViewModel
                                             {
-                                                { "date", auditHistoryItem.Date },
-                                                { "time", auditHistoryItem.Time },
-                                                { "username", auditHistoryItem.Username },
-                                                { "userId", auditHistoryItem.UserId},
-                                                { "userGroup", auditHistoryItem.UserGroup},
-                                                { "auditAction", auditHistoryItem.Action },
-                                                { "internalComment", auditHistoryItem.InternalComment },
-                                                { "publicComment", auditHistoryItem.PublicComment },
-                                                { "returnUrl", returnUrl }
+                                                Date = auditHistoryItem.Date,
+                                                Time = auditHistoryItem.Time,
+                                                Username = auditHistoryItem.Username,
+                                                Usergroup = auditHistoryItem.UserGroup,
+                                                UserId = auditHistoryItem.UserId,
+                                                Action = auditHistoryItem.Action,
+                                                InternalComment = auditHistoryItem.InternalComment,
+                                                PublicComment = auditHistoryItem.PublicComment,
+                                                IsUserInputComment = auditHistoryItem.IsUserInputComment ?? false
                                             };
-
-                                            <input type="hidden" asp-for="@Model.AuditHistoryItems.ToList()[i].Date" />
-
-
-                                            <a class="govuk-button" asp-controller="CABProfile" asp-action="CABHistoryDetails" data-module="govuk-button">
-                                                View History
-                                            </a>
-                                            <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms" asp-route-isUserInputComment="@isUserInputComment">View</a>
+                                            <partial name="Partials/_HistoryViewLink" model="auditHistoryItemVM" />
                                         }
                                         else
                                         {
@@ -96,7 +86,6 @@
                                         }
                                     </td>
                                 </tr>
-
                             }
                             else
                             {
@@ -107,16 +96,16 @@
                                         <label aria-hidden="true">Reason</label>
                                         @if (!string.IsNullOrWhiteSpace(auditHistoryItem.PublicComment))
                                         {
-                                            var parms = new Dictionary<string, string?>
+                                            var auditHistoryItemVM = new AuditHistoryItemViewModel
                                             {
-                                                { "date", auditHistoryItem.Date },
-                                                { "time", auditHistoryItem.Time },
-                                                { "auditAction", auditHistoryItem.Action },
-                                                { "publicComment", auditHistoryItem.PublicComment },
-                                                { "returnUrl", returnUrl },
+                                                Date = auditHistoryItem.Date,
+                                                Time = auditHistoryItem.Time,
+                                                Action = auditHistoryItem.Action,
+                                                PublicComment = auditHistoryItem.PublicComment,
+                                                IsUserInputComment = auditHistoryItem.IsUserInputComment ?? false
                                             };
 
-                                            <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms">View</a>
+                                            <partial name="Partials/_HistoryViewLink" model="auditHistoryItemVM" />
                                         }
                                         else
                                         {
