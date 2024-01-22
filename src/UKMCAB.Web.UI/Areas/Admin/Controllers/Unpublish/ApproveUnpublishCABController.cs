@@ -51,7 +51,8 @@ public class ApproveUnpublishCABController : Controller
     [HttpGet("{cabUrl}", Name = Routes.Approve)]
     public async Task<IActionResult> ApproveAsync(string cabUrl)
     {
-        var document = (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new [] { Status.Published })).First();
+        var document =
+            (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new[] { Status.Published })).First();
         var unpublishStatuses = new List<SubStatus>()
         {
             SubStatus.PendingApprovalToUnpublish,
@@ -90,7 +91,8 @@ public class ApproveUnpublishCABController : Controller
 
         var task = await GetWorkflowTaskAsync(vm.CabId);
         var submitter = await _userService.GetAsync(task.Submitter.UserId);
-        var document = (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new [] { Status.Published })).First();
+        var document =
+            (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new[] { Status.Published })).First();
         bool unpublishAndCreateDraft = task.TaskType == TaskType.RequestToUnpublish;
         if (unpublishAndCreateDraft)
         {
@@ -135,42 +137,39 @@ public class ApproveUnpublishCABController : Controller
     /// <param name="cabName">Name of CAB</param>
     /// <param name="submitter"></param>
     /// <param name="approver"></param>
-    /// <param name="unpublish"></param>
+    /// <param name="unpublish">true - unpublish and draft, false - archive</param>
     private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter, User approver,
         bool unpublish)
     {
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", cabName },
-            {
-                "CABUrl",
-                UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
-            },
-            { "Unpublish", unpublish }
+            { "Unpublish", unpublish },
+            { "Archive", !unpublish }
         };
-        // await _notificationClient.SendEmailAsync(submitter.EmailAddress,
-        //     _templateOptions.NotificationunpublishApproved, personalisation);
-        //
-        // await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
-        //     _templateOptions.NotificationunpublishApproved, personalisation);
 
-        // await _workflowTaskService.CreateAsync(
-        //     new WorkflowTask(
-        //         publish ? TaskType.RequestTounpublishForPublishApproved : TaskType.RequestTounpublishForDraftApproved,
-        //         approver,
-        //         // Approver becomes the submitter for Approved Notification
-        //         submitter.RoleId,
-        //         submitter,
-        //         DateTime.Now,
-        //         publish
-        //             ? $"The request to unpublish and publish CAB {cabName} has been approved."
-        //             : $"The request to unpublish CAB {cabName} has been approved and it has been saved as a draft.",
-        //         approver,
-        //         DateTime.Now,
-        //         true,
-        //         null,
-        //         true,
-        //         cabId));
+        await _notificationClient.SendEmailAsync(submitter.EmailAddress,
+            _templateOptions.NotificationUnpublishApproved, personalisation);
+
+        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+            _templateOptions.NotificationUnpublishApproved, personalisation);
+
+        await _workflowTaskService.CreateAsync(
+            new WorkflowTask(
+                TaskType.RequestToUnpublishApproved,
+                approver,
+                // Approver becomes the submitter for Approved Notification
+                submitter.RoleId,
+                submitter,
+                DateTime.Now,
+                unpublish
+                    ? $"The request to unpublish CAB {cabName} has been approved and it has been saved as a draft."
+                    : $"The request to unpublish and archive CAB {cabName} has been approved.",
+                approver,
+                DateTime.Now,
+                true,
+                null,
+                true,
+                cabId));
     }
 }

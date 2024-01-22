@@ -36,4 +36,6 @@ public enum TaskType
     RequestToUnpublish,
     [Description("Unpublish CAB request declined")]
     RequestToUnpublishDeclined,
+    [Description("CAB unpublished")]
+    RequestToUnpublishApproved,
 }
