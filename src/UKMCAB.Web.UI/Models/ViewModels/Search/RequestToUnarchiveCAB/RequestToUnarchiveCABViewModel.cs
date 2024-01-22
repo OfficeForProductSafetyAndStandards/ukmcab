@@ -8,5 +8,6 @@ public record RequestToUnarchiveCABViewModel(string CABName, string CabUrl, Guid
     public bool? IsPublish { get; set; }
     
     [Required(ErrorMessage = "Enter the reason for requesting to unarchive this CAB")]
+    [MaxLength(ErrorMessage = "Maximum reason length is 1000 characters")]
     public string? Reason { get; set; }
 }

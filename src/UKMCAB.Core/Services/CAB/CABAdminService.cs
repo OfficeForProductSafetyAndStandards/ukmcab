@@ -335,8 +335,6 @@ namespace UKMCAB.Core.Services.CAB
                 internalReason));
             await _cabRepository.UpdateAsync(publishedVersion);
 
-            await UpdateSearchIndex(publishedVersion);
-
             await RefreshCaches(publishedVersion.CABId, publishedVersion.URLSlug);
 
             await RecordStatsAsync();
