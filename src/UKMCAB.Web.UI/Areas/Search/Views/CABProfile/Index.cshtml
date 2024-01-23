@@ -117,16 +117,21 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
                     }
                     @if (Model.IsPublished)
                     {
-                        <span>
-                            <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
-                        </span>
-                        @if (Model.IsOPSSUser)
+                        if (Model.RequestTaskType == null)
                         {
                             <span>
-                                <a id="archive-button" class="govuk-button govuk-button--secondary" asp-area="Search" asp-controller="CABProfile" asp-action="ArchiveCAB" asp-route-cabUrl="@Model.CABUrl" asp-route-returnUrl="@returnUrl">Archive</a>
+                                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
                             </span>
+
+                            if (Model.IsOPSSUser)
+                            {
+                                <span>
+                                    <a id="archive-button" class="govuk-button govuk-button--secondary" asp-area="Search" asp-controller="CABProfile" asp-action="ArchiveCAB" asp-route-cabUrl="@Model.CABUrl" asp-route-returnUrl="@returnUrl">Archive</a>
+                                </span>
+                            }
                         }
-                        @if (Model.ShowRequestToUnpublish)
+
+                        if (Model.ShowRequestToUnpublish)
                         {
                             <span>
                                 <a id="unpublish-button" class="govuk-button govuk-button--secondary" asp-area="Search" asp-controller="RequestToUnpublishCAB" asp-action="Index" asp-route-cabUrl="@Model.CABUrl" asp-route-returnUrl="@returnUrl">Request to unpublish</a>
@@ -441,7 +446,17 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
 {
     <div class="govuk-form-group">
         <p class='govuk-body'>
-            <strong class="govuk-body govuk-!-font-weight-bold">Request to unarchive CAB</strong>
+            @switch (Model.RequestTaskType)
+            {
+                case TaskType.RequestToUnarchiveForDraft:
+                case TaskType.RequestToUnarchiveForPublish:
+                    <strong class="govuk-body govuk-!-font-weight-bold">Request to unarchive CAB</strong>
+                    break;
+                case TaskType.RequestToUnpublish:
+                case TaskType.RequestToArchive:
+                    <strong class="govuk-body govuk-!-font-weight-bold">Request to unpublish CAB</strong>
+                    break;
+            }
         </p>
         <p class='govuk-body'>
             @{
@@ -453,6 +468,14 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
                 else if (Model.RequestTaskType == TaskType.RequestToUnarchiveForPublish)
                 {
                     details = $"{Model.RequestFirstAndLastName} from {Model.RequestUserGroup} has requested that this CAB is unarchived and published for the following reason:";
+                }
+                else if (Model.RequestTaskType == TaskType.RequestToArchive)
+                {
+                    details = $"{Model.RequestFirstAndLastName} from {Model.RequestUserGroup} has requested that this CAB is unpublished and archived for the following reason:";
+                }
+                else if (Model.RequestTaskType == TaskType.RequestToUnpublish)
+                {
+                    details = $"{Model.RequestFirstAndLastName} from {Model.RequestUserGroup} has requested that this CAB is unpublished for the following reason:";
                 }
 
                 @details
@@ -476,12 +499,22 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
             </p>
         }
     </div>
-
-    <div class="govuk-button-group">
-        <a asp-area="admin" asp-controller="ApproveUnarchiveCAB" asp-action="Approve" asp-route-cabUrl="@Model.CABUrl" class="govuk-button">Approve</a>
-        <a asp-area="admin" asp-controller="DeclineUnarchiveCAB" asp-action="Decline" asp-route-cabUrl="@Model.CABUrl" class="govuk-button govuk-button--secondary">Decline</a>
-        <a asp-area="admin" asp-controller="CAB" asp-action="Confirmation" asp-route-id="@Model.CABId" class="govuk-link">Cancel</a>
-    </div>
+    if (Model.RequestTaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish)
+    {
+        <div class="govuk-button-group">
+            <a asp-area="admin" asp-controller="ApproveUnarchiveCAB" asp-action="Approve" asp-route-cabUrl="@Model.CABUrl" class="govuk-button">Approve</a>
+            <a asp-area="admin" asp-controller="DeclineUnarchiveCAB" asp-action="Decline" asp-route-cabUrl="@Model.CABUrl" class="govuk-button govuk-button--secondary">Decline</a>
+            <a asp-area="admin" asp-controller="CAB" asp-action="Confirmation" asp-route-id="@Model.CABId" class="govuk-link">Cancel</a>
+        </div>
+    }
+    else
+    {
+        <div class="govuk-button-group">
+            <a asp-area="admin" asp-controller="ApproveUnpublishCAB" asp-action="Approve" asp-route-cabUrl="@Model.CABUrl" class="govuk-button">Approve</a>
+            <a asp-area="admin" asp-controller="DeclineUnpublishCAB" asp-action="Decline" asp-route-cabUrl="@Model.CABUrl" class="govuk-button govuk-button--secondary">Decline</a>
+            <a asp-area="admin" asp-controller="CAB" asp-action="Confirmation" asp-route-id="@Model.CABId" class="govuk-link">Cancel</a>
+        </div>
+    }
 }
 <div class="govuk-grid-row">
     <div class="atom-feed atom-feed-bottom govuk-grid-column-two-thirds">
