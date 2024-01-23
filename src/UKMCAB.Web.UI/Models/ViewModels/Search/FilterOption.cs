@@ -48,12 +48,14 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                 {
                     case SubStatus.PendingApprovalToPublish:
                         return "To publish CAB";
-                    case SubStatus.PendingApprovalToArchive:
-                        return "To archive CAB";
                     case SubStatus.PendingApprovalToUnarchivePublish:
                         return "To unarchive and publish CAB";
                     case SubStatus.PendingApprovalToUnarchive:
                         return "To unarchive CAB as draft";
+                    case SubStatus.PendingApprovalToArchive:
+                        return "To archive CAB";
+                    case SubStatus.PendingApprovalToUnpublish:
+                        return "To unpublish CAB";
                     default:
                         return subStatus.GetEnumDescription();
                 }
