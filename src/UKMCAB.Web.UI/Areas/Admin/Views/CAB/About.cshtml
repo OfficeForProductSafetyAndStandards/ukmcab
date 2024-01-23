@@ -81,6 +81,11 @@
                         <select class="govuk-select govuk-!-width-full" asp-for="CabNumberVisibility" asp-items="new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label))"></select>
                     </div>
                 }
+                else
+                {
+                    <input type="hidden" asp-for="CabNumberVisibility" value="@Model.CabNumberVisibility" />
+                    <input type="hidden" asp-for="CABNumber" value="@Model.CABNumber" />
+                }
 
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AppointmentDate))">
                     <fieldset class="govuk-fieldset" role="group" aria-describedby="appointment-date-hint">

@@ -53,10 +53,18 @@ public class ApproveCABController : Controller
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
         }
 
-        var model = new ApproveCABViewModel("Approve CAB",
-             document.Name ?? throw new InvalidOperationException());
+        if (string.IsNullOrEmpty(document.CABNumber) || string.IsNullOrEmpty(document.CabNumberVisibility))
+        {
+            var model = new ApproveCABViewModel("Approve CAB",
+            document.Name ?? throw new InvalidOperationException());
 
-        return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
+            return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
+        }
+        else
+        {
+            await Approve(document);
+            return RedirectToRoute(CabManagementController.Routes.CABManagement);
+        }       
     }
 
     [HttpPost("{cabId}", Name = Routes.Approve)]
@@ -74,11 +82,17 @@ public class ApproveCABController : Controller
             return View("~/Areas/Admin/Views/CAB/Approve.cshtml", vm);
         }
 
-        document.CABNumber = vm.CABNumber;
-        document.CabNumberVisibility  = vm.CabNumberVisibility;
+        await Approve(document);
+        return RedirectToRoute(CabManagementController.Routes.CABManagement);
+    }
+
+    private async Task Approve(Document document)
+    {
+        var cabId = Guid.Parse(document.CABId);
+
         var user =
-            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
-            throw new InvalidOperationException("User account not found");
+           await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
+           throw new InvalidOperationException("User account not found");
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
         await _cabAdminService.PublishDocumentAsync(user, document);
@@ -87,7 +101,6 @@ public class ApproveCABController : Controller
                 user.EmailAddress ?? throw new InvalidOperationException()));
         await SendNotificationOfApprovalAsync(cabId, document.Name ?? throw new InvalidOperationException(),
             submitTask.Submitter);
-        return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
     private async Task<Document> GetDocumentAsync(Guid cabId)
