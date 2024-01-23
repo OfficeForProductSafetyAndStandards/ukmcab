@@ -51,7 +51,8 @@ public class ApproveUnpublishCABController : Controller
     [HttpGet("{cabUrl}", Name = Routes.Approve)]
     public async Task<IActionResult> ApproveAsync(string cabUrl)
     {
-        var document = await GetPublishedDocumentAsync(cabUrl);
+        var document =
+            (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new[] { Status.Published })).First();
         var unpublishStatuses = new List<SubStatus>()
         {
             SubStatus.PendingApprovalToUnpublish,
@@ -62,75 +63,59 @@ public class ApproveUnpublishCABController : Controller
             throw new PermissionDeniedException("CAB status needs to be Published and Submitted for approval");
         }
 
-        var task = await GetWorkflowTaskAsync(document.CABId);
         var vm = new ApproveUnpublishCABViewModel(
-            "Approve unpublish CAB",
+            $"Unpublish CAB {document.Name}",
             document.Name ?? throw new InvalidOperationException(),
             document.URLSlug,
-            Guid.Parse(document.CABId),
-            task.Submitter.UserGroup,
-            task.Submitter.FirstAndLastName,
-            task.TaskType == TaskType.RequestToUnpublish);
+            Guid.Parse(document.CABId));
 
         return View("~/Areas/Admin/Views/CAB/unpublish/Approve.cshtml", vm);
     }
 
-    // [HttpPost("{cabUrl}", Name = Routes.Approve)]
-    // public async Task<IActionResult> ApprovePostAsync(string cabUrl, ApproveunpublishCABViewModel vm)
-    // {
-    //     if (!ModelState.IsValid)
-    //     {
-    //         return View("~/Areas/Admin/Views/CAB/unpublish/Approve.cshtml", vm);
-    //     }
-    //
-    //     var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
-    //                       throw new InvalidOperationException();
-    //     var userRoleId = Roles.List.First(r =>
-    //         r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-    //
-    //     var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
-    //         userRoleId ?? throw new InvalidOperationException(),
-    //         currentUser.EmailAddress ?? throw new InvalidOperationException());
-    //     await unpublish(cabUrl, currentUser, vm.IsPublish!.Value, true);
-    //     var requestTask = await MarkTaskAsCompleteAsync(vm.CabId.ToString(), approver);
-    //     await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.IsPublish.Value);
-    //     return RedirectToRoute(CabManagementController.Routes.CABManagement);
-    // }
-
-    private async Task<WorkflowTask> GetWorkflowTaskAsync(string cabId)
+    [HttpPost("{cabUrl}", Name = Routes.Approve)]
+    public async Task<IActionResult> ApprovePostAsync(string cabUrl, ApproveUnpublishCABViewModel vm)
     {
-        var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(cabId));
+        if (!ModelState.IsValid)
+        {
+            return View("~/Areas/Admin/Views/CAB/unpublish/Approve.cshtml", vm);
+        }
+
+        var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
+                          throw new InvalidOperationException();
+        var userRoleId = Roles.List.First(r =>
+            r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+
+        var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
+            userRoleId ?? throw new InvalidOperationException(),
+            currentUser.EmailAddress ?? throw new InvalidOperationException());
+
+        var task = await GetWorkflowTaskAsync(vm.CabId);
+        var submitter = await _userService.GetAsync(task.Submitter.UserId);
+        var document =
+            (await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl, new[] { Status.Published })).First();
+        bool unpublishAndCreateDraft = task.TaskType == TaskType.RequestToUnpublish;
+        if (unpublishAndCreateDraft)
+        {
+            var historical = await _cabAdminService.UnPublishDocumentAsync(currentUser, document.CABId, vm.Reason);
+            await _cabAdminService.CreateDocumentAsync(submitter!, historical);
+        }
+        else
+        {
+            await _cabAdminService.ArchiveDocumentAsync(submitter!, vm.CabId.ToString(), null, vm.Reason!);
+        }
+
+        var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
+        await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver,
+            unpublishAndCreateDraft);
+        return RedirectToRoute(CabManagementController.Routes.CABManagement);
+    }
+
+    private async Task<WorkflowTask> GetWorkflowTaskAsync(Guid cabId)
+    {
+        var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
         var task = tasks.First(t =>
             t.TaskType is TaskType.RequestToArchive or TaskType.RequestToUnpublish && !t.Completed);
         return task;
-    }
-
-    /// <summary>
-    /// Unpublish
-    /// </summary>
-    /// <param name="cabUrl"></param>
-    /// <param name="currentUser"></param>
-    private async Task Unpublish(string cabUrl, UserAccount currentUser)
-    {
-        var document = await GetPublishedDocumentAsync(cabUrl);
-        await _cabAdminService.UnPublishDocumentAsync(currentUser, document.CABId, null);
-        _telemetryClient.TrackEvent(AiTracking.Events.CabUnpublished, HttpContext.ToTrackingMetadata(new()
-        {
-            [AiTracking.Metadata.CabId] = document.CABId,
-            [AiTracking.Metadata.CabName] = document.Name!
-        }));
-    }
-
-    /// <summary>
-    /// Get the Published document
-    /// </summary>
-    /// <param name="cabUrl">url slug to get</param>
-    /// <returns>document with published status</returns>
-    private async Task<Document> GetPublishedDocumentAsync(string cabUrl)
-    {
-        var documents = await _cabAdminService.FindAllDocumentsByCABURLAsync(cabUrl);
-        var publishedDocument = documents.First(d => d.StatusValue == Status.Published);
-        return publishedDocument;
     }
 
     /// <summary>
@@ -138,7 +123,7 @@ public class ApproveUnpublishCABController : Controller
     /// </summary>
     /// <param name="cabId">Associated CAB</param>
     /// <param name="userLastUpdatedBy"></param>
-    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(string cabId, User userLastUpdatedBy)
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
     {
         var task = await GetWorkflowTaskAsync(cabId);
         await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
@@ -152,44 +137,39 @@ public class ApproveUnpublishCABController : Controller
     /// <param name="cabName">Name of CAB</param>
     /// <param name="submitter"></param>
     /// <param name="approver"></param>
-    /// <param name="publish"></param>
+    /// <param name="unpublish">true - unpublish and draft, false - archive</param>
     private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter, User approver,
-        bool publish)
+        bool unpublish)
     {
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", cabName },
-            {
-                "CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                    publish
-                        ? Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId })
-                        : Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
-            },
-            { "Publish", publish },
-            { "Draft", !publish }, //No if else in Notify only if
+            { "Unpublish", unpublish },
+            { "Archive", !unpublish }
         };
-        // await _notificationClient.SendEmailAsync(submitter.EmailAddress,
-        //     _templateOptions.NotificationunpublishApproved, personalisation);
-        //
-        // await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
-        //     _templateOptions.NotificationunpublishApproved, personalisation);
 
-        // await _workflowTaskService.CreateAsync(
-        //     new WorkflowTask(
-        //         publish ? TaskType.RequestTounpublishForPublishApproved : TaskType.RequestTounpublishForDraftApproved,
-        //         approver,
-        //         // Approver becomes the submitter for Approved Notification
-        //         submitter.RoleId,
-        //         submitter,
-        //         DateTime.Now,
-        //         publish
-        //             ? $"The request to unpublish and publish CAB {cabName} has been approved."
-        //             : $"The request to unpublish CAB {cabName} has been approved and it has been saved as a draft.",
-        //         approver,
-        //         DateTime.Now,
-        //         true,
-        //         null,
-        //         true,
-        //         cabId));
+        await _notificationClient.SendEmailAsync(submitter.EmailAddress,
+            _templateOptions.NotificationUnpublishApproved, personalisation);
+
+        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+            _templateOptions.NotificationUnpublishApproved, personalisation);
+
+        await _workflowTaskService.CreateAsync(
+            new WorkflowTask(
+                TaskType.RequestToUnpublishApproved,
+                approver,
+                // Approver becomes the submitter for Approved Notification
+                submitter.RoleId,
+                submitter,
+                DateTime.Now,
+                unpublish
+                    ? $"The request to unpublish CAB {cabName} has been approved and it has been saved as a draft."
+                    : $"The request to unpublish and archive CAB {cabName} has been approved.",
+                approver,
+                DateTime.Now,
+                true,
+                null,
+                true,
+                cabId));
     }
 }
