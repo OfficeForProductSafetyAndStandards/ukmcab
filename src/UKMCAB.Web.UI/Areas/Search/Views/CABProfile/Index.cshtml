@@ -120,7 +120,7 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
                         if (Model.RequestTaskType == null)
                         {
                             <span>
-                                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Edit</a>
+                                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-subSectionEditAllowed="True" asp-route-returnUrl="@returnUrl" asp-route-id="@Model.CABId">Edit</a>
                             </span>
 
                             if (Model.IsOPSSUser)
