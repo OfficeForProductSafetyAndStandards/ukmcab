@@ -9,7 +9,7 @@ namespace UKMCAB.Web.UI.Services
     {
         string GetContentType(IFormFile? file, Dictionary<string, string> acceptedFileExtensionsContentTypes);
         List<FileUpload> GetSelectedFilesFromLatestDocumentOrReturnEmptyList(IEnumerable<FileViewModel> selectedViewModels, List<FileUpload> uploadedFiles);
-        Task RemoveSelectedUploadedFilesFromDocumentAsync(List<FileUpload> selectedFileUploads, Document latestDocument, string docType, UserAccount userAccount);
+        Document RemoveSelectedUploadedFilesFromDocumentAsync(List<FileUpload> selectedFileUploads, Document latestDocument, string docType);
         bool ValidateUploadFileAndAddAnyModelStateError(ModelStateDictionary modelState, IFormFile? file, string contentType, string acceptedFileTypes);
     }
 }

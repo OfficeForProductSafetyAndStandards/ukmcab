@@ -72,8 +72,9 @@ namespace UKMCAB.Data.Models
 
         private static void CalculateChangesToScheduleOrDocument(Document publishedDocument, Document? previousDocument, StringBuilder sb, List<FileUpload> previousFileUploads, List<FileUpload> currentFileUploads, string docType)
         {
-            var docTypes = docType.Equals("Schedules") ? "product schedules" : "supporting documents";
-            var docTypeName = docType.Equals("Schedules") ? "product schedule" : "supporting document";
+            var isSchedule = docType.Equals("Schedules");
+            var docTypes = isSchedule ? "product schedules" : "supporting documents";
+            var docTypeName = isSchedule ? "product schedule" : "supporting document";
 
             var existingFileUploads = currentFileUploads
                 .Where(sch => previousFileUploads.Any(prev => prev.UploadDateTime.Equals(sch.UploadDateTime)));
@@ -83,7 +84,7 @@ namespace UKMCAB.Data.Models
             foreach (var fileupload in existingFileUploads)
             {
                 var previousFileUpload = previousFileUploads.Single(sch => sch.UploadDateTime.Equals(fileupload.UploadDateTime));
-                if (docType.Equals("Schedules"))
+                if (isSchedule)
                 {
                     if (!previousFileUpload.LegislativeArea.Equals(fileupload.LegislativeArea))
                     {

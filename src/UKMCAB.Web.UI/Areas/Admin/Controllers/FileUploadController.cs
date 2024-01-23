@@ -287,8 +287,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var fileUploadsInLatestDocumentMatchingUserSelection = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(selectedViewModels, latestDocument.Schedules);
                     if (fileUploadsInLatestDocumentMatchingUserSelection.Any())
                     {
+                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsInLatestDocumentMatchingUserSelection, latestDocument, nameof(latestDocument.Schedules));
                         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                        await _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsInLatestDocumentMatchingUserSelection, latestDocument, nameof(latestDocument.Schedules), userAccount);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
@@ -425,8 +426,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var selectedFileUploads = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Schedules);
                     if (selectedFileUploads.Any())
                     {
+                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
                         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                        await _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Schedules), userAccount);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                     }
                 }
                 else if (latestDocument.Documents != null && docType.Equals(nameof(latestDocument.Documents)))
@@ -438,8 +440,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var selectedFileUploads = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Documents);
                     if (selectedFileUploads.Any())
                     {
+                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Documents));
                         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                        await _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Documents), userAccount);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                     }
                 }
             }
@@ -699,8 +702,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var fileUploadsMatchingSelectedFiles = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(FilesSelectedInViewModel, latestDocument.Documents);
                     if (fileUploadsMatchingSelectedFiles.Any())
                     {
+                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsMatchingSelectedFiles, latestDocument, nameof(latestDocument.Documents));
                         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                        await _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsMatchingSelectedFiles, latestDocument, nameof(latestDocument.Documents), userAccount);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>();

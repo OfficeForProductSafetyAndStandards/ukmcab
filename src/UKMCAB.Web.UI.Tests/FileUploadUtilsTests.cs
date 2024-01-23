@@ -5,11 +5,9 @@ using UKMCAB.Web.UI.Services;
 using Microsoft.AspNetCore.Http;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.Users;
 using System.Linq;
 using System.Threading.Tasks;
 using UKMCAB.Core.Services.CAB;
-using UKMCAB.Core.Services.Users;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
 namespace UKMCAB.Web.UI.Tests
@@ -176,10 +174,9 @@ namespace UKMCAB.Web.UI.Tests
             };
 
             var latestdoc = new Document() { CABNumber = "test-cab", Schedules = uploadedFilesInLatestDocument };
-            var userAccount = new Mock<UserAccount>();
 
             //Act
-            var result = _sut.RemoveSelectedUploadedFilesFromDocumentAsync(selectedUploadedFiles, latestdoc, "Schedules", userAccount.Object);
+            var result = _sut.RemoveSelectedUploadedFilesFromDocumentAsync(selectedUploadedFiles, latestdoc, "Schedules");
 
 
             //Assert
@@ -193,8 +190,7 @@ namespace UKMCAB.Web.UI.Tests
         {
             //Arrange
             var cabServiceMock = new Mock<ICABAdminService>();
-            var userServiceMock = new Mock<IUserService>();
-            var _sut = new FileUploadUtils(cabServiceMock.Object, userServiceMock.Object);
+            var _sut = new FileUploadUtils();
             var file1 = new FileUpload { FileName = "file1.pdf" };
             var file2 = new FileUpload { FileName = "file2.pdf" };
             var file3 = new FileUpload { FileName = "file3.pdf" };
@@ -210,13 +206,10 @@ namespace UKMCAB.Web.UI.Tests
                 file4
             };
 
-            var latestdoc = new Document() { CABNumber = "test-cab", Schedules = uploadedFilesInLatestDocument };
-            var userAccount = new Mock<UserAccount>();
-            
-            cabServiceMock.Setup(c => c.UpdateOrCreateDraftDocumentAsync(userAccount.Object, latestdoc,false)).ReturnsAsync(latestdoc);            
+            var latestdoc = new Document() { CABNumber = "test-cab", Schedules = uploadedFilesInLatestDocument };            
 
             //Act            
-            await _sut.RemoveSelectedUploadedFilesFromDocumentAsync(selectedUploadedFiles, latestdoc, "Schedules", userAccount.Object);
+            _sut.RemoveSelectedUploadedFilesFromDocumentAsync(selectedUploadedFiles, latestdoc, "Schedules");
 
             //Assert
             Assert.That(uploadedFilesInLatestDocument.Count, Is.EqualTo(3));

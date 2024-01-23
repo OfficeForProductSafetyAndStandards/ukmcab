@@ -9,15 +9,6 @@ namespace UKMCAB.Web.UI.Services
 {
     public class FileUploadUtils: IFileUploadUtils
     {
-        private readonly ICABAdminService _cabAdminService;
-        private readonly IUserService _userService;
-
-        public FileUploadUtils(){}
-        public FileUploadUtils(ICABAdminService cabAdminService, IUserService userService)
-        {
-            _cabAdminService = cabAdminService;
-            _userService = userService;
-        }
         public string GetContentType(IFormFile? file, Dictionary<string, string> acceptedFileExtensionsContentTypes)
         {
             if (file == null)
@@ -47,7 +38,7 @@ namespace UKMCAB.Web.UI.Services
             return fileUploadsInLatestDocumentMatchingSelectedFiles;
         }
 
-        public async Task RemoveSelectedUploadedFilesFromDocumentAsync(List<FileUpload> selectedFileUploads, Document latestDocument, string docType, UserAccount userAccount)
+        public Document RemoveSelectedUploadedFilesFromDocumentAsync(List<FileUpload> selectedFileUploads, Document latestDocument, string docType)
         {
             if (latestDocument.Schedules != null && docType.Equals(nameof(latestDocument.Schedules)))
             {
@@ -63,8 +54,7 @@ namespace UKMCAB.Web.UI.Services
                     latestDocument.Documents.Remove(fileToRemove);
                 }
             }
-    
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            return latestDocument;
         }
 
         public bool ValidateUploadFileAndAddAnyModelStateError(ModelStateDictionary modelState, IFormFile? file, string contentType, string acceptedFileTypes)
