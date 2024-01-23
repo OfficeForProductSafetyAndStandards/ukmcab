@@ -578,11 +578,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         var result = await _fileStorage.UploadCABFile(latestVersion.CABId, file.FileName, file.FileName, DataConstants.Storage.Documents,
                             file.OpenReadStream(), contentType);
                         latestVersion.Documents.Add(result);
-                        if (latestVersion.Documents.Count > 1)
-                        {
-                            latestVersion.Documents.Sort((x, y) => DateTime.Compare(y.UploadDateTime, x.UploadDateTime));
-                        }
-
                         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion);
                     }
