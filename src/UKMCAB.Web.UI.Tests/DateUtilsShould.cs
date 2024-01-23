@@ -88,7 +88,7 @@ public class DateUtilsShould
         var year = "2024";
         var modelKey = "AppointmentDate";
         var errorMessagePart = "appointment";
-        var errorMessage = "The appointment date must be in the past.";
+        var errorMessage = "The appointment date must be in the past";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -110,7 +110,7 @@ public class DateUtilsShould
         var year = "2023";
         var modelKey = "ReviewDate";
         var errorMessagePart = "review";
-        var errorMessage = "The review date must be in the future.";
+        var errorMessage = "The review date must be in the future";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -132,7 +132,7 @@ public class DateUtilsShould
         var year = "2023";
         var modelKey = "ReviewDate";
         var errorMessagePart = "review";
-        var errorMessage = "The review date must be in the future.";
+        var errorMessage = "The review date must be in the future";
         var aptDate = DateTime.Now.AddDays(-1);
 
         //Act
@@ -157,7 +157,7 @@ public class DateUtilsShould
         var modelKey = "AppointmentDate";
         var modelKeyDay = "AppointmentDateDay";        
         var errorMessagePart = "appointment";
-        var errorMessage = "Appointment date must be a real date.";
+        var errorMessage = "Appointment date must be a real date";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey,errorMessagePart);
@@ -202,7 +202,7 @@ public class DateUtilsShould
         var modelKey = "ReviewDate";
         var modelKeyDay = "ReviewDateDay";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must be a real date.";
+        var errorMessage = "Review date must be a real date";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -226,7 +226,7 @@ public class DateUtilsShould
         var modelKeyDay = "ReviewDateDay";
         var modelKeyMonth = "ReviewDateMonth";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must be a real date.";
+        var errorMessage = "Review date must be a real date";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -251,7 +251,7 @@ public class DateUtilsShould
         var modelKey = "ReviewDate";
         var modelKeyDay = "ReviewDateDay";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must be a real date.";
+        var errorMessage = "Review date must be a real date";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -276,7 +276,7 @@ public class DateUtilsShould
         var modelKeyMonth = "AppointmentDateMonth";
         var modelKeyYear = "AppointmentDateYear";
         var errorMessagePart = "appointment";
-        var errorMessage = "Appointment date must include a month and year.";
+        var errorMessage = "Appointment date must include a month and year";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -302,7 +302,7 @@ public class DateUtilsShould
         var modelKeyMonth = "ReviewDateMonth";
         var modelKeyYear = "ReviewDateYear";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must include a month and year.";
+        var errorMessage = "Review date must include a month and year";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -328,7 +328,7 @@ public class DateUtilsShould
         var modelKeyDay = "AppointmentDateDay";
         var modelKeyYear = "AppointmentDateYear";
         var errorMessagePart = "appointment";
-        var errorMessage = "Appointment date must include a day and year.";
+        var errorMessage = "Appointment date must include a day and year";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -354,7 +354,7 @@ public class DateUtilsShould
         var modelKeyDay = "ReviewDateDay";
         var modelKeyYear = "ReviewDateYear";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must include a day and year.";
+        var errorMessage = "Review date must include a day and year";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -380,7 +380,7 @@ public class DateUtilsShould
         var modelKeyDay = "AppointmentDateDay";
         var modelKeyMonth = "AppointmentDateMonth";
         var errorMessagePart = "appointment";
-        var errorMessage = "Appointment date must include a day and month.";
+        var errorMessage = "Appointment date must include a day and month";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -406,7 +406,7 @@ public class DateUtilsShould
         var modelKeyDay = "ReviewDateDay";
         var modelKeyMonth = "ReviewDateMonth";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must include a day and month.";
+        var errorMessage = "Review date must include a day and month";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -431,7 +431,7 @@ public class DateUtilsShould
         var modelKey = "AppointmentDate";
         var modelKeyDay = "AppointmentDateDay";
         var errorMessagePart = "appointment";
-        var errorMessage = "Appointment date must include a day.";
+        var errorMessage = "Appointment date must include a day";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -455,7 +455,7 @@ public class DateUtilsShould
         var modelKey = "ReviewDate";
         var modelKeyDay = "ReviewDateDay";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must include a day.";
+        var errorMessage = "Review date must include a day";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -479,7 +479,7 @@ public class DateUtilsShould
         var modelKey = "AppointmentDate";
         var modelKeyMonth = "AppointmentDateMonth";
         var errorMessagePart = "appointment";
-        var errorMessage = "Appointment date must include a month.";
+        var errorMessage = "Appointment date must include a month";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -503,7 +503,7 @@ public class DateUtilsShould
         var modelKey = "ReviewDate";
         var modelKeyMonth = "ReviewDateMonth";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must include a month.";
+        var errorMessage = "Review date must include a month";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -528,7 +528,7 @@ public class DateUtilsShould
         var modelKey = "AppointmentDate";
         var modelKeyYear = "AppointmentDateYear";
         var errorMessagePart = "appointment";
-        var errorMessage = "Appointment date must include a year.";
+        var errorMessage = "Appointment date must include a year";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
@@ -552,7 +552,7 @@ public class DateUtilsShould
         var modelKey = "ReviewDate";
         var modelKeyYear = "ReviewDateYear";
         var errorMessagePart = "review";
-        var errorMessage = "Review date must include a year.";
+        var errorMessage = "Review date must include a year";
 
         //Act
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);

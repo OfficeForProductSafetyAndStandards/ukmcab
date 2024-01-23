@@ -26,7 +26,7 @@ public class DateService
 
     public static bool IsAValidYear(int year)
     {
-        return year >= 1;
+        return year >= 1000;
 
     }
 
