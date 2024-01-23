@@ -14,7 +14,6 @@ using UKMCAB.Data.Models;
 using UKMCAB.Core.Mappers;
 using System.Linq;
 using Bogus;
-using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {

@@ -12,33 +12,59 @@ namespace UKMCAB.Core.Services.CAB
 
         Task<bool> DocumentWithSameNameExistsAsync(Document document);
         Task<List<CabModel>> FindDocumentsByCABIdAsync(string id);
-        Task<List<Document>> FindAllDocumentsByCABURLAsync(string id);
+        Task<List<Document>> FindAllDocumentsByCABURLAsync(string id, Status[]? statusesToRetrieve = null);
+
         /// <summary>
         /// Find all Draft and Archived documents restricted by user role
         /// </summary>
         /// <param name="userRole"></param>
         /// <returns>If null userRole returns all documents</returns>
-        Task<List<CabModel>> FindAllCABManagementQueueDocumentsForUserRole(String userRole);
-        Task<Document?> GetLatestDocumentAsync(string cabId);
-        Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document, bool saveAsDraft = false);
+        Task<List<CabModel>> FindAllCABManagementQueueDocumentsForUserRole(string userRole);
 
+        Task<Document?> GetLatestDocumentAsync(string cabId);
+
+        /// <summary>
+        /// Creates a new draft document with audit log Created
+        /// </summary>
+        /// <param name="userAccount"></param>
+        /// <param name="document"></param>
+        /// <returns></returns>
+        Task<Document> CreateDocumentAsync(UserAccount userAccount, Document document);
+
+        /// <summary>
+        /// Updates a document and clears the search index and cache.
+        /// </summary>
+        /// <param name="userAccount"></param>
+        /// <param name="draft">document with current status.
+        /// If published creates a new draft
+        /// If Draft updates draft with created audit log
+        /// </param>
+        /// <param name="submitForApproval">if true sub status becomes PendingApprovalToPublish</param>
+        /// <returns>New document</returns>
         Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft,
             bool submitForApproval = false);
 
         Task DeleteDraftDocumentAsync(UserAccount userAccount, Guid cabId, string? deleteReason);
         Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, Audit audit);
-        Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument, string? publishInternalReason = default(string), string? publishPublicReason = default(string));
-        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string? archiveInternalReason, string archivePublicReason);
-        
+
+        Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument,
+            string? publishInternalReason = default(string), string? publishPublicReason = default(string));
+
+        Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string? archiveInternalReason,
+            string archivePublicReason);
+
         /// <summary>
         /// Un-publishes a CAB. Status becomes Historical and the CAB is not visible to users.
         /// </summary>
         /// <param name="userAccount">User un-publishing</param>
         /// <param name="cabId">Cab to unpublish</param>
         /// <param name="archiveInternalReason">Reason for unpublish</param>
-        /// <returns></returns>
-        Task UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? archiveInternalReason);
-        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas);
+        /// <returns>Historical Document</returns>
+        Task<Document> UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? archiveInternalReason);
+
+        Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason,
+            string unarchivePublicReason, bool requestedByUkas);
+
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();
         Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown);
