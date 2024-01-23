@@ -67,7 +67,7 @@ public class DateUtils
     private static void AddInvalidDayOfMonthAndYearError(ModelStateDictionary modelState, string modelKey, string errorMessagePart)
     {
         modelState.AddModelError($"{modelKey}Day", string.Empty);
-        modelState.AddModelError(modelKey, $"{errorMessagePart.ToSentenceCase()} date must be a real date.");
+        modelState.AddModelError(modelKey, $"{errorMessagePart.ToSentenceCase()} date must be a real date");
     }
 
     private static int RealDateErrorsAdded(ModelStateDictionary modelState, string modelKey, string errorMessagePart, int day, int month, int year)
@@ -94,7 +94,7 @@ public class DateUtils
 
         if (errorsAdded > 0)
         {
-            modelState.AddModelError(modelKey, $"{errorMessagePart.ToSentenceCase()} date must be a real date.");
+            modelState.AddModelError(modelKey, $"{errorMessagePart.ToSentenceCase()} date must be a real date");
         }
 
         return errorsAdded;
@@ -124,7 +124,7 @@ public class DateUtils
 
         missingField = missingField.TrimEnd(' ', 'a', 'n', 'd', ' ');
 
-        modelState.AddModelError(modelKey, $"{errorMessagePart.ToSentenceCase()} date must include a {missingField}.");
+        modelState.AddModelError(modelKey, $"{errorMessagePart.ToSentenceCase()} date must include a {missingField}");
     }
 
     private static void AddInvalidDateFormatErrors(ModelStateDictionary modelState, string modelKey, string errorMessagePart, int parsedDay, int parsedMonth, int parsedYear)
@@ -152,18 +152,18 @@ public class DateUtils
     private static void AddDateMustBeInFutureErrors(ModelStateDictionary modelState, string modelKey, string errorMessagePart)
     {
         AddAllFieldErrors(modelState, modelKey);
-        modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be in the future.");
+        modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be in the future");
     }
 
     private static void AddDateMustBeInPastErrors(ModelStateDictionary modelState, string modelKey, string errorMessagePart)
     {
         AddAllFieldErrors(modelState, modelKey);
-        modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be in the past.");
+        modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be in the past");
     }
 
     private static void AddDateMustBeWithin5YearsErrors(ModelStateDictionary modelState, string modelKey, string errorMessagePart)
     {
         AddAllFieldErrors(modelState, modelKey);
-        modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be within 5 years of the appointment date.");
+        modelState.AddModelError(modelKey, $"The {errorMessagePart} date must be within 5 years of the appointment date");
     }
 }

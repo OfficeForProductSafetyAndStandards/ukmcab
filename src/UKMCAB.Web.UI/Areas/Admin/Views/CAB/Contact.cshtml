@@ -82,7 +82,7 @@
                 <p class="govuk-error-message">
                     <span asp-validation-for="Postcode" class="govuk-error-message"></span>
                 </p>
-                <input asp-for="Postcode" class="govuk-input govuk-input--width-10 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Postcode))" autocomplete="postcode" aria-required="true"/>
+                <input asp-for="Postcode" class="govuk-input govuk-input--width-10 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Postcode))" autocomplete="postcode" aria-required="true" spellcheck="false" />
             </div>
             <div class="govuk-form-group">
                 <h3 class="govuk-label-wrapper">
@@ -107,13 +107,19 @@
                 </select>
             </div>
 
-            <div class="govuk-form-group">
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Website))">
                 <h3 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--s" asp-for="Website">
                         Website (optional)
                     </label>
                 </h3>
-                <input asp-for="Website" class="govuk-input govuk-!-width-two-thirds" autocomplete="website" />
+                <p class="govuk-error-message">
+                    <span asp-validation-for="Website" class="govuk-error-message"></span>
+                </p>
+                <div id="website-hint" class="govuk-hint">
+                    Enter a URL including http:// or https://, like http://www.example.com
+                </div>
+                <input asp-for="Website" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Website))" autocomplete="website" spellcheck="false" />
             </div>
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Email))">
                 <h3 class="govuk-label-wrapper">
@@ -124,7 +130,7 @@
                 <p class="govuk-error-message">
                     <span asp-validation-for="Email" class="govuk-error-message"></span>
                 </p>
-                <input asp-for="Email" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="email" />
+                <input asp-for="Email" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Email))" autocomplete="email" spellcheck="false" />
             </div>
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Phone))">
                 <h3 class="govuk-label-wrapper">
@@ -132,10 +138,13 @@
                         Telephone
                     </label>
                 </h3>
+                <div id="telephone-hint" class="govuk-hint">
+                    For international numbers include the country code
+                </div>
                 <p class="govuk-error-message">
                     <span asp-validation-for="Phone" class="govuk-error-message"></span>
                 </p>
-                <input asp-for="Phone" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Phone))" autocomplete="phone" />
+                <input asp-for="Phone" class="govuk-input govuk-!-width-two-thirds @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.Phone))" autocomplete="phone" spellcheck="false" />
             </div>
                 
             <div class="cab-detail-group">
@@ -150,21 +159,30 @@
                     </h3>
                     <input asp-for="PointOfContactName" class="govuk-input govuk-!-width-full" autocomplete="pointofcontactname" />
                 </div>
-                <div class="govuk-form-group">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.PointOfContactEmail))">
                     <h3 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--s" asp-for="PointOfContactEmail">
                             Point of contact email (optional)
                         </label>
                     </h3>
-                    <input asp-for="PointOfContactEmail" class="govuk-input govuk-!-width-full" autocomplete="pointofcontactemail" />
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="PointOfContactEmail" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="PointOfContactEmail" class="govuk-input govuk-!-width-full @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.PointOfContactEmail))" autocomplete="pointofcontactemail" spellcheck="false" />
                 </div>
-                <div class="govuk-form-group">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.PointOfContactPhone))">
                     <h3 class="govuk-label-wrapper">
                         <label class="govuk-label govuk-label--s" asp-for="PointOfContactPhone">
                             Point of contact telephone (optional)
                         </label>
                     </h3>
-                    <input asp-for="PointOfContactPhone" class="govuk-input govuk-!-width-full" autocomplete="pointofcontactphone" />
+                    <div id="poc-telephone-hint" class="govuk-hint">
+                        For international numbers include the country code
+                    </div>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="PointOfContactPhone" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="PointOfContactPhone" class="govuk-input govuk-!-width-full @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.PointOfContactPhone))" autocomplete="pointofcontactphone" spellcheck="false" />
                 </div>
 
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IsPointOfContactPublicDisplay))">
