@@ -53,11 +53,11 @@
     </div>
 </div>
 
-@if (Model is { IsArchived: true, UnarchiveTaskType: null })
+@if (Model is { IsArchived: true, RequestTaskType: null })
 {
     <partial model="@("Archived on " + Model.ArchivedDate)" name="Partials/_PageContentBanner"/>
 }
-else if (Model is { IsArchived: true, UnarchiveTaskType: not null })
+else if (Model is { IsArchived: true, RequestTaskType: not null })
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
@@ -108,7 +108,7 @@ else if (Model is { IsArchived: true, UnarchiveTaskType: not null })
                                 <govuk-button-link class="govuk-button--secondary" asp-route="@RequestToUnarchiveCABController.Routes.RequestUnarchive" asp-route-cabUrl="@Model.CABUrl">Request to unarchive</govuk-button-link>
                             </span>
                         }
-                        else if (Model.UnarchiveTaskType == null)
+                        else if (Model.RequestTaskType == null)
                         {
                             <span>
                                 <govuk-button-link class="govuk-button--secondary" asp-area="Search" asp-controller="CABProfile" asp-action="UnarchiveCAB" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Unarchive</govuk-button-link>
@@ -437,7 +437,7 @@ else if (Model is { IsArchived: true, UnarchiveTaskType: not null })
         </div>
     </div>
 </div>
-@if (Model is { UnarchiveTaskType: not null, IsOPSSUser: true })
+@if (Model is { RequestTaskType: not null, IsOPSSUser: true })
 {
     <div class="govuk-form-group">
         <p class='govuk-body'>
@@ -445,34 +445,34 @@ else if (Model is { IsArchived: true, UnarchiveTaskType: not null })
         </p>
         <p class='govuk-body'>
             @{
-                var archiveDetails = string.Empty;
-                if (Model.UnarchiveTaskType == TaskType.RequestToUnarchiveForDraft)
+                var details = string.Empty;
+                if (Model.RequestTaskType == TaskType.RequestToUnarchiveForDraft)
                 {
-                    archiveDetails = $"{Model.UnarchiverFirstAndLastName} from {Model.UnarchiverUserGroup} has requested that this CAB is unarchived and saved as draft for the following reason:";
+                    details = $"{Model.RequestFirstAndLastName} from {Model.RequestUserGroup} has requested that this CAB is unarchived and saved as draft for the following reason:";
                 }
-                else if (Model.UnarchiveTaskType == TaskType.RequestToUnarchiveForPublish)
+                else if (Model.RequestTaskType == TaskType.RequestToUnarchiveForPublish)
                 {
-                    archiveDetails = $"{Model.UnarchiverFirstAndLastName} from {Model.UnarchiverUserGroup} has requested that this CAB is unarchived and published for the following reason:";
+                    details = $"{Model.RequestFirstAndLastName} from {Model.RequestUserGroup} has requested that this CAB is unarchived and published for the following reason:";
                 }
 
-                @archiveDetails
+                @details
             }
         </p>
-        @if (!string.IsNullOrWhiteSpace(Model.UnarchiveReasonSummary))
+        @if (!string.IsNullOrWhiteSpace(Model.RequestReasonSummary))
         {
             <govuk-details>
                 <govuk-details-summary>
-                    @Model.UnarchiveReasonSummary
+                    @Model.RequestReasonSummary
                 </govuk-details-summary>
                 <govuk-details-text>
-                    @Model.UnarchiveReason
+                    @Model.RequestReason
                 </govuk-details-text>
             </govuk-details>
         }
         else
         {
             <p class='govuk-body'>
-                @Model.UnarchiveReason
+                @Model.RequestReason
             </p>
         }
     </div>

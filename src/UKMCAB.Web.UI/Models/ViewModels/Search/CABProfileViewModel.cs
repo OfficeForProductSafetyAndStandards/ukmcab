@@ -61,11 +61,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FeedLinksViewModel FeedLinksViewModel { get; set; }
         public UserNoteListViewModel GovernmentUserNotes { get; set; }
 
-        public string? UnarchiverFirstAndLastName { get; set; }
-        public string? UnarchiverUserGroup { get; set; }
-        public string? UnarchiveReasonSummary { get; set; }
-        public string? UnarchiveReason { get; set; }
+        public string? RequestFirstAndLastName { get; set; }
+        public string? RequestUserGroup { get; set; }
+        public string? RequestReasonSummary { get; set; }
+        public string? RequestReason { get; set; }
         
-        public TaskType? UnarchiveTaskType { get; set; } 
+        public TaskType? RequestTaskType { get; set; }
+        
     }
 }
