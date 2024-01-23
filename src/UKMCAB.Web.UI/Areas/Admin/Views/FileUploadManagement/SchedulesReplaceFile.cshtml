@@ -21,7 +21,7 @@
 
 <div class="govuk-grid-row">
 
-    @using (Html.BeginForm("SchedulesUseFileAgain", "FileUpload", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
+    @using (Html.BeginForm("SchedulesReplaceFile", "FileUploadManagement", Model.IsFromSummary ? new { area = "admin", id = @Model.CABId, fromSummary = "true" } : new { area = "admin", id = @Model.CABId }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
     {
         <div class="govuk-grid-column-full">
 
@@ -30,18 +30,18 @@
             <div>
                 <span class="govuk-caption-m">@Model.Title</span>
                 <h1 class="govuk-heading-l">@Model.Title</h1>
-                <p id="selectFileToUseAgainHint" class="govuk-body govuk-!-padding-bottom-2">Select the file you want to use again.</p>
+                <p id="selectFileToReplaceHint" class="govuk-body govuk-!-padding-bottom-2">Select the file you want to replace.</p>
                 <h2 class="govuk-heading-s">
                     Files you have uploaded
                 </h2>
             </div>
 
 
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.FileToUseAgain))">
-                <fieldset class="govuk-fieldset" aria-describedby="selectFileToUseAgainHint">
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IndexofSelectedFile))">
+                <fieldset class="govuk-fieldset" aria-describedby="selectFileToReplaceHint">
 
                     <p class="govuk-error-message">
-                        <span asp-validation-for="FileToUseAgain" class="govuk-error-message"></span>
+                        <span asp-validation-for="IndexofSelectedFile" class="govuk-error-message"></span>
                     </p>
 
                     @* Header *@
@@ -71,11 +71,12 @@
                                         <input asp-for="UploadedFiles![i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
                                         <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
                                         <input asp-for="UploadedFiles![i].LegislativeArea" type="hidden" value="@uploadedFile.LegislativeArea">
-                                        <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
+                                        <input asp-for="UploadedFiles![i].IsReplaced" type="hidden" value="@uploadedFile.IsReplaced">
+                                        <input asp-for="CABId" type="hidden"/>
                                     </div>
                                     <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
-                                        <input class="govuk-radios__input" asp-for="FileToUseAgain" type="radio" value="@i">
-                                        <label class="govuk-label govuk-radios__label" asp-for="FileToUseAgain">
+                                        <input class="govuk-radios__input" asp-for="IndexofSelectedFile" type="radio" value="@i">
+                                        <label class="govuk-label govuk-radios__label" asp-for="IndexofSelectedFile">
                                             <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
                                         </label>
                                     </div>
@@ -106,13 +107,22 @@
                     </div>
                 </fieldset>
             </div>
-
         </div>
 
         <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-button-group ukmcab-padding-top-50">
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain" type="submit">
-                    Use file again
+            <input type="hidden" asp-for="IsFromSummary" />
+            
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, "File")">
+                <label class="govuk-label govuk-!-font-weight-bold" asp-for="File">
+                    Select PDF file
+                </label>
+                <span asp-validation-for="File" class="govuk-error-message"></span>
+                <input id="File" class="govuk-file-upload schedules-upload" asp-for="File" accept=".pdf" type="file">
+            </div>
+
+            <div id="schedule-replace-button-group" class="govuk-button-group">
+                <button class="govuk-button js-submit-button" id="replace-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile" data-submitting-text="Uploading...">
+                    Replace
                 </button>
                 @if (Model.IsFromSummary)
                 {
@@ -120,7 +130,7 @@
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
         </div>

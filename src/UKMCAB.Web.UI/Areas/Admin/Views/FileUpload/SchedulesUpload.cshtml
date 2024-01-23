@@ -111,11 +111,14 @@
 
                 @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
                 {
-                    <div class="govuk-button-group">
+                    <div class="govuk-button-group ukmcab-padding-bottom-30">
                         <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove" />
-                        <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesUseFileAgain" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">
+                        <a asp-area="Admin" asp-controller="FileUploadManagement" asp-action="SchedulesUseFileAgain" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state ukmcab-padding-left-40">
                             Use file again
                         </a>
+                        <a asp-area="Admin" asp-controller="FileUploadManagement" asp-action="SchedulesReplaceFile" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state ukmcab-padding-left-40">
+                            Replace file
+                        </a>                   
                     </div>
                 }
             }

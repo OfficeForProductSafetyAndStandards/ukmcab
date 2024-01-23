@@ -20,65 +20,112 @@ namespace UKMCAB.Data.Models
             IsUserInputComment = isUserInputComment;
         }
 
-        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment) { }
+        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null, bool isUserInputComment = true) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment, isUserInputComment) { }
 
         public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document? previousDocument = null, string? comment = null, string? publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment)
         {
-            var sb = new StringBuilder();
+            var sbComment = new StringBuilder();
+            var sbPublicComment = new StringBuilder();
             if (previousDocument == null)
             {
-                sb.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>", publishedDocument.AppointmentDate.HasValue ? publishedDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00" : "Not provided");
-                sb.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>", DateTime.UtcNow.ToString("dd/MM/yyyy"));
+                sbComment.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>", publishedDocument.AppointmentDate.HasValue ? publishedDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00" : "Not provided");
+                sbComment.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>", DateTime.UtcNow.ToString("dd/MM/yyyy"));
             }
             else
             {
-                var previousSchedules = previousDocument.Schedules ?? new List<FileUpload>();
-                var currentSchedules = publishedDocument.Schedules ?? new List<FileUpload>();
-                var existingSchedules = currentSchedules.Where(sch => previousSchedules.Any(prev => prev.UploadDateTime.Equals(sch.UploadDateTime)));
-                var newSchedules = currentSchedules.Where(sch => previousSchedules.All(prev => !prev.UploadDateTime.Equals(sch.UploadDateTime)));
-                var removedSchedules = previousSchedules.Where(sch => currentSchedules.All(pub => !pub.UploadDateTime.Equals(sch.UploadDateTime)));
-                foreach (var schedule in existingSchedules)
-                {
-                    var previousSchedule =
-                        previousDocument.Schedules.Single(sch => sch.UploadDateTime.Equals(schedule.UploadDateTime));
-                    if (!previousSchedule.LegislativeArea.Equals(schedule.LegislativeArea))
-                    {
-                        sb.AppendFormat("<p class=\"govuk-body\">The legislative area {0} has been changed to {1} on this product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>", previousSchedule.LegislativeArea, schedule.LegislativeArea, ScheduleLink(publishedDocument.CABId, schedule.FileName), schedule.Label);
-                    }
-                    if (!previousSchedule.Label.Equals(schedule.Label))
-                    {
-                        sb.AppendFormat("<p class=\"govuk-body\">The title of this product schedule <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been changed from {2} to {3}.</p>", ScheduleLink(publishedDocument.CABId, schedule.FileName), schedule.Label, previousSchedule.Label, schedule.Label);
-                    }
-                }
+                string[] schedulesAndDocsType = { "Documents", "Schedules" };
 
-                foreach (var newSchedule in newSchedules)
+                foreach (var docType in schedulesAndDocsType)
                 {
-                    sb.AppendFormat(
-                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was added to the Product schedules page.</p>",
-                        ScheduleLink(publishedDocument.CABId, newSchedule.FileName), newSchedule.Label);
-                }
-                foreach (var removedSchedule in removedSchedules)
-                {
-                    sb.AppendFormat(
-                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the Product schedules page.</p>",
-                        ScheduleLink(publishedDocument.CABId, removedSchedule.FileName), removedSchedule.Label);
+                    if (docType.Equals("Documents"))
+                    {
+                        var previousFileUploads = previousDocument.Documents ?? new List<FileUpload>();
+                        var currentFileUploads = publishedDocument.Documents ?? new List<FileUpload>();
+                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbComment, previousFileUploads, currentFileUploads, docType);
+                    }
+                    else
+                    {
+                        var previousFileUploads = previousDocument.Schedules ?? new List<FileUpload>();
+                        var currentFileUploads = publishedDocument.Schedules ?? new List<FileUpload>();
+                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbPublicComment, previousFileUploads, currentFileUploads, docType);
+                    }
                 }
             }
 
-            if (sb.Length > 0)
+            if (sbComment.Length > 0)
             {
-                sb.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+                sbComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+            }
+
+            if (sbPublicComment.Length > 0)
+            {
+                sbPublicComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
             }
 
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
+            publicComment = !string.IsNullOrEmpty(publicComment) ? $"<p class=\"govuk-body\">{publicComment}</p>" : string.Empty;
 
-            Comment = string.Join("", comment, HttpUtility.HtmlEncode(sb.ToString()));
+            Comment = string.Join("", comment, HttpUtility.HtmlEncode(sbComment.ToString()));
+            PublicComment = sbPublicComment.Length > 0 ? string.Join("", publicComment, HttpUtility.HtmlEncode(sbPublicComment.ToString())) : null;
             IsUserInputComment = false;
         }
 
-        private static string ScheduleLink(string cabId, string fileName)
+        private static void CalculateChangesToScheduleOrDocument(Document publishedDocument, Document? previousDocument, StringBuilder sb, List<FileUpload> previousFileUploads, List<FileUpload> currentFileUploads, string docType)
         {
-            return $"/search/cab-schedule-view/{cabId}?file={fileName}&filetype=schedules";
+            var isSchedule = docType.Equals("Schedules");
+            var docTypes = isSchedule ? "product schedules" : "supporting documents";
+            var docTypeName = isSchedule ? "product schedule" : "supporting document";
+
+            var existingFileUploads = currentFileUploads
+                .Where(sch => previousFileUploads.Any(prev => prev.UploadDateTime.Equals(sch.UploadDateTime)));
+            var newFileUploads = currentFileUploads.Where(sch => previousFileUploads.All(prev => !prev.UploadDateTime.Equals(sch.UploadDateTime)));
+            var removedFileUploads = previousFileUploads.Where(sch => currentFileUploads.All(pub => !pub.UploadDateTime.Equals(sch.UploadDateTime)));
+
+            foreach (var fileupload in existingFileUploads)
+            {
+                var previousFileUpload = previousFileUploads.Single(sch => sch.UploadDateTime.Equals(fileupload.UploadDateTime));
+                if (isSchedule)
+                {
+                    if (!previousFileUpload.LegislativeArea.Equals(fileupload.LegislativeArea))
+                    {
+                        sb.AppendFormat("<p class=\"govuk-body\">The legislative area {0} has been changed to {1} on this product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>", previousFileUpload.LegislativeArea, fileupload.LegislativeArea, ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType), fileupload.Label);
+                    }
+                }
+                else
+                {
+                    if (!previousFileUpload.Category.Equals(fileupload.Category))
+                    {
+                        sb.AppendFormat("<p class=\"govuk-body\">The category {0} has been changed to {1} on this supporting document <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>", previousFileUpload.Category, fileupload.Category, ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType), fileupload.Label);
+                    }
+                }
+                
+                if (!previousFileUpload.Label.Equals(fileupload.Label))
+                {
+                    sb.AppendFormat("<p class=\"govuk-body\">The title of this {0} <a href=\"{1}\" target=\"_blank\" class=\"govuk-link\">{2}</a> has been changed from {3} to {4}.</p>", docTypeName, ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType), fileupload.Label, previousFileUpload.Label, fileupload.Label);
+                }
+            }
+
+            foreach (var newFileUpload in newFileUploads)
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was added to the {2} page.</p>",
+                    ScheduleOrDocumentLink(publishedDocument.CABId, newFileUpload.FileName, docType), newFileUpload.Label, docTypes);
+            }
+            foreach (var removedFileUpload in removedFileUploads)
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the {2} page.</p>",
+                    ScheduleOrDocumentLink(publishedDocument.CABId, removedFileUpload.FileName, docType), removedFileUpload.Label, docTypes);
+            }
+        }
+
+        private static string ScheduleOrDocumentLink(string cabId, string fileName, string docType)
+        {
+            if (docType.Equals("Schedules"))
+            {
+                return $"/search/cab-schedule-view/{cabId}?file={fileName}&filetype=schedules";
+            }
+            return $"/search/cab-schedule-view/{cabId}?file={fileName}&filetype=documents";
         }
 
         public string UserId { get; set; }

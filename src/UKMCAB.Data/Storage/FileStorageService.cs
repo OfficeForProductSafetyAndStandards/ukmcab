@@ -75,6 +75,6 @@ namespace UKMCAB.Data.Storage
         {
             var result = await _client.DeleteBlobIfExistsAsync(blobName, DeleteSnapshotsOption.IncludeSnapshots);  // let exceptions propagate
             return result.Value;
-        }
+        } 
     }
 }
