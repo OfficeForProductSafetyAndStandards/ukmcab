@@ -101,6 +101,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var unarchiveNotifications = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
                 cabDocument.CABId.ToGuid()!.Value,
                 new List<TaskType> { TaskType.RequestToUnarchiveForDraft, TaskType.RequestToUnarchiveForPublish });
+            var unpublishNotifications = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
+                cabDocument.CABId.ToGuid()!.Value,
+                new List<TaskType> { TaskType.RequestToArchive, TaskType.RequestToUnpublish });
             var requireApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
                 StringComparison.CurrentCultureIgnoreCase);
             var cab = await GetCabProfileViewModel(
@@ -108,7 +111,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 returnUrl,
                 userAccount != null,
                 requireApproval && (!unarchiveNotifications.Any() || unarchiveNotifications.All(t => t.Completed)),
-                pagenumber);
+                pagenumber,
+                requireApproval && (!unpublishNotifications.Any() || unpublishNotifications.All(t => t.Completed))
+                );
             cab = await GetUnarchiveRequestInformation(cab);
 
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
@@ -170,13 +175,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         private async Task<CABProfileViewModel> GetCabProfileViewModel(Document cabDocument, string? returnUrl,
-            bool loggedIn = false, bool showRequestToUnarchive = false, int pagenumber = 1)
+            bool loggedIn = false, bool showRequestToUnarchive = false, int pagenumber = 1, bool showRequestToUnpublish = false)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
 
             var isUnarchivedRequest =
-                auditLogOrdered.Last().Action == AuditCABActions.UnarchivedToDraft; //todo should be notifications
+                auditLogOrdered.Last().Action == AuditCABActions.UnarchivedToDraft; 
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit = isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
             var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
@@ -191,6 +196,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
                 ShowRequestToUnarchive = showRequestToUnarchive,
+                ShowRequestToUnpublish = showRequestToUnpublish,
                 IsPublished = isPublished,
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,
