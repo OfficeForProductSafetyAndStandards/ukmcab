@@ -523,11 +523,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return Ok("File does not exist");
         }
 
-        [HttpGet("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
-        public IActionResult CABHistoryDetails()
+        [HttpGet("search/cab/history-details")]
+        public IActionResult ShowCABHistoryDetails()
         {
              var auditHistoryItemViewModel = TempData.ContainsKey("auditHistoryData") 
-                ? JsonSerializer.Deserialize<AuditHistoryItemViewModel>(TempData.Peek("auditHistoryData") as string)
+                ? JsonSerializer.Deserialize<AuditHistoryItemViewModel>((TempData.Peek("auditHistoryData") as string)!)
                 : new AuditHistoryItemViewModel();
 
             return View(auditHistoryItemViewModel);
