@@ -1,8 +1,8 @@
-﻿@using System.Net;
-@using UKMCAB.Core.Domain;
+﻿@using UKMCAB.Core.Domain;
 @using UKMCAB.Core.Security;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
+@using UKMCAB.Web.UI.Areas.Search.Controllers
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
 @{
     var returnUrl = Model.ReturnUrl;
@@ -36,7 +36,14 @@
                 }
                 else
                 {
-                    <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId" />
+                    if (Model.Status == Status.Draft)
+                    {
+                        <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@SearchController.Routes.Search"/>
+                    }
+                    else
+                    {
+                        <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId" />
+                    }
                 }
 
             </div>
