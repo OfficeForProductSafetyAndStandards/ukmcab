@@ -1,6 +1,7 @@
 ﻿@using System.Web
 @using Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Net
+@using UKMCAB.Web.UI.Models.ViewModels.Shared;
 @model UKMCAB.Web.UI.Models.ViewModels.Shared.AuditLogHistoryViewModel
 @{
     var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery + "#history");
@@ -15,106 +16,106 @@
         }
         else
         {
-            <table class="govuk-table ukmcab-table">
-                <thead class="govuk-table__head">
-                    @if (User.Identity.IsAuthenticated)
-                    {
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header">Date and time</th>
-                            <th scope="col" class="govuk-table__header">User</th>
-                            <th scope="col" class="govuk-table__header">User group</th>
-                            <th scope="col" class="govuk-table__header ">Action</th>
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reason</th>
-                        </tr>
-
-                    }
-                    else
-                    {
-                        <tr class="govuk-table__row">
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-half">Date and time</th>
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-half">Action</th>
-                            <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reason</th>
-                        </tr>
-                    }
-                </thead>
-                <tbody class="govuk-table__body">
-                    @foreach (var auditHistoryItem in Model.AuditHistoryItems)
-                    {
+            @using (Html.BeginForm("CABHistoryDetails", "CABProfile", new { area = "search" }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
+            {
+                <table class="govuk-table ukmcab-table">
+                    <thead class="govuk-table__head">
                         @if (User.Identity.IsAuthenticated)
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
-                                <td class="govuk-table__cell">
-                                    <label aria-hidden="true">User</label>
-                                    @if (auditHistoryItem.UserId.Equals(new Guid().ToString()))
-                                    {
-                                        <text>@auditHistoryItem.Username</text>
-                                    }
-                                    else
-                                    {
-                                        <a asp-area="admin" asp-controller="UserAdmin" asp-action="UserAccount" asp-route-id="@auditHistoryItem.UserId" asp-route-returnUrl="@returnUrl" class="govuk-link">@auditHistoryItem.Username</a>
-                                    }
-                                </td>
-                                <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@auditHistoryItem.UserGroup</td>
-                                <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
-                                <td class="govuk-table__cell">
-                                    <label aria-hidden="true">Reason</label>
-                                    @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment) || !string.IsNullOrWhiteSpace(auditHistoryItem.PublicComment))
-                                    {
-                                        var isUserInputComment = auditHistoryItem.IsUserInputComment is not (null or false);
-                                        var parms = new Dictionary<string, string?>
-                                        {
-                                            { "date", auditHistoryItem.Date },
-                                            { "time", auditHistoryItem.Time },
-                                            { "username", auditHistoryItem.Username },
-                                            { "userId", auditHistoryItem.UserId},
-                                            { "userGroup", auditHistoryItem.UserGroup},
-                                            { "auditAction", auditHistoryItem.Action },
-                                            { "internalComment", auditHistoryItem.InternalComment },
-                                            { "publicComment", auditHistoryItem.PublicComment },
-                                            { "returnUrl", returnUrl }
-                                        };
-
-                                        <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms" asp-route-isUserInputComment="@isUserInputComment">View</a>
-                                    }
-                                    else
-                                    {
-                                        @Constants.NotProvided
-                                    }
-                                </td>
+                                <th scope="col" class="govuk-table__header">Date and time</th>
+                                <th scope="col" class="govuk-table__header">User</th>
+                                <th scope="col" class="govuk-table__header">User group</th>
+                                <th scope="col" class="govuk-table__header">Action</th>
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reason</th>
                             </tr>
 
                         }
                         else
                         {
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
-                                <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
-                                <td class="govuk-table__cell">
-                                    <label aria-hidden="true">Reason</label>
-                                    @if (!string.IsNullOrWhiteSpace(auditHistoryItem.PublicComment))
-                                    {
-                                        var parms = new Dictionary<string, string?>
-                                        {
-                                            { "date", auditHistoryItem.Date },
-                                            { "time", auditHistoryItem.Time },                                            
-                                            { "auditAction", auditHistoryItem.Action },                                        
-                                            { "publicComment", auditHistoryItem.PublicComment },
-                                            { "returnUrl", returnUrl },
-                                        };
-
-                                        <a class="govuk-link" asp-controller="CABProfile" asp-action="CABHistoryDetails" asp-all-route-data="parms">View</a>
-                                    }
-                                    else
-                                    {
-                                        @Constants.NotProvided
-                                    }
-                                </td>
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-half">Date and time</th>
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-half">Action</th>
+                                <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reason</th>
                             </tr>
                         }
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var auditHistoryItem in Model.AuditHistoryItems)
+                        {                            
+                            @if (User.Identity.IsAuthenticated)
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
+                                    <td class="govuk-table__cell">
+                                        <label aria-hidden="true">User</label>
+                                        @if (auditHistoryItem.UserId.Equals(new Guid().ToString()))
+                                        {
+                                            <text>@auditHistoryItem.Username</text>
+                                        }
+                                        else
+                                        {
+                                            <a asp-area="admin" asp-controller="UserAdmin" asp-action="UserAccount" asp-route-id="@auditHistoryItem.UserId" asp-route-returnUrl="@returnUrl" class="govuk-link">@auditHistoryItem.Username</a>
+                                        }
+                                    </td>
+                                    <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@auditHistoryItem.UserGroup</td>
+                                    <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
+                                    <td class="govuk-table__cell">
+                                        <label aria-hidden="true">Reason</label>
+                                        @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment))
+                                        {
+                                            var auditHistoryItemVM = new AuditHistoryItemViewModel
+                                            {
+                                                Date = auditHistoryItem.Date,
+                                                Time = auditHistoryItem.Time,
+                                                Username = auditHistoryItem.Username,
+                                                Usergroup = auditHistoryItem.UserGroup,
+                                                UserId = auditHistoryItem.UserId,
+                                                Action = auditHistoryItem.Action,
+                                                InternalComment = auditHistoryItem.InternalComment,
+                                                PublicComment = auditHistoryItem.PublicComment,
+                                                IsUserInputComment = auditHistoryItem.IsUserInputComment ?? false
+                                            };
+                                            <partial name="Partials/_HistoryViewLink" model="auditHistoryItemVM" />
+                                        }
+                                        else
+                                        {
+                                            @Constants.NotProvided
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                            else
+                            {
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell"><label aria-hidden="true">Date and time</label>@auditHistoryItem.Date<br />@auditHistoryItem.Time</td>
+                                    <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
+                                    <td class="govuk-table__cell">
+                                        <label aria-hidden="true">Reason</label>
+                                        @if (!string.IsNullOrWhiteSpace(auditHistoryItem.PublicComment))
+                                        {
+                                            var auditHistoryItemVM = new AuditHistoryItemViewModel
+                                            {
+                                                Date = auditHistoryItem.Date,
+                                                Time = auditHistoryItem.Time,
+                                                Action = auditHistoryItem.Action,
+                                                PublicComment = auditHistoryItem.PublicComment,
+                                                IsUserInputComment = auditHistoryItem.IsUserInputComment ?? false
+                                            };
+
+                                            <partial name="Partials/_HistoryViewLink" model="auditHistoryItemVM" />
+                                        }
+                                        else
+                                        {
+                                            @Constants.NotProvided
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            }
             <div id="cab-management-pagination-container">
                 <partial name="Partials/_Pagination" model="Model.Pagination" />
             </div>

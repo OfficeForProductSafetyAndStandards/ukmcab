@@ -18,7 +18,7 @@
                 <div class="govuk-grid-column-two-thirds">
                     @if (!string.IsNullOrWhiteSpace(Model.ReturnUrl))
                     {
-                        <a href="@Model.ReturnUrl" class="govuk-back-link">Back</a>
+                        <a href="@WebUtility.UrlDecode(Model.ReturnUrl)" class="govuk-back-link">Back</a>
                     }
                     else
                     {
