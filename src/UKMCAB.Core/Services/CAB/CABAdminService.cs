@@ -356,6 +356,7 @@ namespace UKMCAB.Core.Services.CAB
             // Flag latest with unarchive audit entry
             archivedDoc!.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnarchivedToDraft, unarchiveInternalReason,
                 unarchivePublicReason));
+            archivedDoc.SubStatus = SubStatus.None;
             await _cabRepository.UpdateAsync(archivedDoc);
             await UpdateSearchIndex(archivedDoc);
 
