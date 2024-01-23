@@ -12,4 +12,6 @@ public partial class CoreEmailTemplateOptions
     public string NotificationUnarchiveApproved { get; set; } = null!;
     public string NotificationUnarchiveDeclined { get; set; } = null!;
     public string NotificationRequestToUnpublishCab { get; set; } = null!;
+    public string NotificationUnpublishDeclined { get; set; } = null!;
+    public string NotificationUnpublishApproved { get; set; } = null!;
 }
