@@ -537,6 +537,18 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return Ok("File does not exist");
         }
 
+        [HttpGet("search/cab-schedule-view/replaced-file/{id}")]
+        public async Task<IActionResult> ViewReplacedFile(string id, string file, string filetype)
+        {
+            var fileStream = await _fileStorage.DownloadBlobStream($"{id}/{filetype}/replaced_files/{file}");
+            if (fileStream != null)
+            {
+                return File(fileStream.FileStream, fileStream.ContentType);
+            }
+
+            return Ok("File does not exist");
+        }
+
         [HttpGet("search/cab/history-details")]
         public IActionResult ShowCABHistoryDetails()
         {
