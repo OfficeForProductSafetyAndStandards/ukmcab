@@ -1,9 +1,11 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABConfirmationViewModel
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Shared.ConfirmationViewModel
 
 <govuk-panel heading-level="2">
-    <govuk-panel-title>@Model.Name published</govuk-panel-title>
-    
-    <govuk-panel-body>
-        CAB number
-    </govuk-panel-body>
+    <govuk-panel-title>@Model.Title</govuk-panel-title>
+    @if (!string.IsNullOrEmpty(Model.Body))
+    {
+        <govuk-panel-body>
+            @Model.Body
+        </govuk-panel-body>
+    }
 </govuk-panel>

@@ -9,7 +9,6 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
-using UKMCAB.Web.UI.Areas.Admin.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Search.RequestToUnpublishCAB;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers;
@@ -26,6 +25,7 @@ public class RequestToUnpublishCABController : Controller
     public static class Routes
     {
         public const string RequestUnpublish = "cab.request.unpublish";
+        public const string RequestUnpublishConfirmation = "cab.request.unpublish.confirmation";
     }
 
     public RequestToUnpublishCABController(ICABAdminService cabAdminService, IWorkflowTaskService workflowTaskService,
@@ -47,6 +47,7 @@ public class RequestToUnpublishCABController : Controller
         {
             return RedirectToRoute(CABProfileController.Routes.CabDetails, new { id = publishedDocument.CABId });
         }
+
         var vm =
             new RequestToUnpublishCABViewModel(publishedDocument.Name ?? throw new InvalidOperationException(),
                 publishedDocument.URLSlug, Guid.Parse(publishedDocument.CABId))
@@ -82,11 +83,11 @@ public class RequestToUnpublishCABController : Controller
         var submitter = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
-
+        
         await _cabAdminService.SetSubStatusAsync(vm.CabId, Status.Published,
             vm.IsUnpublish!.Value ? SubStatus.PendingApprovalToUnpublish : SubStatus.PendingApprovalToArchive,
             new Audit(currentUser, vm.IsUnpublish!.Value ? AuditCABActions.UnpublishApprovalRequest : AuditCABActions.ArchiveApprovalRequest));
-
+        
         await _workflowTaskService.CreateAsync(new WorkflowTask(
             vm.IsUnpublish!.Value ? TaskType.RequestToUnpublish : TaskType.RequestToArchive,
             submitter,
@@ -116,6 +117,17 @@ public class RequestToUnpublishCABController : Controller
         };
         await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
             _templateOptions.NotificationRequestToUnpublishCab, personalisation);
-        return RedirectToRoute(CabManagementController.Routes.CABManagement);
+        return RedirectToRoute(Routes.RequestUnpublishConfirmation, new { cabUrl = vm.CabUrl });
+    }
+
+    [HttpGet("search/request-to-unpublish/confirmation/{cabUrl}", Name = Routes.RequestUnpublishConfirmation)]
+    public async Task<IActionResult> CabRequestToUnpublishConfirmationAsync(string cabUrl)
+    {
+        var publishedDocument = await GetPublishedDocumentAsync(cabUrl);
+        return View(new RequestToUnpublishConfirmationViewModel
+        {
+            Title = $"Request to unpublish CAB {publishedDocument.Name} has been submitted for approval",
+            URLSlug = cabUrl
+        });
     }
 }
