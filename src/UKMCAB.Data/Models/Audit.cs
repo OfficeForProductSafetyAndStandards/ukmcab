@@ -151,9 +151,11 @@ namespace UKMCAB.Data.Models
         public const string CABApproved = "CAB Approved";
         public const string CABDeclined = "CAB Declined";
         public const string DraftDeleted = "Draft deleted";
-        public const string UnpublishApprovalRequest = "Request to unpublish"; // UKAS request to un publish and create draft
         public const string ArchiveApprovalRequest = "Request to archive"; // UKAS request to archive
         public const string UnArchiveApprovalRequestDeclined = "CAB unarchive declined";  // Ukas request for unarchive declined
+        public const string UnpublishApprovalRequest = "Request to unpublish"; // UKAS request to un publish and create draft
+        public const string UnpublishApprovalRequestDeclined = "Request to unpublish declined"; // UKAS request to un publish and create draft
+
     }
 
     public class AuditUserActions
