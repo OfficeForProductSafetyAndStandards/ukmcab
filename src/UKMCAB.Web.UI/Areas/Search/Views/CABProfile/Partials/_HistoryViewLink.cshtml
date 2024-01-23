@@ -1,0 +1,24 @@
+﻿@using System.Net;
+@using UKMCAB.Web.UI.Models.ViewModels.Shared;
+@model AuditHistoryItemViewModel;
+@{
+    var returnUrl = WebUtility.UrlEncode(this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery + "#history");
+}
+
+@using (Html.BeginForm("CABHistoryDetails", "CABProfile", new { area = "search" }, FormMethod.Post, false, new { enctype = "multipart/form-data", novalidate = "true" }))
+{
+    <input type="hidden" asp-for="Date"/>
+    <input type="hidden" asp-for="Time" />
+    <input type="hidden" asp-for="Username" />
+    <input type="hidden" asp-for="UserId" />
+    <input type="hidden" asp-for="Usergroup" />
+    <input type="hidden" asp-for="Action" />
+    <input type="hidden" asp-for="InternalComment" />
+    <input type="hidden" asp-for="PublicComment" />
+    <input type="hidden" asp-for="ReturnUrl" value="@returnUrl" />
+    <input type="hidden" asp-for="IsUserInputComment" />
+
+    <button class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button">
+        View
+    </button>
+}
