@@ -138,7 +138,8 @@ public static class CabModelMapper
                     Action = audit.Action,
                     Comment = audit.Comment,
                     PublicComment = audit.PublicComment,
-                    IsUserInputComment = audit.IsUserInputComment
+                    IsUserInputComment = audit.IsUserInputComment,
+                    IsUserEnteredPublicComment = audit.IsUserEnteredPublicComment,
                 });
             }
         }
