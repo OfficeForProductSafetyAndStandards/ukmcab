@@ -4,6 +4,7 @@ using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
@@ -369,10 +370,8 @@ namespace UKMCAB.Core.Services.CAB
                 new(userAccount, AuditCABActions.Unarchived)
             };
 
-            if (!requestedByUkas)
-            {
-                archivedDoc.CreatedByUserGroup = userAccount.Role!.ToLower();
-            }
+            // If UKAS made the request to unarchive, set them as CreatedByUserGroup in order to see the draft.
+            archivedDoc.CreatedByUserGroup = requestedByUkas ? Roles.UKAS.Id : userAccount.Role!.ToLower();
 
             archivedDoc = await _cabRepository.CreateAsync(archivedDoc);
             await UpdateSearchIndex(archivedDoc);
