@@ -1,5 +1,7 @@
 ﻿using FluentValidation;
+using System.ComponentModel.DataAnnotations;
 using UKMCAB.Data.Models;
+using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -40,6 +42,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? ReviewDateMonth { get; set; }
         public string? ReviewDateYear { get; set; }
         public string ReviewDate => $"{ReviewDateDay}/{ReviewDateMonth}/{ReviewDateYear}";
+
+        [RegularExpression(@"^\d*$", ErrorMessage = "Enter a UKAS reference number using only numbers")]
         public string? UKASReference { get; set; }
         public string? Title => $"{(!IsNew ? "Edit" : "Create")} a CAB";
         public string? CabNumberVisibility { get; set; }
