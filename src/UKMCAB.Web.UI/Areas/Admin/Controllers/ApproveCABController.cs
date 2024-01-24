@@ -62,7 +62,7 @@ public class ApproveCABController : Controller
         }
         else
         {
-            await Approve(document);
+            await ApproveAsync(document);
             return RedirectToRoute(CabManagementController.Routes.CABManagement);
         }       
     }
@@ -85,11 +85,11 @@ public class ApproveCABController : Controller
         document.CABNumber = vm.CABNumber;
         document.CabNumberVisibility = vm.CabNumberVisibility;
 
-        await Approve(document);
+        await ApproveAsync(document);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
-    private async Task Approve(Document document)
+    private async Task ApproveAsync(Document document)
     {
         var cabId = Guid.Parse(document.CABId);
 
