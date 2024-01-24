@@ -67,7 +67,8 @@ public class ApproveUnpublishCABController : Controller
             $"Unpublish CAB {document.Name}",
             document.Name ?? throw new InvalidOperationException(),
             document.URLSlug,
-            Guid.Parse(document.CABId));
+            Guid.Parse(document.CABId),
+            document.SubStatus == SubStatus.PendingApprovalToArchive);
 
         return View("~/Areas/Admin/Views/CAB/unpublish/Approve.cshtml", vm);
     }
@@ -101,7 +102,7 @@ public class ApproveUnpublishCABController : Controller
         }
         else
         {
-            await _cabAdminService.ArchiveDocumentAsync(submitter!, vm.CabId.ToString(), null, vm.Reason!);
+            await _cabAdminService.ArchiveDocumentAsync(submitter!, vm.CabId.ToString(), vm.UserNotes, vm.Reason!);
         }
 
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
