@@ -1,13 +1,15 @@
+@import "../shared/colors";
+
 .cab-status-tag {
-    border: 2px solid;
+    border: 1px solid;
     padding: 5px;
     font-weight: 600;
     margin-left: 10px;
 
     &.cab-status-tag--published {
-        background-color: #cce2d8;
-        color: govuk-colour("green");
-        border-color: govuk-colour("green");
+        background-color: $status-published-background-color;
+        color: $status-published-color;
+        border-color: $status-published-color;
     }
 
     &.cab-status-tag--archived {
