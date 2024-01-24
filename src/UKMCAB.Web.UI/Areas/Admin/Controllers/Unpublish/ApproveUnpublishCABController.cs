@@ -145,6 +145,12 @@ public class ApproveUnpublishCABController : Controller
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", cabName },
+            {
+                "CABUrl", UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    unpublish
+                    ? Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId })
+                        : Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId }))
+            },
             { "Unpublish", unpublish },
             { "Archive", !unpublish }
         };
