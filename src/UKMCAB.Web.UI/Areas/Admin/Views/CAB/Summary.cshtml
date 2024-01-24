@@ -38,7 +38,7 @@
                 {
                     if (Model.Status == Status.Draft)
                     {
-                        <govuk-back-link asp-route="@SearchController.Routes.Search"/>
+                        <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@SearchController.Routes.Search"/>
                     }
                     else
                     {
