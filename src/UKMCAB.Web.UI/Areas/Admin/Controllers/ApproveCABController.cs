@@ -82,6 +82,9 @@ public class ApproveCABController : Controller
             return View("~/Areas/Admin/Views/CAB/Approve.cshtml", vm);
         }
 
+        document.CABNumber = vm.CABNumber;
+        document.CabNumberVisibility = vm.CabNumberVisibility;
+
         await Approve(document);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
