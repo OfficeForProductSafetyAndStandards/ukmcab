@@ -74,7 +74,7 @@ public class ApproveUnarchiveCABController : Controller
 
         return View("~/Areas/Admin/Views/CAB/Unarchive/Approve.cshtml", vm);
     }
-    
+
     [HttpPost("{cabUrl}", Name = Routes.Approve)]
     public async Task<IActionResult> ApprovePostAsync(string cabUrl, ApproveUnarchiveCABViewModel vm)
     {
@@ -91,9 +91,10 @@ public class ApproveUnarchiveCABController : Controller
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
-        await Unarchive(cabUrl, currentUser, vm.IsPublish!.Value, true);
+        await UnarchiveAsync(cabUrl, currentUser, vm.IsPublish!.Value, true, vm.UserNotes, vm.Reason);
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId.ToString(), approver);
-        await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver, vm.IsPublish.Value);
+        await SendNotificationOfApprovalAsync(vm.CabId, vm.CABName, requestTask.Submitter, approver,
+            vm.IsPublish.Value);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
@@ -112,10 +113,14 @@ public class ApproveUnarchiveCABController : Controller
     /// <param name="currentUser"></param>
     /// <param name="publish">publish flag</param>
     /// <param name="requestedByUkas">requested by ukas</param>
-    private async Task Unarchive(string cabUrl, UserAccount currentUser, bool publish, bool requestedByUkas)
+    /// <param name="internalPublishReason"></param>
+    /// <param name="publicPublishReason"></param>
+    private async Task UnarchiveAsync(string cabUrl, UserAccount currentUser, bool publish, bool requestedByUkas,
+        string? internalPublishReason, string? publicPublishReason)
     {
         var document = await GetArchivedDocumentAsync(cabUrl);
-        var latestDocument = await _cabAdminService.UnarchiveDocumentAsync(currentUser, document.CABId, null, null, requestedByUkas);
+        var latestDocument =
+            await _cabAdminService.UnarchiveDocumentAsync(currentUser, document.CABId, null, null, requestedByUkas);
         _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
         {
             [AiTracking.Metadata.CabId] = document.CABId,
@@ -123,7 +128,8 @@ public class ApproveUnarchiveCABController : Controller
         }));
         if (publish)
         {
-            await _cabAdminService.PublishDocumentAsync(currentUser, latestDocument);
+            await _cabAdminService.PublishDocumentAsync(currentUser, latestDocument, internalPublishReason,
+                publicPublishReason);
         }
     }
 
@@ -159,7 +165,8 @@ public class ApproveUnarchiveCABController : Controller
     /// <param name="submitter"></param>
     /// <param name="approver"></param>
     /// <param name="publish"></param>
-    private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter, User approver, bool publish)
+    private async Task SendNotificationOfApprovalAsync(Guid cabId, string cabName, User submitter, User approver,
+        bool publish)
     {
         var personalisation = new Dictionary<string, dynamic?>
         {
@@ -177,7 +184,7 @@ public class ApproveUnarchiveCABController : Controller
             _templateOptions.NotificationUnarchiveApproved, personalisation);
 
         await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
-           _templateOptions.NotificationUnarchiveApproved, personalisation);
+            _templateOptions.NotificationUnarchiveApproved, personalisation);
 
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
