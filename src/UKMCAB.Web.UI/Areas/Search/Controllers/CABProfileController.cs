@@ -99,18 +99,24 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var userAccount = User.Identity is { IsAuthenticated: true }
                 ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
                 : null;
-            var unarchiveNotifications = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
+            var unarchiveRequests = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
                 cabDocument.CABId.ToGuid()!.Value,
                 new List<TaskType> { TaskType.RequestToUnarchiveForDraft, TaskType.RequestToUnarchiveForPublish });
+            var unpublishRequests = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
+                cabDocument.CABId.ToGuid()!.Value,
+                new List<TaskType> { TaskType.RequestToArchive, TaskType.RequestToUnpublish });
             var requireApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
                 StringComparison.CurrentCultureIgnoreCase);
             var cab = await GetCabProfileViewModel(
                 cabDocument,
                 returnUrl,
                 userAccount != null,
-                requireApproval && (!unarchiveNotifications.Any() || unarchiveNotifications.All(t => t.Completed)),
-                pagenumber);
-            cab = await GetUnarchiveRequestInformation(cab);
+                requireApproval && (!unarchiveRequests.Any() || unarchiveRequests.All(t => t.Completed)),
+                pagenumber,
+                requireApproval && (!unpublishRequests.Any() || unpublishRequests.All(t => t.Completed))
+            );
+
+            cab = await GetRequestInformation(cab);
 
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
             {
@@ -171,13 +177,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         private async Task<CABProfileViewModel> GetCabProfileViewModel(Document cabDocument, string? returnUrl,
-            bool loggedIn = false, bool showRequestToUnarchive = false, int pagenumber = 1)
+            bool loggedIn = false, bool showRequestToUnarchive = false, int pagenumber = 1,
+            bool showRequestToUnpublish = false)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
 
             var isUnarchivedRequest =
-                auditLogOrdered.Last().Action == AuditCABActions.UnarchivedToDraft; //todo should be notifications
+                auditLogOrdered.Last().Action == AuditCABActions.UnarchivedToDraft;
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit = isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
             var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
@@ -192,6 +199,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
                 ShowRequestToUnarchive = showRequestToUnarchive,
+                ShowRequestToUnpublish = showRequestToUnpublish,
                 IsPublished = isPublished,
                 HasDraft = hasDraft,
                 ArchivedBy = isArchived && archiveAudit != null ? archiveAudit.UserName : string.Empty,
@@ -272,27 +280,33 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return cab;
         }
 
-        private async Task<CABProfileViewModel> GetUnarchiveRequestInformation(CABProfileViewModel profileViewModel)
+        private async Task<CABProfileViewModel> GetRequestInformation(CABProfileViewModel profileViewModel)
         {
             var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(profileViewModel.CABId));
             var task = tasks.FirstOrDefault(t =>
-                t.TaskType is TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish &&
+                new List<TaskType>
+                {
+                    TaskType.RequestToUnarchiveForDraft,
+                    TaskType.RequestToUnarchiveForPublish,
+                    TaskType.RequestToArchive,
+                    TaskType.RequestToUnpublish
+                }.Contains(t.TaskType) &&
                 !t.Completed);
 
             int? summaryBreak = task?.Body.Length > 60
-                ? task.Body.Substring(0, 60).LastIndexOf(" ", StringComparison.Ordinal)
+                ? task.Body[..60].LastIndexOf(" ", StringComparison.Ordinal)
                 : null;
-            profileViewModel.UnarchiverFirstAndLastName = task?.Submitter.FirstAndLastName;
-            profileViewModel.UnarchiverUserGroup = task?.Submitter.UserGroup;
-            profileViewModel.UnarchiveReasonSummary =
+            profileViewModel.RequestFirstAndLastName = task?.Submitter.FirstAndLastName;
+            profileViewModel.RequestUserGroup = task?.Submitter.UserGroup;
+            profileViewModel.RequestReasonSummary =
                 summaryBreak.HasValue ? task?.Body.Substring(0, summaryBreak.Value) : null;
-            profileViewModel.UnarchiveReason = task?.Body;
-            profileViewModel.UnarchiveTaskType = task?.TaskType;
+            profileViewModel.RequestReason = task?.Body;
+            profileViewModel.RequestTaskType = task?.TaskType;
             return profileViewModel;
         }
 
         #region ArchiveCAB
-        
+
         [HttpGet, Route("search/archive-cab/{cabUrl}"), Authorize]
         public async Task<IActionResult> ArchiveCAB(string cabUrl)
         {
@@ -311,7 +325,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 HasDraft = draft != null
             });
         }
-        
+
         [HttpPost, Route("search/archive-cab/{cabUrl}"), Authorize]
         public async Task<IActionResult> ArchiveCAB(string cabUrl, ArchiveCABViewModel model)
         {
@@ -409,7 +423,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         #endregion
-        
+
         [HttpGet, Route("search/unarchive-cab/{id}"), Authorize]
         public async Task<IActionResult> UnarchiveCAB(string id, string? returnUrl)
         {
