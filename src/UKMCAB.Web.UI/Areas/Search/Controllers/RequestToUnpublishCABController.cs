@@ -124,7 +124,7 @@ public class RequestToUnpublishCABController : Controller
     public async Task<IActionResult> CabRequestToUnpublishConfirmationAsync(string cabUrl)
     {
         var publishedDocument = await GetPublishedDocumentAsync(cabUrl);
-        return View(new RequestToUnpublishConfirmationViewModel
+        return View("Confirmation",new RequestToUnpublishConfirmationViewModel
         {
             Title = $"Request to unpublish CAB {publishedDocument.Name} has been submitted for approval",
             URLSlug = cabUrl
