@@ -32,6 +32,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public string? CABId { get; set; }
         public string? Name { get; set; }
+
+        [RegularExpression(@"^[\w\d\s(),-]*$", ErrorMessage = "Enter a CAB number using only numbers and letters")]
         public string? CABNumber { get; set; }
         public string? AppointmentDateDay { get; set; }
         public string? AppointmentDateMonth { get; set; }

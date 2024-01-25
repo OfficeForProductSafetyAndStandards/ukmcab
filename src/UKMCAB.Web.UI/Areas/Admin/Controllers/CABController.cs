@@ -429,7 +429,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ModelState.Clear();
             
             //Lock Record for edit
-            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed && latest.StatusValue is Status.Draft or Status.Published)
+            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed 
+                                                          && latest.StatusValue is Status.Draft or Status.Published
+                                                          && model.IsOPSSOrInCreatorUserGroup)
             {
                 await _editLockService.SetAsync(latest.CABId, User.GetUserId()!);
             }

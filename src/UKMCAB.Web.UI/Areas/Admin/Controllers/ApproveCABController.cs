@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
-using UKMCAB.Core.Domain;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
@@ -12,11 +11,11 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.PublishApproval;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
-[Area("admin"), Route("admin/cab/approve"), Authorize]
+[Area("admin"), Authorize]
 public class ApproveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
@@ -41,12 +40,14 @@ public class ApproveCABController : Controller
 
     public static class Routes
     {
+        public const string ApproveAndSetCabNumber = "cab.approvesetcabnumber";
         public const string Approve = "cab.approve";
     }
 
-    [HttpGet("{cabId}", Name = Routes.Approve)]
-    public async Task<IActionResult> ApproveAsync(Guid cabId)
+    [HttpGet("admin/cab/approve/{id}", Name = Routes.Approve)]
+    public async Task<IActionResult> ApproveAsync(string id, string? returnUrl)
     {
+        var cabId = Guid.Parse(id);
         var document = await GetDocumentAsync(cabId);
         if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
         {
@@ -55,41 +56,84 @@ public class ApproveCABController : Controller
 
         if (string.IsNullOrEmpty(document.CABNumber) || string.IsNullOrEmpty(document.CabNumberVisibility))
         {
-            var model = new ApproveCABViewModel("Approve CAB",
-            document.Name ?? throw new InvalidOperationException());
+            return RedirectToRoute(Routes.ApproveAndSetCabNumber, new { id });
+        } 
 
-            return View("~/Areas/Admin/Views/CAB/Approve.cshtml", model);
+        var model = new UserNotesReasonViewModel(cabId, document.Name ?? throw new InvalidOperationException(), returnUrl, "Approve CAB");
+        return View("~/Areas/Admin/Views/CAB/PublishApproval/Approve.cshtml", model);
+    }
+
+    [HttpPost("admin/cab/approve/{id}", Name = Routes.Approve)]
+    public async Task<IActionResult> ApprovePostAsync(string id, UserNotesReasonViewModel vm)
+    {
+        ModelState.Remove(nameof(UserNotesReasonViewModel.CabName));
+        if (!ModelState.IsValid)
+        {
+            vm.Title = "Approve CAB";
+            return View("~/Areas/Admin/Views/CAB/PublishApproval/Approve.cshtml", vm);
+        }
+
+        var cabId = Guid.Parse(id);
+        var document = await GetDocumentAsync(cabId);
+
+        await ApproveAsync(document, vm.UserNotes, vm.Reason);
+        return RedirectToRoute(CabManagementController.Routes.CABManagement);
+    }
+
+    [HttpGet("admin/cab/approve-setcabnumber/{id}", Name = Routes.ApproveAndSetCabNumber)]
+    public async Task<IActionResult> ApproveSetCabNumberAsync(string id, string? returnUrl)
+    {
+        var cabId = Guid.Parse(id);
+        var document = await GetDocumentAsync(cabId);
+        if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
+        {
+            throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
+        }
+
+        if (string.IsNullOrEmpty(document.CABNumber) || string.IsNullOrEmpty(document.CabNumberVisibility))
+        {
+            var model = new ApproveCABViewModel(cabId, document.Name ?? throw new InvalidOperationException(), returnUrl, "Approve CAB");
+            return View("~/Areas/Admin/Views/CAB/PublishApproval/ApproveSetCabNumber.cshtml", model);
         }
         else
         {
-            await ApproveAsync(document);
-            return RedirectToRoute(CabManagementController.Routes.CABManagement);
-        }       
+            throw new PermissionDeniedException("CAB number already set for this cab");
+        }
     }
 
-    [HttpPost("{cabId}", Name = Routes.Approve)]
-    public async Task<IActionResult> ApprovePostAsync(Guid cabId,
-        [Bind(nameof(ApproveCABViewModel.CABNumber), nameof(CabNumberVisibility))] ApproveCABViewModel vm)
+    [HttpPost("admin/cab/approve-setcabnumber/{id}", Name = Routes.ApproveAndSetCabNumber)]
+    public async Task<IActionResult> ApproveSetCabNumberAsync(string id, ApproveCABViewModel vm)
     {
+        var cabId = Guid.Parse(id);
         var document = await GetDocumentAsync(cabId);
         ModelState.Remove(nameof(ApproveCABViewModel.CabName));
+
+        var duplicateDocuments =
+                   await _cabAdminService.FindOtherDocumentsByCabNumberOrUkasReference(document.CABId,
+                       vm.CABNumber, null);
+
+        if (duplicateDocuments.Any())
+        {
+            if (vm.CABNumber != null && duplicateDocuments.Any(d => d.CABNumber.DoesEqual(vm.CABNumber)))
+            {
+                ModelState.AddModelError(nameof(vm.CABNumber), "This CAB number already exists\r\n\r\n");
+            }
+        }
 
         if (!ModelState.IsValid)
         {
             vm.Title = "Approve CAB";
-            vm.CabName = document.Name??string.Empty;
-
-            return View("~/Areas/Admin/Views/CAB/Approve.cshtml", vm);
+            return View("~/Areas/Admin/Views/CAB/PublishApproval/ApproveSetCabNumber.cshtml", vm);
         }
 
         document.CABNumber = vm.CABNumber;
         document.CabNumberVisibility = vm.CabNumberVisibility;
 
-        await ApproveAsync(document);
+        await ApproveAsync(document, vm.UserNotes, vm.Reason);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
-    private async Task ApproveAsync(Document document)
+    private async Task ApproveAsync(Document document, string? userNotes, string? reason)
     {
         var cabId = Guid.Parse(document.CABId);
 
@@ -98,7 +142,7 @@ public class ApproveCABController : Controller
            throw new InvalidOperationException("User account not found");
         var userRoleId = Roles.List.First(r =>
             r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-        await _cabAdminService.PublishDocumentAsync(user, document);
+        await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason);
         var submitTask = await MarkTaskAsCompleteAsync(cabId,
             new User(user.Id, user.FirstName, user.Surname, userRoleId,
                 user.EmailAddress ?? throw new InvalidOperationException()));
