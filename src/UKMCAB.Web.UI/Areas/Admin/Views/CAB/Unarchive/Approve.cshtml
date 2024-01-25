@@ -22,7 +22,6 @@
                 </govuk-radios-fieldset>
             </govuk-radios>
             <govuk-warning-text icon-fallback-text="Warning">The CAB will be unarchived and @Model.SubmitterGroup will be notified.</govuk-warning-text>
-
             <div class="govuk-button-group">
                 <govuk-button type="submit">Approve</govuk-button>
                 <a asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>

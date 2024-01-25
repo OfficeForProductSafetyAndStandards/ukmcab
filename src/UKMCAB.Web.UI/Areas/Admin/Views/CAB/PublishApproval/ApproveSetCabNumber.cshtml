@@ -1,0 +1,53 @@
+@using System.Net;
+@using UKMCAB.Core.Domain;
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.PublishApproval;
+@model ApproveCABViewModel
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Approve CAB @Model.CabName</h1>
+    </div>    
+    <div class="govuk-grid-column-two-thirds">
+        <form id="approvecabform" method="post">
+            <input type="hidden" asp-for="CabId" />
+            <input type="hidden" asp-for="CabName" />
+            <govuk-input asp-for="CABNumber">
+                <govuk-input-label class="govuk-label--s">CAB number</govuk-input-label>                   
+            </govuk-input>
+            <govuk-select name="CabNumberVisibility" select-class="govuk-!-width-full" label-class="govuk-label--s" asp-for="CabNumberVisibility">
+                <govuk-select-label>Who should see the CAB number?</govuk-select-label>                   
+                @foreach (var item in new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label)))
+                {
+                    if (item.Value == Model.CabNumberVisibility)
+                    {
+                        <govuk-select-item value="@item.Value" selected>@item.Text</govuk-select-item>
+                    }
+                    else
+                    {
+                        <govuk-select-item value="@item.Value">@item.Text</govuk-select-item>
+                    }
+                }
+            </govuk-select>
+            <govuk-character-count asp-for="UserNotes" max-length="1000" rows="5">
+                <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                    User notes (optional)
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    These notes will only be seen by users that are signed in to the UKMCAB service.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+            <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
+                <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                    Reason (optional)
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Enter the reason for unpublishing this CAB. This will be shown to all users in the CAB history page.
+                </govuk-character-count-hint>
+            </govuk-character-count>            
+            <govuk-warning-text icon-fallback-text="Warning">Approved CABs will be published and the user group will be notified.</govuk-warning-text>
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Approve</govuk-button>
+                <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CabId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnURL)" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
