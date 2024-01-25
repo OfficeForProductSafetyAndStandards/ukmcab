@@ -13,5 +13,6 @@
         public string PublicComment { get; set; }
         public string ReturnUrl { get; set; }
         public bool IsUserInputComment { get; set; }
+        public bool IsUserEnteredPublicComment { get; set; }
     }
 }

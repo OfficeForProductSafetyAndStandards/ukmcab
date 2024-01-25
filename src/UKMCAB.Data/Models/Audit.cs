@@ -8,7 +8,7 @@ namespace UKMCAB.Data.Models
     {
         public Audit() { }
 
-        public Audit(string userId, string username, string userrole, DateTime date, string action, string? comment = null, string? publicComment = null, bool isUserInputComment = true)
+        public Audit(string userId, string username, string userrole, DateTime date, string action, string? comment = null, string? publicComment = null, bool isUserInputComment = true, bool isUserEnteredPublicComment = true)
         {
             UserId = userId;
             UserName = username;
@@ -18,9 +18,10 @@ namespace UKMCAB.Data.Models
             Comment = comment;
             PublicComment = publicComment;
             IsUserInputComment = isUserInputComment;
+            IsUserEnteredPublicComment = isUserEnteredPublicComment;
         }
 
-        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null, bool isUserInputComment = true) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment, isUserInputComment) { }
+        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null, bool isUserInputComment = true, bool isUserEnteredPublicComment = true) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment, isUserInputComment, isUserEnteredPublicComment) { }
 
         public Audit(UserAccount? userAccount, string action, Document publishedDocument, Document? previousDocument = null, string? comment = null, string? publicComment = null) : this(userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment, publicComment)
         {
@@ -60,6 +61,7 @@ namespace UKMCAB.Data.Models
             if (sbPublicComment.Length > 0)
             {
                 sbPublicComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+                IsUserEnteredPublicComment = false;
             }
 
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
@@ -136,6 +138,7 @@ namespace UKMCAB.Data.Models
         public string? Comment { get; set; }
         public string? PublicComment { get; set; }
         public bool? IsUserInputComment { get; set; }
+        public bool? IsUserEnteredPublicComment { get; set; }
     }
 
     public class AuditCABActions

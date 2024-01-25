@@ -12,6 +12,7 @@
             <input type="hidden" asp-for="CABName"/>
             <input type="hidden" asp-for="SubmitterFirstAndLastName"/>
             <input type="hidden" asp-for="SubmitterGroup"/>
+            <input type="hidden" asp-for="PublishRequested"/>
             <govuk-radios asp-for="IsPublish">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--s">
@@ -21,6 +22,27 @@
                     <govuk-radios-item value="@bool.FalseString">Unarchive and save as draft</govuk-radios-item>
                 </govuk-radios-fieldset>
             </govuk-radios>
+            @if (Model.PublishRequested)
+            {
+                <govuk-character-count asp-for="UserNotes" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        User notes (optional)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        These notes will only be seen by users that are signed in to the UKMCAB service.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+
+                <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        Reason (optional)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        Enter the reason for unarchiving this CAB. This will be shown to all users in the CAB history page.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+            }
+
             <govuk-warning-text icon-fallback-text="Warning">The CAB will be unarchived and @Model.SubmitterGroup will be notified.</govuk-warning-text>
             <div class="govuk-button-group">
                 <govuk-button type="submit">Approve</govuk-button>

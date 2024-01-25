@@ -1,4 +1,5 @@
-﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+﻿using UKMCAB.Web.UI.Models.ViewModels.Shared;
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 public class CABConfirmationViewModel : ILayoutModel
 {
@@ -8,9 +9,14 @@ public class CABConfirmationViewModel : ILayoutModel
     public string? Title => "CAB confirmation";
 }
 
-public class CabSubmittedForApprovalConfirmationViewModel : ILayoutModel
+public class CabSubmittedForApprovalConfirmationViewModel : ConfirmationViewModel
 {
-    public string? Name { get; set; }
-    public string? Id { get; set; }
-    public string? Title => $"CAB {Name} has been submitted for approval";
+    public string? Name { get; init; }
+    public string? Id { get; init; }
+
+    public ConfirmationViewModel ConfirmationViewModel => new()
+    {
+        Title = $"CAB {Name} has been submitted for approval",
+        Body = Body
+    };
 }

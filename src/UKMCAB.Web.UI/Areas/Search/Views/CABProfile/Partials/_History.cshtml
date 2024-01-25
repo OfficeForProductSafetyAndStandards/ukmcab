@@ -61,7 +61,7 @@
                                     <td class="govuk-table__cell"><label aria-hidden="true">Action</label>@auditHistoryItem.Action</td>
                                     <td class="govuk-table__cell">
                                         <label aria-hidden="true">Reason</label>
-                                        @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment))
+                                        @if (!string.IsNullOrWhiteSpace(auditHistoryItem.InternalComment) || !string.IsNullOrWhiteSpace(auditHistoryItem.PublicComment))
                                         {
                                             var auditHistoryItemVM = new AuditHistoryItemViewModel
                                             {
@@ -73,7 +73,8 @@
                                                 Action = auditHistoryItem.Action,
                                                 InternalComment = auditHistoryItem.InternalComment,
                                                 PublicComment = auditHistoryItem.PublicComment,
-                                                IsUserInputComment = auditHistoryItem.IsUserInputComment ?? false
+                                                IsUserInputComment = auditHistoryItem.IsUserInputComment ?? false,
+                                                IsUserEnteredPublicComment = auditHistoryItem.IsUserEnteredPublicComment ?? false
                                             };
                                             <partial name="Partials/_HistoryViewLink" model="auditHistoryItemVM" />
                                         }
@@ -99,7 +100,8 @@
                                                 Time = auditHistoryItem.Time,
                                                 Action = auditHistoryItem.Action,
                                                 PublicComment = auditHistoryItem.PublicComment,
-                                                IsUserInputComment = auditHistoryItem.IsUserInputComment ?? false
+                                                IsUserInputComment = auditHistoryItem.IsUserInputComment ?? false,
+                                                IsUserEnteredPublicComment = auditHistoryItem.IsUserEnteredPublicComment ?? false
                                             };
 
                                             <partial name="Partials/_HistoryViewLink" model="auditHistoryItemVM" />

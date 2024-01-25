@@ -90,7 +90,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                     Action = NormaliseAction(al.Action),
                     InternalComment = al.Comment,
                     PublicComment = al.PublicComment,
-                    IsUserInputComment = al.IsUserInputComment
+                    IsUserInputComment = al.IsUserInputComment,
+                    IsUserEnteredPublicComment = al.IsUserEnteredPublicComment
                 });
 
             Pagination = new PaginationViewModel
@@ -154,5 +155,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public string? InternalComment { get; init; }
         public string? PublicComment { get; init; }
         public bool? IsUserInputComment { get; init; }
+        public bool? IsUserEnteredPublicComment { get; init; }
     }
 }
