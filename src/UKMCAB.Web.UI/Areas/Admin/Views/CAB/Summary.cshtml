@@ -538,23 +538,27 @@ else if (Model.IsEditLocked)
                                 Notes
                             </dt>
                             <dd class="govuk-summary-list__value">
+                                @{
+                                    var userNotesReturnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+                                }
                                 @if (Model.GovernmentUserNoteCount > 0)
                                 {
                                     <p>Last note added: @Model.LastGovermentUserNoteDate?.ToStringBeisFormat()</p>
+
+                                    <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
+                                       asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl" class="govuk-link govuk-link--no-visited-state">
+                                        View government user notes (@Model.GovernmentUserNoteCount)
+                                    </a>
                                 }
                                 else
                                 {
                                     <p>There are no notes</p>
-                                }
 
-                                @{
-                                    var userNotesReturnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+                                    <a asp-area="Search" asp-controller="UserNote" asp-action="Create" asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl"
+                                        class="govuk-link govuk-link--no-visited-state">
+                                        Add note
+                                    </a>
                                 }
-
-                                <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
-                                    asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl" class="govuk-link govuk-link--no-visited-state">
-                                    View government user notes (@Model.GovernmentUserNoteCount)
-                                </a>
                             </dd>
                         </div>
                     </dl>
