@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Collections.Generic;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
@@ -614,8 +613,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (model.UploadedFiles != null && model.UploadedFiles.Any())
             {   
 
-                var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { FileName= x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1)
-                                        .Select(y => y.Key).ToList();
+                var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { FileName= x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
 
                 if (duplicatedFileAndLabels != null && duplicatedFileAndLabels.Count > 0)
                 {
@@ -684,7 +682,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (model.UploadedFiles != null && model.UploadedFiles.Any())
             {  
-
                 var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.Category) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { FileName=  x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1)
                                         .Select(y => y.Key).ToList();
 

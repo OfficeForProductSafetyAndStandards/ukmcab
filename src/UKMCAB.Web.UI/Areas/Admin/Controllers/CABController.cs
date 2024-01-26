@@ -12,13 +12,10 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
-using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
-using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
-using CsvHelper.Configuration.Attributes;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -389,6 +386,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var cabDetails = new CABDetailsViewModel(latest);
             var cabContact = new CABContactViewModel(latest);
             var cabBody = new CABBodyDetailsViewModel(latest);
+            var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
+            var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
+
             var auditLogOrdered = latest.AuditLog.OrderBy(a => a.DateTime).ToList();
             var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
             var model = new CABSummaryViewModel
@@ -398,8 +398,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabDetailsViewModel = cabDetails,
                 CabContactViewModel = cabContact,
                 CabBodyDetailsViewModel = cabBody,
-                Schedules = latest.Schedules ?? new List<FileUpload>(),
-                Documents = latest.Documents ?? new List<FileUpload>(),
+                CABProductScheduleDetailsViewModel = cabProductSchedules,
+                CABSupportingDocumentDetailsViewModel = cabSupportingDocuments,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl)
                     ? WebUtility.UrlDecode(string.Empty)
                     : WebUtility.UrlDecode(returnUrl),
@@ -412,7 +412,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ValidCAB = latest.StatusValue != Status.Published
                            && TryValidateModel(cabDetails)
                            && TryValidateModel(cabContact)
-                           && TryValidateModel(cabBody),
+                           && TryValidateModel(cabBody) && cabProductSchedules.IsCompleted && cabSupportingDocuments.IsCompleted,
                 TitleHint = "CAB profile",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
                     latest.SubStatus == SubStatus.PendingApprovalToPublish ? "Check details before approving or declining" : "Check details before publishing"
@@ -464,12 +464,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabDetailsViewModel = new CABDetailsViewModel(latest),
                 CabContactViewModel = new CABContactViewModel(latest),
                 CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
-                Schedules = latest.Schedules ?? new List<FileUpload>(),
-                Documents = latest.Documents ?? new List<FileUpload>(),
+                CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latest),
+                CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latest),
             };
             ModelState.Clear();
 
-            publishModel.ValidCAB = TryValidateModel(publishModel);
+            publishModel.ValidCAB = TryValidateModel(publishModel) && publishModel.CABProductScheduleDetailsViewModel.IsCompleted && publishModel.CABSupportingDocumentDetailsViewModel.IsCompleted;
+
             if (publishModel.ValidCAB)
             {
                 var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
