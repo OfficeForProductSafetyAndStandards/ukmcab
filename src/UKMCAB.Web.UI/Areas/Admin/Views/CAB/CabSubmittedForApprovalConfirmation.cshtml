@@ -9,7 +9,7 @@
             Your request has been sent to OPSS to review. You will be notified when the CAB is approved or declined.
         </p>
         <p class="govuk-body">
-            <a class="govuk-link" asp-route="@CABProfileController.Routes.CabDraftProfile" asp-route-id="@Model.Id">View CAB</a>
+            <a id="viewCab" class="govuk-link" asp-route="@CABProfileController.Routes.CabDraftProfile" asp-route-id="@Model.Id">View CAB</a>
         </p>
         <p class="govuk-body">
             <a class="govuk-link" asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement">Go to CAB management</a>
