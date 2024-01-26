@@ -313,7 +313,8 @@ namespace UKMCAB.Core.Services.CAB
             return latestDocument;
         }
 
-        public async Task<Document> UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? internalReason)
+        public async Task<Document> UnPublishDocumentAsync(UserAccount userAccount, string cabId,
+            string? internalReason)
         {
             var docs = await FindAllDocumentsByCABIdAsync(cabId);
             var publishedVersion = docs.SingleOrDefault(d => d.StatusValue == Status.Published);
@@ -412,10 +413,10 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             publishedVersion.StatusValue = Status.Archived;
+            publishedVersion.SubStatus = SubStatus.None;
             publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.Archived, archiveInternalReason,
                 archivePublicReason));
-            Guard.IsTrue(await _cabRepository.Update(publishedVersion),
-                $"Failed to archive published version, CAB Id: {CABId}");
+            await _cabRepository.UpdateAsync(publishedVersion);
 
             await UpdateSearchIndex(publishedVersion);
 
