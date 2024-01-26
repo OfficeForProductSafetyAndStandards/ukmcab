@@ -56,19 +56,22 @@ namespace UKMCAB.Data.Models
             if (sbComment.Length > 0)
             {
                 sbComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+                if (string.IsNullOrWhiteSpace(comment))
+                    IsUserInputComment = false;
             }
 
             if (sbPublicComment.Length > 0)
             {
                 sbPublicComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
-                IsUserEnteredPublicComment = false;
+                if (string.IsNullOrWhiteSpace(publicComment))
+                    IsUserEnteredPublicComment = false;
             }
 
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
             publicComment = !string.IsNullOrEmpty(publicComment) ? $"<p class=\"govuk-body\">{publicComment}</p>" : string.Empty;
 
             Comment = string.Join("", comment, HttpUtility.HtmlEncode(sbComment.ToString()));
-            PublicComment = sbPublicComment.Length > 0 ? string.Join("", publicComment, HttpUtility.HtmlEncode(sbPublicComment.ToString())) : null;
+            PublicComment = string.Join("", publicComment, HttpUtility.HtmlEncode(sbPublicComment.ToString()));
             IsUserInputComment = false;
         }
 
