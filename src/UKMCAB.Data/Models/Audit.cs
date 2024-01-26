@@ -71,7 +71,7 @@ namespace UKMCAB.Data.Models
             publicComment = !string.IsNullOrEmpty(publicComment) ? $"<p class=\"govuk-body\">{publicComment}</p>" : string.Empty;
 
             Comment = string.Join("", comment, HttpUtility.HtmlEncode(sbComment.ToString()));
-            PublicComment = sbPublicComment.Length > 0 ? string.Join("", publicComment, HttpUtility.HtmlEncode(sbPublicComment.ToString())) : null;
+            PublicComment = string.Join("", publicComment, HttpUtility.HtmlEncode(sbPublicComment.ToString()));
             IsUserInputComment = false;
         }
 
