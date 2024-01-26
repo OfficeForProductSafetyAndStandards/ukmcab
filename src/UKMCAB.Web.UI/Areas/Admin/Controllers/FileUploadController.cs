@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
+using System.Collections.Generic;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
@@ -611,8 +612,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private void AddLegislativeLabelAndFileModelStateErrors(FileUploadViewModel model)
         {   
             if (model.UploadedFiles != null && model.UploadedFiles.Any())
-            {
-                var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.LegislativeArea)).GroupBy(x => new { FileName= x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1)
+            {   
+
+                var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { FileName= x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1)
                                         .Select(y => y.Key).ToList();
 
                 if (duplicatedFileAndLabels != null && duplicatedFileAndLabels.Count > 0)
@@ -634,7 +636,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
-                var duplicatedLabelsAndLegislativeAreas = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea)).GroupBy(x => new { Label = x.Label!.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
+                var duplicatedLabelsAndLegislativeAreas = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { Label = x.Label!.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
 
                 if (duplicatedLabelsAndLegislativeAreas != null && duplicatedLabelsAndLegislativeAreas.Count > 0)
                 {
@@ -681,8 +683,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private void AddCategoryLabelAndFileModelStateErrors(FileUploadViewModel model)
         {
             if (model.UploadedFiles != null && model.UploadedFiles.Any())
-            {
-                var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.Category)).GroupBy(x => new { FileName=  x.FileName.ToLower(), Label = x.Label!.ToLower().ToLower() }).Where(g => g.Count() > 1)
+            {  
+
+                var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.Category) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { FileName=  x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1)
                                         .Select(y => y.Key).ToList();
 
                 if (duplicatedFileAndLabels != null && duplicatedFileAndLabels.Count > 0)
@@ -704,7 +707,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
-                var duplicatedLabelsAndCategories = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.Category)).GroupBy(x => new { Label = x.Label!.ToLower(), Category = x.Category!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
+                var duplicatedLabelsAndCategories = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.Category) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { Label = x.Label!.ToLower(), Category = x.Category!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
 
                 if (duplicatedLabelsAndCategories != null && duplicatedLabelsAndCategories.Count > 0)
                 {
