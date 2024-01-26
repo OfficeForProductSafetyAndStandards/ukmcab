@@ -316,7 +316,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (UpdateFiles(latestDocument, model.UploadedFiles))
                 {
                     var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, User.IsInRole(Roles.UKAS.Id) && submitType == Constants.SubmitType.Save);
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 }
 
                 if (submitType == Constants.SubmitType.UploadAnother)
@@ -726,7 +726,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 if (UpdateDocumentFiles(latestDocument, model.UploadedFiles))
                 {
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument, User.IsInRole(Roles.UKAS.Id) && submitType == Constants.SubmitType.Save);
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 }
                 if (submitType == Constants.SubmitType.UploadAnother)
                 {
