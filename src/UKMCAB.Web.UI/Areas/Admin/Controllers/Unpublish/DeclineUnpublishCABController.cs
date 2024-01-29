@@ -126,6 +126,11 @@ public class DeclineUnpublishCABController : Controller
         var personalisation = new Dictionary<string, dynamic?>
         {
             { "CABName", cabName },
+            {
+                "CABUrl",
+                UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
+            },
             { "Reason", reason }
         };
         await _notificationClient.SendEmailAsync(submitter.EmailAddress,
