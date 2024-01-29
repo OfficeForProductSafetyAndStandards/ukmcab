@@ -102,7 +102,7 @@ public class ApproveUnpublishCABController : Controller
         }
         else
         {
-            await _cabAdminService.ArchiveDocumentAsync(submitter!, vm.CabId.ToString(), vm.UserNotes, vm.Reason!);
+            await _cabAdminService.ArchiveDocumentAsync(currentUser, vm.CabId.ToString(), vm.UserNotes, vm.Reason!);
         }
 
         var requestTask = await MarkTaskAsCompleteAsync(vm.CabId, approver);
