@@ -70,9 +70,8 @@ namespace UKMCAB.Data.Models
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
             publicComment = !string.IsNullOrEmpty(publicComment) ? $"<p class=\"govuk-body\">{publicComment}</p>" : string.Empty;
 
-            Comment = string.Join("", comment, HttpUtility.HtmlEncode(sbComment.ToString()));
-            PublicComment = string.Join("", publicComment, HttpUtility.HtmlEncode(sbPublicComment.ToString()));
-            IsUserInputComment = false;
+            Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbComment.ToString()));
+            PublicComment = string.Join("", HttpUtility.HtmlEncode(publicComment), HttpUtility.HtmlEncode(sbPublicComment.ToString()));
         }
 
         private static void CalculateChangesToScheduleOrDocument(Document publishedDocument, Document? previousDocument, StringBuilder sb, List<FileUpload> previousFileUploads, List<FileUpload> currentFileUploads, string docType)
