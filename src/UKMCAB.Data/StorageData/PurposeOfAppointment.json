@@ -1,0 +1,67 @@
+[
+    {
+        "id": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+        "name": "Categories of machine specified in Schedule 2, Part 4 of the regulation",
+        "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002"
+    },
+    {
+        "id": "9483654a-3554-4aea-a810-ed86e6b7d0bc",
+        "name": "Conformity assessment of electrical and non-electrical: - Equipment and protective systems - Safety devices, controlling devices and regulating devices",
+        "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba"
+    },
+    {
+        "id": "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8",
+        "name": "Conformity assessment of Pressure Equipment falling within Regulation 6 and classified in accordance with Schedule 3 as either Category I, II, III, or IV equipment.",
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764"
+    },
+    {
+        "id": "2add9b12-6f01-49bb-8842-ceb91ae8f983",
+        "name": "Issuing of approval relating to the conformity of materials with the requirements of the regulations.",
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764"
+    },
+    {
+        "id": "78e585b4-77e9-4773-8a5c-f1d492b91cb7",
+        "name": "Approval of procedures or personnel for the permanent joining of materials in equipment of the following categories;",
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764"
+    },
+    {
+        "id": "39881a4a-f322-4a92-9a55-dd9cbb9854fb",
+        "name": "Appointment as a Recognised Third Party Organisation for Pressure Equipment",
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764"
+    },
+    {
+        "id": "11d7babd-6526-4193-8537-2b0694093268",
+        "name": "Appointment as a User Inspectorate for Pressure Equipment in the following categories",
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764"
+    },
+    {
+        "id": "2d9e0aae-9928-401d-b2f5-3a7638f82d66",
+        "name": "Conformity assessment procedures prior to manufacture (Regulation 40)",
+        "legislativeAreaId": "e3751919-8b26-4059-ae34-8540146e262a"
+    },
+    {
+        "id": "44f843da-ea00-476c-a9a2-2be3d782aaf1",
+        "name": "Conformity assessment procedures prior to placing a vessel on the market (Regulation 41)",
+        "legislativeAreaId": "e3751919-8b26-4059-ae34-8540146e262a"
+    },
+    {
+        "id": "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5",
+        "name": "Conformity assessment of recreational craft, personal watercraft, components, engines as defined in Regulation 3.",
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+    },
+    {
+        "id": "4301828e-2cc5-4aaa-9ce5-57d976ab72b0",
+        "name": "The conformity assessment of Safety Components intended to be incorporated into a sub-system or cableway installation for the purpose of ensuring a safety function, the failure of which endangers the safety or health of passengers, operating personnel or third parties.",
+        "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66"
+    },
+    {
+        "id": "04631829-0a38-48ef-8df2-012161e5fc3a",
+        "name": "The conformity assessment of subsystems intended for incorporation into cableway installation",
+        "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66"
+    },
+    {
+        "id": "02e70a30-eb78-44c4-a1cf-226943636300",
+        "name": "Civil explosives, defined as materials and articles considered to be explosives in the UN Recommendations on the transport of dangerous goods and falling within class 1 of those recommendations, but excluding ammunition (the acquisition of which is regulated or prohibited by virtue of the Firearms Acts 1968 to 1997), explosives intended for the lawful use by the armed forces or police of any country and pyrotechnic articles",
+        "legislativeAreaId": "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+    }
+]
