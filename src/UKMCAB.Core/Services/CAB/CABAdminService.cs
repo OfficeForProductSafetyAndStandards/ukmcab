@@ -160,7 +160,7 @@ namespace UKMCAB.Core.Services.CAB
                 CABId = document.CABId,
                 CABNumber = document.CABNumber,
                 AddressLine1 = document.AddressLine1,
-                AddressLine2 = document.AddressLine1,
+                AddressLine2 = document.AddressLine2,
                 TownCity = document.TownCity,
                 County = document.County,
                 Postcode = document.Postcode,
