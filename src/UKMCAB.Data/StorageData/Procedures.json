@@ -2,8 +2,9 @@
     {
         "id": "c7b7c77c-848b-11ee-b962-0242ac120002",
         "name": "Schedule 3 – Module B Type examination",
-        "legislativeAreaId": [
-            "cdbeca52-8536-11ee-b9d1-0242ac120002"
+        "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+        "purposeOfAppointmentId": [
+            "e20c0935-0c7e-4342-8483-e0b43c0d6a3e"
         ],
         "productIds": [
             "fbaf7628-885b-11ee-b9d1-0242ac120002",
@@ -24,8 +25,9 @@
     {
         "id": "c7b7a13e-848b-11ee-b962-0242ac120002",
         "name": "Part 9 - Type examination",
-        "legislativeAreaId": [
-            "cdbed358-8536-11ee-b9d1-0242ac120002"
+        "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+        "purposeOfAppointmentId": [
+            "e20c0935-0c7e-4342-8483-e0b43c0d6a3e"
         ],
         "productIds": [
             "fbaf90c2-885b-11ee-b9d1-0242ac120002",
@@ -66,8 +68,9 @@
     {
         "id": "c7b778da-848b-11ee-b962-0242ac120002",
         "name": "Part 10 - Full quality assurance",
-        "legislativeAreaId": [
-            "cdbed358-8536-11ee-b9d1-0242ac120002"
+        "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+        "purposeOfAppointmentId": [
+            "e20c0935-0c7e-4342-8483-e0b43c0d6a3e"
         ],
         "productIds": [
             "fbaf90c2-885b-11ee-b9d1-0242ac120002",
@@ -108,9 +111,8 @@
     {
         "id": "b8580dc7-ad01-4f3e-8898-c8fbf98fc3b5",
         "name": "Schedule 3 – Module B Type examination",
-        "legislativeAreaId": [
-            "a59f88aa-c6ae-4c90-939b-89c16e478728"
-        ],
+        "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "ea6034c7-b363-499d-b032-4bd90563233c",
             "c76c346e-e1c5-4f1a-9184-091a3fdd937e",
@@ -140,9 +142,8 @@
     {
         "id": "36d8fb9b-8821-4d0e-b64c-51d55eabbb2b",
         "name": "Schedule 4 – Module H Conformity based on full quality assurance",
-        "legislativeAreaId": [
-            "a59f88aa-c6ae-4c90-939b-89c16e478728"
-        ],
+        "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "ea6034c7-b363-499d-b032-4bd90563233c",
             "c76c346e-e1c5-4f1a-9184-091a3fdd937e",
@@ -172,8 +173,9 @@
     {
         "id": "a24023e6-fe2f-4019-947e-21585ddf8920",
         "name": "Part 1 Type Examination",
-        "legislativeAreaId": [
-            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba",
+        "purposeOfAppointmentId": [
+            "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
         "categoryIds": [
@@ -185,8 +187,9 @@
     {
         "id": "dc78de09-e38c-48e0-a05e-f30adc8bbac9",
         "name": "Part 2 Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba",
+        "purposeOfAppointmentId": [
+            "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
         "categoryIds": [
@@ -197,8 +200,9 @@
     {
         "id": "ad7b9be0-1f32-4c5f-8e66-678aa1cddfbd",
         "name": "Part 3 Conformity to type based on product verification",
-        "legislativeAreaId": [
-            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba",
+        "purposeOfAppointmentId": [
+            "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
         "categoryIds": [
@@ -209,8 +213,9 @@
     {
         "id": "ed103d42-3b34-4c43-9f0a-3342479fd4f5",
         "name": "Part 4 Conformity to type based on internal production control plus supervised product Testing",
-        "legislativeAreaId": [
-            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba",
+        "purposeOfAppointmentId": [
+            "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
         "categoryIds": [
@@ -220,8 +225,9 @@
     {
         "id": "2587f80f-ff89-4419-9b80-8124aa8eaf77",
         "name": "Part 5 Conformity to type based on product quality assurance",
-        "legislativeAreaId": [
-            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba",
+        "purposeOfAppointmentId": [
+            "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
         "categoryIds": [
@@ -231,8 +237,9 @@
     {
         "id": "b0669ae7-db2a-4aef-97ed-e1458c309ffd",
         "name": "Part 7 Conformity based on unit verification",
-        "legislativeAreaId": [
-            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba",
+        "purposeOfAppointmentId": [
+            "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
         "categoryIds": [
@@ -245,8 +252,9 @@
     {
         "id": "9533c7b9-1cf1-44e5-87f9-d2334b7734cd",
         "name": "Part 7 Conformity based on unit verification.Receipt and retention of a Technical File by an Approved Body",
-        "legislativeAreaId": [
-            "fbf97235-0987-430c-a1d9-4439665aa9ba"
+        "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba",
+        "purposeOfAppointmentId": [
+            "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
         "categoryIds": [
@@ -256,9 +264,8 @@
     {
         "id": "0a7350be-19c8-463e-8255-21d6ea164240",
         "name": "Schedule 11: Type examination for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "7b870174-7b89-4420-a58f-037b175d7560"
@@ -267,9 +274,8 @@
     {
         "id": "63419410-1fde-45c6-bc22-4cab40460416",
         "name": "Schedule 11: Type Examination for safety components for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
             "ed227bf3-55cf-4dc9-b39d-34932be5c762",
@@ -287,9 +293,8 @@
     {
         "id": "71f24f44-265c-4542-9d1d-816cefa5bb4e",
         "name": "Schedule 12: Final inspection for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "7b870174-7b89-4420-a58f-037b175d7560"
@@ -298,9 +303,8 @@
     {
         "id": "1843f1ba-175b-4431-a0a1-4147b2b78555",
         "name": "Schedule 13: Conformity to type based on product quality assurance for safety components for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
             "ed227bf3-55cf-4dc9-b39d-34932be5c762",
@@ -318,9 +322,8 @@
     {
         "id": "018661a8-40cb-4247-97e1-98da40a8a08e",
         "name": "Schedule 14: Conformity based on full quality assurance for safety components for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
             "ed227bf3-55cf-4dc9-b39d-34932be5c762",
@@ -338,9 +341,8 @@
     {
         "id": "9d3d8a59-2a5a-40e7-aa40-643e37071faf",
         "name": "Schedule 15: Conformity based on unit verification for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "7b870174-7b89-4420-a58f-037b175d7560"
@@ -349,9 +351,8 @@
     {
         "id": "1259efe5-9b13-4de9-83d4-869f208de86a",
         "name": "Schedule 16: Conformity to type with random checking for safety components for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
             "ed227bf3-55cf-4dc9-b39d-34932be5c762",
@@ -369,9 +370,8 @@
     {
         "id": "f80dbfac-d0cd-4d4f-be41-57a4cbec2ec2",
         "name": "Schedule 17: Conformity to type based on product quality assurance for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "7b870174-7b89-4420-a58f-037b175d7560"
@@ -380,9 +380,8 @@
     {
         "id": "3ffbea95-da66-4e75-a932-4abb2f38207f",
         "name": "Schedule 18: Conformity based on full quality assurance plus design examination for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "7b870174-7b89-4420-a58f-037b175d7560"
@@ -391,9 +390,8 @@
     {
         "id": "cea6c4de-29dc-4fb2-8c5e-182497bb46ad",
         "name": "Schedule 19: Conformity to type based on production quality assurance for lifts",
-        "legislativeAreaId": [
-            "0fbca682-e49f-4e44-a0b3-7ea21714a1b4"
-        ],
+        "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "7b870174-7b89-4420-a58f-037b175d7560"
@@ -402,8 +400,9 @@
     {
         "id": "61f4fbfd-fa02-493c-9f01-b2347723e5dc",
         "name": "Part 10 – Module G Conformity based on unit verification",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -413,8 +412,9 @@
     {
         "id": "b9a37796-8d31-4a37-af11-4265203c27dc",
         "name": "Part 11 – Module H Conformity based on full quality assurance",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -424,8 +424,9 @@
     {
         "id": "7f0ab699-c5ff-47c9-8b9b-a42a3c943ffb",
         "name": "Part 12 – Module H1 Conformity based on full quality assurance plus design examination",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -435,8 +436,9 @@
     {
         "id": "3423e3dc-6fab-4a92-9db8-a8e3f388174a",
         "name": "Part 2 – Module A2 Internal production control plus supervised pressure equipment checks at random",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -446,8 +448,9 @@
     {
         "id": "d88aa4ce-f154-49a5-98af-bf807bd8ef3c",
         "name": "Part 3 – Module B Type Examination",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -458,8 +461,9 @@
     {
         "id": "17339cfa-2489-47f1-9cc0-c9977eaceb03",
         "name": "Part 4 – Module C2 Conformity to type based on internal production control plus supervised pressure equipment checks at random intervals",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -469,8 +473,9 @@
     {
         "id": "c50bea12-324a-4d87-b6fb-b59f8ae5f36b",
         "name": "Part 5 – Module D Conformity to type based on quality assurance in the production process",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -481,8 +486,9 @@
     {
         "id": "b691a0ec-7518-415e-8491-ef1f9fc3f24d",
         "name": "Part 6 – Module D1 Quality assurance of the production process",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -492,8 +498,9 @@
     {
         "id": "3ad75a71-a2f2-468a-aa67-885a323b821c",
         "name": "Part 7 – Module E Conformity to type based on pressure equipment quality assurance",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -503,8 +510,9 @@
     {
         "id": "bf5e99ca-835f-4a7f-a949-d4e0144e05d8",
         "name": "Part 8 – Module E1 Quality assurance of final pressure equipment inspection and testing",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -514,8 +522,9 @@
     {
         "id": "f6b0cc26-ba13-47e9-99a2-afa4273edef2",
         "name": "Part 9 – Module F Conformity to type based on pressure equipment verification",
-        "legislativeAreaId": [
-            "a4be7faf-5cd9-4b67-ad47-021a12319764"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -526,8 +535,9 @@
     {
         "id": "c2ad6e1f-d4f4-481d-a4e5-2c1ec87535f2",
         "name": "Regulation 50",
-        "legislativeAreaId": [
-            "a8343134-d1ff-43ea-9122-9dceb2e735b5"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
         ],
         "productIds": "",
         "categoryIds": [
@@ -537,9 +547,10 @@
     {
         "id": "6c2809f3-f4b8-4a9a-abd2-abb3eae60ff5",
         "name": "Schedule 2 (21) Approval of permanent joining Personnel",
-        "legislativeAreaId": [
-            "bd62c97a-ee35-48e9-ba44-48967cd95e41",
-            "4b143080-7f3b-462f-a201-b2f291e465a4"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "78e585b4-77e9-4773-8a5c-f1d492b91cb7",
+            "39881a4a-f322-4a92-9a55-dd9cbb9854fb"
         ],
         "productIds": "",
         "categoryIds": [
@@ -553,10 +564,11 @@
     {
         "id": "5a21d41f-b3c5-450d-8c9e-9584357267a7",
         "name": "Schedule 2 (21) Approval of permanent joining procedures",
-        "legislativeAreaId": [
-            "bd62c97a-ee35-48e9-ba44-48967cd95e41",
-            "4b143080-7f3b-462f-a201-b2f291e465a4",
-            "26706cbb-1443-4d61-a860-69cd36c1d68c"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "78e585b4-77e9-4773-8a5c-f1d492b91cb7",
+            "39881a4a-f322-4a92-9a55-dd9cbb9854fb",
+            "11d7babd-6526-4193-8537-2b0694093268"
         ],
         "productIds": "",
         "categoryIds": [
@@ -570,9 +582,10 @@
     {
         "id": "070b3b67-6fc3-4826-8b51-b73631271a12",
         "name": "Schedule 2 (22) Non destructive testing of permanent joining, approval of Personnel",
-        "legislativeAreaId": [
-            "26706cbb-1443-4d61-a860-69cd36c1d68c",
-            "4b143080-7f3b-462f-a201-b2f291e465a4"
+        "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
+        "purposeOfAppointmentId": [
+            "39881a4a-f322-4a92-9a55-dd9cbb9854fb",
+            "11d7babd-6526-4193-8537-2b0694093268"
         ],
         "productIds": "",
         "categoryIds": [
@@ -583,8 +596,9 @@
     {
         "id": "f722ba45-82fc-4142-8473-3a748b1213c2",
         "name": "Part 1 – Module B Design Type Examination",
-        "legislativeAreaId": [
-            "e3751919-8b26-4059-ae34-8540146e262a"
+        "legislativeAreaId": "e3751919-8b26-4059-ae34-8540146e262a",
+        "purposeOfAppointmentId": [
+            "2d9e0aae-9928-401d-b2f5-3a7638f82d66"
         ],
         "productIds": "",
         "categoryIds": [
@@ -594,8 +608,9 @@
     {
         "id": "d13d550d-97d8-456d-b95c-cebd3ab6f5d9",
         "name": "Part 1 – Module B Production Type examination",
-        "legislativeAreaId": [
-            "e3751919-8b26-4059-ae34-8540146e262a"
+        "legislativeAreaId": "e3751919-8b26-4059-ae34-8540146e262a",
+        "purposeOfAppointmentId": [
+            "2d9e0aae-9928-401d-b2f5-3a7638f82d66"
         ],
         "productIds": "",
         "categoryIds": [
@@ -605,9 +620,10 @@
     {
         "id": "98fe6c17-f771-415e-8825-21e46686743c",
         "name": "Part 2 – Module C1 Conformity to type based on internal production control plus supervised vessel testing",
-        "legislativeAreaId": [
-            "e3751919-8b26-4059-ae34-8540146e262a",
-            "d469755c-d57b-41d7-9c37-d383a952f237"
+        "legislativeAreaId": "e3751919-8b26-4059-ae34-8540146e262a",
+        "purposeOfAppointmentId": [
+            "2d9e0aae-9928-401d-b2f5-3a7638f82d66",
+            "44f843da-ea00-476c-a9a2-2be3d782aaf1"
         ],
         "productIds": "",
         "categoryIds": [
@@ -619,8 +635,9 @@
     {
         "id": "69f8ea36-6cdf-42c0-8f25-5c045b12caf3",
         "name": "Part 3 – Module C2 Conformity to type based on internal production control plus supervised vessel checks at random intervals",
-        "legislativeAreaId": [
-            "d469755c-d57b-41d7-9c37-d383a952f237"
+        "legislativeAreaId": "e3751919-8b26-4059-ae34-8540146e262a",
+        "purposeOfAppointmentId": [
+            "44f843da-ea00-476c-a9a2-2be3d782aaf1"
         ],
         "productIds": "",
         "categoryIds": [
@@ -630,8 +647,9 @@
     {
         "id": "92adf121-0dea-4b15-8a5a-90549244d316",
         "name": "Part 4 – Module C Conformity to type based on internal production control",
-        "legislativeAreaId": [
-            "d469755c-d57b-41d7-9c37-d383a952f237"
+        "legislativeAreaId": "e3751919-8b26-4059-ae34-8540146e262a",
+        "purposeOfAppointmentId": [
+            "44f843da-ea00-476c-a9a2-2be3d782aaf1"
         ],
         "productIds": "",
         "categoryIds": [
@@ -641,9 +659,8 @@
     {
         "id": "034200f8-57e1-4b57-8785-9997ee931f87",
         "name": "Point 1 – Module B Production Type examination",
-        "legislativeAreaId": [
-            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
-        ],
+        "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "44f34e2a-3db6-431b-88f4-232f74ca2be9",
             "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
@@ -670,9 +687,8 @@
     {
         "id": "b008378e-f899-49d2-9fb8-6789cdbda7d7",
         "name": "Point 2 – Module C2 Conformity to type based on internal production control plus supervised product checks at random intervals",
-        "legislativeAreaId": [
-            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
-        ],
+        "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "44f34e2a-3db6-431b-88f4-232f74ca2be9",
             "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
@@ -699,9 +715,8 @@
     {
         "id": "c56ac103-c23c-44e8-8246-ba727963eea7",
         "name": "Point 3 – Module D Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
-        ],
+        "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "44f34e2a-3db6-431b-88f4-232f74ca2be9",
             "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
@@ -728,9 +743,8 @@
     {
         "id": "fca6ed34-796d-460c-8358-2665f9f90c76",
         "name": "Point 4 – Module E Conformity to type based on product quality assurance",
-        "legislativeAreaId": [
-            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
-        ],
+        "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "44f34e2a-3db6-431b-88f4-232f74ca2be9",
             "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
@@ -757,9 +771,8 @@
     {
         "id": "96ac7579-1bce-49bb-bfc8-7602d9f1380e",
         "name": "Point 5 – Module F Conformity to type based on product verification",
-        "legislativeAreaId": [
-            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
-        ],
+        "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "44f34e2a-3db6-431b-88f4-232f74ca2be9",
             "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
@@ -786,9 +799,8 @@
     {
         "id": "b37c3a07-c9c5-47c4-8389-2c9e77bdad52",
         "name": "Point 6 – Module G Conformity based on unit verification",
-        "legislativeAreaId": [
-            "750cca10-c78a-496f-9adf-fc6ecaab0a3c"
-        ],
+        "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "44f34e2a-3db6-431b-88f4-232f74ca2be9",
             "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
@@ -815,9 +827,8 @@
     {
         "id": "582e48b3-f0dc-43bf-98a0-213bb21fdf9a",
         "name": "Schedule 9: Internal control of production with assessment of technical documentation and periodical checking ",
-        "legislativeAreaId": [
-            "55174916-ba65-49e8-9ad5-48a0321f4e9b"
-        ],
+        "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "a397272e-a13e-405c-ac54-c77064ef290e",
             "2ae322ec-d1e5-4b54-9365-294c8a362012",
@@ -847,9 +858,8 @@
     {
         "id": "256c10fd-94ff-45c0-8e63-d6f546d611c2",
         "name": "Schedule 10: Unit Verification",
-        "legislativeAreaId": [
-            "55174916-ba65-49e8-9ad5-48a0321f4e9b"
-        ],
+        "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "a397272e-a13e-405c-ac54-c77064ef290e",
             "2ae322ec-d1e5-4b54-9365-294c8a362012",
@@ -879,9 +889,8 @@
     {
         "id": "232201d0-9a4d-4271-8938-bcdc1959e3e3",
         "name": "Schedule 11: Full quality assurance",
-        "legislativeAreaId": [
-            "55174916-ba65-49e8-9ad5-48a0321f4e9b"
-        ],
+        "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "a397272e-a13e-405c-ac54-c77064ef290e",
             "2ae322ec-d1e5-4b54-9365-294c8a362012",
@@ -911,9 +920,8 @@
     {
         "id": "ab0fae73-b4db-42c6-b62a-0eefe3127515",
         "name": "Schedule 4 – Module B Type examination",
-        "legislativeAreaId": [
-            "32d80c5e-0314-483b-8985-a35d507cad52"
-        ],
+        "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "60d1244b-da14-45ce-9d9c-4c2d065b0f7e",
@@ -923,9 +931,8 @@
     {
         "id": "8c8a6e42-024d-4553-ad84-5e91cd4c8d4c",
         "name": "Schedule 5 Part 1 – Module C Conformity to type based on internal production control",
-        "legislativeAreaId": [
-            "32d80c5e-0314-483b-8985-a35d507cad52"
-        ],
+        "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "60d1244b-da14-45ce-9d9c-4c2d065b0f7e",
@@ -935,9 +942,8 @@
     {
         "id": "1f0ba129-c8c1-4314-9434-cdea5d07fe41",
         "name": "Schedule 5 Part 2 – Module D Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "32d80c5e-0314-483b-8985-a35d507cad52"
-        ],
+        "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "60d1244b-da14-45ce-9d9c-4c2d065b0f7e",
@@ -947,9 +953,8 @@
     {
         "id": "e2028f5c-497f-490d-9f4c-4eb47c864973",
         "name": "Schedule 5 Part 3 – Module E Conformity to type based on product quality assurance",
-        "legislativeAreaId": [
-            "32d80c5e-0314-483b-8985-a35d507cad52"
-        ],
+        "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "60d1244b-da14-45ce-9d9c-4c2d065b0f7e",
@@ -959,8 +964,9 @@
     {
         "id": "35b63cb9-4062-4088-8601-f4adf2d4b819",
         "name": "Module A1 Internal production control plus supervised product testing",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -973,8 +979,9 @@
     {
         "id": "a0882592-537d-4271-b32b-272d48c7432f",
         "name": "Module B Type examination",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -989,8 +996,9 @@
     {
         "id": "63c2d27b-a2e5-4543-a778-13739b08f537",
         "name": "Module C Conformity to type based on internal production control",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -1004,8 +1012,9 @@
     {
         "id": "6907371b-b14d-435b-81bd-f4eddcf506b0",
         "name": "Module C1 Conformity to type based on internal production control plus supervised product testing",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -1015,8 +1024,9 @@
     {
         "id": "adfb9b83-390d-4cc7-b304-6ca16ee5a536",
         "name": "Module D Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -1030,8 +1040,9 @@
     {
         "id": "527df19b-6fe8-4f14-b51e-bf708ca1b8d4",
         "name": "Module E Conformity to type based on product quality assurance",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -1045,8 +1056,9 @@
     {
         "id": "5d28a812-6a40-4ddf-b3dc-24926e98c4f3",
         "name": "Module F Conformity to type based on product verification",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -1060,8 +1072,9 @@
     {
         "id": "a49dbbaf-60c2-4e8e-b937-644b39fbd3a4",
         "name": "Module G Conformity based on unit verification",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -1079,8 +1092,9 @@
     {
         "id": "cfb3e95a-4f91-49eb-a09b-83c77ba9ea9a",
         "name": "Module H Conformity based on full quality assurance",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -1097,8 +1111,9 @@
     {
         "id": "fc112c8a-d77a-4ed6-82d2-40a53e5468ea",
         "name": "Schedule 5 Post Construction Assessment",
-        "legislativeAreaId": [
-            "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2"
+        "legislativeAreaId": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
+        "purposeOfAppointmentId": [
+            "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
         ],
         "productIds": "",
         "categoryIds": [
@@ -1108,9 +1123,10 @@
     {
         "id": "3fe89c2e-9424-43d7-9fbe-342788262345",
         "name": "Annex III – Module B Production Type examination",
-        "legislativeAreaId": [
-            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
-            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+        "purposeOfAppointmentId": [
+            "4301828e-2cc5-4aaa-9ce5-57d976ab72b0",
+            "04631829-0a38-48ef-8df2-012161e5fc3a"
         ],
         "productIds": [
             "e261df79-15c1-4a90-a650-ca5671224241",
@@ -1138,9 +1154,10 @@
     {
         "id": "992c0d70-b6c8-4e09-ac65-f605e4f816bb",
         "name": "Annex IV – Module D Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
-            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+        "purposeOfAppointmentId": [
+            "4301828e-2cc5-4aaa-9ce5-57d976ab72b0",
+            "04631829-0a38-48ef-8df2-012161e5fc3a"
         ],
         "productIds": [
             "e261df79-15c1-4a90-a650-ca5671224241",
@@ -1168,9 +1185,10 @@
     {
         "id": "a06a2138-3d8a-465a-949f-f058391d416e",
         "name": "Annex V – Module F Conformity to type based on subsystem or safety component verification",
-        "legislativeAreaId": [
-            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
-            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+        "purposeOfAppointmentId": [
+            "4301828e-2cc5-4aaa-9ce5-57d976ab72b0",
+            "04631829-0a38-48ef-8df2-012161e5fc3a"
         ],
         "productIds": [
             "e261df79-15c1-4a90-a650-ca5671224241",
@@ -1198,9 +1216,10 @@
     {
         "id": "c0aedf9b-d653-4a76-8ed9-5880da372f1f",
         "name": "Annex VI – Module G Conformity based on unit verification",
-        "legislativeAreaId": [
-            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
-            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+        "purposeOfAppointmentId": [
+            "4301828e-2cc5-4aaa-9ce5-57d976ab72b0",
+            "04631829-0a38-48ef-8df2-012161e5fc3a"
         ],
         "productIds": [
             "e261df79-15c1-4a90-a650-ca5671224241",
@@ -1228,9 +1247,10 @@
     {
         "id": "39ff3b85-f960-4b13-88b8-71fa3f8d4f1d",
         "name": "Annex VII – Module H1 Conformity based on full quality assurance plus design examination",
-        "legislativeAreaId": [
-            "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
-            "809c681b-fdad-4e84-8fb1-cba0a8383a5a"
+        "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+        "purposeOfAppointmentId": [
+            "4301828e-2cc5-4aaa-9ce5-57d976ab72b0",
+            "04631829-0a38-48ef-8df2-012161e5fc3a"
         ],
         "productIds": [
             "e261df79-15c1-4a90-a650-ca5671224241",
@@ -1258,8 +1278,9 @@
     {
         "id": "bb6e56e7-8a21-4b8e-8f77-376e3212a06c",
         "name": "Part 1 – Module B Type examination",
-        "legislativeAreaId": [
-            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        "legislativeAreaId": "e840c3d0-6153-4baa-82ab-0374b81d46fe",
+        "purposeOfAppointmentId": [
+            "02e70a30-eb78-44c4-a1cf-226943636300"
         ],
         "productIds": "",
         "categoryIds": ""
@@ -1267,8 +1288,9 @@
     {
         "id": "66ec016e-d86d-4c0e-9f25-cf08312fe578",
         "name": "Part 2 – Module C2 Conformity to type based on internal production control plus supervised product checks at random intervals",
-        "legislativeAreaId": [
-            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        "legislativeAreaId": "e840c3d0-6153-4baa-82ab-0374b81d46fe",
+        "purposeOfAppointmentId": [
+            "02e70a30-eb78-44c4-a1cf-226943636300"
         ],
         "productIds": "",
         "categoryIds": ""
@@ -1276,8 +1298,9 @@
     {
         "id": "e6d3e851-8644-431d-bc74-3aaeca2be713",
         "name": "Part 3 – Module D Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        "legislativeAreaId": "e840c3d0-6153-4baa-82ab-0374b81d46fe",
+        "purposeOfAppointmentId": [
+            "02e70a30-eb78-44c4-a1cf-226943636300"
         ],
         "productIds": "",
         "categoryIds": ""
@@ -1285,8 +1308,9 @@
     {
         "id": "c58cf4bf-5529-4535-bd4c-9179ede42c66",
         "name": "Part 4 – Module E Conformity to type based on product quality assurance",
-        "legislativeAreaId": [
-            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        "legislativeAreaId": "e840c3d0-6153-4baa-82ab-0374b81d46fe",
+        "purposeOfAppointmentId": [
+            "02e70a30-eb78-44c4-a1cf-226943636300"
         ],
         "productIds": "",
         "categoryIds": ""
@@ -1294,8 +1318,9 @@
     {
         "id": "48286c4e-5f4d-4f41-9712-5588434f977f",
         "name": "Part 5 – Module F Conformity to type based on product verification",
-        "legislativeAreaId": [
-            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        "legislativeAreaId": "e840c3d0-6153-4baa-82ab-0374b81d46fe",
+        "purposeOfAppointmentId": [
+            "02e70a30-eb78-44c4-a1cf-226943636300"
         ],
         "productIds": "",
         "categoryIds": ""
@@ -1303,8 +1328,9 @@
     {
         "id": "bdf9e4a3-a9a8-4f91-a27d-1a3d1728bcbd",
         "name": "Part 6 – Module G Conformity based on unit verification",
-        "legislativeAreaId": [
-            "e840c3d0-6153-4baa-82ab-0374b81d46fe"
+        "legislativeAreaId": "e840c3d0-6153-4baa-82ab-0374b81d46fe",
+        "purposeOfAppointmentId": [
+            "02e70a30-eb78-44c4-a1cf-226943636300"
         ],
         "productIds": "",
         "categoryIds": ""
@@ -1312,9 +1338,8 @@
     {
         "id": "1284df07-13b9-453d-b4a5-1842b0e4c22e",
         "name": "Part 1 – Module B Type Examination",
-        "legislativeAreaId": [
-            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
-        ],
+        "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "e13d13e0-2ba9-48f8-b610-71e45f569c98",
@@ -1330,9 +1355,8 @@
     {
         "id": "253af46c-173e-4a30-81fb-80fca482f3fe",
         "name": "Part 2 – Module C2 Conformity to type based on internal production control plus supervised product checks at random intervals",
-        "legislativeAreaId": [
-            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
-        ],
+        "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "e13d13e0-2ba9-48f8-b610-71e45f569c98",
@@ -1348,9 +1372,8 @@
     {
         "id": "c911e82c-a1c4-483b-877d-ff8f5a5b89e3",
         "name": "Part 3 – Module D Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
-        ],
+        "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "e13d13e0-2ba9-48f8-b610-71e45f569c98",
@@ -1366,9 +1389,8 @@
     {
         "id": "10a71b68-1b21-46e2-9d95-628d0d04f075",
         "name": "Part 4 – Module E Conformity to type based on product quality assurance",
-        "legislativeAreaId": [
-            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
-        ],
+        "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "e13d13e0-2ba9-48f8-b610-71e45f569c98",
@@ -1384,9 +1406,8 @@
     {
         "id": "f71ae5a5-5b1e-444d-8fbd-9417a0864d94",
         "name": "Part 5 – Module G Conformity based on unit verification",
-        "legislativeAreaId": [
-            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
-        ],
+        "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "e13d13e0-2ba9-48f8-b610-71e45f569c98",
@@ -1402,9 +1423,8 @@
     {
         "id": "152fbc84-5946-46f7-a999-72e1bf9852c7",
         "name": "Part 6 – Module H Conformity based on full quality assurance",
-        "legislativeAreaId": [
-            "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
-        ],
+        "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "6311172b-be1f-434e-ab2d-6dcb3e535237"
@@ -1413,9 +1433,8 @@
     {
         "id": "1dc494fe-1e35-40fb-9c51-3a36abbc7bb1",
         "name": "Schedule 6 – Module B Type examination",
-        "legislativeAreaId": [
-            "8e686be5-727f-4d70-875f-58109fd03856"
-        ],
+        "legislativeAreaId": "8e686be5-727f-4d70-875f-58109fd03856",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "850c2596-d786-43f0-82a4-2f93da7a0965"
@@ -1424,9 +1443,8 @@
     {
         "id": "28c0d155-5f8a-4a28-919d-e92d3567642f",
         "name": "Module B (Paragraph 1) Type examination",
-        "legislativeAreaId": [
-            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
-        ],
+        "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "59f41f70-4ce2-4773-88d8-65344611418d",
@@ -1441,9 +1459,8 @@
     {
         "id": "cdda1360-4b43-4a7d-a2d9-5213189806bf",
         "name": "Module D (Paragraph 2) Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
-        ],
+        "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "59f41f70-4ce2-4773-88d8-65344611418d",
@@ -1458,9 +1475,8 @@
     {
         "id": "2bc14898-bc8f-45f8-a5b2-634361b819b8",
         "name": "Module D1 (Paragraph 3) Quality assurance of the production process",
-        "legislativeAreaId": [
-            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
-        ],
+        "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "59f41f70-4ce2-4773-88d8-65344611418d",
@@ -1474,9 +1490,8 @@
     {
         "id": "413ef6fa-e6dd-4f2a-9b53-21930eb7cbad",
         "name": "Module F (Paragraph 4) Conformity to type based on product verification",
-        "legislativeAreaId": [
-            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
-        ],
+        "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "59f41f70-4ce2-4773-88d8-65344611418d",
@@ -1491,9 +1506,8 @@
     {
         "id": "d0a6e0b0-d40b-4b29-a8d9-7bbb17bbad2e",
         "name": "Module F1 (Paragraph 5) Conformity based on product verification",
-        "legislativeAreaId": [
-            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
-        ],
+        "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "59f41f70-4ce2-4773-88d8-65344611418d",
@@ -1507,9 +1521,8 @@
     {
         "id": "8e38110b-71fe-43bb-86ad-b6a2ddcb208d",
         "name": "Module G (Paragraph 6) Conformity based on unit verification",
-        "legislativeAreaId": [
-            "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
-        ],
+        "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "59f41f70-4ce2-4773-88d8-65344611418d",
@@ -1523,9 +1536,8 @@
     {
         "id": "ae7165cb-c681-4149-99ff-510b8d874bd9",
         "name": "Module A2 Internal production control plus supervised instrument checks at random intervals",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "c275b78b-9fca-41ef-bab5-07843f853e75"
         ],
@@ -1536,9 +1548,8 @@
     {
         "id": "e22ac592-5836-4085-b167-bf6bfe5683c0",
         "name": "Module B Type examination",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "00b51206-f885-42d3-af20-85a158bbb51a",
             "bfede408-1331-4887-9263-d3c9cb57cf5d",
@@ -1585,9 +1596,8 @@
     {
         "id": "1768deda-37f5-40de-b01d-0fca8d175e95",
         "name": "Module D Conformity to type based on quality assurance of the production process",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "00b51206-f885-42d3-af20-85a158bbb51a",
             "bfede408-1331-4887-9263-d3c9cb57cf5d",
@@ -1634,9 +1644,8 @@
     {
         "id": "73a7e977-76e0-4ea2-b23a-e5f9ccf90b10",
         "name": "Module D1 Quality assurance of the production process",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
             "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
@@ -1655,9 +1664,8 @@
     {
         "id": "60189b59-43dc-46a5-98a2-e640deabaf5e",
         "name": "Module E Conformity to type based on instrument quality assurance",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
             "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
@@ -1680,9 +1688,8 @@
     {
         "id": "faeb122b-5ea5-44be-b50d-023a1d2d0815",
         "name": "Module E1 Quality assurance of final instrument inspection and testing",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "c275b78b-9fca-41ef-bab5-07843f853e75"
         ],
@@ -1693,9 +1700,8 @@
     {
         "id": "f816268e-f543-4458-9d96-2e2d171a6c0f",
         "name": "Module F Conformity to type based on product verification",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "00b51206-f885-42d3-af20-85a158bbb51a",
             "bfede408-1331-4887-9263-d3c9cb57cf5d",
@@ -1739,9 +1745,8 @@
     {
         "id": "c8766a28-9535-4e95-95bd-240940d5d34f",
         "name": "Module F1 Conformity based on product verification",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": "",
         "categoryIds": [
             "3aad4982-6876-4820-ad1f-90110eb3800f",
@@ -1751,9 +1756,8 @@
     {
         "id": "8d3342e8-49d3-4efa-a6fb-21866ebf797a",
         "name": "Module G Conformity based on unit verification",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "00b51206-f885-42d3-af20-85a158bbb51a",
             "bfede408-1331-4887-9263-d3c9cb57cf5d",
@@ -1793,9 +1797,8 @@
     {
         "id": "bd4ef09f-278f-4c74-8f4d-f253d66adbfa",
         "name": "Module H Conformity based on full quality assurance",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "ac70a10d-b899-447c-a8da-b76dea0a5274",
             "c275b78b-9fca-41ef-bab5-07843f853e75"
@@ -1808,9 +1811,8 @@
     {
         "id": "c871a453-f001-4e47-a9d1-7cdf3804e010",
         "name": "Module H1 Conformity based on full quality assurance plus design examination",
-        "legislativeAreaId": [
-            "92728722-d721-4da0-8d9a-f22f3829a551"
-        ],
+        "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+        "purposeOfAppointmentId": "",
         "productIds": [
             "00b51206-f885-42d3-af20-85a158bbb51a",
             "bfede408-1331-4887-9263-d3c9cb57cf5d",

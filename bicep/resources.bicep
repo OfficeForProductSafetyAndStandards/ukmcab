@@ -325,6 +325,36 @@ resource cosmosDbContainerLegislativeArea 'Microsoft.DocumentDB/databaseAccounts
   }
 }
 
+resource cosmosDbContainerPurposeOfAppointment 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'purpose-of-appointment'
+  properties: {
+    resource: {
+      id: 'purpose-of-appointment'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
 
 resource cosmosDbContainerProcedures  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
   parent: cosmosDbDatabase
