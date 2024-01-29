@@ -338,6 +338,8 @@ namespace UKMCAB.Core.Services.CAB
 
             await RefreshCaches(publishedVersion.CABId, publishedVersion.URLSlug);
 
+            await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
+
             await RecordStatsAsync();
             return publishedVersion;
         }
