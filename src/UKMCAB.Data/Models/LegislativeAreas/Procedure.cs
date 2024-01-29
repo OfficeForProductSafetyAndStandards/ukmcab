@@ -8,7 +8,7 @@
 
         public Guid LegislativeAreaId { get; set; }
 
-        public Guid PurposeOfAppointmentId { get; set; }
+        public List<Guid> PurposeOfAppointmentIds { get; set; }
 
         public List<Guid> CategoryIds { get; set; }
 
