@@ -129,7 +129,7 @@ public class DeclineUnpublishCABController : Controller
             {
                 "CABUrl",
                 UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = cabId }))
             },
             { "Reason", reason }
         };
