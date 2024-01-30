@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Ganss.Xss;
+using System.Text;
 using System.Web;
 using UKMCAB.Data.Models.Users;
 
@@ -27,6 +28,20 @@ namespace UKMCAB.Data.Models
         {
             var sbComment = new StringBuilder();
             var sbPublicComment = new StringBuilder();
+
+            HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
+            htmlSanitizer.AllowedTags.Clear();
+
+            if (!string.IsNullOrWhiteSpace(comment))
+            {
+                comment = htmlSanitizer.Sanitize(comment);
+            }
+
+            if (!string.IsNullOrWhiteSpace(publicComment))
+            {
+                publicComment = htmlSanitizer.Sanitize(publicComment);
+            }
+
             if (previousDocument == null)
             {
                 sbComment.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>", publishedDocument.AppointmentDate.HasValue ? publishedDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00" : "Not provided");
