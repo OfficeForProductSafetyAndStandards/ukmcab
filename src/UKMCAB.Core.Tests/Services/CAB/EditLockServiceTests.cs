@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bogus;
 using Moq;
@@ -37,10 +38,10 @@ public class EditLockServiceTests
         var testCabId = _faker.Random.Word();
         var testUserId = _faker.Random.Word();
 
-        _distCache.Setup(c => c.GetAsync<Dictionary<string, string>>(It.IsAny<string>(), -1))
-            .ReturnsAsync(new Dictionary<string, string>()
+        _distCache.Setup(c => c.GetAsync<Dictionary<string, Tuple<string, DateTime>>>(It.IsAny<string>(), -1))
+            .ReturnsAsync(new Dictionary<string, Tuple<string, DateTime>>
             {
-                { testCabId, testUserId }
+                { testCabId, new Tuple<string, DateTime>(testUserId, DateTime.Now.AddMinutes(10)) }
             });
 
         Assert.AreEqual(testUserId, await _sut.LockExistsForCabAsync(testCabId));
@@ -94,9 +95,10 @@ public class EditLockServiceTests
         var testCabId = _faker.Random.Word();
         var testUserId = _faker.Random.Word();
         await _sut.SetAsync(testCabId, testUserId);
+        _distCache.Invocations.Clear();
         await _sut.RemoveEditLockForCabAsync(testCabId);
         _distCache.Verify(
-            c => c.SetAsync(It.IsAny<string>(), It.Is<Dictionary<string, string>>(d => !d.ContainsValue(testCabId)),
+            c => c.SetAsync("CabEditLock", It.Is<Dictionary<string, Tuple<string, DateTime>>>(d => d.Count == 0),
                 TimeSpan.FromHours(1), -1),
             Times.Once);
     }
