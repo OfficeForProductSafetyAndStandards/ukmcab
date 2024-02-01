@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Ganss.Xss;
+using System.Text;
 using System.Web;
 using UKMCAB.Data.Models.Users;
 
@@ -27,6 +28,20 @@ namespace UKMCAB.Data.Models
         {
             var sbComment = new StringBuilder();
             var sbPublicComment = new StringBuilder();
+
+            HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
+            htmlSanitizer.AllowedTags.Clear();
+
+            if (!string.IsNullOrWhiteSpace(comment))
+            {
+                comment = htmlSanitizer.Sanitize(comment);
+            }
+
+            if (!string.IsNullOrWhiteSpace(publicComment))
+            {
+                publicComment = htmlSanitizer.Sanitize(publicComment);
+            }
+
             if (previousDocument == null)
             {
                 sbComment.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>", publishedDocument.AppointmentDate.HasValue ? publishedDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00" : "Not provided");
@@ -56,20 +71,22 @@ namespace UKMCAB.Data.Models
             if (sbComment.Length > 0)
             {
                 sbComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+                if (string.IsNullOrWhiteSpace(comment))
+                    IsUserInputComment = false;
             }
 
             if (sbPublicComment.Length > 0)
             {
                 sbPublicComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
-                IsUserEnteredPublicComment = false;
+                if (string.IsNullOrWhiteSpace(publicComment))
+                    IsUserEnteredPublicComment = false;
             }
 
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
             publicComment = !string.IsNullOrEmpty(publicComment) ? $"<p class=\"govuk-body\">{publicComment}</p>" : string.Empty;
 
-            Comment = string.Join("", comment, HttpUtility.HtmlEncode(sbComment.ToString()));
-            PublicComment = sbPublicComment.Length > 0 ? string.Join("", publicComment, HttpUtility.HtmlEncode(sbPublicComment.ToString())) : null;
-            IsUserInputComment = false;
+            Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbComment.ToString()));
+            PublicComment = string.Join("", HttpUtility.HtmlEncode(publicComment), HttpUtility.HtmlEncode(sbPublicComment.ToString()));
         }
 
         private static void CalculateChangesToScheduleOrDocument(Document publishedDocument, Document? previousDocument, StringBuilder sb, List<FileUpload> previousFileUploads, List<FileUpload> currentFileUploads, string docType)

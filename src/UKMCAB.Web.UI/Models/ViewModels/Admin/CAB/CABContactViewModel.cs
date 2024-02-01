@@ -27,9 +27,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             IsPointOfContactPublicDisplay = document.IsPointOfContactPublicDisplay;
             RegisteredOfficeLocation = document.RegisteredOfficeLocation;
             DocumentStatus = document.StatusValue;
-            IsCompleted = document.AddressLine1.IsNotNullOrEmpty() && document.TownCity.IsNotNullOrEmpty() 
-                            && document.Postcode.IsNotNullOrEmpty() && document.Country.IsNotNullOrEmpty() 
-                            && document.Phone.IsNotNullOrEmpty() && document.RegisteredOfficeLocation.IsNotNullOrEmpty();
+            IsCompleted = Validator.TryValidateObject(this, new ValidationContext(this, null, null), null, true);
         }
 
         public string? CABId { get; set; }
