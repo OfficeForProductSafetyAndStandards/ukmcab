@@ -426,9 +426,18 @@ else if (Model.IsEditLocked)
                         {
                             <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
-                        <div class="cab-result-status-label cab-result-completed">
-                            COMPLETED
-                        </div>
+                        @if (Model.CABProductScheduleDetailsViewModel.IsCompleted)
+                        {
+                            <div class="cab-result-status-label cab-result-completed">
+                                COMPLETED
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cab-result-status-label cab-result-not-completed">
+                                NOT COMPLETED
+                            </div>
+                        }
                     </dd>
                 </div>
             </dl>
@@ -441,10 +450,10 @@ else if (Model.IsEditLocked)
                             Schedule (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.Schedules.Any())
+                            @if (Model.CABProductScheduleDetailsViewModel.Schedules.Any())
                             {
                                 <ol class="govuk-list govuk-list--number">
-                                    @foreach (var schedule in Model.Schedules)
+                                    @foreach (var schedule in Model.CABProductScheduleDetailsViewModel.Schedules)
                                     {
                                         <li class="cab-summary-schedule-item">
                                             <div>
@@ -479,9 +488,18 @@ else if (Model.IsEditLocked)
                         {
                             <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
-                        <div class="cab-result-status-label cab-result-completed">
-                            COMPLETED
-                        </div>
+                        @if (Model.CABSupportingDocumentDetailsViewModel.IsCompleted)
+                        {
+                            <div class="cab-result-status-label cab-result-completed">
+                                COMPLETED
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="cab-result-status-label cab-result-not-completed">
+                                NOT COMPLETED
+                            </div>
+                        }                       
                     </dd>
                 </div>
             </dl>
@@ -493,10 +511,10 @@ else if (Model.IsEditLocked)
                             Document (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.Documents.Any())
+                            @if (Model.CABSupportingDocumentDetailsViewModel.Documents.Any())
                             {
                                 <ol class="govuk-list govuk-list--number">
-                                    @foreach (var document in Model.Documents)
+                                    @foreach (var document in Model.CABSupportingDocumentDetailsViewModel.Documents)
                                     {
                                         <li class="cab-summary-schedule-item">
                                             <div>

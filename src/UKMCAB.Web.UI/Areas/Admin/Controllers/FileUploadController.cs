@@ -132,21 +132,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = latestVersion.CABId });
         }
 
-        private bool ValidateUploadFile(IFormFile? file, string contentType, string acceptedFileTypes, List<FileUpload> currentDocuments)
-        {
-
-            var isValidFile = _fileUploadUtils.ValidateUploadFileAndAddAnyModelStateError(ModelState, file, contentType, SchedulesOptions.AcceptedFileTypes);
-
-            currentDocuments ??= new List<FileUpload>();
-
-            if (currentDocuments.Any(s => s.FileName.Equals(file.FileName)))
-            {
-                ModelState.AddModelError("File", $"{file.FileName} has already been uploaded. Select the existing file and the Use file again option, or upload a different file.");
-                isValidFile = false;
-            }
-            return isValidFile;
-        }
-
         [HttpGet]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
         public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? indexOfSelectedFile, string? fromAction)
@@ -201,52 +186,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 DocumentStatus = latestVersion.StatusValue
             });
         }
-
-        private static void AddSelectedVMToUploadedFileViewModels(List<FileViewModel> uploadedFileViewModels, FileUpload selectedViewModel)
-        {
-            var uploadedFileToDuplicate = new FileViewModel
-            {
-                FileName = selectedViewModel.FileName,
-                UploadDateTime = selectedViewModel.UploadDateTime,
-                Label = selectedViewModel.FileName,
-                LegislativeArea = string.Empty,
-                Category = string.Empty,
-                IsSelected = false,
-                IsDuplicated = true,
-            };
-
-            uploadedFileViewModels.Add(uploadedFileToDuplicate);
-        }
-
-        private static void UpdateShowBannerAndSuccessBanner(List<FileViewModel>? uploadedFiles, out bool showBanner, out string successBannerContent)
-        {
-            showBanner = false;
-            successBannerContent = "The file has been used again";
-            if (uploadedFiles != null)
-            {
-                if (uploadedFiles.Any(f => f.IsDuplicated))
-                {
-                    showBanner = true;
-                }
-                else if (uploadedFiles.Any(f => f.IsReplaced))
-                {
-                    showBanner = true;
-                    successBannerContent = "The replacement file has been uploaded";
-                }
-            }
-        }
-
-        private static void UpdateFileVMIsReplacedPropertyAndLoad(List<FileUpload> latestFileUploads, List<FileViewModel> uploadedFiles, int indexOfFileToReplace)
-        {
-            for (int i = 0; i < latestFileUploads.Count; i++)
-            {
-                var s = latestFileUploads[i];
-                var uploadedfile = new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea, Category = s.Category };
-                uploadedfile.IsReplaced = i == indexOfFileToReplace;
-                uploadedFiles.Add(uploadedfile);
-            }
-        }
-
+        
         [HttpPost]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
         public async Task<IActionResult> SchedulesList(string id, string submitType, FileUploadViewModel model, bool fromSummary)
@@ -309,7 +249,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            AddLabelAndLegislativeModelStateErrors(model);
+            this.AddLegislativeLabelAndFileModelStateErrors(model);
+
+            if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
+            {
+                this.AddLegislativeSelectionModelStateErrors(model);
+            }
 
             if (ModelState.IsValid)
             {
@@ -357,177 +302,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestDocument.StatusValue
             });
-        }
-
-        private void AddLabelAndLegislativeModelStateErrors(FileUploadViewModel model)
-        {
-            if (model.UploadedFiles != null && model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
-            {
-                var index = 0;
-                foreach (var uploadedFile in model.UploadedFiles)
-                {
-                    if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
-                    {
-                        ModelState.AddModelError($"UploadedFiles[{index}].LegislativeArea", "Select a legislative area");
-                    }
-
-                    index++;
-                }
-            }
-
-            if (model.UploadedFiles != null && model.UploadedFiles.Any())
-            {
-                var duplicatedLabels = model.UploadedFiles.GroupBy(x => x.Label).Where(g => g.Count() > 1)
-                                        .Select(y => y.Key).ToList();
-
-                if (duplicatedLabels.Count > 0)
-                {
-                    var index = 0;
-                    foreach (var uploadedFile in model.UploadedFiles)
-                    {
-                        foreach (var uploadedLabel in duplicatedLabels)
-                        {
-                            if (!string.IsNullOrWhiteSpace(uploadedFile.Label) && uploadedFile.Label.Equals(uploadedLabel) && uploadedFile.IsDuplicated)
-                            {
-                                ModelState.AddModelError($"UploadedFiles[{index}].Label", "A file already exists with this title. Change the title or upload a different file.");
-                            }
-                        }
-                        index++;
-                    }
-                }
-            }
-        }
-        private List<FileViewModel> GetFilesSelectedInViewModel(List<FileViewModel> filesInViewModel)
-        {
-
-            return filesInViewModel.Where(f => f.IsSelected).ToList() ?? new List<FileViewModel>();
-        }
-        private void AddSelectAFileModelStateError(string submitType, string modelKey, IEnumerable<FileViewModel> selectedViewModels)
-        {
-            if (submitType == Constants.SubmitType.Remove && !selectedViewModels.Any())
-            {
-                ModelState.AddModelError(modelKey, "Select a file to remove");
-            }
-        }
-
-        private async Task AbortFileUploadAndReturnAsync(string submitType, FileUploadViewModel model, Document latestDocument, string docType)
-        {
-            if (submitType != null && submitType.Equals(Constants.SubmitType.Cancel))
-            {
-                var incompleteFileUploads = new List<FileViewModel>();
-
-                if (latestDocument.Schedules != null && docType.Equals(nameof(latestDocument.Schedules)))
-                {
-                    if (model.UploadedFiles != null)
-                    {
-                        incompleteFileUploads = model.UploadedFiles.Where(f => string.IsNullOrWhiteSpace(f.LegislativeArea)).ToList();
-                    }
-
-                    var selectedFileUploads = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Schedules);
-                    if (selectedFileUploads.Any())
-                    {
-                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
-                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-                    }
-                }
-                else if (latestDocument.Documents != null && docType.Equals(nameof(latestDocument.Documents)))
-                {
-                    if (model.UploadedFiles != null)
-                    {
-                        incompleteFileUploads = model.UploadedFiles.Where(f => string.IsNullOrWhiteSpace(f.Category)).ToList();
-                    }
-                    var selectedFileUploads = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Documents);
-                    if (selectedFileUploads.Any())
-                    {
-                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Documents));
-                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-                    }
-                }
-            }
-        }
-        private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
-        {
-            var newSchedules = new List<FileUpload>();
-            if (fileViewModels != null && latestDocument.Schedules != null)
-            {
-                foreach (var fileViewModel in fileViewModels)
-                {
-                    var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
-                    newSchedules.Add(new FileUpload
-                    {
-                        FileName = fileViewModel.FileName,
-                        BlobName = current.BlobName,
-                        Label = fileViewModel.Label!,
-                        LegislativeArea = fileViewModel.LegislativeArea,
-                        UploadDateTime = current.UploadDateTime
-                    });
-                }
-            }
-
-            if (newSchedules.Any())
-            {
-                if (latestDocument.LegislativeAreas == null)
-                {
-                    latestDocument.LegislativeAreas = new List<string>();
-                }
-                var legislativeAreasFromDocs = newSchedules.Select(sch => sch.LegislativeArea).ToList();
-
-                if (legislativeAreasFromDocs.Except(latestDocument.LegislativeAreas).Any())
-                {
-                    var newLAList = legislativeAreasFromDocs.Union(latestDocument.LegislativeAreas).OrderBy(la => la).ToList();
-                    latestDocument.LegislativeAreas = newLAList;
-                }
-            }
-
-            var fileUploadComparer = new FileUploadComparer();
-            var newNotOld = newSchedules.Except(latestDocument.Schedules, fileUploadComparer);
-            var oldNotNew = latestDocument.Schedules.Except(newSchedules, fileUploadComparer);
-            if (newNotOld.Any() || oldNotNew.Any())
-            {
-                latestDocument.Schedules = newSchedules;
-                return true;
-            }
-
-            return false;
-        }
-
-        private bool UpdateDocumentFiles(Document latestDocument, List<FileViewModel> fileViewModels)
-        {
-            var newDocuments = new List<FileUpload>();
-            if (fileViewModels != null)
-            {
-                foreach (var fileViewModel in fileViewModels)
-                {
-                    var current = latestDocument.Documents.First(fu => fu.FileName.Equals(fileViewModel.FileName));
-                    newDocuments.Add(new FileUpload
-                    {
-                        FileName = fileViewModel.FileName,
-                        BlobName = current.BlobName,
-                        Label = fileViewModel.Label,
-                        Category = fileViewModel.Category,
-                        UploadDateTime = current.UploadDateTime
-                    });
-                }
-            }
-            var fileUploadComparer = new FileUploadComparer();
-            latestDocument.Schedules ??= new();
-            var newNotOld = newDocuments.Except(latestDocument.Schedules, fileUploadComparer);
-            var oldNotNew = latestDocument.Schedules.Except(newDocuments, fileUploadComparer);
-            if (newNotOld.Any() || oldNotNew.Any())
-            {
-                latestDocument.Documents = newDocuments;
-                return true;
-            }
-
-            return false;
-        }
-        private IActionResult SaveDraft(Document document)
-        {
-            TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
-            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = document.CABId });
-        }
+        }      
 
         [HttpGet]
         [Route("admin/cab/documents-upload/{id}")]
@@ -719,7 +494,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            AddLabelAndCategoryModelStateErrors(model);
+            this.AddCategoryLabelAndFileModelStateErrors(model);
+
+            if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
+            {
+                this.AddCategorySelectionModelStateErrors(model);
+            }
 
             if (ModelState.IsValid)
             {
@@ -766,34 +546,86 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             });
         }
 
-        private void AddLabelAndCategoryModelStateErrors(FileUploadViewModel model)
+        #region Private methods
+
+        private bool ValidateUploadFile(IFormFile? file, string contentType, string acceptedFileTypes, List<FileUpload> currentDocuments)
         {
-            if (model.UploadedFiles != null && model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.Category)))
+
+            var isValidFile = _fileUploadUtils.ValidateUploadFileAndAddAnyModelStateError(ModelState, file, contentType, SchedulesOptions.AcceptedFileTypes);
+
+            currentDocuments ??= new List<FileUpload>();
+
+            if (currentDocuments.Any(s => s.FileName.Equals(file.FileName)))
             {
-                var index = 0;
-                foreach (var uploadedFile in model.UploadedFiles)
+                ModelState.AddModelError("File", $"{file.FileName} has already been uploaded. Select the existing file and the Use file again option, or upload a different file.");
+                isValidFile = false;
+            }
+            return isValidFile;
+        }
+
+        private static void AddSelectedVMToUploadedFileViewModels(List<FileViewModel> uploadedFileViewModels, FileUpload selectedViewModel)
+        {
+            var uploadedFileToDuplicate = new FileViewModel
+            {
+                FileName = selectedViewModel.FileName,
+                UploadDateTime = selectedViewModel.UploadDateTime,
+                Label = selectedViewModel.FileName,
+                LegislativeArea = string.Empty,
+                Category = string.Empty,
+                IsSelected = false,
+                IsDuplicated = true,
+            };
+
+            uploadedFileViewModels.Add(uploadedFileToDuplicate);
+        }
+
+        private static void UpdateShowBannerAndSuccessBanner(List<FileViewModel>? uploadedFiles, out bool showBanner, out string successBannerContent)
+        {
+            showBanner = false;
+            successBannerContent = "The file has been used again";
+            if (uploadedFiles != null)
+            {
+                if (uploadedFiles.Any(f => f.IsDuplicated))
                 {
-                    if (string.IsNullOrWhiteSpace(uploadedFile.Category))
-                    {
-                        ModelState.AddModelError($"UploadedFiles[{index}].Category", "Select a category");
-                    }
-                    index++;
+                    showBanner = true;
+                }
+                else if (uploadedFiles.Any(f => f.IsReplaced))
+                {
+                    showBanner = true;
+                    successBannerContent = "The replacement file has been uploaded";
                 }
             }
+        }
 
-            if (model.UploadedFiles != null && model.UploadedFiles.Any())
+        private static void UpdateFileVMIsReplacedPropertyAndLoad(List<FileUpload> latestFileUploads, List<FileViewModel> uploadedFiles, int indexOfFileToReplace)
+        {
+            for (int i = 0; i < latestFileUploads.Count; i++)
             {
-                var duplicatedLabels = model.UploadedFiles.GroupBy(x => x.Label).Where(g => g.Count() > 1)
-                                        .Select(y => y.Key).ToList();
+                var s = latestFileUploads[i];
+                var uploadedfile = new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea, Category = s.Category };
+                uploadedfile.IsReplaced = i == indexOfFileToReplace;
+                uploadedFiles.Add(uploadedfile);
+            }
+        }
 
-                if (duplicatedLabels.Count > 0)
+        private void AddLegislativeLabelAndFileModelStateErrors(FileUploadViewModel model)
+        {   
+            if (model.UploadedFiles != null && model.UploadedFiles.Any())
+            {   
+
+                var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { FileName= x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
+
+                if (duplicatedFileAndLabels != null && duplicatedFileAndLabels.Count > 0)
                 {
                     var index = 0;
                     foreach (var uploadedFile in model.UploadedFiles)
                     {
-                        foreach (var uploadedLabel in duplicatedLabels)
+                        foreach (var uploadedFileLabel in duplicatedFileAndLabels)
                         {
-                            if (uploadedFile.Label!.Equals(uploadedLabel) && uploadedFile.IsDuplicated)
+                            var fileName = uploadedFileLabel.FileName;
+                            var labelName = uploadedFileLabel.Label;                            
+
+                            if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) && uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                             {
                                 ModelState.AddModelError($"UploadedFiles[{index}].Label", "A file already exists with this title. Change the title or upload a different file.");
                             }
@@ -802,8 +634,99 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
-                var filesWithRepeatedNamesAndCategories = model.UploadedFiles.GroupBy(x => new { x.FileName, x.Category }).Where(g => g.Count() > 1)
+                var duplicatedLabelsAndLegislativeAreas = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { Label = x.Label!.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
+
+                if (duplicatedLabelsAndLegislativeAreas != null && duplicatedLabelsAndLegislativeAreas.Count > 0)
+                {
+                    var index = 0;
+                    foreach (var uploadedFile in model.UploadedFiles)
+                    {
+                        foreach (var uploadedFileLabel in duplicatedLabelsAndLegislativeAreas)
+                        {   
+                            var labelName = uploadedFileLabel.Label;
+                            var legislativeArea = uploadedFileLabel.LegislativeArea;
+
+                            if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) && (uploadedFile.LegislativeArea??string.Empty).Equals(legislativeArea, StringComparison.OrdinalIgnoreCase))
+                            {
+                                ModelState.AddModelError($"UploadedFiles[{index}].Label", "A label already exists in this legislative area. Change the title or legislative area.");
+                            }
+                        }
+                        index++;
+                    }
+                }
+
+                var filesWithRepeatedNamesAndLegislativeAreas = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea)).GroupBy(x => new { FileName = x.FileName.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
+
+                if (filesWithRepeatedNamesAndLegislativeAreas != null && filesWithRepeatedNamesAndLegislativeAreas.Count > 0)
+                {
+                    var index = 0;
+                    foreach (var uploadedFile in model.UploadedFiles)
+                    {
+                        foreach (var repeatedFiles in filesWithRepeatedNamesAndLegislativeAreas)
+                        {
+                            var fileName = repeatedFiles.FileName;
+                            var legislativeArea = repeatedFiles.LegislativeArea;
+
+                            if (uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase) && (uploadedFile.LegislativeArea??string.Empty).Equals(legislativeArea, StringComparison.OrdinalIgnoreCase))
+                            {
+                                ModelState.AddModelError($"UploadedFiles[{index}].LegislativeArea", "The file already exists in this legislative area.");
+                            }
+                        }
+                        index++;
+                    }
+                }
+            }
+        }
+
+        private void AddCategoryLabelAndFileModelStateErrors(FileUploadViewModel model)
+        {
+            if (model.UploadedFiles != null && model.UploadedFiles.Any())
+            {  
+                var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.Category) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { FileName=  x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1)
                                         .Select(y => y.Key).ToList();
+
+                if (duplicatedFileAndLabels != null && duplicatedFileAndLabels.Count > 0)
+                {
+                    var index = 0;
+                    foreach (var uploadedFile in model.UploadedFiles)
+                    {
+                        foreach (var uploadedFileLabel in duplicatedFileAndLabels)
+                        {
+                            var fileName = uploadedFileLabel.FileName;
+                            var labelName = uploadedFileLabel.Label;
+
+                            if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) && uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
+                            {
+                                ModelState.AddModelError($"UploadedFiles[{index}].Label", "A file already exists with this title. Change the title or upload a different file.");
+                            }
+                        }
+                        index++;
+                    }
+                }
+
+                var duplicatedLabelsAndCategories = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.Category) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { Label = x.Label!.ToLower(), Category = x.Category!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
+
+                if (duplicatedLabelsAndCategories != null && duplicatedLabelsAndCategories.Count > 0)
+                {
+                    var index = 0;
+                    foreach (var uploadedFile in model.UploadedFiles)
+                    {
+                        foreach (var uploadedFileLabel in duplicatedLabelsAndCategories)
+                        {
+                            var labelName = uploadedFileLabel.Label;
+                            var category = uploadedFileLabel.Category;
+
+                            if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) && (uploadedFile.Category??string.Empty).Equals(category, StringComparison.OrdinalIgnoreCase))
+                            {
+                                ModelState.AddModelError($"UploadedFiles[{index}].Label", "A label already exists in this category. Change the title or category.");
+                            }
+                        }
+                        index++;
+                    }
+                }
+
+                var filesWithRepeatedNamesAndCategories = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.Category)).GroupBy(x => new { FileName =  x.FileName!.ToLower(), Category =  x.Category!.ToLower() }).Where(g => g.Count() > 1)
+                                       .Select(y => y.Key).ToList();
 
                 if (filesWithRepeatedNamesAndCategories != null && filesWithRepeatedNamesAndCategories.Count > 0)
                 {
@@ -815,7 +738,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             var fileName = repeatedFiles.FileName;
                             var category = repeatedFiles.Category;
 
-                            if (uploadedFile.FileName.Equals(fileName) && uploadedFile.Category!.Equals(category) && uploadedFile.IsDuplicated)
+                            if (uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase) && (uploadedFile.Category??string.Empty).Equals(category, StringComparison.OrdinalIgnoreCase))
                             {
                                 ModelState.AddModelError($"UploadedFiles[{index}].Category", "The file already exists in this category.");
                             }
@@ -825,5 +748,178 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
         }
+
+        private void AddLegislativeSelectionModelStateErrors(FileUploadViewModel model)
+        {
+            if (model.UploadedFiles != null && model.UploadedFiles.Any())
+            {
+                if (model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
+                {
+                    var index = 0;
+                    foreach (var uploadedFile in model.UploadedFiles)
+                    {
+                        if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
+                        {
+                            ModelState.AddModelError($"UploadedFiles[{index}].LegislativeArea", "Select a legislative area");
+                        }
+
+                        index++;
+                    }
+                }
+            }
+        }
+
+        private void AddCategorySelectionModelStateErrors(FileUploadViewModel model)
+        {
+            if (model.UploadedFiles != null && model.UploadedFiles.Any())
+            {
+                if (model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.Category)))
+                {
+                    var index = 0;
+                    foreach (var uploadedFile in model.UploadedFiles)
+                    {
+                        if (string.IsNullOrWhiteSpace(uploadedFile.Category))
+                        {
+                            ModelState.AddModelError($"UploadedFiles[{index}].Category", "Select a category");
+                        }
+                        index++;
+                    }
+                }
+            }
+        }
+
+        private List<FileViewModel> GetFilesSelectedInViewModel(List<FileViewModel> filesInViewModel)
+        {
+
+            return filesInViewModel.Where(f => f.IsSelected).ToList() ?? new List<FileViewModel>();
+        }
+        private void AddSelectAFileModelStateError(string submitType, string modelKey, IEnumerable<FileViewModel> selectedViewModels)
+        {
+            if (submitType == Constants.SubmitType.Remove && !selectedViewModels.Any())
+            {
+                ModelState.AddModelError(modelKey, "Select a file to remove");
+            }
+        }
+
+        private async Task AbortFileUploadAndReturnAsync(string submitType, FileUploadViewModel model, Document latestDocument, string docType)
+        {
+            if (submitType != null && submitType.Equals(Constants.SubmitType.Cancel))
+            {
+                var incompleteFileUploads = new List<FileViewModel>();
+
+                if (latestDocument.Schedules != null && docType.Equals(nameof(latestDocument.Schedules)))
+                {
+                    if (model.UploadedFiles != null)
+                    {
+                        incompleteFileUploads = model.UploadedFiles.Where(f => string.IsNullOrWhiteSpace(f.LegislativeArea)).ToList();
+                    }
+
+                    var selectedFileUploads = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Schedules);
+                    if (selectedFileUploads.Any())
+                    {
+                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Schedules));
+                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                    }
+                }
+                else if (latestDocument.Documents != null && docType.Equals(nameof(latestDocument.Documents)))
+                {
+                    if (model.UploadedFiles != null)
+                    {
+                        incompleteFileUploads = model.UploadedFiles.Where(f => string.IsNullOrWhiteSpace(f.Category)).ToList();
+                    }
+                    var selectedFileUploads = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(incompleteFileUploads, latestDocument.Documents);
+                    if (selectedFileUploads.Any())
+                    {
+                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedFileUploads, latestDocument, nameof(latestDocument.Documents));
+                        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                    }
+                }
+            }
+        }
+        private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
+        {
+            var newSchedules = new List<FileUpload>();
+            if (fileViewModels != null && latestDocument.Schedules != null)
+            {
+                foreach (var fileViewModel in fileViewModels)
+                {
+                    var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
+                    newSchedules.Add(new FileUpload
+                    {
+                        FileName = fileViewModel.FileName,
+                        BlobName = current.BlobName,
+                        Label = fileViewModel.Label!,
+                        LegislativeArea = fileViewModel.LegislativeArea,
+                        UploadDateTime = current.UploadDateTime
+                    });
+                }
+            }
+
+            if (newSchedules.Any())
+            {
+                if (latestDocument.LegislativeAreas == null)
+                {
+                    latestDocument.LegislativeAreas = new List<string>();
+                }
+                var legislativeAreasFromDocs = newSchedules.Select(sch => sch.LegislativeArea).ToList();
+
+                if (legislativeAreasFromDocs.Except(latestDocument.LegislativeAreas).Any())
+                {
+                    var newLAList = legislativeAreasFromDocs.Union(latestDocument.LegislativeAreas).OrderBy(la => la).ToList();
+                    latestDocument.LegislativeAreas = newLAList;
+                }
+            }
+
+            var fileUploadComparer = new FileUploadComparer();
+            var newNotOld = newSchedules.Except(latestDocument.Schedules, fileUploadComparer);
+            var oldNotNew = latestDocument.Schedules.Except(newSchedules, fileUploadComparer);
+            if (newNotOld.Any() || oldNotNew.Any())
+            {
+                latestDocument.Schedules = newSchedules;
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool UpdateDocumentFiles(Document latestDocument, List<FileViewModel> fileViewModels)
+        {
+            var newDocuments = new List<FileUpload>();
+            if (fileViewModels != null)
+            {
+                foreach (var fileViewModel in fileViewModels)
+                {
+                    var current = latestDocument.Documents.First(fu => fu.FileName.Equals(fileViewModel.FileName));
+                    newDocuments.Add(new FileUpload
+                    {
+                        FileName = fileViewModel.FileName,
+                        BlobName = current.BlobName,
+                        Label = fileViewModel.Label,
+                        Category = fileViewModel.Category,
+                        UploadDateTime = current.UploadDateTime
+                    });
+                }
+            }
+            var fileUploadComparer = new FileUploadComparer();
+            latestDocument.Schedules ??= new();
+            var newNotOld = newDocuments.Except(latestDocument.Schedules, fileUploadComparer);
+            var oldNotNew = latestDocument.Schedules.Except(newDocuments, fileUploadComparer);
+            if (newNotOld.Any() || oldNotNew.Any())
+            {
+                latestDocument.Documents = newDocuments;
+                return true;
+            }
+
+            return false;
+        }
+        private IActionResult SaveDraft(Document document)
+        {
+            TempData[Constants.TempDraftKey] = $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = document.CABId });
+        }       
+       
+        #endregion
     }
 }
