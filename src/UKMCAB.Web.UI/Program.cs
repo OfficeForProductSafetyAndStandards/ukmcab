@@ -40,6 +40,10 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Web.UI.Services.Subscriptions;
+using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.CosmosDb;
+using UKMCAB.Data.CosmosDb.Utilities;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -123,6 +127,13 @@ builder.Services.AddSingleton<IWorkflowTaskService, WorkflowTaskService>();
 builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
 builder.Services.AddSingleton<IEditLockService, EditLockService>();
+
+var cosmosClient = CosmosClientFactory.Create(cosmosDbConnectionString);
+builder.Services.AddSingleton<IReadOnlyRepository<LegislativeArea>>(new ReadOnlyRepository<LegislativeArea>(cosmosClient, new CosmosFeedIterator(), "legislative-areas"));
+builder.Services.AddSingleton<IReadOnlyRepository<PurposeOfAppointment>>(new ReadOnlyRepository<PurposeOfAppointment>(cosmosClient, new CosmosFeedIterator(), "purpose-of-appointment"));
+builder.Services.AddSingleton<IReadOnlyRepository<Category>>(new ReadOnlyRepository<Category>(cosmosClient, new CosmosFeedIterator(), "categories"));
+builder.Services.AddSingleton<IReadOnlyRepository<Product>>(new ReadOnlyRepository<Product>(cosmosClient, new CosmosFeedIterator(), "products"));
+builder.Services.AddSingleton<IReadOnlyRepository<Procedure>>(new ReadOnlyRepository<Procedure>(cosmosClient, new CosmosFeedIterator(), "procedures"));
 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();
