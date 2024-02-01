@@ -450,7 +450,7 @@ else if (Model.IsEditLocked)
                             Schedule (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.CABProductScheduleDetailsViewModel?.Schedules?.Count > 0)
+                            @if (Model.CABProductScheduleDetailsViewModel.Schedules.Any())
                             {
                                 <ol class="govuk-list govuk-list--number">
                                     @foreach (var schedule in Model.CABProductScheduleDetailsViewModel.Schedules)
@@ -511,7 +511,7 @@ else if (Model.IsEditLocked)
                             Document (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.CABSupportingDocumentDetailsViewModel?.Documents?.Count > 0)
+                            @if (Model.CABSupportingDocumentDetailsViewModel.Documents.Any())
                             {
                                 <ol class="govuk-list govuk-list--number">
                                     @foreach (var document in Model.CABSupportingDocumentDetailsViewModel.Documents)
