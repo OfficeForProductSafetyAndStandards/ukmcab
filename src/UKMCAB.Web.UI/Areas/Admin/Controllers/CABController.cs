@@ -16,6 +16,8 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeAreas;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -39,6 +41,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CabSummary = "cab.summary";
             public const string CabPublish = "cab.publish";
             public const string CabGovernmentUserNotes = "cab.governmentusernotes";
+            public const string AddLegislativeArea = "cab.addlegislativearea";
         }
 
         public CABController(
@@ -551,6 +554,32 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         };
             
             return View(model);
+        }
+        
+        [HttpGet("admin/cab/legislativearea/{id}", Name = Routes.AddLegislativeArea)]
+        public async Task<IActionResult> AddLegislativeArea(string id, string? returnUrl)
+        {
+            var model = new CabLegislativeAreaViewModel
+            {
+                CABId = id,
+                LegislativeAreas = await this.GetItems(),
+                ReturnUrl = returnUrl,
+            };
+
+            return View(model);
+        }
+
+        private async Task<List<SelectListItem>> GetItems()
+        {
+            var list =  new List<SelectListItem>()
+            {
+                new SelectListItem ("Select", "0"),
+                new SelectListItem("Item1", "1"),
+                new SelectListItem("Item2", "2"),
+                new SelectListItem("Item3", "3"),
+            };
+
+            return await Task.FromResult(list);
         }
 
 
