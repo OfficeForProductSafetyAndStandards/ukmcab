@@ -20,7 +20,7 @@ public class LegislativeAreaDetailsController : Controller
     [HttpGet("details", Name = Routes.LegislativeAreaDetails)]
     public async Task<IActionResult> Details()
     {
-        var vm = new LegislativeAreaViewModel(Title: "Legislative area details");
+        var vm = new LegislativeAreaDetailViewModel(Title: "Legislative area details");
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/Details.cshtml", vm);
     }
