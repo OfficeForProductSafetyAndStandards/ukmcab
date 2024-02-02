@@ -1,10 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
-using UKMCAB.Data.Models;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeAreas
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
-    public class CabProcedureViewModel : CabLegislativeAreaBaseViewModel
+    public class ProcedureViewModel : LegislativeAreaBaseViewModel
     {
         [Required(ErrorMessage = "Select an applicable conformity assessment procedure")]
         public IEnumerable<string>? SelectedProcedureIds { get; set; }

@@ -1,17 +1,14 @@
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.ComponentModel.DataAnnotations;
+using UKMCAB.Data.Models;
 
-public record LegislativeAreaViewModel(
-    string? Title
-) : BasicPageModel(Title)
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
-    public bool? IsProvisionalLegislativeArea { get; init; }
-    public string? AppointmentDateDay { get; init; }
-    public string? AppointmentDateMonth { get; init; }
-    public string? AppointmentDateYear { get; init; }
-    public string AppointmentDate => $"{AppointmentDateDay}/{AppointmentDateMonth}/{AppointmentDateYear}";
-    public string? ReviewDateDay { get; init; }
-    public string? ReviewDateMonth { get; init; }
-    public string? ReviewDateYear { get; init; }
-    public string ReviewDate => $"{ReviewDateDay}/{ReviewDateMonth}/{ReviewDateYear}";
-    public string? Reason { get; init; }
+    public class LegislativeAreaViewModel : LegislativeAreaBaseViewModel
+    {
+        [Required(ErrorMessage = "Select a legislative area")]
+        public string? SelectedLegislativeAreaId { get; set; }
+
+        public IEnumerable<SelectListItem>? LegislativeAreas { get; set; }
+    }
 }

@@ -16,7 +16,7 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeAreas;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
@@ -559,7 +559,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpGet("admin/cab/legislativearea/{id}", Name = Routes.AddLegislativeArea)]
         public async Task<IActionResult> AddLegislativeArea(string id, string? returnUrl)
         {
-            var model = new CabLegislativeAreaViewModel
+            var model = new LegislativeAreaViewModel
             {
                 CABId = id,
                 LegislativeAreas = await this.GetItems(),

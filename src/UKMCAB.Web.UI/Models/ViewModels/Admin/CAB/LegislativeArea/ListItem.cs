@@ -1,4 +1,4 @@
-﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeAreas
+﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class ListItem
     {

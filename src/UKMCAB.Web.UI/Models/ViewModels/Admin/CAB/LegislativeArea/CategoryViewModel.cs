@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeAreas
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
-    public class CabCategoryViewModel : CabLegislativeAreaBaseViewModel
+    public class CategoryViewModel : LegislativeAreaBaseViewModel
     {
         [Required(ErrorMessage = "Select a product category")]
         public string? SelectedCategoryId { get; set; }
