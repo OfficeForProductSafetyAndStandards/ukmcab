@@ -1,5 +1,6 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using System.Collections;
 using System.Linq.Expressions;
 using UKMCAB.Data.CosmosDb.Utilities;
 
@@ -25,7 +26,21 @@ public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
         _container = _cosmosClient.GetContainer(DataConstants.CosmosDb.Database, containerId);
     }
 
-    public async Task<ICollection<T>> QueryAsync(Expression<Func<T, bool>> predicate)
+    public async Task<IEnumerable<T>> GetAllAsync()
+    {
+        var feedIterator = _container.GetItemQueryIterator<T>();
+
+        var list = new List<T>();
+        while (feedIterator.HasMoreResults)
+        {
+            var response = await feedIterator.ReadNextAsync();
+            list.AddRange(response.Resource.Select(r => r));
+        }
+
+        return list;
+    }
+
+    public async Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate)
     {
         var query = _container.GetItemLinqQueryable<T>().Where(predicate);
         var feedIterator = _cosmosFeedIterator.GetFeedIterator<T>(query);

@@ -44,6 +44,8 @@ using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.CosmosDb;
 using UKMCAB.Data.CosmosDb.Utilities;
+using UKMCAB.Core.Mappers;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,6 +103,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
 builder.Services.AddAntiforgery(x => x.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest);
 builder.Services.AddHsts(x => x.MaxAge = TimeSpan.FromDays(370));
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile).GetTypeInfo().Assembly);
+
 builder.Services.AddSingleton(new BasicAuthenticationOptions 
 { 
     Password = builder.Configuration["BasicAuthPassword"], 
@@ -139,6 +143,7 @@ builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddTransient<IFileUploadUtils, FileUploadUtils>();
+builder.Services.AddTransient<ILegislativeAreaService, LegislativeAreaService>();
 
 builder.Services.AddCustomHttpErrorHandling();
 builder.Services.AddGovUkFrontend();
