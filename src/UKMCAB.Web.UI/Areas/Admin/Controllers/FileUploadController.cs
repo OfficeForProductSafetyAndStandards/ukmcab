@@ -314,11 +314,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
             // Pre-populate model for edit
-            latestVersion.Documents ??= new List<FileUpload>();
-            if (latestVersion.Documents.Count >= 10)
-            {
-                return RedirectToAction("DocumentsList", fromSummary ? new { id, fromSummary = "true" } : new { id });
-            }
+            latestVersion.Documents ??= new List<FileUpload>();            
 
             var model = new FileUploadViewModel()
             {
