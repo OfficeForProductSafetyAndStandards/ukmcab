@@ -37,6 +37,41 @@ public class ReadOnlyRepositoryTests
     }
 
     [Test]
+    public async Task ReadOnlyRepository_GetAllAsync_ShouldReturnAllEntitiesFromCosmosContainer()
+    {
+        // Arrange
+
+        // Set up the FeedResponse to be returned by the FeedIterator.ReadNextAsync method - i.e. a single product.
+        List<Product> resultOfReadNextAsync = new List<Product>()
+        {
+            new Product { Id = Guid.NewGuid(), Name = "product" },
+        };
+        Mock<FeedResponse<Product>> mockResponse = new Mock<FeedResponse<Product>>();
+        mockResponse.Setup(r => r.Resource).Returns(resultOfReadNextAsync);
+
+        // These lines of code will replicate two products being returned from the container.
+        Mock<FeedIterator<Product>> mockIterator = new Mock<FeedIterator<Product>>();
+        mockIterator.Setup(q => q.ReadNextAsync(It.IsAny<CancellationToken>()))
+            .ReturnsAsync(() => mockResponse.Object);
+        mockIterator.SetupSequence(q => q.HasMoreResults)
+            .Returns(true)
+            .Returns(true)
+            .Returns(false);
+
+        _mockContainer.Setup(x => x.GetItemQueryIterator<Product>(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<QueryRequestOptions>()))
+            .Returns(mockIterator.Object);
+
+        // Act
+        var products = await _repository.GetAllAsync();
+
+        // Assert
+        // The above mocks will result in a list of 2 products being returned.
+        mockIterator.Verify(q => q.ReadNextAsync(It.IsAny<CancellationToken>()), Times.Exactly(2));
+        mockIterator.Verify(q => q.HasMoreResults, Times.Exactly(3));
+        Assert.AreEqual(2, products.Count());
+    }
+
+    [Test]
     public async Task ReadOnlyRepository_QueryAsync_ShouldPassQueryThroughToCosmosContainer()
     {
         // Arrange
@@ -93,4 +128,21 @@ public class ReadOnlyRepositoryTests
         _mockCosmosClient.Verify(x => x.GetContainer(It.IsAny<string>(), "products"), Times.Once);
         _mockContainer.Verify(x => x.ReadItemAsync<Product>(productId.ToString(), It.IsAny<PartitionKey>(), It.IsAny<ItemRequestOptions>(), It.IsAny<CancellationToken>()), Times.Once);
     }
+
+    //[Test]
+    //public async Task ReadOnlyRepository_GetAsync_ShouldPassIdThroughToCosmosContainer()
+    //{
+    //    // Arrange
+    //    var productId = Guid.NewGuid();
+
+    //    _mockContainer.Setup(x => x.ReadItemAsync<Product>(productId.ToString(), It.IsAny<PartitionKey>(), It.IsAny<ItemRequestOptions>(), It.IsAny<CancellationToken>()))
+    //        .ReturnsAsync(() => null);
+
+    //    // Act
+    //    var returnedProduct = _repository.GetAsync(productId.ToString());
+
+    //    // Assert
+    //    _mockCosmosClient.Verify(x => x.GetContainer(It.IsAny<string>(), "products"), Times.Once);
+    //    _mockContainer.Verify(x => x.ReadItemAsync<Product>(productId.ToString(), It.IsAny<PartitionKey>(), It.IsAny<ItemRequestOptions>(), It.IsAny<CancellationToken>()), Times.Once);
+    //}
 }
