@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
-    public class SubProductViewModel : LegislativeAreaBaseViewModel
+    public class ProductViewModel : LegislativeAreaBaseViewModel
     {
         [Required(ErrorMessage = "Select a product")]
         public string? SelectedproductId { get; set; }
