@@ -6,7 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
     public class PurposeOfAppointmentViewModel : LegislativeAreaBaseViewModel
     {
         [Required(ErrorMessage = "Select a purpose of appointment")]
-        public string? SelectedPurposeOfAppointmentId { get; set; }
+        public Guid? SelectedPurposeOfAppointmentId { get; set; }
 
         public ListItem? LegislativeArea { get; set; }
 

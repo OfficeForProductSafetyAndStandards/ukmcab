@@ -555,33 +555,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             return View(model);
         }
-        
-        [HttpGet("admin/cab/legislativearea/{id}", Name = Routes.AddLegislativeArea)]
-        public async Task<IActionResult> AddLegislativeArea(string id, string? returnUrl)
-        {
-            var model = new LegislativeAreaViewModel
-            {
-                CABId = id,
-                LegislativeAreas = await this.GetItems(),
-                ReturnUrl = returnUrl,
-            };
-
-            return View(model);
-        }
-
-        private async Task<List<SelectListItem>> GetItems()
-        {
-            var list =  new List<SelectListItem>()
-            {
-                new SelectListItem ("Select", "0"),
-                new SelectListItem("Item1", "1"),
-                new SelectListItem("Item2", "2"),
-                new SelectListItem("Item3", "3"),
-            };
-
-            return await Task.FromResult(list);
-        }
-
 
         /// <summary>
         /// Sends an email and notification for Request to publish a cab

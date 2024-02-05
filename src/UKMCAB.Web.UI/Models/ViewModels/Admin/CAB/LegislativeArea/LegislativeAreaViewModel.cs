@@ -6,8 +6,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class LegislativeAreaViewModel : LegislativeAreaBaseViewModel
     {
+        public Guid? CABId { get; set; }
+
         [Required(ErrorMessage = "Select a legislative area")]
-        public string? SelectedLegislativeAreaId { get; set; }
+        public Guid? SelectedLegislativeAreaId { get; set; }
 
         public IEnumerable<SelectListItem>? LegislativeAreas { get; set; }
     }

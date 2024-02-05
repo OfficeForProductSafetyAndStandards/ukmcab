@@ -14,4 +14,6 @@ public record LegislativeAreaDetailViewModel(
     public string? ReviewDateYear { get; init; }
     public string ReviewDate => $"{ReviewDateDay}/{ReviewDateMonth}/{ReviewDateYear}";
     public string? Reason { get; init; }
+
+    public ListItem? LegislativeArea { get; set; }
 }
