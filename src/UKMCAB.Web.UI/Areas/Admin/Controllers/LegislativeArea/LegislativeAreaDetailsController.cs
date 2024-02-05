@@ -14,7 +14,7 @@ using System.Linq;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
 
-[Area("admin"), Route("admin/legislative-area"), Authorize]
+[Area("admin"), Route("admin/cab/legislative-area"), Authorize]
 public class LegislativeAreaDetailsController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
@@ -24,7 +24,7 @@ public class LegislativeAreaDetailsController : Controller
     public static class Routes
     {
         public const string LegislativeAreaDetails = "legislative.area.details";
-        public const string LegislativeAreaAdd = "legislative.area.add";
+        public const string LegislativeAreaAdd = "legislative.area.add-legislativearea";
     }
     public LegislativeAreaDetailsController(
         ICABAdminService cabAdminService,            
@@ -37,7 +37,7 @@ public class LegislativeAreaDetailsController : Controller
         _legislativeAreaService = legislativeAreaService;
     }
     
-    [HttpGet("details", Name = Routes.LegislativeAreaDetails)]
+    [HttpGet("details/{id}", Name = Routes.LegislativeAreaDetails)]
     public async Task<IActionResult> Details(Guid id)
     {
         var vm = new LegislativeAreaDetailViewModel(Title: "Legislative area details");
@@ -45,7 +45,7 @@ public class LegislativeAreaDetailsController : Controller
         return View("~/Areas/Admin/views/CAB/LegislativeArea/Details.cshtml", vm);
     }
 
-    [HttpGet("admin/cab/legislativearea/{id}", Name = Routes.LegislativeAreaAdd)]
+    [HttpGet("add/{id}", Name = Routes.LegislativeAreaAdd)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl)
     {
         var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreas();
@@ -53,21 +53,21 @@ public class LegislativeAreaDetailsController : Controller
         var vm = new LegislativeAreaViewModel
         {
             CABId = id,
-            LegislativeAreas = legislativeareas.Select(x => new SelectListItem(){ Text = x.Name, Value = x.Id.ToString() }),
+            LegislativeAreas = await this.GetLegislativeSelectListItemsAsync(),
             ReturnUrl = returnUrl,
         };
 
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/SelectLegislativeArea.cshtml", vm);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
     }
 
-    [HttpPost("admin/cab/legislativearea/{id}", Name = Routes.LegislativeAreaAdd)]
+    [HttpPost("add/{id}", Name = Routes.LegislativeAreaAdd)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, LegislativeAreaViewModel vm, string submitType)
     {
         if (ModelState.IsValid)
         {
             // to do save legislative area/scope of appointment;
 
-            if(submitType == Constants.SubmitType.Continue)
+            if (submitType == Constants.SubmitType.Continue)
             {
                 return RedirectToRoute(Routes.LegislativeAreaDetails, new { id });
             }
@@ -79,10 +79,19 @@ public class LegislativeAreaDetailsController : Controller
             // save as draft
             else
             {
-                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
-            }            
+                return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
+            }
         }
+        else
+        {
+            vm.LegislativeAreas = await this.GetLegislativeSelectListItemsAsync();
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
+        }
+    }
 
-        return View(vm);
+    private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync()
+    {
+        var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreas();
+        return legislativeareas.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
     }
 }
