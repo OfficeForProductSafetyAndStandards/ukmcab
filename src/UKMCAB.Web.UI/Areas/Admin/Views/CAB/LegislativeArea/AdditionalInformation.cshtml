@@ -11,7 +11,6 @@
     </div>
 }
 
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">Create a CAB</span>
@@ -28,13 +27,13 @@
                         Is this a provisional legislative area?
                     </label>
                 </h3>
-                <p class="govuk-error-message">
-                    <span asp-validation-for="IsProvisionalLegislativeArea" class="govuk-error-message"></span>
-                </p>
                 <div id="legislative-area-hint" class="govuk-hint">
                     A provisional legislative area does not have a product schedule and
                     it will be shown as provisional on the CAB profile.
                 </div>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="IsProvisionalLegislativeArea" class="govuk-error-message"></span>
+                </p>
                 <div class="govuk-radios" data-module="govuk-radios" id="IsProvisionalLegislativeArea">
                     <div class="govuk-radios__item">
                         <input class="govuk-radios__input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.IsProvisionalLegislativeArea))" id="LegislativeAreaYes" asp-for="IsProvisionalLegislativeArea" type="radio" value="true">
@@ -51,9 +50,9 @@
                 </div>
             </div>
 
-            <partial name="~/Areas/admin/Views/CAB/Partials/_AppointmentDate.cshtml" model="Model.AppointmentDate" />
-             <partial name="~/Areas/admin/Views/CAB/Partials/_reviewDate.cshtml" model="Model.ReviewDate" />
-            
+            <partial name="~/Areas/admin/Views/CAB/Partials/_AppointmentDate.cshtml" model="Model.AppointmentDate"/>
+            <partial name="~/Areas/admin/Views/CAB/Partials/_reviewDate.cshtml" model="Model.ReviewDate"/>
+
             <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Reason))">
                 <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
                     <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
@@ -64,7 +63,7 @@
                     </govuk-character-count-hint>
                 </govuk-character-count>
             </div>
-            
+
             <div class="govuk-button-group">
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
                     Save and continue
