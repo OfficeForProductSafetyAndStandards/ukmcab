@@ -1,0 +1,47 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Shared.HelperDate
+<div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Date))">
+    <fieldset class="govuk-fieldset" role="group" aria-describedby="review-date-hint">
+        <h3 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--s" asp-for="Date">
+                Review date (optional)
+            </label>
+        </h3>
+        <p class="govuk-error-message">
+            <span asp-validation-for="Date" class="govuk-error-message"></span>
+        </p>
+        <div id="review-date-hint" class="govuk-hint">
+            For example, 27 3 2007
+        </div>
+        <div class="govuk-date-input" id="review-date">
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="DateDay" id="ReviewDate">
+                        Day
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.DateDay))" asp-for="DateDay" type="text" inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="DateMonth">
+                        Month
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-2 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.DateMonth))" asp-for="DateMonth" type="text" inputmode="numeric">
+                </div>
+            </div>
+            <div class="govuk-date-input__item">
+                <div class="govuk-form-group">
+                    <label class="govuk-label govuk-date-input__label" asp-for="DateYear">
+                        Year
+                    </label>
+                    <input class="govuk-input govuk-date-input__input govuk-input--width-4 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.DateYear))" asp-for="DateYear" type="text" inputmode="numeric">
+                </div>
+            </div>
+        </div>
+        <div id="add-18-button">
+            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Add18">
+                Add 18 months from today
+            </button>
+        </div>
+    </fieldset>
+</div>
