@@ -10,6 +10,7 @@ public class LegislativeAreaDetailsController : Controller
     public static class Routes
     {
         public const string LegislativeAreaDetails = "legislative.area.details";
+        public const string LegislativeAreaSelected = "legislative.area.selected";
         
     }
     public LegislativeAreaDetailsController()
@@ -23,5 +24,13 @@ public class LegislativeAreaDetailsController : Controller
         var vm = new LegislativeAreaDetailViewModel(Title: "Legislative area details");
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/Details.cshtml", vm);
+    }
+    
+    [HttpGet("selected-legislative-area", Name = Routes.LegislativeAreaSelected)]
+    public async Task<IActionResult> SelectedLegislativeArea()
+    {
+        var vm = new LegislativeAreaDetailViewModel(Title: "Legislative areas added");
+        
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/SelectedLegislativeArea.cshtml", vm);
     }
 }

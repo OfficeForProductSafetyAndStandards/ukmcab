@@ -1,0 +1,170 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.SelectedLegislativeAreasViewModel
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <govuk-back-link href="/" />
+            </div>
+        </div>
+    </div>
+}
+
+@*
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">       
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <span class="govuk-caption-m">Legislative area added</span>
+                    <h1 class="govuk-fieldset__heading">
+                        Legislative area added
+                    </h1>
+                </legend>
+                <div class="govuk-checkboxes ukmcab-padding-top-20" data-module="govuk-checkboxes">
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="waste" name="waste" type="checkbox" value="carcasses">
+                        <label class="govuk-label govuk-checkboxes__label" for="waste">
+                            Noise emissions in the environment by equipment for use outdoors
+                        </label>
+                    </div>
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="waste-2" name="waste" type="checkbox" value="mines">
+                        <label class="govuk-label govuk-checkboxes__label" for="waste-2">
+                            Non-automatic weighting instruments
+                        </label>
+                    </div>
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+*@
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <span class="govuk-caption-m">Legislative area added</span>
+                    <h1 class="govuk-fieldset__heading">
+                        Legislative area added
+                    </h1>
+                </legend>
+                <div class="govuk-checkboxes ukmcab-padding-top-20" data-module="govuk-checkboxes">
+                    @foreach (var la in Model.SelectedLegislativeAreas)
+                    {
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="@la.Id" type="checkbox" asp-for="@la.Id">
+                            <label class="govuk-label govuk-checkboxes__label" asp-for="@la.LegislativeArea">
+                                @la.LegislativeArea
+                            </label>
+                        </div>
+                        <table class="govuk-table">
+                            <thead class="govuk-table__head">
+                                <tr class="govuk-table__row">
+                                    <th scope="col" class="govuk-table__header @Html.Conditional(string.IsNullOrWhiteSpace(la.PurposeOfAppointment), " app-no-display")">Purpose of appointment</th>
+                                    <th scope="col" class="govuk-table__header @Html.Conditional(string.IsNullOrWhiteSpace(la.Category), " app-no-display")">Product category</th>
+                                    <th scope="col" class="govuk-table__header @Html.Conditional(string.IsNullOrWhiteSpace(la.SubCategory), " app-no-display")" style="display:none">Product sub-category</th>
+                                    <th scope="col" class="govuk-table__header @Html.Conditional(string.IsNullOrWhiteSpace(la.Product), " app-no-display")">Product</th>
+                                    <th scope="col" class="govuk-table__header @Html.Conditional(string.IsNullOrWhiteSpace(la.Procedure), " app-no-display")">
+                                        Applicable conformity asessment procedure
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="govuk-table__body">
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell @Html.Conditional(string.IsNullOrWhiteSpace(la.PurposeOfAppointment), " app-no-display")">@la.PurposeOfAppointment</td>
+                                    <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(la.Category), " app-no-display")">@la.Category</td>
+                                    <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(la.SubCategory), " app-no-display")">@la.SubCategory</td>
+                                    <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(la.Product), " app-no-display")">@la.Product</td>
+                                    <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(la.Procedure), " app-no-display")">@la.Procedure</td>
+                                </tr>
+
+                                @*
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">£159.80 per week</td>
+                                    <td class="govuk-table__cell">£159.80 per week</td>
+                                    <td class="govuk-table__cell" style="display:none">£89.99 per week</td>
+                                    <td class="govuk-table__cell">£89.10 per week</td>
+                                    <td class="govuk-table__cell">£89.10 per week</td>
+                                </tr>
+                                <tr class="govuk-table__row">
+                                    <td class="govuk-table__cell">£4,282.20</td>
+                                    <td class="govuk-table__cell">£4,282.20</td>
+                                    <td class="govuk-table__cell" style="display:none">£2,182.99</td>
+                                    <td class="govuk-table__cell">£2,182.20</td>
+                                    <td class="govuk-table__cell">£2,182.20</td>
+                                </tr>
+                            *@
+
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </fieldset>
+        </div>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+       
+        <table class="govuk-table">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    
+                    <th scope="col" class="govuk-table__header app-custom-class">Purpose of appointment</th>
+                    <th scope="col" class="govuk-table__header app-custom-class">Product category</th>
+                    <th scope="col" class="govuk-table__header app-custom-class" style="display:none">Product sub-category</th>
+                    <th scope="col" class="govuk-table__header app-custom-class">Product</th>
+                    <th scope="col" class="govuk-table__header app-custom-class">
+                        Applicable conformity asessment procedure
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">£109.80 per week</td>
+                    <td class="govuk-table__cell">£109.80 per week</td>
+                    <td class="govuk-table__cell" style="display:none">£59.99 per week</td>
+                    <td class="govuk-table__cell">£59.10 per week</td>
+                    <td class="govuk-table__cell">£59.88 per week</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">£159.80 per week</td>
+                    <td class="govuk-table__cell">£159.80 per week</td>
+                    <td class="govuk-table__cell" style="display:none">£89.99 per week</td>
+                    <td class="govuk-table__cell">£89.10 per week</td>
+                    <td class="govuk-table__cell">£89.10 per week</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">£4,282.20</td>
+                    <td class="govuk-table__cell">£4,282.20</td>
+                    <td class="govuk-table__cell" style="display:none">£2,182.99</td>
+                    <td class="govuk-table__cell">£2,182.20</td>
+                    <td class="govuk-table__cell">£2,182.20</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div>
+            <govuk-button class="govuk-button--secondary">Remove legislative area</govuk-button>
+        </div>
+        <div>
+            <govuk-button class="govuk-button--secondary">Add legislative area</govuk-button>
+        </div>
+        <div class="govuk-button-group ukmcab-padding-top-50">
+            <govuk-button disabled="false">Save and continue</govuk-button>
+            <govuk-button class="govuk-button--secondary">Save as draft</govuk-button>
+            <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+        </div>
+    </div>
+</div>
