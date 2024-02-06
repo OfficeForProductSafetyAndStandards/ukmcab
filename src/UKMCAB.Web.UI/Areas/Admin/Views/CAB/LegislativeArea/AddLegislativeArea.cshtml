@@ -36,17 +36,11 @@
                 </govuk-radios>                
             </div>
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                    Continue to next step
-                </button>
+                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
             </div>
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.AdditionalInfo">
-                    Go to additional information
-                </button>
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
-                    Save as draft
-                </button>
+                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.AdditionalInfo">Go to additional information</govuk-button>
+                <govuk-button name="submitType" class="govuk-button--secondary" type="submit" value="@Constants.SubmitType.Save">Save as draft</govuk-button>
                 <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@Model.ReturnUrl">Cancel</a>
             </div>
         </form>
