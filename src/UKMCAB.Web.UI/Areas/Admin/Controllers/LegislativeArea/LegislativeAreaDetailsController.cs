@@ -100,12 +100,12 @@ public class LegislativeAreaDetailsController : Controller
 
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    return RedirectToRoute(Routes.PurposeOfAppointmentAdd, new { id, scopeId = scopeOfAppointmentId });
+                    return RedirectToRoute(Routes.PurposeOfAppointment, new { id, scopeId = scopeOfAppointmentId });
                 }
                 // save additional info
                 else if (submitType == Constants.SubmitType.AdditionalInfo)
                 {
-                    return RedirectToRoute(Routes.LegislativeAreaDetails, new { id, documentLegislativeAreaId });
+                    return RedirectToRoute(Routes.LegislativeAreaDetails, new { id, laId = documentLegislativeAreaId });
                 }
                 // save as draft
                 else
