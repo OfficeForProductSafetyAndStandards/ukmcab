@@ -1,0 +1,43 @@
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.PurposeOfAppointmentViewModel 
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <govuk-back-link asp-route="@LegislativeAreaDetailsController.Routes.LegislativeAreaAdd" asp-route-id="@Model.CabId" />
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">Create a CAB</span>
+        <h1 class="govuk-heading-l">Purpose of Appointment</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="poaForm" method="post">
+            <govuk-radios asp-for="SelectedPurposeOfAppointmentId">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-label--s">
+                        Purpose of appointment
+                    </govuk-radios-fieldset-legend>
+                    @foreach (var poa in Model.PurposeOfAppointments!)
+                    {
+                        <govuk-radios-item value="@poa.Value">@poa.Text</govuk-radios-item>
+                    }
+                </govuk-radios-fieldset>
+            </govuk-radios>
+            <div class="govuk-button-group">
+                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
+                <govuk-button name="submitType" class="govuk-button--secondary" type="submit" value="@Constants.SubmitType.Save">Save as draft</govuk-button>
+                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CabId">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
