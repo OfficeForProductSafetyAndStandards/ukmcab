@@ -1,55 +1,51 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
-using Notify.Client;
-using Notify.Interfaces;
-using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Services.CAB;
-using UKMCAB.Core.Services.Users;
-using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
-using static UKMCAB.Web.UI.Constants;
-using System.Linq;
+using UKMCAB.Data.Models;
+using System.Security.Claims;
+using UKMCAB.Core.Services.Users;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
-
-[Area("admin"), Route("admin/cab/legislative-area"), Authorize]
+[Area("admin"), Authorize]
 public class LegislativeAreaDetailsController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly IEditLockService _editLockService;
     private readonly ILegislativeAreaService _legislativeAreaService;
+    private readonly IUserService _userService;
 
     public static class Routes
     {
         public const string LegislativeAreaDetails = "legislative.area.details";
         public const string LegislativeAreaAdd = "legislative.area.add-legislativearea";
+        public const string PurposeOfAppointmentAdd = "legislative.area.add-purposeofappointment";
     }
     public LegislativeAreaDetailsController(
         ICABAdminService cabAdminService,            
         IEditLockService editLockService,
-        ILegislativeAreaService legislativeAreaService
+        ILegislativeAreaService legislativeAreaService,
+        IUserService userService
     )
     {
         _cabAdminService = cabAdminService;        
         _editLockService = editLockService;
         _legislativeAreaService = legislativeAreaService;
+        _userService = userService;
     }
     
-    [HttpGet("details/{id}", Name = Routes.LegislativeAreaDetails)]
-    public async Task<IActionResult> Details(Guid id)
+    [HttpGet("admin/cab/{id}/legislative-area/details/{documentLegislativeAreaId}", Name = Routes.LegislativeAreaDetails)]
+    public async Task<IActionResult> Details(Guid id, Guid documentLegislativeAreaId)
     {
         var vm = new LegislativeAreaDetailViewModel(Title: "Legislative area details");
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/Details.cshtml", vm);
     }
 
-    [HttpGet("add/{id}", Name = Routes.LegislativeAreaAdd)]
+    [HttpGet("admin/cab/{id}/legislative-area/add", Name = Routes.LegislativeAreaAdd)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl)
     {
-        var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreas();
-
         var vm = new LegislativeAreaViewModel
         {
             CABId = id,
@@ -60,27 +56,62 @@ public class LegislativeAreaDetailsController : Controller
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
     }
 
-    [HttpPost("add/{id}", Name = Routes.LegislativeAreaAdd)]
+    [HttpPost("admin/cab/{id}/legislative-area/add", Name = Routes.LegislativeAreaAdd)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, LegislativeAreaViewModel vm, string submitType)
     {
         if (ModelState.IsValid)
-        {
-            // to do save legislative area/scope of appointment;
+        {   
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
 
-            if (submitType == Constants.SubmitType.Continue)
+            // Implies no document or archived
+            if (latestDocument == null)
             {
-                return RedirectToRoute(Routes.LegislativeAreaDetails, new { id });
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-            // save additional info
-            else if (submitType == Constants.SubmitType.AdditionalInfo)
-            {
-                return RedirectToRoute(Routes.LegislativeAreaDetails, new { id });
-            }
-            // save as draft
             else
             {
-                return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
-            }
+                // add  document new legislative area;
+                var documentLegislativeAreaId = Guid.NewGuid();
+
+                var documentLegislativeArea = new DocumentLegislativeArea
+                {
+                    Id = documentLegislativeAreaId,
+                    LegislativeAreaId = vm.SelectedLegislativeAreaId
+                };
+
+                latestDocument.DocumentLegislativeAreas.Add(documentLegislativeArea);
+
+                // add new document scope of appointment;
+                var scopeOfAppointmentId = Guid.NewGuid();
+
+                var scopeOfAppointment = new DocumentScopeOfAppointment
+                {
+                    Id = scopeOfAppointmentId,
+                    LegislativeAreaId = vm.SelectedLegislativeAreaId
+                };
+
+                latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
+
+                var userAccount =
+                  await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+
+                if (submitType == Constants.SubmitType.Continue)
+                {
+                    return RedirectToRoute(Routes.PurposeOfAppointmentAdd, new { id, scopeId = scopeOfAppointmentId });
+                }
+                // save additional info
+                else if (submitType == Constants.SubmitType.AdditionalInfo)
+                {
+                    return RedirectToRoute(Routes.LegislativeAreaDetails, new { id, documentLegislativeAreaId });
+                }
+                // save as draft
+                else
+                {
+                    return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
+                }
+            }            
         }
         else
         {
