@@ -111,7 +111,7 @@ public class LegislativeAreaDetailsController : Controller
             PurposeOfAppointments = selectListItems
         };
 
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
     }
     
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync()
