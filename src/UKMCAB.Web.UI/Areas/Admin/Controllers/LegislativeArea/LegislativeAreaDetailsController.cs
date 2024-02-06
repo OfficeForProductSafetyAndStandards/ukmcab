@@ -1,20 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
-using Notify.Client;
-using Notify.Interfaces;
-using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Services.CAB;
-using UKMCAB.Core.Services.Users;
-using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
-using static UKMCAB.Web.UI.Constants;
-using System.Linq;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
 
-[Area("admin"), Route("admin/cab/legislative-area"), Authorize]
+[Area("admin"), Route("admin/cab/{id}/legislative-area"), Authorize]
 public class LegislativeAreaDetailsController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
@@ -38,15 +30,15 @@ public class LegislativeAreaDetailsController : Controller
         _legislativeAreaService = legislativeAreaService;
     }
     
-    [HttpGet("details/{id}", Name = Routes.LegislativeAreaDetails)]
-    public async Task<IActionResult> Details(Guid id)
+    [HttpGet("details/{laId}", Name = Routes.LegislativeAreaDetails)]
+    public async Task<IActionResult> Details(Guid id, Guid laId)
     {
         var vm = new LegislativeAreaDetailViewModel(Title: "Legislative area details");
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/Details.cshtml", vm);
     }
 
-    [HttpGet("add/{id}", Name = Routes.LegislativeAreaAdd)]
+    [HttpGet("add", Name = Routes.LegislativeAreaAdd)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl)
     {
         var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
@@ -61,7 +53,7 @@ public class LegislativeAreaDetailsController : Controller
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
     }
 
-    [HttpPost("add/{id}", Name = Routes.LegislativeAreaAdd)]
+    [HttpPost("add", Name = Routes.LegislativeAreaAdd)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, LegislativeAreaViewModel vm, string submitType)
     {
         if (ModelState.IsValid)
@@ -91,11 +83,11 @@ public class LegislativeAreaDetailsController : Controller
     }
     
     
-    [HttpGet("add/{id}/purpose-of-appointment/{scopeId}", Name = Routes.PurposeOfAppointment)]
+    [HttpGet("add-purpose-of-appointment/{scopeId}", Name = Routes.PurposeOfAppointment)]
     public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid scopeId)
     {
         //todo get scope of appointment
-        var laId = Guid.NewGuid();
+        var laId = Guid.Parse("e840c3d0-6153-4baa-82ab-0374b81d46fe");
         var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(laId);
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(laId);
         if (legislativeArea == null)
@@ -108,7 +100,8 @@ public class LegislativeAreaDetailsController : Controller
         {
             Title = "Select purpose of appointment",
             LegislativeArea = legislativeArea.Name,
-            PurposeOfAppointments = selectListItems
+            PurposeOfAppointments = selectListItems,
+            CabId = id
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
