@@ -5,7 +5,7 @@
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <a>Back</a>
+                <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" />
             </div>
         </div>
     </div>
@@ -22,18 +22,18 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="legislativeForm" method="post" novalidate>
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedLegislativeAreaId))">                
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedLegislativeAreaId))">
                 <govuk-radios asp-for="SelectedLegislativeAreaId">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">
                             Legislative area
                         </govuk-radios-fieldset-legend>
-                        @foreach(var legislativearea in Model.LegislativeAreas)
+                        @foreach (var legislativearea in Model.LegislativeAreas)
                         {
                             <govuk-radios-item value="@legislativearea.Value">@legislativearea.Text</govuk-radios-item>
                         }
                     </govuk-radios-fieldset>
-                </govuk-radios>                
+                </govuk-radios>
             </div>
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
