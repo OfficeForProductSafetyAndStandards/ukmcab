@@ -25,6 +25,7 @@ public class LegislativeAreaDetailsController : Controller
     {
         public const string LegislativeAreaDetails = "legislative.area.details";
         public const string LegislativeAreaAdd = "legislative.area.add-legislativearea";
+        public const string PurposeOfAppointment = "legislative.area.add-purpose-of-appointment";
     }
     public LegislativeAreaDetailsController(
         ICABAdminService cabAdminService,            
@@ -65,7 +66,52 @@ public class LegislativeAreaDetailsController : Controller
     {
         if (ModelState.IsValid)
         {
-            // to do save legislative area/scope of appointment;
+            // todo save legislative area/scope of appointment;
+
+            if (submitType == Constants.SubmitType.Continue)
+            {
+                return RedirectToRoute(Routes.LegislativeAreaDetails, new { id });
+            }
+            // save additional info
+            else if (submitType == Constants.SubmitType.AdditionalInfo)
+            {
+                return RedirectToRoute(Routes.LegislativeAreaDetails, new { id });
+            }
+            // save as draft
+            else
+            {
+                return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
+            }
+        }
+        else
+        {
+            vm.LegislativeAreas = await this.GetLegislativeSelectListItemsAsync();
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
+        }
+    }
+    
+    
+    [HttpGet("add/{id}/{laId}", Name = Routes.LegislativeAreaAdd)]
+    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid legAreaId, string? returnUrl)
+    {
+        var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreas();
+
+        var vm = new LegislativeAreaViewModel
+        {
+            CABId = id,
+            LegislativeAreas = await this.GetLegislativeSelectListItemsAsync(),
+            ReturnUrl = returnUrl,
+        };
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
+    }
+
+    [HttpPost("add/{id}", Name = Routes.LegislativeAreaAdd)]
+    public async Task<IActionResult> AddLegislativeArea(Guid id, LegislativeAreaViewModel vm, string submitType)
+    {
+        if (ModelState.IsValid)
+        {
+            // todo save legislative area/scope of appointment;
 
             if (submitType == Constants.SubmitType.Continue)
             {
