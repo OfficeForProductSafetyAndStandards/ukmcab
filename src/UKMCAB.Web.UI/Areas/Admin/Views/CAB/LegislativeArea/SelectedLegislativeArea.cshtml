@@ -1,7 +1,7 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.SelectedLegislativeAreasViewModel
 
 @section BackButton
-{
+    {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -11,99 +11,78 @@
     </div>
 }
 
-@*
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">       
-        <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                    <span class="govuk-caption-m">Legislative area added</span>
-                    <h1 class="govuk-fieldset__heading">
-                        Legislative area added
-                    </h1>
-                </legend>
-                <div class="govuk-checkboxes ukmcab-padding-top-20" data-module="govuk-checkboxes">
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="waste" name="waste" type="checkbox" value="carcasses">
-                        <label class="govuk-label govuk-checkboxes__label" for="waste">
-                            Noise emissions in the environment by equipment for use outdoors
-                        </label>
-                    </div>
-                    <div class="govuk-checkboxes__item">
-                        <input class="govuk-checkboxes__input" id="waste-2" name="waste" type="checkbox" value="mines">
-                        <label class="govuk-label govuk-checkboxes__label" for="waste-2">
-                            Non-automatic weighting instruments
-                        </label>
-                    </div>
-                </div>
-            </fieldset>
-        </div>
-    </div>
-</div>
+    <form method="post" enctype="multipart/form-data" novalidate>
+        <div class="govuk-grid-column-full">
+            <div class="govuk-form-group">
+                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                        <span class="govuk-caption-m">Legislative area added</span>
+                        <h1 class="govuk-fieldset__heading">
+                            Legislative area added
+                        </h1>
+                    </legend>
 
-*@
+                    <div class="govuk-checkboxes ukmcab-padding-top-20" data-module="govuk-checkboxes">
+                        @foreach (var la in Model.SelectedLegislativeAreas)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@la.IsSelected">
+                                <label class="govuk-label govuk-checkboxes__label govuk-details__summary-textX" asp-for="@la.IsSelected">
+                                    <details class="govuk-details">
+                                        <summary class="govuk-details__summary">
+                                            <span class="govuk-details__summary-text">
+                                                @la.LegislativeAreaName
+                                            </span>
+                                        </summary>
 
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div class="govuk-form-group">
-            <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                    <span class="govuk-caption-m">Legislative area added</span>
-                    <h1 class="govuk-fieldset__heading">
-                        Legislative area added
-                    </h1>
-                </legend>
-                <div class="govuk-checkboxes ukmcab-padding-top-20" data-module="govuk-checkboxes">
-                    @foreach (var la in Model.SelectedLegislativeAreas)
-                    {
-                        <div class="govuk-checkboxes__item">
-                            <input class="govuk-checkboxes__input" id="@la.Id" type="checkbox" asp-for="@la.Id">
-                            <label class="govuk-label govuk-checkboxes__label" asp-for="@la.LegislativeAreaName">
-                                @la.LegislativeAreaName
-                            </label>
-                        </div>
-                        @if (la.LegislativeAreaDetails != null && la.LegislativeAreaDetails.Any())
-                        {                            
-                            <table class="govuk-table">
-                                <thead class="govuk-table__head">
-                                    <tr class="govuk-table__row">
-                                        <th scope="col" class="govuk-table__header @Html.Conditional(la.LegislativeAreaDetails.Any( x => string.IsNullOrWhiteSpace(x.PurposeOfAppointment)), " app-no-display")">Purpose of appointment</th>
-                                        <th scope="col" class="govuk-table__header @Html.Conditional(la.LegislativeAreaDetails.Any( x =>string.IsNullOrWhiteSpace(x.Category)), " app-no-display")">Product category</th>
-                                        <th scope="col" class="govuk-table__header @Html.Conditional(la.LegislativeAreaDetails.Any( x =>string.IsNullOrWhiteSpace(x.Product)), " app-no-display")">Product</th>
-                                        <th scope="col" class="govuk-table__header @Html.Conditional(la.LegislativeAreaDetails.Any( x =>string.IsNullOrWhiteSpace(x.Procedure)), " app-no-display")">
-                                            Applicable conformity asessment procedure
-                                        </th>
-                                    </tr>
-                                </thead>
-
-                                @foreach (var laDetails in la.LegislativeAreaDetails)
-                                {
-                                    <tbody class="govuk-table__body">
-                                        <tr class="govuk-table__row">
-                                            <td class="govuk-table__cell @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.PurposeOfAppointment), " app-no-display")">@laDetails.PurposeOfAppointment</td>
-                                            <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.Category), " app-no-display")">@laDetails.Category</td>                                            
-                                            <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.Product), " app-no-display")">@laDetails.Product</td>
-                                            <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.Procedure), " app-no-display")">@laDetails.Procedure</td>
-                                        </tr>
-                                            @if (!string.IsNullOrWhiteSpace(laDetails.SubCategory))
+                                        <div class="govuk-details__text">
+                                            @if (la.LegislativeAreaDetails != null && la.LegislativeAreaDetails.Any())
                                             {
-                                                <tr style="border:none">      
-                                                    <td>
-                                                        <p>Product sub-category</p>
-                                                        <p>@laDetails.SubCategory</p>
-                                                    </td>                                                    
-                                                </tr>
-                                            } 
-                                    </tbody>
-                                }                                
-                            </table>
-                        }                        
-                    }
-                </div>
-            </fieldset>
+                                                <table class="govuk-table">
+                                                    <thead class="govuk-table__head">
+                                                        <tr class="govuk-table__row">
+                                                            <th scope="col" class="govuk-table__header @Html.Conditional(la.LegislativeAreaDetails.Any( x => string.IsNullOrWhiteSpace(x.PurposeOfAppointment)), " app-no-display")">Purpose of appointment</th>
+                                                            <th scope="col" class="govuk-table__header @Html.Conditional(la.LegislativeAreaDetails.Any( x =>string.IsNullOrWhiteSpace(x.Category)), " app-no-display")">Product category</th>
+                                                            <th scope="col" class="govuk-table__header @Html.Conditional(la.LegislativeAreaDetails.Any( x =>string.IsNullOrWhiteSpace(x.Product)), " app-no-display")">Product</th>
+                                                            <th scope="col" class="govuk-table__header @Html.Conditional(la.LegislativeAreaDetails.Any( x =>string.IsNullOrWhiteSpace(x.Procedure)), " app-no-display")">
+                                                                Applicable conformity asessment procedure
+                                                            </th>
+                                                        </tr>
+                                                    </thead>
+
+                                                    @foreach (var laDetails in la.LegislativeAreaDetails)
+                                                    {
+                                                        var removeBorder = string.IsNullOrWhiteSpace(laDetails.SubCategory) ? false : true;
+                                                        <tbody class="govuk-table__body">
+                                                            <tr class="govuk-table__row">
+                                                                <td class="govuk-table__cell @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.PurposeOfAppointment), " app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">@laDetails.PurposeOfAppointment</td>
+                                                                <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.Category), " app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">@laDetails.Category</td>
+                                                                <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.Product), " app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">@laDetails.Product</td>
+                                                                <td class="govuk-table__cell  @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.Procedure), " app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">@laDetails.Procedure</td>
+                                                            </tr>
+                                                            @if (!string.IsNullOrWhiteSpace(laDetails.SubCategory))
+                                                            {
+                                                                <tr>
+                                                                    <td>
+                                                                        <p><span class="bold-text">Product sub-category</span><br />@laDetails.SubCategory</p>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    }
+                                                </table>
+                                            }
+                                        </div>
+                                    </details>
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 
