@@ -3,7 +3,7 @@
     public class DocumentScopeOfAppointment
     {
         public Guid Id { get; set; }
-        public Guid? LegislativeAreaId { get; set; }
+        public Guid LegislativeAreaId { get; set; }
 
         public Guid? PurposeOfAppointmentId { get; set; }
 
