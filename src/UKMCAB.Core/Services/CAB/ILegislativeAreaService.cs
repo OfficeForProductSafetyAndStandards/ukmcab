@@ -4,15 +4,17 @@ namespace UKMCAB.Core.Services.CAB;
 
 public interface ILegislativeAreaService
 {
-    Task<IEnumerable<LegislativeAreaModel>> GetAllLegislativeAreas();
+    Task<IEnumerable<LegislativeAreaModel>> GetAllLegislativeAreasAsync();
 
-    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeArea(Guid legislativeAreaId);
+    Task<LegislativeAreaModel?> GetLegislativeAreaByIdAsync(Guid legislativeAreaId);
 
-    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointment(Guid purposeOfAppointmentId);
+    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId);
 
-    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForCategory(Guid categoryId);
+    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid purposeOfAppointmentId);
 
-    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForSubcategory(Guid categoryId);
+    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid categoryId);
 
-    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProduct(Guid productId);
+    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForSubcategoryAsync(Guid categoryId);
+
+    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId);
 }

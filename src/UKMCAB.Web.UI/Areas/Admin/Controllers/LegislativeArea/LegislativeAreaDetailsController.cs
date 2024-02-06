@@ -49,7 +49,7 @@ public class LegislativeAreaDetailsController : Controller
     [HttpGet("add/{id}", Name = Routes.LegislativeAreaAdd)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl)
     {
-        var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreas();
+        var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
 
         var vm = new LegislativeAreaViewModel
         {
@@ -91,53 +91,32 @@ public class LegislativeAreaDetailsController : Controller
     }
     
     
-    [HttpGet("add/{id}/{laId}", Name = Routes.LegislativeAreaAdd)]
-    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid legAreaId, string? returnUrl)
+    [HttpGet("add/{id}/purpose-of-appointment/{scopeId}", Name = Routes.PurposeOfAppointment)]
+    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid scopeId)
     {
-        var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreas();
-
-        var vm = new LegislativeAreaViewModel
+        //todo get scope of appointment
+        var laId = Guid.NewGuid();
+        var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(laId);
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(laId);
+        if (legislativeArea == null)
         {
-            CABId = id,
-            LegislativeAreas = await this.GetLegislativeSelectListItemsAsync(),
-            ReturnUrl = returnUrl,
+            throw new InvalidOperationException($"Legislative Area not found for {laId}");
+        }
+            
+        var selectListItems = options.PurposeOfAppointments.Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
+        var vm = new PurposeOfAppointmentViewModel
+        {
+            Title = "Select purpose of appointment",
+            LegislativeArea = legislativeArea.Name,
+            PurposeOfAppointments = selectListItems
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
     }
-
-    [HttpPost("add/{id}", Name = Routes.LegislativeAreaAdd)]
-    public async Task<IActionResult> AddLegislativeArea(Guid id, LegislativeAreaViewModel vm, string submitType)
-    {
-        if (ModelState.IsValid)
-        {
-            // todo save legislative area/scope of appointment;
-
-            if (submitType == Constants.SubmitType.Continue)
-            {
-                return RedirectToRoute(Routes.LegislativeAreaDetails, new { id });
-            }
-            // save additional info
-            else if (submitType == Constants.SubmitType.AdditionalInfo)
-            {
-                return RedirectToRoute(Routes.LegislativeAreaDetails, new { id });
-            }
-            // save as draft
-            else
-            {
-                return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
-            }
-        }
-        else
-        {
-            vm.LegislativeAreas = await this.GetLegislativeSelectListItemsAsync();
-            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
-        }
-    }
-
+    
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync()
     {
-        var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreas();
-        return legislativeareas.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
+        var legislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
+        return legislativeAreas.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
     }
 }

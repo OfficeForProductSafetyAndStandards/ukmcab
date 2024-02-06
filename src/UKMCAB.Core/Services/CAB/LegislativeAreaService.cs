@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using UKMCAB.Common;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models.LegislativeAreas;
@@ -30,14 +31,21 @@ public class LegislativeAreaService : ILegislativeAreaService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<LegislativeAreaModel>> GetAllLegislativeAreas()
+    public async Task<IEnumerable<LegislativeAreaModel>> GetAllLegislativeAreasAsync()
     {
         var result = await _legislativeAreaRepository.GetAllAsync();
 
         return _mapper.Map<IEnumerable<LegislativeAreaModel>>(result);
     }
 
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeArea(Guid legislativeAreaId)
+    public async Task<LegislativeAreaModel?> GetLegislativeAreaByIdAsync(Guid legislativeAreaId)
+    {
+        Guard.IsTrue(legislativeAreaId != Guid.Empty, "Guid cannot be empty");
+        var la = await _legislativeAreaRepository.QueryAsync(l => l.Id == legislativeAreaId);
+        return _mapper.Map<LegislativeAreaModel>(la.FirstOrDefault());
+    }
+
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId)
     {
         var purposeOfAppointments = await _purposeOfAppointmentRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId);
         if (purposeOfAppointments.Any())
@@ -78,7 +86,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         return new ScopeOfAppointmentOptionsModel();
     }
 
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointment(Guid purposeOfAppointmentId)
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid purposeOfAppointmentId)
     {
         var categories = await _categoryRepository.QueryAsync(x => x.PurposeOfAppointmentId == purposeOfAppointmentId);
         if (categories.Any())
@@ -113,7 +121,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         return new ScopeOfAppointmentOptionsModel();
     }
 
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForCategory(Guid categoryId)
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid categoryId)
     {
         // Work out if this category has any subcategories. Find all categories with matching name.
         var category = (await _categoryRepository.QueryAsync(x => x.Id == categoryId)).First();
@@ -151,7 +159,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         return new ScopeOfAppointmentOptionsModel();
     }
 
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForSubcategory(Guid categoryId)
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForSubcategoryAsync(Guid categoryId)
     {
         var products = await _productRepository.QueryAsync(x => x.CategoryId == categoryId);
         if (products.Any())
@@ -174,7 +182,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         return new ScopeOfAppointmentOptionsModel();
     }
 
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProduct(Guid productId)
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId)
     {
         var procedures = await _procedureRepository.QueryAsync(x => x.ProductIds.Contains(productId));
         if (procedures.Any())
