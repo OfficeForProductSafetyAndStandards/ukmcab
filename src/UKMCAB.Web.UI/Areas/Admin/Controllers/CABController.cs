@@ -189,16 +189,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             // Pre-populate model for edit
             var model = new CABBodyDetailsViewModel(latest);
 
-            // Ensure legislative areas are full covered
-            if (model.ProductScheduleLegislativeAreas.Except(model.LegislativeAreas).Any())
-            {
-                var userAccount =
-                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                latest.LegislativeAreas = GetLAUnion(model.LegislativeAreas, model.ProductScheduleLegislativeAreas);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
-                model.LegislativeAreas = latest.LegislativeAreas;
-            }
-
             if (!model.TestingLocations.Any())
             {
                 model.TestingLocations.Add(string.Empty);
@@ -218,11 +208,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-
-            model.LegislativeAreas = GetLAUnion(model.LegislativeAreas,
-                model.ProductScheduleLegislativeAreas ?? new List<string>());
-            ModelState.Clear();
-            TryValidateModel(model);
 
             var userAccount =
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
@@ -247,7 +232,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
-                latestDocument.LegislativeAreas = model.LegislativeAreas;
 
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
@@ -268,8 +252,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.DocumentStatus = latestDocument.StatusValue;
             model.IsFromSummary = fromSummary;
-            model.ProductScheduleLegislativeAreas =
-                latestDocument.Schedules?.Select(sch => sch.LegislativeArea).Distinct().ToList() ?? new List<string>();
             return View(model);
         }
 
@@ -614,12 +596,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             base.OnActionExecuted(context);
-        }
-
-        private List<string> GetLAUnion(List<string> las, List<string> pschLAs)
-        {
-            var union = (las ?? new List<string>()).Union(pschLAs).ToList();
-            return union;
         }
 
         private IActionResult SaveDraft(Document document)
