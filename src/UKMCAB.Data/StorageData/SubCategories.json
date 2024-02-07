@@ -1,0 +1,17 @@
+[
+  {
+    "id": "93075630-4824-4ce7-950e-b48e2346fbae",
+    "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+    "name": "Mechanical systems"
+  },
+  {
+    "id": "f53853e2-fc02-4926-b3d1-fe6edd9391d4",
+    "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+    "name": "Electromechanical instruments"
+  },
+  {
+    "id": "0929e3eb-cc64-4193-8250-6dae6937da6e",
+    "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+    "name": "Electronic systems or systems containing software"
+  }
+]

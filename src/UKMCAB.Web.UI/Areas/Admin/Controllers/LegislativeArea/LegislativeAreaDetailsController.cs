@@ -1,15 +1,12 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using UKMCAB.Core.Services.CAB;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
-using UKMCAB.Data.Models;
-using System.Security.Claims;
 using UKMCAB.Core.Services.Users;
-using UKMCAB.Core.Domain.LegislativeAreas;
-using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
-
 
 [Area("admin"), Route("admin/cab/{id}/legislative-area"), Authorize]
 public class LegislativeAreaDetailsController : Controller
@@ -18,40 +15,43 @@ public class LegislativeAreaDetailsController : Controller
     private readonly IEditLockService _editLockService;
     private readonly ILegislativeAreaService _legislativeAreaService;
     private readonly IUserService _userService;
-
+    
     public static class Routes
     {
         public const string LegislativeAreaDetails = "legislative.area.details";
         public const string AddLegislativeArea = "legislative.area.add-legislativearea";
-        public const string PurposeOfAppointment = "legislative.area.add-purpose-of-appointment";
+        public const string AddPurposeOfAppointment = "legislative.area.add-purpose-of-appointment";
         public const string AddCategory = "legislative.area.add-category";
-        public const string AddSubCategory = "legislative.area.add-sub-category";
+        public const string AddSubCategory = "legislative.area.add-sub-category";        
+        
         public const string AddProduct = "legislative.area.add-product";
     }
+
     public LegislativeAreaDetailsController(
-        ICABAdminService cabAdminService,            
+        ICABAdminService cabAdminService,
         IEditLockService editLockService,
-        ILegislativeAreaService legislativeAreaService,
-        IUserService userService
-    )
+        ILegislativeAreaService legislativeAreaService, 
+        IUserService userService)
     {
-        _cabAdminService = cabAdminService;        
+        _cabAdminService = cabAdminService;
         _editLockService = editLockService;
         _legislativeAreaService = legislativeAreaService;
         _userService = userService;
     }
-    
+
     [HttpGet("details/{laId}", Name = Routes.LegislativeAreaDetails)]
     public async Task<IActionResult> Details(Guid id, Guid laId)
     {
         var vm = new LegislativeAreaDetailViewModel(Title: "Legislative area details");
-        
+
         return View("~/Areas/Admin/views/CAB/LegislativeArea/Details.cshtml", vm);
     }
 
     [HttpGet("add", Name = Routes.AddLegislativeArea)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl)
     {
+        var legislativeareas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
+
         var vm = new LegislativeAreaViewModel
         {
             CABId = id,
@@ -74,60 +74,51 @@ public class LegislativeAreaDetailsController : Controller
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-            else
+
+            // add  document new legislative area;
+            var documentLegislativeAreaId = Guid.NewGuid();
+
+            var documentLegislativeArea = new DocumentLegislativeArea
             {
-                // add  document new legislative area;
-                var documentLegislativeAreaId = Guid.NewGuid();
+                Id = documentLegislativeAreaId,
+                LegislativeAreaId = vm.SelectedLegislativeAreaId
+            };
 
-                var documentLegislativeArea = new DocumentLegislativeArea
-                {
-                    Id = documentLegislativeAreaId,
-                    LegislativeAreaId = vm.SelectedLegislativeAreaId
-                };
+            latestDocument.DocumentLegislativeAreas.Add(documentLegislativeArea);
 
-                latestDocument.DocumentLegislativeAreas.Add(documentLegislativeArea);
+            // add new document scope of appointment;
+            var scopeOfAppointmentId = Guid.NewGuid();
 
-                // add new document scope of appointment;
-                var scopeOfAppointmentId = Guid.NewGuid();
+            var scopeOfAppointment = new DocumentScopeOfAppointment
+            {
+                Id = scopeOfAppointmentId,
+                LegislativeAreaId = vm.SelectedLegislativeAreaId
+            };
 
-                var scopeOfAppointment = new DocumentScopeOfAppointment
-                {
-                    Id = scopeOfAppointmentId,
-                    LegislativeAreaId = vm.SelectedLegislativeAreaId
-                };
+            latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
 
-                latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
-                var userAccount =
-                  await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
 
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-
-                if (submitType == Constants.SubmitType.Continue)
-                {
-                    return RedirectToRoute(Routes.PurposeOfAppointment, new { id, scopeId = scopeOfAppointmentId });
-                }
+            return submitType switch
+            {
+                Constants.SubmitType.Continue => RedirectToRoute(Routes.AddPurposeOfAppointment,
+                    new { id, scopeId = scopeOfAppointmentId }),
                 // save additional info
-                else if (submitType == Constants.SubmitType.AdditionalInfo)
-                {
-                    return RedirectToRoute(Routes.LegislativeAreaDetails, new { id, laId = documentLegislativeAreaId });
-                }
-                // save as draft
-                else
-                {
-                    return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
-                }
-            }            
+                Constants.SubmitType.AdditionalInfo => RedirectToRoute(Routes.LegislativeAreaDetails,
+                    new { id, laId = documentLegislativeAreaId }),
+                _ => RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true })
+            };
         }
-        else
-        {
-            vm.LegislativeAreas = await this.GetLegislativeSelectListItemsAsync();
-            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
-        }
+
+        vm.LegislativeAreas = await this.GetLegislativeSelectListItemsAsync();
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
     }
-    
-    
-    [HttpGet("add-purpose-of-appointment/{scopeId}", Name = Routes.PurposeOfAppointment)]
+
+
+    [HttpGet("add-purpose-of-appointment/{scopeId}", Name = Routes.AddPurposeOfAppointment)]
     public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid scopeId)
     {
         //todo get scope of appointment
@@ -138,8 +129,14 @@ public class LegislativeAreaDetailsController : Controller
         {
             throw new InvalidOperationException($"Legislative Area not found for {laId}");
         }
-            
-        var selectListItems = options.PurposeOfAppointments.Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
+
+        if (!options.PurposeOfAppointments.Any())
+        {
+            return RedirectToRoute(Routes.AddCategory, new { id, scopeId });
+        }
+
+        var selectListItems = options.PurposeOfAppointments
+            .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
         var vm = new PurposeOfAppointmentViewModel
         {
             Title = "Select purpose of appointment",
@@ -148,6 +145,36 @@ public class LegislativeAreaDetailsController : Controller
             CabId = id
         };
 
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
+    }
+
+    [HttpPost("add-purpose-of-appointment/{scopeId}", Name = Routes.AddPurposeOfAppointment)]
+    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, PurposeOfAppointmentViewModel vm, Guid scopeId)
+    {
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+        // Implies no document or archived
+        if (latestDocument == null)
+        {
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+        }
+        var documentScopeOfAppointment = latestDocument.ScopeOfAppointments.First(s => s.Id == scopeId);
+
+        if (ModelState.IsValid)
+        {
+            documentScopeOfAppointment.PurposeOfAppointmentId = vm.SelectedPurposeOfAppointmentId;
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+
+            return RedirectToRoute(Routes.AddCategory, new { id, scopeId });
+        }
+
+        var options =
+            await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
+                documentScopeOfAppointment.LegislativeAreaId);
+        vm.PurposeOfAppointments = options.PurposeOfAppointments
+            .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
     }
 

@@ -202,6 +202,7 @@ var cspHeader = new CspHeader().AddDefaultCspDirectives()
 cspHeader.AllowUnsafeInlineScripts();
 cspHeader.AllowUnsafeInlineStyles();
 cspHeader.AllowUnsafeEvalScripts();
+cspHeader.AllowImageSources("data:");
 /*
  * END
  */

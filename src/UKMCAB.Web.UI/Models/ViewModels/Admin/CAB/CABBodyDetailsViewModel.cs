@@ -11,8 +11,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             CABId = document.CABId;
             TestingLocations = document.TestingLocations ?? new List<string>();
             BodyTypes = document.BodyTypes ?? new List<string>();
-            LegislativeAreas = document.LegislativeAreas ?? new List<string>();
-            ProductScheduleLegislativeAreas = document.Schedules?.Select(sch => sch.LegislativeArea).Distinct().ToList() ?? new List<string>();
             IsCompleted = TestingLocations.Any() && BodyTypes.Any();
         }
 
@@ -24,10 +22,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         [CannotBeEmpty(ErrorMessage = "Select a body type")]
         public List<string> BodyTypes { get; set; } = new();
 
-        public List<string> LegislativeAreas { get; set; } = new();
-
-        public List<string>? ProductScheduleLegislativeAreas { get; set; }
         public string? Title => "Body details";
-        public string[] FieldOrder => new[] { nameof(TestingLocations), nameof(BodyTypes), nameof(LegislativeAreas) };
+        public string[] FieldOrder => new[] { nameof(TestingLocations), nameof(BodyTypes) };
     }
 }
