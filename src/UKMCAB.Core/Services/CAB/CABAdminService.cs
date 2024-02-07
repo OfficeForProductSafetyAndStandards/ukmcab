@@ -459,6 +459,13 @@ namespace UKMCAB.Core.Services.CAB
         }
 
 
+        public async Task<DocumentLegislativeArea?> GetDocumentLegislativeAreaAsync(Guid cabId,
+            Guid documentLegislativeAreaId)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
+            return latestDocument?.DocumentLegislativeAreas.FirstOrDefault(a => a.Id == documentLegislativeAreaId);
+        }
+
         private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {
             List<Document> docs = await _cabRepository.Query<Document>(d =>

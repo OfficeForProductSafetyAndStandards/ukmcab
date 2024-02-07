@@ -29,8 +29,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
     [HttpGet("additional-information/{laId}", Name = Routes.LegislativeAreaAdditionalInformation)]
     public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl)
     {
-        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-        var legislativeArea = latestDocument?.DocumentLegislativeAreas.FirstOrDefault(a => a.Id == laId);
+        var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaAsync(id, laId);
         var vm = new LegislativeAreaAdditionalInformationViewModel(Title: "Legislative area: additional information")
         {
             CabId = id,
