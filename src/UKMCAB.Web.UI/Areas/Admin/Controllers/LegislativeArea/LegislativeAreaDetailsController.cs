@@ -119,13 +119,14 @@ public class LegislativeAreaDetailsController : Controller
     [HttpGet("add-purpose-of-appointment/{scopeId}", Name = Routes.AddPurposeOfAppointment)]
     public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid scopeId)
     {
-        //todo get scope of appointment
-        var laId = Guid.Parse("e840c3d0-6153-4baa-82ab-0374b81d46fe");
-        var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(laId);
-        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(laId);
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+        var documentScopeOfAppointment = latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeId) ?? throw new InvalidOperationException();
+        
+        var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId);
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentScopeOfAppointment.LegislativeAreaId);
         if (legislativeArea == null)
         {
-            throw new InvalidOperationException($"Legislative Area not found for {laId}");
+            throw new InvalidOperationException($"Legislative Area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         }
 
         if (!options.PurposeOfAppointments.Any())
@@ -150,12 +151,7 @@ public class LegislativeAreaDetailsController : Controller
     public async Task<IActionResult> AddPurposeOfAppointment(Guid id, PurposeOfAppointmentViewModel vm, Guid scopeId)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-        // Implies no document or archived
-        if (latestDocument == null)
-        {
-            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
-        }
-        var documentScopeOfAppointment = latestDocument.ScopeOfAppointments.First(s => s.Id == scopeId);
+        var documentScopeOfAppointment = latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeId) ?? throw new InvalidOperationException();
 
         if (ModelState.IsValid)
         {
