@@ -28,6 +28,7 @@
 @import "./shared/tags.scss";
 @import "./shared/mobile-sort-table.scss";
 @import "./shared/page-content-banner.scss";
+@import "./shared/expander.scss";
 
 /* The below style should be coming from the govfrontent node package but isn't for some reason. Adding here as troubleshooting failed to find the reason and time constraints */
 .govuk-link:hover {
