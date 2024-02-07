@@ -19,7 +19,6 @@ public class LegislativeAreaDetailsController : Controller
 
     public static class Routes
     {
-        public const string LegislativeAreaDetails = "legislative.area.details";
         public const string LegislativeAreaAdd = "legislative.area.add-legislativearea";
         public const string PurposeOfAppointment = "legislative.area.add-purpose-of-appointment";
     }
@@ -36,13 +35,6 @@ public class LegislativeAreaDetailsController : Controller
         _userService = userService;
     }
     
-    [HttpGet("details/{laId}", Name = Routes.LegislativeAreaDetails)]
-    public async Task<IActionResult> Details(Guid id, Guid laId)
-    {
-        var vm = new LegislativeAreaDetailViewModel(Title: "Legislative area details");
-        
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/Details.cshtml", vm);
-    }
 
     [HttpGet("add", Name = Routes.LegislativeAreaAdd)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl)
@@ -105,7 +97,7 @@ public class LegislativeAreaDetailsController : Controller
                 // save additional info
                 else if (submitType == Constants.SubmitType.AdditionalInfo)
                 {
-                    return RedirectToRoute(Routes.LegislativeAreaDetails, new { id, laId = documentLegislativeAreaId });
+                    return RedirectToRoute( LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation , new { id, laId = documentLegislativeAreaId });
                 }
                 // save as draft
                 else
