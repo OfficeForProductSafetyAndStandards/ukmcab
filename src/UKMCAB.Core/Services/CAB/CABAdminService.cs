@@ -13,6 +13,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+using static System.Formats.Asn1.AsnWriter;
 
 // ReSharper disable SpecifyStringComparison - Not For Cosmos
 
@@ -447,6 +448,15 @@ namespace UKMCAB.Core.Services.CAB
 
         public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) =>
             _cabRepository.GetCABCountBySubStatusAsync(subStatus);
+
+        public async Task<DocumentScopeOfAppointment?> GetDocumentScopeOfAppointmentAsync(Guid cabId, Guid scopeOfAppointmentId)
+        {
+            var latestDocument = await this.GetLatestDocumentAsync(cabId.ToString());
+
+            var documentScopeOfAppointment = latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeOfAppointmentId) ?? throw new InvalidOperationException();
+
+            return documentScopeOfAppointment;
+        }
 
 
         private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
