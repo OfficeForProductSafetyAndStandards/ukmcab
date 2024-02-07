@@ -14,5 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? Product { get; set; }
 
+        public string? Procedure { get; set; }
+
     }
 }

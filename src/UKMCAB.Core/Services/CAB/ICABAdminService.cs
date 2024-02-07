@@ -69,5 +69,7 @@ namespace UKMCAB.Core.Services.CAB
         Task RecordStatsAsync();
         Task<int> GetCABCountForStatusAsync(Status status = Status.Unknown);
         Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None);
+
+        Task<DocumentScopeOfAppointment?> GetDocumentScopeOfAppointmentAsync(Guid cabId, Guid scopeOfAppointmentId);
     }
 }

@@ -182,7 +182,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         return new ScopeOfAppointmentOptionsModel();
     }
 
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId)
+    public async Task<ScopeOfAppointmentOptionsModel?> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId)
     {
         var procedures = await _procedureRepository.QueryAsync(x => x.ProductIds.Contains(productId));
         if (procedures.Any())
@@ -194,5 +194,19 @@ public class LegislativeAreaService : ILegislativeAreaService
         }
 
         return new ScopeOfAppointmentOptionsModel();
+    }
+
+    public async Task<PurposeOfAppointmentModel?> GetPurposeOfAppointmentByIdAsync(Guid purposeOfAppointmentId)
+    {
+        Guard.IsTrue(purposeOfAppointmentId != Guid.Empty, "Guid cannot be empty");
+        var pa = await _purposeOfAppointmentRepository.QueryAsync(l => l.Id == purposeOfAppointmentId);
+        return _mapper.Map<PurposeOfAppointmentModel>(pa.FirstOrDefault());
+    }
+
+    public async Task<CategoryModel?> GetCategoryByIdAsync(Guid categoryId)
+    {
+        Guard.IsTrue(categoryId != Guid.Empty, "Guid cannot be empty");
+        var cat = await _categoryRepository.QueryAsync(l => l.Id == categoryId);
+        return _mapper.Map<CategoryModel>(cat.FirstOrDefault());
     }
 }
