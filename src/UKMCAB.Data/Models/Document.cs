@@ -57,7 +57,11 @@ namespace UKMCAB.Data.Models
         public List<string> TestingLocations { get; set; } = new();
         public List<string> BodyTypes { get; set; } = new();
 
-        public List<string> LegislativeAreas { get; set; } = new();
+        public List<string> LegislativeAreas { get; set; }
+
+        public List<DocumentLegislativeArea> DocumentLegislativeAreas { get; set; } = new();
+
+        public List<DocumentScopeOfAppointment> ScopeOfAppointments { get; set; } = new();
 
         // Schedules of accreditation
         public List<FileUpload>? Schedules { get; set; } = new();

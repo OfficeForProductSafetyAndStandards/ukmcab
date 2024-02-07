@@ -1,0 +1,77 @@
+﻿/*
+    Expander component:
+
+    Expandable section with a plus/minus sign inside a circle. Similar to the nhsuk-expander component in the NHS 
+    frontend design library, but no outside border and no left hand border on expand.
+
+    Usage:
+    Create a govuk details section as normal, then add the "ukmcab-expander" class to the top level details component.
+
+    <details class="govuk-details ukmcab-expander">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                My expandable section
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+        </div>
+    </details>
+*/
+
+
+.ukmcab-expander {
+    .govuk-details__summary {
+        padding: govuk-spacing(1) govuk-spacing(1) govuk-spacing(1) 38px;
+
+        &:focus {
+            .govuk-details__summary-text::before {
+                background: $govuk-focus-colour url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' aria-hidden='true'%3E%3Ccircle cx='12' cy='12' r='10' fill='002f5c'%3E%3C/circle%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M12 8v8M8 12h8'%3E%3C/path%3E%3C/svg%3E%0A") left -2px center no-repeat;
+            }
+        }
+
+        &:before {
+            clip-path: unset !important;
+            border: none !important;
+        }
+    }
+
+    .govuk-details__summary-text {
+        &:before {
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' aria-hidden='true'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23005eb8'%3E%3C/circle%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M12 8v8M8 12h8'%3E%3C/path%3E%3C/svg%3E%0A") left -2px center no-repeat;
+            content: "";
+            display: inline-block;
+            height: 32px;
+            left: 0;
+            position: absolute;
+            top: calc(50% - 16px);
+            width: 32px;
+        }
+    }
+
+    .govuk-details__text {
+        border-left: none;
+        padding-left: 0;
+    }
+}
+
+.ukmcab-expander[open] {
+    .govuk-details__summary {
+        &:focus {
+            &:hover {
+                .govuk-details__summary-text {
+                    text-decoration: none;
+                }
+            }
+
+            .govuk-details__summary-text::before {
+                background: $govuk-focus-colour url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' aria-hidden='true'%3E%3Ccircle cx='12' cy='12' r='10' fill='002f5c'%3E%3C/circle%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M8 12h8'%3E%3C/path%3E%3C/svg%3E%0A") left -2px center no-repeat;
+            }
+        }
+    }
+
+    .govuk-details__summary-text::before {
+        background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24' aria-hidden='true'%3E%3Ccircle cx='12' cy='12' r='10' fill='%23005eb8'%3E%3C/circle%3E%3Cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M8 12h8'%3E%3C/path%3E%3C/svg%3E%0A") left -2px center no-repeat;
+    }
+}
