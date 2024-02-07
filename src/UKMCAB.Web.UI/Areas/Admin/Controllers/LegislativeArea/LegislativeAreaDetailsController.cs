@@ -19,7 +19,6 @@ public class LegislativeAreaDetailsController : Controller
 
     public static class Routes
     {
-        public const string LegislativeAreaDetails = "legislative.area.details";
         public const string AddLegislativeArea = "legislative.area.add-legislativearea";
         public const string AddPurposeOfAppointment = "legislative.area.add-purpose-of-appointment";
         public const string AddCategory = "legislative.area.add-category";
@@ -99,7 +98,7 @@ public class LegislativeAreaDetailsController : Controller
                 Constants.SubmitType.Continue => RedirectToRoute(Routes.AddPurposeOfAppointment,
                     new { id, scopeId = scopeOfAppointmentId }),
                 // save additional info
-                Constants.SubmitType.AdditionalInfo => RedirectToRoute(Routes.LegislativeAreaDetails,
+                Constants.SubmitType.AdditionalInfo => RedirectToRoute( LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
                     new { id, laId = documentLegislativeAreaId }),
                 _ => RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true })
             };

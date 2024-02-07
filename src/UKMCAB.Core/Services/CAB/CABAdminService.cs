@@ -454,7 +454,14 @@ namespace UKMCAB.Core.Services.CAB
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
             return latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeOfAppointmentId) ?? throw new InvalidOperationException();
         }
-        
+
+        public async Task<DocumentLegislativeArea> GetDocumentLegislativeAreaAsync(Guid cabId,
+            Guid documentLegislativeAreaId)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
+            return latestDocument?.DocumentLegislativeAreas.First(a => a.Id == documentLegislativeAreaId) ?? throw new InvalidOperationException();
+        }
+
         private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {
             List<Document> docs = await _cabRepository.Query<Document>(d =>
