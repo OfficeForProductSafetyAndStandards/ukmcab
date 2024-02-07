@@ -449,15 +449,11 @@ namespace UKMCAB.Core.Services.CAB
         public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) =>
             _cabRepository.GetCABCountBySubStatusAsync(subStatus);
 
-        public async Task<DocumentScopeOfAppointment?> GetDocumentScopeOfAppointmentAsync(Guid cabId, Guid scopeOfAppointmentId)
+        public async Task<DocumentScopeOfAppointment> GetDocumentScopeOfAppointmentAsync(Guid cabId, Guid scopeOfAppointmentId)
         {
-            var latestDocument = await this.GetLatestDocumentAsync(cabId.ToString());
-
-            var documentScopeOfAppointment = latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeOfAppointmentId) ?? throw new InvalidOperationException();
-
-            return documentScopeOfAppointment;
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
+            return latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeOfAppointmentId) ?? throw new InvalidOperationException();
         }
-
 
         public async Task<DocumentLegislativeArea?> GetDocumentLegislativeAreaAsync(Guid cabId,
             Guid documentLegislativeAreaId)
