@@ -388,29 +388,6 @@ else if (Model.IsEditLocked)
                             }
                         </dd>
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Legislative area
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (Model.CabBodyDetailsViewModel.LegislativeAreas.Any())
-                            {
-                                @Html.Raw(string.Join("<br />", Model.CabBodyDetailsViewModel.LegislativeAreas))
-                            }
-                            else
-                            {
-                                <text>@Constants.NotProvided</text>
-                                <br>
-                                <div class="govuk-warning-text">
-                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                    <strong class="govuk-warning-text__text">
-                                        <span class="govuk-warning-text__assistive">Warning</span>
-                                        No legislative area has been selected.
-                                    </strong>
-                                </div>
-                            }
-                        </dd>
-                    </div>
                 </dl>
             </div>
 
