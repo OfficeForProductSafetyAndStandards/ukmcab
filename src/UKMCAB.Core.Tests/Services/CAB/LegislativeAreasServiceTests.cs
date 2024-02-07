@@ -605,7 +605,7 @@
                 });
 
             // Act
-            var category = await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(testGuid);
+            var category = await _legislativeAreaService.GetCategoryByIdAsync(testGuid);
 
             // Assert
             Assert.IsNotNull(category);
