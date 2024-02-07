@@ -2,6 +2,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using UKMCAB.Core.Services.CAB;
+using UKMCAB.Core.Services.Users;
+using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
@@ -12,7 +14,8 @@ public class LegislativeAreaDetailsController : Controller
     private readonly ICABAdminService _cabAdminService;
     private readonly IEditLockService _editLockService;
     private readonly ILegislativeAreaService _legislativeAreaService;
-
+    private readonly IUserService _userService;
+    
     public static class Routes
     {
         public const string LegislativeAreaDetails = "legislative.area.details";
@@ -25,12 +28,13 @@ public class LegislativeAreaDetailsController : Controller
     public LegislativeAreaDetailsController(
         ICABAdminService cabAdminService,
         IEditLockService editLockService,
-        ILegislativeAreaService legislativeAreaService
-    )
+        ILegislativeAreaService legislativeAreaService, 
+        IUserService userService)
     {
         _cabAdminService = cabAdminService;
         _editLockService = editLockService;
         _legislativeAreaService = legislativeAreaService;
+        _userService = userService;
     }
 
     [HttpGet("details/{laId}", Name = Routes.LegislativeAreaDetails)]
@@ -53,6 +57,61 @@ public class LegislativeAreaDetailsController : Controller
             ReturnUrl = returnUrl,
         };
 
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
+    }
+    
+     [HttpPost("add", Name = Routes.AddLegislativeArea)]
+    public async Task<IActionResult> AddLegislativeArea(Guid id, LegislativeAreaViewModel vm, string submitType)
+    {
+        if (ModelState.IsValid)
+        {   
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+
+            // Implies no document or archived
+            if (latestDocument == null)
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            // add  document new legislative area;
+            var documentLegislativeAreaId = Guid.NewGuid();
+
+            var documentLegislativeArea = new DocumentLegislativeArea
+            {
+                Id = documentLegislativeAreaId,
+                LegislativeAreaId = vm.SelectedLegislativeAreaId
+            };
+
+            latestDocument.DocumentLegislativeAreas.Add(documentLegislativeArea);
+
+            // add new document scope of appointment;
+            var scopeOfAppointmentId = Guid.NewGuid();
+
+            var scopeOfAppointment = new DocumentScopeOfAppointment
+            {
+                Id = scopeOfAppointmentId,
+                LegislativeAreaId = vm.SelectedLegislativeAreaId
+            };
+
+            latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
+
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+
+            return submitType switch
+            {
+                Constants.SubmitType.Continue => RedirectToRoute(Routes.AddPurposeOfAppointment,
+                    new { id, scopeId = scopeOfAppointmentId }),
+                // save additional info
+                Constants.SubmitType.AdditionalInfo => RedirectToRoute(Routes.LegislativeAreaDetails,
+                    new { id, laId = documentLegislativeAreaId }),
+                _ => RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true })
+            };
+        }
+
+        vm.LegislativeAreas = await this.GetLegislativeSelectListItemsAsync();
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
     }
 
