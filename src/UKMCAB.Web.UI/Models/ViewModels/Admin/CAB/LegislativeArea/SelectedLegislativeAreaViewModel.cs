@@ -7,7 +7,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? Id { get; set; }
         public string? LegislativeAreaName { get; set; }
         public bool IsSelected { get; set; } = false;
-        public List<LegislativeAreaDetails>? LegislativeAreaDetails { get; set; }      
+        public List<LegislativeAreaListItemViewModel>? LegislativeAreaDetails { get; set; }      
 
     }
 }

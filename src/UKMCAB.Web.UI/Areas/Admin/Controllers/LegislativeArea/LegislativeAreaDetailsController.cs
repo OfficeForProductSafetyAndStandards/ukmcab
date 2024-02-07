@@ -158,13 +158,14 @@ public class LegislativeAreaDetailsController : Controller
     {
         var vm = new SelectedLegislativeAreasViewModel() 
         { 
+            ReturnUrl = "/",
             SelectedLegislativeAreas = new[]
             {
                 new SelectedLegislativeAreaViewModel
                 {
                     LegislativeAreaName = "Non-automatic weighting instruments",
-                    LegislativeAreaDetails = new List<LegislativeAreaDetails> 
-                    { new LegislativeAreaDetails 
+                    LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel> 
+                    { new LegislativeAreaListItemViewModel 
                         { 
                             PurposeOfAppointment = "",
                             Category = "MI-005 Measuring systems for the continuous and dynamic measurement of quantities of liquid other than water",
@@ -172,7 +173,7 @@ public class LegislativeAreaDetailsController : Controller
                             Product = "Measuring systems on a pipelines (Accuracy Class 0.3)",
                             Procedure = "Module G Conformity based on unit verification"
                         },
-                        new LegislativeAreaDetails
+                        new LegislativeAreaListItemViewModel
                         {
                             PurposeOfAppointment = "",
                             Category = "MI-006 Automatic weighing machines",
@@ -185,8 +186,8 @@ public class LegislativeAreaDetailsController : Controller
                 new SelectedLegislativeAreaViewModel
                 {
                     LegislativeAreaName = "Pressure equipment",
-                    LegislativeAreaDetails = new List<LegislativeAreaDetails>
-                    { new LegislativeAreaDetails
+                    LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel>
+                    { new LegislativeAreaListItemViewModel
                         {
                             PurposeOfAppointment = "Conformity assessment of Pressure Equipment falling within Regulation 6 and classified in accordance with Schedule 3 as either Category I, II, III, or IV equipment",
                             Category = "Category II",
@@ -194,7 +195,7 @@ public class LegislativeAreaDetailsController : Controller
                             Product = "Lorem ipsum dolor siture",
                             Procedure = "Part 2 – Module A2 Internal production control plus supervised pressure equipment checks at random"
                         },
-                        new LegislativeAreaDetails
+                        new LegislativeAreaListItemViewModel
                         {
                             PurposeOfAppointment = "Not applicable",
                             Category = "Lorem ipsum dolor siture",

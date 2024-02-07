@@ -1,11 +1,11 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.SelectedLegislativeAreasViewModel
 
 @section BackButton
-    {
+{
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link href="/" />
+                <govuk-back-link href="@Model.ReturnUrl" />
             </div>
         </div>
     </div>
@@ -18,17 +18,18 @@
                 <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <span class="govuk-caption-m">Legislative area added</span>
-                        <h1 class="govuk-fieldset__heading">
-                            Legislative area added
-                        </h1>
                     </legend>
 
-                    <div class="govuk-checkboxes ukmcab-padding-top-20" data-module="govuk-checkboxes">
-                        @foreach (var la in Model.SelectedLegislativeAreas)
-                        {
-                            <div class="govuk-checkboxes__item">
-                                <input class="govuk-checkboxes__input" type="checkbox" asp-for="@la.IsSelected">
-                                <label class="govuk-label govuk-checkboxes__label govuk-details__summary-textX" asp-for="@la.IsSelected">
+                    <govuk-checkboxes name="nationality">
+                        <govuk-checkboxes-fieldset>
+                            <govuk-checkboxes-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
+                                Legislative area added
+                            </govuk-checkboxes-fieldset-legend>
+
+                            @foreach (var la in Model.SelectedLegislativeAreas)
+                            {
+                                <govuk-checkboxes-item value="@la.IsSelected">
+
                                     <details class="govuk-details ukmcab-expander">
                                         <summary class="govuk-details__summary">
                                             <span class="govuk-details__summary-text govuk-!-font-size-24">
@@ -75,10 +76,10 @@
                                             }
                                         </div>
                                     </details>
-                                </label>
-                            </div>
-                        }
-                    </div>
+                                </govuk-checkboxes-item>
+                            }
+                        </govuk-checkboxes-fieldset>
+                    </govuk-checkboxes>
                 </fieldset>
             </div>
         </div>
