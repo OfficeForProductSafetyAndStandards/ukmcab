@@ -9,6 +9,7 @@
     using System.Linq.Expressions;
     using System.Text;
     using System.Threading.Tasks;
+    using UKMCAB.Core.Domain.LegislativeAreas;
     using UKMCAB.Core.Mappers;
     using UKMCAB.Core.Services.CAB;
     using UKMCAB.Data.CosmosDb.Services;
@@ -551,5 +552,65 @@
 
         #endregion
 
+
+        #region GetPurposeOfAppointmentById
+        [Test]
+        public void EmptyGuid_GetPurposeOfAppointmentById_ShouldThrowException()
+        {
+            // Arrange & Act & Assert
+            Assert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(Guid.Empty));
+        }
+
+        [Test]
+        public async Task LegislativeAreaService_GetPurposeOfAppointmentById_ShouldReturnPurposeOfAppointmentFromRepository()
+        {
+            // Arrange
+            var testGuid = Guid.NewGuid();
+            _mockPurposeOfAppointmentRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
+                .ReturnsAsync(new List<PurposeOfAppointment>
+                {
+                    new() { Id = testGuid, Name = "Name1" },
+                    new() { Id = new Guid(), Name = "Name2" },
+                    new() { Id = new Guid(), Name = "Name3" },
+                });
+
+            // Act
+            var purposeOfAppointment = await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(testGuid);
+
+            // Assert
+            Assert.IsNotNull(purposeOfAppointment);
+            Assert.AreEqual("Name1", purposeOfAppointment!.Name);
+        }
+        #endregion
+
+        #region GetCategoryById
+        [Test]
+        public void EmptyGuid_GetCategoryById_ShouldThrowException()
+        {
+            // Arrange & Act & Assert
+            Assert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetCategoryByIdAsync(Guid.Empty));
+        }
+
+        [Test]
+        public async Task LegislativeAreaService_GetCategoryById_ShouldReturnCategoryFromRepository()
+        {
+            // Arrange
+            var testGuid = Guid.NewGuid();
+            _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
+                .ReturnsAsync(new List<Category>
+                {
+                    new() { Id = testGuid, Name = "Name1", LegislativeAreaId = new Guid(),  PurposeOfAppointmentId = new Guid()},
+                    new() { Id = new Guid(), Name = "Name2", LegislativeAreaId = new Guid(),  PurposeOfAppointmentId = new Guid() },
+                    new() { Id = new Guid(), Name = "Name3", LegislativeAreaId = new Guid(),  PurposeOfAppointmentId =new Guid() },
+                });
+
+            // Act
+            var category = await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(testGuid);
+
+            // Assert
+            Assert.IsNotNull(category);
+            Assert.AreEqual("Name1", category!.Name);
+        }
+        #endregion
     }
 }

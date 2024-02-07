@@ -1,11 +1,13 @@
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaViewModel 
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.SubCategoryViewModel
 
 @section BackButton
 {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" />
+                <govuk-back-link asp-route="@LegislativeAreaDetailsController.Routes.PurposeOfAppointment" asp-route-id="@Model.CABId" asp-route-scopeId="@Model.ScopeId" />
+            </div>
             </div>
         </div>
     </div>
@@ -22,13 +24,28 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="legislativeForm" method="post" novalidate>
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedLegislativeAreaId))">
-                <govuk-radios asp-for="SelectedLegislativeAreaId">
+            <input type="hidden" asp-for="LegislativeArea" />
+            <input type="hidden" asp-for="PurposeOfAppointment" />
+            <input type="hidden" asp-for="Category" />
+            <h2 class="govuk-heading-s">Legislative Area</h2>
+            <p class="govuk-body">@Model.LegislativeArea</p>
+            @if (Model.PurposeOfAppointment != null)
+            {
+                <h2 class="govuk-heading-s">Purpose of appointment</h2>
+                <p class="govuk-body">@Model.PurposeOfAppointment</p>
+            }
+            @if (Model.Category != null)
+            {
+                <h2 class="govuk-heading-s">Category</h2>
+                <p class="govuk-body">@Model.Category</p>
+            }
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedSubCategoryId))">
+                <govuk-radios asp-for="SelectedSubCategoryId">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">
                             Legislative area
                         </govuk-radios-fieldset-legend>
-                        @foreach (var item in Model.LegislativeAreas)
+                        @foreach (var item in Model.SubCategories)
                         {
                             <govuk-radios-item value="@item.Value">@item.Text</govuk-radios-item>
                         }

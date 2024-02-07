@@ -448,6 +448,18 @@ namespace UKMCAB.Core.Services.CAB
         public Task<int> GetCABCountForSubStatusAsync(SubStatus subStatus = SubStatus.None) =>
             _cabRepository.GetCABCountBySubStatusAsync(subStatus);
 
+        public async Task<DocumentScopeOfAppointment?> GetDocumentScopeOfAppointmentAsync(Guid cabId, Guid scopeOfAppointmentId)
+        {
+            var latestDocument = await this.GetLatestDocumentAsync(cabId.ToString());
+
+            if(latestDocument != null && latestDocument.ScopeOfAppointments.Any())
+            {
+                return latestDocument.ScopeOfAppointments.Where(n => n.Id == scopeOfAppointmentId).FirstOrDefault();
+            }
+
+            return null;
+        }
+
 
         private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {
