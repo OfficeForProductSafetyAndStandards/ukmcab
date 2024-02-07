@@ -167,15 +167,13 @@ public class LegislativeAreaDetailsController : Controller
 
             return RedirectToRoute(Routes.AddCategory, new { id, scopeId });
         }
-        else
-        {
-            var options =
-                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
-                    documentScopeOfAppointment.LegislativeAreaId);
-            vm.PurposeOfAppointments = options.PurposeOfAppointments
-                .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
-            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
-        }
+
+        var options =
+            await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
+                documentScopeOfAppointment.LegislativeAreaId);
+        vm.PurposeOfAppointments = options.PurposeOfAppointments
+            .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
     }
 
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync()

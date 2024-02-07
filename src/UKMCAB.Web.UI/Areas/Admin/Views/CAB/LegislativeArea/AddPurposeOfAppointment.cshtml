@@ -24,6 +24,7 @@
         <form id="poaForm" method="post">
             <h2 class="govuk-heading-s">Legislative Area</h2>
             <p class="govuk-body">@Model.LegislativeArea</p>
+            <input type="hidden" asp-for="@Model.LegislativeArea"/>
             <govuk-radios asp-for="SelectedPurposeOfAppointmentId">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--s">
@@ -37,7 +38,6 @@
             </govuk-radios>
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
-                <govuk-button name="submitType" class="govuk-button--secondary" type="submit" value="@Constants.SubmitType.Save">Save as draft</govuk-button>
                 <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CabId">Cancel</a>
             </div>
         </form>
