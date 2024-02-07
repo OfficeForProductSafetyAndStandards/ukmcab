@@ -24,8 +24,16 @@
     word-wrap: break-word;
 }
 
+.bold-text {
+    font-weight: bold;
+}
+
 .ukmcab-border {
     border: #bfc1c3 1px solid;
+}
+
+.ukmcab-no-border {
+    border: none !important;
 }
 
 .ukmcab-float__clear {
