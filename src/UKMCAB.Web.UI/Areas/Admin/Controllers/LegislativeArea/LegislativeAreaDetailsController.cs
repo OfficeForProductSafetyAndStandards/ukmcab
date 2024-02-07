@@ -18,7 +18,6 @@ public class LegislativeAreaDetailsController : Controller
     
     public static class Routes
     {
-        //public const string LegislativeAreaDetails = "legislative.area.details";
         public const string AddLegislativeArea = "legislative.area.add-legislativearea";
         public const string AddPurposeOfAppointment = "legislative.area.add-purpose-of-appointment";
         public const string AddCategory = "legislative.area.add-category";
