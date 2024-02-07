@@ -87,4 +87,9 @@
     </None>
   </ItemGroup>
 
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CAB\Partials\_AppointmentDate.cshtml" />
+    <_ContentIncludedByDefault Remove="Areas\Admin\Views\CAB\Partials\_ReviewDate.cshtml" />
+  </ItemGroup>
+
 </Project>

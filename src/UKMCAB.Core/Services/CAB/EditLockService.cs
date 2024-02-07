@@ -4,7 +4,7 @@ namespace UKMCAB.Core.Services.CAB;
 
 public class EditLockService : IEditLockService
 {
-    private const string EditLockCacheKey = "CabEditLock";
+    private const string EditLockCacheKey = "CabEditLock12";
     private readonly IDistCache _distCache;
     private readonly Dictionary<string, Tuple<string, DateTime>> _items; // CabId, UserId, ExpirationTime
 

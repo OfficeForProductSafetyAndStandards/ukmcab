@@ -14,44 +14,65 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">Create a CAB</span>
-        <h1 class="govuk-heading-l">@Model.Title</h1>
+        <h1 class="govuk-heading-l">Legislative area: additional information</h1>
     </div>
 </div>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <form id="legislativeAreaDetailsForm" method="post" novalidate>
+        <form id="legislativeAreaAdditionalInformationForm" method="post" novalidate>
+
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IsProvisionalLegislativeArea))">
-                <h3 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--s" asp-for="IsProvisionalLegislativeArea">
-                        Is this a provisional legislative area?
-                    </label>
-                </h3>
-                <div id="legislative-area-hint" class="govuk-hint">
-                    A provisional legislative area does not have a product schedule and
-                    it will be shown as provisional on the CAB profile.
-                </div>
-                <p class="govuk-error-message">
-                    <span asp-validation-for="IsProvisionalLegislativeArea" class="govuk-error-message"></span>
-                </p>
-                <div class="govuk-radios" data-module="govuk-radios" id="IsProvisionalLegislativeArea">
-                    <div class="govuk-radios__item">
-                        <input class="govuk-radios__input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.IsProvisionalLegislativeArea))" id="LegislativeAreaYes" asp-for="IsProvisionalLegislativeArea" type="radio" value="true">
-                        <label class="govuk-label govuk-radios__label" for="LegislativeAreaYes">
-                            Yes
-                        </label>
+                <govuk-radios asp-for="IsProvisionalLegislativeArea">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--s">
+                            Is this a provisional legislative area?
+                        </govuk-radios-fieldset-legend>
+
+                        <govuk-radios-hint>
+                            A provisional legislative area does not have a product schedule and
+                            it will be shown as provisional on the CAB profile.
+                        </govuk-radios-hint>
+
+                        <govuk-radios-item value="true">Yes</govuk-radios-item>
+                        <govuk-radios-item value="false">No</govuk-radios-item>
+                    </govuk-radios-fieldset>
+                </govuk-radios>
+            </div>
+
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AppointmentDate))">
+                <govuk-date-input asp-for="AppointmentDate">
+                    <govuk-date-input-fieldset>
+                        <govuk-date-input-fieldset-legend is-page-heading="false" class="govuk-fieldset__legend--s">
+                            Appointment date (optional)
+                        </govuk-date-input-fieldset-legend>
+                        <govuk-date-input-hint>
+                            For example, 27 3 2007
+                        </govuk-date-input-hint>
+                    </govuk-date-input-fieldset>
+                </govuk-date-input>
+            </div>
+
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ReviewDate))">
+                <div>
+                    <div class="review-date">
+                        <govuk-date-input asp-for="ReviewDate">
+                            <govuk-date-input-fieldset>
+                                <govuk-date-input-fieldset-legend is-page-heading="false" class="govuk-fieldset__legend--s">
+                                    Review date (optional)
+                                </govuk-date-input-fieldset-legend>
+                                <govuk-date-input-hint>
+                                    For example, 27 3 2007
+                                </govuk-date-input-hint>
+                            </govuk-date-input-fieldset>
+                        </govuk-date-input>
                     </div>
-                    <div class="govuk-radios__item">
-                        <input class="govuk-radios__input" id="LegislativeAreaNo" asp-for="IsProvisionalLegislativeArea" type="radio" value="false">
-                        <label class="govuk-label govuk-radios__label" for="LegislativeAreaNo">
-                            No
-                        </label>
+                    <div class="review-date-add-month">
+                        <govuk-button class="govuk-button--secondary">Add 18 months from today</govuk-button>
                     </div>
                 </div>
             </div>
 
-            <partial name="~/Areas/admin/Views/CAB/Partials/_AppointmentDate.cshtml" model="Model.AppointmentDate"/>
-            <partial name="~/Areas/admin/Views/CAB/Partials/_reviewDate.cshtml" model="Model.ReviewDate"/>
 
             <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Reason))">
                 <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
@@ -65,12 +86,8 @@
             </div>
 
             <div class="govuk-button-group">
-                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                    Save and continue
-                </button>
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
-                    Save as draft
-                </button>
+                <govuk-button type="submit">Save and continue</govuk-button>
+                <govuk-button class="govuk-button--secondary">Save as draft</govuk-button>
                 <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
