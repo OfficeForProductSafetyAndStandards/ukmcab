@@ -13,6 +13,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+using static System.Formats.Asn1.AsnWriter;
 
 // ReSharper disable SpecifyStringComparison - Not For Cosmos
 
@@ -452,12 +453,9 @@ namespace UKMCAB.Core.Services.CAB
         {
             var latestDocument = await this.GetLatestDocumentAsync(cabId.ToString());
 
-            if(latestDocument != null && latestDocument.ScopeOfAppointments.Any())
-            {
-                return latestDocument.ScopeOfAppointments.Where(n => n.Id == scopeOfAppointmentId).FirstOrDefault();
-            }
+            var documentScopeOfAppointment = latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeOfAppointmentId) ?? throw new InvalidOperationException();
 
-            return null;
+            return documentScopeOfAppointment;
         }
 
 
