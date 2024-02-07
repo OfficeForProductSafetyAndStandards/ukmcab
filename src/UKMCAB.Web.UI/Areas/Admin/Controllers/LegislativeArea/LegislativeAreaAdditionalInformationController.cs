@@ -34,10 +34,10 @@ public class LegislativeAreaAdditionalInformationController : Controller
         {
             CabId = id,
             LegislativeAreaId = laId,
-            IsProvisionalLegislativeArea = legislativeArea?.IsProvisional,
-            AppointmentDate = legislativeArea?.AppointmentDate,
-            ReviewDate = legislativeArea?.ReviewDate,
-            Reason = legislativeArea?.Reason
+            IsProvisionalLegislativeArea = legislativeArea.IsProvisional,
+            AppointmentDate = legislativeArea.AppointmentDate,
+            ReviewDate = legislativeArea.ReviewDate,
+            Reason = legislativeArea.Reason
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);

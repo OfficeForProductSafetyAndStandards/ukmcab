@@ -455,11 +455,11 @@ namespace UKMCAB.Core.Services.CAB
             return latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeOfAppointmentId) ?? throw new InvalidOperationException();
         }
 
-        public async Task<DocumentLegislativeArea?> GetDocumentLegislativeAreaAsync(Guid cabId,
+        public async Task<DocumentLegislativeArea> GetDocumentLegislativeAreaAsync(Guid cabId,
             Guid documentLegislativeAreaId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
-            return latestDocument?.DocumentLegislativeAreas.FirstOrDefault(a => a.Id == documentLegislativeAreaId);
+            return latestDocument?.DocumentLegislativeAreas.First(a => a.Id == documentLegislativeAreaId) ?? throw new InvalidOperationException();
         }
 
         private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
