@@ -416,6 +416,36 @@ resource cosmosDbContainerCategories  'Microsoft.DocumentDB/databaseAccounts/sql
   }
 }
 
+resource cosmosDbContainerSubCategories  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'sub-categories'
+  properties: {
+    resource: {
+      id: 'sub-categories'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
 
 resource cosmosDbContainerProducts  'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
   parent: cosmosDbDatabase
