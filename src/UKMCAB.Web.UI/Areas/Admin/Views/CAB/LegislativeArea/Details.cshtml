@@ -1,0 +1,165 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaDetailViewModel 
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a>Back</a>
+            </div>
+        </div>
+    </div>
+}
+
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">Create a CAB</span>
+        <h1 class="govuk-heading-l">Legislative area details</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="legislativeAreaDetailsForm" method="post" novalidate>
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IsProvisionalLegislativeArea))">
+                <h3 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--s" asp-for="IsProvisionalLegislativeArea">
+                        Is this a provisional legislative area?
+                    </label>
+                </h3>
+                <p class="govuk-error-message">
+                    <span asp-validation-for="IsProvisionalLegislativeArea" class="govuk-error-message"></span>
+                </p>
+                <div id="legislative-area-hint" class="govuk-hint">
+                    A provisional legislative area does not have a product schedule and
+                    it will be shown as provisional on the CAB profile.
+                </div>
+                <div class="govuk-radios" data-module="govuk-radios" id="IsProvisionalLegislativeArea">
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.IsProvisionalLegislativeArea))" id="LegislativeAreaYes" asp-for="IsProvisionalLegislativeArea" type="radio" value="true">
+                        <label class="govuk-label govuk-radios__label" for="LegislativeAreaYes">
+                            Yes
+                        </label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="LegislativeAreaNo" asp-for="IsProvisionalLegislativeArea" type="radio" value="false">
+                        <label class="govuk-label govuk-radios__label" for="LegislativeAreaNo">
+                            No
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AppointmentDate))">
+                <fieldset class="govuk-fieldset" role="group" aria-describedby="appointment-date-hint">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="AppointmentDate" id="AppointmentDate">
+                            Appointment date (optional)
+                        </label>
+                    </h3>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="AppointmentDate" class="govuk-error-message"></span>
+                    </p>
+                    <div id="appointment-date-hint" class="govuk-hint">
+                        For example, 27 3 2007
+                    </div>
+                    <div class="govuk-date-input" id="appointment-date">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" asp-for="AppointmentDateDay">
+                                    Day
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.AppointmentDateDay))" asp-for="AppointmentDateDay" type="text" inputmode="numeric">
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" asp-for="AppointmentDateMonth">
+                                    Month
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.AppointmentDateMonth))" asp-for="AppointmentDateMonth" type="text" inputmode="numeric">
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" asp-for="AppointmentDateYear">
+                                    Year
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.AppointmentDateYear))" asp-for="AppointmentDateYear" type="text" inputmode="numeric">
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ReviewDate))">
+                <fieldset class="govuk-fieldset" role="group" aria-describedby="review-date-hint">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="ReviewDate">
+                            Review date (optional)
+                        </label>
+                    </h3>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="ReviewDate" class="govuk-error-message"></span>
+                    </p>
+                    <div id="review-date-hint" class="govuk-hint">
+                        For example, 27 3 2007
+                    </div>
+                    <div class="govuk-date-input" id="review-date">
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" asp-for="ReviewDateDay" id="ReviewDate">
+                                    Day
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ReviewDateDay))" asp-for="ReviewDateDay" type="text" inputmode="numeric">
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" asp-for="ReviewDateMonth">
+                                    Month
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-2 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ReviewDateMonth))" asp-for="ReviewDateMonth" type="text" inputmode="numeric">
+                            </div>
+                        </div>
+                        <div class="govuk-date-input__item">
+                            <div class="govuk-form-group">
+                                <label class="govuk-label govuk-date-input__label" asp-for="ReviewDateYear">
+                                    Year
+                                </label>
+                                <input class="govuk-input govuk-date-input__input govuk-input--width-4 @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.ReviewDateYear))" asp-for="ReviewDateYear" type="text" inputmode="numeric">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="add-18-button">
+                        <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Add18">
+                            Add 18 months from today
+                        </button>
+                    </div>
+                </fieldset>
+            </div>
+            <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Reason))">
+                <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        Reason (optional)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        Enter the reason for changing the review date for this legislative area.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+            </div>
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                    Save and continue
+                </button>
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
+                    Save as draft
+                </button>
+                <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+
+</div>
