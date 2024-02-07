@@ -1,0 +1,20 @@
+#legislativeAreaAdditionalInformationForm {
+
+  .review-date {
+    float: left;
+
+    @include govuk-media-query($until: tablet) {
+      float: none;
+    }
+  }
+
+  .review-date-add-month {
+    padding-top: 95px;
+    @include govuk-media-query($until: tablet) {
+      padding-top: 4px;
+      margin-top: 4px;
+    }
+  }
+
+
+}

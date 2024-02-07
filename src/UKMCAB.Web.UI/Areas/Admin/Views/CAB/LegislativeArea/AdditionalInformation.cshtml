@@ -1,0 +1,94 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaAdditionalInformationViewModel 
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a>Back</a>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">Create a CAB</span>
+        <h1 class="govuk-heading-l">Legislative area: additional information</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="legislativeAreaAdditionalInformationForm" method="post" novalidate>
+
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IsProvisionalLegislativeArea))">
+                <govuk-radios asp-for="IsProvisionalLegislativeArea">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--s">
+                            Is this a provisional legislative area?
+                        </govuk-radios-fieldset-legend>
+
+                        <govuk-radios-hint>
+                            A provisional legislative area does not have a product schedule and
+                            it will be shown as provisional on the CAB profile.
+                        </govuk-radios-hint>
+
+                        <govuk-radios-item value="true">Yes</govuk-radios-item>
+                        <govuk-radios-item value="false">No</govuk-radios-item>
+                    </govuk-radios-fieldset>
+                </govuk-radios>
+            </div>
+
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AppointmentDate))">
+                <govuk-date-input asp-for="AppointmentDate">
+                    <govuk-date-input-fieldset>
+                        <govuk-date-input-fieldset-legend is-page-heading="false" class="govuk-fieldset__legend--s">
+                            Appointment date (optional)
+                        </govuk-date-input-fieldset-legend>
+                        <govuk-date-input-hint>
+                            For example, 27 3 2007
+                        </govuk-date-input-hint>
+                    </govuk-date-input-fieldset>
+                </govuk-date-input>
+            </div>
+
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ReviewDate))">
+                <div>
+                    <div class="review-date">
+                        <govuk-date-input asp-for="ReviewDate">
+                            <govuk-date-input-fieldset>
+                                <govuk-date-input-fieldset-legend is-page-heading="false" class="govuk-fieldset__legend--s">
+                                    Review date (optional)
+                                </govuk-date-input-fieldset-legend>
+                                <govuk-date-input-hint>
+                                    For example, 27 3 2007
+                                </govuk-date-input-hint>
+                            </govuk-date-input-fieldset>
+                        </govuk-date-input>
+                    </div>
+                    <div class="review-date-add-month">
+                        <govuk-button class="govuk-button--secondary">Add 18 months from today</govuk-button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Reason))">
+                <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        Reason (optional)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        Enter the reason for changing the review date for this legislative area.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+            </div>
+
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Save and continue</govuk-button>
+                <govuk-button class="govuk-button--secondary">Save as draft</govuk-button>
+                <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
