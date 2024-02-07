@@ -123,9 +123,7 @@ public class LegislativeAreaDetailsController : Controller
     [HttpGet("add-purpose-of-appointment/{scopeId}", Name = Routes.AddPurposeOfAppointment)]
     public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid scopeId)
     {
-        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-        var documentScopeOfAppointment = latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeId) ?? throw new InvalidOperationException();
-        
+        var documentScopeOfAppointment = await _cabAdminService.GetDocumentScopeOfAppointmentAsync(id, scopeId);
         var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId);
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentScopeOfAppointment.LegislativeAreaId);
         if (legislativeArea == null)
@@ -365,7 +363,7 @@ public class LegislativeAreaDetailsController : Controller
                 {
                     LegislativeAreaName = "Non-automatic weighting instruments",
                     LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel> 
-                    { new LegislativeAreaListItemViewModel 
+                    { new()
                         { 
                             PurposeOfAppointment = "",
                             Category = "MI-005 Measuring systems for the continuous and dynamic measurement of quantities of liquid other than water",
@@ -373,7 +371,7 @@ public class LegislativeAreaDetailsController : Controller
                             Product = "Measuring systems on a pipelines (Accuracy Class 0.3)",
                             Procedure = "Module G Conformity based on unit verification"
                         },
-                        new LegislativeAreaListItemViewModel
+                        new()
                         {
                             PurposeOfAppointment = "",
                             Category = "MI-006 Automatic weighing machines",
@@ -387,21 +385,21 @@ public class LegislativeAreaDetailsController : Controller
                 {
                     LegislativeAreaName = "Pressure equipment",
                     LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel>
-                    { new LegislativeAreaListItemViewModel
+                    { new()
                         {
                             PurposeOfAppointment = "Conformity assessment of Pressure Equipment falling within Regulation 6 and classified in accordance with Schedule 3 as either Category I, II, III, or IV equipment",
                             Category = "Category II",
                             SubCategory = "",
                             Product = "Lorem ipsum dolor siture",
-                            Procedure = "Part 2 – Module A2 Internal production control plus supervised pressure equipment checks at random"
+                            Procedure = "Part 2 Module A2 Internal production control plus supervised pressure equipment checks at random"
                         },
-                        new LegislativeAreaListItemViewModel
+                        new()
                         {
                             PurposeOfAppointment = "Not applicable",
                             Category = "Lorem ipsum dolor siture",
                             SubCategory = "",
                             Product = "Not applicable",
-                            Procedure = "Part 2 – Module A2 Internal production control plus supervised pressure equipment checks at random"
+                            Procedure = "Part 2 Module A2 Internal production control plus supervised pressure equipment checks at random"
                         }
                     }
                 }
