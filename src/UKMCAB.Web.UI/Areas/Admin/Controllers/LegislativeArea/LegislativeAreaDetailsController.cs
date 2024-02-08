@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using UKMCAB.Core.Domain.LegislativeAreas;
@@ -347,9 +348,9 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     [HttpGet("selected-legislative-area", Name = Routes.LegislativeAreaSelected)]
-    public async Task<IActionResult> SelectedLegislativeArea(Guid cabId)
+    public async Task<IActionResult> SelectedLegislativeArea(Guid id, string? returnUrl)
     {
-        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString());
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
 
         // Implies no document or archived
         if (latestDocument == null)
@@ -358,70 +359,76 @@ public class LegislativeAreaDetailsController : Controller
         }
 
         var scopeOfAppointments = latestDocument.ScopeOfAppointments;
+        var selectedLAs = new List<LegislativeAreaListItemViewModel>();      
 
         foreach (var sa in scopeOfAppointments)
         {
-            var laName = await _legislativeAreaService.GetLegislativeAreaByIdAsync(sa.LegislativeAreaId);
-            var name = laName.Name;
-        }
+            var products = new StringBuilder();
+            var procedures = new StringBuilder();
 
+            var legislativeArea = sa.LegislativeAreaId != null
+            ? await _legislativeAreaService.GetLegislativeAreaByIdAsync((Guid)sa.LegislativeAreaId)
+            : null;
 
-        var vm = new SelectedLegislativeAreasViewModel() 
-        { 
-            ReturnUrl = "/",
-            SelectedLegislativeAreas = new[]
+            var purpose = sa.PurposeOfAppointmentId != null
+            ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)sa.PurposeOfAppointmentId)
+            : null;
+
+            var category = sa.CategoryId != null
+            ? await _legislativeAreaService.GetCategoryByIdAsync((Guid)sa.CategoryId)
+            : null;
+
+            var subCategory = sa.SubCategoryId != null
+            ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)sa.SubCategoryId)
+            : null;
+
+            if (sa.ProductIds != null && sa.ProductIds.Any())
             {
-                new SelectedLegislativeAreaViewModel
+                foreach (var productId in sa.ProductIds)
                 {
-                    LegislativeAreaName = "Non-automatic weighting instruments",
-                    LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel>
-                    {
-                        new()
-                        {
-                            PurposeOfAppointment = "",
-                            Category =
-                                "MI-005 Measuring systems for the continuous and dynamic measurement of quantities of liquid other than water",
-                            SubCategory = "",
-                            Product = "Measuring systems on a pipelines (Accuracy Class 0.3)",
-                            Procedure = "Module G Conformity based on unit verification"
-                        },
-                        new()
-                        {
-                            PurposeOfAppointment = "",
-                            Category = "MI-006 Automatic weighing machines",
-                            SubCategory = "Automatic catch weigher",
-                            Product = "Automatic catch weigher",
-                            Procedure = "Module D1 Quality assurance of the production process"
-                        }
-                    }
-                },
-                new SelectedLegislativeAreaViewModel
-                {
-                    LegislativeAreaName = "Pressure equipment",
-                    LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel>
-                    {
-                        new()
-                        {
-                            PurposeOfAppointment =
-                                "Conformity assessment of Pressure Equipment falling within Regulation 6 and classified in accordance with Schedule 3 as either Category I, II, III, or IV equipment",
-                            Category = "Category II",
-                            SubCategory = "",
-                            Product = "Lorem ipsum dolor siture",
-                            Procedure =
-                                "Part 2 Module A2 Internal production control plus supervised pressure equipment checks at random"
-                        },
-                        new()
-                        {
-                            PurposeOfAppointment = "Not applicable",
-                            Category = "Lorem ipsum dolor siture",
-                            SubCategory = "",
-                            Product = "Not applicable",
-                            Procedure =
-                                "Part 2 Module A2 Internal production control plus supervised pressure equipment checks at random"
-                        }
-                    }
+                    var prod = await _legislativeAreaService.GetProductByIdAsync((Guid)productId);
+                    products.AppendFormat("<p class=\"govuk-body\">{0}</p>", prod.Name);
                 }
             }
+
+            if (sa.ProcedureIds != null && sa.ProcedureIds.Any())
+            {
+                foreach (var procedureId in sa.ProcedureIds)
+                {
+                    var proc = await _legislativeAreaService.GetProcedureByIdAsync((Guid)procedureId);
+                    procedures.AppendFormat("<p class=\"govuk-body\">{0}</p>", proc.Name);
+                }
+            }
+
+            var laItem = new LegislativeAreaListItemViewModel
+            {
+                LegislativeArea = new ListItem { Id = sa.LegislativeAreaId, Title = legislativeArea!.Name ?? string.Empty },
+                PurposeOfAppointment = purpose?.Name ?? string.Empty,
+                Category = category?.Name ?? string.Empty,
+                SubCategory = subCategory?.Name ?? string.Empty,
+                Product = HttpUtility.HtmlEncode(products?.ToString()) ?? string.Empty,
+                Procedure = HttpUtility.HtmlEncode(procedures?.ToString()) ?? string.Empty
+            };
+            selectedLAs.Add(laItem);
+        }
+
+        var groupedSelectedLAs = selectedLAs.GroupBy(la => la.LegislativeArea.Title).Select(group => new SelectedLegislativeAreaViewModel
+        {
+            LegislativeAreaName = group.Key,
+            LegislativeAreaDetails = group.Select(laDetails => new LegislativeAreaListItemViewModel
+            {
+                PurposeOfAppointment = laDetails.PurposeOfAppointment,
+                Category = laDetails.Category,
+                SubCategory = laDetails.SubCategory,
+                Product = laDetails.Product,
+                Procedure = laDetails.Procedure
+            }).ToList()
+        }).ToList();
+
+        var vm = new SelectedLegislativeAreasViewModel
+        {
+            ReturnUrl = returnUrl ?? "/",
+            SelectedLegislativeAreas = groupedSelectedLAs
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/SelectedLegislativeArea.cshtml", vm);

@@ -13,6 +13,7 @@ public class LegislativeAreaService : ILegislativeAreaService
     private readonly IReadOnlyRepository<Category> _categoryRepository;
     private readonly IReadOnlyRepository<Product> _productRepository;
     private readonly IReadOnlyRepository<Procedure> _procedureRepository;
+    private readonly IReadOnlyRepository<SubCategory> _subCategoryRepository;
     private readonly IMapper _mapper;
 
     public LegislativeAreaService(
@@ -21,6 +22,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         IReadOnlyRepository<Category> categoryAreRepository,
         IReadOnlyRepository<Product> productRepository,
         IReadOnlyRepository<Procedure> procedureRepository,
+        IReadOnlyRepository<SubCategory> subCategoryRepository,
         IMapper mapper)
     {
         _legislativeAreaRepository = legislativeAreaRepository;
@@ -28,6 +30,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         _categoryRepository = categoryAreRepository;
         _productRepository = productRepository;
         _procedureRepository = procedureRepository;
+        _subCategoryRepository = subCategoryRepository;
         _mapper = mapper;
     }
 
@@ -209,4 +212,25 @@ public class LegislativeAreaService : ILegislativeAreaService
         var cat = await _categoryRepository.QueryAsync(l => l.Id == categoryId);
         return _mapper.Map<CategoryModel>(cat.FirstOrDefault());
     }
+
+    public async Task<ProductModel?> GetProductByIdAsync(Guid productId)
+    {
+        Guard.IsTrue(productId != Guid.Empty, "Guid cannot be empty");
+        var prod = await _productRepository.QueryAsync(p => p.Id == productId);
+        return _mapper.Map<ProductModel>(prod.FirstOrDefault());
+    }
+
+    public async Task<ProcedureModel?> GetProcedureByIdAsync(Guid procedureId)
+    {
+        Guard.IsTrue(procedureId != Guid.Empty, "Guid cannot be empty");
+        var procedure = await _procedureRepository.QueryAsync(p => p.Id == procedureId);
+        return _mapper.Map<ProcedureModel>(procedure.FirstOrDefault());
+    }
+    public async Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid subCategoryId)
+    {
+        Guard.IsTrue(subCategoryId != Guid.Empty, "Guid cannot be empty");
+        var subCat = await _subCategoryRepository.QueryAsync(p => p.Id == subCategoryId);
+        return _mapper.Map<SubCategoryModel>(subCat.FirstOrDefault());
+    }
+
 }

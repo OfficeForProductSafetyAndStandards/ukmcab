@@ -10,7 +10,6 @@ using System.Security.Cryptography.X509Certificates;
 using GovUk.Frontend.AspNetCore;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Common.Security.Tokens;
-using UKMCAB.Core;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
@@ -35,7 +34,6 @@ using UKMCAB.Web.Middleware;
 using UKMCAB.Web.Middleware.BasicAuthentication;
 using UKMCAB.Web.Security;
 using UKMCAB.Web.UI;
-using UKMCAB.Web.UI.Models.ViewModels.Admin;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
@@ -138,6 +136,7 @@ builder.Services.AddSingleton<IReadOnlyRepository<PurposeOfAppointment>>(new Rea
 builder.Services.AddSingleton<IReadOnlyRepository<Category>>(new ReadOnlyRepository<Category>(cosmosClient, new CosmosFeedIterator(), "categories"));
 builder.Services.AddSingleton<IReadOnlyRepository<Product>>(new ReadOnlyRepository<Product>(cosmosClient, new CosmosFeedIterator(), "products"));
 builder.Services.AddSingleton<IReadOnlyRepository<Procedure>>(new ReadOnlyRepository<Procedure>(cosmosClient, new CosmosFeedIterator(), "procedures"));
+builder.Services.AddSingleton<IReadOnlyRepository<SubCategory>>(new ReadOnlyRepository<SubCategory>(cosmosClient, new CosmosFeedIterator(), "sub-categories"));
 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();
