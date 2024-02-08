@@ -45,7 +45,7 @@ public class LegislativeAreaDetailsController : Controller
         var vm = new LegislativeAreaViewModel
         {
             CABId = id,
-            LegislativeAreas = await GetLegislativeSelectListItemsAsync(),
+            LegislativeAreas = await this.GetLegislativeSelectListItemsAsync(),
             ReturnUrl = returnUrl,
         };
 
@@ -117,7 +117,7 @@ public class LegislativeAreaDetailsController : Controller
                 $"Legislative Area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         }
 
-        if (!options.PurposeOfAppointments.Any())
+        if (options.PurposeOfAppointments == null || options.PurposeOfAppointments.Any())
         {
             return RedirectToRoute(Routes.AddCategory, new { id, scopeId });
         }
@@ -175,7 +175,7 @@ public class LegislativeAreaDetailsController : Controller
             var vm = new CategoryViewModel
             {
                 CABId = id,
-                Categories = selectListItems,
+                Categories = categories,
                 LegislativeArea = legislativeArea?.Name,
                 PurposeOfAppointment = purposeOfAppointment?.Name
             };
@@ -218,8 +218,8 @@ public class LegislativeAreaDetailsController : Controller
     [HttpGet("add-sub-category/{scopeId}", Name = Routes.AddSubCategory)]
     public async Task<IActionResult> AddSubCategory(Guid id, Guid scopeId)
     {
-        var scopeOfAppointment = await _cabAdminService.GetDocumentScopeOfAppointmentAsync(id, scopeId);        
-        var subcategories = await this.GetSubCategoriesSelectListItemsAsync(scopeOfAppointment.CategoryId);        
+        var scopeOfAppointment = await _cabAdminService.GetDocumentScopeOfAppointmentAsync(id, scopeId);
+        var subcategories = await this.GetSubCategoriesSelectListItemsAsync(scopeOfAppointment.CategoryId);
 
         if (subcategories != null && subcategories.Any())
         {
@@ -227,16 +227,21 @@ public class LegislativeAreaDetailsController : Controller
             var purposeOfAppointment = await this._legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)scopeOfAppointment.PurposeOfAppointmentId);
             var category = await this._legislativeAreaService.GetCategoryByIdAsync((Guid)scopeOfAppointment.CategoryId);
 
-        var vm = new SubCategoryViewModel
-        {
-            CABId = id,
-            SubCategories = subcategories,
-            LegislativeArea = legislativeArea?.Name,
-            PurposeOfAppointment = purposeOfAppointment?.Name,
-            Category = category?.Name
-        };
+            var vm = new SubCategoryViewModel
+            {
+                CABId = id,
+                SubCategories = subcategories,
+                LegislativeArea = legislativeArea?.Name,
+                PurposeOfAppointment = purposeOfAppointment?.Name,
+                Category = category?.Name
+            };
 
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddSubCategory.cshtml", vm);
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddSubCategory.cshtml", vm);
+        }
+        else
+        {
+            return RedirectToRoute(Routes.AddProduct, new { id, scopeId });
+        }
     }
 
     [HttpPost("add-sub-category/{scopeId}", Name = Routes.AddSubCategory)]
@@ -263,7 +268,72 @@ public class LegislativeAreaDetailsController : Controller
             vm.SubCategories = await this.GetSubCategoriesSelectListItemsAsync(scopeOfAppointment.CategoryId);
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AddSubCategory.cshtml", vm);
         }
+    }   
+
+    [HttpGet("selected-legislative-area", Name = Routes.LegislativeAreaSelected)]
+    public IActionResult SelectedLegislativeArea()
+    {
+        var vm = new SelectedLegislativeAreasViewModel()
+        {
+            ReturnUrl = "/",
+            SelectedLegislativeAreas = new[]
+            {
+            new SelectedLegislativeAreaViewModel
+            {
+                LegislativeAreaName = "Non-automatic weighting instruments",
+                LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel>
+                {
+                    new()
+                    {
+                        PurposeOfAppointment = "",
+                        Category =
+                            "MI-005 Measuring systems for the continuous and dynamic measurement of quantities of liquid other than water",
+                        SubCategory = "",
+                        Product = "Measuring systems on a pipelines (Accuracy Class 0.3)",
+                        Procedure = "Module G Conformity based on unit verification"
+                    },
+                    new()
+                    {
+                        PurposeOfAppointment = "",
+                        Category = "MI-006 Automatic weighing machines",
+                        SubCategory = "Automatic catch weigher",
+                        Product = "Automatic catch weigher",
+                        Procedure = "Module D1 Quality assurance of the production process"
+                    }
+                }
+            },
+            new SelectedLegislativeAreaViewModel
+            {
+                LegislativeAreaName = "Pressure equipment",
+                LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel>
+                {
+                    new()
+                    {
+                        PurposeOfAppointment =
+                            "Conformity assessment of Pressure Equipment falling within Regulation 6 and classified in accordance with Schedule 3 as either Category I, II, III, or IV equipment",
+                        Category = "Category II",
+                        SubCategory = "",
+                        Product = "Lorem ipsum dolor siture",
+                        Procedure =
+                            "Part 2 Module A2 Internal production control plus supervised pressure equipment checks at random"
+                    },
+                    new()
+                    {
+                        PurposeOfAppointment = "Not applicable",
+                        Category = "Lorem ipsum dolor siture",
+                        SubCategory = "",
+                        Product = "Not applicable",
+                        Procedure =
+                            "Part 2 Module A2 Internal production control plus supervised pressure equipment checks at random"
+                    }
+                }
+            }
+        }
+        };
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/SelectedLegislativeArea.cshtml", vm);
     }
+   
 
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync()
     {
@@ -284,10 +354,10 @@ public class LegislativeAreaDetailsController : Controller
                     (Guid)purposeOfAppointmentId);
         }
 
-        if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Categories != null &&  scopeOfAppointmentOptionsModel.Categories.Any())
+        if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Categories != null && scopeOfAppointmentOptionsModel.Categories.Any())
         {
             list = scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem()
-                { Text = x.Name, Value = x.Id.ToString() });
+            { Text = x.Name, Value = x.Id.ToString() });
         }
         else
         {
@@ -295,93 +365,29 @@ public class LegislativeAreaDetailsController : Controller
                 await _legislativeAreaService
                     .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
 
-            if(scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Categories != null && scopeOfAppointmentOptionsModel.Categories.Any())
+            if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Categories != null && scopeOfAppointmentOptionsModel.Categories.Any())
             {
                 list = scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem()
-                    { Text = x.Name, Value = x.Id.ToString() });
+                { Text = x.Name, Value = x.Id.ToString() });
             }
         }
 
-        return list ?? throw new InvalidOperationException();
+        return list;
     }
 
     private async Task<IEnumerable<SelectListItem>> GetSubCategoriesSelectListItemsAsync(Guid? categoryId)
     {
         IEnumerable<SelectListItem>? list = null;
-       
+
         if (categoryId != null)
         {
             var scopeOfAppointmentOptionsModel = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync((Guid)categoryId);
-            if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Subcategories!= null && scopeOfAppointmentOptionsModel.Subcategories.Any())
+            if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Subcategories != null && scopeOfAppointmentOptionsModel.Subcategories.Any())
             {
                 list = scopeOfAppointmentOptionsModel.Subcategories.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
             }
-        }        
+        }
 
-        return list ?? throw new InvalidOperationException();
-    }
-
-    [HttpGet("selected-legislative-area", Name = Routes.LegislativeAreaSelected)]
-    public IActionResult SelectedLegislativeArea()
-    {
-        var vm = new SelectedLegislativeAreasViewModel()
-        {
-            ReturnUrl = "/",
-            SelectedLegislativeAreas = new[]
-            {
-                new SelectedLegislativeAreaViewModel
-                {
-                    LegislativeAreaName = "Non-automatic weighting instruments",
-                    LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel>
-                    {
-                        new()
-                        {
-                            PurposeOfAppointment = "",
-                            Category =
-                                "MI-005 Measuring systems for the continuous and dynamic measurement of quantities of liquid other than water",
-                            SubCategory = "",
-                            Product = "Measuring systems on a pipelines (Accuracy Class 0.3)",
-                            Procedure = "Module G Conformity based on unit verification"
-                        },
-                        new()
-                        {
-                            PurposeOfAppointment = "",
-                            Category = "MI-006 Automatic weighing machines",
-                            SubCategory = "Automatic catch weigher",
-                            Product = "Automatic catch weigher",
-                            Procedure = "Module D1 Quality assurance of the production process"
-                        }
-                    }
-                },
-                new SelectedLegislativeAreaViewModel
-                {
-                    LegislativeAreaName = "Pressure equipment",
-                    LegislativeAreaDetails = new List<LegislativeAreaListItemViewModel>
-                    {
-                        new()
-                        {
-                            PurposeOfAppointment =
-                                "Conformity assessment of Pressure Equipment falling within Regulation 6 and classified in accordance with Schedule 3 as either Category I, II, III, or IV equipment",
-                            Category = "Category II",
-                            SubCategory = "",
-                            Product = "Lorem ipsum dolor siture",
-                            Procedure =
-                                "Part 2 Module A2 Internal production control plus supervised pressure equipment checks at random"
-                        },
-                        new()
-                        {
-                            PurposeOfAppointment = "Not applicable",
-                            Category = "Lorem ipsum dolor siture",
-                            SubCategory = "",
-                            Product = "Not applicable",
-                            Procedure =
-                                "Part 2 Module A2 Internal production control plus supervised pressure equipment checks at random"
-                        }
-                    }
-                }
-            }
-        };
-
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/SelectedLegislativeArea.cshtml", vm);
-    }
-}
+        return list;
+    }   
+ }
