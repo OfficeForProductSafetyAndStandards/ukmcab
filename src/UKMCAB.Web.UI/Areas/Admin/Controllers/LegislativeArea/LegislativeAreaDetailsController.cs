@@ -23,7 +23,8 @@ public class LegislativeAreaDetailsController : Controller
         public const string AddPurposeOfAppointment = "legislative.area.add-purpose-of-appointment";
         public const string AddCategory = "legislative.area.add-category";
         public const string AddSubCategory = "legislative.area.add-sub-category";     
-        public const string AddProduct = "legislative.area.add-product";        
+        public const string AddProduct = "legislative.area.add-product";
+        public const string AddProcedure = "legislative.area.add-procedure";
         public const string LegislativeAreaSelected = "legislative.area.selected";
     }
 
@@ -45,7 +46,7 @@ public class LegislativeAreaDetailsController : Controller
         var vm = new LegislativeAreaViewModel
         {
             CABId = id,
-            LegislativeAreas = await this.GetLegislativeSelectListItemsAsync(),
+            LegislativeAreas = await GetLegislativeSelectListItemsAsync(),
             ReturnUrl = returnUrl,
         };
 
@@ -117,7 +118,7 @@ public class LegislativeAreaDetailsController : Controller
                 $"Legislative Area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         }
 
-        if (options.PurposeOfAppointments == null || options.PurposeOfAppointments.Any())
+        if (options.PurposeOfAppointments.Any())
         {
             return RedirectToRoute(Routes.AddCategory, new { id, scopeId });
         }
@@ -165,27 +166,26 @@ public class LegislativeAreaDetailsController : Controller
     public async Task<IActionResult> AddCategory(Guid id, Guid scopeId)
     {
         var scopeOfAppointment = await _cabAdminService.GetDocumentScopeOfAppointmentAsync(id, scopeId);        
-        var categories = await this.GetCategoriesSelectListItemsAsync(scopeOfAppointment.PurposeOfAppointmentId, scopeOfAppointment.LegislativeAreaId);       
+        var categories = await GetCategoriesSelectListItemsAsync(scopeOfAppointment.PurposeOfAppointmentId, scopeOfAppointment.LegislativeAreaId);
 
-        if (categories != null && categories.Any())
+        var selectListItems = categories.ToList();
+        if (selectListItems.Any())
         {
             var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
-            var purposeOfAppointment = await this._legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)scopeOfAppointment.PurposeOfAppointmentId);
+            var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId != null ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)scopeOfAppointment.PurposeOfAppointmentId) : null;
 
             var vm = new CategoryViewModel
             {
                 CABId = id,
-                Categories = categories,
+                Categories = selectListItems,
                 LegislativeArea = legislativeArea?.Name,
                 PurposeOfAppointment = purposeOfAppointment?.Name
             };
 
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AddCategory.cshtml", vm);
         }
-        else
-        {
-            return RedirectToRoute(Routes.AddProduct, new { id, scopeId });
-        }
+
+        return RedirectToRoute(Routes.AddProduct, new { id, scopeId });
     }
 
     [HttpPost("add-category/{scopeId}", Name = Routes.AddCategory)]
@@ -199,7 +199,7 @@ public class LegislativeAreaDetailsController : Controller
             scopeOfAppointment.CategoryId = vm.SelectedCategoryId;
 
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
             return submitType switch
             {
@@ -208,29 +208,28 @@ public class LegislativeAreaDetailsController : Controller
 
             };           
         }
-        else
-        {   
-            vm.Categories = await this.GetCategoriesSelectListItemsAsync(scopeOfAppointment.PurposeOfAppointmentId, scopeOfAppointment.LegislativeAreaId);
-            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddCategory.cshtml", vm);
-        }
+
+        vm.Categories = await GetCategoriesSelectListItemsAsync(scopeOfAppointment.PurposeOfAppointmentId, scopeOfAppointment.LegislativeAreaId);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddCategory.cshtml", vm);
     }
 
     [HttpGet("add-sub-category/{scopeId}", Name = Routes.AddSubCategory)]
     public async Task<IActionResult> AddSubCategory(Guid id, Guid scopeId)
     {
         var scopeOfAppointment = await _cabAdminService.GetDocumentScopeOfAppointmentAsync(id, scopeId);
-        var subcategories = await this.GetSubCategoriesSelectListItemsAsync(scopeOfAppointment.CategoryId);
+        var subcategories = await GetSubCategoriesSelectListItemsAsync(scopeOfAppointment.CategoryId);
 
-        if (subcategories != null && subcategories.Any())
+        var selectListItems = subcategories.ToList();
+        if (selectListItems.Any())
         {
             var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
-            var purposeOfAppointment = await this._legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)scopeOfAppointment.PurposeOfAppointmentId);
-            var category = await this._legislativeAreaService.GetCategoryByIdAsync((Guid)scopeOfAppointment.CategoryId);
+            var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId != null ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)scopeOfAppointment.PurposeOfAppointmentId) : null;
+            var category = scopeOfAppointment.CategoryId != null ? await _legislativeAreaService.GetCategoryByIdAsync((Guid)scopeOfAppointment.CategoryId) : null;
 
             var vm = new SubCategoryViewModel
             {
                 CABId = id,
-                SubCategories = subcategories,
+                SubCategories = selectListItems,
                 LegislativeArea = legislativeArea?.Name,
                 PurposeOfAppointment = purposeOfAppointment?.Name,
                 Category = category?.Name
@@ -238,10 +237,8 @@ public class LegislativeAreaDetailsController : Controller
 
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AddSubCategory.cshtml", vm);
         }
-        else
-        {
-            return RedirectToRoute(Routes.AddProduct, new { id, scopeId });
-        }
+
+        return RedirectToRoute(Routes.AddProduct, new { id, scopeId });
     }
 
     [HttpPost("add-sub-category/{scopeId}", Name = Routes.AddSubCategory)]
@@ -255,7 +252,7 @@ public class LegislativeAreaDetailsController : Controller
             scopeOfAppointment.SubCategoryId = vm.SelectedSubCategoryId;
 
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
             return submitType switch
             {
@@ -263,17 +260,43 @@ public class LegislativeAreaDetailsController : Controller
                 _ => RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true })
             };           
         }
-        else
-        {  
-            vm.SubCategories = await this.GetSubCategoriesSelectListItemsAsync(scopeOfAppointment.CategoryId);
-            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddSubCategory.cshtml", vm);
-        }
+
+        vm.SubCategories = await GetSubCategoriesSelectListItemsAsync(scopeOfAppointment.CategoryId);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddSubCategory.cshtml", vm);
     }   
 
+    [HttpGet("add-sub-category/{scopeId}", Name = Routes.AddSubCategory)]
+    public async Task<IActionResult> AddProduct(Guid id, Guid scopeId)
+    {
+        var scopeOfAppointment = await _cabAdminService.GetDocumentScopeOfAppointmentAsync(id, scopeId);
+        var products = await GetProductSelectListItemsAsync(scopeOfAppointment.CategoryId);
+
+        var selectListItems = products.ToList();
+        if (!selectListItems.Any()) return RedirectToRoute(Routes.AddProcedure, new { id, scopeId });
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
+        var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId != null ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)scopeOfAppointment.PurposeOfAppointmentId) : null;
+        var category = scopeOfAppointment.CategoryId != null ? await _legislativeAreaService.GetCategoryByIdAsync((Guid)scopeOfAppointment.CategoryId) : null;
+        var subCategory = scopeOfAppointment.SubCategoryId != null ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)scopeOfAppointment.SubCategoryId) : null;
+
+        var vm = new ProductViewModel
+        {
+            CABId = id,
+            Products = selectListItems,
+            LegislativeArea = legislativeArea?.Name,
+            PurposeOfAppointment = purposeOfAppointment?.Name,
+            Category = category?.Name,
+            SubCategory = subCategory?.Name
+        };
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProduct.cshtml", vm);
+
+    }
+    
+    
     [HttpGet("selected-legislative-area", Name = Routes.LegislativeAreaSelected)]
     public IActionResult SelectedLegislativeArea()
     {
-        var vm = new SelectedLegislativeAreasViewModel()
+        var vm = new SelectedLegislativeAreasViewModel
         {
             ReturnUrl = "/",
             SelectedLegislativeAreas = new[]
@@ -338,13 +361,12 @@ public class LegislativeAreaDetailsController : Controller
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync()
     {
         var legislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
-        return legislativeAreas.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
+        return legislativeAreas.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
     }
 
     private async Task<IEnumerable<SelectListItem>> GetCategoriesSelectListItemsAsync(Guid? purposeOfAppointmentId,
         Guid legislativeAreaId)
     {
-        IEnumerable<SelectListItem>? list = null;
         ScopeOfAppointmentOptionsModel? scopeOfAppointmentOptionsModel = null;
 
         if (purposeOfAppointmentId != null)
@@ -354,40 +376,48 @@ public class LegislativeAreaDetailsController : Controller
                     (Guid)purposeOfAppointmentId);
         }
 
-        if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Categories != null && scopeOfAppointmentOptionsModel.Categories.Any())
+        if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Categories.Any())
         {
-            list = scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem()
-            { Text = x.Name, Value = x.Id.ToString() });
-        }
-        else
-        {
-            scopeOfAppointmentOptionsModel =
-                await _legislativeAreaService
-                    .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
-
-            if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Categories != null && scopeOfAppointmentOptionsModel.Categories.Any())
-            {
-                list = scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem()
-                { Text = x.Name, Value = x.Id.ToString() });
-            }
+            return scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
         }
 
-        return list;
+        scopeOfAppointmentOptionsModel =
+            await _legislativeAreaService
+                .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
+
+        if (scopeOfAppointmentOptionsModel.Categories.Any())
+        {
+            return scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
+        }
+
+        return new List<SelectListItem>();
     }
 
     private async Task<IEnumerable<SelectListItem>> GetSubCategoriesSelectListItemsAsync(Guid? categoryId)
     {
-        IEnumerable<SelectListItem>? list = null;
-
         if (categoryId != null)
         {
             var scopeOfAppointmentOptionsModel = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync((Guid)categoryId);
-            if (scopeOfAppointmentOptionsModel != null && scopeOfAppointmentOptionsModel.Subcategories != null && scopeOfAppointmentOptionsModel.Subcategories.Any())
+            if (scopeOfAppointmentOptionsModel.Subcategories.Any())
             {
-                list = scopeOfAppointmentOptionsModel.Subcategories.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
+               return scopeOfAppointmentOptionsModel.Subcategories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
             }
         }
 
-        return list;
-    }   
+        return new List<SelectListItem>();
+    }  
+    
+    private async Task<IEnumerable<SelectListItem>> GetProductSelectListItemsAsync(Guid? categoryId)
+    {
+        if (categoryId != null)
+        {
+            var scopeOfAppointmentOptionsModel = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync((Guid)categoryId);
+            if (scopeOfAppointmentOptionsModel.Products.Any())
+            {
+                return scopeOfAppointmentOptionsModel.Products.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
+            }
+        }
+
+        return new List<SelectListItem>();
+    }  
  }
