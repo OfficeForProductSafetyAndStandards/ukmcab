@@ -11,7 +11,7 @@
     },
     {
         "id": "a59f88aa-c6ae-4c90-939b-89c16e478728",
-        "name": "Radio",
+        "name": "Radio equipment",
         "regulation": "Radio Equipment Regulations 2017"
     },
     {
@@ -31,7 +31,7 @@
     },
     {
         "id": "e3751919-8b26-4059-ae34-8540146e262a",
-        "name": "Pressure Vessels",
+        "name": "Simple pressure vessels",
         "regulation": "Simple Pressure Vessels (Safety) Regulations 2016"
     },
     {
@@ -41,7 +41,7 @@
     },
     {
         "id": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
-        "name": "Noise Emmision",
+        "name": "Noise emissions in the environment by equipment for use outdoors",
         "regulation": "The Noise Emission in the Environment by Equipment for use Outdoors Regulations 2001"
     },
     {
@@ -76,7 +76,7 @@
     },
     {
         "id": "ecc739f4-0be4-4651-8598-1e6a1d0808fc",
-        "name": "Non automatic weighing instruments",
+        "name": "Non-automatic weighing instruments",
         "regulation": "Non Automatic Weighing Instruments Regulations"
     },
     {
