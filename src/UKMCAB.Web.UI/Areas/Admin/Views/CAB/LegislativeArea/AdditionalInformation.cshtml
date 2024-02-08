@@ -1,3 +1,4 @@
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaAdditionalInformationViewModel 
 
 <div class="govuk-grid-row">
@@ -23,8 +24,8 @@
                             it will be shown as provisional on the CAB profile.
                         </govuk-radios-hint>
 
-                        <govuk-radios-item value="true">Yes</govuk-radios-item>
-                        <govuk-radios-item value="false">No</govuk-radios-item>
+                        <govuk-radios-item value="@bool.TrueString">Yes</govuk-radios-item>
+                        <govuk-radios-item value="@bool.FalseString">No</govuk-radios-item>
                     </govuk-radios-fieldset>
                 </govuk-radios>
             </div>
@@ -57,7 +58,7 @@
                         </govuk-date-input>
                     </div>
                     <div class="review-date-add-month">
-                        <govuk-button class="govuk-button--secondary">Add 18 months from today</govuk-button>
+                        <govuk-button type="submit" class="govuk-button--secondary" name="submitType" value="@Constants.SubmitType.Add18" >Add 18 months from today</govuk-button>
                     </div>
                 </div>
             </div>
@@ -74,8 +75,8 @@
             </div>
 
             <div class="govuk-button-group">
-                <govuk-button type="submit">Save and continue</govuk-button>
-                <govuk-button class="govuk-button--secondary">Save as draft</govuk-button>
+                <govuk-button type="submit" name="submitType" value="@Constants.SubmitType.Continue">Save and continue</govuk-button>
+                <govuk-button class="govuk-button--secondary" name="submitType" value="@Constants.SubmitType.Save">Save as draft</govuk-button>
                 <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
