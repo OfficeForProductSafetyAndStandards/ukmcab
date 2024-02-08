@@ -184,8 +184,25 @@ public class LegislativeAreaDetailsController : Controller
     }
     
     [HttpGet("selected-legislative-area", Name = Routes.LegislativeAreaSelected)]
-    public async Task<IActionResult> SelectedLegislativeArea()
+    public async Task<IActionResult> SelectedLegislativeArea(Guid cabId)
     {
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(cabId.ToString());
+
+        // Implies no document or archived
+        if (latestDocument == null)
+        {
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+        }
+
+        var scopeOfAppointments = latestDocument.ScopeOfAppointments;
+
+        foreach (var sa in scopeOfAppointments)
+        {
+            var laName = await _legislativeAreaService.GetLegislativeAreaByIdAsync(sa.LegislativeAreaId);
+            var name = laName.Name;
+        }
+
+
         var vm = new SelectedLegislativeAreasViewModel() 
         { 
             ReturnUrl = "/",
