@@ -91,7 +91,11 @@ public class LegislativeAreaAdditionalInformationController : Controller
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
 
-        //TODO : Route to be configured
-        return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+        return submitType switch
+        {
+            Constants.SubmitType.Continue => RedirectToRoute(
+                LegislativeAreaDetailsController.Routes.LegislativeAreaSelected, new { id }),
+            _ => RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true })
+        };
     }
 }
