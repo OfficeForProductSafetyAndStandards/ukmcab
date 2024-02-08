@@ -55,7 +55,7 @@ namespace UKMCAB.Data.Search.Services
         {
             var cosmosDbDataSource = new SearchIndexerDataSourceConnection(DataConstants.Search.SEARCH_DATASOURCE,
                 SearchIndexerDataSourceType.CosmosDb, cosmosDBConnectionString + $";Database={DataConstants.CosmosDb.Database}",
-                new SearchIndexerDataContainer(DataConstants.CosmosDb.Container));
+                new SearchIndexerDataContainer(DataConstants.CosmosDb.CabContainer));
 
             cosmosDbDataSource.Container.Query = $"SELECT * FROM c WHERE c.StatusValue not in ({(int)Status.Historical})";
 

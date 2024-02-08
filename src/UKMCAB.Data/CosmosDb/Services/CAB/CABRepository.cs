@@ -5,6 +5,7 @@ using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Data.CosmosDb.Services.CAB
 {
@@ -23,30 +24,50 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         {
             var client = new CosmosClient(_cosmosDbConnectionString);
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
-            _container = database.GetContainer(DataConstants.CosmosDb.Container);
+            _container = database.GetContainer(DataConstants.CosmosDb.CabContainer);
             var items = await Query<Document>(_container, document => true);
 
             // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             if (items.Any() && (force || items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true)))
             {
+                var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
+                var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
+
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
-                    if (string.IsNullOrWhiteSpace(document.CreatedByUserGroup))
+
+                    // Populate new DocumentLegislativeAreas and DocumentScopeOfAppointments for each existing LegislativeAreas string.
+                    if (document.LegislativeAreas != null && document.LegislativeAreas.Any())
                     {
-                        UpdateCreatedByUserGroup(document);
+                        foreach (var legislativeArea in document.LegislativeAreas)
+                        {
+                            var dbLegislativeArea = legislativeAreas.Where(x => x.Name.Equals(legislativeArea, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
+
+                            if (dbLegislativeArea != null)
+                            {
+                                if (!document.DocumentLegislativeAreas.Any(x => x.LegislativeAreaId == dbLegislativeArea.Id))
+                                {
+                                    document.DocumentLegislativeAreas.Add(new DocumentLegislativeArea
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        LegislativeAreaId = dbLegislativeArea.Id,
+                                        IsProvisional = false,
+                                    });
+                                }
+
+                                if (!document.ScopeOfAppointments.Any(x => x.LegislativeAreaId == dbLegislativeArea.Id))
+                                {
+                                    document.ScopeOfAppointments.Add(new DocumentScopeOfAppointment
+                                    {
+                                        Id = Guid.NewGuid(),
+                                        LegislativeAreaId = dbLegislativeArea.Id
+                                    });
+                                }
+                            }
+                        }
                     }
 
-                    // for old records if cab number exists and cabnumber visibility is empty/null then update to public
-                    if(!string.IsNullOrWhiteSpace(document.CABNumber) && string.IsNullOrWhiteSpace(document.CabNumberVisibility))
-                    {   
-                        UpdateCabNumberVisibilityNullToPublic(document);
-                    }
-
-                    if (document.AuditLog.Any())
-                    {
-                        ChangeUnarchiveRequestToUnarchivedToDraft(document);
-                    }
                     await UpdateAsync(document);
                 }
             }

@@ -18,5 +18,6 @@ public class AutoMapperProfile : Profile
         this.CreateMap<SubCategory, SubCategoryModel>();
         this.CreateMap<Product, ProductModel>();
         this.CreateMap<Procedure, ProcedureModel>();
+        this.CreateMap<SubCategory, SubCategoryModel>();
     }
 }

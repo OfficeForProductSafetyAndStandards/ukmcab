@@ -11,9 +11,9 @@ public class LegislativeAreaService : ILegislativeAreaService
     private readonly IReadOnlyRepository<LegislativeArea> _legislativeAreaRepository;
     private readonly IReadOnlyRepository<PurposeOfAppointment> _purposeOfAppointmentRepository;
     private readonly IReadOnlyRepository<Category> _categoryRepository;
+    private readonly IReadOnlyRepository<SubCategory> _subCategoryRepository;
     private readonly IReadOnlyRepository<Product> _productRepository;
     private readonly IReadOnlyRepository<Procedure> _procedureRepository;
-    private readonly IReadOnlyRepository<SubCategory> _subCategoryRepository;
     private readonly IMapper _mapper;
 
     public LegislativeAreaService(
@@ -23,7 +23,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         IReadOnlyRepository<Product> productRepository,
         IReadOnlyRepository<Procedure> procedureRepository,
         IReadOnlyRepository<SubCategory> subCategoryRepository,
-        IMapper mapper)
+    IMapper mapper)
     {
         _legislativeAreaRepository = legislativeAreaRepository;
         _purposeOfAppointmentRepository = purposeOfAppointmentRepository;
@@ -125,20 +125,15 @@ public class LegislativeAreaService : ILegislativeAreaService
     }
 
     public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid categoryId)
-    {
-        // Work out if this category has any subcategories. Find all categories with matching name.
-        var category = (await _categoryRepository.QueryAsync(x => x.Id == categoryId)).First();
-        if (!string.IsNullOrEmpty(category.Subcategory))
+    {        
+        var subcategories = await _subCategoryRepository.QueryAsync(x => x.CategoryId == categoryId);
+
+        if (subcategories.Count() > 1)
         {
-            var subcategories = await _categoryRepository.QueryAsync(x => x.Name == category.Name);
-            if (subcategories.Count() > 1)
-            {
-                return new ScopeOfAppointmentOptionsModel
-                {
-                    // Can't use automapper here as a mapping from Category to CategoryModel already exists for categories.
-                    Subcategories = subcategories.Select(x => new CategoryModel { Id = x.Id, Name = x.Subcategory })
-                };
-            }
+            return new ScopeOfAppointmentOptionsModel
+            {   
+                Subcategories = _mapper.Map<IEnumerable<SubCategoryModel>>(subcategories)
+            };
         }
 
         var products = await _productRepository.QueryAsync(x => x.CategoryId == categoryId);
@@ -160,30 +155,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         }
 
         return new ScopeOfAppointmentOptionsModel();
-    }
-
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForSubcategoryAsync(Guid categoryId)
-    {
-        var products = await _productRepository.QueryAsync(x => x.CategoryId == categoryId);
-        if (products.Any())
-        {
-            return new ScopeOfAppointmentOptionsModel
-            {
-                Products = _mapper.Map<IEnumerable<ProductModel>>(products)
-            };
-        }
-
-        var procedures = await _procedureRepository.QueryAsync(x => x.CategoryIds.Contains(categoryId));
-        if (procedures.Any())
-        {
-            return new ScopeOfAppointmentOptionsModel
-            {
-                Procedures = _mapper.Map<IEnumerable<ProcedureModel>>(procedures)
-            };
-        }
-
-        return new ScopeOfAppointmentOptionsModel();
-    }
+    }   
 
     public async Task<ScopeOfAppointmentOptionsModel?> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId)
     {
