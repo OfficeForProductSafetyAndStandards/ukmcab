@@ -1,19 +1,6 @@
 @using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.SubCategoryViewModel
 
-@section BackButton
-{
-    <div class="govuk-width-container ">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link asp-route="@LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment" asp-route-id="@Model.CABId" asp-route-scopeId="@Model.ScopeId" />
-            </div>
-            </div>
-        </div>
-    </div>
-}
-
-
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">Create a CAB</span>
@@ -36,14 +23,14 @@
             }
             @if (Model.Category != null)
             {
-                <h2 class="govuk-heading-s">Category</h2>
+                <h2 class="govuk-heading-s">Product category</h2>
                 <p class="govuk-body">@Model.Category</p>
             }
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedSubCategoryId))">
                 <govuk-radios asp-for="SelectedSubCategoryId">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">
-                            Legislative area
+                            Product sub-category
                         </govuk-radios-fieldset-legend>
                         @foreach (var item in Model.SubCategories)
                         {
@@ -56,8 +43,6 @@
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
             </div>
             <div class="govuk-button-group">
-                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.AdditionalInfo">Go to additional information</govuk-button>
-                <govuk-button name="submitType" class="govuk-button--secondary" type="submit" value="@Constants.SubmitType.Save">Save as draft</govuk-button>
                 <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@Model.ReturnUrl">Cancel</a>
             </div>
         </form>
