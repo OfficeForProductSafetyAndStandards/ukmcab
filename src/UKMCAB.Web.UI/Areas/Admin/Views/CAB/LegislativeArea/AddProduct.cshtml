@@ -31,17 +31,21 @@
                 <h2 class="govuk-heading-s">Product sub category</h2>
                 <p class="govuk-body">@Model.SubCategory</p>
             }
-            <govuk-radios asp-for="SelectedProductId">
-                <govuk-radios-fieldset>
-                    <govuk-radios-fieldset-legend class="govuk-label--s">
+            <govuk-checkboxes asp-for="SelectedProductIds">
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
                         Product
-                    </govuk-radios-fieldset-legend>
-                    @foreach (var item in Model.SubCategories)
+                    </govuk-checkboxes-fieldset-legend>
+
+                    <govuk-checkboxes-hint>
+                        Select all that apply
+                    </govuk-checkboxes-hint>
+                    @foreach (var item in Model.Products)
                     {
-                        <govuk-radios-item value="@item.Value">@item.Text</govuk-radios-item>
+                        <govuk-checkboxes-item value="@item.Value">@item.Text</govuk-checkboxes-item>
                     }
-                </govuk-radios-fieldset>
-            </govuk-radios>
+                </govuk-checkboxes-fieldset>
+            </govuk-checkboxes>
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
             </div>

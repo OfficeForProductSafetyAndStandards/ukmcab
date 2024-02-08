@@ -265,7 +265,7 @@ public class LegislativeAreaDetailsController : Controller
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddSubCategory.cshtml", vm);
     }   
 
-    [HttpGet("add-sub-category/{scopeId}", Name = Routes.AddSubCategory)]
+    [HttpGet("add-product/{scopeId}", Name = Routes.AddProduct)]
     public async Task<IActionResult> AddProduct(Guid id, Guid scopeId)
     {
         var scopeOfAppointment = await _cabAdminService.GetDocumentScopeOfAppointmentAsync(id, scopeId);
