@@ -10,7 +10,8 @@ public class DataConstants
     public static class CosmosDb
     {
         public const string Database = "main";
-        public const string Container = "cab-documents";
+        public const string CabContainer = "cab-documents";
+        public const string LegislativeAreasContainer = "legislative-areas";
     }
 
     public static class Search
