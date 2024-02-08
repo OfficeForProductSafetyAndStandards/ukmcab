@@ -8,9 +8,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         [Required(ErrorMessage = "Select a product category")]
         public Guid? SelectedCategoryId { get; set; }
 
-        public ListItem? LegislativeArea { get; set; }
+        public string? LegislativeArea { get; set; }
 
-        public ListItem? PurposeOfAppointment { get; set; }
+        public string? PurposeOfAppointment { get; set; }
 
         public IEnumerable<SelectListItem>? Categories { get; set; }
     }
