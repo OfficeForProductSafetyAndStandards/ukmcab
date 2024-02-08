@@ -138,6 +138,7 @@ builder.Services.AddSingleton<IReadOnlyRepository<PurposeOfAppointment>>(new Rea
 builder.Services.AddSingleton<IReadOnlyRepository<Category>>(new ReadOnlyRepository<Category>(cosmosClient, new CosmosFeedIterator(), "categories"));
 builder.Services.AddSingleton<IReadOnlyRepository<Product>>(new ReadOnlyRepository<Product>(cosmosClient, new CosmosFeedIterator(), "products"));
 builder.Services.AddSingleton<IReadOnlyRepository<Procedure>>(new ReadOnlyRepository<Procedure>(cosmosClient, new CosmosFeedIterator(), "procedures"));
+builder.Services.AddSingleton<IReadOnlyRepository<SubCategory>>(new ReadOnlyRepository<SubCategory>(cosmosClient, new CosmosFeedIterator(), "sub-categories"));
 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();
