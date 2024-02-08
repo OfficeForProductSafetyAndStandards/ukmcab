@@ -11,6 +11,7 @@ public class LegislativeAreaService : ILegislativeAreaService
     private readonly IReadOnlyRepository<LegislativeArea> _legislativeAreaRepository;
     private readonly IReadOnlyRepository<PurposeOfAppointment> _purposeOfAppointmentRepository;
     private readonly IReadOnlyRepository<Category> _categoryRepository;
+    private readonly IReadOnlyRepository<SubCategory> _subCategoryRepository;
     private readonly IReadOnlyRepository<Product> _productRepository;
     private readonly IReadOnlyRepository<Procedure> _procedureRepository;
     private readonly IMapper _mapper;
@@ -21,13 +22,15 @@ public class LegislativeAreaService : ILegislativeAreaService
         IReadOnlyRepository<Category> categoryAreRepository,
         IReadOnlyRepository<Product> productRepository,
         IReadOnlyRepository<Procedure> procedureRepository,
-        IMapper mapper)
+        IReadOnlyRepository<SubCategory> subCategoryRepository,
+    IMapper mapper)
     {
         _legislativeAreaRepository = legislativeAreaRepository;
         _purposeOfAppointmentRepository = purposeOfAppointmentRepository;
         _categoryRepository = categoryAreRepository;
         _productRepository = productRepository;
         _procedureRepository = procedureRepository;
+        _subCategoryRepository = subCategoryRepository;
         _mapper = mapper;
     }
 
@@ -122,20 +125,15 @@ public class LegislativeAreaService : ILegislativeAreaService
     }
 
     public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid categoryId)
-    {
-        // Work out if this category has any subcategories. Find all categories with matching name.
-        var category = (await _categoryRepository.QueryAsync(x => x.Id == categoryId)).First();
-        if (!string.IsNullOrEmpty(category.Subcategory))
+    {        
+        var subcategories = await _subCategoryRepository.QueryAsync(x => x.CategoryId == categoryId);
+
+        if (subcategories.Count() > 1)
         {
-            var subcategories = await _categoryRepository.QueryAsync(x => x.Name == category.Name);
-            if (subcategories.Count() > 1)
-            {
-                return new ScopeOfAppointmentOptionsModel
-                {
-                    // Can't use automapper here as a mapping from Category to CategoryModel already exists for categories.
-                    Subcategories = subcategories.Select(x => new CategoryModel { Id = x.Id, Name = x.Subcategory })
-                };
-            }
+            return new ScopeOfAppointmentOptionsModel
+            {   
+                Subcategories = _mapper.Map<IEnumerable<SubCategoryModel>>(subcategories)
+            };
         }
 
         var products = await _productRepository.QueryAsync(x => x.CategoryId == categoryId);
@@ -157,30 +155,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         }
 
         return new ScopeOfAppointmentOptionsModel();
-    }
-
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForSubcategoryAsync(Guid categoryId)
-    {
-        var products = await _productRepository.QueryAsync(x => x.CategoryId == categoryId);
-        if (products.Any())
-        {
-            return new ScopeOfAppointmentOptionsModel
-            {
-                Products = _mapper.Map<IEnumerable<ProductModel>>(products)
-            };
-        }
-
-        var procedures = await _procedureRepository.QueryAsync(x => x.CategoryIds.Contains(categoryId));
-        if (procedures.Any())
-        {
-            return new ScopeOfAppointmentOptionsModel
-            {
-                Procedures = _mapper.Map<IEnumerable<ProcedureModel>>(procedures)
-            };
-        }
-
-        return new ScopeOfAppointmentOptionsModel();
-    }
+    }   
 
     public async Task<ScopeOfAppointmentOptionsModel?> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId)
     {
@@ -208,5 +183,12 @@ public class LegislativeAreaService : ILegislativeAreaService
         Guard.IsTrue(categoryId != Guid.Empty, "Guid cannot be empty");
         var cat = await _categoryRepository.QueryAsync(l => l.Id == categoryId);
         return _mapper.Map<CategoryModel>(cat.FirstOrDefault());
+    }
+
+    public async Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid subCategoryId)
+    {
+        Guard.IsTrue(subCategoryId != Guid.Empty, "Guid cannot be empty");
+        var cat = await _subCategoryRepository.QueryAsync(l => l.Id == subCategoryId);
+        return _mapper.Map<SubCategoryModel>(cat.FirstOrDefault());
     }
 }

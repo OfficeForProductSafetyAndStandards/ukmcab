@@ -6,7 +6,7 @@ public class ScopeOfAppointmentOptionsModel
 
     public IEnumerable<CategoryModel> Categories { get; set; }
 
-    public IEnumerable<CategoryModel> Subcategories { get; set; }
+    public IEnumerable<SubCategoryModel> Subcategories { get; set; }
 
     public IEnumerable<ProductModel> Products { get; set; }
 
