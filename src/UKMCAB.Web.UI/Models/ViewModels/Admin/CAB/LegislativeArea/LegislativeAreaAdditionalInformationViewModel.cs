@@ -7,8 +7,8 @@ public record LegislativeAreaAdditionalInformationViewModel(
     string? Title
 ) : BasicPageModel(Title)
 {
-    public Guid? CabId { get; init; }
-    public Guid? LegislativeAreaId { get; init; }
+    public Guid? CabId { get; set; }
+    public Guid? LegislativeAreaId { get; set; }
 
     [Required(ErrorMessage = "Select if this is a provisional legislative area")]
     public bool? IsProvisionalLegislativeArea { get; init; }
