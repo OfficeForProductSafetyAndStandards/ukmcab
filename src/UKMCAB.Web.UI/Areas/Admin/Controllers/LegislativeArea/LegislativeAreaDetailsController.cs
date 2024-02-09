@@ -6,6 +6,7 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+using System.Linq;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -43,10 +44,13 @@ public class LegislativeAreaDetailsController : Controller
     [HttpGet("add", Name = Routes.AddLegislativeArea)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl)
     {
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ?? throw new InvalidOperationException();
+        var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId != null).Select(n => n.LegislativeAreaId).ToList();
+
         var vm = new LegislativeAreaViewModel
         {
             CABId = id,
-            LegislativeAreas = await GetLegislativeSelectListItemsAsync(),
+            LegislativeAreas = await GetLegislativeSelectListItemsAsync(cabLegislativeAreaIds),
             ReturnUrl = returnUrl,
         };
 
@@ -56,10 +60,17 @@ public class LegislativeAreaDetailsController : Controller
     [HttpPost("add", Name = Routes.AddLegislativeArea)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, LegislativeAreaViewModel vm, string submitType)
     {
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ?? throw new InvalidOperationException();
+        var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId != null).Select(n => n.LegislativeAreaId).ToList();
+
+        if(cabLegislativeAreaIds.Contains(vm.SelectedLegislativeAreaId))
+        {
+            var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(vm.SelectedLegislativeAreaId);
+            ModelState.AddModelError(nameof(vm.SelectedLegislativeAreaId), $"Legislative area '{legislativeArea?.Name}' already exists in Cab.");
+        }
+
         if (ModelState.IsValid)
         {   
-            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ?? throw new InvalidOperationException(); 
-
             // add  document new legislative area;
             var documentLegislativeAreaId = Guid.NewGuid();
 
@@ -98,7 +109,7 @@ public class LegislativeAreaDetailsController : Controller
             };
         }
 
-        vm.LegislativeAreas = await GetLegislativeSelectListItemsAsync();
+        vm.LegislativeAreas = await GetLegislativeSelectListItemsAsync(cabLegislativeAreaIds);
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
     }
 
@@ -358,10 +369,10 @@ public class LegislativeAreaDetailsController : Controller
     }
    
 
-    private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync()
+    private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid?> excludeLegislativeAreaIds)
     {
-        var legislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
-        return legislativeAreas.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
+        var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
+        return legislativeAreas.Select(x => new SelectListItem(){ Text = x.Name, Value = x.Id.ToString() });
     }
 
     private async Task<IEnumerable<SelectListItem>> GetCategoriesSelectListItemsAsync(Guid? purposeOfAppointmentId,
