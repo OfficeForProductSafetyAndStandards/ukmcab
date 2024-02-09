@@ -10,7 +10,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="legislativeForm" method="post" novalidate>
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedLegislativeAreaId))">
+            <div class="govuk-form-group">
                 <govuk-radios asp-for="SelectedLegislativeAreaId">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">

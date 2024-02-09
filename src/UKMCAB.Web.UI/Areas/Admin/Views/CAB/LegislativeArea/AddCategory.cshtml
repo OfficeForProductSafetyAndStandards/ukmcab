@@ -20,7 +20,7 @@
                 <h2 class="govuk-heading-s">Purpose of appointment</h2>
                 <p class="govuk-body">@Model.PurposeOfAppointment</p>
             }                     
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedCategoryId))">
+            <div class="govuk-form-group">
                 <govuk-radios asp-for="SelectedCategoryId">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">

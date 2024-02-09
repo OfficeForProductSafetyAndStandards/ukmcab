@@ -21,4 +21,6 @@ public interface ILegislativeAreaService
     Task<CategoryModel?> GetCategoryByIdAsync(Guid categoryId);
 
     Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid categoryId);
+
+    Task<IEnumerable<LegislativeAreaModel>> GetAvailableCabLegislativeAreas(List<Guid?> selectedLegislativeAreaIds);
 }

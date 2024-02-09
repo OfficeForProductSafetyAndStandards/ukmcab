@@ -3,6 +3,7 @@ using UKMCAB.Common;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models.LegislativeAreas;
+using System.Linq;
 
 namespace UKMCAB.Core.Services.CAB;
 
@@ -190,5 +191,11 @@ public class LegislativeAreaService : ILegislativeAreaService
         Guard.IsTrue(subCategoryId != Guid.Empty, "Guid cannot be empty");
         var cat = await _subCategoryRepository.QueryAsync(l => l.Id == subCategoryId);
         return _mapper.Map<SubCategoryModel>(cat.FirstOrDefault());
+    }
+
+    public async Task<IEnumerable<LegislativeAreaModel>> GetAvailableCabLegislativeAreas(List<Guid?> selectedLegislativeAreaIds)
+    {
+        var allLegislativeAreas = await this.GetAllLegislativeAreasAsync();
+        return allLegislativeAreas.Where(n => !selectedLegislativeAreaIds.Contains(n.Id));
     }
 }

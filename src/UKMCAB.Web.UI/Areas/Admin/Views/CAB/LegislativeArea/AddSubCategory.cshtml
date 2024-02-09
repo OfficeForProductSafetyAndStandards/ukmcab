@@ -26,7 +26,7 @@
                 <h2 class="govuk-heading-s">Product category</h2>
                 <p class="govuk-body">@Model.Category</p>
             }
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedSubCategoryId))">
+            <div class="govuk-form-group">
                 <govuk-radios asp-for="SelectedSubCategoryId">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">
