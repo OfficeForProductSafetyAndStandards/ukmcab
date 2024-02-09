@@ -6,7 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
     public class ProductViewModel : LegislativeAreaBaseViewModel
     {
         [Required(ErrorMessage = "Select a product")]
-        public Guid? SelectedProductId { get; set; }
+        public List<Guid>? SelectedProductIds { get; set; }
 
         public string? LegislativeArea { get; set; }
 
@@ -16,6 +16,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? SubCategory { get; set; }
 
-        public IEnumerable<SelectListItem>? Products { get; set; }
+        public IEnumerable<SelectListItem> Products { get; set; }
     }
 }

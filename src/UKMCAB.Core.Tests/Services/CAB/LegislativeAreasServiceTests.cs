@@ -116,10 +116,10 @@
             // Assert
             Assert.IsNotNull(nextScopeOptions);
             Assert.IsNotNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
-            Assert.IsNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.PurposeOfAppointments.Count());
             Assert.AreEqual("Name1", nextScopeOptions.PurposeOfAppointments.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.PurposeOfAppointments.ElementAt(1).Name);
@@ -145,11 +145,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
-            Assert.IsNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsNotEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Categories.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
@@ -178,11 +178,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNotNull(nextScopeOptions.Products);
-            Assert.IsNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsNotEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Products.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
@@ -214,10 +214,10 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
             Assert.IsNotNull(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
@@ -245,11 +245,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
-            Assert.IsNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsNotEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Categories.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
@@ -275,11 +275,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
-            Assert.IsNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsNotEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Categories.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
@@ -305,11 +305,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNotNull(nextScopeOptions.Products);
-            Assert.IsNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsNotEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Products.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
@@ -338,11 +338,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
-            Assert.IsNotNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsNotEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
@@ -376,11 +376,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNotNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
-            Assert.IsNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsNotEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Subcategories.Count());
             Assert.AreEqual("Sub1", nextScopeOptions.Subcategories.ElementAt(0).Name);
             Assert.AreEqual("Sub2", nextScopeOptions.Subcategories.ElementAt(1).Name);
@@ -408,11 +408,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNotNull(nextScopeOptions.Products);
-            Assert.IsNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsNotEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Products.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
@@ -443,11 +443,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
-            Assert.IsNotNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsNotEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
@@ -474,11 +474,11 @@
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNull(nextScopeOptions.Categories);
-            Assert.IsNull(nextScopeOptions.Subcategories);
-            Assert.IsNull(nextScopeOptions.Products);
-            Assert.IsNotNull(nextScopeOptions.Procedures);
+            Assert.IsEmpty(nextScopeOptions!.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsNotEmpty(nextScopeOptions.Procedures);
             Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
             Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
             Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
