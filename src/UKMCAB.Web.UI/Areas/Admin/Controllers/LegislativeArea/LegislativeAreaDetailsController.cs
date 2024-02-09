@@ -50,7 +50,7 @@ public class LegislativeAreaDetailsController : Controller
         var vm = new LegislativeAreaViewModel
         {
             CABId = id,
-            LegislativeAreas = await this.GetLegislativeSelectListItemsAsync(cabLegislativeAreaIds),
+            LegislativeAreas = await GetLegislativeSelectListItemsAsync(cabLegislativeAreaIds),
             ReturnUrl = returnUrl,
         };
 
