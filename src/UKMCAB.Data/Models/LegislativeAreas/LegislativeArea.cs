@@ -7,5 +7,8 @@
         public string Name { get; set; }
 
         public string Regulation { get; set; }
+
+        public bool HasDataModel { get; set; }
+
     }
 }
