@@ -42,6 +42,12 @@ public class LegislativeAreaService : ILegislativeAreaService
         return _mapper.Map<IEnumerable<LegislativeAreaModel>>(result);
     }
 
+    public async Task<IEnumerable<LegislativeAreaModel>> GetAvailableCabLegislativeAreasAsync(List<Guid?> selectedLegislativeAreaIds)
+    {
+        var allLegislativeAreas = await this.GetAllLegislativeAreasAsync();
+        return allLegislativeAreas.Where(n => !selectedLegislativeAreaIds.Contains(n.Id));
+    }
+
     public async Task<LegislativeAreaModel?> GetLegislativeAreaByIdAsync(Guid legislativeAreaId)
     {
         Guard.IsTrue(legislativeAreaId != Guid.Empty, "Guid cannot be empty");
@@ -191,11 +197,5 @@ public class LegislativeAreaService : ILegislativeAreaService
         Guard.IsTrue(subCategoryId != Guid.Empty, "Guid cannot be empty");
         var cat = await _subCategoryRepository.QueryAsync(l => l.Id == subCategoryId);
         return _mapper.Map<SubCategoryModel>(cat.FirstOrDefault());
-    }
-
-    public async Task<IEnumerable<LegislativeAreaModel>> GetAvailableCabLegislativeAreas(List<Guid?> selectedLegislativeAreaIds)
-    {
-        var allLegislativeAreas = await this.GetAllLegislativeAreasAsync();
-        return allLegislativeAreas.Where(n => !selectedLegislativeAreaIds.Contains(n.Id));
     }
 }

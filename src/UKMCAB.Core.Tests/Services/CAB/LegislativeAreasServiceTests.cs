@@ -66,7 +66,39 @@
         }
 
         #endregion
-        
+
+        #region GetAvailableCabLegislativeAreas
+
+        [Test]
+        public async Task LegislativeAreaService_GetAvailableCabLegislativeAreas_ShouldReturnNonSelectedLegislativeAreasFromRepository()
+        {
+            // Arrange
+
+            var cabSelectedLegislativeId1 = Guid.NewGuid();
+            var cabSelectedLegislativeId2 = Guid.NewGuid();
+
+            List<Guid?> selectedLegislativeAreaIds = new List<Guid?>() { cabSelectedLegislativeId1, cabSelectedLegislativeId2 };
+
+            _mockLegislativeAreaRepository.Setup(x => x.GetAllAsync())
+                .ReturnsAsync(new List<LegislativeArea>() {
+                    new() { Id = cabSelectedLegislativeId1, Name = "Name1" },
+                    new() { Id = cabSelectedLegislativeId2, Name = "Name2" },
+                    new() { Id = Guid.NewGuid(), Name = "Name3" },
+                    new() { Id = Guid.NewGuid(), Name = "Name4" },
+                });
+
+            // Act
+            var availableLegislativeAreas = await _legislativeAreaService.GetAvailableCabLegislativeAreasAsync(selectedLegislativeAreaIds);
+
+            // Assert
+            Assert.IsNotNull(availableLegislativeAreas);
+            Assert.AreEqual(2, availableLegislativeAreas.Count());
+            Assert.AreEqual("Name3", availableLegislativeAreas.ElementAt(0).Name);
+            Assert.AreEqual("Name4", availableLegislativeAreas.ElementAt(1).Name);
+        }
+
+        #endregion
+
         #region GetLegislativeAreaById
         [Test]
         public void EmptyGuid_GetLegislativeAreaById_ShouldThrowException()

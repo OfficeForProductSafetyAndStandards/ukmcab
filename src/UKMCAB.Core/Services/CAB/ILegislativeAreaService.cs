@@ -6,6 +6,8 @@ public interface ILegislativeAreaService
 {
     Task<IEnumerable<LegislativeAreaModel>> GetAllLegislativeAreasAsync();
 
+    Task<IEnumerable<LegislativeAreaModel>> GetAvailableCabLegislativeAreasAsync(List<Guid?> selectedLegislativeAreaIds);
+
     Task<LegislativeAreaModel?> GetLegislativeAreaByIdAsync(Guid legislativeAreaId);
 
     Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId);
@@ -22,5 +24,5 @@ public interface ILegislativeAreaService
 
     Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid categoryId);
 
-    Task<IEnumerable<LegislativeAreaModel>> GetAvailableCabLegislativeAreas(List<Guid?> selectedLegislativeAreaIds);
+ 
 }
