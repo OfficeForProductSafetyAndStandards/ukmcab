@@ -12,17 +12,22 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 public class LegislativeAreaAdditionalInformationController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
+    private readonly ILegislativeAreaService _legislativeAreaService;
     private readonly IUserService _userService;
 
+    private const string PageTitle = "{0}: additional information";
+    private const string StoragePageTitle = "pageTitle";  
     public static class Routes
     {
         public const string LegislativeAreaAdditionalInformation = "legislative.area.additional.information";
     }
 
     public LegislativeAreaAdditionalInformationController(ICABAdminService cabAdminService,
+        ILegislativeAreaService legislativeAreaService,
         IUserService userService)
     {
         _cabAdminService = cabAdminService;
+        _legislativeAreaService = legislativeAreaService;
         _userService = userService;
     }
 
@@ -30,7 +35,10 @@ public class LegislativeAreaAdditionalInformationController : Controller
     public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl)
     {
         var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaAsync(id, laId);
-        var vm = new LegislativeAreaAdditionalInformationViewModel(Title: "Legislative area: additional information")
+        var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(Guid.Parse(legislativeArea.LegislativeAreaId.ToString() ?? string.Empty));
+        TempData[StoragePageTitle] = string.Format(PageTitle, legislativeAreaService?.Name);
+        TempData.Keep(StoragePageTitle);
+        var vm = new LegislativeAreaAdditionalInformationViewModel(Title: TempData[StoragePageTitle]?.ToString())
         {
             CabId = id,
             LegislativeAreaId = laId,
@@ -47,6 +55,10 @@ public class LegislativeAreaAdditionalInformationController : Controller
     public async Task<IActionResult> AdditionalInformationAsync(LegislativeAreaAdditionalInformationViewModel vm,
         Guid id, Guid laId, string submitType, string? returnUrl)
     {
+        vm.Title = TempData.Peek(StoragePageTitle)?.ToString();
+        vm.CabId = id;
+        vm.LegislativeAreaId = laId;
+
         if (submitType == Constants.SubmitType.Add18)
         {
             vm.ReviewDate = DateTime.UtcNow.AddMonths(18);
@@ -90,8 +102,13 @@ public class LegislativeAreaAdditionalInformationController : Controller
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-
-        //TODO : Route to be configured
-        return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+        
+        TempData.Remove(StoragePageTitle);
+        return submitType switch
+        {
+            Constants.SubmitType.Continue => RedirectToRoute(
+                LegislativeAreaDetailsController.Routes.LegislativeAreaSelected, new { id }),
+            _ => RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true })
+        };
     }
 }

@@ -4,14 +4,14 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">Create a CAB</span>
-        <h1 class="govuk-heading-l">Legislative area: additional information</h1>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
     </div>
 </div>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="legislativeAreaAdditionalInformationForm" method="post" novalidate>
-
+    
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IsProvisionalLegislativeArea))">
                 <govuk-radios asp-for="IsProvisionalLegislativeArea">
                     <govuk-radios-fieldset>
@@ -77,7 +77,7 @@
             <div class="govuk-button-group">
                 <govuk-button type="submit" name="submitType" value="@Constants.SubmitType.Continue">Save and continue</govuk-button>
                 <govuk-button class="govuk-button--secondary" name="submitType" value="@Constants.SubmitType.Save">Save as draft</govuk-button>
-                <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <a asp-area="Admin" asp-controller="Cab" asp-action="Summary" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>
