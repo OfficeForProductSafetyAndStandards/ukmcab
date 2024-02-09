@@ -70,14 +70,14 @@
         #region GetAvailableCabLegislativeAreas
 
         [Test]
-        public async Task LegislativeAreaService_GetAvailableCabLegislativeAreas_ShouldReturnNonSelectedLegislativeAreasFromRepository()
+        public async Task LegislativeAreaService_GetLegislativeAreas_ShouldNotReturnExcludedLegislativeAreasFromRepository()
         {
             // Arrange
 
             var cabSelectedLegislativeId1 = Guid.NewGuid();
             var cabSelectedLegislativeId2 = Guid.NewGuid();
 
-            List<Guid?> selectedLegislativeAreaIds = new List<Guid?>() { cabSelectedLegislativeId1, cabSelectedLegislativeId2 };
+            List<Guid?> excludeLegislativeAreaIds = new List<Guid?>() { cabSelectedLegislativeId1, cabSelectedLegislativeId2 };
 
             _mockLegislativeAreaRepository.Setup(x => x.GetAllAsync())
                 .ReturnsAsync(new List<LegislativeArea>() {
@@ -88,7 +88,7 @@
                 });
 
             // Act
-            var availableLegislativeAreas = await _legislativeAreaService.GetAvailableCabLegislativeAreasAsync(selectedLegislativeAreaIds);
+            var availableLegislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
 
             // Assert
             Assert.IsNotNull(availableLegislativeAreas);

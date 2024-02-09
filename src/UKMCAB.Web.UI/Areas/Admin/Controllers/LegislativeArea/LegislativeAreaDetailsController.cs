@@ -369,9 +369,9 @@ public class LegislativeAreaDetailsController : Controller
     }
    
 
-    private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid?> selectedLegislativeAreaIds)
+    private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid?> excludeLegislativeAreaIds)
     {
-        var legislativeAreas = await _legislativeAreaService.GetAvailableCabLegislativeAreasAsync(selectedLegislativeAreaIds);
+        var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
         return legislativeAreas.Select(x => new SelectListItem(){ Text = x.Name, Value = x.Id.ToString() });
     }
 

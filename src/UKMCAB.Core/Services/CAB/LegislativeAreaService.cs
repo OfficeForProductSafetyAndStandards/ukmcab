@@ -42,10 +42,10 @@ public class LegislativeAreaService : ILegislativeAreaService
         return _mapper.Map<IEnumerable<LegislativeAreaModel>>(result);
     }
 
-    public async Task<IEnumerable<LegislativeAreaModel>> GetAvailableCabLegislativeAreasAsync(List<Guid?> selectedLegislativeAreaIds)
+    public async Task<IEnumerable<LegislativeAreaModel>> GetLegislativeAreasAsync(List<Guid?> excludeLegislativeAreaIds)
     {
         var allLegislativeAreas = await this.GetAllLegislativeAreasAsync();
-        return allLegislativeAreas.Where(n => !selectedLegislativeAreaIds.Contains(n.Id));
+        return allLegislativeAreas.Where(n => !excludeLegislativeAreaIds.Contains(n.Id));
     }
 
     public async Task<LegislativeAreaModel?> GetLegislativeAreaByIdAsync(Guid legislativeAreaId)
