@@ -10,11 +10,19 @@
 
   .review-date-add-month {
     padding-top: 95px;
+
     @include govuk-media-query($until: tablet) {
       padding-top: 4px;
       margin-top: 4px;
     }
   }
 
+  .review-date-error {
+    padding-top: 135px;
+
+    @include govuk-media-query($until: tablet) {
+      padding-top: 4px;
+    }
+  }
 
 }
