@@ -3,6 +3,7 @@ using UKMCAB.Common;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models.LegislativeAreas;
+using System.Linq;
 
 namespace UKMCAB.Core.Services.CAB;
 
@@ -39,6 +40,12 @@ public class LegislativeAreaService : ILegislativeAreaService
         var result = await _legislativeAreaRepository.GetAllAsync();
 
         return _mapper.Map<IEnumerable<LegislativeAreaModel>>(result);
+    }
+
+    public async Task<IEnumerable<LegislativeAreaModel>> GetLegislativeAreasAsync(List<Guid?> excludeLegislativeAreaIds)
+    {
+        var allLegislativeAreas = await this.GetAllLegislativeAreasAsync();
+        return allLegislativeAreas.Where(n => !excludeLegislativeAreaIds.Contains(n.Id));
     }
 
     public async Task<LegislativeAreaModel?> GetLegislativeAreaByIdAsync(Guid legislativeAreaId)

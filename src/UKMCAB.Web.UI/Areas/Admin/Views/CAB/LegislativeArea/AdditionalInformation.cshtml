@@ -1,6 +1,8 @@
-@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaAdditionalInformationViewModel 
-
+@{
+    var isReviewDateValid = ViewData.ModelState.Keys.Any(a => a.Equals(nameof(Model.ReviewDate)));
+    var reviewDateErrorClass = isReviewDateValid ? "review-date-error" : string.Empty;
+}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">Create a CAB</span>
@@ -11,7 +13,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="legislativeAreaAdditionalInformationForm" method="post" novalidate>
-    
+
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IsProvisionalLegislativeArea))">
                 <govuk-radios asp-for="IsProvisionalLegislativeArea">
                     <govuk-radios-fieldset>
@@ -57,8 +59,8 @@
                             </govuk-date-input-fieldset>
                         </govuk-date-input>
                     </div>
-                    <div class="review-date-add-month">
-                        <govuk-button type="submit" class="govuk-button--secondary" name="submitType" value="@Constants.SubmitType.Add18" >Add 18 months from today</govuk-button>
+                    <div class="review-date-add-month @reviewDateErrorClass">
+                        <govuk-button type="submit" class="govuk-button--secondary" name="submitType" value="@Constants.SubmitType.Add18">Add 18 months from today</govuk-button>
                     </div>
                 </div>
             </div>
