@@ -15,6 +15,7 @@ public class AutoMapperProfile : Profile
         this.CreateMap<LegislativeArea, LegislativeAreaModel>();
         this.CreateMap<PurposeOfAppointment, PurposeOfAppointmentModel>();
         this.CreateMap<Category, CategoryModel>();
+        this.CreateMap<SubCategory, SubCategoryModel>();
         this.CreateMap<Product, ProductModel>();
         this.CreateMap<Procedure, ProcedureModel>();
         this.CreateMap<SubCategory, SubCategoryModel>();

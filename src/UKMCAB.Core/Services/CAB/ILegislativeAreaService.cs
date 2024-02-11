@@ -22,7 +22,9 @@ public interface ILegislativeAreaService
 
     Task<CategoryModel?> GetCategoryByIdAsync(Guid categoryId);
 
-    Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid categoryId);
+    Task<ProductModel?> GetProductByIdAsync(Guid productId);
 
- 
+    Task<ProcedureModel?> GetProcedureByIdAsync(Guid procedureId);
+
+    Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid subCategoryId);
 }
