@@ -285,8 +285,8 @@ public class LegislativeAreaDetailsController : Controller
 
     }
     
-    [HttpGet("selected-legislative-area", Name = Routes.LegislativeAreaSelected)]
-    public async Task<IActionResult> SelectedLegislativeArea(Guid id, string? returnUrl)
+    [HttpGet("review-legislative-areas", Name = Routes.LegislativeAreaSelected)]
+    public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string? returnUrl)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
 
@@ -301,8 +301,8 @@ public class LegislativeAreaDetailsController : Controller
 
         foreach (var sa in scopeOfAppointments)
         {
-            var products = new StringBuilder();
-            var procedures = new StringBuilder();
+            var products = new List<string>();            
+            var procedures = new List<string>();
 
             var legislativeArea = sa.LegislativeAreaId != null
             ? await _legislativeAreaService.GetLegislativeAreaByIdAsync((Guid)sa.LegislativeAreaId)
@@ -325,7 +325,7 @@ public class LegislativeAreaDetailsController : Controller
                 foreach (var productId in sa.ProductIds)
                 {
                     var prod = await _legislativeAreaService.GetProductByIdAsync((Guid)productId);
-                    products.AppendFormat("<p class=\"govuk-body\">{0}</p>", prod.Name);
+                    products.Add(prod.Name);
                 }
             }
 
@@ -334,7 +334,7 @@ public class LegislativeAreaDetailsController : Controller
                 foreach (var procedureId in sa.ProcedureIds)
                 {
                     var proc = await _legislativeAreaService.GetProcedureByIdAsync((Guid)procedureId);
-                    procedures.AppendFormat("<p class=\"govuk-body\">{0}</p>", proc.Name);
+                    procedures.Add(proc.Name);
                 }
             }
 
@@ -344,8 +344,8 @@ public class LegislativeAreaDetailsController : Controller
                 PurposeOfAppointment = purpose?.Name ?? string.Empty,
                 Category = category?.Name ?? string.Empty,
                 SubCategory = subCategory?.Name ?? string.Empty,
-                Product = HttpUtility.HtmlEncode(products?.ToString()) ?? string.Empty,
-                Procedure = HttpUtility.HtmlEncode(procedures?.ToString()) ?? string.Empty
+                Products = products,
+                Procedures = procedures 
             };
             selectedLAs.Add(laItem);
         }
@@ -358,8 +358,8 @@ public class LegislativeAreaDetailsController : Controller
                 PurposeOfAppointment = laDetails.PurposeOfAppointment,
                 Category = laDetails.Category,
                 SubCategory = laDetails.SubCategory,
-                Product = laDetails.Product,
-                Procedure = laDetails.Procedure
+                Products = laDetails.Products,
+                Procedures = laDetails.Procedures
             }).ToList()
         }).ToList();
 
@@ -369,7 +369,7 @@ public class LegislativeAreaDetailsController : Controller
             SelectedLegislativeAreas = groupedSelectedLAs
         };
 
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/SelectedLegislativeArea.cshtml", vm);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
     
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid?> excludeLegislativeAreaIds)
