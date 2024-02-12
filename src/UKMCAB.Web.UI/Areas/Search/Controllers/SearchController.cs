@@ -79,6 +79,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var internalSearch = User != null && User.Identity.IsAuthenticated;
             model.InternalSearch = internalSearch;
             model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
+            if (!internalSearch)
+            {
+                if (model.Statuses != null && model.Statuses.Any(s => s == ((int)Status.Archived).ToString()))
+                {
+                    model.Statuses = new string[] { ((int)Status.Archived).ToString() };
+                }
+                else
+                {
+                    model.Statuses = new string[] { ((int)Status.Published).ToString() };
+                }                
+            } 
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
             if (internalSearch && !string.IsNullOrWhiteSpace(unlockCab))
             {
@@ -216,7 +227,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
-            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
+            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);  
+            
             if (model.InternalSearch)
             {
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
@@ -227,6 +239,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     model.SubStatuses = pendingApprovalSubStatus.ToArray();
                 } 
                 model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
+            }
+            else
+            {
+                model.StatusOptions = GetArchivedOnlyFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses); 
             }
         }
 
@@ -242,6 +258,28 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 selectedFacets = Array.Empty<string>();
             }
             filter.FilterOptions = facets.Select(f => new FilterOption(facetName, f,
+                selectedFacets.Any(sf => sf.Equals(f, StringComparison.InvariantCultureIgnoreCase)))).ToList();
+            return filter;
+        }
+
+        private FilterViewModel GetArchivedOnlyFilterOptions(string facetName, string facetLabel, IEnumerable<string> facets, IEnumerable<string> selectedFacets)
+        {
+            IEnumerable<string> newFacet = new List<string>();
+            var filter = new FilterViewModel
+            {
+                Id = facetName,
+                Label = facetLabel
+            };
+            if (selectedFacets == null)
+            {
+                selectedFacets = Array.Empty<string>();
+            }
+
+            if (facets.Any(f => f.Equals(((int)Status.Archived).ToString(), StringComparison.InvariantCultureIgnoreCase)))
+            {
+                newFacet = new List<string> { ((int)Status.Archived).ToString() };
+            }
+            filter.FilterOptions = newFacet.Select(f => new FilterOption(facetName, f,
                 selectedFacets.Any(sf => sf.Equals(f, StringComparison.InvariantCultureIgnoreCase)))).ToList();
             return filter;
         }
