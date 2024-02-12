@@ -653,7 +653,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId.Value)).Name : null,
                     };
 
-                    foreach(var productId in scopeOfAppointment.ProductIds)
+                    foreach (var productId in scopeOfAppointment.ProductIds)
                     {
                         var product = await _legislativeAreaService.GetProductByIdAsync(productId);
                         soaViewModel.Products.Add(product.Name);
@@ -672,72 +672,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             return viewModel;
-
-
-
-
-
-            //var viewModel = new CABLegislativeAreasViewModel();
-            //viewModel.LegislativeAreas.Add(
-            //    new CABLegislativeAreasItemViewModel
-            //    {
-            //        Name = "Machinery",
-            //        AppointmentDate = DateTime.Now,
-            //        ReviewDate = DateTime.Now.AddYears(1),
-            //        IsProvisional = false,
-            //        Reason = "My reason for editing",
-            //        CanChooseScopeOfAppointment = true,
-            //        ScopeOfAppointments = new List<LegislativeAreaListItemViewModel>
-            //        {
-            //                new LegislativeAreaListItemViewModel {
-            //                    PurposeOfAppointment = "Categories of machine specified in Schedule 2, Part 4 of the regulation",
-            //                    Category = "Circular saws (single- or multi-blade) for working with wood and material with similar physical characteristics or for working with meat and material with similar physical characteristics, of the following types",
-            //                    SubCategory = "My product subcategory",
-            //                    Products = new List<string> { "sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed" },
-            //                    Procedures = new List<string> { "Part 9 Type examination" }
-            //                },
-            //                new LegislativeAreaListItemViewModel {
-            //                    PurposeOfAppointment = "Categories of machine specified in Schedule 2, Part 4 of the regulation",
-            //                    Category = "Circular saws (single- or multi-blade) for working with wood and material with similar physical characteristics or for working with meat and material with similar physical characteristics, of the following types",
-            //                    SubCategory = "",
-            //                    Products = null,
-            //                    Procedures = new List < string > { /*"Part 9 Type examination"*/ }
-            //                }
-            //        }
-            //    });
-            //viewModel.LegislativeAreas.Add(
-            //    new CABLegislativeAreasItemViewModel
-            //    {
-            //        Name = "Gas appliances and related",
-            //        IsProvisional = true,
-            //        CanChooseScopeOfAppointment = true,
-            //        ScopeOfAppointments = new List<LegislativeAreaListItemViewModel>
-            //        {
-            //                new LegislativeAreaListItemViewModel {
-            //                    PurposeOfAppointment = "Categories of machine specified in Schedule 2, Part 4 of the regulation",
-            //                    Category = "Circular saws (single- or multi-blade) for working with wood and material with similar physical characteristics or for working with meat and material with similar physical characteristics, of the following types",
-            //                    SubCategory = "My product subcategory",
-            //                    Products = new List<string> { "sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed" },
-            //                    Procedures = new List<string> { "Part 9 Type examination" }
-            //                },
-            //                new LegislativeAreaListItemViewModel {
-            //                    PurposeOfAppointment = "Categories of machine specified in Schedule 2, Part 4 of the regulation",
-            //                    Category = "Circular saws (single- or multi-blade) for working with wood and material with similar physical characteristics or for working with meat and material with similar physical characteristics, of the following types",
-            //                    SubCategory = "My product subcategory",
-            //                    Products = new List<string> { "sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed" },
-            //                    Procedures = new List<string> { "Part 9 Type examination" }
-            //                }
-            //        }
-            //    });
-            //viewModel.LegislativeAreas.Add(
-            //    new CABLegislativeAreasItemViewModel
-            //    {
-            //        Name = "Measuring Instruments",
-            //        IsProvisional = true,
-            //        CanChooseScopeOfAppointment = false,
-            //    });
-
-            //return viewModel;
         }
 
         private void ValidateCabSummaryModels(CABDetailsViewModel cabDetails, CABContactViewModel cabContact, CABBodyDetailsViewModel cabBody, CABLegislativeAreasViewModel cabLegislativeAreas)
