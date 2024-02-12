@@ -36,33 +36,35 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
-
+                    // ReSharper disable once *** Existing CABs can have null List of La ***
+                    document.LegislativeAreas ??= new List<string>();
                     // Populate new DocumentLegislativeAreas and DocumentScopeOfAppointments for each existing LegislativeAreas string.
-                    if (document.LegislativeAreas != null && document.LegislativeAreas.Any())
+                    if (document.LegislativeAreas.Any())
                     {
-                        foreach (var legislativeArea in document.LegislativeAreas)
+                        var las = document.LegislativeAreas.ToList();
+                        foreach (var legislativeArea in las)
                         {
-                            var dbLegislativeArea = legislativeAreas.Where(x => x.Name.Equals(legislativeArea, StringComparison.OrdinalIgnoreCase)).FirstOrDefault();
-
-                            if (dbLegislativeArea != null)
+                            if (string.Equals(legislativeArea, "Not assigned", StringComparison.OrdinalIgnoreCase))
                             {
-                                if (!document.DocumentLegislativeAreas.Any(x => x.LegislativeAreaId == dbLegislativeArea.Id))
-                                {
-                                    document.DocumentLegislativeAreas.Add(new DocumentLegislativeArea
-                                    {
-                                        Id = Guid.NewGuid(),
-                                        LegislativeAreaId = dbLegislativeArea.Id,
-                                        IsProvisional = false,
-                                    });
-                                }
+                                document.LegislativeAreas.Remove(legislativeArea);
+                            }
+                            else
+                            {
+                                var dbLegislativeArea = legislativeAreas.FirstOrDefault(x =>
+                                    x.Name.Equals(legislativeArea, StringComparison.OrdinalIgnoreCase));
 
-                                if (!document.ScopeOfAppointments.Any(x => x.LegislativeAreaId == dbLegislativeArea.Id))
+                                if (dbLegislativeArea != null)
                                 {
-                                    document.ScopeOfAppointments.Add(new DocumentScopeOfAppointment
+                                    if (document.DocumentLegislativeAreas.All(x =>
+                                            x.LegislativeAreaId != dbLegislativeArea.Id))
                                     {
-                                        Id = Guid.NewGuid(),
-                                        LegislativeAreaId = dbLegislativeArea.Id
-                                    });
+                                        document.DocumentLegislativeAreas.Add(new DocumentLegislativeArea
+                                        {
+                                            Id = Guid.NewGuid(),
+                                            LegislativeAreaId = dbLegislativeArea.Id,
+                                            IsProvisional = false,
+                                        });
+                                    }
                                 }
                             }
                         }
@@ -74,9 +76,12 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
             return force;
         }
+
         private void UpdateCreatedByUserGroup(Document document)
         {
-            var userRole = document.AuditLog.Any() ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole : string.Empty;
+            var userRole = document.AuditLog.Any()
+                ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole
+                : string.Empty;
             document.CreatedByUserGroup = userRole;
         }
 
@@ -85,14 +90,14 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             const string unarchiveRequest = "UnarchiveRequest";
             var auditLog = document.AuditLog.FirstOrDefault(a => a.Action == unarchiveRequest);
             if (auditLog == null) return;
-            
+
             document.AuditLog.RemoveFirst(a => a.Action == unarchiveRequest);
             auditLog.Action = AuditCABActions.UnarchivedToDraft;
             document.AuditLog.Add(auditLog);
         }
 
         private void UpdateCabNumberVisibilityNullToPublic(Document document)
-        {           
+        {
             document.CabNumberVisibility = DataConstants.CabNumberVisibilityOptions.Public;
         }
 
