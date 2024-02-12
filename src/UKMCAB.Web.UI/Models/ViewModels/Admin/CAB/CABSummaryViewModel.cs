@@ -13,6 +13,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public CABDetailsViewModel? CabDetailsViewModel { get; set; }
         public CABContactViewModel? CabContactViewModel { get; set; }
         public CABBodyDetailsViewModel? CabBodyDetailsViewModel { get; set; }
+        public CABLegislativeAreasViewModel? CabLegislativeAreasViewModel { get; set; }
         public CABProductScheduleDetailsViewModel? CABProductScheduleDetailsViewModel { get; set; }
         public CABSupportingDocumentDetailsViewModel? CABSupportingDocumentDetailsViewModel { get; set; }
         public bool ValidCAB { get; set; }

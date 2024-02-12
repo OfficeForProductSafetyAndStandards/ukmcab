@@ -17,7 +17,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
-using Microsoft.AspNetCore.Mvc.Rendering;
+using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -31,6 +31,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly CoreEmailTemplateOptions _templateOptions;
         private readonly IEditLockService _editLockService;
         private readonly IUserNoteService _userNoteService;
+        private readonly ILegislativeAreaService _legislativeAreaService;
 
         public static class Routes
         {
@@ -51,7 +52,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             IAsyncNotificationClient notificationClient,
             IOptions<CoreEmailTemplateOptions> templateOptions,
             IEditLockService editLockService,
-            IUserNoteService userNoteService)
+            IUserNoteService userNoteService,
+            ILegislativeAreaService legislativeAreaService)
         {
             _cabAdminService = cabAdminService;
             _userService = userService;
@@ -60,6 +62,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _editLockService = editLockService;
             _templateOptions = templateOptions.Value;
             _userNoteService = userNoteService;
+            _legislativeAreaService = legislativeAreaService;
         }
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
@@ -362,7 +365,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-            
+
             //Check Edit lock
             var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
@@ -371,6 +374,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var cabDetails = new CABDetailsViewModel(latest);
             var cabContact = new CABContactViewModel(latest);
             var cabBody = new CABBodyDetailsViewModel(latest);
+            var cabLegislativeAreas = await PopulateCABLegislativeAreasViewModel(latest);
+            ValidateCabSummaryModels(cabDetails, cabContact, cabBody, cabLegislativeAreas);
+
             var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
             var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
 
@@ -383,6 +389,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabDetailsViewModel = cabDetails,
                 CabContactViewModel = cabContact,
                 CabBodyDetailsViewModel = cabBody,
+                CabLegislativeAreasViewModel = cabLegislativeAreas,
                 CABProductScheduleDetailsViewModel = cabProductSchedules,
                 CABSupportingDocumentDetailsViewModel = cabSupportingDocuments,
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl)
@@ -395,15 +402,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 SubStatus = latest.SubStatus,
                 SubStatusName = latest.SubStatus.GetEnumDescription(),
                 ValidCAB = latest.StatusValue != Status.Published
-                           && TryValidateModel(cabDetails)
-                           && TryValidateModel(cabContact)
-                           && TryValidateModel(cabBody) && cabProductSchedules.IsCompleted && cabSupportingDocuments.IsCompleted,
+                           && cabDetails.IsCompleted && cabContact.IsCompleted && cabBody.IsCompleted && cabLegislativeAreas.IsCompleted
+                           //&& TryValidateModel(cabDetails)
+                           //&& TryValidateModel(cabContact)
+                           //&& TryValidateModel(cabBody)
+                           //&& TryValidateModel(cabLegislativeAreas) 
+                           && cabProductSchedules.IsCompleted && cabSupportingDocuments.IsCompleted,
                 TitleHint = "CAB profile",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
                     latest.SubStatus == SubStatus.PendingApprovalToPublish ? "Check details before approving or declining" : "Check details before publishing"
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
-                IsEditLocked =  !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
+                IsEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
                 SubSectionEditAllowed = subSectionEditAllowed ?? false,
                 LastModifiedDate = latest.LastUpdatedDate,
                 PublishedDate = publishedAudit?.DateTime ?? null,
@@ -411,10 +421,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LastGovermentUserNoteDate = latest.GovernmentUserNotes.OrderByDescending(u => u.DateTime).FirstOrDefault()?.DateTime,
             };
 
-            ModelState.Clear();
-            
             //Lock Record for edit
-            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed 
+            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed
                                                           && latest.StatusValue is Status.Draft or Status.Published
                                                           && model.IsOPSSOrInCreatorUserGroup)
             {
@@ -608,6 +616,143 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private RedirectToActionResult RedirectToCabManagementWithUnlockCab(string cabId)
         {
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = cabId });
+        }
+
+        private async Task<CABLegislativeAreasViewModel> PopulateCABLegislativeAreasViewModel(Document cab)
+        {
+            var viewModel = new CABLegislativeAreasViewModel();
+
+            foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
+            {
+                var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea.LegislativeAreaId.Value);
+
+                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel()
+                {
+                    Name = legislativeArea.Name,
+                    IsProvisional = documentLegislativeArea.IsProvisional,
+                    AppointmentDate = documentLegislativeArea.AppointmentDate,
+                    ReviewDate = documentLegislativeArea.ReviewDate,
+                    Reason = documentLegislativeArea.Reason,
+                    CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
+                };
+
+                var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
+                foreach (var scopeOfAppointment in scopeOfAppointments)
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel()
+                    {
+                        LegislativeArea = new ListItem { Id = scopeOfAppointment.LegislativeAreaId, Title = legislativeAreaViewModel.Name },
+
+                        PurposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId.HasValue ?
+                            (await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(scopeOfAppointment.PurposeOfAppointmentId.Value)).Name : null,
+
+                        Category = scopeOfAppointment.CategoryId.HasValue ?
+                            (await _legislativeAreaService.GetCategoryByIdAsync(scopeOfAppointment.CategoryId.Value)).Name : null,
+
+                        SubCategory = scopeOfAppointment.SubCategoryId.HasValue ?
+                            (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId.Value)).Name : null,
+                    };
+
+                    foreach(var productId in scopeOfAppointment.ProductIds)
+                    {
+                        var product = await _legislativeAreaService.GetProductByIdAsync(productId);
+                        soaViewModel.Products.Add(product.Name);
+                    }
+
+                    foreach (var procedureId in scopeOfAppointment.ProcedureIds)
+                    {
+                        var product = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                        soaViewModel.Procedures.Add(product.Name);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
+
+                viewModel.LegislativeAreas.Add(legislativeAreaViewModel);
+            }
+
+            return viewModel;
+
+
+
+
+
+            //var viewModel = new CABLegislativeAreasViewModel();
+            //viewModel.LegislativeAreas.Add(
+            //    new CABLegislativeAreasItemViewModel
+            //    {
+            //        Name = "Machinery",
+            //        AppointmentDate = DateTime.Now,
+            //        ReviewDate = DateTime.Now.AddYears(1),
+            //        IsProvisional = false,
+            //        Reason = "My reason for editing",
+            //        CanChooseScopeOfAppointment = true,
+            //        ScopeOfAppointments = new List<LegislativeAreaListItemViewModel>
+            //        {
+            //                new LegislativeAreaListItemViewModel {
+            //                    PurposeOfAppointment = "Categories of machine specified in Schedule 2, Part 4 of the regulation",
+            //                    Category = "Circular saws (single- or multi-blade) for working with wood and material with similar physical characteristics or for working with meat and material with similar physical characteristics, of the following types",
+            //                    SubCategory = "My product subcategory",
+            //                    Products = new List<string> { "sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed" },
+            //                    Procedures = new List<string> { "Part 9 Type examination" }
+            //                },
+            //                new LegislativeAreaListItemViewModel {
+            //                    PurposeOfAppointment = "Categories of machine specified in Schedule 2, Part 4 of the regulation",
+            //                    Category = "Circular saws (single- or multi-blade) for working with wood and material with similar physical characteristics or for working with meat and material with similar physical characteristics, of the following types",
+            //                    SubCategory = "",
+            //                    Products = null,
+            //                    Procedures = new List < string > { /*"Part 9 Type examination"*/ }
+            //                }
+            //        }
+            //    });
+            //viewModel.LegislativeAreas.Add(
+            //    new CABLegislativeAreasItemViewModel
+            //    {
+            //        Name = "Gas appliances and related",
+            //        IsProvisional = true,
+            //        CanChooseScopeOfAppointment = true,
+            //        ScopeOfAppointments = new List<LegislativeAreaListItemViewModel>
+            //        {
+            //                new LegislativeAreaListItemViewModel {
+            //                    PurposeOfAppointment = "Categories of machine specified in Schedule 2, Part 4 of the regulation",
+            //                    Category = "Circular saws (single- or multi-blade) for working with wood and material with similar physical characteristics or for working with meat and material with similar physical characteristics, of the following types",
+            //                    SubCategory = "My product subcategory",
+            //                    Products = new List<string> { "sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed" },
+            //                    Procedures = new List<string> { "Part 9 Type examination" }
+            //                },
+            //                new LegislativeAreaListItemViewModel {
+            //                    PurposeOfAppointment = "Categories of machine specified in Schedule 2, Part 4 of the regulation",
+            //                    Category = "Circular saws (single- or multi-blade) for working with wood and material with similar physical characteristics or for working with meat and material with similar physical characteristics, of the following types",
+            //                    SubCategory = "My product subcategory",
+            //                    Products = new List<string> { "sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed" },
+            //                    Procedures = new List<string> { "Part 9 Type examination" }
+            //                }
+            //        }
+            //    });
+            //viewModel.LegislativeAreas.Add(
+            //    new CABLegislativeAreasItemViewModel
+            //    {
+            //        Name = "Measuring Instruments",
+            //        IsProvisional = true,
+            //        CanChooseScopeOfAppointment = false,
+            //    });
+
+            //return viewModel;
+        }
+
+        private void ValidateCabSummaryModels(CABDetailsViewModel cabDetails, CABContactViewModel cabContact, CABBodyDetailsViewModel cabBody, CABLegislativeAreasViewModel cabLegislativeAreas)
+        {
+            // Perform validation here (in MVC context) to check data annotation rules AND fluent validation rules.
+            // Have to clear the ModelState inbetween calls to TryValidateModel with different objects, otherwise incorrect results can be returned.
+            // i.e. an earlier false result can cause all later calls to return false even if the objects are valid.
+            cabDetails.IsCompleted = TryValidateModel(cabDetails);
+            ModelState.Clear();
+            cabContact.IsCompleted = TryValidateModel(cabContact);
+            ModelState.Clear();
+            cabBody.IsCompleted = TryValidateModel(cabBody);
+            ModelState.Clear();
+            cabLegislativeAreas.IsCompleted = TryValidateModel(cabLegislativeAreas);
+            ModelState.Clear();
         }
     }
 }
