@@ -215,6 +215,7 @@ namespace UKMCAB.Data.Search.Services
                         //$"{nameof(CABIndexItem.ScheduleLabels)}:(\"{input}\")",        // TODO: removed from 2.0 phrase-match
                         $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4",           //phrase-match, boosted x4
                         $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6",    //phrase-match, boosted x6
+                        $"{nameof(CABIndexItem.UKASReference)}:(\"{input}\")",            //phrase-match
                     };
                     if (internalSearch)
                     {
