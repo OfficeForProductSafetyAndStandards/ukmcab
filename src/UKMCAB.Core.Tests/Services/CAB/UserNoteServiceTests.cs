@@ -8,11 +8,11 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using UKMCAB.Common;
+    using Common;
     using UKMCAB.Core.Services.CAB;
     using UKMCAB.Data.CosmosDb.Services.CAB;
     using UKMCAB.Data.CosmosDb.Services.CachedCAB;
-    using UKMCAB.Data.Models;
+    using Data.Models;
     using UKMCAB.Data.Models.Users;
 
     [TestFixture]

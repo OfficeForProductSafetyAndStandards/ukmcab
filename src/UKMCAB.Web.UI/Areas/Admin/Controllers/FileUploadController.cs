@@ -42,7 +42,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
             // Pre-populate model for edit
-            if (latestVersion.Schedules != null && latestVersion.Schedules.Count >= SchedulesOptions.MaxFileCount)
+            if (latestVersion.Schedules is { Count: >= SchedulesOptions.MaxFileCount })
             {
                 return RedirectToAction("SchedulesList", fromSummary ? new { id, fromSummary = "true" } : new { id });
             }
@@ -51,10 +51,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 Title = SchedulesOptions.UploadTitle,
                 UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea }).ToList() ?? new List<FileViewModel>(),
-                CABId = id
+                CABId = id,
+                IsFromSummary = fromSummary,
+                DocumentStatus = latestVersion.StatusValue
             };
-            model.IsFromSummary = fromSummary;
-            model.DocumentStatus = latestVersion.StatusValue;
             return View(model);
         }
 
@@ -144,7 +144,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var uploadedFileViewModels = new List<FileViewModel>();
 
-            if (fromAction == nameof(FileUploadManagementController.SchedulesReplaceFile) || fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain))
+            if (fromAction is nameof(FileUploadManagementController.SchedulesReplaceFile) or nameof(FileUploadManagementController.SchedulesUseFileAgain))
             {
                 if (fromAction == nameof(FileUploadManagementController.SchedulesReplaceFile) && latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var indexOfFileToReplace) && indexOfFileToReplace < latestVersion.Schedules.Count)
                 {
@@ -632,7 +632,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 var duplicatedLabelsAndLegislativeAreas = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { Label = x.Label!.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
 
-                if (duplicatedLabelsAndLegislativeAreas != null && duplicatedLabelsAndLegislativeAreas.Count > 0)
+                if (duplicatedLabelsAndLegislativeAreas is { Count: > 0 })
                 {
                     var index = 0;
                     foreach (var uploadedFile in model.UploadedFiles)
@@ -653,7 +653,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 var filesWithRepeatedNamesAndLegislativeAreas = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea)).GroupBy(x => new { FileName = x.FileName.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
 
-                if (filesWithRepeatedNamesAndLegislativeAreas != null && filesWithRepeatedNamesAndLegislativeAreas.Count > 0)
+                if (filesWithRepeatedNamesAndLegislativeAreas is { Count: > 0 })
                 {
                     var index = 0;
                     foreach (var uploadedFile in model.UploadedFiles)
@@ -681,7 +681,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var duplicatedFileAndLabels = model.UploadedFiles.Where(x => string.IsNullOrWhiteSpace(x.Category) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { FileName=  x.FileName.ToLower(), Label = x.Label!.ToLower() }).Where(g => g.Count() > 1)
                                         .Select(y => y.Key).ToList();
 
-                if (duplicatedFileAndLabels != null && duplicatedFileAndLabels.Count > 0)
+                if (duplicatedFileAndLabels.Any())
                 {
                     var index = 0;
                     foreach (var uploadedFile in model.UploadedFiles)
@@ -702,7 +702,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 var duplicatedLabelsAndCategories = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.Category) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { Label = x.Label!.ToLower(), Category = x.Category!.ToLower() }).Where(g => g.Count() > 1).Select(y => y.Key).ToList();
 
-                if (duplicatedLabelsAndCategories != null && duplicatedLabelsAndCategories.Count > 0)
+                if (duplicatedLabelsAndCategories.Any())
                 {
                     var index = 0;
                     foreach (var uploadedFile in model.UploadedFiles)
@@ -724,7 +724,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var filesWithRepeatedNamesAndCategories = model.UploadedFiles.Where(x => !string.IsNullOrWhiteSpace(x.Category)).GroupBy(x => new { FileName =  x.FileName!.ToLower(), Category =  x.Category!.ToLower() }).Where(g => g.Count() > 1)
                                        .Select(y => y.Key).ToList();
 
-                if (filesWithRepeatedNamesAndCategories != null && filesWithRepeatedNamesAndCategories.Count > 0)
+                if (filesWithRepeatedNamesAndCategories.Any())
                 {
                     var index = 0;
                     foreach (var uploadedFile in model.UploadedFiles)
@@ -799,7 +799,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private async Task AbortFileUploadAndReturnAsync(string submitType, FileUploadViewModel model, Document latestDocument, string docType)
         {
-            if (submitType != null && submitType.Equals(Constants.SubmitType.Cancel))
+            if (submitType is Constants.SubmitType.Cancel)
             {
                 var incompleteFileUploads = new List<FileViewModel>();
 
@@ -837,7 +837,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
             var newSchedules = new List<FileUpload>();
-            if (fileViewModels != null && latestDocument.Schedules != null)
+            if (latestDocument.Schedules != null)
             {
                 foreach (var fileViewModel in fileViewModels)
                 {
@@ -855,16 +855,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (newSchedules.Any())
             {
-                if (latestDocument.LegislativeAreas == null)
-                {
-                    latestDocument.LegislativeAreas = new List<string>();
-                }
                 var legislativeAreasFromDocs = newSchedules.Select(sch => sch.LegislativeArea).ToList();
 
                 if (legislativeAreasFromDocs.Except(latestDocument.LegislativeAreas).Any())
                 {
-                    var newLAList = legislativeAreasFromDocs.Union(latestDocument.LegislativeAreas).OrderBy(la => la).ToList();
-                    latestDocument.LegislativeAreas = newLAList;
+                    var newLaList = legislativeAreasFromDocs.Union(latestDocument.LegislativeAreas).OrderBy(la => la).ToList();
+                    latestDocument.LegislativeAreas = newLaList;
                 }
             }
 

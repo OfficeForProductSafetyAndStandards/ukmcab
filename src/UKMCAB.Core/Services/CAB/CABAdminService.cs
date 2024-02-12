@@ -177,6 +177,7 @@ namespace UKMCAB.Core.Services.CAB
                 URLSlug = document.URLSlug,
                 LastUpdatedDate = document.LastUpdatedDate,
                 RandomSort = document.RandomSort,
+                UKASReference = document.UKASReference
             });
         }
 
@@ -460,6 +461,23 @@ namespace UKMCAB.Core.Services.CAB
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
             return latestDocument?.DocumentLegislativeAreas.First(a => a.Id == documentLegislativeAreaId) ?? throw new InvalidOperationException();
+        }
+
+        public async Task<Guid> AddLegislativeAreaAsync(Guid cabId, Guid laToAdd, string laName)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
+            if (latestDocument == null) throw new InvalidOperationException("No document found");
+            if (latestDocument.DocumentLegislativeAreas.Any(l => l.LegislativeAreaId == laToAdd))
+                throw new ArgumentException("Legislative id already exists on cab");
+            var guid = Guid.NewGuid();
+            latestDocument.DocumentLegislativeAreas.Add(new DocumentLegislativeArea
+            {
+                Id = guid,
+                LegislativeAreaId = laToAdd
+            });
+            latestDocument.LegislativeAreas.Add(laName);
+            await _cabRepository.UpdateAsync(latestDocument);
+            return guid;
         }
 
         private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
