@@ -22,7 +22,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 .ReturnsAsync(new List<Document>());
 
             // Act and Assert
-            Assert.ThrowsAsync<Exception>(async () =>
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _sut.AddLegislativeAreaAsync(Guid.NewGuid(), Guid.NewGuid(), "Lifts"), "No document found");
             return Task.CompletedTask;
         }
@@ -48,8 +48,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
 
             // Act and Assert
-            Assert.ThrowsAsync<Exception>(async () =>
-                await _sut.AddLegislativeAreaAsync(Guid.NewGuid(), laId, "test"));
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _sut.AddLegislativeAreaAsync(Guid.NewGuid(), laId, "test"), "Legislative id already exists on cab");
             return Task.CompletedTask;
         }
 
@@ -57,14 +57,15 @@ namespace UKMCAB.Core.Tests.Services.CAB
         public async Task NewLegislativeId_AddLegislativeAreaAsync_CabUpdated()
         {
             // Arrange
-            const string cabId = "cabId";
+            var cabId = Guid.NewGuid();
             var legislativeArea = new Mock<DocumentLegislativeArea>();
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
                 .ReturnsAsync(new List<Document>
                 {
                     new()
                     {
-                        CABId = cabId,
+                        CABId = cabId.ToString(),
+                        StatusValue = Status.Draft,
                         DocumentLegislativeAreas = new()
                         {
                             legislativeArea.Object
@@ -73,13 +74,13 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
 
             // Act
-            await _sut.AddLegislativeAreaAsync(Guid.Parse(cabId), legislativeArea.Object.LegislativeAreaId, "La to Add");
+            await _sut.AddLegislativeAreaAsync(cabId, Guid.NewGuid(), "La to Add");
 
             // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
-                    d.CABId == cabId && d.DocumentLegislativeAreas.Contains(legislativeArea.Object))),
+                    d.CABId == cabId.ToString() && d.DocumentLegislativeAreas.Contains(legislativeArea.Object))),
                 Times.Once);
             _mockCABRepository.VerifyNoOtherCalls();
         }
