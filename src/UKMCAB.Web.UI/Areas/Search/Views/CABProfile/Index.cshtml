@@ -76,7 +76,7 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
         <div class="govuk-!-margin-bottom-7">
             <span class="govuk-caption-m govuk-!-display-inline-block">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
         </div>
-        @if (!string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
+        @if (User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
         {
             <div class="govuk-!-margin-bottom-6">
                 <span class="govuk-caption-m govuk-!-display-inline-block">
@@ -149,7 +149,7 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5 govuk-!-margin-bottom-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
 
-            @if (!string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
+            @if (User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
             {
                 <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">
                     Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong>
