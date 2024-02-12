@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Data.Models;
 using System.Linq;
-using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {

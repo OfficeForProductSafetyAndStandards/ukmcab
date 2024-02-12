@@ -42,17 +42,17 @@ public class LegislativeAreaService : ILegislativeAreaService
         return _mapper.Map<IEnumerable<LegislativeAreaModel>>(result);
     }
 
-    public async Task<IEnumerable<LegislativeAreaModel>> GetLegislativeAreasAsync(List<Guid?> excludeLegislativeAreaIds)
+    public async Task<IEnumerable<LegislativeAreaModel>> GetLegislativeAreasAsync(List<Guid> excludeLegislativeAreaIds)
     {
         var allLegislativeAreas = await this.GetAllLegislativeAreasAsync();
         return allLegislativeAreas.Where(n => !excludeLegislativeAreaIds.Contains(n.Id));
     }
 
-    public async Task<LegislativeAreaModel?> GetLegislativeAreaByIdAsync(Guid legislativeAreaId)
+    public async Task<LegislativeAreaModel> GetLegislativeAreaByIdAsync(Guid legislativeAreaId)
     {
         Guard.IsTrue(legislativeAreaId != Guid.Empty, "Guid cannot be empty");
         var la = await _legislativeAreaRepository.QueryAsync(l => l.Id == legislativeAreaId);
-        return _mapper.Map<LegislativeAreaModel>(la.FirstOrDefault());
+        return _mapper.Map<LegislativeAreaModel>(la.First());
     }
 
     public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId)

@@ -3,7 +3,7 @@
     public class DocumentLegislativeArea
     {
         public Guid Id { get; set; }
-        public Guid? LegislativeAreaId { get; set; }
+        public Guid LegislativeAreaId { get; set; }
 
         public DateTime? AppointmentDate { get; set; }
 

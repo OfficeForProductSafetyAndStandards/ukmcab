@@ -72,5 +72,14 @@ namespace UKMCAB.Core.Services.CAB
 
         Task<DocumentScopeOfAppointment> GetDocumentScopeOfAppointmentAsync(Guid cabId, Guid scopeOfAppointmentId);
         Task<DocumentLegislativeArea> GetDocumentLegislativeAreaAsync(Guid cabId, Guid documentLegislativeAreaId);
+
+        /// <summary>
+        /// Adds a Legislative area and sets the labels for search
+        /// </summary>
+        /// <param name="cabId">cab to update</param>
+        /// <param name="laToAdd">New Legislative area id to create</param>
+        /// <param name="laName">Name of Legislative Area to add to labels</param>
+        /// <returns>DocumentLegislativeId created</returns>
+        Task<Guid> AddLegislativeAreaAsync(Guid cabId, Guid laToAdd, string laName);
     }
 }

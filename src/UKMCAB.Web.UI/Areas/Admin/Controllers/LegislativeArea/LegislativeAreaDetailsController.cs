@@ -46,7 +46,7 @@ public class LegislativeAreaDetailsController : Controller
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ?? throw new InvalidOperationException();
-        var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId != null).Select(n => n.LegislativeAreaId).ToList();
+        var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
 
         var vm = new LegislativeAreaViewModel
         {
@@ -63,23 +63,17 @@ public class LegislativeAreaDetailsController : Controller
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ?? throw new InvalidOperationException();
         var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId != null).Select(n => n.LegislativeAreaId).ToList();
-
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(vm.SelectedLegislativeAreaId);
+        
         if(cabLegislativeAreaIds.Contains(vm.SelectedLegislativeAreaId))
         {
-            var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(vm.SelectedLegislativeAreaId);
-            ModelState.AddModelError(nameof(vm.SelectedLegislativeAreaId), $"Legislative area '{legislativeArea?.Name}' already exists in Cab.");
+            ModelState.AddModelError(nameof(vm.SelectedLegislativeAreaId), $"Legislative area '{legislativeArea.Name}' already exists in Cab.");
         }
 
         if (ModelState.IsValid)
         {   
             // add  document new legislative area;
-            var documentLegislativeAreaId = Guid.NewGuid();
-            var documentLegislativeArea = new DocumentLegislativeArea
-            {
-                Id = documentLegislativeAreaId,
-                LegislativeAreaId = vm.SelectedLegislativeAreaId
-            };
-            latestDocument.DocumentLegislativeAreas.Add(documentLegislativeArea);
+            var documentLegislativeAreaId = await _cabAdminService.AddLegislativeAreaAsync(vm.CABId, vm.SelectedLegislativeAreaId, legislativeArea.Name);
 
             // add new document scope of appointment to cache;
             var scopeOfAppointmentId = Guid.NewGuid();
@@ -372,7 +366,7 @@ public class LegislativeAreaDetailsController : Controller
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
     
-    private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid?> excludeLegislativeAreaIds)
+    private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid> excludeLegislativeAreaIds)
     {
         var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
         return legislativeAreas.Select(x => new SelectListItem(){ Text = x.Name, Value = x.Id.ToString() });
