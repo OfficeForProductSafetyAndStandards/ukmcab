@@ -177,6 +177,7 @@ namespace UKMCAB.Core.Services.CAB
                 URLSlug = document.URLSlug,
                 LastUpdatedDate = document.LastUpdatedDate,
                 RandomSort = document.RandomSort,
+                UKASReference = document.UKASReference
             });
         }
 
