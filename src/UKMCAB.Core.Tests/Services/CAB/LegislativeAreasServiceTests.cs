@@ -77,10 +77,11 @@
             var cabSelectedLegislativeId1 = Guid.NewGuid();
             var cabSelectedLegislativeId2 = Guid.NewGuid();
 
-            List<Guid?> excludeLegislativeAreaIds = new List<Guid?>() { cabSelectedLegislativeId1, cabSelectedLegislativeId2 };
+            List<Guid> excludeLegislativeAreaIds = new List<Guid>() { cabSelectedLegislativeId1, cabSelectedLegislativeId2 };
 
             _mockLegislativeAreaRepository.Setup(x => x.GetAllAsync())
-                .ReturnsAsync(new List<LegislativeArea>() {
+                .ReturnsAsync(new List<LegislativeArea>
+                {
                     new() { Id = cabSelectedLegislativeId1, Name = "Name1" },
                     new() { Id = cabSelectedLegislativeId2, Name = "Name2" },
                     new() { Id = Guid.NewGuid(), Name = "Name3" },
