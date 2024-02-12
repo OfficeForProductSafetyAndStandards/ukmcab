@@ -72,7 +72,7 @@ public class LegislativeAreaDetailsController : Controller
 
         if (ModelState.IsValid)
         {   
-            // add  document new legislative area;
+            // add document new legislative area;
             var documentLegislativeAreaId = await _cabAdminService.AddLegislativeAreaAsync(vm.CABId, vm.SelectedLegislativeAreaId, legislativeArea.Name);
 
             // add new document scope of appointment to cache;
@@ -83,11 +83,6 @@ public class LegislativeAreaDetailsController : Controller
                 LegislativeAreaId = vm.SelectedLegislativeAreaId
             };
             await _distCache.SetAsync(scopeOfAppointmentId.ToString(), scopeOfAppointment, TimeSpan.FromHours(1));
-
-            var userAccount =
-                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
             return submitType switch
             {
@@ -108,6 +103,7 @@ public class LegislativeAreaDetailsController : Controller
     [HttpGet("add-purpose-of-appointment/{scopeId}", Name = Routes.AddPurposeOfAppointment)]
     public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid scopeId)
     {
+        //todo handle existing cabs which need scope of appointment
         var documentScopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(scopeId.ToString());
         var options =
             await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
