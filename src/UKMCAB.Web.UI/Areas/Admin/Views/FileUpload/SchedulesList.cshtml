@@ -107,7 +107,6 @@
                             @for (int i = 0; i < Model.UploadedFiles.Count; i++)
                             {
                                 var uploadedFile = Model.UploadedFiles[i];
-                                var items = DataConstants.Lists.LegislativeAreas.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.LegislativeArea?.Trim() ?? string.Empty))).ToList();
 
                                 <div class="govuk-checkboxes__item">
                                     @*Row 1: Checkbox Row*@
@@ -149,15 +148,15 @@
                                             <span asp-validation-for="UploadedFiles![i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
                                         <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
-                                            @foreach (var la in items)
+                                            @foreach (var la in Model.LegislativeAreas)
                                             {
-                                                if (la.Selected)
+                                                if (la.Equals(uploadedFile.LegislativeArea?.Trim()))
                                                 {
-                                                    <option value="@la.Value" selected="selected">@la.Text</option>
+                                                    <option value="@la" selected="selected">@la</option>
                                                 }
                                                 else
                                                 {
-                                                    <option value="@la.Value">@la.Text</option>
+                                                    <option value="@la">@la</option>
                                                 }
                                             }
                                         </select>

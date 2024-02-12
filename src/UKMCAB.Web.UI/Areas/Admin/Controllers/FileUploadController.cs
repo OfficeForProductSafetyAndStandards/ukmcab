@@ -19,18 +19,25 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IFileStorage _fileStorage;
         private readonly IUserService _userService;
         private readonly IFileUploadUtils _fileUploadUtils;
+        private readonly ILegislativeAreaService _legislativeAreaService;
 
         public static class Routes
         {
             public const string SchedulesList = "file-upload.schedules-list";
         }
 
-        public FileUploadController(ICABAdminService cabAdminService, IFileStorage fileStorage, IUserService userService, IFileUploadUtils fileUploadUtils)
+        public FileUploadController(
+            ICABAdminService cabAdminService, 
+            IFileStorage fileStorage,
+            IUserService userService, 
+            IFileUploadUtils fileUploadUtils, 
+            ILegislativeAreaService legislativeAreaService)
         {
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
             _userService = userService;
             _fileUploadUtils = fileUploadUtils;
+            _legislativeAreaService = legislativeAreaService;
         }
 
         [HttpGet("admin/cab/schedules-upload/{id}")]
@@ -168,7 +175,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     IsFromSummary = fromSummary,
                     DocumentStatus = latestVersion.StatusValue,
                     SuccessBannerTitle = successBannerContent,
-                    ShowBanner = showBanner
+                    ShowBanner = showBanner,
+                    LegislativeAreas = latestVersion.LegislativeAreas.ToList()
                 };
 
                 return View(viewModel);
@@ -183,7 +191,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 UploadedFiles = uploadedFileViewModels,
                 CABId = id,
                 IsFromSummary = fromSummary,
-                DocumentStatus = latestVersion.StatusValue
+                DocumentStatus = latestVersion.StatusValue,
+                LegislativeAreas = latestVersion.LegislativeAreas.ToList()
             });
         }
         
@@ -199,7 +208,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
             latestDocument.Schedules ??= new List<FileUpload>();
 
-            if (submitType != null && submitType.Equals(Constants.SubmitType.Cancel))
+            if (submitType is Constants.SubmitType.Cancel)
             {
                 await AbortFileUploadAndReturnAsync(submitType, model, latestDocument, nameof(latestDocument.Schedules));
 
@@ -213,7 +222,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            if (submitType != null && submitType.Equals(Constants.SubmitType.Remove))
+            if (submitType is Constants.SubmitType.Remove)
             {
                 var filesInViewModel = model.UploadedFiles ?? new List<FileViewModel>();
 
@@ -229,7 +238,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {
                         _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsInLatestDocumentMatchingUserSelection, latestDocument, nameof(latestDocument.Schedules));
                         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
                     }
 
                     var currentlyUploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea, IsSelected = false }).ToList() ?? new List<FileViewModel>();
@@ -249,11 +258,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            this.AddLegislativeLabelAndFileModelStateErrors(model);
+            AddLegislativeLabelAndFileModelStateErrors(model);
 
-            if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
+            if (submitType is Constants.SubmitType.Continue)
             {
-                this.AddLegislativeSelectionModelStateErrors(model);
+                AddLegislativeSelectionModelStateErrors(model);
             }
 
             if (ModelState.IsValid)
@@ -261,7 +270,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (UpdateFiles(latestDocument, model.UploadedFiles))
                 {
                     var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
                 }
 
                 if (submitType == Constants.SubmitType.UploadAnother)
@@ -283,12 +292,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     return SaveDraft(latestDocument);
                 }
 
-                if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain))
+                if (submitType is Constants.SubmitType.UseFileAgain)
                 {
                     return RedirectToAction("SchedulesUseFileAgain", "FileUploadManagement", new { id, fromSummary });
                 }
 
-                if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
+                if (submitType is Constants.SubmitType.ReplaceFile)
                 {
                     return RedirectToAction("SchedulesReplaceFile", "FileUploadManagement", new { id, fromSummary });
                 }
@@ -490,11 +499,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            this.AddCategoryLabelAndFileModelStateErrors(model);
+            AddCategoryLabelAndFileModelStateErrors(model);
 
             if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
             {
-                this.AddCategorySelectionModelStateErrors(model);
+                AddCategorySelectionModelStateErrors(model);
             }
 
             if (ModelState.IsValid)
