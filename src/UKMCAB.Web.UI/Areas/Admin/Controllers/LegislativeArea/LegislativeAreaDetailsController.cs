@@ -294,9 +294,7 @@ public class LegislativeAreaDetailsController : Controller
             var products = new List<string>();            
             var procedures = new List<string>();
 
-            var legislativeArea = sa.LegislativeAreaId != null
-            ? await _legislativeAreaService.GetLegislativeAreaByIdAsync((Guid)sa.LegislativeAreaId)
-            : null;
+            var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync((Guid)sa.LegislativeAreaId);
 
             var purpose = sa.PurposeOfAppointmentId != null
             ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)sa.PurposeOfAppointmentId)
@@ -310,7 +308,7 @@ public class LegislativeAreaDetailsController : Controller
             ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)sa.SubCategoryId)
             : null;
 
-            if (sa.ProductIds != null && sa.ProductIds.Any())
+            if (sa.ProductIds.Any())
             {
                 foreach (var productId in sa.ProductIds)
                 {
@@ -319,18 +317,18 @@ public class LegislativeAreaDetailsController : Controller
                 }
             }
 
-            if (sa.ProcedureIds != null && sa.ProcedureIds.Any())
+            if (sa.ProcedureIds.Any())
             {
                 foreach (var procedureId in sa.ProcedureIds)
                 {
-                    var proc = await _legislativeAreaService.GetProcedureByIdAsync((Guid)procedureId);
-                    procedures.Add(proc.Name);
+                    var proc = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                    if (proc?.Name != null) procedures.Add(proc.Name);
                 }
             }
 
             var laItem = new LegislativeAreaListItemViewModel
             {
-                LegislativeArea = new ListItem { Id = sa.LegislativeAreaId, Title = legislativeArea!.Name ?? string.Empty },
+                LegislativeArea = new ListItem { Id = sa.LegislativeAreaId, Title = legislativeArea.Name },
                 PurposeOfAppointment = purpose?.Name ?? string.Empty,
                 Category = category?.Name ?? string.Empty,
                 SubCategory = subCategory?.Name ?? string.Empty,
