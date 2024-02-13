@@ -89,6 +89,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
         var legislativeArea = latestDocument?.DocumentLegislativeAreas.FirstOrDefault(a => a.Id == laId);
         latestDocument?.DocumentLegislativeAreas.Remove(legislativeArea);
+            
         var documentLegislativeArea = new DocumentLegislativeArea
         {
             Id = legislativeArea.Id,

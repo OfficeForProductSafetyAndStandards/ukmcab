@@ -47,11 +47,11 @@
 }
 
 <div id="cab-profile-page">
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <partial name="Partials/_ValidationSummary" model="null" />
-        </div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="null"/>
     </div>
+</div>
 
 @if (Model is { IsArchived: true, RequestTaskType: null })
 {
@@ -166,42 +166,47 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
     </div>
 </div>
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-            <div class="govuk-tabs cab-tabs tabs-pagenumber-reset" data-module="govuk-tabs">
-                <ul class="govuk-tabs__list">
-                    <li class="govuk-tabs__list-item @Html.Conditional(!Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected")">
-                        <a class="govuk-tabs__tab" href="#details">
-                            Details
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="govuk-tabs cab-tabs tabs-pagenumber-reset" data-module="govuk-tabs">
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item @Html.Conditional(!Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected")">
+                    <a class="govuk-tabs__tab" href="#details">
+                        Details
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item @Html.Conditional(!User.Identity.IsAuthenticated, "last")">
+                    <a class="govuk-tabs__tab" href="#legislative-areas">
+                        Legislative areas
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item @Html.Conditional(!User.Identity.IsAuthenticated, "last")">
+                    <a class="govuk-tabs__tab" href="#product-schedules">
+                        Product schedules
+                    </a>
+                </li>
+                @if (User.Identity.IsAuthenticated /*todo*/)
+                {
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#supporting-documents">
+                            Supporting documents
                         </a>
                     </li>
-                    <li class="govuk-tabs__list-item @Html.Conditional(!User.Identity.IsAuthenticated, "last")">
-                        <a class="govuk-tabs__tab" href="#product-schedules">
-                            Product schedules
+                }
+                @if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabGovernmentUserNotes))
+                {
+                    <li class="govuk-tabs__list-item">
+                        <a class="govuk-tabs__tab" href="#usernotes">
+                            Government user notes
                         </a>
                     </li>
-                    @if (User.Identity.IsAuthenticated /*todo*/)
-                    {
-                        <li class="govuk-tabs__list-item">
-                            <a class="govuk-tabs__tab" href="#supporting-documents">
-                                Supporting documents
-                            </a>
-                        </li>
-                    }
-                    @if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabGovernmentUserNotes))
-                    {
-                        <li class="govuk-tabs__list-item">
-                            <a class="govuk-tabs__tab" href="#usernotes">
-                                Government user notes
-                            </a>
-                        </li>
-                    }
-                    <li class="govuk-tabs__list-item @Html.Conditional(Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected")">
-                        <a class="govuk-tabs__tab" href="#history">
-                            History
-                        </a>
-                    </li>
-                </ul>
+                }
+                <li class="govuk-tabs__list-item @Html.Conditional(Context.Request.Query.Keys.Contains("pagenumber"), "govuk-tabs__list-item--selected")">
+                    <a class="govuk-tabs__tab" href="#history">
+                        History
+                    </a>
+                </li>
+            </ul>
 
             <div class="govuk-tabs__panel cabs-panel" id="details">
                 <div class="cab-detail-section">
@@ -421,6 +426,7 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
                 </div>
             </div>
 
+            <partial name="Partials/_LegislativeAreas" model="null"/>
             <partial name="Partials/_Documents" model="Model.ProductSchedules"/>
 
             @if (User.Identity.IsAuthenticated /*todo: what claim?*/)
