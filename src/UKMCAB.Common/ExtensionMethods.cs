@@ -39,9 +39,13 @@ public static class ExtensionMethods
     /// <returns></returns>
     public static DateTime AsUtc(this DateTime dateTime) => dateTime.Kind == DateTimeKind.Utc ? dateTime : DateTime.SpecifyKind(dateTime, DateTimeKind.Utc);
     public static string ToStringBeisFormat(this DateTime dateTime)
-     {
-        return dateTime.ToString("dd/MM/yyyy HH:mm");
-     }
+    {
+       return dateTime.ToString("dd/MM/yyyy HH:mm");
+    }
+    public static string ToStringBeisFormat(this DateTime? dateTime)
+    {
+        return dateTime.HasValue ? dateTime.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty;
+    }
     public static string AsYesNo(this bool b)
     {
         return b ? "yes" : "no";
@@ -59,6 +63,21 @@ public static class ExtensionMethods
 
             default:
                 return "Unknown";
+        }
+    }
+
+    public static string AsYesNoOrNotProvided(this bool? b)
+    {
+        switch (b)
+        {
+            case true:
+                return "Yes";
+
+            case false:
+                return "No";
+
+            default:
+                return "Not provided";
         }
     }
 
