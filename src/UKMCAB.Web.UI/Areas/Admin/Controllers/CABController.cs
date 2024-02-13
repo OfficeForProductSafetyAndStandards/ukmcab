@@ -403,10 +403,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 SubStatusName = latest.SubStatus.GetEnumDescription(),
                 ValidCAB = latest.StatusValue != Status.Published
                            && cabDetails.IsCompleted && cabContact.IsCompleted && cabBody.IsCompleted && cabLegislativeAreas.IsCompleted
-                           //&& TryValidateModel(cabDetails)
-                           //&& TryValidateModel(cabContact)
-                           //&& TryValidateModel(cabBody)
-                           //&& TryValidateModel(cabLegislativeAreas) 
                            && cabProductSchedules.IsCompleted && cabSupportingDocuments.IsCompleted,
                 TitleHint = "CAB profile",
                 Title = User.IsInRole(Roles.OPSS.Id) ?
