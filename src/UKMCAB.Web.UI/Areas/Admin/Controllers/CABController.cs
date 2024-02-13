@@ -620,7 +620,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
             {
-                var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea.LegislativeAreaId.Value);
+                var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea.LegislativeAreaId);
 
                 var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel()
                 {
