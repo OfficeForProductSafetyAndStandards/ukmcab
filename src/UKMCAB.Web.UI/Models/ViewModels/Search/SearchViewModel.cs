@@ -50,7 +50,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FilterViewModel? CreatedByUserGroupOptions { get; set; }
         public FilterViewModel? SubStatusOptions { get; set; }
 
-        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && InternalSearch ? Statuses.Length : 0) + (SubStatuses != null && InternalSearch ? SubStatuses.Length : 0) + (UserGroups != null && InternalSearch ? UserGroups.Length : 0);
+        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && (InternalSearch || Statuses.Contains(((int)Status.Archived).ToString())) ? Statuses.Length : 0) + (SubStatuses != null && InternalSearch ? SubStatuses.Length : 0) + (UserGroups != null && InternalSearch ? UserGroups.Length : 0);
 
         public Dictionary<string, string[]> SelectedFilters => new Dictionary<string, string[]>
         {
