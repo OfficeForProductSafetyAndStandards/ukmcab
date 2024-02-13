@@ -57,8 +57,10 @@ namespace UKMCAB.Data.Models
         public List<string> TestingLocations { get; set; } = new();
         public List<string> BodyTypes { get; set; } = new();
 
-        public List<string> LegislativeAreas { get; set; } = new();
-
+        /*This needs to be kept post data model (v3.0) for a few reasons:
+        Search Filter, Data models are used in Controllers and Views*/
+        public List<string> LegislativeAreas { get; set; } = new(); 
+        
         public List<DocumentLegislativeArea> DocumentLegislativeAreas { get; set; } = new();
 
         public List<DocumentScopeOfAppointment> ScopeOfAppointments { get; set; } = new();

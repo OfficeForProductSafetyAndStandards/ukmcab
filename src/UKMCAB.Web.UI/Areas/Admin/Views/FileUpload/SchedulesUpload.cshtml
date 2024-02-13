@@ -97,7 +97,7 @@
                                         <div class="width-three-tenth ukmcab-padding-left-40 ukmcab-float__left govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
                                             <label class="govuk-label govuk-label--s desktop-no-display">Legislative area</label>
                                             <p class="govuk-body">
-                                                @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea), uploadedFile.LegislativeArea, @Constants.NotAssigned)
+                                               @uploadedFile.LegislativeArea
                                             </p>
                                         </div>
 
