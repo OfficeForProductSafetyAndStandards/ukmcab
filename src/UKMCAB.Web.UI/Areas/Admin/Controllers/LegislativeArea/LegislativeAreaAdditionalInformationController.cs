@@ -87,29 +87,32 @@ public class LegislativeAreaAdditionalInformationController : Controller
         }
 
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-        var legislativeArea = latestDocument?.DocumentLegislativeAreas.FirstOrDefault(a => a.Id == laId);
-        latestDocument?.DocumentLegislativeAreas.Remove(legislativeArea);
-            
-        var documentLegislativeArea = new DocumentLegislativeArea
+        var legislativeArea = latestDocument!.DocumentLegislativeAreas.FirstOrDefault(a => a.Id == laId);
+        if (legislativeArea != null)
         {
-            Id = legislativeArea.Id,
-            LegislativeAreaId = legislativeArea.LegislativeAreaId,
-            IsProvisional = vm.IsProvisionalLegislativeArea,
-            AppointmentDate = vm.AppointmentDate,
-            ReviewDate = vm.ReviewDate,
-            Reason = vm.Reason
-        };
-        latestDocument?.DocumentLegislativeAreas.Add(documentLegislativeArea);
+            latestDocument.DocumentLegislativeAreas.Remove(legislativeArea);
+            var documentLegislativeArea = new DocumentLegislativeArea
+            {
+                Id = legislativeArea.Id,
+                LegislativeAreaId = legislativeArea.LegislativeAreaId,
+                IsProvisional = vm.IsProvisionalLegislativeArea,
+                AppointmentDate = vm.AppointmentDate,
+                ReviewDate = vm.ReviewDate,
+                Reason = vm.Reason
+            };
+            latestDocument.DocumentLegislativeAreas.Add(documentLegislativeArea);
+        }
+
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
-        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
         
         TempData.Remove(StoragePageTitle);
         return submitType switch
         {
             Constants.SubmitType.Continue => RedirectToRoute(
-                LegislativeAreaDetailsController.Routes.LegislativeAreaSelected, new { id }),
+                LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id }),
             _ => RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true })
         };
     }
