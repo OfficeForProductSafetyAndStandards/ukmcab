@@ -79,5 +79,8 @@ namespace UKMCAB.Data.Search.Models
 
         [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string CreatedByUserGroup { get; set; }
+
+        [SearchableField]
+        public string? UKASReference { get; set; } 
     }
 }

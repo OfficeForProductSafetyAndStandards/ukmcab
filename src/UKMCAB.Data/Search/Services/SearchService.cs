@@ -21,7 +21,7 @@ namespace UKMCAB.Data.Search.Services
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
                 Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0", $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0"},
-                Filter = internalSearch ? "" : "StatusValue eq '30'"
+                Filter = internalSearch ? "" : "StatusValue eq '30' or StatusValue eq '40'"
             });
 
             if (search.HasValue)
@@ -124,14 +124,10 @@ namespace UKMCAB.Data.Search.Services
                 var registeredOfficeLocations = string.Join(" or ", options.RegisteredOfficeLocationsFilter.Select(bt => $"RegisteredOfficeLocation eq '{bt}'"));
                 filters.Add($"({registeredOfficeLocations})");
             }
-            if (options.InternalSearch && options.StatusesFilter != null && options.StatusesFilter.Any())
+            if (options.StatusesFilter != null && options.StatusesFilter.Any())
             {
                 var statuses = string.Join(" or ", options.StatusesFilter.Select(st => $"StatusValue eq '{st}'"));
                 filters.Add($"({statuses})");
-            }
-            else if (!options.InternalSearch)
-            {
-                filters.Add($"(StatusValue eq '{(int)Status.Published}')");
             }
             if (options.InternalSearch && options.UserGroupsFilter != null && options.UserGroupsFilter.Any())
             {
@@ -215,6 +211,7 @@ namespace UKMCAB.Data.Search.Services
                         //$"{nameof(CABIndexItem.ScheduleLabels)}:(\"{input}\")",        // TODO: removed from 2.0 phrase-match
                         $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4",           //phrase-match, boosted x4
                         $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6",    //phrase-match, boosted x6
+                        $"{nameof(CABIndexItem.UKASReference)}:(\"{input}\")",            //phrase-match
                     };
                     if (internalSearch)
                     {

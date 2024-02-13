@@ -86,7 +86,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl });
             }
 
-            if (cabDocument == null || (cabDocument.StatusValue == Status.Archived && !User.Identity.IsAuthenticated))
+            if (cabDocument == null)
             {
                 return NotFound();
             }
