@@ -1,0 +1,36 @@
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.RemoveViewModel
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <govuk-back-link href="@Model.ReturnUrl" />
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-l">Remove legislative area</h1>
+    </div>
+    <div class="govuk-grid-column-two-thirds">
+        <form id="legislativeForm" method="post" novalidate>
+            <govuk-radios asp-for="Action">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend class="govuk-label--s">
+                            Select an option
+                        </govuk-radios-fieldset-legend>
+                    <govuk-radios-item value="@RemoveActionEnum.Remove">Remove</govuk-radios-item>
+                    <govuk-radios-item value="@RemoveActionEnum.Archive">Archive</govuk-radios-item>
+                    </govuk-radios-fieldset>
+                </govuk-radios>
+            <div class="govuk-button-group">
+                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
+                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.Id" asp-route-returnUrl="@Model.ReturnUrl">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
