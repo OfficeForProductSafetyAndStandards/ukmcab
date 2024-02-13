@@ -1,5 +1,3 @@
-using System.Security.Claims;
-using System.Web;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using UKMCAB.Core.Domain.LegislativeAreas;
@@ -27,7 +25,6 @@ public class LegislativeAreaDetailsController : Controller
         public const string AddSubCategory = "legislative.area.add-sub-category";     
         public const string AddProduct = "legislative.area.add-product";
         public const string AddProcedure = "legislative.area.add-procedure";
-        public const string LegislativeAreaSelected = "legislative.area.selected";
     }
 
     public LegislativeAreaDetailsController(
@@ -273,93 +270,6 @@ public class LegislativeAreaDetailsController : Controller
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProduct.cshtml", vm);
 
-    }
-    
-    [HttpGet("review-legislative-areas", Name = Routes.LegislativeAreaSelected)]
-    public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string? returnUrl)
-    {
-        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-
-        // Implies no document or archived
-        if (latestDocument == null)
-        {
-            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
-        }
-
-        var scopeOfAppointments = latestDocument.ScopeOfAppointments;
-        var selectedLAs = new List<LegislativeAreaListItemViewModel>();      
-
-        foreach (var sa in scopeOfAppointments)
-        {
-            var products = new List<string>();            
-            var procedures = new List<string>();
-
-            var legislativeArea = sa.LegislativeAreaId != null
-            ? await _legislativeAreaService.GetLegislativeAreaByIdAsync((Guid)sa.LegislativeAreaId)
-            : null;
-
-            var purpose = sa.PurposeOfAppointmentId != null
-            ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)sa.PurposeOfAppointmentId)
-            : null;
-
-            var category = sa.CategoryId != null
-            ? await _legislativeAreaService.GetCategoryByIdAsync((Guid)sa.CategoryId)
-            : null;
-
-            var subCategory = sa.SubCategoryId != null
-            ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)sa.SubCategoryId)
-            : null;
-
-            if (sa.ProductIds != null && sa.ProductIds.Any())
-            {
-                foreach (var productId in sa.ProductIds)
-                {
-                    var prod = await _legislativeAreaService.GetProductByIdAsync((Guid)productId);
-                    products.Add(prod.Name);
-                }
-            }
-
-            if (sa.ProcedureIds != null && sa.ProcedureIds.Any())
-            {
-                foreach (var procedureId in sa.ProcedureIds)
-                {
-                    var proc = await _legislativeAreaService.GetProcedureByIdAsync((Guid)procedureId);
-                    procedures.Add(proc.Name);
-                }
-            }
-
-            var laItem = new LegislativeAreaListItemViewModel
-            {
-                LegislativeArea = new ListItem { Id = sa.LegislativeAreaId, Title = legislativeArea!.Name ?? string.Empty },
-                PurposeOfAppointment = purpose?.Name ?? string.Empty,
-                Category = category?.Name ?? string.Empty,
-                SubCategory = subCategory?.Name ?? string.Empty,
-                Products = products,
-                Procedures = procedures 
-            };
-            selectedLAs.Add(laItem);
-        }
-
-        var groupedSelectedLAs = selectedLAs.GroupBy(la => la.LegislativeArea.Title).Select(group => new SelectedLegislativeAreaViewModel
-        {
-            LegislativeAreaName = group.Key,
-            LegislativeAreaDetails = group.Select(laDetails => new LegislativeAreaListItemViewModel
-            {
-                PurposeOfAppointment = laDetails.PurposeOfAppointment,
-                Category = laDetails.Category,
-                SubCategory = laDetails.SubCategory,
-                Products = laDetails.Products,
-                Procedures = laDetails.Procedures
-            }).ToList()
-        }).ToList();
-
-        var vm = new SelectedLegislativeAreasViewModel
-        {
-            ReturnUrl = returnUrl ?? "/",
-            SelectedLegislativeAreas = groupedSelectedLAs
-        };
-
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
     
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid> excludeLegislativeAreaIds)

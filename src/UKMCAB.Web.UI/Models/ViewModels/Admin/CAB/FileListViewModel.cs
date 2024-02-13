@@ -7,5 +7,6 @@
         public List<FileViewModel>? UploadedFiles { get; set; }
         public bool ShowBanner { get; set; }
         public string? SuccessBannerTitle { get; set; }
+        public List<string> LegislativeAreas { get; set; } = new();
     }
 }
