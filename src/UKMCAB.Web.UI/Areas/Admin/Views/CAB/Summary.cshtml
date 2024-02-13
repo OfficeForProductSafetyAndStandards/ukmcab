@@ -401,10 +401,8 @@ else if (Model.IsEditLocked)
                     <dd class="govuk-summary-list__value">
                         @if (Model.ShowEditActions)
                         {
-                            var summaryReturnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
-                            @*<a asp-area="Admin" asp-controller="CAB" asp-action="LegislativeAreas" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>*@
-                            @* https://localhost:7061/Admin/CAB/ca27887e-c2fe-49e3-807c-32a4f091b39c/legislative-area/review-legislative-areas *@
-                            <a asp-area="Admin" asp-controller="LegislativeAreaDetails" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@summaryReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                            var summaryReturnUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+                            <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@summaryReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
                         @if (Model.CabLegislativeAreasViewModel.IsCompleted)
                         {
