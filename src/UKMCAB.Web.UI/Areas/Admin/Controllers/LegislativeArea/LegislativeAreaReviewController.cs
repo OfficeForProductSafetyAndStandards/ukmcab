@@ -101,6 +101,7 @@ public class LegislativeAreaReviewController : Controller
 
         var vm = new SelectedLegislativeAreasViewModel
         {
+            CABId = id,
             ReturnUrl = returnUrl ?? "/",
             SelectedLegislativeAreas = groupedSelectedLAs
         };
