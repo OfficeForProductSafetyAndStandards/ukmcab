@@ -81,5 +81,9 @@ namespace UKMCAB.Core.Services.CAB
         /// <param name="laName">Name of Legislative Area to add to labels</param>
         /// <returns>DocumentLegislativeId created</returns>
         Task<Guid> AddLegislativeAreaAsync(Guid cabId, Guid laToAdd, string laName);
+
+        Task RemoveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId, string laName);
+
+        Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId, string laName);
     }
 }

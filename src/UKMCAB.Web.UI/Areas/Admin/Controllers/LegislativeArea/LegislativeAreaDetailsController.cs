@@ -6,6 +6,7 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Infrastructure.Cache;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -25,6 +26,7 @@ public class LegislativeAreaDetailsController : Controller
         public const string AddSubCategory = "legislative.area.add-sub-category";     
         public const string AddProduct = "legislative.area.add-product";
         public const string AddProcedure = "legislative.area.add-procedure";
+        public const string RemoveLegislativeArea = "legislative.area.remove-legislativearea";
     }
 
     public LegislativeAreaDetailsController(
@@ -269,9 +271,42 @@ public class LegislativeAreaDetailsController : Controller
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProduct.cshtml", vm);
-
     }
-    
+
+    [HttpGet("remove/{legislativeAreaId}", Name = Routes.RemoveLegislativeArea)]
+    public async Task<IActionResult> RemoveLegislativeArea(Guid id, Guid legislativeAreaId, string? returnUrl)
+    {   
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
+
+        var vm = new RemoveViewModel()
+        {
+            Title = legislativeArea?.Name,
+            Id = id,
+            ReturnUrl = returnUrl
+        };
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
+    }
+
+    [HttpPost("remove/{legislativeAreaId}", Name = Routes.RemoveLegislativeArea)]
+    public async Task<IActionResult> RemoveLegislativeArea(Guid id, Guid legislativeAreaId, RemoveViewModel vm, string? returnUrl)
+    {
+        if (ModelState.IsValid)
+        {
+            if(vm.Action == RemoveActionEnum.Remove)
+            {
+                await _cabAdminService.RemoveLegislativeAreaAsync(id, legislativeAreaId, vm.Title);
+            }
+            else
+            {
+                await _cabAdminService.ArchiveLegislativeAreaAsync(id, legislativeAreaId, vm.Title);
+            }                    
+        }
+
+        return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
+        
+    }
+
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid> excludeLegislativeAreaIds)
     {
         var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
