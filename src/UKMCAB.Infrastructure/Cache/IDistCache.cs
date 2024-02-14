@@ -9,7 +9,7 @@ public interface IDistCache : ICachedFactory
     void Flush(int databaseId = 0);
     Task FlushAsync(int databaseId = 0);
     T Get<T>(string key, int databaseId = -1);
-    Task<T> GetAsync<T>(string key, int databaseId = -1);
+    Task<T?> GetAsync<T>(string key, int databaseId = -1);
     bool LockExtend(string name, LockOwner lockOwner, TimeSpan duration, int databaseId = -1);
     Task<bool> LockExtendAsync(string name, LockOwner lockOwner, TimeSpan duration, int databaseId = -1);
     bool LockRelease(string name, LockOwner lockOwner, int databaseId = -1);
