@@ -17,7 +17,8 @@ public class LegislativeAreaAdditionalInformationController : Controller
     private readonly IUserService _userService;
 
     private const string PageTitle = "{0}: additional information";
-    private const string StoragePageTitle = "pageTitle";  
+    private const string StoragePageTitle = "pageTitle";
+
     public static class Routes
     {
         public const string LegislativeAreaAdditionalInformation = "legislative.area.additional.information";
@@ -36,7 +37,9 @@ public class LegislativeAreaAdditionalInformationController : Controller
     public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl)
     {
         var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaAsync(id, laId);
-        var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(Guid.Parse(legislativeArea.LegislativeAreaId.ToString() ?? string.Empty));
+        var legislativeAreaService =
+            await _legislativeAreaService.GetLegislativeAreaByIdAsync(
+                Guid.Parse(legislativeArea.LegislativeAreaId.ToString() ?? string.Empty));
         TempData[StoragePageTitle] = string.Format(PageTitle, legislativeAreaService?.Name);
         TempData.Keep(StoragePageTitle);
         var vm = new LegislativeAreaAdditionalInformationViewModel(Title: TempData[StoragePageTitle]?.ToString())
@@ -87,27 +90,21 @@ public class LegislativeAreaAdditionalInformationController : Controller
         }
 
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-        var legislativeArea = latestDocument!.DocumentLegislativeAreas.FirstOrDefault(a => a.Id == laId);
-        if (legislativeArea != null)
-        {
-            latestDocument.DocumentLegislativeAreas.Remove(legislativeArea);
-            var documentLegislativeArea = new DocumentLegislativeArea
-            {
-                Id = legislativeArea.Id,
-                LegislativeAreaId = legislativeArea.LegislativeAreaId,
-                IsProvisional = vm.IsProvisionalLegislativeArea,
-                AppointmentDate = vm.AppointmentDate,
-                ReviewDate = vm.ReviewDate,
-                Reason = vm.Reason
-            };
-            latestDocument.DocumentLegislativeAreas.Add(documentLegislativeArea);
-        }
+
+        latestDocument!.DocumentLegislativeAreas.First(a => a.Id == laId).IsProvisional =
+            vm.IsProvisionalLegislativeArea;
+        latestDocument!.DocumentLegislativeAreas.First(a => a.Id == laId).AppointmentDate =
+            vm.AppointmentDate;
+        latestDocument!.DocumentLegislativeAreas.First(a => a.Id == laId).ReviewDate =
+            vm.ReviewDate;
+        latestDocument!.DocumentLegislativeAreas.First(a => a.Id == laId).Reason =
+            vm.Reason;
 
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
-        
+
         TempData.Remove(StoragePageTitle);
         return submitType switch
         {
