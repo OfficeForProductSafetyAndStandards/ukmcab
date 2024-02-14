@@ -288,7 +288,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             IEnumerable<DocumentLegislativeArea> documentLegislativeAreas)
         {
             var cabLegislativeAreaIds = documentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
-            var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasByIdsAsync(cabLegislativeAreaIds);
+            var allLegislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
+            var legislativeAreas = allLegislativeAreas.Where(n => cabLegislativeAreaIds.Contains(n.Id));
 
             var legislativeAreasList = new List<CABLegislativeAreasModel>();
             legislativeAreasList.AddRange(legislativeAreas.Select(legislativeAreaModel => new CABLegislativeAreasModel()
