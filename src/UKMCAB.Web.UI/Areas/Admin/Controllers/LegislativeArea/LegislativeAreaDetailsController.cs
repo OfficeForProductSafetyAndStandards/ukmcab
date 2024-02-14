@@ -6,6 +6,7 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Infrastructure.Cache;
+using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -271,7 +272,52 @@ public class LegislativeAreaDetailsController : Controller
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProduct.cshtml", vm);
 
     }
-    
+
+    [HttpGet("add-procedure/{scopeId}", Name = Routes.AddProcedure)]
+    public async Task<IActionResult> AddProcedure(Guid id, Guid scopeId, int indexOfProduct = 0)
+    {
+        var scopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(scopeId.ToString());
+        Guid? productId = null;
+
+        var selectListItems = new List<SelectListItem>();   
+ 
+        if (scopeOfAppointment != null && scopeOfAppointment.ProductIds.Any() && indexOfProduct < scopeOfAppointment.ProductIds.Count)
+        {
+            productId = scopeOfAppointment.ProductIds[indexOfProduct];
+            var procedures = await GetProcedureSelectListItemsAsync(productId);
+            selectListItems = procedures.ToList();
+            if (!selectListItems.Any())
+            {
+                return RedirectToRoute(Routes.AddProcedure, new { id, scopeId, indexOfProduct = indexOfProduct + 1 });
+            }                 
+        }
+
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
+        var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId != null ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)scopeOfAppointment.PurposeOfAppointmentId) : null;
+        var category = scopeOfAppointment.CategoryId != null ? await _legislativeAreaService.GetCategoryByIdAsync((Guid)scopeOfAppointment.CategoryId) : null;
+        var subCategory = scopeOfAppointment.SubCategoryId != null ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)scopeOfAppointment.SubCategoryId) : null;
+        var productName = string.Empty;
+        if (productId != null)
+        {
+            var product = await _legislativeAreaService.GetProductByIdAsync((Guid)productId);
+            productName = product.Name;
+        }
+
+        var vm = new ProcedureViewModel
+        {
+            CABId = id,
+            Product = productName,
+            Procedures = selectListItems,
+            LegislativeArea = legislativeArea?.Name,
+            PurposeOfAppointment = purposeOfAppointment?.Name,
+            Category = category?.Name,
+            SubCategory = subCategory?.Name
+        };
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProcedure.cshtml", vm);
+
+    }
+
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(List<Guid> excludeLegislativeAreaIds)
     {
         var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
@@ -349,6 +395,24 @@ public class LegislativeAreaDetailsController : Controller
                 return scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
             }
         }
+        
+        return new List<SelectListItem>();
+    } 
+    
+    private async Task<IEnumerable<SelectListItem>> GetProcedureSelectListItemsAsync(Guid? productId)
+    {
+        ScopeOfAppointmentOptionsModel? scopeOfAppointmentOptionsModel;
+
+        if (productId != null)
+        {
+            scopeOfAppointmentOptionsModel =
+            await _legislativeAreaService
+                    .GetNextScopeOfAppointmentOptionsForProductAsync(productId.Value);
+            if (scopeOfAppointmentOptionsModel.Products.Any())
+            {
+                return scopeOfAppointmentOptionsModel.Procedures.Select(x => new SelectListItem { Text = x.Name, Value = x.Id.ToString() });
+            }
+        }       
         
         return new List<SelectListItem>();
     }  
