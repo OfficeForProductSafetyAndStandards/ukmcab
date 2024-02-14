@@ -48,6 +48,11 @@ public class LegislativeAreaService : ILegislativeAreaService
         return allLegislativeAreas.Where(n => !excludeLegislativeAreaIds.Contains(n.Id));
     }
 
+    public async Task<IEnumerable<LegislativeAreaModel>> GetLegislativeAreasByIdsAsync(List<Guid> legislativeAreaIds)
+    {
+        var allLegislativeAreas = await GetAllLegislativeAreasAsync();
+        return allLegislativeAreas.Where(n => legislativeAreaIds.Contains(n.Id));
+    }
     public async Task<LegislativeAreaModel> GetLegislativeAreaByIdAsync(Guid legislativeAreaId)
     {
         Guard.IsTrue(legislativeAreaId != Guid.Empty, "Guid cannot be empty");

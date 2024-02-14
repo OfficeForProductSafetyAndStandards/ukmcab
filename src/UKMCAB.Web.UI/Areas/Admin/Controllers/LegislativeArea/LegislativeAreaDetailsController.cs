@@ -70,7 +70,7 @@ public class LegislativeAreaDetailsController : Controller
         if (ModelState.IsValid)
         {   
             // add document new legislative area;
-            var documentLegislativeAreaId = await _cabAdminService.AddLegislativeAreaAsync(vm.CABId, vm.SelectedLegislativeAreaId, legislativeArea.Name);
+            var documentLegislativeAreaId = await _cabAdminService.AddLegislativeAreaAsync(id, vm.SelectedLegislativeAreaId, legislativeArea.Name);
 
             // add new document scope of appointment to cache;
             var scopeOfAppointmentId = Guid.NewGuid();

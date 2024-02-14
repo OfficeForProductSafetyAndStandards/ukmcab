@@ -426,7 +426,7 @@ else if (Model is { IsArchived: true, RequestTaskType: not null })
                 </div>
             </div>
 
-            <partial name="Partials/_LegislativeAreas" model="null"/>
+            <partial name="Partials/_LegislativeAreas" model="Model.CabLegislativeAreas"/>
             <partial name="Partials/_Documents" model="Model.ProductSchedules"/>
 
             @if (User.Identity.IsAuthenticated /*todo: what claim?*/)

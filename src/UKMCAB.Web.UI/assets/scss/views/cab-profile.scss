@@ -16,6 +16,10 @@
         float: none;
     }
 
+    .table-top-border {
+        border-top: 1px solid $govuk-border-colour;
+    }
+    
     .govuk-tabs__panel{
         padding: 0 !important;
     }

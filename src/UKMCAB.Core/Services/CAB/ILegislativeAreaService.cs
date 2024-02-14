@@ -7,6 +7,8 @@ public interface ILegislativeAreaService
     Task<IEnumerable<LegislativeAreaModel>> GetAllLegislativeAreasAsync();
 
     Task<IEnumerable<LegislativeAreaModel>> GetLegislativeAreasAsync(List<Guid> excludeLegislativeAreaIds);
+   
+    Task<IEnumerable<LegislativeAreaModel>> GetLegislativeAreasByIdsAsync(List<Guid> legislativeAreaIds);
 
     Task<LegislativeAreaModel> GetLegislativeAreaByIdAsync(Guid legislativeAreaId);
 
