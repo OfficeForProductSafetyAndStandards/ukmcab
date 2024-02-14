@@ -37,8 +37,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
     public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl)
     {
         var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaAsync(id, laId);
-        var legislativeAreaService =
-            await _legislativeAreaService.GetLegislativeAreaByIdAsync(
+        var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(
                 Guid.Parse(legislativeArea.LegislativeAreaId.ToString() ?? string.Empty));
         TempData[StoragePageTitle] = string.Format(PageTitle, legislativeAreaService?.Name);
         TempData.Keep(StoragePageTitle);
