@@ -15,7 +15,7 @@ public interface ILegislativeAreaService
     Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid purposeOfAppointmentId);
 
     Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid categoryId);  
-
+    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForSubCategoryAsync(Guid subCategoryId);  
     Task<ScopeOfAppointmentOptionsModel?> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId);
 
     Task<PurposeOfAppointmentModel?> GetPurposeOfAppointmentByIdAsync(Guid purposeOfAppointmentId);

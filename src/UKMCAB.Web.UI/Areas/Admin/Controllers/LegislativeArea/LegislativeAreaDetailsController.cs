@@ -474,17 +474,28 @@ public class LegislativeAreaDetailsController : Controller
         return new List<SelectListItem>();
     }
 
-    private async Task<IEnumerable<SelectListItem>> GetProductSelectListItemsAsync(Guid? categoryId,
+    private async Task<IEnumerable<SelectListItem>> GetProductSelectListItemsAsync(Guid? subCategoryId, Guid? categoryId,
         Guid? purposeOfAppointmentId, Guid? legislativeAreaId)
     {
-        ScopeOfAppointmentOptionsModel? scopeOfAppointmentOptionsModel;
+        ScopeOfAppointmentOptionsModel scopeOfAppointmentOptionsModel = new();
+        if (subCategoryId != null)
+        {
+            scopeOfAppointmentOptionsModel =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForSubCategoryAsync(subCategoryId.Value);
+            if (scopeOfAppointmentOptionsModel.Products.Any())
+            {
+                return scopeOfAppointmentOptionsModel.Products.Select(x => new SelectListItem
+                    { Text = x.Name, Value = x.Id.ToString() });
+            }
+        }
+        
         if (categoryId != null)
         {
             scopeOfAppointmentOptionsModel =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(categoryId.Value);
             if (scopeOfAppointmentOptionsModel.Products.Any())
             {
-                return scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Products.Select(x => new SelectListItem
                 { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -496,7 +507,7 @@ public class LegislativeAreaDetailsController : Controller
                     purposeOfAppointmentId.Value);
             if (scopeOfAppointmentOptionsModel.Products.Any())
             {
-                return scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Products.Select(x => new SelectListItem
                 { Text = x.Name, Value = x.Id.ToString() });
             }
         }
