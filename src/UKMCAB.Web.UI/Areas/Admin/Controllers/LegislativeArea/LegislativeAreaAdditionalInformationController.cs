@@ -35,7 +35,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
     [HttpGet("additional-information/{laId}", Name = Routes.LegislativeAreaAdditionalInformation)]
     public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl)
     {
-        var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaAsync(id, laId);
+        var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaByLaIdAsync(id, laId);
         var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(Guid.Parse(legislativeArea.LegislativeAreaId.ToString() ?? string.Empty));
         TempData[StoragePageTitle] = string.Format(PageTitle, legislativeAreaService?.Name);
         TempData.Keep(StoragePageTitle);

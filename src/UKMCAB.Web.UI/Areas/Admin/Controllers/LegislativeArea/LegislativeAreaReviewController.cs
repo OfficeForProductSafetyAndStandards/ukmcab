@@ -65,13 +65,13 @@ public class LegislativeAreaReviewController : Controller
                 }
             }
 
-            if (sa.ProcedureIds.Any())
+            if (sa.ProductIdAndProcedureIds.Any())
             {
-                foreach (var procedureId in sa.ProcedureIds)
-                {
-                    var proc = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                    if (proc?.Name != null) procedures.Add(proc.Name);
-                }
+                //foreach (var procedureId in sa.ProductIdAndProcedureIds.Select(p => p.ProcedureIds).ForEach(p => p).Distinct())
+                //{
+                //    var proc = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                //    if (proc?.Name != null) procedures.Add(proc.Name);
+                //}
             }
 
             var laItem = new LegislativeAreaListItemViewModel
