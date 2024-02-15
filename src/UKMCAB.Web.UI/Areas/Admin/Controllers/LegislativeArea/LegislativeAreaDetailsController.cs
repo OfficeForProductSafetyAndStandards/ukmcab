@@ -422,8 +422,7 @@ public class LegislativeAreaDetailsController : Controller
 
         vm.Procedures = await GetProcedureSelectListItemsAsync(productId, scopeOfAppointment.CategoryId, scopeOfAppointment.PurposeOfAppointmentId);
 
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProcedure.cshtml", vm);
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProduct.cshtml", vm);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProcedure.cshtml", vm);        
     }
 
     [HttpGet("remove/{legislativeAreaId}", Name = Routes.RemoveLegislativeArea)]
