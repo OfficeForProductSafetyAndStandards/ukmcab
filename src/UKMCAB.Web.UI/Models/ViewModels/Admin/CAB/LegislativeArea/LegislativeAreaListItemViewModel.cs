@@ -12,9 +12,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? SubCategory { get; set; }
 
-        public List<string>? Products { get; set; }
+        public List<string>? Products { get; set; } = new();
 
-        public List<string>? Procedures { get; set; }
+        public List<string>? Procedures { get; set; } = new();
 
     }
 }
