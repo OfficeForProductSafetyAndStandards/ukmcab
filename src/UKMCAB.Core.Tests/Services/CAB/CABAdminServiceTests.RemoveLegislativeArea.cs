@@ -5,9 +5,6 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Data.Models;
-using System.Linq;
-using UKMCAB.Data.Models.LegislativeAreas;
-
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -53,8 +50,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var cabId = Guid.NewGuid();
             var legislativeAreaId = Guid.NewGuid();
             var documentLegislativeArea = new DocumentLegislativeArea() { LegislativeAreaId = legislativeAreaId };
-            var documentScopeOfAppointment = new DocumentScopeOfAppointment() { LegislativeAreaId = legislativeAreaId };            
-
+            var documentScopeOfAppointment = new DocumentScopeOfAppointment() { LegislativeAreaId = legislativeAreaId };  
             var laToRemove = "La to Remove";
            
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
