@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Data.Models;
+using System.Linq;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -75,6 +76,69 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 r => r.UpdateAsync(It.Is<Document>(d =>
                     d.CABId == cabId.ToString() && !d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && !d.ScopeOfAppointments.Contains(documentScopeOfAppointment) && !d.LegislativeAreas.Contains(laToRemove))), Times.Once);
            
+
+            _mockCABRepository.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public Task DocumentNotFound_ArchiveLegislativeAreaAsync_ThrowsException()
+        {
+            // Arrange
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .ReturnsAsync(new List<Document>());
+
+            // Act and Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _sut.ArchiveLegislativeAreaAsync(Guid.NewGuid(), Guid.NewGuid()), "No document found");
+            return Task.CompletedTask;
+        }
+
+        [Test]
+        public Task LegislativeAreaNotFound_ArchiveLegislativeAreaAsync_ThrowsException()
+        {
+            // Arrange         
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .ReturnsAsync(new List<Document>
+                {
+                    new()
+                    {
+                        id = Guid.NewGuid().ToString()
+                    }
+                });
+
+            // Act and Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                await _sut.ArchiveLegislativeAreaAsync(Guid.NewGuid(), Guid.NewGuid()), "No legislative area found");
+            return Task.CompletedTask;
+        }
+
+        [Test]
+        public async Task LegislativeArea_ArchiveLegislativeAreaAsync_CabUpdated()
+        {
+            // Arrange
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var documentLegislativeArea = new DocumentLegislativeArea() { LegislativeAreaId = legislativeAreaId };
+            
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .ReturnsAsync(new List<Document>
+                {
+                    new()
+                    {
+                        CABId = cabId.ToString(),
+                        StatusValue = Status.Draft,
+                        DocumentLegislativeAreas = new() { documentLegislativeArea } 
+                    }
+                });
+
+            // Act
+            await _sut.ArchiveLegislativeAreaAsync(cabId, legislativeAreaId);
+
+            // Assert
+            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
+            _mockCABRepository.Verify(
+                r => r.UpdateAsync(It.Is<Document>(d =>
+                    d.CABId == cabId.ToString() && d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && d.DocumentLegislativeAreas.First().Archived == true)), Times.Once);
 
             _mockCABRepository.VerifyNoOtherCalls();
 

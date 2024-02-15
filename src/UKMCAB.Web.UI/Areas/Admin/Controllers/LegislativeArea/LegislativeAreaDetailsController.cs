@@ -460,7 +460,7 @@ public class LegislativeAreaDetailsController : Controller
             }
             else
             {
-                await _cabAdminService.ArchiveLegislativeAreaAsync(id, legislativeAreaId, vm.Title);
+                await _cabAdminService.ArchiveLegislativeAreaAsync(id, legislativeAreaId);
             }                    
         }
 

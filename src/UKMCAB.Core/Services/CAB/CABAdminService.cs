@@ -503,13 +503,13 @@ namespace UKMCAB.Core.Services.CAB
             await _cabRepository.UpdateAsync(latestDocument);
         }
 
-        public async Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId, string laName)
+        public async Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
             if (latestDocument == null) throw new InvalidOperationException("No document found");
 
             // archive document legislative area
-            var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException();
+            var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException("No legislative area found");
             documentLegislativeArea.Archived = true;
 
             await _cabRepository.UpdateAsync(latestDocument);
