@@ -486,7 +486,7 @@ namespace UKMCAB.Core.Services.CAB
             if (latestDocument == null) throw new InvalidOperationException("No document found");
 
             // remove document legislative area
-            var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException();
+            var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException("No legislative area found");
             latestDocument.DocumentLegislativeAreas.Remove(documentLegislativeArea);
             
             // remove legislative area

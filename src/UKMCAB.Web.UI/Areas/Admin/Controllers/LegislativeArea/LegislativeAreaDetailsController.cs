@@ -275,17 +275,26 @@ public class LegislativeAreaDetailsController : Controller
 
     [HttpGet("remove/{legislativeAreaId}", Name = Routes.RemoveLegislativeArea)]
     public async Task<IActionResult> RemoveLegislativeArea(Guid id, Guid legislativeAreaId, string? returnUrl)
-    {   
+    {
+        var cabDocuments = await _cabAdminService.FindDocumentsByCABIdAsync(id.ToString());
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
 
-        var vm = new RemoveViewModel()
+        // only one document and draft mode
+        if (cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
         {
-            Title = legislativeArea?.Name,
-            Id = id,
-            ReturnUrl = returnUrl
-        };
-
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
+            await _cabAdminService.RemoveLegislativeAreaAsync(id, legislativeAreaId, legislativeArea.Name);
+            return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
+        }
+        else
+        {   
+            var vm = new RemoveViewModel()
+            {
+                Title = legislativeArea.Name,
+                Id = id,
+                ReturnUrl = returnUrl
+            };
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
+        }        
     }
 
     [HttpPost("remove/{legislativeAreaId}", Name = Routes.RemoveLegislativeArea)]
