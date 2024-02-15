@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Data.Models
+﻿using UKMCAB.Data.Models.LegislativeAreas;
+
+namespace UKMCAB.Data.Models
 {
     public class DocumentScopeOfAppointment
     {
@@ -13,6 +15,7 @@
 
         public List<Guid> ProductIds { get; set; } = new();
 
-        public List<Guid> ProcedureIds { get; set; } = new();
+        public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
+
     }
 }

@@ -1,0 +1,21 @@
+@model List<CABLegislativeAreasModel>
+<div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden govuk-body" id="legislative-areas">
+    <div class="cab-detail-section">
+        <h2 class="govuk-heading-l">Legislative areas</h2>
+    </div>
+
+    <dl class="govuk-summary-list table-top-border">
+        @foreach (var legislativeArea in Model)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key ">
+                    @* TODO : Action needs to be added  *@
+                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="View" asp-route-id="@legislativeArea.Id" target="_blank">
+                        @legislativeArea.Name
+                    </a>
+                    <p> Regulation : @legislativeArea.Regulation </p>
+                </dt>
+            </div>
+        }
+    </dl>
+</div>

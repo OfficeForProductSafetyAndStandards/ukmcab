@@ -456,11 +456,11 @@ namespace UKMCAB.Core.Services.CAB
             return latestDocument?.ScopeOfAppointments.First(s => s.Id == scopeOfAppointmentId) ?? throw new InvalidOperationException();
         }
 
-        public async Task<DocumentLegislativeArea> GetDocumentLegislativeAreaAsync(Guid cabId,
-            Guid documentLegislativeAreaId)
+        public async Task<DocumentLegislativeArea> GetDocumentLegislativeAreaByLaIdAsync(Guid cabId,
+            Guid laId)
         {
-            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
-            return latestDocument?.DocumentLegislativeAreas.First(a => a.Id == documentLegislativeAreaId) ?? throw new InvalidOperationException();
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("Document not found");
+            return latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId) ?? throw new InvalidOperationException();
         }
 
         public async Task<Guid> AddLegislativeAreaAsync(Guid cabId, Guid laToAdd, string laName)

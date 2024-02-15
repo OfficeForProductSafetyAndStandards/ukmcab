@@ -35,8 +35,8 @@ public class LegislativeAreaAdditionalInformationController : Controller
     [HttpGet("additional-information/{laId}", Name = Routes.LegislativeAreaAdditionalInformation)]
     public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl)
     {
-        var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaAsync(id, laId);
-        var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(Guid.Parse(legislativeArea.LegislativeAreaId.ToString() ?? string.Empty));
+        var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaByLaIdAsync(id, laId);
+        var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeArea.LegislativeAreaId);
         TempData[StoragePageTitle] = string.Format(PageTitle, legislativeAreaService?.Name);
         TempData.Keep(StoragePageTitle);
         var vm = new LegislativeAreaAdditionalInformationViewModel(Title: TempData[StoragePageTitle]?.ToString())
@@ -87,22 +87,12 @@ public class LegislativeAreaAdditionalInformationController : Controller
         }
 
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-        var legislativeArea = latestDocument!.DocumentLegislativeAreas.FirstOrDefault(a => a.Id == laId);
-        if (legislativeArea != null)
-        {
-            latestDocument.DocumentLegislativeAreas.Remove(legislativeArea);
-            var documentLegislativeArea = new DocumentLegislativeArea
-            {
-                Id = legislativeArea.Id,
-                LegislativeAreaId = legislativeArea.LegislativeAreaId,
-                IsProvisional = vm.IsProvisionalLegislativeArea,
-                AppointmentDate = vm.AppointmentDate,
-                ReviewDate = vm.ReviewDate,
-                Reason = vm.Reason
-            };
-            latestDocument.DocumentLegislativeAreas.Add(documentLegislativeArea);
-        }
-
+        var documentLegislativeArea = latestDocument!.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId);
+        documentLegislativeArea.IsProvisional = vm.IsProvisionalLegislativeArea;
+        documentLegislativeArea.AppointmentDate = vm.AppointmentDate;
+        documentLegislativeArea.ReviewDate = vm.ReviewDate;
+        documentLegislativeArea.Reason = vm.Reason;
+        
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 

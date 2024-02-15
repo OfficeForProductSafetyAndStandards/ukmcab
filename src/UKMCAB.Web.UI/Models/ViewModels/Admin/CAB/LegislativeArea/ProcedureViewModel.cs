@@ -10,15 +10,19 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? LegislativeArea { get; set; }
 
-        public ListItem? PurposeOfAppointment { get; set; }
+        public string? PurposeOfAppointment { get; set; }
 
         public string? Category { get; set; }
 
         public string? SubCategory { get; set; }
 
         public string? Product { get; set; }
+        public Guid? CurrentProductId { get; set; }
 
         public IEnumerable<SelectListItem>? Procedures { get; set; }
+
+        public int IndexOfProduct { get; set; }
+        public bool ShowContinueToNextStep { get; set; } = true;
 
     }
 }

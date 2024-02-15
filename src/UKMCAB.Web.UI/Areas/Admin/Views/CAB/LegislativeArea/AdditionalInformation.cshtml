@@ -2,7 +2,29 @@
 @{
     var isReviewDateValid = ViewData.ModelState.Keys.Any(a => a.Equals(nameof(Model.ReviewDate)));
     var reviewDateErrorClass = isReviewDateValid ? "review-date-error" : string.Empty;
+
+    //Note : Fix for Tag helper error handling
+    const string dateError = "date date";
+    const string dateErrorReplacement = "date";
+    var reviewDateModelState = ViewData.ModelState[nameof(Model.ReviewDate)];
+    var reviewDateErrors = reviewDateModelState?.Errors.Where(a => a.ErrorMessage.Contains(dateError)).ToList();
+    if ( reviewDateErrors != null && reviewDateErrors.Any())
+    {
+        var reviewDateError = reviewDateErrors.First().ErrorMessage.Replace(dateError, dateErrorReplacement);
+        ViewData.ModelState[nameof(Model.ReviewDate)]?.Errors.RemoveAt(0);
+        ViewData.ModelState[nameof(Model.ReviewDate)]?.Errors.Add(reviewDateError);
+    }
+    
+    var appointmentDateModelState = ViewData.ModelState[nameof(Model.AppointmentDate)];
+    var appointmentDateErrors = appointmentDateModelState?.Errors.Where(a => a.ErrorMessage.Contains(dateError)).ToList();
+    if (appointmentDateErrors != null && appointmentDateErrors.Any())
+    {
+        var appointmentDateError = appointmentDateErrors.First().ErrorMessage.Replace(dateError, dateErrorReplacement);
+        ViewData.ModelState[nameof(Model.AppointmentDate)]?.Errors.RemoveAt(0);
+        ViewData.ModelState[nameof(Model.AppointmentDate)]?.Errors.Add(appointmentDateError);
+    }
 }
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">Create a CAB</span>
@@ -65,9 +87,9 @@
                 </div>
             </div>
 
-            <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Reason))">
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Reason))">
                 <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
-                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                    <govuk-character-count-label class="govuk-label--s" is-page-heading="false">
                         Reason (optional)
                     </govuk-character-count-label>
                     <govuk-character-count-hint>

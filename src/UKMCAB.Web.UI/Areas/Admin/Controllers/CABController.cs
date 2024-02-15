@@ -655,11 +655,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         soaViewModel.Products.Add(product.Name);
                     }
 
-                    foreach (var procedureId in scopeOfAppointment.ProcedureIds)
-                    {
-                        var product = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                        soaViewModel.Procedures.Add(product.Name);
-                    }
+                    //foreach (var procedureId in scopeOfAppointment.ProcedureIds)
+                    //{
+                    //    var product = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                    //    soaViewModel.Procedures.Add(product.Name);
+                    //}
 
                     legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
                 }
