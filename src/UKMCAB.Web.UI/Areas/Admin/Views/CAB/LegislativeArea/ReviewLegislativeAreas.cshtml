@@ -1,4 +1,5 @@
 @using System.Web;
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.SelectedLegislativeAreasViewModel
 
 @section BackButton
@@ -53,7 +54,7 @@
                                                                 <th scope="col" class="govuk-table__header @Html.Conditional(showCategory, "", " app-no-display")">Product category</th>
                                                                 <th scope="col" class="govuk-table__header @Html.Conditional(showProduct, "", " app-no-display")">Product</th>
                                                                 <th scope="col" class="govuk-table__header @Html.Conditional(showProcedure, "", " app-no-display")">
-                                                                    Applicable conformity asessment procedure
+                                                                    Applicable conformity assessment procedure
                                                                 </th>
                                                             </tr>
                                                         </thead>
@@ -171,10 +172,10 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
         <div>
-            <govuk-button class="govuk-button--secondary">Remove legislative area</govuk-button>
+            <govuk-button-link class="govuk-button--secondary" href="/">Remove legislative area</govuk-button-link>
         </div>
         <div>
-            <govuk-button class="govuk-button--secondary">Add legislative area</govuk-button>
+            <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new {id = Model.CABId})">Add legislative area</govuk-button-link>
         </div>
         <div class="govuk-button-group ukmcab-padding-top-50">
             <govuk-button disabled="false">Save and continue</govuk-button>

@@ -17,8 +17,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? SubCategory { get; set; }
 
         public string? Product { get; set; }
+        public Guid? CurrentProductId { get; set; }
 
         public IEnumerable<SelectListItem>? Procedures { get; set; }
+
+        public int IndexOfProduct { get; set; }
+        public bool ShowContinueToNextStep { get; set; } = true;
 
     }
 }

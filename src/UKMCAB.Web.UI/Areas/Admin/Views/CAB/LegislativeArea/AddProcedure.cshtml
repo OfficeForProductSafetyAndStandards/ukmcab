@@ -14,6 +14,9 @@
             <input type="hidden" asp-for="PurposeOfAppointment"/>
             <input type="hidden" asp-for="Category"/>
             <input type="hidden" asp-for="SubCategory"/>
+            <input type="hidden" asp-for="Product"/>
+            <input type="hidden" asp-for="CurrentProductId"/>
+            <input type="hidden" asp-for="IndexOfProduct"/>
             <h2 class="govuk-heading-s">Legislative Area</h2>
             <p class="govuk-body">@Model.LegislativeArea</p>
             @if (Model.PurposeOfAppointment != null)
@@ -33,8 +36,8 @@
             }
             @if (Model.Product != null)
             {
-                <h2 class="govuk-heading-s">Product sub category</h2>
-                <p class="govuk-body">@Model.SubCategory</p>
+                <h2 class="govuk-heading-s">Product</h2>
+                <p class="govuk-body">@Model.Product</p>
             }
             <govuk-checkboxes asp-for="SelectedProcedureIds">
                 <govuk-checkboxes-fieldset>
@@ -55,7 +58,14 @@
                 <govuk-button class="govuk-button--secondary" name="submitType" type="submit" value="@Constants.SubmitType.AdditionalInfo">Add more to this legislative area</govuk-button>
             </div>
             <div class="govuk-button-group">
-                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
+                @if(Model.ShowContinueToNextStep){
+                        <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
+                }
+                else
+                {
+                        <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Add procedures for next product</govuk-button>
+                }
+                
                 <govuk-button class="govuk-button--secondary" name="submitType" type="submit" value="@Constants.SubmitType.Save">Save as draft</govuk-button>
             </div>
             <div class="govuk-button-group">

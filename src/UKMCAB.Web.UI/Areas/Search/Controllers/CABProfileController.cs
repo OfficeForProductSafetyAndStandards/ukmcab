@@ -31,16 +31,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
     [Area("search")]
     public class CABProfileController : Controller
     {
-        private readonly ICachedPublishedCABService _cachedPublishedCabService;
-        private readonly ICABAdminService _cabAdminService;
-        private readonly IFileStorage _fileStorage;
-        private readonly TelemetryClient _telemetryClient;
-        private readonly IFeedService _feedService;
-        private readonly IUserService _userService;
         private readonly CoreEmailTemplateOptions _templateOptions;
         private readonly IAsyncNotificationClient _notificationClient;
-        private readonly IWorkflowTaskService _workflowTaskService;
+        private readonly ICABAdminService _cabAdminService;
+        private readonly ICachedPublishedCABService _cachedPublishedCabService;
         private readonly IEditLockService _editLockService;
+        private readonly IFeedService _feedService;
+        private readonly IFileStorage _fileStorage;
+        private readonly ILegislativeAreaService _legislativeAreaService;
+        private readonly IUserService _userService;
+        private readonly IWorkflowTaskService _workflowTaskService;
+        private readonly TelemetryClient _telemetryClient;
 
         public static class Routes
         {
@@ -55,18 +56,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             ICABAdminService cabAdminService, IFileStorage fileStorage, TelemetryClient telemetryClient,
             IFeedService feedService, IUserService userService, IOptions<CoreEmailTemplateOptions> templateOptions,
             IAsyncNotificationClient notificationClient, IWorkflowTaskService workflowTaskService,
-            IEditLockService editLockService)
+            IEditLockService editLockService, ILegislativeAreaService legislativeAreaService)
         {
-            _cachedPublishedCabService = cachedPublishedCabService;
             _cabAdminService = cabAdminService;
-            _fileStorage = fileStorage;
-            _telemetryClient = telemetryClient;
-            _feedService = feedService;
-            _userService = userService;
-            _templateOptions = templateOptions.Value;
-            _notificationClient = notificationClient;
-            _workflowTaskService = workflowTaskService;
+            _cachedPublishedCabService = cachedPublishedCabService;
             _editLockService = editLockService;
+            _feedService = feedService;
+            _fileStorage = fileStorage;
+            _legislativeAreaService = legislativeAreaService;
+            _notificationClient = notificationClient;
+            _telemetryClient = telemetryClient;
+            _templateOptions = templateOptions.Value;
+            _userService = userService;
+            _workflowTaskService = workflowTaskService;
         }
 
         [HttpGet("~/__subscriptions/__inbound/cab/{id}", Name = Routes.TrackInboundLinkCabDetails)]
@@ -276,8 +278,27 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
 
             ShareUtils.AddDetails(HttpContext, cab.FeedLinksViewModel);
-
+            
+            var listCabLegislateArea = await GetCABLegislativeAreasAsync(cabDocument.DocumentLegislativeAreas);
+            cab.CabLegislativeAreas = listCabLegislateArea;
             return cab;
+        }
+
+        private async Task<List<CABLegislativeAreasModel>> GetCABLegislativeAreasAsync(
+            IEnumerable<DocumentLegislativeArea> documentLegislativeAreas)
+        {
+            var cabLegislativeAreaIds = documentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
+            var allLegislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
+            var legislativeAreas = allLegislativeAreas.Where(n => cabLegislativeAreaIds.Contains(n.Id));
+
+            var legislativeAreasList = new List<CABLegislativeAreasModel>();
+            legislativeAreasList.AddRange(legislativeAreas.Select(legislativeAreaModel => new CABLegislativeAreasModel()
+            {
+                Id = legislativeAreaModel.Id,
+                Name = legislativeAreaModel.Name,
+                Regulation = legislativeAreaModel.Regulation
+            }));
+            return legislativeAreasList;
         }
 
         private async Task<CABProfileViewModel> GetRequestInformation(CABProfileViewModel profileViewModel)
@@ -552,7 +573,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [HttpGet("search/cab/history-details")]
         public IActionResult ShowCABHistoryDetails()
         {
-             var auditHistoryItemViewModel = TempData.ContainsKey("auditHistoryData") 
+            var auditHistoryItemViewModel = TempData.ContainsKey("auditHistoryData")
                 ? JsonSerializer.Deserialize<AuditHistoryItemViewModel>((TempData.Peek("auditHistoryData") as string)!)
                 : new AuditHistoryItemViewModel();
 
@@ -562,8 +583,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [HttpPost("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
         public IActionResult CABHistoryDetails(AuditHistoryItemViewModel auditHistoryItemViewModel)
         {
-                TempData["auditHistoryData"] = JsonSerializer.Serialize(auditHistoryItemViewModel);
-                return RedirectToAction(nameof(CABHistoryDetails));
+            TempData["auditHistoryData"] = JsonSerializer.Serialize(auditHistoryItemViewModel);
+            return RedirectToAction(nameof(CABHistoryDetails));
         }
     }
 }

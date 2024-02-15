@@ -16,6 +16,6 @@ namespace UKMCAB.Data.Models
         public List<Guid> ProductIds { get; set; } = new();
 
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
-        public List<Guid> ProcedureIds { get; set; } = new();
+
     }
 }
