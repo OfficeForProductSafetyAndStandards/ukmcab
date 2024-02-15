@@ -16,5 +16,7 @@ public record LegislativeAreaAdditionalInformationViewModel(
     public DateTime? AppointmentDate { get; init; }
     [DisplayName("Review date")]
     public DateTime? ReviewDate { get; set; }
+    
+    [MaxLength(1000, ErrorMessage = "Maximum reason length is 1000 characters")]
     public string? Reason { get; init; }
 }
