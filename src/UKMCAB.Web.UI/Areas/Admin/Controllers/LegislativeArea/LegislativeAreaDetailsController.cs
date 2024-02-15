@@ -63,8 +63,7 @@ public class LegislativeAreaDetailsController : Controller
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                              throw new InvalidOperationException();
-        var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId != null)
-            .Select(n => n.LegislativeAreaId).ToList();
+        var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(vm.SelectedLegislativeAreaId);
 
         if (cabLegislativeAreaIds.Contains(vm.SelectedLegislativeAreaId))
@@ -95,7 +94,7 @@ public class LegislativeAreaDetailsController : Controller
                 // save additional info
                 Constants.SubmitType.AdditionalInfo => RedirectToRoute(
                     LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
-                    new { id, laId = documentLegislativeAreaId }),
+                    new { id, laId = vm.SelectedLegislativeAreaId }),
                 _ => RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true })
             };
         }
@@ -384,7 +383,7 @@ public class LegislativeAreaDetailsController : Controller
             var productAndProcedures = new ProductAndProcedures
             {
                 ProductId = vm.CurrentProductId,
-                ProcedureIds = (List<Guid>)vm.SelectedProcedureIds
+                ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
             };
 
             scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
