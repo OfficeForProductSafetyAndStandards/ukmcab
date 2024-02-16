@@ -6,10 +6,12 @@ namespace UKMCAB.Data.Models
 
     public class DocumentLegislativeArea
     {
+        [FieldBuilderIgnore]
         public Guid Id { get; set; }
 
         public string LegislativeAreaName { get; set; } = string.Empty;
 
+        [FieldBuilderIgnore]
         public Guid LegislativeAreaId { get; set; }
 
         public DateTime? AppointmentDate { get; set; }
