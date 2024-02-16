@@ -6,8 +6,6 @@
 
         public string Name { get; set; }
 
-        public string Subcategory { get; set; }
-
         public Guid? LegislativeAreaId { get; set; }
 
         public Guid? PurposeOfAppointmentId { get; set; }
