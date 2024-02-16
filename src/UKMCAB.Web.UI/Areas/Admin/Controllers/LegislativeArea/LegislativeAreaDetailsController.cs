@@ -393,24 +393,15 @@ public class LegislativeAreaDetailsController : Controller
             {
                 return RedirectToRoute(Routes.AddProcedure, new { id, scopeId, indexOfProduct = indexOfProduct + 1 });
             }
-            else
-            {
-                var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-                latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
 
-                var userAccount =
-                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
-                var la = latestDocument.DocumentLegislativeAreas.First(dLa => dLa.LegislativeAreaId == scopeOfAppointment.LegislativeAreaId);
-                if (la == null)
-                {
-                    await _cabAdminService.AddLegislativeAreaAsync(id, scopeOfAppointment.LegislativeAreaId, legislativeArea.Name);
-                }                
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ?? throw new InvalidOperationException();
+             latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
 
-                return RedirectToRoute(LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation, new { id, laId = scopeOfAppointment.LegislativeAreaId });
-            }
-            
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+
+            return RedirectToRoute(LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation, new { id, laId = scopeOfAppointment.LegislativeAreaId });
         }
 
         if (scopeOfAppointment.ProductIds.Any() && indexOfProduct < scopeOfAppointment.ProductIds.Count)

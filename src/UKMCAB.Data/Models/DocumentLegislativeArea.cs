@@ -1,4 +1,5 @@
-﻿using StackExchange.Redis;
+﻿using System.Text.Json.Serialization;
+using StackExchange.Redis;
 
 namespace UKMCAB.Data.Models
 {
@@ -6,10 +7,11 @@ namespace UKMCAB.Data.Models
 
     public class DocumentLegislativeArea
     {
+        [JsonIgnore]
         public Guid Id { get; set; }
 
         public string LegislativeAreaName { get; set; } = string.Empty;
-
+        [JsonIgnore]
         public Guid LegislativeAreaId { get; set; }
 
         public DateTime? AppointmentDate { get; set; }
