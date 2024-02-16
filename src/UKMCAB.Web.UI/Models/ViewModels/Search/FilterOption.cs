@@ -64,6 +64,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             {
                 return value.ToUpper();
             }
+            if (prefix.Equals("provisionallegislativeareas", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var isProvisional = bool.Parse(value);
+
+                return isProvisional ? "Yes" : "No";
+            }
             return value;
         }
 

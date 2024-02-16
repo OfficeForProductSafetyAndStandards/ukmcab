@@ -38,6 +38,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string[]? Statuses { get; set; }
         public string[]? UserGroups { get; set; }
         public string[]? SubStatuses { get; set; }
+        public string[]? ProvisionalLegislativeAreas { get; set; }
         public string? Sort { get; set; }
         public int PageNumber { get; set; } = 1;
         public bool SelectAllPendingApproval { get; set; }
@@ -49,8 +50,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FilterViewModel? StatusOptions { get; set; }
         public FilterViewModel? CreatedByUserGroupOptions { get; set; }
         public FilterViewModel? SubStatusOptions { get; set; }
+        public FilterViewModel? LegislativeAreaProvisionalOptions { get; set; }
 
-        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && (InternalSearch || Statuses.Contains(((int)Status.Archived).ToString())) ? Statuses.Length : 0) + (SubStatuses != null && InternalSearch ? SubStatuses.Length : 0) + (UserGroups != null && InternalSearch ? UserGroups.Length : 0);
+        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && (InternalSearch || Statuses.Contains(((int)Status.Archived).ToString())) ? Statuses.Length : 0) + (SubStatuses != null && InternalSearch ? SubStatuses.Length : 0) + (UserGroups != null && InternalSearch ? UserGroups.Length : 0) + (ProvisionalLegislativeAreas != null && InternalSearch ? ProvisionalLegislativeAreas.Length : 0);
 
         public Dictionary<string, string[]> SelectedFilters => new Dictionary<string, string[]>
         {
@@ -60,6 +62,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             { nameof(Statuses), Statuses ?? Array.Empty<string>() },
             { nameof(UserGroups), UserGroups ?? Array.Empty<string>() },
             { nameof(SubStatuses), SubStatuses ?? Array.Empty<string>() },
+            { nameof(ProvisionalLegislativeAreas), ProvisionalLegislativeAreas ?? Array.Empty<string>() },
         };
 
         public string StatusLabel(string status)
@@ -74,6 +77,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string UserGroupLabel(string userGroup)
         {
             return userGroup.ToUpper();
+        }
+
+        public string ProvisionalLegislativeAreaLabel(string value)
+        {
+            return bool.Parse(value) ? "Provisional legislative area: Yes" : "Provisional legislative area: No";
         }
 
 

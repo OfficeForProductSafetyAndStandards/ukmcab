@@ -46,6 +46,10 @@
                             label = filter.ToUpper();
                             break;
 
+                        case "ProvisionalLegislativeAreas":
+                            label = Model.ProvisionalLegislativeAreaLabel(filter);
+                            break;
+
                         default:
                             label = filter;
                             break;

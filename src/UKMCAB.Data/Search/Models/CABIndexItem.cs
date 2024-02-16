@@ -1,4 +1,5 @@
 ﻿using Azure.Search.Documents.Indexes;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data.Search.Models
 {
@@ -81,6 +82,9 @@ namespace UKMCAB.Data.Search.Models
         public string CreatedByUserGroup { get; set; }
 
         [SearchableField]
-        public string? UKASReference { get; set; } 
+        public string? UKASReference { get; set; }
+
+        [SearchableField]
+        public List<DocumentLegislativeArea> DocumentLegislativeAreas { get; set; }
     }
 }
