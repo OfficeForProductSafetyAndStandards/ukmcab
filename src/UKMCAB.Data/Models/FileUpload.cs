@@ -4,6 +4,7 @@ namespace UKMCAB.Data.Models
 {
     public class FileUpload 
     {
+        public Guid Id { get; set; }
         public string Label { get; set; }
         public string? LegislativeArea { get; set; }
         public string? Category { get; set; }

@@ -3,6 +3,6 @@
     public enum RemoveActionEnum
     {   
         Remove = 0,     
-        Archive = 1,
+        Archive = 1       
     }
 }

@@ -177,7 +177,9 @@
             @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
             {
                 <div class="govuk-button-group">
-                    <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove"/>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove">
+                        Remove schedule
+                    </button>                    
                     <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
                     <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
                 </div>

@@ -70,6 +70,28 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         }
                     }
 
+                    if(document.Schedules.Any())
+                    {
+                       foreach(var schedule in document.Schedules)
+                        {
+                            if (string.IsNullOrEmpty(schedule.Id.ToString()))
+                            {
+                                schedule.Id = Guid.NewGuid();
+                            }
+                        }
+                    }
+
+                    if (document.Documents.Any())
+                    {
+                        foreach (var supportingDocument in document.Documents)
+                        {
+                            if (string.IsNullOrEmpty(supportingDocument.Id.ToString()))
+                            {
+                                supportingDocument.Id = Guid.NewGuid();
+                            }
+                        }
+                    }
+
                     await UpdateAsync(document);
                 }
             }
