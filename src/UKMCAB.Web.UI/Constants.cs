@@ -53,6 +53,7 @@ public static class Constants
         public const string Remove = nameof(Remove);
         public const string Cancel = nameof(Cancel);
         public const string AdditionalInfo = nameof(AdditionalInfo);
+        public const string Confirm = nameof(Confirm);
     }
 
     public class ErrorMessages
