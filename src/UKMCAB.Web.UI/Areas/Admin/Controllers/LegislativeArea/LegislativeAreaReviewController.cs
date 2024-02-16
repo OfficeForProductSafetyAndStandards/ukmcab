@@ -41,10 +41,6 @@ public class LegislativeAreaReviewController : Controller
 
         foreach (var sa in scopeOfAppointments)
         {
-            //var products = new List<string>();            
-            //var procedures = new List<string>();
-            //var productsAndProcedures = new List<ProductAndProceduresName>();
-
             var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync((Guid)sa.LegislativeAreaId);
 
             var purpose = sa.PurposeOfAppointmentId != null
@@ -59,17 +55,6 @@ public class LegislativeAreaReviewController : Controller
             ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)sa.SubCategoryId)
             : null;
 
-            //if (sa.ProductIds.Any())
-            //{
-            //    foreach (var productId in sa.ProductIds)
-            //    {
-            //        var prod = await _legislativeAreaService.GetProductByIdAsync(productId);
-            //        if (prod != null) products.Add(prod.Name);
-            //    }
-            //}
-
-            // TODO: Use total numbers of Products to determine number of rows to create per la --> use foreach to create each row record
-
             if (sa.ProductIdAndProcedureIds.Any())
             {  
                 var totalNumbOfProducts = sa.ProductIdAndProcedureIds.Count(p => p.ProductId != null);
@@ -77,7 +62,7 @@ public class LegislativeAreaReviewController : Controller
 
                 for (int i = 0; i < numOfIteration; i++)
                 {
-                    ProductModel prod = null;
+                    ProductModel? prod = null;
                     if (sa.ProductIdAndProcedureIds[i].ProductId != null)
                     {
                         prod = await _legislativeAreaService.GetProductByIdAsync((Guid)sa.ProductIdAndProcedureIds[i].ProductId!);
@@ -105,28 +90,6 @@ public class LegislativeAreaReviewController : Controller
                     selectedLAs.Add(laItem);
 
                 }
-
-                //foreach (var productIdAndProceduresId in sa.ProductIdAndProcedureIds)
-                //{
-                //    ProductModel prod = null;
-                //    if (productIdAndProceduresId.ProductId != null)
-                //    {
-                //        prod = await _legislativeAreaService.GetProductByIdAsync((Guid)productIdAndProceduresId.ProductId);
-                //        //if (prod != null) productsAndProcedures.Add(prod.Name);
-                //    }
-                //    var procedures = new List<string>();
-                //    foreach (var procedureId in productIdAndProceduresId.ProcedureIds)
-                //    {
-                //        var proc = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                //        if (proc?.Name != null) procedures.Add(proc.Name);
-                //    }
-                //    productsAndProcedures.Add(new ProductAndProceduresName
-                //    {
-                //        Product = prod != null ? prod.Name : null,
-                //        Procedures = procedures
-                //    });
-
-                //}
             }
             else
             {
@@ -140,18 +103,6 @@ public class LegislativeAreaReviewController : Controller
                 };
                 selectedLAs.Add(laItem);
             }
-
-            //var laItem = new LegislativeAreaListItemViewModel
-            //{
-            //    LegislativeArea = new ListItem { Id = sa.LegislativeAreaId, Title = legislativeArea.Name },
-            //    PurposeOfAppointment = purpose?.Name ?? string.Empty,
-            //    Category = category?.Name ?? string.Empty,
-            //    SubCategory = subCategory?.Name ?? string.Empty,
-            //    ProductAndProcedures = productsAndProcedures
-            //    //Product = products,
-            //    //Procedures = procedures 
-            //};
-            //selectedLAs.Add(laItem);
         }
 
         var groupedSelectedLAs = selectedLAs.GroupBy(la => la.LegislativeArea?.Title).Select(group => new SelectedLegislativeAreaViewModel
@@ -162,9 +113,7 @@ public class LegislativeAreaReviewController : Controller
                 PurposeOfAppointment = laDetails.PurposeOfAppointment,
                 Category = laDetails.Category,
                 SubCategory = laDetails.SubCategory,
-                ProductAndProcedures = laDetails.ProductAndProcedures,
-                //Product = laDetails.Product,
-                //Procedures = laDetails.Procedures
+                ProductAndProcedures = laDetails.ProductAndProcedures
             }).ToList()
         }).ToList();
 

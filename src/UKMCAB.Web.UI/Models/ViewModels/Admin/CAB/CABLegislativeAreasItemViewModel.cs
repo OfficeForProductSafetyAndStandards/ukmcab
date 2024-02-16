@@ -24,6 +24,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PurposeOfAppointment));
         public bool ShowCategoryColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
         public bool ShowProductColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => x.Products != null);
-        public bool ShowProcedureColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => x.Procedures != null);
+        public bool ShowProcedureColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => x.ProductAndProcedures != null && x.ProductAndProcedures.Procedures != null);
     }
 }

@@ -130,14 +130,14 @@
         "name": "locomotives and brake-vans",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
-        "categoryId": "cdbed358-8536-11ee-b9d1-0242ac120002"
+        "categoryId": "34237c6c-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "fbafa454-885b-11ee-b9d1-0242ac120002",
         "name": "hydraulic-powered roof supports",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
-        "categoryId": "cdbed358-8536-11ee-b9d1-0242ac120002"
+        "categoryId": "34237c6c-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "ea6034c7-b363-499d-b032-4bd90563233c",
@@ -771,121 +771,136 @@
     },
     {
         "id": "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
-        "name": "Automatic catch weigher",
+        "name": "Automatic catch weighers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f"
+        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+        "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
     },
     {
         "id": "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
         "name": "Automatic gravimetric filling instruments",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f"
+        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+        "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
     },
     {
         "id": "feda1b4d-efbf-474c-a14d-931f1a8112ca",
         "name": "Discontinuous totalisers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f"
+        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+        "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
     },
     {
         "id": "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
         "name": "Continuous totalisers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f"
+        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+        "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
     },
     {
         "id": "30f75726-1712-47e2-af17-af14601ae87d",
         "name": "Automatic rail weigh-bridges",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f"
+        "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+        "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
     },
     {
         "id": "887d7407-150a-4947-beeb-f7003b9528af",
         "name": "Automatic catch weighers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb"
+        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+        "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
     },
     {
         "id": "c56450c4-8993-41c1-8376-5f8875b24b2c",
         "name": "Automatic gravimetric filling instruments",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb"
+        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+        "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
     },
     {
         "id": "e80ed0c3-8921-41bf-a553-a531dd8a8464",
         "name": "Discontinuous totalisers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb"
+        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+        "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
     },
     {
         "id": "0a98e53c-da6b-4c6e-bc6e-c567a5027ae1",
         "name": "Continuous totalisers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb"
+        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+        "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
     },
     {
         "id": "c7b41e1b-ba34-4c7c-b83a-b69caf678a27",
         "name": "Automatic rail weigh-bridges",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb"
+        "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+        "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
     },
     {
         "id": "a1827ba5-12bf-426f-a5cf-e8783da1558a",
         "name": "Continuous totalisers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623"
+        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+        "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
     },
     {
         "id": "1ce8b9ec-6403-4b9a-9e41-2cfc2fededf6",
         "name": "Automatic gravimetric filling instruments",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623"
+        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+        "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
     },
     {
         "id": "07c6b25f-366a-479a-92eb-0c733c5ec1d1",
         "name": "Discontinuous totalisers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623"
+        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+        "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
     },
     {
         "id": "871ef6e7-8985-4af9-8dc9-2e73c4ac6830",
         "name": "Continuous totalisers",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623"
+        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+        "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
     },
     {
         "id": "9e58f6db-36d5-4fb4-958c-102ce4cc8d2d",
         "name": "Automatic rail weigh-bridges",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623"
+        "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+        "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
     },
     {
         "id": "ac70a10d-b899-447c-a8da-b76dea0a5274",
         "name": "Material measures of length",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        "categoryId": "89c9f511-5147-466b-9a1c-85fe4ba2e174"
     },
     {
         "id": "c275b78b-9fca-41ef-bab5-07843f853e75",
         "name": "Capacity serving measures",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
-        "categoryId": "cd77c31a-a003-477a-81e2-38ecb2072d0a"
+        "categoryId": "89c9f511-5147-466b-9a1c-85fe4ba2e174"
     }
 ]

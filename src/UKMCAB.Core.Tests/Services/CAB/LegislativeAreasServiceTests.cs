@@ -8,10 +8,10 @@
     using System.Linq;
     using System.Linq.Expressions;
     using System.Threading.Tasks;
-    using UKMCAB.Core.Mappers;
+    using Mappers;
     using UKMCAB.Core.Services.CAB;
-    using UKMCAB.Data.CosmosDb.Services;  
-    using UKMCAB.Data.Models.LegislativeAreas;
+    using UKMCAB.Data.CosmosDb.Services;
+    using Data.Models.LegislativeAreas;
 
     [TestFixture]
     public class LegislativeAreasServiceTests
@@ -33,12 +33,14 @@
             _mockCategoryRepository = new Mock<IReadOnlyRepository<Category>>();
             _mockSubCategoryRepository = new Mock<IReadOnlyRepository<SubCategory>>();
             _mockProductRepository = new Mock<IReadOnlyRepository<Product>>();
-            _mockProcedureRepository = new Mock<IReadOnlyRepository<Procedure>>() ;
+            _mockProcedureRepository = new Mock<IReadOnlyRepository<Procedure>>();
 
             var mapper = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); }).CreateMapper();
 
-            _legislativeAreaService = new LegislativeAreaService(_mockLegislativeAreaRepository.Object, _mockPurposeOfAppointmentRepository.Object,
-                _mockCategoryRepository.Object, _mockProductRepository.Object, _mockProcedureRepository.Object, _mockSubCategoryRepository.Object,  mapper);
+            _legislativeAreaService = new LegislativeAreaService(_mockLegislativeAreaRepository.Object,
+                _mockPurposeOfAppointmentRepository.Object,
+                _mockCategoryRepository.Object, _mockProductRepository.Object, _mockProcedureRepository.Object,
+                _mockSubCategoryRepository.Object, mapper);
         }
 
         #region GetAllLegislativeAreas
@@ -48,7 +50,8 @@
         {
             // Arrange
             _mockLegislativeAreaRepository.Setup(x => x.GetAllAsync())
-                .ReturnsAsync(new List<LegislativeArea>() {
+                .ReturnsAsync(new List<LegislativeArea>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
@@ -70,14 +73,16 @@
         #region GetAvailableCabLegislativeAreas
 
         [Test]
-        public async Task LegislativeAreaService_GetLegislativeAreas_ShouldNotReturnExcludedLegislativeAreasFromRepository()
+        public async Task
+            LegislativeAreaService_GetLegislativeAreas_ShouldNotReturnExcludedLegislativeAreasFromRepository()
         {
             // Arrange
 
             var cabSelectedLegislativeId1 = Guid.NewGuid();
             var cabSelectedLegislativeId2 = Guid.NewGuid();
 
-            List<Guid> excludeLegislativeAreaIds = new List<Guid>() { cabSelectedLegislativeId1, cabSelectedLegislativeId2 };
+            List<Guid> excludeLegislativeAreaIds = new List<Guid>()
+                { cabSelectedLegislativeId1, cabSelectedLegislativeId2 };
 
             _mockLegislativeAreaRepository.Setup(x => x.GetAllAsync())
                 .ReturnsAsync(new List<LegislativeArea>
@@ -89,7 +94,8 @@
                 });
 
             // Act
-            var availableLegislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
+            var availableLegislativeAreas =
+                await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
 
             // Assert
             Assert.IsNotNull(availableLegislativeAreas);
@@ -101,11 +107,12 @@
         #endregion
 
         #region GetLegislativeAreaById
+
         [Test]
         public void EmptyGuid_GetLegislativeAreaById_ShouldThrowException()
         {
             // Arrange & Act & Assert
-           Assert.ThrowsAsync<Exception>( () => _legislativeAreaService.GetLegislativeAreaByIdAsync(Guid.Empty));
+            Assert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetLegislativeAreaByIdAsync(Guid.Empty));
         }
 
         [Test]
@@ -128,23 +135,28 @@
             Assert.IsNotNull(legislativeArea);
             Assert.AreEqual("Name1", legislativeArea!.Name);
         }
+
         #endregion
 
         #region GetNextScopeOfAppointmentOptionsForLegislativeArea
 
         [Test]
-        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnPurposeOfAppointments()
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnPurposeOfAppointments()
         {
             // Arrange
-            _mockPurposeOfAppointmentRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
-                .ReturnsAsync(new List<PurposeOfAppointment>() {
+            _mockPurposeOfAppointmentRepository
+                .Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
+                .ReturnsAsync(new List<PurposeOfAppointment>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -160,21 +172,25 @@
         }
 
         [Test]
-        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnCategories()
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnCategories()
         {
             // Arrange
-            _mockPurposeOfAppointmentRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
+            _mockPurposeOfAppointmentRepository
+                .Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
                 .ReturnsAsync(new List<PurposeOfAppointment>());
 
             _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
-                .ReturnsAsync(new List<Category>() {
+                .ReturnsAsync(new List<Category>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -190,24 +206,28 @@
         }
 
         [Test]
-        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnProducts()
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnProducts()
         {
             // Arrange
-            _mockPurposeOfAppointmentRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
+            _mockPurposeOfAppointmentRepository
+                .Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
                 .ReturnsAsync(new List<PurposeOfAppointment>());
 
             _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
                 .ReturnsAsync(new List<Category>());
 
             _mockProductRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Product, bool>>>()))
-                .ReturnsAsync(new List<Product>() {
+                .ReturnsAsync(new List<Product>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -223,10 +243,12 @@
         }
 
         [Test]
-        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnProcedures()
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnProcedures()
         {
             // Arrange
-            _mockPurposeOfAppointmentRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
+            _mockPurposeOfAppointmentRepository
+                .Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
                 .ReturnsAsync(new List<PurposeOfAppointment>());
 
             _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
@@ -236,14 +258,16 @@
                 .ReturnsAsync(new List<Product>());
 
             _mockProcedureRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Procedure, bool>>>()))
-                .ReturnsAsync(new List<Procedure>() {
+                .ReturnsAsync(new List<Procedure>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -263,18 +287,22 @@
         #region GetNextScopeOfAppointmentOptionsForPurposeOfAppointment
 
         [Test]
-        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForPurposeOfAppointment_ShouldReturnCategories()
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForPurposeOfAppointment_ShouldReturnCategories()
         {
             // Arrange
             _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
-                .ReturnsAsync(new List<Category>() {
+                .ReturnsAsync(new List<Category>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(
+                    Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -290,11 +318,13 @@
         }
 
         [Test]
-        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForPurposeOfAppointment_ShouldRemoveDuplicateCategories()
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForPurposeOfAppointment_ShouldRemoveDuplicateCategories()
         {
             // Arrange - Category names are duplicated when it has subcategories available.
             _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
-                .ReturnsAsync(new List<Category>() {
+                .ReturnsAsync(new List<Category>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name2" },
@@ -304,7 +334,9 @@
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(
+                    Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -320,21 +352,25 @@
         }
 
         [Test]
-        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForPurposeOfAppointment_ShouldReturnProducts()
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForPurposeOfAppointment_ShouldReturnProducts()
         {
             // Arrange
             _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
                 .ReturnsAsync(new List<Category>());
 
             _mockProductRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Product, bool>>>()))
-                .ReturnsAsync(new List<Product>() {
+                .ReturnsAsync(new List<Product>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(
+                    Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -350,7 +386,8 @@
         }
 
         [Test]
-        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForPurposeOfAppointment_ShouldReturnProcedures()
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForPurposeOfAppointment_ShouldReturnProcedures()
         {
             // Arrange
             _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
@@ -360,14 +397,17 @@
                 .ReturnsAsync(new List<Product>());
 
             _mockProcedureRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Procedure, bool>>>()))
-                .ReturnsAsync(new List<Procedure>() {
+                .ReturnsAsync(new List<Procedure>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(
+                    Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -393,19 +433,22 @@
 
             // Arrange
             _mockCategoryRepository.SetupSequence(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
-                .ReturnsAsync(new List<Category>() {
+                .ReturnsAsync(new List<Category>()
+                {
                     new() { Id = categoryId, Name = "Name1" },
-             });                
+                });
 
             _mockSubCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<SubCategory, bool>>>()))
-               .ReturnsAsync(new List<SubCategory>() {
+                .ReturnsAsync(new List<SubCategory>()
+                {
                     new() { Id = new Guid(), Name = "Sub1", CategoryId = categoryId },
                     new() { Id = new Guid(), Name = "Sub2", CategoryId = categoryId },
                     new() { Id = new Guid(), Name = "Sub3", CategoryId = categoryId },
-            });
+                });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -425,19 +468,22 @@
         {
             // Arrange - Note the empty Subcategory.
             _mockCategoryRepository.SetupSequence(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
-                .ReturnsAsync(new List<Category>() {
+                .ReturnsAsync(new List<Category>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                 });
 
             _mockProductRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Product, bool>>>()))
-                .ReturnsAsync(new List<Product>() {
+                .ReturnsAsync(new List<Product>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -457,7 +503,8 @@
         {
             // Arrange - Note the empty Subcategory.
             _mockCategoryRepository.SetupSequence(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
-                .ReturnsAsync(new List<Category>() {
+                .ReturnsAsync(new List<Category>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                 });
 
@@ -465,14 +512,16 @@
                 .ReturnsAsync(new List<Product>());
 
             _mockProcedureRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Procedure, bool>>>()))
-                .ReturnsAsync(new List<Procedure>() {
+                .ReturnsAsync(new List<Procedure>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -487,7 +536,62 @@
             Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
         }
 
-        #endregion        
+        #endregion
+
+        #region GetNextScopeOfAppointmentOptionsForSubCategory
+
+        [Test]
+        public async Task NoProductsFound_GetNextScopeOfAppointmentOptionsForSubCategory_ShouldReturnEmptyOptions()
+        {
+            // Arrange
+            _mockProductRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+                .ReturnsAsync(new List<Product>(0));
+
+            // Act
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForSubCategoryAsync(Guid.NewGuid());
+
+            // Assert
+            Assert.IsNotNull(nextScopeOptions);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
+        }
+
+        [Test]
+        public async Task LegislativeAreaService_GetNextScopeOfAppointmentOptionsForSubCategory_ShouldReturnProducts()
+        {
+            var subCategoryId = new Guid();
+
+            // Arrange
+            _mockProductRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+                .ReturnsAsync(new List<Product>
+                {
+                    new() { Id = new Guid(), Name = "Prod1", SubCategoryId = subCategoryId },
+                    new() { Id = new Guid(), Name = "Prod2", SubCategoryId = subCategoryId },
+                    new() { Id = new Guid(), Name = "Prod3", SubCategoryId = subCategoryId },
+                });
+
+            // Act
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForSubCategoryAsync(Guid.NewGuid());
+
+            // Assert
+            Assert.IsNotNull(nextScopeOptions);
+            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            Assert.IsEmpty(nextScopeOptions.Categories);
+            Assert.IsEmpty(nextScopeOptions.Subcategories);
+            Assert.IsNotEmpty(nextScopeOptions.Products);
+            Assert.IsEmpty(nextScopeOptions.Procedures);
+            Assert.AreEqual(3, nextScopeOptions.Products.Count());
+            Assert.AreEqual("Prod1", nextScopeOptions.Products.ElementAt(0).Name);
+            Assert.AreEqual("Prod2", nextScopeOptions.Products.ElementAt(1).Name);
+            Assert.AreEqual("Prod3", nextScopeOptions.Products.ElementAt(2).Name);
+        }
+
+        #endregion
 
         #region GetNextScopeOfAppointmentOptionsForProduct
 
@@ -496,14 +600,16 @@
         {
             // Arrange
             _mockProcedureRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Procedure, bool>>>()))
-                .ReturnsAsync(new List<Procedure>() {
+                .ReturnsAsync(new List<Procedure>()
+                {
                     new() { Id = new Guid(), Name = "Name1" },
                     new() { Id = new Guid(), Name = "Name2" },
                     new() { Id = new Guid(), Name = "Name3" },
                 });
 
             // Act
-            var nextScopeOptions = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForProductAsync(Guid.NewGuid());
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForProductAsync(Guid.NewGuid());
 
             // Assert
             Assert.IsNotNull(nextScopeOptions);
@@ -522,6 +628,7 @@
 
 
         #region GetPurposeOfAppointmentById
+
         [Test]
         public void EmptyGuid_GetPurposeOfAppointmentById_ShouldThrowException()
         {
@@ -530,11 +637,13 @@
         }
 
         [Test]
-        public async Task LegislativeAreaService_GetPurposeOfAppointmentById_ShouldReturnPurposeOfAppointmentFromRepository()
+        public async Task
+            LegislativeAreaService_GetPurposeOfAppointmentById_ShouldReturnPurposeOfAppointmentFromRepository()
         {
             // Arrange
             var testGuid = Guid.NewGuid();
-            _mockPurposeOfAppointmentRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
+            _mockPurposeOfAppointmentRepository
+                .Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
                 .ReturnsAsync(new List<PurposeOfAppointment>
                 {
                     new() { Id = testGuid, Name = "Name1" },
@@ -549,9 +658,11 @@
             Assert.IsNotNull(purposeOfAppointment);
             Assert.AreEqual("Name1", purposeOfAppointment!.Name);
         }
+
         #endregion
 
         #region GetCategoryById
+
         [Test]
         public void EmptyGuid_GetCategoryById_ShouldThrowException()
         {
@@ -567,9 +678,21 @@
             _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
                 .ReturnsAsync(new List<Category>
                 {
-                    new() { Id = testGuid, Name = "Name1", LegislativeAreaId = new Guid(),  PurposeOfAppointmentId = new Guid()},
-                    new() { Id = new Guid(), Name = "Name2", LegislativeAreaId = new Guid(),  PurposeOfAppointmentId = new Guid() },
-                    new() { Id = new Guid(), Name = "Name3", LegislativeAreaId = new Guid(),  PurposeOfAppointmentId =new Guid() },
+                    new()
+                    {
+                        Id = testGuid, Name = "Name1", LegislativeAreaId = new Guid(),
+                        PurposeOfAppointmentId = new Guid()
+                    },
+                    new()
+                    {
+                        Id = new Guid(), Name = "Name2", LegislativeAreaId = new Guid(),
+                        PurposeOfAppointmentId = new Guid()
+                    },
+                    new()
+                    {
+                        Id = new Guid(), Name = "Name3", LegislativeAreaId = new Guid(),
+                        PurposeOfAppointmentId = new Guid()
+                    },
                 });
 
             // Act
@@ -579,9 +702,11 @@
             Assert.IsNotNull(category);
             Assert.AreEqual("Name1", category!.Name);
         }
+
         #endregion
 
         #region GetSubCategoryById
+
         [Test]
         public void EmptyGuid_GetSubCategoryById_ShouldThrowException()
         {
@@ -609,6 +734,7 @@
             Assert.IsNotNull(subCategory);
             Assert.AreEqual("Name1", subCategory!.Name);
         }
+
         #endregion
     }
 }

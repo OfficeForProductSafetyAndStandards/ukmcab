@@ -534,9 +534,9 @@ else if (Model.IsEditLocked)
                                             {
                                                 <td class="govuk-table__cell">
                                                     <label aria-hidden="true">Applicable conformity asessment procedure</label>
-                                                    @if (scopeOfAppointment.Procedures != null)
+                                                    @if (scopeOfAppointment.ProductAndProcedures.Procedures != null)
                                                     {
-                                                        @foreach(var procedure in scopeOfAppointment.Procedures)
+                                                        @foreach (var procedure in scopeOfAppointment.ProductAndProcedures.Procedures)
                                                         {
                                                             <p>@procedure</p>
                                                         }
