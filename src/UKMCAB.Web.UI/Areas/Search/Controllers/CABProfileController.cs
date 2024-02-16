@@ -46,6 +46,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public static class Routes
         {
             public const string CabDetails = "cab.detail";
+            public const string CabDetailsLegislativeArea = "cab.detail.legislative-area";
             public const string CabDraftProfile = "cab.profile.draft";
             public const string CabProfileHistoryDetails = "cab.profile.history-details";
             public const string TrackInboundLinkCabDetails = "cab.details.inbound-email-link";
@@ -98,34 +99,25 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 await _editLockService.RemoveEditLockForCabAsync(unlockCab);
             }
 
-            var userAccount = User.Identity is { IsAuthenticated: true }
-                ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
-                : null;
-            var unarchiveRequests = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
-                cabDocument.CABId.ToGuid()!.Value,
-                new List<TaskType> { TaskType.RequestToUnarchiveForDraft, TaskType.RequestToUnarchiveForPublish });
-            var unpublishRequests = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
-                cabDocument.CABId.ToGuid()!.Value,
-                new List<TaskType> { TaskType.RequestToArchive, TaskType.RequestToUnpublish });
-            var requireApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
-                StringComparison.CurrentCultureIgnoreCase);
-            var cab = await GetCabProfileViewModel(
-                cabDocument,
-                returnUrl,
-                userAccount != null,
-                requireApproval && (!unarchiveRequests.Any() || unarchiveRequests.All(t => t.Completed)),
-                pagenumber,
-                requireApproval && (!unpublishRequests.Any() || unpublishRequests.All(t => t.Completed))
-            );
-
-            cab = await GetRequestInformation(cab);
-
+            var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
             {
                 [AiTracking.Metadata.CabId] = id,
                 [AiTracking.Metadata.CabName] = cab.Name
             }));
 
+            cab.CabLegislativeAreas.IsLoadCabLegislativeAreas = false;
+            return View(cab);
+        }
+
+        [HttpGet("search/cab-profile/{id}/{legislativeAreaId}", Name = Routes.CabDetailsLegislativeArea)]
+        public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, Guid legislativeAreaId,
+            int pagenumber = 1)
+        {
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
+            var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
+            cab.CabLegislativeAreas.IsLoadCabLegislativeAreas = true;
+            var purposeOfAppointment = GetCABLegislativeAreaPurposeOfAppointmentAsync(legislativeAreaId);
             return View(cab);
         }
 
@@ -176,6 +168,35 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 var content = new StreamReader(stream).ReadToEnd();
                 return Content(content, "application/atom+xml;charset=utf-8");
             }
+        }
+
+        private async Task<CABProfileViewModel> GetCabProfileForIndex(Document cabDocument, string? returnUrl,
+            int pagenumber = 1)
+        {
+            var userAccount = User.Identity is { IsAuthenticated: true }
+                ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
+                : null;
+
+            var unarchiveRequests = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
+                cabDocument.CABId.ToGuid()!.Value,
+                new List<TaskType> { TaskType.RequestToUnarchiveForDraft, TaskType.RequestToUnarchiveForPublish });
+            var unpublishRequests = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
+                cabDocument.CABId.ToGuid()!.Value,
+                new List<TaskType> { TaskType.RequestToArchive, TaskType.RequestToUnpublish });
+            var requireApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
+                StringComparison.CurrentCultureIgnoreCase);
+
+            var cab = await GetCabProfileViewModel(
+                cabDocument,
+                returnUrl,
+                userAccount != null,
+                requireApproval && (!unarchiveRequests.Any() || unarchiveRequests.All(t => t.Completed)),
+                pagenumber,
+                requireApproval && (!unpublishRequests.Any() || unpublishRequests.All(t => t.Completed))
+            );
+
+            cab = await GetRequestInformation(cab);
+            return cab;
         }
 
         private async Task<CABProfileViewModel> GetCabProfileViewModel(Document cabDocument, string? returnUrl,
@@ -278,27 +299,47 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
 
             ShareUtils.AddDetails(HttpContext, cab.FeedLinksViewModel);
-            
-            var listCabLegislateArea = await GetCABLegislativeAreasAsync(cabDocument.DocumentLegislativeAreas);
+
+            var listCabLegislateArea =
+                await GetCABLegislativeAreasAsync(cabDocument.DocumentLegislativeAreas, cab.CABUrl);
+
             cab.CabLegislativeAreas = listCabLegislateArea;
             return cab;
         }
 
-        private async Task<List<CABLegislativeAreasModel>> GetCABLegislativeAreasAsync(
-            IEnumerable<DocumentLegislativeArea> documentLegislativeAreas)
+        private async Task<CABLegislativeAreasModel> GetCABLegislativeAreasAsync(
+            IEnumerable<DocumentLegislativeArea> documentLegislativeAreas, string cabUrl)
         {
             var cabLegislativeAreaIds = documentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
             var allLegislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
             var legislativeAreas = allLegislativeAreas.Where(n => cabLegislativeAreaIds.Contains(n.Id));
 
-            var legislativeAreasList = new List<CABLegislativeAreasModel>();
-            legislativeAreasList.AddRange(legislativeAreas.Select(legislativeAreaModel => new CABLegislativeAreasModel()
+            var legislativeAreasList = new List<LegislativeAreasViewModel>();
+            legislativeAreasList.AddRange(legislativeAreas.Select(legislativeAreaModel =>
+                new LegislativeAreasViewModel()
+                {
+                    LegislativeAreaId = legislativeAreaModel.Id,
+
+                    Name = legislativeAreaModel.Name,
+                    Regulation = legislativeAreaModel.Regulation
+                }));
+            var cabLegislativeAreasModel = new CABLegislativeAreasModel
             {
-                Id = legislativeAreaModel.Id,
-                Name = legislativeAreaModel.Name,
-                Regulation = legislativeAreaModel.Regulation
-            }));
-            return legislativeAreasList;
+                CabUrl = cabUrl,
+                LegislativeAreasModel = legislativeAreasList
+            };
+            return cabLegislativeAreasModel;
+        }
+
+        //TODO : Work in-progress - Integration to be done
+        private async Task<LegislativeAreaPurposeOfAppointmentViewModel> GetCABLegislativeAreaPurposeOfAppointmentAsync(
+            Guid legislativeAreaId)
+        {
+            var scopeOfAppointment =
+                await _legislativeAreaService
+                    .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
+
+            return null;
         }
 
         private async Task<CABProfileViewModel> GetRequestInformation(CABProfileViewModel profileViewModel)
