@@ -166,6 +166,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
                 StatusesFilter = model.Statuses,
                 SubStatusesFilter = model.SubStatuses,
+                ProvisionalLegislativeAreasFilter = model.ProvisionalLegislativeAreas,
                 UserGroupsFilter = model.UserGroups,
                 IsOPSSUser = model.IsOPSSUser,
                 Select = _select,
@@ -239,6 +240,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     model.SubStatuses = pendingApprovalSubStatus.ToArray();
                 } 
                 model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
+                model.LegislativeAreaProvisionalOptions = GetFilterOptions(nameof(model.ProvisionalLegislativeAreas), "Provisional legislative area", facets.ProvisionalLegislativeAreas.OrderByDescending(x => x), model.ProvisionalLegislativeAreas);
             }
             else
             {
