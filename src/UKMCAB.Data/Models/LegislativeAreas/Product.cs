@@ -11,5 +11,6 @@
         public Guid? PurposeOfAppointmentId { get; set; }
 
         public Guid? CategoryId { get; set; }
+        public Guid? SubCategoryId { get; set; }
     }
 }
