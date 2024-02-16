@@ -328,8 +328,6 @@ public class LegislativeAreaDetailsController : Controller
         var scopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(scopeId.ToString());
         Guid? productId = null;
 
-        //var selectListItems = new List<SelectListItem>();
-
         if (scopeOfAppointment == null)
             return RedirectToRoute(Routes.AddLegislativeArea);
 
