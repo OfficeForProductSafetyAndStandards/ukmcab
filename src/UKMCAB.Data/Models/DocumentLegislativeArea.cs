@@ -1,10 +1,14 @@
-﻿namespace UKMCAB.Data.Models
+﻿using StackExchange.Redis;
+
+namespace UKMCAB.Data.Models
 {
     using Azure.Search.Documents.Indexes;
 
     public class DocumentLegislativeArea
     {
         public Guid Id { get; set; }
+
+        public string LegislativeAreaName { get; set; } = string.Empty;
 
         public Guid LegislativeAreaId { get; set; }
 
@@ -17,5 +21,6 @@
 
         public string? Reason { get; set; }
 
+        public bool? Archived { get; set; }
     }
 }
