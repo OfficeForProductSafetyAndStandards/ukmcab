@@ -11,11 +11,11 @@ public static class CabModelMapper
     {
         var dest = new CabModel();
         var supportingDocuments = new List<FileUpload>();
-        source.Documents?.ForEach(d => supportingDocuments.Add(new FileUpload(d.Id, d.Label, d.LegislativeArea, d.Category, d.FileName, d.BlobName, d.UploadDateTime)));
+        source.Documents?.ForEach(d => supportingDocuments.Add(new FileUpload(d.Id, d.Label, d.LegislativeArea, d.Category, d.FileName, d.BlobName, d.UploadDateTime, d.Archived)));
         var schedules = new List<FileUpload>();
         source.Schedules?.ForEach(s =>
             schedules.Add(new FileUpload(s.Id, s.Label, s.LegislativeArea, s.Category, s.FileName, s.BlobName,
-                s.UploadDateTime)));
+                s.UploadDateTime, s.Archived)));
         
         dest.Id = source.id.ToGuid() ?? throw new Exception($"{nameof(source.id)} is not a guid (value:{source.id})");
         dest.Address = new GeoAddress(source.AddressLine1, source.AddressLine2, source.TownCity, source.County,

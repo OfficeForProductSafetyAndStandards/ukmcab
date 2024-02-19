@@ -462,11 +462,14 @@ public class LegislativeAreaDetailsController : Controller
             else
             {
                 await _cabAdminService.ArchiveLegislativeAreaAsync(id, legislativeAreaId);
-            }                    
+            }
+
+            return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
         }
 
-        return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
-        
+        vm.ReturnUrl = returnUrl;
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
+
     }
 
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(

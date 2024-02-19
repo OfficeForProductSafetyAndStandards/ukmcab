@@ -19,6 +19,7 @@
     <div class="govuk-grid-column-two-thirds">
         <form id="legislativeForm" method="post" novalidate>
             <input type="hidden" asp-for="Title" />
+            <input type="hidden" asp-for="Id" />
             <h2 class="govuk-heading-s">You have selected: </h2>
             <p class="govuk-body">@Model.Title</p>
             <govuk-radios asp-for="Action">

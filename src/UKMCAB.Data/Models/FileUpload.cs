@@ -11,6 +11,7 @@ namespace UKMCAB.Data.Models
         public string FileName { get; set; }
         public string BlobName { get; set; }
         public DateTime UploadDateTime { get; set; }
+        public bool? Archived { get; set; }
     }
 
     public class FileUploadComparer : IEqualityComparer<FileUpload>
