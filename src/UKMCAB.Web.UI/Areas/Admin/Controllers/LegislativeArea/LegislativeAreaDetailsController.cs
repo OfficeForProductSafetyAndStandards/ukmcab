@@ -464,7 +464,7 @@ public class LegislativeAreaDetailsController : Controller
             var userAccount =
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             var updatedDocument = await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
-            var existingScopeOfAppointment = updatedDocument.ScopeOfAppointments.FirstOrDefault(s => s.Id == scopeId);
+            var existingScopeOfAppointment = updatedDocument.ScopeOfAppointments.FirstOrDefault(s => s.Id == compareScopeId);
             if (existingScopeOfAppointment != null)
             {
                 updatedDocument.ScopeOfAppointments.Remove(existingScopeOfAppointment);
