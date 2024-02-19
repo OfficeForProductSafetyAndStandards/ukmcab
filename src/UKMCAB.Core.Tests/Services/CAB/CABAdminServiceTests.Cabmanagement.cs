@@ -13,6 +13,7 @@ using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Core.Mappers;
 using System.Linq;
+using AutoMapper;
 using Bogus;
 
 namespace UKMCAB.Core.Tests.Services.CAB
@@ -35,8 +36,9 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCachedSearchService = new Mock<ICachedSearchService>();
             _telemetryClient = new TelemetryClient();
             _mockUserService = new Mock<IUserService>();
+            var mapper = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); }).CreateMapper();
 
-            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _telemetryClient, _mockUserService.Object);
+            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _telemetryClient, _mockUserService.Object, mapper);
         }
 
         [Theory]
