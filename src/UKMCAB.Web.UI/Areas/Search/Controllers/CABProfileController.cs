@@ -25,6 +25,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using System.Text.Json;
+using MoreLinq.Extensions;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Web.UI.Models.ViewModels.Search.Shared;
 
@@ -50,8 +51,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             public const string CabDetails = "cab.detail";
             public const string CabDetailsLegislativeArea = "cab.detail.legislative-area";
+
             public const string CabDetailsLegislativeAreaPurposeOfAppointment =
                 "cab.detail.legislative-area.purpose-of-appointment";
+
             public const string CabDraftProfile = "cab.profile.draft";
             public const string CabProfileHistoryDetails = "cab.profile.history-details";
             public const string TrackInboundLinkCabDetails = "cab.details.inbound-email-link";
@@ -111,7 +114,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 [AiTracking.Metadata.CabName] = cab.Name
             }));
 
-            cab.CabLegislativeAreas.IsLoadCabLegislativeAreas = false;
+            cab.CabLegislativeAreas.IsLoadCabLegislativeAreaInformation = false;
             return View(cab);
         }
 
@@ -121,7 +124,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
-            cab.CabLegislativeAreas.IsLoadCabLegislativeAreas = true;
+            cab.CabLegislativeAreas.IsLoadCabLegislativeAreaInformation = true;
+            var purposeOfAppointments = new List<PurposeOfAppointmentModel>();
             var legislativeAreaInfo = cab.CabLegislativeAreas.LegislativeAreasModel
                 .Where(a => a.LegislativeAreaId == legislativeAreaId)
                 .Select(a =>
@@ -131,20 +135,32 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                         LegislativeAreaName = a.Name
                     }).First();
 
-            //TODO: Scope of appointment should get it from CAB document 
-            var scopeOfVariousOptions = await _legislativeAreaService
-                .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
-
-            if (scopeOfVariousOptions.PurposeOfAppointments.Any())
+            var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
+                .Where(a => a.PurposeOfAppointmentId != null && a.LegislativeAreaId == legislativeAreaId)
+                .Distinct()
+                .Select(a => a.PurposeOfAppointmentId);
+            var purposeOfAppointmentInformation = new PurposeOfAppointmentModel();
+            foreach (var purposeOfAppointmentId in purposeOfAppointmentIds)
             {
-                var purposeOfAppointment = GetCABLegislativeAreaPurposeOfAppointmentAsync(legislativeAreaId,
-                    legislativeAreaInfo?.LegislativeAreaName,
-                    cab.CABUrl,
-                    legislativeAreaInfo?.Regulation,
-                    scopeOfVariousOptions.PurposeOfAppointments);
-                cab.CabLegislativeAreas.PurposeOfAppointments = purposeOfAppointment;
+                purposeOfAppointmentInformation = await _legislativeAreaService
+                    .GetPurposeOfAppointmentByIdAsync(purposeOfAppointmentId ?? Guid.Empty);
+
+                if (purposeOfAppointmentInformation != null)
+                    purposeOfAppointments.Add(new PurposeOfAppointmentModel()
+                    {
+                        LegislativeAreaId = legislativeAreaId,
+                        Id = purposeOfAppointmentInformation.Id,
+                        Name = purposeOfAppointmentInformation.Name
+                    });
             }
 
+            var cabLegislativeAreaPurposeOfAppointmentViewModel = GetCABLegislativeAreaPurposeOfAppointmentAsync(
+                legislativeAreaId,
+                legislativeAreaInfo?.LegislativeAreaName,
+                cab.CABUrl,
+                legislativeAreaInfo?.Regulation,
+                purposeOfAppointments);
+            cab.CabLegislativeAreas.PurposeOfAppointments = cabLegislativeAreaPurposeOfAppointmentViewModel;
             return View(cab);
         }
 
@@ -155,7 +171,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
-            cab.CabLegislativeAreas.IsLoadCabLegislativeAreas = false;
+            cab.CabLegislativeAreas.IsLoadCabLegislativeAreaInformation = false;
             return View(cab);
         }
 

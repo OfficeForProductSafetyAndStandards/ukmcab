@@ -767,7 +767,7 @@ else if (Model.IsEditLocked)
                         <div class="govuk-button-group">
                             @if (Model.CanPublish)
                             {
-                                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" )>
                                     Publish
                                 </button>
                             }

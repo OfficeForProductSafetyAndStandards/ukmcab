@@ -4,6 +4,6 @@ public class CABLegislativeAreasModel
 {
     public List<LegislativeAreasViewModel> LegislativeAreasModel { get; set; }
     public string CabUrl { get; set; }
-    public bool IsLoadCabLegislativeAreas { get; set; }
+    public bool IsLoadCabLegislativeAreaInformation { get; set; }
     public CABLegislativeAreaPurposeOfAppointmentViewModel? PurposeOfAppointments { get; set; }
 }
