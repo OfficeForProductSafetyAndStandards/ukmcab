@@ -53,11 +53,11 @@
     </div>
 </div>
 
-@if (Model is { IsArchived: true, RequestTaskType: null })
+    @if (User.Identity.IsAuthenticated && Model is { IsArchived: true, RequestTaskType: null })
 {
     <partial model="@("Archived on " + Model.ArchivedDate)" name="Partials/_PageContentBanner"/>
 }
-else if (Model is { IsArchived: true, RequestTaskType: not null })
+    else if (User.Identity.IsAuthenticated &&  Model is { IsArchived: true, RequestTaskType: not null })
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
