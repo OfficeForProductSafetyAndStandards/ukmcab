@@ -42,7 +42,7 @@
                     </govuk-checkboxes-hint>
                     @foreach (var item in Model.Products)
                     {
-                        <govuk-checkboxes-item value="@item.Value">@item.Text</govuk-checkboxes-item>
+                        <govuk-checkboxes-item value="@item.Value" checked="@item.Selected">@item.Text</govuk-checkboxes-item>
                     }
                 </govuk-checkboxes-fieldset>
             </govuk-checkboxes>

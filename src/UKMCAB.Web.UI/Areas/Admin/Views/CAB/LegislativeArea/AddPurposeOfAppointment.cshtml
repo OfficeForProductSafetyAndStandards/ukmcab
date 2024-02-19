@@ -21,7 +21,7 @@
                     </govuk-radios-fieldset-legend>
                     @foreach (var poa in Model.PurposeOfAppointments!)
                     {
-                        <govuk-radios-item value="@poa.Value">@poa.Text</govuk-radios-item>
+                        <govuk-radios-item value="@poa.Value" checked="@poa.Selected">@poa.Text</govuk-radios-item>
                     }
                 </govuk-radios-fieldset>
             </govuk-radios>
