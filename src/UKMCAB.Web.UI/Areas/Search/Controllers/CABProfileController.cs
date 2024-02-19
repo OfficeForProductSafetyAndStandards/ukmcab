@@ -25,9 +25,12 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using System.Text.Json;
+using UKMCAB.Core.Domain.LegislativeAreas;
+using UKMCAB.Web.UI.Models.ViewModels.Search.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
+    //TODO: Split this controller
     [Area("search")]
     public class CABProfileController : Controller
     {
@@ -47,6 +50,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             public const string CabDetails = "cab.detail";
             public const string CabDetailsLegislativeArea = "cab.detail.legislative-area";
+            public const string CabDetailsLegislativeAreaPurposeOfAppointment =
+                "cab.detail.legislative-area.purpose-of-appointment";
             public const string CabDraftProfile = "cab.profile.draft";
             public const string CabProfileHistoryDetails = "cab.profile.history-details";
             public const string TrackInboundLinkCabDetails = "cab.details.inbound-email-link";
@@ -117,7 +122,39 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
             cab.CabLegislativeAreas.IsLoadCabLegislativeAreas = true;
-            var purposeOfAppointment = GetCABLegislativeAreaPurposeOfAppointmentAsync(legislativeAreaId);
+            var legislativeAreaInfo = cab.CabLegislativeAreas.LegislativeAreasModel
+                .Where(a => a.LegislativeAreaId == legislativeAreaId)
+                .Select(a =>
+                    new
+                    {
+                        Regulation = a.Regulation,
+                        LegislativeAreaName = a.Name
+                    }).FirstOrDefault();
+
+            var scopeOfVariousOptions = await _legislativeAreaService
+                .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
+
+            if (scopeOfVariousOptions.PurposeOfAppointments.Any())
+            {
+                var purposeOfAppointment = GetCABLegislativeAreaPurposeOfAppointmentAsync(legislativeAreaId,
+                    legislativeAreaInfo?.LegislativeAreaName,
+                    cab.CABUrl,
+                    legislativeAreaInfo?.Regulation,
+                    scopeOfVariousOptions.PurposeOfAppointments);
+                cab.CabLegislativeAreas.PurposeOfAppointments = purposeOfAppointment;
+            }
+
+            return View(cab);
+        }
+
+        [HttpGet("search/cab-profile/{id}/{legislativeAreaId}/{scopeId}",
+            Name = Routes.CabDetailsLegislativeAreaPurposeOfAppointment)]
+        public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, Guid legislativeAreaId,
+            Guid scopeId, int pagenumber = 1)
+        {
+            var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
+            var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
+            cab.CabLegislativeAreas.IsLoadCabLegislativeAreas = false;
             return View(cab);
         }
 
@@ -332,14 +369,30 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         //TODO : Work in-progress - Integration to be done
-        private async Task<LegislativeAreaPurposeOfAppointmentViewModel> GetCABLegislativeAreaPurposeOfAppointmentAsync(
-            Guid legislativeAreaId)
+        private CABLegislativeAreaPurposeOfAppointmentViewModel GetCABLegislativeAreaPurposeOfAppointmentAsync(
+            Guid legislativeAreaId,
+            string? LegislativeAreaName,
+            string cabUrl,
+            string? regulation,
+            IEnumerable<PurposeOfAppointmentModel> purposeOfAppointments)
         {
-            var scopeOfAppointment =
-                await _legislativeAreaService
-                    .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
+            var purposeOfAppointmentList = new List<StandardViewModel>();
+            purposeOfAppointmentList.AddRange(purposeOfAppointments.Select(a => new StandardViewModel()
+            {
+                Name = a.Name,
+                Id = a.Id
+            }));
+            var purposeOfAppointment = new CABLegislativeAreaPurposeOfAppointmentViewModel
+            {
+                LegislativeAreaId = legislativeAreaId,
+                LegislativeAreaName = LegislativeAreaName,
+                CabUrl = cabUrl,
+                Regulation = regulation,
+                PurposeOfAppointments = purposeOfAppointmentList
+            };
 
-            return null;
+
+            return purposeOfAppointment;
         }
 
         private async Task<CABProfileViewModel> GetRequestInformation(CABProfileViewModel profileViewModel)
