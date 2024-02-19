@@ -129,8 +129,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     {
                         Regulation = a.Regulation,
                         LegislativeAreaName = a.Name
-                    }).FirstOrDefault();
+                    }).First();
 
+            //TODO: Scope of appointment should get it from CAB document 
             var scopeOfVariousOptions = await _legislativeAreaService
                 .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
 
