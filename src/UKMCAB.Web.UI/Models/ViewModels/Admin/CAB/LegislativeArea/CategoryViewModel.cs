@@ -12,6 +12,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? PurposeOfAppointment { get; set; }
 
-        public IEnumerable<SelectListItem>? Categories { get; set; }
+        public IEnumerable<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
     }
 }
