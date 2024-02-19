@@ -162,7 +162,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Archived &&
                 x.SubStatus == SubStatus.None && x.SubStatusName == "None")), Times.Once);
 
-            _mockCachedSearchService.Verify(x => x.ReIndexAsync(It.Is<CABIndexItem>(x => x.id == "1" && x.SubStatus == ((int)SubStatus.None).ToString())), Times.Once);
+            _mockCachedSearchService.Verify(x => x.ReIndexAsync(It.Is<CABIndexItem>(x => x.Id == "1" && x.SubStatus == ((int)SubStatus.None).ToString())), Times.Once);
         }
     }
 }
