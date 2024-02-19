@@ -1,4 +1,5 @@
-﻿using Microsoft.ApplicationInsights;
+﻿using AutoMapper;
+using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
@@ -26,15 +27,17 @@ namespace UKMCAB.Core.Services.CAB
         private readonly ICachedSearchService _cachedSearchService;
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
         private readonly TelemetryClient _telemetryClient;
+        private readonly IMapper _mapper;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
             ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient,
-            IUserService userService)
+            IUserService userService, IMapper mapper)
         {
             _cabRepository = cabRepository;
             _cachedSearchService = cachedSearchService;
             _cachedPublishedCabService = cachedPublishedCabService;
             _telemetryClient = telemetryClient;
+            _mapper = mapper;
         }
 
         public async Task<List<CabModel>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
@@ -151,7 +154,7 @@ namespace UKMCAB.Core.Services.CAB
         {
             await _cachedSearchService.ReIndexAsync(new CABIndexItem
             {
-                id = document.id,
+                Id = document.id,
                 Status = document.Status,
                 StatusValue = ((int)document.StatusValue).ToString(),
                 SubStatus = ((int)document.SubStatus).ToString(),
@@ -178,7 +181,7 @@ namespace UKMCAB.Core.Services.CAB
                 LastUpdatedDate = document.LastUpdatedDate,
                 RandomSort = document.RandomSort,
                 UKASReference = document.UKASReference,
-                DocumentLegislativeAreas = document.DocumentLegislativeAreas,
+                DocumentLegislativeAreas = _mapper.Map<List<DocumentLegislativeAreaIndexItem>>(document.DocumentLegislativeAreas)
             });
         }
 

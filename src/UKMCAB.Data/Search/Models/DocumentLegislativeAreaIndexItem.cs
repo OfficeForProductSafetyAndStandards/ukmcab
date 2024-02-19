@@ -1,12 +1,15 @@
-﻿namespace UKMCAB.Data.Models
-{
-    using Azure.Search.Documents.Indexes;
+﻿using System.Text.Json.Serialization;
+using Azure.Search.Documents.Indexes;
 
-    public class DocumentLegislativeArea
+namespace UKMCAB.Data.Search.Models
+{
+    public class DocumentLegislativeAreaIndexItem
     {
+        [JsonIgnore]
         public Guid Id { get; set; }
 
         public string LegislativeAreaName { get; set; } = string.Empty;
+        [JsonIgnore]
         public Guid LegislativeAreaId { get; set; }
 
         public DateTime? AppointmentDate { get; set; }
