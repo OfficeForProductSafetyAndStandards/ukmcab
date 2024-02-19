@@ -25,7 +25,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using System.Text.Json;
-using MoreLinq.Extensions;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Web.UI.Models.ViewModels.Search.Shared;
 
@@ -137,12 +136,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
                 .Where(a => a.PurposeOfAppointmentId != null && a.LegislativeAreaId == legislativeAreaId)
-                .Distinct()
-                .Select(a => a.PurposeOfAppointmentId);
-            var purposeOfAppointmentInformation = new PurposeOfAppointmentModel();
+                .Select(a => a.PurposeOfAppointmentId)
+                .Distinct();
+            
             foreach (var purposeOfAppointmentId in purposeOfAppointmentIds)
             {
-                purposeOfAppointmentInformation = await _legislativeAreaService
+                var purposeOfAppointmentInformation = await _legislativeAreaService
                     .GetPurposeOfAppointmentByIdAsync(purposeOfAppointmentId ?? Guid.Empty);
 
                 if (purposeOfAppointmentInformation != null)
