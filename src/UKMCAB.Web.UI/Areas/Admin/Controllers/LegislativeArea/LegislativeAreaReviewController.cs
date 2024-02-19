@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System.Security.Claims;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Core.Services.CAB;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
@@ -11,13 +14,16 @@ public class LegislativeAreaReviewController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly ILegislativeAreaService _legislativeAreaService;
+    private readonly IUserService _userService;
 
     public LegislativeAreaReviewController(
-        ICABAdminService cabAdminService, 
-        ILegislativeAreaService legislativeAreaService)
+        ICABAdminService cabAdminService,
+        ILegislativeAreaService legislativeAreaService,
+        IUserService userService)
     {
         _cabAdminService = cabAdminService;
         _legislativeAreaService = legislativeAreaService;
+        _userService = userService;
     }
 
     public static class Routes
@@ -37,7 +43,7 @@ public class LegislativeAreaReviewController : Controller
         }
 
         var scopeOfAppointments = latestDocument.ScopeOfAppointments;
-        var selectedLAs = new List<LegislativeAreaListItemViewModel>();      
+        var selectedLAs = new List<LegislativeAreaListItemViewModel>();
 
         foreach (var sa in scopeOfAppointments)
         {
@@ -56,7 +62,7 @@ public class LegislativeAreaReviewController : Controller
             : null;
 
             if (sa.ProductIdAndProcedureIds.Any())
-            {  
+            {
                 var totalNumbOfProducts = sa.ProductIdAndProcedureIds.Count(p => p.ProductId != null);
                 var numOfIteration = totalNumbOfProducts == 0 ? 1 : totalNumbOfProducts;
 
@@ -126,4 +132,31 @@ public class LegislativeAreaReviewController : Controller
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
+
+    [HttpPost(Name = Routes.LegislativeAreaSelected)]
+    public async Task <IActionResult> ReviewLegislativeAreas(Guid id, string? submitType, bool fromSummary, SelectedLegislativeAreasViewModel viewModel)
+    {
+        var cabId = id.ToString();
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(cabId) ??
+                             throw new InvalidOperationException();
+
+        if (submitType == Constants.SubmitType.Continue)
+        {
+            return RedirectToAction("SchedulesList", "FileUpload", fromSummary ? new { id = cabId, fromSummary = "true" } : new { id = cabId });
+        }
+
+        if (submitType == Constants.SubmitType.Save)
+        {
+            var userAccount =
+                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
+                userAccount ?? throw new InvalidOperationException(), latestDocument);
+            TempData[Constants.TempDraftKey] =
+                $"Draft record saved for {latestDocument.Name} <br>CAB number {latestDocument.CABNumber}";
+            RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = cabId });
+        }
+
+        return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" }); ;
+    }
+
 }

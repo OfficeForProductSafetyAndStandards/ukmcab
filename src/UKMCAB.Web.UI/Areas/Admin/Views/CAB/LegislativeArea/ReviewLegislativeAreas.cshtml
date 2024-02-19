@@ -22,16 +22,16 @@
                         <span class="govuk-caption-m">Legislative area added</span>
                     </legend>
 
-                    <govuk-checkboxes name="nationality">
+                    <govuk-checkboxes name="IsSelected">
                         <govuk-checkboxes-fieldset>
                             <govuk-checkboxes-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
                                 Legislative area added
                             </govuk-checkboxes-fieldset-legend>
 
-                            @foreach (var la in Model.SelectedLegislativeAreas)
+                            @for (int i = 0; i < Model.SelectedLegislativeAreas.Count; i++)
                             {
-                                <govuk-checkboxes-item value="@la.IsSelected">
-
+                                var la = Model.SelectedLegislativeAreas[i];
+                                <govuk-checkboxes-item name="SelectedLegislativeAreas[@i].IsSelected" value="@la.IsSelected">
                                     <details class="govuk-details ukmcab-expander">
                                         <summary class="govuk-details__summary">
                                             <span class="govuk-details__summary-text govuk-!-font-size-24">
@@ -167,23 +167,18 @@
                     </govuk-checkboxes>
                 </fieldset>
             </div>
+            <div>
+                <div>
+                    <govuk-button-link class="govuk-button--secondary" href="/">Remove legislative area</govuk-button-link>
+                </div>
+                <div>
+                    <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new {id = Model.CABId})">Add legislative area</govuk-button-link>
+                </div>
+                <div class="govuk-button-group ukmcab-padding-top-50">
+                    <govuk-button disabled="false" type="submit" name="submitType" value="@Constants.SubmitType.Continue">Save and continue</govuk-button>
+                    <govuk-button type="submit" name="submitType" value="@Constants.SubmitType.Save" class="govuk-button--secondary">Save as draft</govuk-button>
+                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
         </div>
     </form>
-</div>
-
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div>
-            <govuk-button-link class="govuk-button--secondary" href="/">Remove legislative area</govuk-button-link>
-        </div>
-        <div>
-            <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new {id = Model.CABId})">Add legislative area</govuk-button-link>
-        </div>
-        <div class="govuk-button-group ukmcab-padding-top-50">
-            <govuk-button disabled="false">Save and continue</govuk-button>
-            <govuk-button class="govuk-button--secondary">Save as draft</govuk-button>
-            <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-        </div>
-    </div>
 </div>
