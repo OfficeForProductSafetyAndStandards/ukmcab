@@ -7,7 +7,7 @@
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link href="@Model.ReturnUrl" />
+                <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new {id = Model.CABId})" />
             </div>
         </div>
     </div>
@@ -22,16 +22,16 @@
                         <span class="govuk-caption-m">Legislative area added</span>
                     </legend>
 
-                    <govuk-checkboxes name="nationality">
+                    <govuk-checkboxes name="IsSelected">
                         <govuk-checkboxes-fieldset>
                             <govuk-checkboxes-fieldset-legend is-page-heading="true" class="govuk-fieldset__legend--l">
                                 Legislative area added
                             </govuk-checkboxes-fieldset-legend>
 
-                            @foreach (var la in Model.SelectedLegislativeAreas)
+                            @for (int i = 0; i < Model.SelectedLegislativeAreas.Count; i++)
                             {
-                                <govuk-checkboxes-item value="@la.IsSelected">
-
+                                var la = Model.SelectedLegislativeAreas[i];
+                                <govuk-checkboxes-item name="SelectedLegislativeAreas[@i].IsSelected" value="@la.IsSelected">
                                     <details class="govuk-details ukmcab-expander">
                                         <summary class="govuk-details__summary">
                                             <span class="govuk-details__summary-text govuk-!-font-size-24">
@@ -45,9 +45,10 @@
                                                 {
                                                     var showPurposeOfAppointment = la.LegislativeAreaDetails.Any(x => !string.IsNullOrWhiteSpace(x.PurposeOfAppointment));
                                                     var showCategory = la.LegislativeAreaDetails.Any(x => !string.IsNullOrWhiteSpace(x.Category));
-                                                    var showProduct = la.LegislativeAreaDetails.Any(x => x.Products.Any());
-                                                    var showProcedure = la.LegislativeAreaDetails.Any(x => x.Procedures.Any());
-                                                    <table class="govuk-table">                                                        
+                                                    var showProduct = la.LegislativeAreaDetails.Any(x => !string.IsNullOrWhiteSpace(x.ProductAndProcedures.Product));
+                                                    var showProcedure = la.LegislativeAreaDetails.Any(x => x.ProductAndProcedures.Procedures != null && x.ProductAndProcedures.Procedures.Any());
+                                                    
+                                                    <table class="govuk-table">
                                                         <thead class="govuk-table__head">
                                                             <tr class="govuk-table__row">
                                                                 <th scope="col" class="govuk-table__header @Html.Conditional(showPurposeOfAppointment, "", " app-no-display")">Purpose of appointment</th>
@@ -66,15 +67,12 @@
                                                                 <tr class="govuk-table__row">
                                                                     <td class="govuk-table__cell @Html.Conditional(!showPurposeOfAppointment, " app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">@Html.ValueOrNotProvided(@laDetails.PurposeOfAppointment)</td>
                                                                     <td class="govuk-table__cell  @Html.Conditional(!showCategory, " app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">@Html.ValueOrNotProvided(@laDetails.Category)</td>
-                                                                    <td class="govuk-table__cell @Html.Conditional(!showProcedure, "app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">
-                                                                        @if (laDetails.Products.Any())
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showProduct, "app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">
+                                                                        @if (laDetails.ProductAndProcedures.Product != null)
                                                                         {
-                                                                            @foreach (var product in laDetails.Products)
-                                                                            {
-                                                                                <p class="govuk-body">
-                                                                                    @product
-                                                                                </p>
-                                                                            }
+                                                                            <p class="govuk-body">
+                                                                                @laDetails.ProductAndProcedures.Product
+                                                                            </p>
                                                                         }
                                                                         else
                                                                         {
@@ -82,9 +80,9 @@
                                                                         }
                                                                     </td>
                                                                     <td class="govuk-table__cell  @Html.Conditional(!showProcedure, "app-no-display") @Html.Conditional(removeBorder, " ukmcab-no-border")">
-                                                                        @if (laDetails.Procedures.Any())
+                                                                        @if (laDetails.ProductAndProcedures.Procedures != null && laDetails.ProductAndProcedures.Procedures.Any())
                                                                         {
-                                                                            @foreach (var procedure in laDetails.Procedures)
+                                                                            @foreach (var procedure in laDetails.ProductAndProcedures.Procedures)
                                                                             {
                                                                                 <p class="govuk-body">
                                                                                     @procedure
@@ -94,8 +92,9 @@
                                                                         else
                                                                         {
                                                                             @Constants.NotProvided
-                                                                        }                                                                        
+                                                                        }
                                                                     </td>
+
                                                                 </tr>
                                                                 @if (!string.IsNullOrWhiteSpace(laDetails.SubCategory))
                                                                 {
@@ -122,36 +121,40 @@
                                                         </h2>
 
                                                         <p class="govuk-body @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.PurposeOfAppointment), " app-no-display")">@laDetails.PurposeOfAppointment</p>
-                                                        
+
                                                         <h2 class="govuk-heading-m @Html.Conditional(la.LegislativeAreaDetails.Any( x => !string.IsNullOrWhiteSpace(x.Category)), "", " app-no-display")">
                                                             Product category
-                                                        </h2>                                                        
+                                                        </h2>
                                                         <p class="govuk-body  @Html.Conditional(string.IsNullOrWhiteSpace(laDetails.Category), " app-no-display")">@laDetails.Category</p>
                                                         @if (!string.IsNullOrWhiteSpace(laDetails.SubCategory))
                                                         {
                                                             <p><span class="bold-text">Product sub-category</span><br />@laDetails.SubCategory</p>
                                                         }
-                                                        
-                                                        <h2 class="govuk-heading-m @Html.Conditional(la.LegislativeAreaDetails.Any( x => x.Products.Any()), "", " app-no-display")">
+
+                                                        <h2 class="govuk-heading-m @Html.Conditional(la.LegislativeAreaDetails.Any( x => !string.IsNullOrWhiteSpace(x.ProductAndProcedures.Product)), "", " app-no-display")">
                                                             Product
                                                         </h2>
-                                                        @foreach (var product in laDetails.Products)
-                                                        {
-                                                            <p class="govuk-body">
-                                                                @product
-                                                            </p>
-                                                        }
 
-                                                        <h2 class="govuk-heading-m @Html.Conditional(la.LegislativeAreaDetails.Any( x => x.Procedures.Any()), "", " app-no-display")">
+                                                        <p class="govuk-body">
+                                                            @if (laDetails.ProductAndProcedures.Product != null)
+                                                            {
+                                                                @laDetails.ProductAndProcedures.Product
+                                                            }
+                                                            else
+                                                            {
+                                                                @Constants.NotProvided
+                                                            }
+                                                        </p>
+
+                                                        <h2 class="govuk-heading-m @Html.Conditional(la.LegislativeAreaDetails.Any( x => laDetails.ProductAndProcedures.Procedures != null && x.ProductAndProcedures.Procedures.Any()), "", " app-no-display")">
                                                             Applicable conformity asessment procedure
                                                         </h2>
-                                                        @foreach (var procedure in laDetails.Procedures)
+                                                        @foreach (var procedure in laDetails.ProductAndProcedures.Procedures)
                                                         {
                                                             <p class="govuk-body">
                                                                 @procedure
                                                             </p>
                                                         }
-
                                                         <hr class="ukmcab-border" />
                                                     }
                                                 }
@@ -164,23 +167,18 @@
                     </govuk-checkboxes>
                 </fieldset>
             </div>
+            <div>
+                <div>
+                    <govuk-button-link class="govuk-button--secondary" href="/">Remove legislative area</govuk-button-link>
+                </div>
+                <div>
+                    <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new {id = Model.CABId})">Add legislative area</govuk-button-link>
+                </div>
+                <div class="govuk-button-group ukmcab-padding-top-50">
+                    <govuk-button disabled="false" type="submit" name="submitType" value="@Constants.SubmitType.Continue">Save and continue</govuk-button>
+                    <govuk-button type="submit" name="submitType" value="@Constants.SubmitType.Save" class="govuk-button--secondary">Save as draft</govuk-button>
+                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
         </div>
     </form>
-</div>
-
-
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <div>
-            <govuk-button-link class="govuk-button--secondary" href="/">Remove legislative area</govuk-button-link>
-        </div>
-        <div>
-            <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new {id = Model.CABId})">Add legislative area</govuk-button-link>
-        </div>
-        <div class="govuk-button-group ukmcab-padding-top-50">
-            <govuk-button disabled="false">Save and continue</govuk-button>
-            <govuk-button class="govuk-button--secondary">Save as draft</govuk-button>
-            <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-        </div>
-    </div>
 </div>

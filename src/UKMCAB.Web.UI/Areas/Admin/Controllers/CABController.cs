@@ -17,7 +17,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
-using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -655,13 +654,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         soaViewModel.Products.Add(product.Name);
                     }
 
-                    foreach (var item in scopeOfAppointment.ProductIdAndProcedureIds)
+                    foreach (var productAndProcedureIds in scopeOfAppointment.ProductIdAndProcedureIds)
                     {
-                        foreach (var procedureId in item.ProcedureIds)
+                        if (productAndProcedureIds.ProductId != null)
+                        {
+                            var prod = await _legislativeAreaService.GetProductByIdAsync((Guid)productAndProcedureIds.ProductId!);
+                            soaViewModel.ProductAndProcedures.Product = prod.Name;
+                        }                        
+
+                        foreach (var procedureId in productAndProcedureIds.ProcedureIds)
                         {
                             var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                            soaViewModel.Procedures.Add(procedure.Name);
-                        }
+                            soaViewModel.ProductAndProcedures.Procedures.Add(procedure.Name);
+                        }                        
                     }
 
                     legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
