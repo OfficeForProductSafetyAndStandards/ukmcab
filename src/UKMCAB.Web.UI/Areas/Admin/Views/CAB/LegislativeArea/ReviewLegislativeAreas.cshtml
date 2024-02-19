@@ -6,6 +6,7 @@
     {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
+            I
             <div class="govuk-grid-column-two-thirds">
                 <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new {id = Model.CABId})" />
             </div>
@@ -47,7 +48,7 @@
                                                     var showCategory = la.LegislativeAreaDetails.Any(x => !string.IsNullOrWhiteSpace(x.Category));
                                                     var showProduct = la.LegislativeAreaDetails.Any(x => !string.IsNullOrWhiteSpace(x.ProductAndProcedures.Product));
                                                     var showProcedure = la.LegislativeAreaDetails.Any(x => x.ProductAndProcedures.Procedures != null && x.ProductAndProcedures.Procedures.Any());
-                                                    
+
                                                     <table class="govuk-table">
                                                         <thead class="govuk-table__head">
                                                             <tr class="govuk-table__row">
@@ -179,6 +180,7 @@
                     <govuk-button type="submit" name="submitType" value="@Constants.SubmitType.Save" class="govuk-button--secondary">Save as draft</govuk-button>
                     <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 </div>
+            </div>
         </div>
     </form>
 </div>
