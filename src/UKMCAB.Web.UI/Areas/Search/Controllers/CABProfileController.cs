@@ -113,7 +113,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 [AiTracking.Metadata.CabName] = cab.Name
             }));
 
-            cab.CabLegislativeAreas.IsLoadCabLegislativeAreaInformation = false;
+            cab.CabLegislativeAreas.CABLegislativeAreaView = CABLegislativeAreaView.LegislativeAreaList;
             return View(cab);
         }
 
@@ -123,22 +123,17 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
-            cab.CabLegislativeAreas.IsLoadCabLegislativeAreaInformation = true;
+            cab.CabLegislativeAreas.CABLegislativeAreaView = CABLegislativeAreaView.LegislativeAreaList;
             var purposeOfAppointments = new List<PurposeOfAppointmentModel>();
-            var legislativeAreaInfo = cab.CabLegislativeAreas.LegislativeAreasModel
-                .Where(a => a.LegislativeAreaId == legislativeAreaId)
-                .Select(a =>
-                    new
-                    {
-                        Regulation = a.Regulation,
-                        LegislativeAreaName = a.Name
-                    }).First();
+
+            var legislativeAreaInfo =
+                GetLegislativeAreaInfo(cab.CabLegislativeAreas.LegislativeAreasModel, legislativeAreaId);
 
             var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
                 .Where(a => a.PurposeOfAppointmentId != null && a.LegislativeAreaId == legislativeAreaId)
                 .Select(a => a.PurposeOfAppointmentId)
                 .Distinct();
-            
+
             foreach (var purposeOfAppointmentId in purposeOfAppointmentIds)
             {
                 var purposeOfAppointmentInformation = await _legislativeAreaService
@@ -155,25 +150,39 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var cabLegislativeAreaPurposeOfAppointmentViewModel = GetCABLegislativeAreaPurposeOfAppointmentAsync(
                 legislativeAreaId,
-                legislativeAreaInfo?.LegislativeAreaName,
+                legislativeAreaInfo.LegislativeAreaName,
                 cab.CABUrl,
-                legislativeAreaInfo?.Regulation,
+                legislativeAreaInfo.Regulation,
                 purposeOfAppointments);
             cab.CabLegislativeAreas.PurposeOfAppointments = cabLegislativeAreaPurposeOfAppointmentViewModel;
+            cab.CabLegislativeAreas.CABLegislativeAreaView = CABLegislativeAreaView.PurposeOfAppointmentOnly;
             return View(cab);
         }
 
-        [HttpGet("search/cab-profile/{id}/{legislativeAreaId}/{scopeId}",
+        [HttpGet("search/cab-profile/{id}/{legislativeAreaId}/{purposeOfAppointmentId}",
             Name = Routes.CabDetailsLegislativeAreaPurposeOfAppointment)]
         public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, Guid legislativeAreaId,
-            Guid scopeId, int pagenumber = 1)
+            Guid purposeOfAppointmentId, int pagenumber = 1)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
-            cab.CabLegislativeAreas.IsLoadCabLegislativeAreaInformation = false;
+
+            var legislativeAreaInfo =
+                GetLegislativeAreaInfo(cab.CabLegislativeAreas.LegislativeAreasModel, legislativeAreaId);
+
+            cab.CabLegislativeAreas.PoaCategories = await GetCabLaPoaCategoriesAsync(cabDocument.ScopeOfAppointments,
+                legislativeAreaId,
+                legislativeAreaInfo.LegislativeAreaName, cab.CABUrl,
+                legislativeAreaInfo.Regulation, purposeOfAppointmentId);
+            if (cab.CabLegislativeAreas.PoaCategories.Categories.Any())
+            {
+                cab.CabLegislativeAreas.CABLegislativeAreaView =
+                    CABLegislativeAreaView.PurposeOfAppointmentWithCategories;
+            }
             return View(cab);
         }
 
+        #region profileDraft
         [HttpGet("profile/draft/{id:guid}", Name = Routes.CabDraftProfile), Authorize]
         public async Task<IActionResult> DraftAsync(string id, int pagenumber = 1)
         {
@@ -189,7 +198,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 return NotFound();
             }
         }
+        #endregion
 
+        #region profileFeed
         [HttpGet("search/cab-profile-feed/{id}", Name = Routes.CabFeed)]
         public async Task<IActionResult> Feed(string id, string? returnUrl)
         {
@@ -222,7 +233,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 return Content(content, "application/atom+xml;charset=utf-8");
             }
         }
-
+        #endregion
         private async Task<CABProfileViewModel> GetCabProfileForIndex(Document cabDocument, string? returnUrl,
             int pagenumber = 1)
         {
@@ -363,15 +374,18 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private async Task<CABLegislativeAreasModel> GetCABLegislativeAreasAsync(
             IEnumerable<DocumentLegislativeArea> documentLegislativeAreas, string cabUrl)
         {
+            var cabLegislativeAreaIds = documentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
             var allLegislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
+            var legislativeAreas = allLegislativeAreas.Where(n => cabLegislativeAreaIds.Contains(n.Id));
 
-            var legislativeAreasList = documentLegislativeAreas.Select(x => new LegislativeAreasViewModel {
-                LegislativeAreaId = x.Id,
-                Name = allLegislativeAreas.Single(y => y.Id ==  x.LegislativeAreaId).Name,
-                Regulation = allLegislativeAreas.Single(y => y.Id ==  x.LegislativeAreaId).Regulation,
-                IsProvisional = x.IsProvisional!.Value,
-            }).ToList();
-
+            var legislativeAreasList = new List<LegislativeAreasViewModel>();
+            legislativeAreasList.AddRange(legislativeAreas.Select(legislativeAreaModel =>
+                new LegislativeAreasViewModel()
+                {
+                    LegislativeAreaId = legislativeAreaModel.Id,
+                    Name = legislativeAreaModel.Name,
+                    Regulation = legislativeAreaModel.Regulation,
+                }));
             var cabLegislativeAreasModel = new CABLegislativeAreasModel
             {
                 CabUrl = cabUrl,
@@ -381,7 +395,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         //TODO : Work in-progress - Integration to be done
-        private CABLegislativeAreaPurposeOfAppointmentViewModel GetCABLegislativeAreaPurposeOfAppointmentAsync(
+        private CABLaPurposeOfAppointmentViewModel GetCABLegislativeAreaPurposeOfAppointmentAsync(
             Guid legislativeAreaId,
             string? LegislativeAreaName,
             string cabUrl,
@@ -394,7 +408,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Name = a.Name,
                 Id = a.Id
             }));
-            var purposeOfAppointment = new CABLegislativeAreaPurposeOfAppointmentViewModel
+            var purposeOfAppointment = new CABLaPurposeOfAppointmentViewModel
             {
                 LegislativeAreaId = legislativeAreaId,
                 LegislativeAreaName = LegislativeAreaName,
@@ -405,6 +419,64 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
 
             return purposeOfAppointment;
+        }
+
+        private (string LegislativeAreaName, string? Regulation) GetLegislativeAreaInfo(
+            IEnumerable<LegislativeAreasViewModel> legislativeAreas, Guid legislativeAreaId)
+        {
+            var legislativeAreaInfo = legislativeAreas.Where(a => a.LegislativeAreaId == legislativeAreaId)
+                .Select(a =>
+                    new
+                    {
+                        a.Regulation,
+                        LegislativeAreaName = a.Name
+                    }).First();
+            return (legislativeAreaInfo.LegislativeAreaName, legislativeAreaInfo.Regulation);
+        }
+
+        //TODO : Needs to deal with Category with Subcategories vs product
+        private async Task<CABLaPoaCategoriesViewModel> GetCabLaPoaCategoriesAsync(
+            List<DocumentScopeOfAppointment> scopeOfAppointments,
+            Guid legislativeAreaId,
+            string? LegislativeAreaName,
+            string cabUrl,
+            string? regulation,
+            Guid purposeOfAppointmentId
+        )
+        {
+            var PoaWithCatories = new CABLaPoaCategoriesViewModel
+            {
+                CabUrl = cabUrl,
+                Regulation = regulation,
+                LegislativeAreaName = LegislativeAreaName,
+                LegislativeAreaId = legislativeAreaId
+            };
+
+            var purposeOfAppointmentInformation = await _legislativeAreaService
+                .GetPurposeOfAppointmentByIdAsync(purposeOfAppointmentId);
+            PoaWithCatories.PurposeOfAppointment = new StandardViewModel
+            {
+                Name = purposeOfAppointmentInformation?.Name,
+                Id = purposeOfAppointmentInformation.Id
+            };
+
+            Guid? categoryId = scopeOfAppointments.First(a =>
+                    a.LegislativeAreaId == legislativeAreaId && a.PurposeOfAppointmentId == purposeOfAppointmentId)
+                .CategoryId;
+            if (categoryId != null)
+            {
+                var categoryInformation = await _legislativeAreaService.GetCategoryByIdAsync(categoryId?? Guid.Empty);
+                var categories = new List<StandardViewModel>
+                {
+                    new()
+                    {
+                        Name = categoryInformation?.Name,
+                        Id = categoryInformation.Id
+                    }
+                };
+                PoaWithCatories.Categories = categories;
+            }
+            return PoaWithCatories;
         }
 
         private async Task<CABProfileViewModel> GetRequestInformation(CABProfileViewModel profileViewModel)
@@ -551,6 +623,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         #endregion
 
+        #region UnarchiveCAB
+
         [HttpGet, Route("search/unarchive-cab/{id}"), Authorize]
         public async Task<IActionResult> UnarchiveCAB(string id, string? returnUrl)
         {
@@ -594,6 +668,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(model);
         }
 
+        #endregion
+
+        #region SubscriptionAndSchedule
 
         /// <summary>
         /// CAB data API used by the Email Subscriptions Core
@@ -676,6 +753,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return Ok("File does not exist");
         }
 
+        #endregion
+
+        #region CabHistory
+
         [HttpGet("search/cab/history-details")]
         public IActionResult ShowCABHistoryDetails()
         {
@@ -692,5 +773,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             TempData["auditHistoryData"] = JsonSerializer.Serialize(auditHistoryItemViewModel);
             return RedirectToAction(nameof(CABHistoryDetails));
         }
+
+        #endregion
     }
 }
