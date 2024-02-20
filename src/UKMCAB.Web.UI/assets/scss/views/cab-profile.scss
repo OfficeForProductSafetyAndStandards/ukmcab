@@ -19,11 +19,11 @@
     .table-top-border {
         border-top: 1px solid $govuk-border-colour;
     }
-    
-    .govuk-tabs__panel{
+
+    .govuk-tabs__panel {
         padding: 0 !important;
     }
-    
+
     #admin-buttons-container {
         display: block;
         float: right;
@@ -136,6 +136,7 @@
 
             .cab-detail-section {
                 padding: 10px 0 40px;
+
                 .govuk-summary-list {
                     border-top: 1px solid #b1b4b6;
 
@@ -156,8 +157,29 @@
                 }
             }
 
-            .cab-detail-section:last-child  {
+            .cab-detail-section:last-child {
                 padding: 10px 0 0 !important;
+            }
+        }
+
+        .legislative-area-name {
+            @include govuk-media-query($until: tablet) {
+                display: block;
+            }
+
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+
+            .la-provisional-tag {
+                strong {
+                    margin: 0;
+                }
+
+                @include govuk-media-query($until: tablet) {
+                    margin-top: 10px;
+                    margin-bottom: 15px;
+                }
             }
         }
     }
