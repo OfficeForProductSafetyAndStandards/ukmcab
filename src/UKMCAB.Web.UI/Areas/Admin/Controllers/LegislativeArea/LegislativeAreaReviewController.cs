@@ -91,7 +91,7 @@ public class LegislativeAreaReviewController : Controller
                         PurposeOfAppointment = purpose?.Name ?? string.Empty,
                         Category = category?.Name ?? string.Empty,
                         SubCategory = subCategory?.Name ?? string.Empty,
-                        ProductAndProcedures = productAndProcedures
+                         //= productAndProcedures
                     };
                     selectedLAs.Add(laItem);
 
@@ -105,7 +105,7 @@ public class LegislativeAreaReviewController : Controller
                     PurposeOfAppointment = purpose?.Name ?? string.Empty,
                     Category = category?.Name ?? string.Empty,
                     SubCategory = subCategory?.Name ?? string.Empty,
-                    ProductAndProcedures = new() { Product = string.Empty, Procedures = new List<string>() },
+                    //ProductAndProcedures = new() { Product = string.Empty, Procedures = new List<string>() },
                 };
                 selectedLAs.Add(laItem);
             }
@@ -119,7 +119,7 @@ public class LegislativeAreaReviewController : Controller
                 PurposeOfAppointment = laDetails.PurposeOfAppointment,
                 Category = laDetails.Category,
                 SubCategory = laDetails.SubCategory,
-                ProductAndProcedures = laDetails.ProductAndProcedures
+                //ProductAndProcedures = laDetails.ProductAndProcedures
             }).ToList()
         }).ToList();
 
