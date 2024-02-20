@@ -240,7 +240,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     return model.IsFromSummary
                         ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
-                        : RedirectToAction("SchedulesUpload", "FileUpload",
+                        : RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails",
                             new { Area = "admin", id = latestDocument.CABId });
                 }
 
