@@ -1,30 +1,18 @@
+@using UKMCAB.Web.UI.Models.ViewModels.Search.Shared
 @model CABLegislativeAreasModel
-@if (!Model.IsLoadCabLegislativeAreaInformation)
-{
-    <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden govuk-body" id="legislative-areas">
-        <div class="cab-detail-section">
-            <h2 class="govuk-heading-l">Legislative areas</h2>
-        </div>
 
-        <dl class="govuk-summary-list table-top-border">
-            @foreach (var legislativeArea in Model.LegislativeAreasModel)
-            {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key ">
-                        <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
-                            @legislativeArea.Name
-                        </a>
-                        @if (!string.IsNullOrWhiteSpace(legislativeArea.Regulation))
-                        {
-                            <p> Regulation : @legislativeArea.Regulation </p>
-                        }
-                    </dt>
-                </div>
-            }
-        </dl>
-    </div>
-}
-else
+@switch (Model.CABLegislativeAreaView)
 {
-    <partial name="Partials/_LegislativeAreaPurposeOfAppointment" model="@Model.PurposeOfAppointments"/>
+    case CABLegislativeAreaView.LegislativeAreaList:
+        <partial name="Partials/_LA_List" model="@Model"/>
+        break;
+    case CABLegislativeAreaView.PurposeOfAppointmentOnly:
+        <partial name="Partials/_LA_PurposeOfAppointment" model="@Model.PurposeOfAppointments"/>
+        break;
+    case CABLegislativeAreaView.PurposeOfAppointmentWithCategories:
+        <partial name="Partials/_LA_PurposeOfAppointmentWithCategories" model="@Model.PoaCategories"/>
+        break;
+    case CABLegislativeAreaView.None:
+    default:
+        throw new ArgumentOutOfRangeException();
 }

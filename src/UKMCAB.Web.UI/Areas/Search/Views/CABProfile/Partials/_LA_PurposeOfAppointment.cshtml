@@ -1,14 +1,14 @@
-@model  CABLegislativeAreaPurposeOfAppointmentViewModel
+@model  CABLaPurposeOfAppointmentViewModel
 <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
-   asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-scopeId="@Guid.NewGuid()" asp-fragment="legislative-areas">
-    View all legislative areas
+     asp-fragment="legislative-areas">
+    View all legislative areas 
 </a>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">Legislative area </span>
         <h3 class="govuk-heading-s">@Model.LegislativeAreaName</h3>
-        @if (!string.IsNullOrWhiteSpace(@Model.Regulation))
+        @if (!string.IsNullOrWhiteSpace(Model.Regulation))
         {
             <p class="govuk-body">Regulation: @Model.Regulation</p>
         }
@@ -22,10 +22,10 @@
     {
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key ">
-                <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-fragment="legislative-areas">
+                <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                   asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@purposeOfAppointment.Id" asp-fragment="legislative-areas">
                     @purposeOfAppointment.Name
                 </a>
-
             </dt>
         </div>
     }
