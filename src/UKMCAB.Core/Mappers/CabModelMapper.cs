@@ -99,7 +99,9 @@ public static class CabModelMapper
                     UploadDateTime = fileUpload.UploadDateTime,
                     Label = fileUpload.Label,
                     FileName = fileUpload.FileName,
-                    LegislativeArea = fileUpload.LegislativeArea
+                    LegislativeArea = fileUpload.LegislativeArea,
+                    Archived = fileUpload.Archived,
+                    
                 });
                 
             }
@@ -118,7 +120,8 @@ public static class CabModelMapper
                     UploadDateTime = fileUpload.UploadDateTime,
                     Label = fileUpload.Label,
                     FileName = fileUpload.FileName,
-                    LegislativeArea = fileUpload.LegislativeArea
+                    LegislativeArea = fileUpload.LegislativeArea,
+                    Archived = fileUpload.Archived,
                 });
             }
         }

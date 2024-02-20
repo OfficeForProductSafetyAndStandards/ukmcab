@@ -147,8 +147,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestVersion.Schedules?.Select(s => new FileViewModel
                     {
                         FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                        LegislativeArea = s.LegislativeArea
-                    })
+                        LegislativeArea = s.LegislativeArea, Id = s.Id, Archived = s.Archived
+                })
                     .ToList() ?? new List<FileViewModel>();
             model.CABId = id;
             model.IsFromSummary = fromSummary;
@@ -191,7 +191,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id });
             }
-
 
             var uploadedFileViewModels = new List<FileViewModel>();           
 
@@ -318,8 +317,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             }
                             // ask user to remove or archive
                             else
-                            {
-                            
+                            {                            
                                 var storagekey = Guid.NewGuid().ToString();
                                 await _distCache.SetAsync(storagekey, fileUploadsInLatestDocumentMatchingUserSelection.Select(n => n.Id).ToList(), TimeSpan.FromHours(1));
 
@@ -334,7 +332,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             Label = s.Label,
                             LegislativeArea = s.LegislativeArea,
                             IsSelected = false,
-                            Archived = s.Archived
+                            Archived = s.Archived, 
+                            Id = s.Id
                         }).ToList() ?? new List<FileViewModel>();
 
                         var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected)
@@ -502,7 +501,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.UploadedFiles =
                 latestVersion.Documents?.Select(s => new FileViewModel
                     {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category
+                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category, Id = s.Id, Archived = s.Archived
                     })
                     .ToList() ?? new List<FileViewModel>();
             model.CABId = id;
@@ -543,7 +542,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                     {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category
+                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category, Archived = s.Archived, Id = s.Id
                     }).ToList() ?? new List<FileViewModel>();
 
                     var selectedViewModel = latestDocument.Documents[fileToUseAgainIndex];
@@ -569,8 +568,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                 {
-                    FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category
-                })
+                    FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category, Archived = s.Archived, Id = s.Id
+            })
                 .ToList() ?? new List<FileViewModel>();
 
             //Pre - populate model for edit
@@ -638,14 +637,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                     var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                     {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category
+                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category, Archived = s.Archived, Id = s.Id
                     }).ToList() ?? new List<FileViewModel>();
 
                     var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected)
                         .Select(s => new FileViewModel
                         {
                             FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                            LegislativeArea = s.LegislativeArea, IsSelected = false
+                            Category = s.Category, IsSelected = false, Archived = s.Archived
                         }).ToList() ?? new List<FileViewModel>();
                     ;
 
@@ -657,7 +656,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         UploadedFiles = currentlyUploadedFileViewModels,
                         CABId = id,
                         IsFromSummary = fromSummary,
-                        DocumentStatus = latestDocument.StatusValue
+                        DocumentStatus = latestDocument.StatusValue                        
                     });
                 }
             }
@@ -812,7 +811,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Category = string.Empty,
                 IsSelected = false,
                 IsDuplicated = true,
-                Id = selectedViewModel.Id,
+                Id = Guid.NewGuid()
             };
 
             uploadedFileViewModels.Add(uploadedFileToDuplicate);
