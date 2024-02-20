@@ -4,8 +4,11 @@ using System.Security.Claims;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -41,122 +44,80 @@ public class LegislativeAreaReviewController : Controller
         {
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
-
-        var scopeOfAppointments = latestDocument.ScopeOfAppointments;
-        var selectedLAs = new List<LegislativeAreaListItemViewModel>();
-
-        foreach (var sa in scopeOfAppointments)
+        
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", await PopulateCABLegislativeAreasViewModelAsync(latestDocument));
+    }
+    private async Task<ReviewLegislativeAreasViewModel> PopulateCABLegislativeAreasViewModelAsync(Document cab)
         {
-            var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync((Guid)sa.LegislativeAreaId);
-
-            var purpose = sa.PurposeOfAppointmentId != null
-            ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)sa.PurposeOfAppointmentId)
-            : null;
-
-            var category = sa.CategoryId != null
-            ? await _legislativeAreaService.GetCategoryByIdAsync((Guid)sa.CategoryId)
-            : null;
-
-            var subCategory = sa.SubCategoryId != null
-            ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)sa.SubCategoryId)
-            : null;
-
-            if (sa.ProductIdAndProcedureIds.Any())
+            var viewModel = new ReviewLegislativeAreasViewModel
             {
-                var totalNumbOfProducts = sa.ProductIdAndProcedureIds.Count(p => p.ProductId != null);
-                var numOfIteration = totalNumbOfProducts == 0 ? 1 : totalNumbOfProducts;
+                CABId = Guid.Parse(cab.CABId)
+            };
 
-                for (int i = 0; i < numOfIteration; i++)
-                {
-                    ProductModel? prod = null;
-                    if (sa.ProductIdAndProcedureIds[i].ProductId != null)
-                    {
-                        prod = await _legislativeAreaService.GetProductByIdAsync((Guid)sa.ProductIdAndProcedureIds[i].ProductId!);
-                    }
-                    var procedures = new List<string>();
-                    foreach (var procedureId in sa.ProductIdAndProcedureIds[i].ProcedureIds)
-                    {
-                        var proc = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                        if (proc?.Name != null) procedures.Add(proc.Name);
-                    }
-                    var productAndProcedures = new ProductAndProceduresName
-                    {
-                        Product = prod != null ? prod.Name : null,
-                        Procedures = procedures
-                    };
-
-                    var laItem = new LegislativeAreaListItemViewModel
-                    {
-                        LegislativeArea = new ListItem { Id = sa.LegislativeAreaId, Title = legislativeArea.Name },
-                        PurposeOfAppointment = purpose?.Name ?? string.Empty,
-                        Category = category?.Name ?? string.Empty,
-                        SubCategory = subCategory?.Name ?? string.Empty,
-                         //= productAndProcedures
-                    };
-                    selectedLAs.Add(laItem);
-
-                }
-            }
-            else
+            foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
             {
-                var laItem = new LegislativeAreaListItemViewModel
+                var legislativeArea =
+                    await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea
+                        .LegislativeAreaId);
+
+                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
                 {
-                    LegislativeArea = new ListItem { Id = sa.LegislativeAreaId, Title = legislativeArea.Name },
-                    PurposeOfAppointment = purpose?.Name ?? string.Empty,
-                    Category = category?.Name ?? string.Empty,
-                    SubCategory = subCategory?.Name ?? string.Empty,
-                    //ProductAndProcedures = new() { Product = string.Empty, Procedures = new List<string>() },
+                    Name = legislativeArea.Name,
+                    IsProvisional = documentLegislativeArea.IsProvisional,
+                    AppointmentDate = documentLegislativeArea.AppointmentDate,
+                    ReviewDate = documentLegislativeArea.ReviewDate,
+                    Reason = documentLegislativeArea.Reason,
+                    CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
                 };
-                selectedLAs.Add(laItem);
+
+                var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
+                foreach (var scopeOfAppointment in scopeOfAppointments)
+                {
+                    var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId.HasValue
+                        ? (await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(scopeOfAppointment
+                            .PurposeOfAppointmentId.Value))?.Name
+                        : null;
+
+                    var category = scopeOfAppointment.CategoryId.HasValue
+                        ? (await _legislativeAreaService.GetCategoryByIdAsync(scopeOfAppointment.CategoryId.Value))
+                        ?.Name
+                        : null;
+
+                    var subCategory = scopeOfAppointment.SubCategoryId.HasValue
+                        ? (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId
+                            .Value))?.Name
+                        : null;
+
+                    foreach (var productProcedure in scopeOfAppointment.ProductIdAndProcedureIds)
+                    {
+                        var soaViewModel = new LegislativeAreaListItemViewModel
+                        {
+                            LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                            PurposeOfAppointment = purposeOfAppointment,
+                            Category = category,
+                            SubCategory = subCategory,
+                        };
+
+                        if (productProcedure.ProductId.HasValue)
+                        {
+                            var product =
+                                await _legislativeAreaService.GetProductByIdAsync(productProcedure.ProductId.Value);
+                            soaViewModel.Product = product!.Name;
+                        }
+                        
+                        foreach (var procedureId in productProcedure.ProcedureIds)
+                        {
+                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                            soaViewModel.Procedures?.Add(procedure!.Name);
+                        }
+
+                        legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                    }
+                }
+
+                viewModel.LAItems.Add(legislativeAreaViewModel);
             }
+
+            return viewModel;
         }
-
-        var groupedSelectedLAs = selectedLAs.GroupBy(la => la.LegislativeArea?.Title).Select(group => new SelectedLegislativeAreaViewModel
-        {
-            LegislativeAreaName = group.Key,
-            LegislativeAreaDetails = group.Select(laDetails => new LegislativeAreaListItemViewModel
-            {
-                PurposeOfAppointment = laDetails.PurposeOfAppointment,
-                Category = laDetails.Category,
-                SubCategory = laDetails.SubCategory,
-                //ProductAndProcedures = laDetails.ProductAndProcedures
-            }).ToList()
-        }).ToList();
-
-        var vm = new SelectedLegislativeAreasViewModel
-        {
-            CABId = id,
-            ReturnUrl = returnUrl ?? "/",
-            SelectedLegislativeAreas = groupedSelectedLAs
-        };
-
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
-    }
-
-    [HttpPost(Name = Routes.LegislativeAreaSelected)]
-    public async Task <IActionResult> ReviewLegislativeAreas(Guid id, string? submitType, bool fromSummary, SelectedLegislativeAreasViewModel viewModel)
-    {
-        var cabId = id.ToString();
-        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(cabId) ??
-                             throw new InvalidOperationException();
-
-        if (submitType == Constants.SubmitType.Continue)
-        {
-            return RedirectToAction("SchedulesList", "FileUpload", fromSummary ? new { id = cabId, fromSummary = "true" } : new { id = cabId });
-        }
-
-        if (submitType == Constants.SubmitType.Save)
-        {
-            var userAccount =
-                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
-                userAccount ?? throw new InvalidOperationException(), latestDocument);
-            TempData[Constants.TempDraftKey] =
-                $"Draft record saved for {latestDocument.Name} <br>CAB number {latestDocument.CABNumber}";
-            RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = cabId });
-        }
-
-        return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" }); ;
-    }
-
 }
