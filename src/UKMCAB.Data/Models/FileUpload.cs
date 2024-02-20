@@ -4,12 +4,14 @@ namespace UKMCAB.Data.Models
 {
     public class FileUpload 
     {
+        public Guid Id { get; set; }
         public string Label { get; set; }
         public string? LegislativeArea { get; set; }
         public string? Category { get; set; }
         public string FileName { get; set; }
         public string BlobName { get; set; }
         public DateTime UploadDateTime { get; set; }
+        public bool? Archived { get; set; }
     }
 
     public class FileUploadComparer : IEqualityComparer<FileUpload>

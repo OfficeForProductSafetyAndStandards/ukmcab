@@ -13,9 +13,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     }
 
     public class FileViewModel
-    {
+    { 
+        public Guid Id { get; set; }
         public string FileName { get; set; }
-
         [Required(ErrorMessage = "Enter a title for the file")]
         public string? Label { get; set; }
         public string? LegislativeArea { get; set; }
@@ -25,6 +25,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsSelected { get; set; } = false;
         public bool IsDuplicated { get; set; } = false;
         public bool IsReplaced { get; set; } = false;
+
+        public bool? Archived { get; set; }
     }
 
     public static class SchedulesOptions

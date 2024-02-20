@@ -107,16 +107,26 @@
                             @for (int i = 0; i < Model.UploadedFiles.Count; i++)
                             {
                                 var uploadedFile = Model.UploadedFiles[i];
-
+                                var archived = uploadedFile.Archived.GetValueOrDefault();
+                                
                                 <div class="govuk-checkboxes__item">
                                     @*Row 1: Checkbox Row*@
-                                    <div class="row">
-                                        <div class="width-one-tenth">
+                                    <div class="row">                                       
+                                        <div class="width-one-tenth">                                          
                                             <input type="hidden" asp-for="UploadedFiles![i].FileIndex" value="@i"/>
+                                            <input type="hidden" asp-for="UploadedFiles![i].Archived" value="@archived" />
+                                            <input type="hidden" asp-for="UploadedFiles![i].Id" value="@uploadedFile.Id" />
                                         </div>
 
                                         <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
-                                            <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected"/>
+                                            @if(archived)
+                                            {
+                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected" disabled />
+                                            }
+                                            else
+                                            {
+                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected" />
+                                            }                                            
                                             <label class="govuk-label govuk-checkboxes__label" asp-for="UploadedFiles![i].IsSelected">
                                                 <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
                                             </label>
@@ -124,7 +134,6 @@
                                             {
                                                 <label class="govuk-body govuk-!-font-weight-bold govuk-colour-green">New</label>
                                             }
-
                                         </div>
                                     </div>
                                 </div>
@@ -136,9 +145,13 @@
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles![i].Label" class="govuk-error-message"></span>
                                         </p>
-                                        <input asp-for="UploadedFiles![i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
-                                        <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
-                                        <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
+                                        <input asp-for="UploadedFiles![i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" disabled="@archived" value="@uploadedFile.Label" aria-required="true" maxlength="150">
+                                        @if(archived)
+                                        {
+                                            <input asp-for="UploadedFiles![i].Label" type="hidden" value="@uploadedFile.Label" />
+                                        }
+                                        <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName" />
+                                        <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated" disabled="@archived">
                                         <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">                                        
                                     </div>
 
@@ -147,10 +160,11 @@
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles![i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
-                                        <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
-                                            @foreach (var la in Model.LegislativeAreas)
+                                        <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")" @(archived ? "disabled" : string.Empty)>
+                                            @foreach (var la in Model.LegislativeAreas.Where(x => x != null))
                                             {
-                                                if (la.Equals(uploadedFile.LegislativeArea?.Trim()))
+                                                var legislativeArea = uploadedFile.LegislativeArea ?? string.Empty;
+                                                if (la.Equals(legislativeArea.Trim()))
                                                 {
                                                     <option value="@la" selected="selected">@la</option>
                                                 }
@@ -177,7 +191,9 @@
             @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
             {
                 <div class="govuk-button-group">
-                    <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove"/>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove">
+                        Remove schedule
+                    </button>                    
                     <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
                     <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
                 </div>
