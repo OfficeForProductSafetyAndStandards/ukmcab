@@ -634,42 +634,41 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
                 foreach (var scopeOfAppointment in scopeOfAppointments)
                 {
-                    var soaViewModel = new LegislativeAreaListItemViewModel()
+                    var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId.HasValue ?
+                        (await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(scopeOfAppointment.PurposeOfAppointmentId.Value)).Name : null;
+
+                    var category = scopeOfAppointment.CategoryId.HasValue ?
+                        (await _legislativeAreaService.GetCategoryByIdAsync(scopeOfAppointment.CategoryId.Value)).Name : null;
+
+                    var subCategory = scopeOfAppointment.SubCategoryId.HasValue ?
+                        (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId.Value)).Name : null;
+
+                    foreach (var productProcedure in scopeOfAppointment.ProductIdAndProcedureIds)
                     {
-                        LegislativeArea = new ListItem { Id = scopeOfAppointment.LegislativeAreaId, Title = legislativeAreaViewModel.Name },
-
-                        PurposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId.HasValue ?
-                            (await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(scopeOfAppointment.PurposeOfAppointmentId.Value)).Name : null,
-
-                        Category = scopeOfAppointment.CategoryId.HasValue ?
-                            (await _legislativeAreaService.GetCategoryByIdAsync(scopeOfAppointment.CategoryId.Value)).Name : null,
-
-                        SubCategory = scopeOfAppointment.SubCategoryId.HasValue ?
-                            (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId.Value)).Name : null,
-                    };
-
-                    foreach (var productId in scopeOfAppointment.ProductIds)
-                    {
-                        var product = await _legislativeAreaService.GetProductByIdAsync(productId);
-                        soaViewModel.Products.Add(product.Name);
-                    }
-
-                    foreach (var productAndProcedureIds in scopeOfAppointment.ProductIdAndProcedureIds)
-                    {
-                        if (productAndProcedureIds.ProductId != null)
+                        var soaViewModel = new LegislativeAreaListItemViewModel()
                         {
-                            var prod = await _legislativeAreaService.GetProductByIdAsync((Guid)productAndProcedureIds.ProductId!);
-                            soaViewModel.ProductAndProcedures.Product = prod.Name;
-                        }                        
+                            LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                            PurposeOfAppointment = purposeOfAppointment,
+                            Category = category,
+                            SubCategory = subCategory,
+                        };
 
-                        foreach (var procedureId in productAndProcedureIds.ProcedureIds)
+                        if (productProcedure.ProductId.HasValue) {
+                            var product = await _legislativeAreaService.GetProductByIdAsync(productProcedure.ProductId.Value);
+                            soaViewModel.Product = product!.Name;
+                        }
+
+                        if (productProcedure.ProcedureIds != null)
                         {
-                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                            soaViewModel.ProductAndProcedures.Procedures.Add(procedure.Name);
-                        }                        
-                    }
+                            foreach(var procedureId in productProcedure.ProcedureIds)
+                            {
+                                var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                                soaViewModel.Procedures.Add(procedure!.Name);
+                            }
+                        }
 
-                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                        legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                    }
                 }
 
                 viewModel.LegislativeAreas.Add(legislativeAreaViewModel);

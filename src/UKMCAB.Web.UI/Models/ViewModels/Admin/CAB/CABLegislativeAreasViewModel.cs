@@ -22,8 +22,8 @@ public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegisl
         RuleFor(x => x.LegislativeAreas)
             .Must((model, legislativeAreas) =>
             {
-                bool complete = legislativeAreas.Any() && legislativeAreas.All(x => x.IsProvisional.HasValue && 
-                    (!x.CanChooseScopeOfAppointment || (x.ScopeOfAppointments.Any() && x.ScopeOfAppointments.All(y => y.ProductAndProcedures != null && y.ProductAndProcedures.Procedures != null && y.ProductAndProcedures.Procedures.Any() && y.ProductAndProcedures.Procedures.All(z => !string.IsNullOrEmpty(z))))));
+                bool complete = legislativeAreas.Any() && legislativeAreas.All(x => x.IsProvisional.HasValue &&
+                    (!x.CanChooseScopeOfAppointment || (x.ScopeOfAppointments.Any() && x.ScopeOfAppointments.All(y => y.Procedures != null && y.Procedures.Any() && y.Procedures.All(z => !string.IsNullOrEmpty(z))))));
                 return complete;
             })
             .WithMessage("Legislative areas are incomplete");
