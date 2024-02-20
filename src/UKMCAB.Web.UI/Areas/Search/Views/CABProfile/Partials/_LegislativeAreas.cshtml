@@ -11,9 +11,19 @@
             {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key ">
-                        <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
-                            @legislativeArea.Name
-                        </a>
+                        <div class="legislative-area-name">
+                            <div>
+                                <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
+                                    @legislativeArea.Name
+                                </a>
+                            </div>
+                            @if (legislativeArea.IsProvisional)
+                            {
+                                <div class="la-provisional-tag">
+                                    <strong class="cab-status-tag govuk-tag--yellow">Provisional</strong>
+                                </div>
+                            }
+                        </div>
                         @if (!string.IsNullOrWhiteSpace(legislativeArea.Regulation))
                         {
                             <p> Regulation : @legislativeArea.Regulation </p>
