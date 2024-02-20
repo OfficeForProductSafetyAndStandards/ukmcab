@@ -519,6 +519,27 @@ namespace UKMCAB.Core.Services.CAB
             await _cabRepository.UpdateAsync(latestDocument);
         }
 
+        public async Task ArchiveSchedulesAsync(Guid cabId, List<Guid> ScheduleIds)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
+            if (latestDocument == null) throw new InvalidOperationException("No document found");
+
+            if (ScheduleIds != null && ScheduleIds.Any())
+            {
+                var selectedSchedules = latestDocument.Schedules?.Where(n => ScheduleIds.Contains(n.Id)).ToList();
+
+                if (selectedSchedules != null && selectedSchedules.Any())
+                { 
+                    foreach (var schedule in selectedSchedules)
+                    {
+                        schedule.Archived = true;
+                    }
+                }
+            }
+
+            await _cabRepository.UpdateAsync(latestDocument);
+        }
+
         private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {
             List<Document> docs = await _cabRepository.Query<Document>(d =>

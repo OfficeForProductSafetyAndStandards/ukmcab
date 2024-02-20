@@ -84,6 +84,8 @@ namespace UKMCAB.Core.Services.CAB
 
         Task RemoveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId, string laName);
 
-        Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId);
+        Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId);        
+
+        Task ArchiveSchedulesAsync(Guid cabId, List<Guid> ScheduleIds);
     }
 }

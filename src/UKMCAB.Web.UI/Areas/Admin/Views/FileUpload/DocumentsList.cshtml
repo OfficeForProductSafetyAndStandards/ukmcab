@@ -121,9 +121,10 @@
                                         <div class="row">
                                             <div class="width-one-tenth">
                                                 <input type="hidden" asp-for="UploadedFiles![i].FileIndex" value="@i"/>
-                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles![i].IsSelected" />
+                                                <input type="hidden" asp-for="UploadedFiles![i].Id" value="@uploadedFile.Id" />
                                             </div>
-                                            <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">                                               
+                                            <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
+                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles![i].IsSelected" />
                                                 <label class="govuk-label govuk-checkboxes__label" asp-for="UploadedFiles![i].IsSelected">
                                                     <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@uploadedFile.FileName</a>
                                                 </label>                                                
