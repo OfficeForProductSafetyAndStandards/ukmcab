@@ -67,8 +67,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
         public string StatusLabel(string status)
         {
-            var label = ((Status)int.Parse(status)).ToString();
-            return InternalSearch ? label : $"{label} CAB";
+            return $"{(Status)int.Parse(status)} CAB";
         }
         public string SubStatusLabel(string substatus)
         {
