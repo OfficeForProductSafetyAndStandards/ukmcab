@@ -13,6 +13,7 @@
         public string[] StatusesFilter { get; set; }
         public string[] UserGroupsFilter { get; set; }
         public string[] SubStatusesFilter { get; set; }
+        public string[] ProvisionalLegislativeAreasFilter { get; set; }
 
         public bool IgnorePaging { get; set; }
         public bool InternalSearch { get; set; }

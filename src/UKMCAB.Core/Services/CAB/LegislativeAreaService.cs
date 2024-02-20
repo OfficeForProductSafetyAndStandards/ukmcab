@@ -162,9 +162,22 @@ public class LegislativeAreaService : ILegislativeAreaService
         }
 
         return new ScopeOfAppointmentOptionsModel();
-    }   
+    }
 
-    public async Task<ScopeOfAppointmentOptionsModel?> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId)
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForSubCategoryAsync(Guid subCategoryId)
+    {
+        var products = await _productRepository.QueryAsync(x => x.SubCategoryId == subCategoryId);
+        if (products.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                Products = _mapper.Map<IEnumerable<ProductModel>>(products)
+            };
+        }
+        return new ScopeOfAppointmentOptionsModel();
+    }
+    
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId)
     {
         var procedures = await _procedureRepository.QueryAsync(x => x.ProductIds.Contains(productId));
         if (procedures.Any())

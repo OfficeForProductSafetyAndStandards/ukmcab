@@ -17,10 +17,11 @@ namespace UKMCAB.Data.Search.Services
 
         public async Task<SearchFacets> GetFacetsAsync(bool internalSearch)
         {
+            var provisionalLegislativeAreaPath = "DocumentLegislativeAreas/IsProvisional";
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
-                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0", $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0"},
+                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0", $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0", $"{provisionalLegislativeAreaPath},count:0" },
                 Filter = internalSearch ? "" : "StatusValue eq '30' or StatusValue eq '40'"
             });
 
@@ -34,6 +35,7 @@ namespace UKMCAB.Data.Search.Services
                 result.StatusValue = GetFacetList(facets[nameof(result.StatusValue)]);
                 result.CreatedByUserGroup = GetFacetList(facets[nameof(result.CreatedByUserGroup)]);
                 result.SubStatus = GetFacetList(facets[nameof(result.SubStatus)]);
+                result.ProvisionalLegislativeAreas = GetFacetList(facets[provisionalLegislativeAreaPath]).OrderBy(x => x).ToList();
             }
 
             return result;
@@ -138,6 +140,20 @@ namespace UKMCAB.Data.Search.Services
             {
                 var subStatuses = string.Join(" or ", options.SubStatusesFilter.Select(st => $"SubStatus eq '{st}'"));
                 filters.Add($"({subStatuses})");
+            }
+            if (options.InternalSearch && options.ProvisionalLegislativeAreasFilter != null && options.ProvisionalLegislativeAreasFilter.Any())
+            {
+                if (options.ProvisionalLegislativeAreasFilter.Count() == 1)
+                {
+                    if (options.ProvisionalLegislativeAreasFilter.Contains("True"))
+                    {
+                        filters.Add($"DocumentLegislativeAreas/any(la: la/IsProvisional eq true)");
+                    }
+                    else
+                    {
+                        filters.Add($"DocumentLegislativeAreas/all(la: la/IsProvisional ne true)");
+                    }
+                }
             }
 
             // if internal search (user logged in) and non opss user (ukas user) then exclude opss draft cab from search
