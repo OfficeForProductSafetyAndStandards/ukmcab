@@ -29,39 +29,39 @@
 }
 
 <div class="govuk-width-container ">
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
-                @if (string.IsNullOrWhiteSpace(returnUrl))
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
+            @if (string.IsNullOrWhiteSpace(returnUrl))
+            {
+                <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement"/>
+            }
+            else
+            {
+                if (Model.Status == Status.Draft)
                 {
-                    <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement" />
+                    <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@SearchController.Routes.Search"/>
                 }
                 else
                 {
-                    if (Model.Status == Status.Draft)
-                    {
-                        <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@SearchController.Routes.Search"/>
-                    }
-                    else
-                    {
-                        <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId" />
-                    }
+                    <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId"/>
                 }
+            }
 
-            </div>
         </div>
     </div>
+</div>
 
 @if (Model.SubStatus == SubStatus.PendingApprovalToPublish)
 {
-    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner" />
+    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 else if (!Model.EditByGroupPermitted)
 {
-    <partial model="@("This CAB profile cannot be edited as it's been created by an OPSS user.")" name="Partials/_PageContentBanner" />
+    <partial model="@("This CAB profile cannot be edited as it's been created by an OPSS user.")" name="Partials/_PageContentBanner"/>
 }
 else if (Model.IsEditLocked)
 {
-    <partial model="@("This CAB profile cannot be edited as it's being edited by another user.")" name="Partials/_PageContentBanner" />
+    <partial model="@("This CAB profile cannot be edited as it's being edited by another user.")" name="Partials/_PageContentBanner"/>
 }
 
 <div class="govuk-grid-row">
@@ -109,711 +109,696 @@ else if (Model.IsEditLocked)
                 <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")</span>
             }
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
-                <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
-                @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
-                {
-                    <span class="govuk-caption-m govuk-!-display-inline-block">
-                        <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
-                    </span>
-                }
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
+            @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
+            {
+                <span class="govuk-caption-m govuk-!-display-inline-block">
+                    <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
+                </span>
+            }
         </div>
     </div>
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-full">
-        <fieldset class="govuk-fieldset cab-summary-header-list">
-            <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                    <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header">
-                            <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
-                        </div>
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (Model.ShowEditActions)
-                        {
-                            <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                        }
-                        @if (Model.CabDetailsViewModel.IsCompleted)
-                        {
-                            <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
-                                COMPLETED
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="cab-result-status-label cab-result-not-completed">
-                                NOT COMPLETED
-                            </div>
-                        }
-                    </dd>
-                </div>
-            </dl>
-
-            <div class="cab-summary-detail">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                        <dt class="govuk-summary-list__key">
-                            CAB name
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Model.CabDetailsViewModel.Name
-
-                            @if (Model.CABNameAlreadyExists)
-                            {
-                                <br>
-                                <div class="govuk-warning-text">
-                                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                                    <strong class="govuk-warning-text__text">
-                                        <span class="govuk-warning-text__assistive">Warning</span>
-                                        This CAB name already exists. Only create this CAB if you have contacted OPSS for approval.
-                                    </strong>
-                                </div>
-                            }
-                        </dd>
-                    </div>
-                    @if (CabNumberVisibility.CanDisplay(Model.CabDetailsViewModel.CabNumberVisibility, User))
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                CAB number
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Model.CabDetailsViewModel.CABNumber
-                            </dd>
-                        </div>
-                    }
-                    else if (Model.CanSubmitForApproval)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                CAB number
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                CAB number assigned on approval
-                            </dd>
-                        </div>
-                    }
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Appointment date (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @appointmentDate
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Review date (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @reviewDate
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            UKAS reference number (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabDetailsViewModel.UKASReference)
-                        </dd>
-                    </div>
-                </dl>
+<div class="govuk-grid-column-full">
+<fieldset class="govuk-fieldset cab-summary-header-list">
+<dl class="govuk-summary-list cab-summary-list">
+    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+        <dt class="govuk-summary-list__key">
+            <div class="cab-summary-header">
+                <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
             </div>
-
-            <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-
-                    <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header">
-                            <h3 class="govuk-heading-l govuk-!-padding-top-5">Contact details</h3>
-                        </div>
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (Model.ShowEditActions)
-                        {
-                            <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                        }
-                        @if (Model.CabContactViewModel.IsCompleted)
-                        {
-                            <div class="cab-result-status-label cab-result-completed">
-                                COMPLETED
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="cab-result-status-label cab-result-not-completed">
-                                NOT COMPLETED
-                            </div>
-                        }
-                    </dd>
-                </div>
-            </dl>
-
-            <div class="cab-summary-detail">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                        <dt class="govuk-summary-list__key">
-                            Address
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabContactViewModel.FormattedAddress)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Website (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabContactViewModel.Website)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Email (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabContactViewModel.Email)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Telephone
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabContactViewModel.Phone)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Point of contact name (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabContactViewModel.PointOfContactName)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Point of contact email (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabContactViewModel.PointOfContactEmail)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Point of contact telephone (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabContactViewModel.PointOfContactPhone)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Display of point of contact details
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(isPointOfContactPublicDisplay)
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Registered office location
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @Html.ValueOrNotProvided(Model.CabContactViewModel.RegisteredOfficeLocation)
-                        </dd>
-                    </div>
-                </dl>
-            </div>
-
-            <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row govuk-!-padding-top-5">
-                    <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header">
-                            <h3 class="govuk-heading-l govuk-!-padding-top-5">Body details</h3>
-                        </div>
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (Model.ShowEditActions)
-                        {
-                            <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                        }
-                        @if (Model.CabBodyDetailsViewModel.IsCompleted)
-                        {
-                            <div class="cab-result-status-label cab-result-completed">
-                                COMPLETED
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="cab-result-status-label cab-result-not-completed">
-                                NOT COMPLETED
-                            </div>
-                        }
-                    </dd>
-                </div>
-            </dl>
-
-            <div class="cab-summary-detail">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                        <dt class="govuk-summary-list__key">
-                            Registered test location
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (Model.CabBodyDetailsViewModel.TestingLocations.Any(tl => !string.IsNullOrWhiteSpace(tl)))
-                            {
-                                @Html.Raw(string.Join("<br />", Model.CabBodyDetailsViewModel.TestingLocations))
-                            }
-                            else
-                            {
-                                <text>@Constants.NotProvided</text>
-                            }
-                        </dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Body type
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (Model.CabBodyDetailsViewModel.BodyTypes.Any())
-                            {
-                                @Html.Raw(string.Join("<br />", Model.CabBodyDetailsViewModel.BodyTypes))
-                            }
-                            else
-                            {
-                                <text>@Constants.NotProvided</text>
-                            }
-                        </dd>
-                    </div>
-                </dl>
-            </div>
-
-            <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row govuk-!-padding-top-5">
-                    <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header">
-                            <h3 class="govuk-heading-l govuk-!-padding-top-5">Legislative areas</h3>
-                        </div>
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (Model.ShowEditActions)
-                        {
-                            var summaryReturnUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
-                            <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@summaryReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                        }
-                        @if (Model.CabLegislativeAreasViewModel.IsCompleted)
-                        {
-                            <div class="cab-result-status-label cab-result-completed">
-                                COMPLETED
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="cab-result-status-label cab-result-not-completed">
-                                NOT COMPLETED
-                            </div>
-                        }
-                    </dd>
-                </div>
-            </dl>
-
-            @if (Model.CabLegislativeAreasViewModel.LegislativeAreas.Any())
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ShowEditActions)
             {
-                @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.LegislativeAreas)
-                {
-                    <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-                        <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                @legislativeArea.Name
-                            </span>
-                        </summary>
-                        <div class="govuk-details__text govuk-!-padding-top-1">
-
-                            <div class="cab-summary-detail legislative-area-summary-list">
-                                <dl class="govuk-summary-list">
-                                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                                        <dt class="govuk-summary-list__key">
-                                            Provisional
-                                        </dt>
-                                        <dd class="govuk-summary-list__value">
-                                            @legislativeArea.IsProvisional.AsYesNoOrNotProvided()
-                                        </dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">
-                                            Appointment date (optional)
-                                        </dt>
-                                        <dd class="govuk-summary-list__value">
-                                            @Html.ValueOrNotProvided(legislativeArea.AppointmentDate.ToStringBeisFormat())
-                                        </dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">
-                                            Review date (optional)
-                                        </dt>
-                                        <dd class="govuk-summary-list__value">
-                                            @Html.ValueOrNotProvided(legislativeArea.ReviewDate.ToStringBeisFormat())
-                                        </dd>
-                                    </div>
-                                    <div class="govuk-summary-list__row">
-                                        <dt class="govuk-summary-list__key">
-                                            Reason (optional)
-                                        </dt>
-                                        <dd class="govuk-summary-list__value">
-                                            @Html.ValueOrNotProvided(legislativeArea.Reason)
-                                        </dd>
-                                    </div>
-                                </dl>
-                            </div>
-
-                            <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
-                                <thead class="govuk-table__head">
-                                    <tr class="govuk-table__row">
-                                        @if (legislativeArea.ShowPurposeOfAppointmentColumn)
-                                        {
-                                            <th scope="col" class="govuk-table__header">Purpose of appointment</th>
-                                        }
-                                        @if (legislativeArea.ShowCategoryColumn)
-                                        {
-                                            <th scope="col" class="govuk-table__header">Product category</th>
-                                        }
-                                        @if (legislativeArea.ShowProductColumn)
-                                        {
-                                            <th scope="col" class="govuk-table__header">Product</th>
-                                        }
-                                        @if (legislativeArea.ShowProcedureColumn)
-                                        {
-                                            <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
-                                        }
-                                    </tr>
-                                </thead>
-                                <tbody class="govuk-table__body">
-                                    @foreach (var scopeOfAppointment in legislativeArea.ScopeOfAppointments)
-                                    {
-                                        <tr class="govuk-table__row">
-                                            @if (legislativeArea.ShowPurposeOfAppointmentColumn)
-                                            {
-                                                <td class="govuk-table__cell">
-                                                    <label aria-hidden="true">Purpose of appointment</label>
-                                                    @scopeOfAppointment.PurposeOfAppointment
-                                                </td>
-                                            }
-                                            @if (legislativeArea.ShowCategoryColumn)
-                                            {
-                                                <td class="govuk-table__cell">
-                                                    <label aria-hidden="true">Product category</label>
-                                                    @scopeOfAppointment.Category
-                                                    @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
-                                                    {
-                                                        <div class="govuk-!-margin-top-3">Product sub-category</div>
-                                                        <div>@scopeOfAppointment.SubCategory</div>
-                                                    }
-                                                </td>
-                                            }
-                                            @*TODO - loop products / schedules based off design*@
-                                            @if (legislativeArea.ShowProductColumn)
-                                            {
-                                                <td class="govuk-table__cell">
-                                                    <label aria-hidden="true">Product</label>
-                                                    @if (scopeOfAppointment.Products != null)
-                                                    {
-                                                        foreach(var product in scopeOfAppointment.Products)
-                                                        {
-                                                            <div>@product</div>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>Not provided</span>
-                                                    }
-                                                </td>
-                                            }
-                                            @if (legislativeArea.ShowProcedureColumn)
-                                            {
-                                                <td class="govuk-table__cell">
-                                                    <label aria-hidden="true">Applicable conformity asessment procedure</label>
-                                                    @if (scopeOfAppointment.ProductAndProcedures.Procedures != null)
-                                                    {
-                                                        @foreach (var procedure in scopeOfAppointment.ProductAndProcedures.Procedures)
-                                                        {
-                                                            <p>@procedure</p>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>Not provided</span>
-                                                    }
-                                                </td>
-                                            }
-                                        </tr>
-                                    }
-                                </tbody>
-                        </table>
-
-                        </div>
-                    </details>
-                }
+                <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+            }
+            @if (Model.CabDetailsViewModel.IsCompleted)
+            {
+                <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
+                    COMPLETED
+                </div>
             }
             else
             {
-                <div class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                    <span class="govuk-warning-text__assistive">Warning</span>
-                        No legislative area has been selected.
-                    </strong>
+                <div class="cab-result-status-label cab-result-not-completed">
+                    NOT COMPLETED
                 </div>
             }
+        </dd>
+    </div>
+</dl>
 
-            <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                    <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header  govuk-!-padding-top-5">
-                            <h3 class="govuk-heading-l">Product schedules</h3>
-                        </div>
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (Model.ShowEditActions)
-                        {
-                            <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                        }
-                        @if (Model.CABProductScheduleDetailsViewModel.IsCompleted)
-                        {
-                            <div class="cab-result-status-label cab-result-completed">
-                                COMPLETED
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="cab-result-status-label cab-result-not-completed">
-                                NOT COMPLETED
-                            </div>
-                        }
-                    </dd>
-                </div>
-            </dl>
+<div class="cab-summary-detail">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                CAB name
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.CabDetailsViewModel.Name
 
-
-            <div class="cab-summary-detail">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row govuk-!-padding-top-5">
-                        <dt class="govuk-summary-list__key">
-                            Schedule (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (Model.CABProductScheduleDetailsViewModel.Schedules.Any())
-                            {
-                                <ol class="govuk-list govuk-list--number">
-                                    @foreach (var schedule in Model.CABProductScheduleDetailsViewModel.Schedules)
-                                    {
-                                        <li class="cab-summary-schedule-item">
-                                            <div>
-                                                <div>
-                                                    <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@schedule.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@schedule.Label</a>
-                                                </div>
-                                                <div>@schedule.LegislativeArea</div>
-                                            </div>
-
-                                        </li>
-                                    }
-                                </ol>
-                            }
-                            else
-                            {
-                                <text>@Constants.NotProvided</text>
-                            }
-                        </dd>
+                @if (Model.CABNameAlreadyExists)
+                {
+                    <br>
+                    <div class="govuk-warning-text">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            This CAB name already exists. Only create this CAB if you have contacted OPSS for approval.
+                        </strong>
                     </div>
-                </dl>
+                }
+            </dd>
+        </div>
+        @if (CabNumberVisibility.CanDisplay(Model.CabDetailsViewModel.CabNumberVisibility, User))
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    CAB number
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.CabDetailsViewModel.CABNumber
+                </dd>
             </div>
-
-            <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                    <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header govuk-!-padding-top-5">
-                            <h3 class="govuk-heading-l">Supporting documents</h3>
-                        </div>
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @if (Model.ShowEditActions)
-                        {
-                            <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                        }
-                        @if (Model.CABSupportingDocumentDetailsViewModel.IsCompleted)
-                        {
-                            <div class="cab-result-status-label cab-result-completed">
-                                COMPLETED
-                            </div>
-                        }
-                        else
-                        {
-                            <div class="cab-result-status-label cab-result-not-completed">
-                                NOT COMPLETED
-                            </div>
-                        }                       
-                    </dd>
-                </div>
-            </dl>
-
-            <div class="cab-summary-detail">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row govuk-!-padding-top-5">
-                        <dt class="govuk-summary-list__key">
-                            Document (optional)
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            @if (Model.CABSupportingDocumentDetailsViewModel.Documents.Any())
-                            {
-                                <ol class="govuk-list govuk-list--number">
-                                    @foreach (var document in Model.CABSupportingDocumentDetailsViewModel.Documents)
-                                    {
-                                        <li class="cab-summary-schedule-item">
-                                            <div>
-                                                <div>
-                                                    <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@document.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@document.Label</a>
-                                                </div>
-                                                <div>@document.Category</div>
-                                            </div>
-
-                                        </li>
-                                    }
-                                </ol>
-                            }
-                            else
-                            {
-                                <text>@Constants.NotProvided</text>
-                            }
-                        </dd>
-                    </div>
-                </dl>
+        }
+        else if (Model.CanSubmitForApproval)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    CAB number
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    CAB number assigned on approval
+                </dd>
             </div>
+        }
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Appointment date (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @appointmentDate
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Review date (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @reviewDate
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                UKAS reference number (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabDetailsViewModel.UKASReference)
+            </dd>
+        </div>
+    </dl>
+</div>
 
-            @if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabGovernmentUserNotes))
+<dl class="govuk-summary-list cab-summary-list">
+    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+
+        <dt class="govuk-summary-list__key">
+            <div class="cab-summary-header">
+                <h3 class="govuk-heading-l govuk-!-padding-top-5">Contact details</h3>
+            </div>
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ShowEditActions)
             {
-                <dl class="govuk-summary-list cab-summary-list">
-                    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                        <dt class="govuk-summary-list__key">
-                            <div class="cab-summary-header  govuk-!-padding-top-5">
-                                <h3 class="govuk-heading-l">Government user notes</h3>
-                            </div>
-                        </dt>
-                    </div>
-                </dl>
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+            }
+            @if (Model.CabContactViewModel.IsCompleted)
+            {
+                <div class="cab-result-status-label cab-result-completed">
+                    COMPLETED
+                </div>
+            }
+            else
+            {
+                <div class="cab-result-status-label cab-result-not-completed">
+                    NOT COMPLETED
+                </div>
+            }
+        </dd>
+    </div>
+</dl>
 
-                <div class="cab-summary-detail">
+<div class="cab-summary-detail">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                Address
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabContactViewModel.FormattedAddress)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Website (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabContactViewModel.Website)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Email (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabContactViewModel.Email)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Telephone
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabContactViewModel.Phone)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Point of contact name (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabContactViewModel.PointOfContactName)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Point of contact email (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabContactViewModel.PointOfContactEmail)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Point of contact telephone (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabContactViewModel.PointOfContactPhone)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Display of point of contact details
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(isPointOfContactPublicDisplay)
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Registered office location
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.CabContactViewModel.RegisteredOfficeLocation)
+            </dd>
+        </div>
+    </dl>
+</div>
+
+<dl class="govuk-summary-list cab-summary-list">
+    <div class="govuk-summary-list__row govuk-!-padding-top-5">
+        <dt class="govuk-summary-list__key">
+            <div class="cab-summary-header">
+                <h3 class="govuk-heading-l govuk-!-padding-top-5">Body details</h3>
+            </div>
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ShowEditActions)
+            {
+                <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+            }
+            @if (Model.CabBodyDetailsViewModel.IsCompleted)
+            {
+                <div class="cab-result-status-label cab-result-completed">
+                    COMPLETED
+                </div>
+            }
+            else
+            {
+                <div class="cab-result-status-label cab-result-not-completed">
+                    NOT COMPLETED
+                </div>
+            }
+        </dd>
+    </div>
+</dl>
+
+<div class="cab-summary-detail">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                Registered test location
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model.CabBodyDetailsViewModel.TestingLocations.Any(tl => !string.IsNullOrWhiteSpace(tl)))
+                {
+                    @Html.Raw(string.Join("<br />", Model.CabBodyDetailsViewModel.TestingLocations))
+                }
+                else
+                {
+                    <text>@Constants.NotProvided</text>
+                }
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Body type
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model.CabBodyDetailsViewModel.BodyTypes.Any())
+                {
+                    @Html.Raw(string.Join("<br />", Model.CabBodyDetailsViewModel.BodyTypes))
+                }
+                else
+                {
+                    <text>@Constants.NotProvided</text>
+                }
+            </dd>
+        </div>
+    </dl>
+</div>
+
+<dl class="govuk-summary-list cab-summary-list">
+    <div class="govuk-summary-list__row govuk-!-padding-top-5">
+        <dt class="govuk-summary-list__key">
+            <div class="cab-summary-header">
+                <h3 class="govuk-heading-l govuk-!-padding-top-5">Legislative areas</h3>
+            </div>
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ShowEditActions)
+            {
+                var summaryReturnUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@summaryReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+            }
+            @if (Model.CabLegislativeAreasViewModel.IsCompleted)
+            {
+                <div class="cab-result-status-label cab-result-completed">
+                    COMPLETED
+                </div>
+            }
+            else
+            {
+                <div class="cab-result-status-label cab-result-not-completed">
+                    NOT COMPLETED
+                </div>
+            }
+        </dd>
+    </div>
+</dl>
+
+@if (Model.CabLegislativeAreasViewModel.LegislativeAreas.Any())
+{
+    @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.LegislativeAreas)
+    {
+        <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    @legislativeArea.Name
+                </span>
+            </summary>
+            <div class="govuk-details__text govuk-!-padding-top-1">
+
+                <div class="cab-summary-detail legislative-area-summary-list">
                     <dl class="govuk-summary-list">
-                        <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                        <div class="govuk-summary-list__row  govuk-!-padding-top-5">
                             <dt class="govuk-summary-list__key">
-                                Notes
+                                Provisional
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @{
-                                    var userNotesReturnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
-                                }
-                                @if (Model.GovernmentUserNoteCount > 0)
-                                {
-                                    <p>Last note added: @Model.LastGovermentUserNoteDate?.ToStringBeisFormat()</p>
-
-                                    <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
-                                       asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl" class="govuk-link govuk-link--no-visited-state">
-                                        View government user notes (@Model.GovernmentUserNoteCount)
-                                    </a>
-                                }
-                                else
-                                {
-                                    <p>There are no notes</p>
-
-                                    <a asp-area="Search" asp-controller="UserNote" asp-action="Create" asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl"
-                                        class="govuk-link govuk-link--no-visited-state">
-                                        Add note
-                                    </a>
-                                }
+                                @legislativeArea.IsProvisional.AsYesNoOrNotProvided()
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Appointment date (optional)
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNotProvided(legislativeArea.AppointmentDate.ToStringBeisFormat())
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Review date (optional)
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNotProvided(legislativeArea.ReviewDate.ToStringBeisFormat())
+                            </dd>
+                        </div>
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Reason (optional)
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                @Html.ValueOrNotProvided(legislativeArea.Reason)
                             </dd>
                         </div>
                     </dl>
                 </div>
-            }
-            
-            @if (Model is { ValidCAB: true, CanPublish: true })
-            {
-                <div class="govuk-warning-text govuk-!-margin-top-5">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        <text>Once published this record will be visible to the public.</text>
-                    </strong>
-                </div>
-            }
-            else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None })
-            {
-                <div class="govuk-warning-text govuk-!-margin-top-5">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        <text>Provide all mandatory information before you are able to publish this record.</text>
-                    </strong>
-                </div>
-            }
 
-            @if (Model is { ShowEditActions: true, SubStatus: SubStatus.None })
-            {
-                <div class="govuk-!-margin-top-5">
-                    <form method="post">
-                        <input type="hidden" asp-for="Id" />
-                        <input type="hidden" asp-for="CABId" />
-                        <div class="govuk-button-group">
-                            @if (Model.CanPublish)
+                <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
+                    <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        @if (legislativeArea.ShowPurposeOfAppointmentColumn)
+                        {
+                            <th scope="col" class="govuk-table__header">Purpose of appointment</th>
+                        }
+                        @if (legislativeArea.ShowCategoryColumn)
+                        {
+                            <th scope="col" class="govuk-table__header">Product category</th>
+                        }
+                        @if (legislativeArea.ShowProductColumn)
+                        {
+                            <th scope="col" class="govuk-table__header">Product</th>
+                        }
+                        @if (legislativeArea.ScopeOfAppointments.Any())
+                        {
+                            <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
+                        }
+                    </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                    @foreach (var scopeOfAppointment in legislativeArea.ScopeOfAppointments)
+                    {
+                        <tr class="govuk-table__row">
+                            @if (legislativeArea.ShowPurposeOfAppointmentColumn)
                             {
-                                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
-                                    Publish
-                                </button>
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Purpose of appointment</label>
+                                    @scopeOfAppointment.PurposeOfAppointment
+                                </td>
                             }
-
-                            @if (Model.CanSubmitForApproval)
+                            @if (legislativeArea.ShowCategoryColumn)
                             {
-                                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.SubmitForApproval" @(!Model.ValidCAB ? "disabled" : string.Empty)>
-                                    Submit for approval
-                                </button>
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Product category</label>
+                                    @scopeOfAppointment.Category
+                                    @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
+                                    {
+                                        <div class="govuk-!-margin-top-3">Product sub-category</div>
+                                        <div>@scopeOfAppointment.SubCategory</div>
+                                    }
+                                </td>
                             }
-
-                            <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
-                                Save as draft
-                            </button>
-
-                            @if (Model.CabDetailsViewModel.DocumentStatus == Status.Draft)
+                            @if (legislativeArea.ShowProductColumn)
                             {
-                                <govuk-button-link class="govuk-button--warning" asp-area="admin" asp-controller="cab" asp-action="delete" asp-route-id="@Model.CABId">Delete draft</govuk-button-link>
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Product</label>
+                                    @Html.ValueOrNotProvided(scopeOfAppointment.Product)
+                                </td>
                             }
-
-                            @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
-                            {
-                                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                            }
-                            else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
-                            {
-                                <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                            }
-                            else
-                            {
-                                <a href="@Model.ReturnUrl&unlockCab=@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                            }
-                        </div>
-                    </form>
-                </div>
-            }
-            else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish })
-            {
-                <div class="govuk-!-margin-top-5">
-                    <div class="govuk-button-group">
-                        <govuk-button-link id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Approve</govuk-button-link>
-                        <govuk-button-link id="declineCab" class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
-                        <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                    </div>
-                </div>
-            }
-        </fieldset>
+                            <td class="govuk-table__cell">
+                                <label aria-hidden="true">Applicable conformity assessment procedure</label>
+                                @if (scopeOfAppointment.Procedures != null)
+                                {
+                                    @foreach (var procedure in scopeOfAppointment.Procedures)
+                                    {
+                                        <p>@procedure</p>
+                                    }
+                                }
+                                else
+                                {
+                                    <span>Not provided</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </details>
+    }
+}
+else
+{
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            No legislative area has been selected.
+        </strong>
     </div>
+}
+
+<dl class="govuk-summary-list cab-summary-list">
+    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+        <dt class="govuk-summary-list__key">
+            <div class="cab-summary-header  govuk-!-padding-top-5">
+                <h3 class="govuk-heading-l">Product schedules</h3>
+            </div>
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ShowEditActions)
+            {
+                <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+            }
+            @if (Model.CABProductScheduleDetailsViewModel.IsCompleted)
+            {
+                <div class="cab-result-status-label cab-result-completed">
+                    COMPLETED
+                </div>
+            }
+            else
+            {
+                <div class="cab-result-status-label cab-result-not-completed">
+                    NOT COMPLETED
+                </div>
+            }
+        </dd>
+    </div>
+</dl>
+
+
+<div class="cab-summary-detail">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                Schedule (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model.CABProductScheduleDetailsViewModel.Schedules.Any())
+                {
+                    <ol class="govuk-list govuk-list--number">
+                        @foreach (var schedule in Model.CABProductScheduleDetailsViewModel.Schedules)
+                        {
+                            <li class="cab-summary-schedule-item">
+                                <div>
+                                    <div>
+                                        <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@schedule.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@schedule.Label</a>
+                                    </div>
+                                    <div>@schedule.LegislativeArea</div>
+                                </div>
+
+                            </li>
+                        }
+                    </ol>
+                }
+                else
+                {
+                    <text>@Constants.NotProvided</text>
+                }
+            </dd>
+        </div>
+    </dl>
+</div>
+
+<dl class="govuk-summary-list cab-summary-list">
+    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+        <dt class="govuk-summary-list__key">
+            <div class="cab-summary-header govuk-!-padding-top-5">
+                <h3 class="govuk-heading-l">Supporting documents</h3>
+            </div>
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ShowEditActions)
+            {
+                <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+            }
+            @if (Model.CABSupportingDocumentDetailsViewModel.IsCompleted)
+            {
+                <div class="cab-result-status-label cab-result-completed">
+                    COMPLETED
+                </div>
+            }
+            else
+            {
+                <div class="cab-result-status-label cab-result-not-completed">
+                    NOT COMPLETED
+                </div>
+            }
+        </dd>
+    </div>
+</dl>
+
+<div class="cab-summary-detail">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                Document (optional)
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model.CABSupportingDocumentDetailsViewModel.Documents.Any())
+                {
+                    <ol class="govuk-list govuk-list--number">
+                        @foreach (var document in Model.CABSupportingDocumentDetailsViewModel.Documents)
+                        {
+                            <li class="cab-summary-schedule-item">
+                                <div>
+                                    <div>
+                                        <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@document.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@document.Label</a>
+                                    </div>
+                                    <div>@document.Category</div>
+                                </div>
+
+                            </li>
+                        }
+                    </ol>
+                }
+                else
+                {
+                    <text>@Constants.NotProvided</text>
+                }
+            </dd>
+        </div>
+    </dl>
+</div>
+
+@if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabGovernmentUserNotes))
+{
+    <dl class="govuk-summary-list cab-summary-list">
+        <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                <div class="cab-summary-header  govuk-!-padding-top-5">
+                    <h3 class="govuk-heading-l">Government user notes</h3>
+                </div>
+            </dt>
+        </div>
+    </dl>
+
+    <div class="cab-summary-detail">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                <dt class="govuk-summary-list__key">
+                    Notes
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @{
+                        var userNotesReturnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+                    }
+                    @if (Model.GovernmentUserNoteCount > 0)
+                    {
+                        <p>Last note added: @Model.LastGovermentUserNoteDate?.ToStringBeisFormat()</p>
+
+                        <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
+                           asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl" class="govuk-link govuk-link--no-visited-state">
+                            View government user notes (@Model.GovernmentUserNoteCount)
+                        </a>
+                    }
+                    else
+                    {
+                        <p>There are no notes</p>
+
+                        <a asp-area="Search" asp-controller="UserNote" asp-action="Create" asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl"
+                           class="govuk-link govuk-link--no-visited-state">
+                            Add note
+                        </a>
+                    }
+                </dd>
+            </div>
+        </dl>
+    </div>
+}
+
+@if (Model is { ValidCAB: true, CanPublish: true })
+{
+    <div class="govuk-warning-text govuk-!-margin-top-5">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            <text>Once published this record will be visible to the public.</text>
+        </strong>
+    </div>
+}
+else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None })
+{
+    <div class="govuk-warning-text govuk-!-margin-top-5">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            <text>Provide all mandatory information before you are able to publish this record.</text>
+        </strong>
+    </div>
+}
+
+@if (Model is { ShowEditActions: true, SubStatus: SubStatus.None })
+{
+    <div class="govuk-!-margin-top-5">
+        <form method="post">
+            <input type="hidden" asp-for="Id"/>
+            <input type="hidden" asp-for="CABId"/>
+            <div class="govuk-button-group">
+                @if (Model.CanPublish)
+                {
+                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                        Publish
+                    </button>
+                }
+
+                @if (Model.CanSubmitForApproval)
+                {
+                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.SubmitForApproval" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                        Submit for approval
+                    </button>
+                }
+
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
+                    Save as draft
+                </button>
+
+                @if (Model.CabDetailsViewModel.DocumentStatus == Status.Draft)
+                {
+                    <govuk-button-link class="govuk-button--warning" asp-area="admin" asp-controller="cab" asp-action="delete" asp-route-id="@Model.CABId">Delete draft</govuk-button-link>
+                }
+
+                @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
+                {
+                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+                else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                {
+                    <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+                else
+                {
+                    <a href="@Model.ReturnUrl&unlockCab=@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+            </div>
+        </form>
+    </div>
+}
+else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish })
+{
+    <div class="govuk-!-margin-top-5">
+        <div class="govuk-button-group">
+            <govuk-button-link id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Approve</govuk-button-link>
+            <govuk-button-link id="declineCab" class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
+            <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+        </div>
+    </div>
+}
+</fieldset>
+</div>
 </div>

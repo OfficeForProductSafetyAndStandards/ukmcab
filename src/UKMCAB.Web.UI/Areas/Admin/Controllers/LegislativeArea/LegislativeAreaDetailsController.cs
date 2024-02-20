@@ -9,6 +9,7 @@ using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Data.Models.LegislativeAreas;
 using System.Security.Claims;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -493,7 +494,7 @@ public class LegislativeAreaDetailsController : Controller
         var cabDocuments = await _cabAdminService.FindDocumentsByCABIdAsync(id.ToString());
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
 
-        // only one document and draft mode
+        // only one document and draft mode the remove else give user an option to remove or archive
         if (cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
         {
             await _cabAdminService.RemoveLegislativeAreaAsync(id, legislativeAreaId, legislativeArea.Name);
@@ -525,9 +526,13 @@ public class LegislativeAreaDetailsController : Controller
             {
                 await _cabAdminService.ArchiveLegislativeAreaAsync(id, legislativeAreaId);
             }
+
+            return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
         }
 
-        return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
+        vm.ReturnUrl = returnUrl;
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
+
     }
 
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(

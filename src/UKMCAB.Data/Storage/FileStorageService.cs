@@ -55,6 +55,7 @@ namespace UKMCAB.Data.Storage
             {
                 return new FileUpload
                 {
+                    Id = Guid.NewGuid(),
                     Label = label,
                     FileName = fileName,
                     BlobName = blobName,

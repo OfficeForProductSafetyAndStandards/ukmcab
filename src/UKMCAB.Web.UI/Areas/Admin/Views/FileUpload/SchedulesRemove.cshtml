@@ -1,12 +1,12 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.RemoveViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule.RemoveScheduleViewModel
 
 @section BackButton
 {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link href="@Model.ReturnUrl" />
+                <govuk-back-link asp-area="admin" asp-controller="cab" asp-action="schedules-list" asp-route-id="@Model.Id" />
             </div>
         </div>
     </div>
@@ -14,14 +14,16 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">Remove legislative area</h1>
+        <h1 class="govuk-heading-l">Remove product schedule</h1>
     </div>
     <div class="govuk-grid-column-two-thirds">
-        <form id="legislativeForm" method="post" novalidate>
-            <input type="hidden" asp-for="Title" />
-            <input type="hidden" asp-for="Id" />
+        <form id="scheduleForm" method="post" novalidate>
+            <input type="hidden" asp-for="Title" />            
             <h2 class="govuk-heading-s">You have selected: </h2>
-            <p class="govuk-body">@Model.Title</p>
+            @foreach (var label in Model.ScheduleFileLabelList)
+            {
+                <p class="govuk-body">@label</p>
+            }            
             <govuk-radios asp-for="Action">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">
@@ -33,7 +35,7 @@
                 </govuk-radios>
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
-                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.Id" asp-route-returnUrl="@Model.ReturnUrl">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="schedules-list" asp-route-id="@Model.Id">Cancel</a>
             </div>
         </form>
     </div>
