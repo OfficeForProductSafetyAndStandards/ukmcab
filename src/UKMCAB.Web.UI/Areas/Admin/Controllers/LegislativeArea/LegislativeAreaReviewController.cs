@@ -49,7 +49,10 @@ public class LegislativeAreaReviewController : Controller
     }
     private async Task<ReviewLegislativeAreasViewModel> PopulateCABLegislativeAreasViewModelAsync(Document cab)
         {
-            var viewModel = new ReviewLegislativeAreasViewModel();
+            var viewModel = new ReviewLegislativeAreasViewModel
+            {
+                CABId = Guid.Parse(cab.CABId)
+            };
 
             foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
             {
@@ -117,30 +120,4 @@ public class LegislativeAreaReviewController : Controller
 
             return viewModel;
         }
-    // [HttpPost(Name = Routes.LegislativeAreaSelected)]
-    // public async Task <IActionResult> ReviewLegislativeAreas(Guid id, string? submitType, bool fromSummary, SelectedLegislativeAreasViewModel viewModel)
-    // {
-    //     var cabId = id.ToString();
-    //     var latestDocument = await _cabAdminService.GetLatestDocumentAsync(cabId) ??
-    //                          throw new InvalidOperationException();
-    //
-    //     if (submitType == Constants.SubmitType.Continue)
-    //     {
-    //         return RedirectToAction("SchedulesList", "FileUpload", fromSummary ? new { id = cabId, fromSummary = "true" } : new { id = cabId });
-    //     }
-    //
-    //     if (submitType == Constants.SubmitType.Save)
-    //     {
-    //         var userAccount =
-    //                  await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-    //         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
-    //             userAccount ?? throw new InvalidOperationException(), latestDocument);
-    //         TempData[Constants.TempDraftKey] =
-    //             $"Draft record saved for {latestDocument.Name} <br>CAB number {latestDocument.CABNumber}";
-    //         RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = cabId });
-    //     }
-    //
-    //     return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" }); ;
-    // }
-
 }
