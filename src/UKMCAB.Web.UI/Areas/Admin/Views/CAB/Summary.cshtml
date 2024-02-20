@@ -484,10 +484,7 @@ else if (Model.IsEditLocked)
                                         {
                                             <th scope="col" class="govuk-table__header">Product</th>
                                         }
-                                        @if (legislativeArea.ShowProcedureColumn)
-                                        {
-                                            <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
-                                        }
+                                        <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
                                     </tr>
                                 </thead>
                                 <tbody class="govuk-table__body">
@@ -513,46 +510,31 @@ else if (Model.IsEditLocked)
                                                     }
                                                 </td>
                                             }
-                                            @*TODO - loop products / schedules based off design*@
                                             @if (legislativeArea.ShowProductColumn)
                                             {
                                                 <td class="govuk-table__cell">
                                                     <label aria-hidden="true">Product</label>
-                                                    @if (scopeOfAppointment.Products != null)
-                                                    {
-                                                        foreach(var product in scopeOfAppointment.Products)
-                                                        {
-                                                            <div>@product</div>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>Not provided</span>
-                                                    }
+                                                    @Html.ValueOrNotProvided(scopeOfAppointment.Product)
                                                 </td>
                                             }
-                                            @if (legislativeArea.ShowProcedureColumn)
-                                            {
-                                                <td class="govuk-table__cell">
-                                                    <label aria-hidden="true">Applicable conformity asessment procedure</label>
-                                                    @if (scopeOfAppointment.ProductAndProcedures.Procedures != null)
+                                            <td class="govuk-table__cell">
+                                                <label aria-hidden="true">Applicable conformity assessment procedure</label>
+                                                @if (scopeOfAppointment.Procedures != null)
+                                                {
+                                                    @foreach (var procedure in scopeOfAppointment.Procedures)
                                                     {
-                                                        @foreach (var procedure in scopeOfAppointment.ProductAndProcedures.Procedures)
-                                                        {
-                                                            <p>@procedure</p>
-                                                        }
+                                                        <p>@procedure</p>
                                                     }
-                                                    else
-                                                    {
-                                                        <span>Not provided</span>
-                                                    }
-                                                </td>
-                                            }
+                                                }
+                                                else
+                                                {
+                                                    <span>Not provided</span>
+                                                }
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
-                        </table>
-
+                            </table>
                         </div>
                     </details>
                 }
