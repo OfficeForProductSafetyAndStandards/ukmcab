@@ -214,7 +214,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     uploadedFileViewModels = latestVersion.Schedules?.Select(s => new FileViewModel
                     {
                         FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                        LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived
+                        LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
                     }).ToList() ?? new List<FileViewModel>();
 
                     var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
@@ -241,7 +241,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             uploadedFileViewModels = latestVersion.Schedules?.Select(s => new FileViewModel
             {
                 FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived
+                LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
             }).ToList() ?? new List<FileViewModel>();
          
 
@@ -812,6 +812,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Category = string.Empty,
                 IsSelected = false,
                 IsDuplicated = true,
+                Id = selectedViewModel.Id,
             };
 
             uploadedFileViewModels.Add(uploadedFileToDuplicate);
@@ -845,7 +846,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var uploadedfile = new FileViewModel
                 {
                     FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                    LegislativeArea = s.LegislativeArea, Category = s.Category
+                    LegislativeArea = s.LegislativeArea, Category = s.Category, Id = s.Id,
                 };
                 uploadedfile.IsReplaced = i == indexOfFileToReplace;
                 uploadedFiles.Add(uploadedfile);
@@ -1037,10 +1038,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (model.UploadedFiles != null && model.UploadedFiles.Any())
             {
-                if (model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
+                var unArchivedUploadedFiles = model.UploadedFiles.Where(n => !n.Archived.GetValueOrDefault());
+
+                if (unArchivedUploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UploadedFiles)
+                    foreach (var uploadedFile in unArchivedUploadedFiles)
                     {
                         if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
                         {
@@ -1150,6 +1153,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
                     newSchedules.Add(new FileUpload
                     {
+                        Id = fileViewModel.Id,
                         FileName = fileViewModel.FileName,
                         BlobName = current.BlobName,
                         Label = fileViewModel.Label!,
@@ -1197,7 +1201,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         BlobName = current.BlobName,
                         Label = fileViewModel.Label,
                         Category = fileViewModel.Category,
-                        UploadDateTime = current.UploadDateTime
+                        UploadDateTime = current.UploadDateTime,
+                        Id = fileViewModel.Id
                     });
                 }
             }

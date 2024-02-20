@@ -14,6 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
     public class FileViewModel
     { 
+        public Guid Id { get; set; }
         public string FileName { get; set; }
         [Required(ErrorMessage = "Enter a title for the file")]
         public string? Label { get; set; }
