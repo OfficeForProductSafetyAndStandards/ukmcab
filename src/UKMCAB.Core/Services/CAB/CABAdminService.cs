@@ -477,6 +477,7 @@ namespace UKMCAB.Core.Services.CAB
             latestDocument.DocumentLegislativeAreas.Add(new DocumentLegislativeArea
             {
                 Id = guid,
+                LegislativeAreaName = laName,
                 LegislativeAreaId = laToAdd
             });
             latestDocument.LegislativeAreas.Add(laName);
