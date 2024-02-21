@@ -6,7 +6,6 @@ public class CABLegislativeAreasModel
 {
     public List<LegislativeAreasViewModel> LegislativeAreasModel { get; set; } = new();
     public string CabUrl { get; set; } = string.Empty;
-    public CABLegislativeAreaView CABLegislativeAreaView { get; set; }
     public Guid LegislativeAreaId { get; set; }
     public string? LegislativeAreaName { get; set; } 
     public string? Regulation { get; set; }

@@ -112,8 +112,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 [AiTracking.Metadata.CabId] = id,
                 [AiTracking.Metadata.CabName] = cab.Name
             }));
-
-            cab.CabLegislativeAreas.CABLegislativeAreaView = CABLegislativeAreaView.LegislativeAreaList;
             return View(cab);
         }
 
@@ -123,7 +121,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             var vm = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
-            var purposeOfAppointments = new List<PurposeOfAppointmentModel>();
 
             var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
                 .Where(a => a.PurposeOfAppointmentId != null && a.LegislativeAreaId == legislativeAreaId)
@@ -136,46 +133,54 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     .GetPurposeOfAppointmentByIdAsync(pId ?? Guid.Empty);
 
                 if (purposeOfAppointmentInformation != null)
-                    purposeOfAppointments.Add(new PurposeOfAppointmentModel
+                {
+                    vm.CabLegislativeAreas.PurposeOfAppointments.Add(new StandardViewModel
                     {
-                        LegislativeAreaId = legislativeAreaId,
-                        Id = purposeOfAppointmentInformation.Id,
+                        Id = pId ?? Guid.Empty,
                         Name = purposeOfAppointmentInformation.Name
                     });
-            }
-            var la =await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
-            vm.CabLegislativeAreas.LegislativeAreaId = legislativeAreaId;
-            vm.CabLegislativeAreas.LegislativeAreaName = la.Name;
-            vm.CabLegislativeAreas.Regulation = la.Regulation;
-            vm.CabLegislativeAreas.PurposeOfAppointments = purposeOfAppointments.Select(a => new StandardViewModel
-            {
-                Name = a.Name,
-                Id = a.Id
-            }).ToList();
-            if (purposeOfAppointmentId.HasValue)
-            {
-                vm.CabLegislativeAreas.PurposeOfAppointment = new StandardViewModel
-                {
-                    Name =
-                        (await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(purposeOfAppointmentId.Value))!
-                        .Name,
-                    Id = purposeOfAppointmentId.Value
-                };
-                
-                // vm.CabLegislativeAreas.Categories = cabDocument.ScopeOfAppointments.Where(s => s.PurposeOfAppointmentId != null && s.PurposeOfAppointmentId == purposeOfAppointmentId).
-                // if (vm.CabLegislativeAreas.PoaCategories.Categories.Any())
-                // {
-                //     cab.CabLegislativeAreas.CABLegislativeAreaView =
-                //         CABLegislativeAreaView.PurposeOfAppointmentWithCategories;
-                // }
+                }
 
-                vm.CabLegislativeAreas.CABLegislativeAreaView = CABLegislativeAreaView.PurposeOfAppointmentOnly;
+                var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
+                vm.CabLegislativeAreas.LegislativeAreaId = legislativeAreaId;
+                vm.CabLegislativeAreas.LegislativeAreaName = la.Name;
+                vm.CabLegislativeAreas.Regulation = la.Regulation;
+
+                if (purposeOfAppointmentId.HasValue)
+                {
+                    vm.CabLegislativeAreas.PurposeOfAppointment = new StandardViewModel
+                    {
+                        Name = vm.CabLegislativeAreas.PurposeOfAppointments.First(p => p.Id == purposeOfAppointmentId)
+                            .Name,
+                        Id = purposeOfAppointmentId.Value
+                    };
+
+                    var catIds = cabDocument.ScopeOfAppointments
+                        .Where(s => s.PurposeOfAppointmentId != null &&
+                                    s.PurposeOfAppointmentId == purposeOfAppointmentId)
+                        .Select(s => s.CategoryId);
+                    foreach (var catId in catIds)
+                    {
+                        var category = await _legislativeAreaService
+                            .GetCategoryByIdAsync(catId ?? Guid.Empty);
+
+                        if (category != null)
+                        {
+                            vm.CabLegislativeAreas.Categories.Add(new StandardViewModel()
+                            {
+                                Id = category.Id,
+                                Name = category.Name
+                            });
+                        }
+                    }
+                }
             }
 
             return View(vm);
         }
 
         #region profileDraft
+
         [HttpGet("profile/draft/{id:guid}", Name = Routes.CabDraftProfile), Authorize]
         public async Task<IActionResult> DraftAsync(string id, int pagenumber = 1)
         {
@@ -191,9 +196,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 return NotFound();
             }
         }
+
         #endregion
 
         #region profileFeed
+
         [HttpGet("search/cab-profile-feed/{id}", Name = Routes.CabFeed)]
         public async Task<IActionResult> Feed(string id, string? returnUrl)
         {
@@ -226,12 +233,15 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 return Content(content, "application/atom+xml;charset=utf-8");
             }
         }
+
         #endregion
+
         private async Task<CABProfileViewModel> GetCabProfileForIndex(Document cabDocument, string? returnUrl,
             int pagenumber = 1)
         {
             var userAccount = User.Identity is { IsAuthenticated: true }
-                ? await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
+                ? await _userService.GetAsync(
+                    User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
                 : null;
 
             var unarchiveRequests = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
@@ -266,7 +276,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var isUnarchivedRequest =
                 auditLogOrdered.Last().Action == AuditCABActions.UnarchivedToDraft;
             var isPublished = cabDocument.StatusValue == Status.Published;
-            var archiveAudit = isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
+            var archiveAudit =
+                isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
             var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
 
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
@@ -441,10 +452,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (ModelState.IsValid)
             {
                 var userAccount =
-                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                        .Value);
                 //Get draft before archiving deletes it
                 var draft = await _cachedPublishedCabService.FindDraftDocumentByCABIdAsync(cabDocument.CABId);
-                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId, model.ArchiveInternalReason,
+                await _cabAdminService.ArchiveDocumentAsync(userAccount, cabDocument.CABId,
+                    model.ArchiveInternalReason,
                     model.ArchivePublicReason);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
@@ -559,7 +572,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (ModelState.IsValid)
             {
                 var userAccount =
-                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                        .Value);
                 await _cabAdminService.UnarchiveDocumentAsync(userAccount, cabDocument.CABId,
                     model.UnarchiveInternalReason, model.UnarchivePublicReason, false);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
@@ -668,7 +682,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         public IActionResult ShowCABHistoryDetails()
         {
             var auditHistoryItemViewModel = TempData.ContainsKey("auditHistoryData")
-                ? JsonSerializer.Deserialize<AuditHistoryItemViewModel>((TempData.Peek("auditHistoryData") as string)!)
+                ? JsonSerializer.Deserialize<AuditHistoryItemViewModel>(
+                    (TempData.Peek("auditHistoryData") as string)!)
                 : new AuditHistoryItemViewModel();
 
             return View(auditHistoryItemViewModel);
