@@ -540,7 +540,7 @@ namespace UKMCAB.Core.Services.CAB
             await _cabRepository.UpdateAsync(latestDocument);
         }
 
-        private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
+        public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {
             List<Document> docs = await _cabRepository.Query<Document>(d =>
                 d.CABId.Equals(id, StringComparison.CurrentCultureIgnoreCase));

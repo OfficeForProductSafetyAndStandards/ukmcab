@@ -732,7 +732,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var vm = new RemoveScheduleViewModel
             {
-                Id = Guid.Parse(id),  
+                CabId = Guid.Parse(id),  
                 Title = "CAB Remove Schedules",
                 ScheduleFileLabelList = latestVersion.Schedules.Where(n => fileUploadListIds.Contains(n.Id)).Select(n => n.Label).ToList()
             };

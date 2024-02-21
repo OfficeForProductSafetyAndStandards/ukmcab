@@ -491,7 +491,7 @@ public class LegislativeAreaDetailsController : Controller
     [HttpGet("remove/{legislativeAreaId}", Name = Routes.RemoveLegislativeArea)]
     public async Task<IActionResult> RemoveLegislativeArea(Guid id, Guid legislativeAreaId, string? returnUrl)
     {
-        var cabDocuments = await _cabAdminService.FindDocumentsByCABIdAsync(id.ToString());
+        var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
 
         // only one document and draft mode the remove else give user an option to remove or archive
@@ -502,10 +502,16 @@ public class LegislativeAreaDetailsController : Controller
         }
         else
         {
-            var vm = new RemoveViewModel
+            var latestDocument = GetLatestDocumentAsync(cabDocuments);
+            var legislativeAreaArchived = latestDocument?.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId == legislativeAreaId).First().Archived;
+
+            var vm = new LegislativeAreaRemoveViewModel
             {
                 Title = legislativeArea.Name,
-                Id = id,
+                CabId = id,
+                LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
+                ProductSchedules = latestDocument?.Schedules ?? new List<FileUpload>(),
+                ShowArchiveOption = !legislativeAreaArchived.GetValueOrDefault(),
                 ReturnUrl = returnUrl
             };
             return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
@@ -513,7 +519,7 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     [HttpPost("remove/{legislativeAreaId}", Name = Routes.RemoveLegislativeArea)]
-    public async Task<IActionResult> RemoveLegislativeArea(Guid id, Guid legislativeAreaId, RemoveViewModel vm,
+    public async Task<IActionResult> RemoveLegislativeArea(Guid id, Guid legislativeAreaId, LegislativeAreaRemoveViewModel vm,
         string? returnUrl)
     {
         if (ModelState.IsValid)
@@ -529,10 +535,16 @@ public class LegislativeAreaDetailsController : Controller
 
             return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
         }
+        else
+        {
+            var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
+            var latestDocument = GetLatestDocumentAsync(cabDocuments);
 
-        vm.ReturnUrl = returnUrl;
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
-
+            vm.LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId);
+            vm.ProductSchedules = latestDocument?.Schedules ?? new List<FileUpload>();
+           
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
+        }
     }
 
     private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(
@@ -683,4 +695,88 @@ public class LegislativeAreaDetailsController : Controller
 
         return new List<SelectListItem>();
     }
+
+    public Document? GetLatestDocumentAsync(List<Document> documents)
+    {  
+        // if a newly create cab or a draft version exists this will be the latest version, there should be no more than one
+        if (documents.Any(d => d is { StatusValue: Status.Draft }))
+        {
+            return documents.Single(d => d is { StatusValue: Status.Draft });
+        }
+
+        // if no draft or created version exists then see if a published version exists, again should only ever be one
+        if (documents.Any(d => d is { StatusValue: Status.Published }))
+        {
+            return documents.Single(d => d is { StatusValue: Status.Published });
+        }
+
+        return null;
+    }
+
+    private async Task<CABLegislativeAreasItemViewModel> PopulateCABLegislativeAreasItemViewModelAsync(Document? cab, Guid LegislativeAreaId)
+    {      
+        var documentLegislativeArea = cab.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId == LegislativeAreaId).First() ?? throw new InvalidOperationException("document legislative area not found");
+
+        var legislativeArea =
+                await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea
+                    .LegislativeAreaId);
+
+        var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel()
+        {
+            Name = legislativeArea.Name,
+            IsProvisional = documentLegislativeArea.IsProvisional,
+            AppointmentDate = documentLegislativeArea.AppointmentDate,
+            ReviewDate = documentLegislativeArea.ReviewDate,
+            Reason = documentLegislativeArea.Reason,
+            CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
+        };
+
+        var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
+        foreach (var scopeOfAppointment in scopeOfAppointments)
+        {
+            var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId.HasValue
+                ? (await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(scopeOfAppointment
+                    .PurposeOfAppointmentId.Value))?.Name
+                : null;
+
+            var category = scopeOfAppointment.CategoryId.HasValue
+                ? (await _legislativeAreaService.GetCategoryByIdAsync(scopeOfAppointment.CategoryId.Value))
+                ?.Name
+                : null;
+
+            var subCategory = scopeOfAppointment.SubCategoryId.HasValue
+                ? (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId
+                    .Value))?.Name
+                : null;
+
+            foreach (var productProcedure in scopeOfAppointment.ProductIdAndProcedureIds)
+            {
+                var soaViewModel = new LegislativeAreaListItemViewModel()
+                {
+                    LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                    PurposeOfAppointment = purposeOfAppointment,
+                    Category = category,
+                    SubCategory = subCategory,
+                };
+
+                if (productProcedure.ProductId.HasValue)
+                {
+                    var product =
+                        await _legislativeAreaService.GetProductByIdAsync(productProcedure.ProductId.Value);
+                    soaViewModel.Product = product!.Name;
+                }
+
+                foreach (var procedureId in productProcedure.ProcedureIds)
+                {
+                    var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                    soaViewModel.Procedures?.Add(procedure!.Name);
+                }
+
+                legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+            }
+        }
+
+        return legislativeAreaViewModel;
+    }
+
 }

@@ -14,6 +14,8 @@ namespace UKMCAB.Core.Services.CAB
         Task<List<CabModel>> FindDocumentsByCABIdAsync(string id);
         Task<List<Document>> FindAllDocumentsByCABURLAsync(string id, Status[]? statusesToRetrieve = null);
 
+        Task<List<Document>> FindAllDocumentsByCABIdAsync(string id);
+
         /// <summary>
         /// Find all Draft and Archived documents restricted by user role
         /// </summary>
