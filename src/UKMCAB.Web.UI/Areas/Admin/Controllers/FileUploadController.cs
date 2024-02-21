@@ -1,13 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Azure;
-using System.Collections.Generic;
 using System.Security.Claims;
-using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Storage;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
@@ -187,7 +183,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            if (!latestVersion.DocumentLegislativeAreas.Any(a => a.Archived == null))
+            if (!latestVersion.DocumentLegislativeAreas.Any(a => a.Archived is null or false))
             {
                 return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id });
             }
@@ -243,7 +239,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
             }).ToList() ?? new List<FileViewModel>();
 
-            var legislativeArea = latestVersion.DocumentLegislativeAreas.Where(a => a.Archived == null)
+            var legislativeArea = latestVersion.DocumentLegislativeAreas.Where(a => a.Archived is null or false)
                 .Select(a => a.LegislativeAreaName)
                 .Distinct()
                 .ToList();
