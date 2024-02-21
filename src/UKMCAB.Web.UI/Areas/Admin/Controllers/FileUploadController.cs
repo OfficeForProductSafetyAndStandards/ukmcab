@@ -244,7 +244,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }).ToList() ?? new List<FileViewModel>();
 
             var legislativeArea = latestVersion.DocumentLegislativeAreas.Where(a => a.Archived == null)
-                .Select(a => a.LegislativeAreaName).ToList();
+                .Select(a => a.LegislativeAreaName)
+                .Distinct()
+                .ToList();
 
             // Pre-populate model for edit
             return View(new FileListViewModel
