@@ -296,7 +296,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    var cabDocuments = await _cabAdminService.FindDocumentsByCABIdAsync(id.ToString());
+                    var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
 
                     var fileUploadsInLatestDocumentMatchingUserSelection =
                         _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(selectedViewModels,
@@ -758,7 +758,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            var fileUploadListIds = await _distCache.GetAsync<List<Guid>>(storageKey);
+            var fileUploadListIds = await _distCache.GetAsync<List<Guid>>(storageKey)?? new();
 
             if (ModelState.IsValid)
             {

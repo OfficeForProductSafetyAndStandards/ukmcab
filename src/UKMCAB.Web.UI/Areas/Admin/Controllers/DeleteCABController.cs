@@ -53,8 +53,8 @@ public class DeleteCABController : Controller
         EnsureCabStatusIsDraft(document);
 
         // Check if there is an existing published version. If found, user has to enter a delete reason which is stored against it.
-        var allDocuments = await _cabAdminService.FindDocumentsByCABIdAsync(cabId);
-        var hasExistingVersion = allDocuments.Any(d => d.Id.ToString() != document.id);
+        var allDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(cabId);
+        var hasExistingVersion = allDocuments.Any(d => d.id.ToString() != document.id);
 
         var model = new DeleteCABViewModel(
             "Delete draft CAB profile",
