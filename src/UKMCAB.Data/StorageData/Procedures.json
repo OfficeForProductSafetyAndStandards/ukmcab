@@ -172,7 +172,7 @@
     },
     {
         "id": "a24023e6-fe2f-4019-947e-21585ddf8920",
-        "name": "Part 1 Type Examination",
+        "name": "Part 1 Type examination",
         "legislativeAreaId": "fbf97235-0987-430c-a1d9-4439665aa9ba",
         "purposeOfAppointmentIds": [
             "9483654a-3554-4aea-a810-ed86e6b7d0bc"
@@ -273,7 +273,7 @@
     },
     {
         "id": "63419410-1fde-45c6-bc22-4cab40460416",
-        "name": "Schedule 11: Type Examination for safety components for lifts",
+        "name": "Schedule 11: Type examination for safety components for lifts",
         "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
         "purposeOfAppointmentIds": "",
         "productIds": [
@@ -447,7 +447,7 @@
     },
     {
         "id": "d88aa4ce-f154-49a5-98af-bf807bd8ef3c",
-        "name": "Part 3 – Module B Type Examination",
+        "name": "Part 3 – Module B Type examination",
         "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
         "purposeOfAppointmentIds": [
             "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
@@ -595,7 +595,7 @@
     },
     {
         "id": "f722ba45-82fc-4142-8473-3a748b1213c2",
-        "name": "Part 1 – Module B Design Type Examination",
+        "name": "Part 1 – Module B Design Type examination",
         "legislativeAreaId": "e3751919-8b26-4059-ae34-8540146e262a",
         "purposeOfAppointmentIds": [
             "2d9e0aae-9928-401d-b2f5-3a7638f82d66"
@@ -1337,7 +1337,7 @@
     },
     {
         "id": "1284df07-13b9-453d-b4a5-1842b0e4c22e",
-        "name": "Part 1 – Module B Type Examination",
+        "name": "Part 1 – Module B Type examination",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed",
         "purposeOfAppointmentIds": "",
         "productIds": "",
