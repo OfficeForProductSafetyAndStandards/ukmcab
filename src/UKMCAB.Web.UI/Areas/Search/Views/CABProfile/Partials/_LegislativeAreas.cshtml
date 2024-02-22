@@ -16,7 +16,7 @@
             }
         </div>
     </div>
-    @if (Model.PurposeOfAppointment.Id != Guid.Empty)
+    @if (Model.PurposeOfAppointment.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
             <dl class="govuk-summary-list">
@@ -32,7 +32,7 @@
         </div>
     }
 
-    @if (Model.Category.Id != Guid.Empty)
+    @if (Model.Category.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
             <dl class="govuk-summary-list">
@@ -48,7 +48,7 @@
         </div>
     }
 
-    @if (Model.SubCategory.Id != Guid.Empty)
+    @if (Model.SubCategory.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
             <dl class="govuk-summary-list">
@@ -64,7 +64,7 @@
         </div>
     }
 
-    @if (Model.Product.Id != Guid.Empty)
+    @if (Model.Product.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
             <dl class="govuk-summary-list">

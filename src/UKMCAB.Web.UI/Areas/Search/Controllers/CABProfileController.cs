@@ -203,33 +203,33 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 });
             }
 
-            vm.CabLegislativeAreas.PurposeOfAppointment = new ValueTuple<Guid, string?>
+            vm.CabLegislativeAreas.PurposeOfAppointment = new ValueTuple<Guid?, string?>
             {
-                Item1 = purposeOfAppointmentId ?? Guid.Empty,
+                Item1 = purposeOfAppointmentId ?? null,
                 Item2 = purposeOfAppointmentId.HasValue
                     ? (await _legislativeAreaService
                         .GetPurposeOfAppointmentByIdAsync(purposeOfAppointmentId.Value))?.Name
                     : null
             };
-            vm.CabLegislativeAreas.Category = new ValueTuple<Guid, string?>
+            vm.CabLegislativeAreas.Category = new ValueTuple<Guid?, string?>
             {
-                Item1 = categoryId ?? Guid.Empty,
+                Item1 = categoryId ?? null,
                 Item2 = categoryId.HasValue
                     ? (await _legislativeAreaService
                         .GetCategoryByIdAsync(categoryId.Value))?.Name
                     : null
             };
-            vm.CabLegislativeAreas.SubCategory = new ValueTuple<Guid, string?>
+            vm.CabLegislativeAreas.SubCategory = new ValueTuple<Guid?, string?>
             {
-                Item1 = subCategoryId ?? Guid.Empty,
+                Item1 = subCategoryId ?? null,
                 Item2 = subCategoryId.HasValue
                     ? (await _legislativeAreaService
                         .GetSubCategoryByIdAsync(subCategoryId.Value))?.Name
                     : null
             };
-            vm.CabLegislativeAreas.Product = new ValueTuple<Guid, string?>
+            vm.CabLegislativeAreas.Product = new ValueTuple<Guid?, string?>
             {
-                Item1 = productId ?? Guid.Empty,
+                Item1 = productId ?? null,
                 Item2 = productId.HasValue ?(await _legislativeAreaService
                     .GetCategoryByIdAsync(productId.Value))?.Name : null
             };
