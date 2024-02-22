@@ -112,8 +112,13 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     [HttpGet("add-purpose-of-appointment/{scopeId}", Name = Routes.AddPurposeOfAppointment)]
-    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid scopeId, Guid? compareScopeId)
+    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, Guid scopeId, Guid? compareScopeId, Guid? legislativeAreaId)
     {
+        if (scopeId == Guid.Empty && legislativeAreaId != null)
+        {
+            scopeId = Guid.NewGuid();
+            await CreateScopeOfAppointmentInCacheAsync(scopeId, (Guid)legislativeAreaId);
+        }
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
         if (existingScopeOfAppointment != null)
         {
