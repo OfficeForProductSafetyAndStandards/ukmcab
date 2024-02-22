@@ -120,7 +120,7 @@ public class NotificationDetailsController : Controller
         }
         if (workFlowTask.CABId == null) return (notificationDetail, workFlowTask);
 
-        var cabs = await _cabAdminService.FindDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
+        var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
         var cabDetails = cabs.First();
         notificationDetail.ViewLink = workFlowTask.TaskType switch
         {

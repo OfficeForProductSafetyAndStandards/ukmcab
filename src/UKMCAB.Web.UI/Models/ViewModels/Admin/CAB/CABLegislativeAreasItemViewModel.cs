@@ -6,7 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABLegislativeAreasItemViewModel
     {
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         public bool? IsProvisional { get; set; }
 
