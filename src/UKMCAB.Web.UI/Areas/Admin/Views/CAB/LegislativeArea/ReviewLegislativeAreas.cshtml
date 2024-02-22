@@ -27,7 +27,9 @@
                             var legislativeArea = Model.LAItems[i];
 
                             <input type="hidden" asp-for="CABId">
+                            <input type="hidden" asp-for="ReturnUrl">
                             <input type="hidden" asp-for="LAItems[i].Name">
+                            <input type="hidden" asp-for="LAItems[i].LegislativeAreaId">
 
                             <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                                 <summary class="govuk-details__summary">
@@ -78,6 +80,8 @@
                                                         <div>
                                                             <input type="radio" asp-for="LAItems[i].ScopeOfAppointments[j].IsSelected" value="true">
                                                             <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].ScopeId">
+                                                            <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Id">
+                                                            <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Title">                                                                                                                    
                                                         </div>
                                                     </td>
                                                     @if (legislativeArea.ShowPurposeOfAppointmentColumn)
@@ -124,7 +128,8 @@
                                             }
                                         </tbody>
                                     </table>
-                                    <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="@Constants.SubmitType.Add">Add scope of appointment</govuk-button>
+
+                                    <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="Add-@legislativeArea.LegislativeAreaId">Add scope of appointment</govuk-button>
                                     @if (legislativeArea.ScopeOfAppointments.Any())
                                     {
                                         <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="@Constants.SubmitType.Edit">Edit scope of appointment</govuk-button>
