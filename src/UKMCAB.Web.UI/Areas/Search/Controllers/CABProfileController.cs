@@ -522,18 +522,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private async Task<List<LegislativeAreasViewModel>> GetCABLegislativeAreasAsync(
             IEnumerable<DocumentLegislativeArea> documentLegislativeAreas)
         {
-            var cabLegislativeAreaIds = documentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
-            var allLegislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
-            var legislativeAreas = allLegislativeAreas.Where(n => cabLegislativeAreaIds.Contains(n.Id));
+            var allLegislativeAreas = (await _legislativeAreaService.GetAllLegislativeAreasAsync()).ToList();
 
-            var legislativeAreasList = new List<LegislativeAreasViewModel>();
-            legislativeAreasList.AddRange(legislativeAreas.Select(legislativeAreaModel =>
-                new LegislativeAreasViewModel()
-                {
-                    LegislativeAreaId = legislativeAreaModel.Id,
-                    Name = legislativeAreaModel.Name,
-                    Regulation = legislativeAreaModel.Regulation,
-                }));
+            var legislativeAreasList = documentLegislativeAreas.Select(x => new LegislativeAreasViewModel {
+                LegislativeAreaId = x.LegislativeAreaId,
+                Name = allLegislativeAreas.Single(y => y.Id ==  x.LegislativeAreaId).Name,
+                Regulation = allLegislativeAreas.Single(y => y.Id ==  x.LegislativeAreaId).Regulation,
+                IsProvisional = x.IsProvisional != null && x.IsProvisional.Value,
+            }).ToList();
 
             return legislativeAreasList;
         }
