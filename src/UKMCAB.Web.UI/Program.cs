@@ -44,7 +44,6 @@ using UKMCAB.Data.CosmosDb;
 using UKMCAB.Data.CosmosDb.Utilities;
 using UKMCAB.Core.Mappers;
 using System.Reflection;
-using UKMCAB.Web.UI.Services.LegislativeArea;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -144,7 +143,6 @@ builder.Services.AddTransient<IUserNoteService, UserNoteService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddTransient<IFileUploadUtils, FileUploadUtils>();
 builder.Services.AddTransient<ILegislativeAreaService, LegislativeAreaService>();
-builder.Services.AddTransient<ILegislativeAreaUtils, LegislativeAreaUtils>();
 
 builder.Services.AddCustomHttpErrorHandling();
 builder.Services.AddGovUkFrontend();

@@ -5,7 +5,6 @@ using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
-using UKMCAB.Web.UI.Services.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -15,18 +14,15 @@ public class LegislativeAreaReviewController : Controller
     private readonly ICABAdminService _cabAdminService;
     private readonly ILegislativeAreaService _legislativeAreaService;
     private readonly IUserService _userService;
-    private readonly ILegislativeAreaUtils _legislativeAreaUtils;
 
     public LegislativeAreaReviewController(
         ICABAdminService cabAdminService,
         ILegislativeAreaService legislativeAreaService,
-        IUserService userService,
-        ILegislativeAreaUtils legislativeAreaUtils)
+        IUserService userService)
     {
         _cabAdminService = cabAdminService;
         _legislativeAreaService = legislativeAreaService;
         _userService = userService;
-        _legislativeAreaUtils = legislativeAreaUtils;
     }
 
     public static class Routes
@@ -61,13 +57,11 @@ public class LegislativeAreaReviewController : Controller
 
         if (submitType != null && submitType.StartsWith("Add-"))
         {
-            var scopeOfAppointmentId = Guid.NewGuid();
             var legislativeAreaIdString = submitType.Substring(4);
-            if (Guid.TryParse(legislativeAreaIdString, out Guid legislativeAreaId))
+            if (Guid.TryParse(legislativeAreaIdString, out Guid laId))
             {
-                await _legislativeAreaUtils.CreateScopeOfAppointmentInCacheAsync(scopeOfAppointmentId, legislativeAreaId);
-            }
-            return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = scopeOfAppointmentId });
+                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, legislativeAreaId = laId});
+            }            
         }
 
         var cabLaOfSelectedScopeofAppointment = reviewLaVM.LAItems.FirstOrDefault(la => la.ScopeOfAppointments.Any(soa => soa.IsSelected == true));
@@ -78,7 +72,7 @@ public class LegislativeAreaReviewController : Controller
         }
 
         var laOfSelectedSoa = cabLaOfSelectedScopeofAppointment.ScopeOfAppointments.First(la => la.IsSelected == true);
-        var laId = laOfSelectedSoa.LegislativeArea.Id;
+        var legislativeArea = laOfSelectedSoa.LegislativeArea.Id;
         var selectedScopeOfAppointmentId = laOfSelectedSoa.ScopeId;
         Guard.IsTrue(selectedScopeOfAppointmentId != Guid.Empty, "Scope Id Guid cannot be empty");
 
@@ -88,7 +82,7 @@ public class LegislativeAreaReviewController : Controller
             // TODO: Handle the different submit types
             if (submitType == Constants.SubmitType.Edit)
             {
-
+                
             }
             if (submitType == Constants.SubmitType.Remove)
             {
