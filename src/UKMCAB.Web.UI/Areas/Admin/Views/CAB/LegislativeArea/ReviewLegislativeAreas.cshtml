@@ -2,11 +2,11 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review.ReviewLegislativeAreasViewModel
 
 @section BackButton
-{
+    {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })"/>
+                <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })" />
             </div>
         </div>
     </div>
@@ -22,8 +22,13 @@
                     </legend>
                     @if (Model.LAItems.Any())
                     {
-                        @foreach (var legislativeArea in Model.LAItems)
+                        @for (int i = 0; i < Model.LAItems.Count; i++)
                         {
+                            var legislativeArea = Model.LAItems[i];
+
+                            <input type="hidden" asp-for="CABId">
+                            <input type="hidden" asp-for="LAItems[i].Name">
+
                             <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                                 <summary class="govuk-details__summary">
                                     <span class="govuk-details__summary-text">
@@ -34,84 +39,96 @@
                                     <govuk-button-link class="govuk-button--secondary" href="/">Remove legislative area</govuk-button-link>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
                                         <thead class="govuk-table__head">
-                                        <tr class="govuk-table__row">
-                                            @if (legislativeArea.ShowPurposeOfAppointmentColumn)
-                                            {
-                                                <th scope="col" class="govuk-table__header">Purpose of appointment</th>
-                                            }
-                                            @if (legislativeArea.ShowCategoryColumn)
-                                            {
-                                                <th scope="col" class="govuk-table__header">Product category</th>
-                                            }
-                                            @if (legislativeArea.ShowProductColumn)
-                                            {
-                                                <th scope="col" class="govuk-table__header">Product</th>
-                                            }
-                                            @if (legislativeArea.ScopeOfAppointments.Any())
-                                            {
-                                                <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
-                                            }
-                                        </tr>
-                                        </thead>
-                                        <tbody class="govuk-table__body">
-                                        @if (!legislativeArea.ScopeOfAppointments.Any())
-                                        {
-                                            <tr>
-                                                <td>No scope of appointments</td>
-                                            </tr>
-                                        }
-                                        @foreach (var scopeOfAppointment in legislativeArea.ScopeOfAppointments)
-                                        {
                                             <tr class="govuk-table__row">
+
+                                                <th scope="col" class="govuk-table__header width-one-fortieth"></th>
+
                                                 @if (legislativeArea.ShowPurposeOfAppointmentColumn)
                                                 {
-                                                    <td class="govuk-table__cell">
-                                                        <label aria-hidden="true">Purpose of appointment</label>
-                                                        @scopeOfAppointment.PurposeOfAppointment
-                                                    </td>
+                                                    <th scope="col" class="govuk-table__header">Purpose of appointment</th>
                                                 }
                                                 @if (legislativeArea.ShowCategoryColumn)
                                                 {
-                                                    <td class="govuk-table__cell">
-                                                        <label aria-hidden="true">Product category</label>
-                                                        @scopeOfAppointment.Category
-                                                        @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
-                                                        {
-                                                            <div class="govuk-!-margin-top-3">Product sub-category</div>
-                                                            <div>@scopeOfAppointment.SubCategory</div>
-                                                        }
-                                                    </td>
+                                                    <th scope="col" class="govuk-table__header">Product category</th>
                                                 }
                                                 @if (legislativeArea.ShowProductColumn)
                                                 {
-                                                    <td class="govuk-table__cell">
-                                                        <label aria-hidden="true">Product</label>
-                                                        @Html.ValueOrNotProvided(scopeOfAppointment.Product)
-                                                    </td>
+                                                    <th scope="col" class="govuk-table__header">Product</th>
                                                 }
-                                                <td class="govuk-table__cell">
-                                                    <label aria-hidden="true">Applicable conformity assessment procedure</label>
-                                                    @if (scopeOfAppointment.Procedures != null)
-                                                    {
-                                                        @foreach (var procedure in scopeOfAppointment.Procedures)
-                                                        {
-                                                            <p>@procedure</p>
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        <span>Not provided</span>
-                                                    }
-                                                </td>
+                                                @if (legislativeArea.ScopeOfAppointments.Any())
+                                                {
+                                                    <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
+                                                }
                                             </tr>
-                                        }
+                                        </thead>
+                                        <tbody class="govuk-table__body">
+                                            @if (!legislativeArea.ScopeOfAppointments.Any())
+                                            {
+                                                <tr>
+                                                    <td>No scope of appointments</td>
+                                                </tr>
+                                            }
+
+                                            @for (int j = 0; j < legislativeArea.ScopeOfAppointments.Count; j++)
+                                            {
+                                                var scopeOfAppointment = legislativeArea.ScopeOfAppointments[j];                                              
+
+                                                <tr class="govuk-table__row">
+                                                    <td class="govuk-table__cell">
+                                                        <div>
+                                                            <input type="radio" asp-for="LAItems[i].ScopeOfAppointments[j].IsSelected" value="true">
+                                                            <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].ScopeId">
+                                                        </div>
+                                                    </td>
+                                                    @if (legislativeArea.ShowPurposeOfAppointmentColumn)
+                                                    {
+                                                        <td class="govuk-table__cell">
+                                                            <label aria-hidden="true">Purpose of appointment</label>
+                                                            @scopeOfAppointment.PurposeOfAppointment
+                                                        </td>
+                                                    }
+                                                    @if (legislativeArea.ShowCategoryColumn)
+                                                    {
+                                                        <td class="govuk-table__cell">
+                                                            <label aria-hidden="true">Product category</label>
+                                                            @scopeOfAppointment.Category
+                                                            @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
+                                                            {
+                                                                <div class="govuk-!-margin-top-3">Product sub-category</div>
+                                                                <div>@scopeOfAppointment.SubCategory</div>
+                                                            }
+                                                        </td>
+                                                    }
+                                                    @if (legislativeArea.ShowProductColumn)
+                                                    {
+                                                        <td class="govuk-table__cell">
+                                                            <label aria-hidden="true">Product</label>
+                                                            @Html.ValueOrNotProvided(scopeOfAppointment.Product)
+                                                        </td>
+                                                    }
+                                                    <td class="govuk-table__cell">
+                                                        <label aria-hidden="true">Applicable conformity assessment procedure</label>
+                                                        @if (scopeOfAppointment.Procedures != null)
+                                                        {
+                                                            @foreach (var procedure in scopeOfAppointment.Procedures)
+                                                            {
+                                                                <p>@procedure</p>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>Not provided</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
                                         </tbody>
                                     </table>
-                                    <govuk-button-link class="govuk-button--secondary" href="/">Add scope of appointment</govuk-button-link>
+                                    <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="@Constants.SubmitType.Add">Add scope of appointment</govuk-button>
                                     @if (legislativeArea.ScopeOfAppointments.Any())
                                     {
-                                        <govuk-button-link class="govuk-button--secondary" href="/">Edit scope of appointment</govuk-button-link>
-                                        <govuk-button-link class="govuk-button--secondary" href="/">Remove scope of appointment</govuk-button-link>
+                                        <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="@Constants.SubmitType.Edit">Edit scope of appointment</govuk-button>
+                                        <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="@Constants.SubmitType.Remove">Remove scope of appointment</govuk-button>
                                     }
                                 </div>
                             </details>
