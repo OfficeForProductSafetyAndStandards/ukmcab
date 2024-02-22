@@ -1,11 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Security.Claims;
-using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
@@ -47,6 +43,42 @@ public class LegislativeAreaReviewController : Controller
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", await PopulateCABLegislativeAreasViewModelAsync(latestDocument));
     }
+
+    [HttpPost(Name = Routes.LegislativeAreaSelected)]
+    public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string submitType, ReviewLegislativeAreasViewModel reviewLaVM)
+    {
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+
+        var laOfSelectedSoa = reviewLaVM.LAItems.First(la => la.ScopeOfAppointments.Any(soa => soa.IsSelected == true));
+        var selectedSoaId = laOfSelectedSoa.ScopeOfAppointments.First(soa => soa.IsSelected == true).ScopeId;
+
+        if (ModelState.IsValid)
+        {
+            // TODO: Handle the different submit types
+            if (submitType == Constants.SubmitType.Add)
+            {
+
+            }
+            if (submitType == Constants.SubmitType.Edit)
+            {
+
+            }
+            if (submitType == Constants.SubmitType.Remove)
+            {
+
+            }
+        }
+       
+
+        // Implies no document or archived
+        if (latestDocument == null)
+        {
+            return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+        }
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", new ReviewLegislativeAreasViewModel());
+    }
+
     private async Task<ReviewLegislativeAreasViewModel> PopulateCABLegislativeAreasViewModelAsync(Document cab)
         {
             var viewModel = new ReviewLegislativeAreasViewModel
@@ -96,6 +128,7 @@ public class LegislativeAreaReviewController : Controller
                             PurposeOfAppointment = purposeOfAppointment,
                             Category = category,
                             SubCategory = subCategory,
+                            ScopeId = scopeOfAppointment.Id,
                         };
 
                         if (productProcedure.ProductId.HasValue)

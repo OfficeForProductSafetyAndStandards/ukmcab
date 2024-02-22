@@ -54,6 +54,8 @@ public static class Constants
         public const string Cancel = nameof(Cancel);
         public const string AdditionalInfo = nameof(AdditionalInfo);
         public const string Confirm = nameof(Confirm);
+        public const string Add = nameof(Add);
+        public const string Edit = nameof(Edit);
     }
 
     public class ErrorMessages
