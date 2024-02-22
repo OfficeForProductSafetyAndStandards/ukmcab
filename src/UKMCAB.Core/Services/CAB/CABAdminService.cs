@@ -60,14 +60,6 @@ namespace UKMCAB.Core.Services.CAB
             return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList().Count > 0;
         }
 
-        public async Task<List<CabModel>> FindDocumentsByCABIdAsync(string id)
-        {
-            var documents = await FindAllDocumentsByCABIdAsync(id);
-            return documents.Select(document => document.MapToCabModel())
-                .OrderByDescending(d => d.LastUpdatedUtc)
-                .ToList();
-        }
-
         public async Task<List<Document>> FindAllDocumentsByCABURLAsync(string url, Status[]? statusesToRetrieve = null)
         {
             List<Document> docs;
@@ -541,11 +533,13 @@ namespace UKMCAB.Core.Services.CAB
             await _cabRepository.UpdateAsync(latestDocument);
         }
 
-        private async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
-        {
+        public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
+        {  
             List<Document> docs = await _cabRepository.Query<Document>(d =>
                 d.CABId.Equals(id, StringComparison.CurrentCultureIgnoreCase));
-            return docs;
+
+            return docs.OrderByDescending(d => d.LastUpdatedDate)
+                .ToList();
         }
 
         private async Task RefreshCaches(string cabId, string slug)

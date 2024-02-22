@@ -12,6 +12,6 @@ namespace UKMCAB.Web.UI.Services
         Document RemoveSelectedUploadedFilesFromDocumentAsync(List<FileUpload> selectedFileUploads, Document latestDocument, string docType);
         bool ValidateUploadFileAndAddAnyModelStateError(ModelStateDictionary modelState, IFormFile? file, string contentType, string acceptedFileTypes);
 
-        List<FileUpload> GetSelectedFilesFromLatestDocumentByIds(List<Guid> FileIds, List<FileUpload> uploadedFiles);
+        List<FileUpload> GetSelectedFilesFromLatestDocumentByIds(List<Guid> FileIds, List<FileUpload>? uploadedFiles);
     }
 }

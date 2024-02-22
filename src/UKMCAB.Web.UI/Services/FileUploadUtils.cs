@@ -83,7 +83,7 @@ namespace UKMCAB.Web.UI.Services
             return isValidFile;
         }
 
-        public List<FileUpload> GetSelectedFilesFromLatestDocumentByIds(List<Guid> FileIds, List<FileUpload> uploadedFiles)
+        public List<FileUpload> GetSelectedFilesFromLatestDocumentByIds(List<Guid> FileIds, List<FileUpload>? uploadedFiles)
         {
             if (FileIds != null && FileIds.Any())
             {
