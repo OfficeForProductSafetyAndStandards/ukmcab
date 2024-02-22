@@ -39,7 +39,10 @@
                 <partial name="Partials/_SearchFilter" model="Model.StatusOptions" />
                 @if (Model.InternalSearch)
                 {
-                    <partial name="Partials/_SearchFilter" model="Model.SubStatusOptions" />
+                    @if (Model.SubStatusOptions != null && Model.SubStatusOptions.FilterOptions.Any())
+                    {
+                        <partial name="Partials/_SearchFilter" model="Model.SubStatusOptions"/>
+                    }
                     <partial name="Partials/_SearchFilter" model="Model.CreatedByUserGroupOptions" />
                     <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaProvisionalOptions" />
                 }
