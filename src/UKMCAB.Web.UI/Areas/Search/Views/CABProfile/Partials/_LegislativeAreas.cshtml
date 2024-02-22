@@ -1,7 +1,7 @@
 @using UKMCAB.Web.UI.Areas.Search.Controllers
 @model CABLegislativeAreasModel
 
-@if (Model.SubCategories.Any())
+@if (Model.Procedures.Any())
 {
     <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-fragment="legislative-areas">
@@ -25,7 +25,7 @@
                 </a>
             </dt>
             <dd class="govuk-summary-list__value">
-                @Model.PurposeOfAppointment
+                @Model.PurposeOfAppointment.Name
             </dd>
         </dl>
     </div>
@@ -33,14 +33,171 @@
         <dl class="govuk-summary-list">
             <dt class="govuk-summary-list__key">
                 <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link">
-                    Product sub-category
+                    Product Category
                 </a>
             </dt>
             <dd class="govuk-summary-list__value">
-                @Model.PurposeOfAppointment
+                @Model.Category.Name 
             </dd>
         </dl>
     </div>
+    <div class="govuk-summary-list__row">
+        <dl class="govuk-summary-list">
+            <dt class="govuk-summary-list__key">
+                <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link">
+                    Product Sub Category
+                </a>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.SubCategory.Name  
+            </dd>
+        </dl>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dl class="govuk-summary-list">
+            <dt class="govuk-summary-list__key">
+                <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link">
+                    Product
+                </a>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.Product.Name  
+            </dd>
+        </dl>
+    </div>
+    <h3 class="govuk-heading-s">Procedures</h3>
+    <dl class="govuk-summary-list table-top-border">
+        @foreach (var procedure in Model.Procedures)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key ">
+                        @procedure.Name
+                </dt>
+            </div>
+        }
+    </dl>
+}
+@if (Model.Products.Any())
+{
+    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-fragment="legislative-areas">
+        View all legislative areas
+    </a>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Legislative area </span>
+            <h3 class="govuk-heading-s">@Model.LegislativeAreaName</h3>
+            @if (!string.IsNullOrWhiteSpace(Model.Regulation))
+            {
+                <p class="govuk-body">Regulation: @Model.Regulation</p>
+            }
+        </div>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dl class="govuk-summary-list">
+            <dt class="govuk-summary-list__key">
+                <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" class="govuk-link">
+                    Purpose of appointment
+                </a>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.PurposeOfAppointment.Name
+            </dd>
+        </dl>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dl class="govuk-summary-list">
+            <dt class="govuk-summary-list__key">
+                <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link">
+                    Product Category
+                </a>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.Category.Name 
+            </dd>
+        </dl>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dl class="govuk-summary-list">
+            <dt class="govuk-summary-list__key">
+                <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link">
+                    Product Sub Category
+                </a>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.SubCategory.Name  
+            </dd>
+        </dl>
+    </div>
+    <h3 class="govuk-heading-s">Products</h3>
+    <dl class="govuk-summary-list table-top-border">
+        @foreach (var product in Model.Products)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key ">
+                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-productId="@product.Id" asp-fragment="legislative-areas">
+                        @product.Name
+                    </a>
+                </dt>
+            </div>
+        }
+    </dl>
+}
+else if (Model.SubCategories.Any())
+{
+    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-fragment="legislative-areas">
+        View all legislative areas
+    </a>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <span class="govuk-caption-m">Legislative area </span>
+            <h3 class="govuk-heading-s">@Model.LegislativeAreaName</h3>
+            @if (!string.IsNullOrWhiteSpace(Model.Regulation))
+            {
+                <p class="govuk-body">Regulation: @Model.Regulation</p>
+            }
+        </div>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dl class="govuk-summary-list">
+            <dt class="govuk-summary-list__key">
+                <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" class="govuk-link">
+                    Purpose of appointment
+                </a>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.PurposeOfAppointment.Name   
+            </dd>
+        </dl>
+    </div>
+    <div class="govuk-summary-list__row">
+        <dl class="govuk-summary-list">
+            <dt class="govuk-summary-list__key">
+                <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link">
+                    Product Category
+                </a>
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @Model.Category.Name
+            </dd>
+        </dl>
+    </div>
+    <h3 class="govuk-heading-s">Product Sub Category</h3>
+    <dl class="govuk-summary-list table-top-border">
+        @foreach (var subCategory in Model.SubCategories)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key ">
+                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-subCategoryId="@subCategory.Id" asp-fragment="legislative-areas">
+                        @subCategory.Name
+                    </a>
+                </dt>
+            </div>
+        }
+    </dl>
 }
 else if (Model.Categories.Any())
 {
@@ -76,7 +233,8 @@ else if (Model.Categories.Any())
         {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key ">
-                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-fragment="legislative-areas">
+                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-categoryId="@category.Id" asp-fragment="legislative-areas">
                         @category.Name
                     </a>
                 </dt>

@@ -1,4 +1,5 @@
-﻿using Microsoft.ApplicationInsights;
+﻿using System.Diagnostics.CodeAnalysis;
+using Microsoft.ApplicationInsights;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
 using System.Security.Claims;
@@ -117,7 +118,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         [HttpGet("search/cab-profile/{id}/{legislativeAreaId}", Name = Routes.CabDetailsLegislativeArea)]
         public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, Guid legislativeAreaId,
-            Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategory, Guid? productId, int pagenumber = 1)
+            Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategoryId, Guid? productId, int pagenumber = 1)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             var vm = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
@@ -125,32 +126,16 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             vm.CabLegislativeAreas.LegislativeAreaId = legislativeAreaId;
             vm.CabLegislativeAreas.LegislativeAreaName = la.Name;
             vm.CabLegislativeAreas.Regulation = la.Regulation;
-            var scopeOfAppointmentsForLa = cabDocument.ScopeOfAppointments
-                .Where(a => a.LegislativeAreaId == legislativeAreaId).ToList();
-            var purposeOfAppointmentIds = scopeOfAppointmentsForLa
-                .Where(a => a.PurposeOfAppointmentId.HasValue)
-                .Select(a => a.PurposeOfAppointmentId!.Value)
-                .Distinct();
-           
-            foreach (var pId in purposeOfAppointmentIds)
-            {
-                    vm.CabLegislativeAreas.PurposeOfAppointments.Add(new StandardViewModel
-                    {
-                        Id = pId,
-                        Name = (await _legislativeAreaService
-                        .GetPurposeOfAppointmentByIdAsync(pId))!.Name
-                    });
-            }
-
+            
             if (purposeOfAppointmentId.HasValue)
             {
                 //Show Categories / Products or procedures 
-                vm.CabLegislativeAreas.PurposeOfAppointment = new StandardViewModel
+                vm.CabLegislativeAreas.PurposeOfAppointment = new ValueTuple<Guid, string>
                 {
-                    Name =
-                        vm.CabLegislativeAreas.PurposeOfAppointments
-                            .First(p => p.Id == purposeOfAppointmentId).Name,
-                    Id = purposeOfAppointmentId.Value
+                    Item1 = purposeOfAppointmentId.Value,
+                    Item2 = 
+                        (await _legislativeAreaService
+                            .GetPurposeOfAppointmentByIdAsync(purposeOfAppointmentId.Value))!.Name,
                 };
 
                 var catIds = cabDocument.ScopeOfAppointments
@@ -159,38 +144,37 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     .Select(s => s.CategoryId!.Value);
                 foreach (var catId in catIds)
                 {
-                        vm.CabLegislativeAreas.Categories.Add(new StandardViewModel
-                        {
-                            Id = catId,
-                            Name = (await _legislativeAreaService
-                                .GetCategoryByIdAsync(catId))!.Name
-                        });
-                }
-
-                var prodIds = cabDocument.ScopeOfAppointments
-                    .Where(s => s.PurposeOfAppointmentId != null &&
-                                s.PurposeOfAppointmentId == purposeOfAppointmentId && s.ProductIds.Any())
-                    .Select(s => s.ProductIds).SelectMany(p => p).ToList();
-                foreach (var prodId in prodIds)
-                {
-                    vm.CabLegislativeAreas.Products.Add(new StandardViewModel
+                    vm.CabLegislativeAreas.Categories.Add(new ValueTuple<Guid, string>
                     {
-                        Id = prodId,
-                        Name = (await _legislativeAreaService
-                            .GetCategoryByIdAsync(prodId))!.Name
+                        Item1 = catId,
+                        Item2 = (await _legislativeAreaService
+                            .GetCategoryByIdAsync(catId))!.Name
                     });
                 }
-                
+
+                if (vm.CabLegislativeAreas.Categories.Any())
+                {
+                    return View(vm);
+                }
+
+                await GetProductsAsync(purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
+                if (vm.CabLegislativeAreas.Products.Any())
+                {
+                    return View(vm);
+                }
+
                 //todo: procedures
             }
-
+            
+            //Get Purpose of appointments
             if (categoryId.HasValue)
             {
                 //Show Sub Category / Products or procedures 
-                vm.CabLegislativeAreas.Category = new StandardViewModel
+                vm.CabLegislativeAreas.Category = new ValueTuple<Guid, string>
                 {
-                    Name = vm.CabLegislativeAreas.Categories.First(p => p.Id == categoryId).Name,
-                    Id = categoryId.Value
+                    Item1 = categoryId.Value,
+                    Item2 = (await _legislativeAreaService
+                        .GetCategoryByIdAsync(categoryId.Value))!.Name
                 };
                 var subCatIds = cabDocument.ScopeOfAppointments
                     .Where(s => s.CategoryId != null &&
@@ -203,16 +187,123 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
                     if (subCat != null)
                     {
-                        vm.CabLegislativeAreas.SubCategories.Add(new StandardViewModel
+                        vm.CabLegislativeAreas.SubCategories.Add(new ValueTuple<Guid, string>
                         {
-                            Id = subCat.Id,
-                            Name = subCat.Name
+                            Item1 = subCat.Id,
+                            Item2 = subCat.Name
                         });
                     }
                 }
+
+                if (vm.CabLegislativeAreas.SubCategories.Any())
+                {
+                    return View(vm);
+                }
+
+                await GetProductsAsync(purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
+                if (vm.CabLegislativeAreas.Products.Any())
+                {
+                    return View(vm);
+                }
+            }
+            var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
+                .Where(a => a.LegislativeAreaId == legislativeAreaId)
+                .Where(a => a.PurposeOfAppointmentId.HasValue)
+                .Select(p => p.PurposeOfAppointmentId!.Value);
+            foreach (var pId in purposeOfAppointmentIds)
+            {
+                vm.CabLegislativeAreas.PurposeOfAppointments.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = pId,
+                    Item2 = (await _legislativeAreaService
+                        .GetPurposeOfAppointmentByIdAsync(pId))!.Name
+                });
             }
 
             return View(vm);
+        }
+
+        private async Task GetProductsAsync(Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategoryId, Document cabDocument,
+            CABProfileViewModel vm)
+        {
+            IEnumerable<Guid> prodIds;
+            if (purposeOfAppointmentId != null)
+            {
+                prodIds = cabDocument.ScopeOfAppointments
+                    .Where(s => s.PurposeOfAppointmentId != null &&
+                                s.PurposeOfAppointmentId == purposeOfAppointmentId && s.ProductIds.Any())
+                    .Select(s => s.ProductIds).SelectMany(p => p).ToList();
+            }
+            else if (categoryId.HasValue)
+            {
+                prodIds = cabDocument.ScopeOfAppointments
+                    .Where(s => s.CategoryId != null &&
+                                s.CategoryId == categoryId && s.ProductIds.Any()).Select(s => s.ProductIds)
+                    .SelectMany(p => p).ToList();
+            }
+            else
+            {
+                prodIds = cabDocument.ScopeOfAppointments
+                    .Where(s => s.SubCategoryId != null &&
+                                s.SubCategoryId == categoryId && s.ProductIds.Any()).Select(s => s.ProductIds)
+                    .SelectMany(p => p).ToList();
+            }
+
+            foreach (var prodId in prodIds)
+            {
+                vm.CabLegislativeAreas.Products.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = prodId,
+                    Item2 = (await _legislativeAreaService
+                        .GetProductByIdAsync(prodId))!.Name
+                });
+            }
+        }
+        
+        private async Task GetProceduresAsync(Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategoryId, Guid? productId, Document cabDocument,
+            CABProfileViewModel vm)
+        {
+            IEnumerable<DocumentScopeOfAppointment> scopeOfAppointments;
+            if (purposeOfAppointmentId != null)
+            {
+                scopeOfAppointments = cabDocument.ScopeOfAppointments
+                    .Where(s => s.PurposeOfAppointmentId != null &&
+                                s.PurposeOfAppointmentId == purposeOfAppointmentId && s.ProductIdAndProcedureIds.Any());
+            }
+            else if (categoryId != null)
+            {
+                scopeOfAppointments = cabDocument.ScopeOfAppointments
+                    .Where(s => s.CategoryId != null &&
+                                s.CategoryId == categoryId && s.ProductIdAndProcedureIds.Any());
+            }
+            else if (subCategoryId != null)
+            {
+                scopeOfAppointments = cabDocument.ScopeOfAppointments
+                    .Where(s => s.SubCategoryId != null &&
+                                s.SubCategoryId == subCategoryId && s.ProductIdAndProcedureIds.Any());
+            }
+            else
+            {
+                scopeOfAppointments = cabDocument.ScopeOfAppointments
+                    .Where(s => s.SubCategoryId != null &&
+                                s.ProductIds.Contains(productId!.Value) && s.ProductIdAndProcedureIds.Any());
+
+            }
+            
+            var prodIds = scopeOfAppointments.ToList()
+             .Select(s => s.ProductIdAndProcedureIds)
+                 .SelectMany(pp => pp)
+                 .SelectMany(pr => pr.ProcedureIds);
+            
+            foreach (var prodId in prodIds)
+            {
+                vm.CabLegislativeAreas.Products.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = prodId,
+                    Item2 = (await _legislativeAreaService
+                        .GetProductByIdAsync(prodId))!.Name
+                });
+            }
         }
 
         #region profileDraft
