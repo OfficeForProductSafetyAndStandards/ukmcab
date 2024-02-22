@@ -231,7 +231,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 Item1 = productId ?? null,
                 Item2 = productId.HasValue ?(await _legislativeAreaService
-                    .GetCategoryByIdAsync(productId.Value))?.Name : null
+                    .GetProductByIdAsync(productId.Value))?.Name : null
             };
             
             return View(vm);
@@ -511,10 +511,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var listCabLegislateArea =
                 await GetCABLegislativeAreasAsync(cabDocument.DocumentLegislativeAreas);
-            cab.CabLegislativeAreas = new CABLegislativeAreasModel()
+            cab.CabLegislativeAreas = new CABLegislativeAreasModel
             {
                 CabUrl = cab.CABUrl,
-                LegislativeAreasModel = listCabLegislateArea
+                LegislativeAreasModel = listCabLegislateArea,
+                ShowLabels = false
             };
             return cab;
         }
