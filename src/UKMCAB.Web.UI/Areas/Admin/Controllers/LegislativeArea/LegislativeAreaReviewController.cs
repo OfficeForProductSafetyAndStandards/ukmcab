@@ -94,6 +94,7 @@ public class LegislativeAreaReviewController : Controller
 
                 var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
                 {
+                    LegislativeAreaId = legislativeArea.Id,
                     Name = legislativeArea.Name,
                     IsProvisional = documentLegislativeArea.IsProvisional,
                     AppointmentDate = documentLegislativeArea.AppointmentDate,
