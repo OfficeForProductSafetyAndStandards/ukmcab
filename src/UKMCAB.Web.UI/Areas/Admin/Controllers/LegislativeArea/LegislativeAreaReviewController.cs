@@ -112,16 +112,16 @@ public class LegislativeAreaReviewController : Controller
                 await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea
                     .LegislativeAreaId);
 
-            var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
-            {
-                Name = legislativeArea.Name,
-                LegislativeAreaId = legislativeArea.Id,
-                IsProvisional = documentLegislativeArea.IsProvisional,
-                AppointmentDate = documentLegislativeArea.AppointmentDate,
-                ReviewDate = documentLegislativeArea.ReviewDate,
-                Reason = documentLegislativeArea.Reason,
-                CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
-            };
+                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
+                {
+                    LegislativeAreaId = legislativeArea.Id,
+                    Name = legislativeArea.Name,
+                    IsProvisional = documentLegislativeArea.IsProvisional,
+                    AppointmentDate = documentLegislativeArea.AppointmentDate,
+                    ReviewDate = documentLegislativeArea.ReviewDate,
+                    Reason = documentLegislativeArea.Reason,
+                    CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
+                };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
             foreach (var scopeOfAppointment in scopeOfAppointments)

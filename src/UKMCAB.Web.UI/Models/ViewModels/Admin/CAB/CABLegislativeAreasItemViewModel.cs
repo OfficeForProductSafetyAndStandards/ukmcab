@@ -6,8 +6,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABLegislativeAreasItemViewModel
     {
+        public Guid? LegislativeAreaId { get; set; }
+        
         public string? Name { get; set; }
-        public Guid LegislativeAreaId { get; set; }
 
         public bool? IsProvisional { get; set; }
 
