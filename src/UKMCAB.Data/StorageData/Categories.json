@@ -237,7 +237,7 @@
     },
     {
         "id": "0b0c8938-a7e4-4c9d-a5f9-61eaff789ce5",
-        "name": "space heaters and combination heaters with a rated heat output ≤ 400 kW, including those integrated in packages of space heater, temperature control and solar device or packages of combination heater, temperature control and solar device as defined in Article 2 of Commission Delegated Regulation (EU) No 811/2013",
+        "name": "Space heaters and combination heaters with a rated heat output ≤ 400 kW, including those integrated in packages of space heater, temperature control and solar device or packages of combination heater, temperature control and solar device as defined in Article 2 of Commission Delegated Regulation (EU) No 811/2013",
         "legislativeAreaId": "32d80c5e-0314-483b-8985-a35d507cad52"
     },
     {
@@ -247,12 +247,12 @@
     },
     {
         "id": "9964b165-bc13-489c-8acd-daf720f87091",
-        "name": "Personal Watercraft",
+        "name": "Personal watercraft",
         "purposeOfAppointmentId": "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
     },
     {
         "id": "f9bf9dea-2bff-4e06-8416-7b113f00bc5c",
-        "name": "Recreational Craft Category A and B with a hull length between 12m and 24m Category C with a hull length between 12m and 24m",
+        "name": "Recreational craft Category A and B with a hull length between 12m and 24m Category C with a hull length between 12m and 24m",
         "purposeOfAppointmentId": "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
     },
     {
@@ -262,7 +262,7 @@
     },
     {
         "id": "15dfd696-f9ad-4025-a34a-ef565af600c1",
-        "name": "Exhaust Emissions Products identified in Regulation 3(1)(d) and (e) (Where designated standards have been applied)",
+        "name": "Exhaust emissions Products identified in Regulation 3(1)(d) and (e) (Where designated standards have been applied)",
         "purposeOfAppointmentId": "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
     },
     {
@@ -272,17 +272,17 @@
     },
     {
         "id": "a6300a83-c1db-404d-aff9-c70363276c3c",
-        "name": "Noise Emissions – Recreational Crafts Crafts with propulsion systems defined in Regulation 46 (Where designated standards have been applied)",
+        "name": "Noise emissions – Recreational crafts Crafts with propulsion systems defined in Regulation 46 (Where designated standards have been applied)",
         "purposeOfAppointmentId": "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
     },
     {
         "id": "e73bf09b-d473-475c-a0ab-74a943701be0",
-        "name": "Noise Emissions – Personal Watercraft Crafts with propulsion systems defined in Regulation 47 (Where designated standards have been applied)",
+        "name": "Noise emissions – Personal watercraft Crafts with propulsion systems defined in Regulation 47 (Where designated standards have been applied)",
         "purposeOfAppointmentId": "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
     },
     {
         "id": "2c9bacf5-0e01-449a-bb01-945a72529b5a",
-        "name": "Noise Emissions – Recreational Crafts Crafts with propulsion systems defined in Regulation 46 (Where the Froude number of power displacement ratio method is used for assessment)",
+        "name": "Noise emissions – Recreational crafts Crafts with propulsion systems defined in Regulation 46 (Where the Froude number of power displacement ratio method is used for assessment)",
         "purposeOfAppointmentId": "6b8fb48a-cad1-4cf1-8192-a5ca218d88d5"
     },
     {
@@ -292,7 +292,7 @@
     },
     {
         "id": "73a7ac40-2b28-4973-b371-10605bcbc123",
-        "name": "Mechanical Equipment",
+        "name": "Mechanical equipment",
         "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a"
     },
     {
@@ -322,87 +322,87 @@
     },
     {
         "id": "e13d13e0-2ba9-48f8-b610-71e45f569c98",
-        "name": "Category F1 Fireworks",
+        "name": "Category F1 fireworks",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
     },
     {
         "id": "f68eeafc-3df1-4827-91ec-87474ea5c8d2",
-        "name": "Category F2 Fireworks",
+        "name": "Category F2 fireworks",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
     },
     {
         "id": "32708645-930a-48cd-9c92-ce52b8b675f7",
-        "name": "Category F3 Fireworks",
+        "name": "Category F3 fireworks",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
     },
     {
         "id": "6311172b-be1f-434e-ab2d-6dcb3e535237",
-        "name": "Category F4 Fireworks",
+        "name": "Category F4 fireworks",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
     },
     {
         "id": "a1ca6cd9-c8e4-438a-84c6-e31d030719d6",
-        "name": "Category T1 Theatrical pyrotechnic articles",
+        "name": "Category T1 theatrical pyrotechnic articles",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
     },
     {
         "id": "c9423861-68de-494a-b98d-85b999dd67db",
-        "name": "Category T2 Theatrical pyrotechnic articles",
+        "name": "Category T2 theatrical pyrotechnic articles",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
     },
     {
         "id": "72eab7af-5ca7-45f6-ab3e-8542259f307b",
-        "name": "Category P1 Other pyrotechnic articles",
+        "name": "Category P1 other pyrotechnic articles",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
     },
     {
         "id": "24f28f30-3942-40ff-a2d4-8c006ea43d42",
-        "name": "Category P2 Other pyrotechnic articles",
+        "name": "Category P2 other pyrotechnic articles",
         "legislativeAreaId": "53067ecd-1fba-431e-a3e4-d0f772bf62ed"
     },
     {
         "id": "850c2596-d786-43f0-82a4-2f93da7a0965",
-        "name": "Toys falling withing the definition provided by Regulation 4 of the Toys (Safety) Regulations.",
+        "name": "Toys falling within the definition provided by Regulation 4 of the Toys (Safety) Regulations",
         "legislativeAreaId": "8e686be5-727f-4d70-875f-58109fd03856"
     },
     {
         "id": "59f41f70-4ce2-4773-88d8-65344611418d",
-        "name": "determination of mass for commercial transaction",
+        "name": "Determination of mass for commercial transaction",
         "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
     },
     {
         "id": "c41cdb43-7c3d-460a-84be-1c931fb12db0",
-        "name": "determination of mass for the calculation of a toll, tariff, tax, bonus, penalty, remuneration, indemnity or similar type of payment",
+        "name": "Determination of mass for the calculation of a toll, tariff, tax, bonus, penalty, remuneration, indemnity or similar type of payment",
         "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
     },
     {
         "id": "74913dc5-96ac-4a7e-b8ab-9387882e6140",
-        "name": "determination of mass for the application of laws or regulations or for an expert opinion given in court proceedings",
+        "name": "Determination of mass for the application of laws or regulations or for an expert opinion given in court proceedings",
         "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
     },
     {
         "id": "e7e41428-3ba7-4373-94b0-125d28200bcb",
-        "name": "determination of mass in the practice of medicine for weighing patients for the purposes of monitoring, diagnosis and medical treatment",
+        "name": "Determination of mass in the practice of medicine for weighing patients for the purposes of monitoring, diagnosis and medical treatment",
         "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
     },
     {
         "id": "0c8753e6-ae64-4bad-9684-be4b93e36f9b",
-        "name": "determination of mass for making up medicines on prescription in a pharmacy and determination of mass in analyses carried out in medical and pharmaceutical laboratories",
+        "name": "Determination of mass for making up medicines on prescription in a pharmacy and determination of mass in analyses carried out in medical and pharmaceutical laboratories",
         "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
     },
     {
         "id": "7a4950f0-336a-4c64-8c11-26f8488c7f45",
-        "name": "determination of price on the basis of mass for the purposes of direct sales to the public and the making-up of pre-packages",
+        "name": "Determination of price on the basis of mass for the purposes of direct sales to the public and the making-up of pre-packages",
         "legislativeAreaId": "ecc739f4-0be4-4651-8598-1e6a1d0808fc"
     },
     {
         "id": "8c8ba0f1-3c74-400a-a9c8-9598afd1e81e",
-        "name": "MI-001 Water Meters",
+        "name": "MI-001 Water meters",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551"
     },
     {
         "id": "8a7bfd21-c76f-4734-b131-017b2b89f22a",
-        "name": "MI-002 Gas Meters",
+        "name": "MI-002 Gas meters",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551"
     },
     {

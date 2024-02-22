@@ -1,21 +1,21 @@
 [
     {
         "id": "fbaf7628-885b-11ee-b9d1-0242ac120002",
-        "name": "Industrial Equipment",
+        "name": "Industrial equipment",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf7916-885b-11ee-b9d1-0242ac120002",
-        "name": "Information Technology Equipment",
+        "name": "Information technology equipment",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf7eca-885b-11ee-b9d1-0242ac120002",
-        "name": "Alarms Systems",
+        "name": "Alarms systems",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
@@ -29,175 +29,175 @@
     },
     {
         "id": "fbaf815e-885b-11ee-b9d1-0242ac120002",
-        "name": "Railway Systems",
+        "name": "Railway systems",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf8276-885b-11ee-b9d1-0242ac120002",
-        "name": "Laboratory & Test Equipment",
+        "name": "Laboratory & test equipment",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf8398-885b-11ee-b9d1-0242ac120002",
-        "name": "Air Traffic Management",
+        "name": "Air traffic management",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf84ba-885b-11ee-b9d1-0242ac120002",
-        "name": "Transmission Systems",
+        "name": "Transmission systems",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf85d2-885b-11ee-b9d1-0242ac120002",
-        "name": "Maritime Systems",
+        "name": "Maritime systems",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf8a3c-885b-11ee-b9d1-0242ac120002",
-        "name": "Automotive Systems",
+        "name": "Automotive systems",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf8bfe-885b-11ee-b9d1-0242ac120002",
-        "name": "Domestic Appliances",
+        "name": "Domestic appliances",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf8d52-885b-11ee-b9d1-0242ac120002",
-        "name": "Military Equipment",
+        "name": "Military equipment",
         "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "fbaf90c2-885b-11ee-b9d1-0242ac120002",
-        "name": "sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed",
+        "name": "Sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
         "categoryId": "3423693e-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "fbaf9216-885b-11ee-b9d1-0242ac120002",
-        "name": "sawing machinery with fixed blade(s) during cutting, having a manually operated reciprocating saw-bench or carriage",
+        "name": "Sawing machinery with fixed blade(s) during cutting, having a manually operated reciprocating saw-bench or carriage",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
         "categoryId": "3423693e-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "fbaf9392-885b-11ee-b9d1-0242ac120002",
-        "name": "sawing machinery with fixed blade(s) during cutting, having a built-in mechanical feed device for the workpieces, with manual loading and/or unloading",
+        "name": "Sawing machinery with fixed blade(s) during cutting, having a built-in mechanical feed device for the workpieces, with manual loading and/or unloading",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
         "categoryId": "3423693e-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "fbaf954a-885b-11ee-b9d1-0242ac120002",
-        "name": "sawing machinery with movable blade(s) during cutting, having mechanical movement of the blade, with manual loading and/or unloading",
+        "name": "Sawing machinery with movable blade(s) during cutting, having mechanical movement of the blade, with manual loading and/or unloading",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
         "categoryId": "3423693e-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "fbaf9784-885b-11ee-b9d1-0242ac120002",
-        "name": "sawing machinery with fixed blade(s) during cutting, having a fixed or reciprocating",
+        "name": "Sawing machinery with fixed blade(s) during cutting, having a fixed or reciprocating",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
         "categoryId": "342365ce-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "fbaf9be4-885b-11ee-b9d1-0242ac120002",
-        "name": "sawing machinery with blade(s) assembled on a carriage with reciprocating motion",
+        "name": "Sawing machinery with blade(s) assembled on a carriage with reciprocating motion",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
         "categoryId": "342365ce-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "fbaf9cfc-885b-11ee-b9d1-0242ac120002",
-        "name": "locomotives and brake-vans",
+        "name": "Locomotives and brake-vans",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
         "categoryId": "34237c6c-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "fbafa454-885b-11ee-b9d1-0242ac120002",
-        "name": "hydraulic-powered roof supports",
+        "name": "Hydraulic-powered roof supports",
         "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
         "categoryId": "34237c6c-8856-11ee-b9d1-0242ac120002"
     },
     {
         "id": "ea6034c7-b363-499d-b032-4bd90563233c",
-        "name": "Aeronautical Equipment",
+        "name": "Aeronautical equipment",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "c76c346e-e1c5-4f1a-9184-091a3fdd937e",
-        "name": "Base Station for Mobile Network",
+        "name": "Base station for mobile network",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "d7779ee0-6720-4c8a-9231-73db4911d579",
-        "name": "Broadcast (including Programme Making and Outside Broadcast)",
+        "name": "Broadcast (including programme making and outside broadcast)",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "a95a3bbd-3107-4173-8572-607b01b9942e",
-        "name": "Citizens’ Band",
+        "name": "Citizens’ band",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "03319939-7d80-4d8a-bd0c-b6b69925480f",
-        "name": "Cordless Telephone",
+        "name": "Cordless telephone",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "d80266eb-7ad9-4aa7-b2bc-ce1d826f19f6",
-        "name": "Distress/Position Indicating Beacon",
+        "name": "Distress/Position indicating beacon",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "c1541a77-9709-4df8-bd21-14d1868f6a6b",
-        "name": "Fixed Link",
+        "name": "Fixed link",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "967debf0-6027-4cd9-ad33-e67cce73afb6",
-        "name": "Fixed Wireless Access",
+        "name": "Fixed wireless access",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "88f423e4-8e10-4809-8e43-35caeab63e4c",
-        "name": "Industrial, Scientific and Medical within the scope of the Directive",
+        "name": "Industrial, scientific and medical within the scope of the directive",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
@@ -211,21 +211,21 @@
     },
     {
         "id": "d2a36dd0-98df-49e0-9e4f-f92b15fc3d39",
-        "name": "Mobile (Cellular) Telephone Handsets",
+        "name": "Mobile (cellular) telephone handsets",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "d4f55869-6e00-4fdd-9804-280a08720253",
-        "name": "Paging (Radio Messaging)",
+        "name": "Paging (radio messaging)",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "57ae060c-2960-46eb-8df7-1cd25f6f4cf7",
-        "name": "Private/Professional Mobile Radio",
+        "name": "Private/Professional mobile radio",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
@@ -239,28 +239,28 @@
     },
     {
         "id": "eda90a1a-8158-41e6-97fa-dbdb28db5b2d",
-        "name": "Radio Frequency Identification (RFID)",
+        "name": "Radio frequency identification (RFID)",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "eeb48c7c-dd4b-45df-b0f0-7ce4792a2298",
-        "name": "Radio Local Area Network",
+        "name": "Radio local area network",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "61748e6d-9694-4e58-ace5-00cc3bff2786",
-        "name": "Satellite Earth Station (Fixed/Mobile)",
+        "name": "Satellite earth station (fixed/mobile)",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "95467059-cf54-48ac-8474-9295be10ee33",
-        "name": "Short Range Device",
+        "name": "Short range device",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
@@ -281,14 +281,14 @@
     },
     {
         "id": "83e58f4d-92c9-4e38-b261-0429765067e6",
-        "name": "Ultrawideband Applications (including Ground Probing Radar)",
+        "name": "Ultrawideband applications (including ground probing radar)",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
     },
     {
         "id": "a5fce71e-ef3f-45db-901c-9defba434960",
-        "name": "Wireless Microphone",
+        "name": "Wireless microphone",
         "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "purposeOfAppointmentId": "",
         "categoryId": ""
@@ -463,7 +463,7 @@
     },
     {
         "id": "a397272e-a13e-405c-ac54-c77064ef290e",
-        "name": "Builders hoists for the transport of goods (combustion-engine driven)",
+        "name": "Builders' hoists for the transport of goods (combustion-engine driven)",
         "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
         "purposeOfAppointmentId": "",
         "categoryId": ""
@@ -561,7 +561,7 @@
     },
     {
         "id": "06435e3b-f274-4494-8e77-08eb8ca2dbdd",
-        "name": "Lift trucks, combustion-engine driven, counterbalanced (excluding \"other counterbalanced lift trucks\" as defined in Annex I, Item 36, second indent with a rated capacity of not more than 10 tonnes)",
+        "name": "Lift trucks, combustion-engine driven, counterbalanced (excluding \"other counterbalanced lift trucks\" as defined in Annex I, item 36, second indent with a rated capacity of not more than 10 tonnes)",
         "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
         "purposeOfAppointmentId": "",
         "categoryId": ""
@@ -701,7 +701,7 @@
     },
     {
         "id": "00b51206-f885-42d3-af20-85a158bbb51a",
-        "name": "Measuring systems on a pipelines (Accuracy Class 0.3)",
+        "name": "Measuring systems on pipeline (Accuracy Class 0.3)",
         "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
         "purposeOfAppointmentId": "",
         "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
