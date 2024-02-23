@@ -146,7 +146,7 @@ public class LegislativeAreaDetailsController : Controller
         }
 
         var selectListItems = options.PurposeOfAppointments
-            .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
+            .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList(); 
 
 
         if (existingScopeOfAppointment is { PurposeOfAppointmentId: not null })

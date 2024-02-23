@@ -72,7 +72,7 @@ public class LegislativeAreaReviewController : Controller
         }
 
         var laOfSelectedSoa = cabLaOfSelectedScopeofAppointment.ScopeOfAppointments.First(la => la.IsSelected == true);
-        var legislativeArea = laOfSelectedSoa.LegislativeArea.Id;
+        var legislativeAreaId = laOfSelectedSoa.LegislativeArea.Id;
         var selectedScopeOfAppointmentId = laOfSelectedSoa.ScopeId;
         Guard.IsTrue(selectedScopeOfAppointmentId != Guid.Empty, "Scope Id Guid cannot be empty");
 
@@ -82,7 +82,7 @@ public class LegislativeAreaReviewController : Controller
             // TODO: Handle the different submit types
             if (submitType == Constants.SubmitType.Edit)
             {
-                
+                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, compareScopeId = selectedScopeOfAppointmentId, legislativeAreaId });
             }
             if (submitType == Constants.SubmitType.Remove)
             {
