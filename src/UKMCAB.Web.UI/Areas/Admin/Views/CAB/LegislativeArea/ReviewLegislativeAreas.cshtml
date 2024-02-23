@@ -25,7 +25,11 @@
                         @for (int i = 0; i < Model.LAItems.Count; i++)
                         {
                             var legislativeArea = Model.LAItems[i];
-
+                            var removeLegislativeAreaLabel = "Remove legislative area";
+                            if (Model.LAItems.Count > 1)
+                            {
+                                removeLegislativeAreaLabel = $"{(legislativeArea.IsArchived is null or false ? "Remove or archive" : "Remove")} legislative area";
+                            }
                             <input type="hidden" asp-for="CABId">
                             <input type="hidden" asp-for="ReturnUrl">
                             <input type="hidden" asp-for="LAItems[i].Name">
@@ -44,7 +48,7 @@
                                     </govuk-button-link>
                                     <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveLegislativeArea" class="govuk-button--secondary"
                                                        asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area">
-                                        @($"{(legislativeArea.IsArchived is null or false ? "Remove or archive" : "Remove")} legislative area")
+                                        @removeLegislativeAreaLabel
                                     </govuk-button-link>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
                                         <thead class="govuk-table__head">
