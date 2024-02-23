@@ -119,10 +119,10 @@ public class LegislativeAreaDetailsController : Controller
             scopeId = Guid.NewGuid();
         }
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
-        if (existingScopeOfAppointment != null)
+        if (existingScopeOfAppointment != null || legislativeAreaId != null)
         {
             //Create a new scope of id in session to replace existing
-            await CreateScopeOfAppointmentInCacheAsync(scopeId, existingScopeOfAppointment.LegislativeAreaId);
+            await CreateScopeOfAppointmentInCacheAsync(scopeId, legislativeAreaId ?? existingScopeOfAppointment.LegislativeAreaId);
         }
 
         var documentScopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey,scopeId.ToString()));
