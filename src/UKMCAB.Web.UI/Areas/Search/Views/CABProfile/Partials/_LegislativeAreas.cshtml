@@ -16,12 +16,12 @@
             }
         </div>
     </div>
-    @if (Model.PurposeOfAppointment.Id != Guid.Empty)
+    @if (Model.PurposeOfAppointment.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
             <dl class="govuk-summary-list">
                 <dt class="govuk-summary-list__key">
-                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" class="govuk-link">
+                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link govuk-link--no-visited-state">
                         Purpose of appointment
                     </a>
                 </dt>
@@ -32,12 +32,12 @@
         </div>
     }
 
-    @if (Model.Category.Id != Guid.Empty)
+    @if (Model.Category.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
             <dl class="govuk-summary-list">
                 <dt class="govuk-summary-list__key">
-                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@Model.Category.Id" class="govuk-link">
+                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" class="govuk-link govuk-link--no-visited-state">
                         Product Category
                     </a>
                 </dt>
@@ -48,12 +48,12 @@
         </div>
     }
 
-    @if (Model.SubCategory.Id != Guid.Empty)
+    @if (Model.SubCategory.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
             <dl class="govuk-summary-list">
                 <dt class="govuk-summary-list__key">
-                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@Model.Category.Id" asp-route-subCategoryId="@Model.SubCategory.Id" class="govuk-link">
+                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@Model.Category.Id" class="govuk-link govuk-link--no-visited-state">
                         Product Sub Category
                     </a>
                 </dt>
@@ -64,12 +64,12 @@
         </div>
     }
 
-    @if (Model.Product.Id != Guid.Empty)
+    @if (Model.Product.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
             <dl class="govuk-summary-list">
                 <dt class="govuk-summary-list__key">
-                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@Model.Category.Id" asp-route-subCategoryId="@Model.SubCategory.Id" asp-route-productId="@Model.Product.Id" class="govuk-link">
+                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@Model.Category.Id" asp-route-subCategoryId="@Model.SubCategory.Id" class="govuk-link govuk-link--no-visited-state">
                         Product
                     </a>
                 </dt>
@@ -102,7 +102,7 @@ else if (Model.Products.Any())
         {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key ">
-                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@Model.Category.Id" asp-route-subCategoryId="@Model.SubCategory.Id" asp-route-productId="@product.Id" asp-fragment="legislative-areas">
                         @product.Name
                     </a>
@@ -119,7 +119,7 @@ else if (Model.SubCategories.Any())
         {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key ">
-                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@Model.Category.Id" asp-route-subCategoryId="@subCategory.Id" asp-fragment="legislative-areas">
                         @subCategory.Name
                     </a>
@@ -136,7 +136,7 @@ else if (Model.Categories.Any())
         {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key ">
-                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@category.Id" asp-fragment="legislative-areas">
                         @category.Name
                     </a>
@@ -153,7 +153,7 @@ else if (Model.PurposeOfAppointments.Any())
         {
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key ">
-                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@purposeOfAppointment.Id" asp-fragment="legislative-areas">
                         @purposeOfAppointment.Name
                     </a>
@@ -176,7 +176,7 @@ else
                     <dt class="govuk-summary-list__key ">
                         <div class="legislative-area-name">
                             <div>
-                                <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
+                                <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
                                     @legislativeArea.Name
                                 </a>
                             </div>

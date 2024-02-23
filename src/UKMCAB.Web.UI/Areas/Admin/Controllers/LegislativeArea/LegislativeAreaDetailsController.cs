@@ -117,7 +117,6 @@ public class LegislativeAreaDetailsController : Controller
         if (scopeId == Guid.Empty && legislativeAreaId != null)
         {
             scopeId = Guid.NewGuid();
-            await CreateScopeOfAppointmentInCacheAsync(scopeId, (Guid)legislativeAreaId);
         }
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
         if (existingScopeOfAppointment != null)
@@ -161,7 +160,7 @@ public class LegislativeAreaDetailsController : Controller
             Title = "Select purpose of appointment",
             LegislativeArea = legislativeArea.Name,
             PurposeOfAppointments = selectListItems,
-            CabId = id
+            CabId = id,
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
@@ -429,6 +428,7 @@ public class LegislativeAreaDetailsController : Controller
             Product = productName,
             CurrentProductId = productId,
             Procedures = selectListItems,
+            LegislativeAreaId = legislativeArea?.Id,
             LegislativeArea = legislativeArea?.Name,
             PurposeOfAppointment = purposeOfAppointment?.Name,
             Category = category?.Name,
@@ -441,7 +441,7 @@ public class LegislativeAreaDetailsController : Controller
 
     [HttpPost("add-procedure/{scopeId}", Name = Routes.AddProcedure)]
     public async Task<IActionResult> AddProcedure(Guid id, Guid scopeId, int indexOfProduct, ProcedureViewModel vm,
-        Guid? compareScopeId)
+        Guid? compareScopeId, string submitType)
     {
         var scopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey,scopeId.ToString()));
         Guid? productId = null;
@@ -476,6 +476,11 @@ public class LegislativeAreaDetailsController : Controller
             {
                 updatedDocument.ScopeOfAppointments.Remove(existingScopeOfAppointment);
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, updatedDocument);
+            }
+
+            if (submitType == Constants.SubmitType.Add)
+            {
+                return RedirectToRoute(Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, legislativeAreaId = vm.LegislativeAreaId });
             }
 
             return RedirectToRoute(
