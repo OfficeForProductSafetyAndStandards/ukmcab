@@ -12,6 +12,10 @@
     </div>
 }
 
+@{
+    var file = Model.FileUpload;
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Remove product schedule</h1>
@@ -20,11 +24,33 @@
         <form id="scheduleForm" method="post" novalidate>
             <input type="hidden" asp-for="Title" />            
             <h2 class="govuk-heading-s">You have selected: </h2>
-            @foreach (var label in Model.ScheduleFileLabelList)
-            {
-                <p class="govuk-body">@label</p>
-            }            
-            <govuk-radios asp-for="Action">
+            <dl class="govuk-summary-list govuk-summary-list--no-border">
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        Title:
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @file.Label
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        Filename:
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @file.FileName
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        From legislative area:
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @file.LegislativeArea
+                    </dd>
+                </div>
+            </dl>            
+            <govuk-radios asp-for="RemoveAction">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">
                             Select an option
@@ -32,7 +58,21 @@
                     <govuk-radios-item value="@RemoveActionEnum.Remove">Remove</govuk-radios-item>
                     <govuk-radios-item value="@RemoveActionEnum.Archive">Archive</govuk-radios-item>
                     </govuk-radios-fieldset>
-                </govuk-radios>
+            </govuk-radios>
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-visually-hidden">Warning</span>
+                    @if (Model.LastSchedule)
+                    {
+                        @:Removing this product schedule will leave the legislative area with no product schedules linked to it.
+                    }
+                    else
+                    {
+                        @:Removing this product schedule will remove it from the legislative area it's linked to.
+                    }
+                </strong>
+            </div>
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
                 <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CabId">Cancel</a>

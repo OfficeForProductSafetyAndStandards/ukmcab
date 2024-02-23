@@ -499,7 +499,7 @@ public class LegislativeAreaDetailsController : Controller
         if (cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
         {
             await _cabAdminService.RemoveLegislativeAreaAsync(id, legislativeAreaId, legislativeArea.Name);
-            return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true });
+            return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true, });
         }
         else
         {
@@ -525,7 +525,7 @@ public class LegislativeAreaDetailsController : Controller
     {
         if (ModelState.IsValid)
         {
-            if (vm.Action == RemoveActionEnum.Remove)
+            if (vm.RemoveAction == RemoveActionEnum.Remove)
             {
                 await _cabAdminService.RemoveLegislativeAreaAsync(id, legislativeAreaId, vm.Title);
             }
@@ -540,10 +540,12 @@ public class LegislativeAreaDetailsController : Controller
         {
             var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
             var latestDocument = GetLatestDocumentAsync(cabDocuments);
+            var legislativeAreaArchived = latestDocument?.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId == legislativeAreaId).First().Archived;
 
             vm.LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId);
             vm.ProductSchedules = latestDocument?.Schedules ?? new List<FileUpload>();
-           
+            vm.ShowArchiveOption = !legislativeAreaArchived.GetValueOrDefault();
+
             return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
         }
     }

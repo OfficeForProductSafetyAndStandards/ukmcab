@@ -91,7 +91,7 @@
 
                         @* Header*@
                         <div>
-                            <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display">
+                            <div class="width-half ukmcab-float__left mobile-no-display">
                                 <h3 class="govuk-heading-s">File</h3>
                             </div>
                             <div class="ukmcab-float__left">
@@ -102,15 +102,14 @@
                             </div>
                         </div>
 
-                        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
 
                             @for (int i = 0; i < Model.UploadedFiles.Count; i++)
                             {
                                 var uploadedFile = Model.UploadedFiles[i];
                                 var archived = uploadedFile.Archived.GetValueOrDefault();
                                 
-                                <div class="govuk-checkboxes__item">
-                                    @*Row 1: Checkbox Row*@
+                                <div class="govuk-radios__item">                                    
                                     <div class="row">                                       
                                         <div class="width-one-tenth">                                          
                                             <input type="hidden" asp-for="UploadedFiles![i].FileIndex" value="@i"/>
@@ -121,13 +120,13 @@
                                         <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
                                             @if(archived)
                                             {
-                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected" disabled />
+                                                <input class="govuk-radios__input" type="radio" id="IndexofSelectedFile" name="IndexofSelectedFile" value="@i" checked="@uploadedFile.IsSelected" disabled />
                                             }
                                             else
                                             {
-                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected" />
-                                            }                                            
-                                            <label class="govuk-label govuk-checkboxes__label" asp-for="UploadedFiles![i].IsSelected">
+                                                <input class="govuk-radios__input" type="radio" id="IndexofSelectedFile" name="IndexofSelectedFile" value="@i" checked="@uploadedFile.IsSelected" />
+                                            }
+                                            <label class="govuk-label govuk-radios__label" asp-for="UploadedFiles![i].IsSelected">
                                                 <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
                                             </label>
                                             @if (uploadedFile.IsDuplicated || uploadedFile.IsReplaced)
@@ -186,28 +185,28 @@
                 </div>
             }
         </div>
-
-        <div class="govuk-grid-column-two-thirds">
-            @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
+                {
+                    <div class="govuk-button-group">
+                        <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove">
+                            Remove schedule
+                        </button>
+                        <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Use file again</button>
+                        <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
+                    </div>
+                }
+            </div>
+            @if (Model.UploadedFiles != null && Model.UploadedFiles.Count < SchedulesOptions.MaxFileCount)
             {
-                <div class="govuk-button-group">
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove">
-                        Remove schedule
-                    </button>                    
-                    <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
-                    <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
+                <div class="govuk-grid-column-one-third ukmcab-text-align-right">
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
+                        @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file", "Upload a file")
+                    </button>
                 </div>
             }
         </div>
-
-        @if (Model.UploadedFiles != null && Model.UploadedFiles.Count < SchedulesOptions.MaxFileCount)
-        {
-            <div class="govuk-grid-column-one-third ukmcab-text-align-rightx">
-                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
-                    @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file", "Upload a file")
-                </button>
-            </div>
-        }
 
         <div class="govuk-grid-column-two-thirds ukmcab-float__clear">
             <div class="govuk-button-group ukmcab-padding-top-50">

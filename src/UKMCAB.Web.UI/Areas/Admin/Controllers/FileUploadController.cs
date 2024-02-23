@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Humanizer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Razor.Language;
+using StackExchange.Redis;
+using System.Runtime.InteropServices;
 using System.Security.Claims;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
@@ -64,12 +68,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var model = new FileUploadViewModel
             {
-                Title = SchedulesOptions.UploadTitle,
-                UploadedFiles = latestVersion.Schedules?.Select(s => new FileViewModel
-                {
-                    FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                    LegislativeArea = s.LegislativeArea
-                }).ToList() ?? new List<FileViewModel>(),
+                Title = SchedulesOptions.UploadTitle,                
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
@@ -138,14 +137,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     $"Select a {SchedulesOptions.AcceptedFileTypes} file 10 megabytes or less.");
             }
 
-            model.Title = SchedulesOptions.UploadTitle;
-            model.UploadedFiles =
-                latestVersion.Schedules?.Select(s => new FileViewModel
-                    {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                        LegislativeArea = s.LegislativeArea, Id = s.Id, Archived = s.Archived
-                })
-                    .ToList() ?? new List<FileViewModel>();
+            model.Title = SchedulesOptions.UploadTitle;           
             model.CABId = id;
             model.IsFromSummary = fromSummary;
             model.DocumentStatus = latestVersion.StatusValue;
@@ -189,6 +181,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             var uploadedFileViewModels = new List<FileViewModel>();
+            var legislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestVersion);
 
             if (fromAction is nameof(FileUploadManagementController.SchedulesReplaceFile)
                 or nameof(FileUploadManagementController.SchedulesUseFileAgain))
@@ -202,19 +195,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         indexOfFileToReplace);
                 }
 
-                if (fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain) &&
-                    latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var fileToUseAgainIndex) &&
-                    fileToUseAgainIndex < latestVersion.Schedules.Count)
-                {
-                    uploadedFileViewModels = latestVersion.Schedules?.Select(s => new FileViewModel
-                    {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                        LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
-                    }).ToList() ?? new List<FileViewModel>();
+                //if (fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain) &&
+                //    latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var fileToUseAgainIndex) &&
+                //    fileToUseAgainIndex < latestVersion.Schedules.Count)
+                //{
+                //    uploadedFileViewModels = latestVersion.Schedules?.Select(s => new FileViewModel
+                //    {
+                //        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
+                //        LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
+                //    }).ToList() ?? new List<FileViewModel>();
 
-                    var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
-                    AddSelectedVMToUploadedFileViewModels(uploadedFileViewModels, selectedViewModel);
-                }
+                //    var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
+                //    AddSelectedVMToUploadedFileViewModels(uploadedFileViewModels, selectedViewModel);
+                //}
 
                 UpdateShowBannerAndSuccessBanner(uploadedFileViewModels, out bool showBanner,
                     out string successBannerContent);
@@ -227,7 +220,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     DocumentStatus = latestVersion.StatusValue,
                     SuccessBannerTitle = successBannerContent,
                     ShowBanner = showBanner,
-                    LegislativeAreas = latestVersion.LegislativeAreas.ToList()
+                    LegislativeAreas = legislativeAreas
                 };
 
                 return View(viewModel);
@@ -239,10 +232,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
             }).ToList() ?? new List<FileViewModel>();
 
-            var legislativeArea = latestVersion.DocumentLegislativeAreas.Where(a => a.Archived is null or false)
-                .Select(a => a.LegislativeAreaName)
-                .Distinct()
-                .ToList();
+            if (int.TryParse(indexOfSelectedFile, out var fileToUseAgainIndex) &&
+                    fileToUseAgainIndex < latestVersion?.Schedules?.Count)
+            {
+                uploadedFileViewModels[fileToUseAgainIndex].IsSelected = true;
+            }
 
             // Pre-populate model for edit
             return View(new FileListViewModel
@@ -252,13 +246,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue,
-                LegislativeAreas = legislativeArea
+                LegislativeAreas = legislativeAreas
             });
         }
 
         [HttpPost]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
-        public async Task<IActionResult> SchedulesList(string id, string submitType, FileUploadViewModel model,
+        public async Task<IActionResult> SchedulesList(string id, string submitType, FileUploadViewModel model, 
             bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -285,31 +279,48 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            if (submitType is Constants.SubmitType.Remove)
+            if((submitType is Constants.SubmitType.Remove || submitType is Constants.SubmitType.ReplaceFile || submitType is Constants.SubmitType.UseFileAgain) 
+                && string.IsNullOrEmpty(model.IndexofSelectedFile))
+            {                
+                ModelState.AddModelError("IndexofSelectedFile", "Select a schedule");
+
+                return View(new FileListViewModel
+                {
+                    Title = SchedulesOptions.ListTitle,
+                    UploadedFiles = model.UploadedFiles,
+                    CABId = id,
+                    IsFromSummary = fromSummary,
+                    DocumentStatus = latestDocument.StatusValue,
+                    LegislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestDocument),
+                });                
+            }            
+
+            if(submitType == Constants.SubmitType.Continue || submitType == Constants.SubmitType.Save)
             {
-                var filesInViewModel = model.UploadedFiles ?? new List<FileViewModel>();
+                AddLegislativeLabelAndFileModelStateErrors(model);
+            }
 
-                var selectedViewModels = GetFilesSelectedInViewModel(filesInViewModel);
-                if (!selectedViewModels.Any())
+            if (submitType is Constants.SubmitType.Continue)
+            {
+                AddLegislativeSelectionModelStateErrors(model);
+            }
+
+            if (ModelState.IsValid)
+            {
+                if (submitType is Constants.SubmitType.Remove)
                 {
-                    AddSelectAFileModelStateError(submitType, nameof(model.UploadedFiles), selectedViewModels);
-                }
-                else
-                {
+                    var filesInViewModel = model.UploadedFiles ?? new List<FileViewModel>();
+
                     var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
+                    var schedule = latestDocument.Schedules[Convert.ToInt32(model.IndexofSelectedFile)];
 
-                    var fileUploadsInLatestDocumentMatchingUserSelection =
-                        _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(selectedViewModels,
-                            latestDocument.Schedules);
-
-                    if (fileUploadsInLatestDocumentMatchingUserSelection.Any())
+                    if (schedule != null)
                     {
                         // only one document and draft mode then remove the schedule else give user an option to remove or archive the schedule
                         if (cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
                         {
-                            _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(
-                                fileUploadsInLatestDocumentMatchingUserSelection, latestDocument,
-                                nameof(latestDocument.Schedules));
+                            latestDocument.Schedules.Remove(schedule);
+
                             var userAccount =
                                 await _userService.GetAsync(User.Claims
                                     .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
@@ -319,12 +330,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         // ask user to remove or archive
                         else
                         {
-                            var storagekey = Guid.NewGuid().ToString();
-                            await _distCache.SetAsync(storagekey,
-                                fileUploadsInLatestDocumentMatchingUserSelection.Select(n => n.Id).ToList(),
-                                TimeSpan.FromHours(1));
-
-                            return RedirectToRoute(Routes.SchedulesListRemove, new { id, storagekey });
+                            return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id });
                         }
                     }
 
@@ -362,58 +368,67 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         DocumentStatus = latestDocument.StatusValue
                     });
                 }
-            }
-
-            AddLegislativeLabelAndFileModelStateErrors(model);
-
-            if (submitType is Constants.SubmitType.Continue)
-            {
-                AddLegislativeSelectionModelStateErrors(model);
-            }
-
-            if (ModelState.IsValid)
-            {
-                if (UpdateFiles(latestDocument, model.UploadedFiles))
+                else if (submitType is Constants.SubmitType.UseFileAgain)
                 {
-                    var userAccount =
-                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-                            .Value);
+                    var schedule = latestDocument.Schedules[Convert.ToInt32(model.IndexofSelectedFile)];
+
+                    var newSchedule = new FileUpload()
+                    { 
+                        Id = Guid.NewGuid(),
+                        Label = schedule.Label,
+                        FileName = schedule.FileName,
+                        BlobName = schedule.BlobName,
+                        Archived = null,
+                        Category = null,
+                        LegislativeArea = string.Empty,
+                        UploadDateTime = DateTime.UtcNow,
+                    };
+
+                    latestDocument.Schedules.Add(newSchedule);
+
+                    var userAccount =  await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
-                }
 
-                if (submitType == Constants.SubmitType.UploadAnother)
-                {
-                    return model.IsFromSummary
-                        ? RedirectToAction("SchedulesUpload", "FileUpload",
-                            new { Area = "admin", id = latestDocument.CABId, fromSummary = true })
-                        : RedirectToAction("SchedulesUpload", "FileUpload",
-                            new { Area = "admin", id = latestDocument.CABId });
-                }
+                    return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, indexOfSelectedFile = model.IndexofSelectedFile });
 
-                if (submitType == Constants.SubmitType.Continue)
-                {
-                    return model.IsFromSummary
-                        ? RedirectToAction("Summary", "CAB",
-                            new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
-                        : RedirectToAction("DocumentsUpload", "FileUpload",
-                            new { Area = "admin", id = latestDocument.CABId });
                 }
+                else if (submitType is Constants.SubmitType.ReplaceFile)
+                {
+                    var schedule = latestDocument.Schedules[Convert.ToInt32(model.IndexofSelectedFile)];
+                    return RedirectToAction("SchedulesReplaceFile", "FileUploadManagement", new { id, scheduleId = schedule.Id, fromSummary });
+                }
+                else
+                {
+                    if (UpdateFiles(latestDocument, model.UploadedFiles))
+                    {
+                        var userAccount =
+                            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                                .Value);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+                    }
 
-                if (submitType == Constants.SubmitType.Save)
-                {
-                    return SaveDraft(latestDocument);
+                    if (submitType == Constants.SubmitType.UploadAnother)
+                    {
+                        return model.IsFromSummary
+                            ? RedirectToAction("SchedulesUpload", "FileUpload",
+                                new { Area = "admin", id = latestDocument.CABId, fromSummary = true })
+                            : RedirectToAction("SchedulesUpload", "FileUpload",
+                                new { Area = "admin", id = latestDocument.CABId });
+                    }
+                    else if (submitType == Constants.SubmitType.Continue)
+                    {
+                        return model.IsFromSummary
+                            ? RedirectToAction("Summary", "CAB",
+                                new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
+                            : RedirectToAction("DocumentsUpload", "FileUpload",
+                                new { Area = "admin", id = latestDocument.CABId });
+                    }
+                    else if (submitType == Constants.SubmitType.Save)
+                    {
+                        return SaveDraft(latestDocument);
+                    }
                 }
-
-                if (submitType is Constants.SubmitType.UseFileAgain)
-                {
-                    return RedirectToAction("SchedulesUseFileAgain", "FileUploadManagement", new { id, fromSummary });
-                }
-
-                if (submitType is Constants.SubmitType.ReplaceFile)
-                {
-                    return RedirectToAction("SchedulesReplaceFile", "FileUploadManagement", new { id, fromSummary });
-                }
-            }
+            }            
 
             return View(new FileListViewModel
             {
@@ -422,7 +437,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestDocument.StatusValue,
-                LegislativeAreas = latestDocument.LegislativeAreas.ToList()
+                LegislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestDocument),
             });
         }
 
@@ -726,31 +741,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("admin/cab/schedules-list/remove/{id}/{storageKey}", Name = Routes.SchedulesListRemove)]
-        public async Task<IActionResult> SchedulesListRemove(string id, string storageKey)
-        {
-            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
-            if (latestVersion == null) // Implies no document or archived
-            {
-                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
-            }
-
-            var fileUploadListIds = await _distCache.GetAsync<List<Guid>>(storageKey);
-
-            var vm = new RemoveScheduleViewModel
-            {
-                CabId = Guid.Parse(id),  
-                Title = "CAB Remove Schedules",
-                ScheduleFileLabelList = latestVersion.Schedules.Where(n => fileUploadListIds.Contains(n.Id))
-                    .Select(n => n.Label).ToList()
-            };
-
-            return View("~/Areas/Admin/views/FileUpload/SchedulesRemove.cshtml", vm);
-        }
-
-        [HttpPost]
-        [Route("admin/cab/schedules-list/remove/{id}/{storageKey}", Name = Routes.SchedulesListRemove)]
-        public async Task<IActionResult> SchedulesListRemove(string id, string storageKey, RemoveScheduleViewModel vm)
+        [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}", Name = Routes.SchedulesListRemove)]
+        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -758,18 +750,39 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            var fileUploadListIds = await _distCache.GetAsync<List<Guid>>(storageKey)?? new();
+            var schedules = latestDocument?.Schedules ?? new();
+            var fileUpload = schedules.Where(n => n.Id == Guid.Parse(scheduleId)).First() ?? throw new InvalidOperationException("No schedule found"); 
+
+            var vm = new RemoveScheduleViewModel
+            {
+                CabId = Guid.Parse(id),
+                Title = "CAB Remove Schedules",
+                LastSchedule = schedules.Count == 1,
+                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime)
+            };
+
+            return View("~/Areas/Admin/views/FileUpload/SchedulesRemove.cshtml", vm);
+        }
+
+        [HttpPost]
+        [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}", Name = Routes.SchedulesListRemove)]
+        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, RemoveScheduleViewModel vm)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var schedules = latestDocument?.Schedules ?? new();
+            var fileUpload = schedules.Where(n => n.Id == Guid.Parse(scheduleId)).First() ?? throw new InvalidOperationException("No schedule found"); ;
 
             if (ModelState.IsValid)
-            {
-                List<FileUpload> selectedSchedules =
-                    _fileUploadUtils.GetSelectedFilesFromLatestDocumentByIds(fileUploadListIds,
-                        latestDocument.Schedules);
-
-                if (vm.Action == RemoveActionEnum.Remove)
+            { 
+                if (vm.RemoveAction == RemoveActionEnum.Remove)
                 {
-                    _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(selectedSchedules, latestDocument,
-                        nameof(latestDocument.Schedules));
+                    schedules.Remove(fileUpload);
 
                     var userAccount =
                         await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
@@ -778,16 +791,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    await _cabAdminService.ArchiveSchedulesAsync(Guid.Parse(id), fileUploadListIds);
+                    await _cabAdminService.ArchiveSchedulesAsync(Guid.Parse(id), new List<Guid>() { Guid.Parse(scheduleId) });
                 }
-
-                _distCache.Remove(storageKey);
 
                 return RedirectToAction("SchedulesList", new { id });
             }
 
-            vm.ScheduleFileLabelList = latestDocument.Schedules.Where(n => fileUploadListIds.Contains(n.Id))
-                .Select(n => n.Label).ToList();
+            vm.FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime);
+            vm.LastSchedule = schedules.Count == 1;
+
             return View("~/Areas/Admin/views/FileUpload/SchedulesRemove.cshtml", vm);
         }
 
@@ -1088,7 +1100,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
-        private List<FileViewModel> GetFilesSelectedInViewModel(List<FileViewModel> filesInViewModel)
+        private static List<FileViewModel> GetFilesSelectedInViewModel(List<FileViewModel> filesInViewModel)
         {
             return filesInViewModel.Where(f => f.IsSelected).ToList() ?? new List<FileViewModel>();
         }
@@ -1154,7 +1166,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
-        private bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
+        private static bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
             var newSchedules = new List<FileUpload>();
             if (latestDocument.Schedules != null && latestDocument.Schedules.Any())
@@ -1198,7 +1210,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return false;
         }
 
-        private bool UpdateDocumentFiles(Document latestDocument, List<FileViewModel> fileViewModels)
+        private static bool UpdateDocumentFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
             var newDocuments = new List<FileUpload>();
             if (fileViewModels != null)
@@ -1237,6 +1249,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
             return RedirectToAction("CABManagement", "CabManagement",
                 new { Area = "admin", unlockCab = document.CABId });
+        }
+
+        private List<string> GetDocumentAreaDistinctLegislativeAreas(Document latestDocument)
+        {
+            var legislativeareas = latestDocument.DocumentLegislativeAreas.Where(a => a.Archived is null or false)
+               .Select(a => a.LegislativeAreaName)
+               .Distinct()
+               .ToList();
+
+            legislativeareas.Insert(0, "Unassigned");
+            return legislativeareas;
         }
 
         #endregion

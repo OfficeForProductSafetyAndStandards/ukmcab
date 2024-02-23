@@ -10,6 +10,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowBanner { get; set; }
         public string? SuccessBannerTitle { get; set; }
         public List<string> LegislativeAreas { get; set; } = new();
-        public RemoveActionEnum RemoveAction { get; set; }
+        public RemoveActionEnum RemoveAction { get; set; }       
     }
 }

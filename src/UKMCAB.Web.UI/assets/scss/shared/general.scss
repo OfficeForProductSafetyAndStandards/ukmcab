@@ -251,6 +251,16 @@
     }
 }
 
+.width-half {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-half {
+        width: 50% !important;
+    }
+}
+
 .width-three-fifth {
     width: 100% !important;
 }
