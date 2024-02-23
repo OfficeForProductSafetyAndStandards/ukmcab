@@ -21,6 +21,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public List<LegislativeAreaListItemViewModel> ScopeOfAppointments { get; set; } = new();
 
         public bool CanChooseScopeOfAppointment { get; set; }
+        public bool? IsArchived { get; init; }
 
 
         public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PurposeOfAppointment));
