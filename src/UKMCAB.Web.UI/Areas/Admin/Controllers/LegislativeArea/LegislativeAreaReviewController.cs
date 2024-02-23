@@ -101,6 +101,7 @@ public class LegislativeAreaReviewController : Controller
                     ReviewDate = documentLegislativeArea.ReviewDate,
                     Reason = documentLegislativeArea.Reason,
                     CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
+                    IsArchived = documentLegislativeArea.Archived
                 };
 
                 var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
