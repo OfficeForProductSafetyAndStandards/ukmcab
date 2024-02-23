@@ -118,6 +118,7 @@ public class LegislativeAreaDetailsController : Controller
         {
             scopeId = Guid.NewGuid();
             await CreateScopeOfAppointmentInCacheAsync(scopeId, (Guid)legislativeAreaId);
+            return RedirectToRoute(Routes.AddPurposeOfAppointment, new { id, scopeId, legislativeAreaId });
         }
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
         if (existingScopeOfAppointment != null)
@@ -161,7 +162,7 @@ public class LegislativeAreaDetailsController : Controller
             Title = "Select purpose of appointment",
             LegislativeArea = legislativeArea.Name,
             PurposeOfAppointments = selectListItems,
-            CabId = id
+            CabId = id,
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
