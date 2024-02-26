@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
@@ -86,7 +88,15 @@ public class LegislativeAreaReviewController : Controller
             }
             if (submitType == Constants.SubmitType.Remove)
             {
-
+                var soaToRemove = latestDocument.ScopeOfAppointments.First(s => s.Id == selectedScopeOfAppointmentId);
+                if (soaToRemove != null)
+                {
+                    var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                    latestDocument.ScopeOfAppointments.Remove(soaToRemove);
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+                    return RedirectToRoute(Routes.LegislativeAreaSelected, new { id });
+                }
             }
         }
 
