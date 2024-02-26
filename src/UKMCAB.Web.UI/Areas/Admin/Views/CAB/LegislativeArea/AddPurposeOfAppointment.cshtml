@@ -14,6 +14,7 @@
             <h2 class="govuk-heading-s">Legislative Area</h2>
             <p class="govuk-body">@Model.LegislativeArea</p>
             <input type="hidden" asp-for="@Model.LegislativeArea"/>
+            <input type="hidden" asp-for="@Model.ScopeId" value="@Model.ScopeId"/>
             <govuk-radios asp-for="SelectedPurposeOfAppointmentId">
                 <govuk-radios-fieldset>
                     <govuk-radios-fieldset-legend class="govuk-label--s">
