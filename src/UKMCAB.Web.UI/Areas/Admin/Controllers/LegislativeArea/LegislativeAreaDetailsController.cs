@@ -161,6 +161,7 @@ public class LegislativeAreaDetailsController : Controller
             LegislativeArea = legislativeArea.Name,
             PurposeOfAppointments = selectListItems,
             CabId = id,
+            ScopeId = scopeId,
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
@@ -174,7 +175,7 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     [HttpPost("add-purpose-of-appointment/{scopeId}", Name = Routes.AddPurposeOfAppointment)]
-    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, PurposeOfAppointmentViewModel vm, Guid scopeId,
+    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, PurposeOfAppointmentViewModel vm, [FromForm]Guid scopeId,
         Guid? compareScopeId)
     {
         var documentScopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey,scopeId.ToString()));
