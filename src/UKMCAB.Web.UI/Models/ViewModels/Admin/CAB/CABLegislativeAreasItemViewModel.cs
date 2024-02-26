@@ -1,6 +1,4 @@
-﻿using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.LegislativeAreas;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+﻿using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -23,6 +21,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CanChooseScopeOfAppointment { get; set; }
         public bool? IsArchived { get; init; }
 
+        public string? IndexofSelectedScopeofAppointment { get; set; }
 
         public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PurposeOfAppointment));
         public bool ShowCategoryColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
