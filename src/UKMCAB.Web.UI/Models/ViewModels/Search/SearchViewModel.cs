@@ -39,6 +39,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string[]? UserGroups { get; set; }
         public string[]? SubStatuses { get; set; }
         public string[]? ProvisionalLegislativeAreas { get; set; }
+        public string[]? LegislativeAreaStatus { get; set; }
         public string? Sort { get; set; }
         public int PageNumber { get; set; } = 1;
         public bool SelectAllPendingApproval { get; set; }
@@ -52,9 +53,23 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FilterViewModel? SubStatusOptions { get; set; }
         public FilterViewModel? LegislativeAreaProvisionalOptions { get; set; }
 
-        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) + (LegislativeAreas?.Length ?? 0) + (Statuses != null && (InternalSearch || Statuses.Contains(((int)Status.Archived).ToString())) ? Statuses.Length : 0) + (SubStatuses != null && InternalSearch ? SubStatuses.Length : 0) + (UserGroups != null && InternalSearch ? UserGroups.Length : 0) + (ProvisionalLegislativeAreas != null && InternalSearch ? ProvisionalLegislativeAreas.Length : 0);
+        public FilterViewModel? LegislativeAreaStatusOptions { get; set; }
 
-        public Dictionary<string, string[]> SelectedFilters => new Dictionary<string, string[]>
+        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) +
+                                  (LegislativeAreas?.Length ?? 0) +
+                                  (Statuses != null && (InternalSearch ||
+                                                        Statuses.Contains(((int)Status.Archived).ToString()))
+                                      ? Statuses.Length
+                                      : 0) +
+                                  (SubStatuses != null && InternalSearch ? SubStatuses.Length : 0) +
+                                  (UserGroups != null && InternalSearch ? UserGroups.Length : 0) +
+                                  (ProvisionalLegislativeAreas != null && InternalSearch
+                                      ? ProvisionalLegislativeAreas.Length
+                                      : 0) +
+                                  (LegislativeAreaStatus != null && InternalSearch ? LegislativeAreaStatus.Length : 0);
+                                  
+
+        public Dictionary<string, string[]> SelectedFilters => new()
         {
             { nameof(BodyTypes), BodyTypes ?? Array.Empty<string>() },
             { nameof(RegisteredOfficeLocations), RegisteredOfficeLocations ?? Array.Empty<string>() },
@@ -63,12 +78,14 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             { nameof(UserGroups), UserGroups ?? Array.Empty<string>() },
             { nameof(SubStatuses), SubStatuses ?? Array.Empty<string>() },
             { nameof(ProvisionalLegislativeAreas), ProvisionalLegislativeAreas ?? Array.Empty<string>() },
+            { nameof(LegislativeAreaStatus), LegislativeAreaStatus ?? Array.Empty<string>()}
         };
 
         public string StatusLabel(string status)
         {
             return $"{(Status)int.Parse(status)} CAB";
         }
+
         public string SubStatusLabel(string substatus)
         {
             return ((SubStatus)int.Parse(substatus)).GetEnumDescription();

@@ -36,6 +36,7 @@ namespace UKMCAB.Data.Search.Services
                 result.CreatedByUserGroup = GetFacetList(facets[nameof(result.CreatedByUserGroup)]);
                 result.SubStatus = GetFacetList(facets[nameof(result.SubStatus)]);
                 result.ProvisionalLegislativeAreas = GetFacetList(facets[provisionalLegislativeAreaPath]).OrderBy(x => x).ToList();
+                result.LegislativeAreaStatus = new List<string>() { "Archived", "Published" };
             }
 
             return result;
