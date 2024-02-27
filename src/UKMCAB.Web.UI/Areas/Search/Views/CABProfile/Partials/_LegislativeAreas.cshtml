@@ -2,14 +2,15 @@
 @model CABLegislativeAreasModel
 @if (Model.ShowLabels)
 {
-    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
-       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-fragment="legislative-areas">
-        View all legislative areas
-    </a>
     <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            <span class="govuk-caption-m">Legislative area </span>
-            <h3 class="govuk-heading-s">@Model.LegislativeAreaName</h3>
+        <div class="govuk-grid-column-full govuk-!-padding-top-2 govuk-!-padding-bottom-4">
+            <a class="govuk-link govuk-link--no-visited-state" asp-route="@CABProfileController.Routes.CabDetails" asp-route-id="@Model.CabUrl" asp-fragment="legislative-areas">
+                &lt; View all legislative areas
+            </a>
+        </div>
+        <div class="govuk-grid-column-full">
+            <span class="govuk-caption-m">Legislative area</span>
+            <h3 class="govuk-heading-m govuk-!-margin-bottom-1">@Model.LegislativeAreaName</h3>
             @if (!string.IsNullOrWhiteSpace(Model.Regulation))
             {
                 <p class="govuk-body">Regulation: @Model.Regulation</p>
@@ -82,12 +83,12 @@
 }
 @if (Model.Procedures.Any())
 {
-    <h3 class="govuk-heading-s">Procedures</h3>
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Procedures</h3>
     <dl class="govuk-summary-list table-top-border">
         @foreach (var procedure in Model.Procedures)
         {
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key ">
+                <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
                     @procedure.Name
                 </dt>
             </div>
@@ -96,7 +97,7 @@
 }
 else if (Model.Products.Any())
 {
-    <h3 class="govuk-heading-s">Products</h3>
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Products</h3>
     <dl class="govuk-summary-list table-top-border">
         @foreach (var product in Model.Products)
         {
@@ -113,12 +114,12 @@ else if (Model.Products.Any())
 }
 else if (Model.SubCategories.Any())
 {
-    <h3 class="govuk-heading-s">Product Sub Category</h3>
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Product Sub Category</h3>
     <dl class="govuk-summary-list table-top-border">
         @foreach (var subCategory in Model.SubCategories)
         {
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key ">
+                <dt class="govuk-summary-list__key">
                     <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@Model.Category.Id" asp-route-subCategoryId="@subCategory.Id" asp-fragment="legislative-areas">
                         @subCategory.Name
@@ -130,12 +131,12 @@ else if (Model.SubCategories.Any())
 }
 else if (Model.Categories.Any())
 {
-    <h3 class="govuk-heading-s">Product category</h3>
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Product category</h3>
     <dl class="govuk-summary-list table-top-border">
         @foreach (var category in Model.Categories)
         {
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key ">
+                <dt class="govuk-summary-list__key">
                     <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@category.Id" asp-fragment="legislative-areas">
                         @category.Name
@@ -147,12 +148,12 @@ else if (Model.Categories.Any())
 }
 else if (Model.PurposeOfAppointments.Any())
 {
-    <h3 class="govuk-heading-s">Purpose of appointment</h3>
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Purpose of appointment</h3>
     <dl class="govuk-summary-list table-top-border">
         @foreach (var purposeOfAppointment in Model.PurposeOfAppointments)
         {
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key ">
+                <dt class="govuk-summary-list__key">
                     <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@purposeOfAppointment.Id" asp-fragment="legislative-areas">
                         @purposeOfAppointment.Name
@@ -165,15 +166,15 @@ else if (Model.PurposeOfAppointments.Any())
 else
 {
     <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden govuk-body" id="legislative-areas">
-        <div class="cab-detail-section">
-            <h2 class="govuk-heading-l">Legislative areas</h2>
+        <div>
+            <h2 class="govuk-heading-l govuk-!-margin-top-2 govuk-!-margin-bottom-2">Legislative areas</h2>
         </div>
 
         <dl class="govuk-summary-list table-top-border">
             @foreach (var legislativeArea in Model.LegislativeAreasModel)
             {
                 <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key ">
+                    <dt class="govuk-summary-list__key">
                         <div class="legislative-area-name">
                             <div>
                                 <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
