@@ -16,6 +16,5 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public List<string>? Procedures { get; set; } = new();
 
-        public bool? IsSelected { get; set; }
     }
 }

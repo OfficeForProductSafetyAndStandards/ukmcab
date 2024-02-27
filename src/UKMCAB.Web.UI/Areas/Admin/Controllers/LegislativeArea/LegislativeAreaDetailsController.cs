@@ -117,14 +117,12 @@ public class LegislativeAreaDetailsController : Controller
         if (scopeId == Guid.Empty && legislativeAreaId != null)
         {
             scopeId = Guid.NewGuid();
-            await CreateScopeOfAppointmentInCacheAsync(scopeId, (Guid)legislativeAreaId);
-            return RedirectToRoute(Routes.AddPurposeOfAppointment, new { id, scopeId, legislativeAreaId });
         }
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
-        if (existingScopeOfAppointment != null)
+        if (existingScopeOfAppointment != null || legislativeAreaId != null)
         {
             //Create a new scope of id in session to replace existing
-            await CreateScopeOfAppointmentInCacheAsync(scopeId, existingScopeOfAppointment.LegislativeAreaId);
+            await CreateScopeOfAppointmentInCacheAsync(scopeId, legislativeAreaId ?? existingScopeOfAppointment.LegislativeAreaId);
         }
 
         var documentScopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey,scopeId.ToString()));
@@ -147,7 +145,7 @@ public class LegislativeAreaDetailsController : Controller
         }
 
         var selectListItems = options.PurposeOfAppointments
-            .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
+            .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList(); 
 
 
         if (existingScopeOfAppointment is { PurposeOfAppointmentId: not null })
@@ -163,6 +161,7 @@ public class LegislativeAreaDetailsController : Controller
             LegislativeArea = legislativeArea.Name,
             PurposeOfAppointments = selectListItems,
             CabId = id,
+            ScopeId = scopeId,
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPurposeOfAppointment.cshtml", vm);
@@ -176,7 +175,7 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     [HttpPost("add-purpose-of-appointment/{scopeId}", Name = Routes.AddPurposeOfAppointment)]
-    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, PurposeOfAppointmentViewModel vm, Guid scopeId,
+    public async Task<IActionResult> AddPurposeOfAppointment(Guid id, PurposeOfAppointmentViewModel vm, [FromForm]Guid scopeId,
         Guid? compareScopeId)
     {
         var documentScopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey,scopeId.ToString()));
