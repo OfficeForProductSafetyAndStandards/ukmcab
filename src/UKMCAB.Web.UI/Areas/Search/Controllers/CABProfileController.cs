@@ -125,11 +125,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (productId.HasValue)
             {
-                await GetProceduresAsync(null,null, null, null, productId, cabDocument, vm);
+                await GetProceduresAsync(null, null, null, null, productId, cabDocument, vm);
             }
+
             if (subCategoryId.HasValue)
             {
-                await GetProductsAsync(null,null, null, subCategoryId, cabDocument, vm);
+                await GetProductsAsync(null, null, null, subCategoryId, cabDocument, vm);
             }
             else if (categoryId.HasValue)
             {
@@ -155,10 +156,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
                 if (!vm.CabLegislativeAreas.SubCategories.Any())
                 {
-                    await GetProductsAsync(null,purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
+                    await GetProductsAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(null,purposeOfAppointmentId, categoryId, subCategoryId, productId,
+                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId,
                             cabDocument, vm);
                     }
                 }
@@ -170,10 +171,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
                 if (!vm.CabLegislativeAreas.Categories.Any())
                 {
-                    await GetProductsAsync(null,purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
+                    await GetProductsAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(null,purposeOfAppointmentId, categoryId, subCategoryId, productId,
+                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId,
                             cabDocument,
                             vm);
                     }
