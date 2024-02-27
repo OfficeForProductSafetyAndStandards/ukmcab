@@ -89,7 +89,7 @@
                                                 <tr class="govuk-table__row">
                                                     <td class="govuk-table__cell">
                                                         <div>
-                                                            <input type="radio" asp-for="LAItems[i].ScopeOfAppointments[j].IsSelected" value="true">
+                                                            <input type="radio" asp-for="LAItems[i].IndexofSelectedScopeofAppointment" value="@j">
                                                             <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].ScopeId">
                                                             <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Id">
                                                             <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Title">                                                                                                                    
