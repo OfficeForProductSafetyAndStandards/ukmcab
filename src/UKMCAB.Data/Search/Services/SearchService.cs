@@ -136,14 +136,14 @@ namespace UKMCAB.Data.Search.Services
             if (options.LegislativeAreasFilter != null && options.LegislativeAreasFilter.Any())
             {
                 var legislativeAreas = string.Join(" or ",
-                    options.LegislativeAreasFilter.Select(bt => $"LegislativeAreas/any(la: la eq '{bt}')"));
+                    options.LegislativeAreasFilter.Select(la => $"LegislativeAreas/any(la: la eq '{la}')"));
                 filters.Add($"({legislativeAreas})");
             }
 
             if (options.RegisteredOfficeLocationsFilter != null && options.RegisteredOfficeLocationsFilter.Any())
             {
                 var registeredOfficeLocations = string.Join(" or ",
-                    options.RegisteredOfficeLocationsFilter.Select(bt => $"RegisteredOfficeLocation eq '{bt}'"));
+                    options.RegisteredOfficeLocationsFilter.Select(rol => $"RegisteredOfficeLocation eq '{rol}'"));
                 filters.Add($"({registeredOfficeLocations})");
             }
 
