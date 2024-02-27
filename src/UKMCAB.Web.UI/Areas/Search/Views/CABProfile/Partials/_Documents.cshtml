@@ -10,37 +10,18 @@
         else
         {
             var isSchedule = Model.Documents.Any(d => !string.IsNullOrWhiteSpace(d.LegislativeArea));
-            var groupedSchedules = Model.Documents.OrderBy(s => isSchedule ? s.LegislativeArea : s.Category).ThenBy(s => s.Label).GroupBy(s => isSchedule ? s.LegislativeArea : s.Category);
 
-            foreach (var groupedSchedule in groupedSchedules)
+            var activeGroupedSchedules = Model.Documents.Where(d => d.Archived == null || !d.Archived.Value).OrderBy(s => isSchedule ? s.LegislativeArea : s.Category).ThenBy(s => s.Label).GroupBy(s => isSchedule ? s.LegislativeArea : s.Category);
+            var archivedGroupedSchedules = Model.Documents.Where(d => d.Archived.HasValue && d.Archived.Value).OrderBy(s => isSchedule ? s.LegislativeArea : s.Category).ThenBy(s => s.Label).GroupBy(s => isSchedule ? s.LegislativeArea : s.Category);
+
+            <partial name="Partials/_DocumentsTable" model="@(new CABDocumentsTableViewModel { CABId = Model.CABId, DocumentType = Model.DocumentType, GroupedDocuments = activeGroupedSchedules })" />
+
+            @if(isSchedule && archivedGroupedSchedules.Any())
             {
-                if (!string.IsNullOrWhiteSpace(groupedSchedule.Key))
-                {
-                    <h3 class="govuk-heading-m">@groupedSchedule.Key</h3>                    
-                }
-                <dl class="govuk-summary-list">
-                    @foreach (var file in groupedSchedule)
-                    {
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                @file.Label
-                            </dt>
-                            <dd class="govuk-summary-list__actions">
-                                @if (file.FileName.EndsWith("pdf", StringComparison.CurrentCultureIgnoreCase))
-                                {
-                                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="View" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType" target="_blank">
-                                        View<span class="govuk-visually-hidden"> file (opens in a new window)</span>
-                                    </a>
-                                }
-                            </dd>
-                            <dd class="govuk-summary-list__actions">
-                                <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType">
-                                    Download<span class="govuk-visually-hidden"> file</span>
-                                </a>
-                            </dd>
-                        </div>
-                    }
-                </dl>
+                <hr class="govuk-!-margin-top-9" />
+                <h2 class="govuk-heading-m govuk-!-font-size-27 govuk-!-margin-bottom-6">Archived @(@Model.Title.ToLower())</h2>
+
+                <partial name="Partials/_DocumentsTable" model="@(new CABDocumentsTableViewModel { CABId = Model.CABId, DocumentType = Model.DocumentType, GroupedDocuments = archivedGroupedSchedules })" />
             }
         }
     </div>
