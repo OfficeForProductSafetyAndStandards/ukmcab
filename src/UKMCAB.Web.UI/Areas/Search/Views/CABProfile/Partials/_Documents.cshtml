@@ -1,15 +1,29 @@
-﻿@model CABDocumentsViewModel
+﻿@using UKMCAB.Web.UI.Models.ViewModels.Search.Enums;
+@model CABDocumentsViewModel
+
+@{
+    var isSchedule = Model.Title == "Product schedules";
+}
 
 <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="@Model.Id">
     <div class="cab-detail-section">
         <h2 class="govuk-heading-l">@Model.Title</h2>
+
+        @if (isSchedule)
+        {
+            <form id="product-schedule-filter-form" method="get" class="govuk-!-margin-bottom-6">
+                <label class="govuk-label" for="product-schedule-filter">Showing</label>
+                <select class="govuk-select" id="product-schedule-filter" asp-for="ProductScheduleFilter" asp-items="@(Html.GetEnumSelectList<ArchivedFilterOption>())"></select>
+                <button id="apply-product-schedule-filter" type="submit" class="govuk-button govuk-button--secondary">Apply filter</button>
+            </form>
+        }
+
         @if (!Model.Documents.Any())
         { 
             <p class="govuk-body">@Constants.NotProvided</p>
         }
         else
         {
-            var isSchedule = Model.Documents.Any(d => !string.IsNullOrWhiteSpace(d.LegislativeArea));
             var groupedSchedules = Model.Documents.OrderBy(s => isSchedule ? s.LegislativeArea : s.Category).ThenBy(s => s.Label).GroupBy(s => isSchedule ? s.LegislativeArea : s.Category);
 
             foreach (var groupedSchedule in groupedSchedules)
@@ -26,14 +40,20 @@
                                 @file.Label
                             </dt>
                             <dd class="govuk-summary-list__actions">
+                                @if (file.Archived.HasValue && file.Archived.Value)
+                                {
+                                    <div class="tag-container">
+                                        <strong class="cab-status-tag govuk-tag--grey">Archived</strong>
+                                    </div>
+                                }
+
                                 @if (file.FileName.EndsWith("pdf", StringComparison.CurrentCultureIgnoreCase))
                                 {
-                                    <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="View" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType" target="_blank">
+                                    <a class="govuk-link govuk-!-margin-right-7" asp-area="search" asp-controller="CABProfile" asp-action="View" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType" target="_blank">
                                         View<span class="govuk-visually-hidden"> file (opens in a new window)</span>
                                     </a>
                                 }
-                            </dd>
-                            <dd class="govuk-summary-list__actions">
+
                                 <a class="govuk-link" asp-area="search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@Model.DocumentType">
                                     Download<span class="govuk-visually-hidden"> file</span>
                                 </a>

@@ -182,5 +182,16 @@
                 }
             }
         }
+
+        .tag-container {
+            @include govuk-responsive-margin(3, "top");
+            @include govuk-responsive-margin(3, "bottom");
+
+            @include govuk-media-query($until: tablet) {
+                .cab-status-tag {
+                    margin-left: 0;
+                }
+            }
+        }
     }
 }

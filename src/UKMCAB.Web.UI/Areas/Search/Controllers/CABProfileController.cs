@@ -25,6 +25,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using System.Text.Json;
+using UKMCAB.Web.UI.Models.ViewModels.Search.Enums;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -86,7 +87,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
-        public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, int pagenumber = 1)
+        public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, int pagenumber = 1,
+            ArchivedFilterOption productScheduleFilter = ArchivedFilterOption.All)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
@@ -104,7 +106,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 await _editLockService.RemoveEditLockForCabAsync(unlockCab);
             }
 
-            var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
+            var cab = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber, productScheduleFilter);
             _telemetryClient.TrackEvent(AiTracking.Events.CabViewed, HttpContext.ToTrackingMetadata(new()
             {
                 [AiTracking.Metadata.CabId] = id,
@@ -378,7 +380,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         #endregion
 
         private async Task<CABProfileViewModel> GetCabProfileForIndex(Document cabDocument, string? returnUrl,
-            int pagenumber = 1)
+            int pagenumber = 1, ArchivedFilterOption productScheduleFilter = ArchivedFilterOption.All)
         {
             var userAccount = User.Identity is { IsAuthenticated: true }
                 ? await _userService.GetAsync(
@@ -400,7 +402,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 userAccount != null,
                 requireApproval && (!unarchiveRequests.Any() || unarchiveRequests.All(t => t.Completed)),
                 pagenumber,
-                requireApproval && (!unpublishRequests.Any() || unpublishRequests.All(t => t.Completed))
+                requireApproval && (!unpublishRequests.Any() || unpublishRequests.All(t => t.Completed)),
+                productScheduleFilter
             );
 
             cab = await GetRequestInformation(cab);
@@ -409,7 +412,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task<CABProfileViewModel> GetCabProfileViewModel(Document cabDocument, string? returnUrl,
             bool loggedIn = false, bool showRequestToUnarchive = false, int pagenumber = 1,
-            bool showRequestToUnpublish = false)
+            bool showRequestToUnpublish = false, ArchivedFilterOption productScheduleFilter = ArchivedFilterOption.All)
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
@@ -477,9 +480,15 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                         Label = s.Label ?? s.FileName,
                         FileName = s.FileName,
                         BlobName = s.BlobName,
-                        LegislativeArea = s.LegislativeArea
-                    }).ToList() ?? new List<FileUpload>(),
-                    DocumentType = DataConstants.Storage.Schedules
+                        LegislativeArea = s.LegislativeArea,
+                        Archived = s.Archived,
+                    })
+                    .Where(d => productScheduleFilter == ArchivedFilterOption.All || 
+                                (productScheduleFilter == ArchivedFilterOption.Active && (!d.Archived.HasValue || !d.Archived.Value)) ||
+                                (productScheduleFilter == ArchivedFilterOption.Archived && d.Archived.HasValue && d.Archived.Value))
+                    .ToList() ?? new List<FileUpload>(),
+                    DocumentType = DataConstants.Storage.Schedules,
+                    ProductScheduleFilter = productScheduleFilter,
                 },
                 SupportingDocuments = new CABDocumentsViewModel
                 {
