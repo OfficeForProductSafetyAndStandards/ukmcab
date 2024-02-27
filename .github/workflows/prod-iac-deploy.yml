@@ -28,7 +28,7 @@ jobs:
           sslCertPfxBase64=${{ secrets.PROD_SSL_CERT2 }} 
           dataProtectionX509CertBase64=${{ secrets.PROD_DATA_PROTECTION_X509_CERT }} 
           govukNotifyApiKey=${{ secrets.PROD_GOVUK_NOTIFY_API_KEY }} 
-          sslCertPfxBase64VNextSlot=${{ secrets.PROD_SSL_CERT_VNEXT }}
+          sslCertPfxBase64VNextSlot=${{ secrets.PROD_SSL_CERT_VNEXT_24 }}
           encryptionKey=${{ secrets.PROD_ENCRYPTION_KEY }}
           oneLoginClientId=${{ secrets.PROD_ONELOGINCLIENTID }}
           oneLoginKeyPairBase64=${{ secrets.PROD_ONELOGINKEYPAIRBASE64 }}
