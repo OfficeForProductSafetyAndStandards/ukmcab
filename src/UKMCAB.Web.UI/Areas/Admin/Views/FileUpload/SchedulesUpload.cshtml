@@ -8,7 +8,7 @@
             <div class="govuk-grid-column-two-thirds">
                 @if (Model.IsFromSummary)
                 {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-back-link">Back</a>
                 }
                 else
                 {
@@ -64,7 +64,7 @@
                 </a>
                 @if (Model.IsFromSummary)
                 {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {
