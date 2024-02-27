@@ -1,0 +1,23 @@
+@model (string CabUrl, LegislativeAreaViewModel LegislativeArea)
+<div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+        <div class="display-flex">
+            <div>
+                <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
+                    @Model.LegislativeArea.Name
+                </a>
+            </div>
+            @if (Model.LegislativeArea.IsProvisional)
+            {
+                <div class="tag-container">
+                    <strong class="cab-status-tag govuk-tag--yellow">Provisional</strong>
+                </div>
+            }
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model.LegislativeArea.Regulation))
+        {
+            <p>Regulation : @Model.LegislativeArea.Regulation</p>
+        }
+    </dt>
+</div>

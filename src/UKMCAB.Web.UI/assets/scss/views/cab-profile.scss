@@ -162,7 +162,7 @@
             }
         }
 
-        .legislative-area-name {
+        .display-flex {
             @include govuk-media-query($until: tablet) {
                 display: block;
             }
@@ -171,7 +171,12 @@
             justify-content: space-between;
             margin-bottom: 10px;
 
-            .la-provisional-tag {
+            .tag-container {
+                font-family: "GDS Transport", arial, sans-serif;
+                @include govuk-media-query($until: tablet) {
+                    font-size: 16px;
+                }
+                font-size: 19px;
                 strong {
                     margin: 0;
                 }

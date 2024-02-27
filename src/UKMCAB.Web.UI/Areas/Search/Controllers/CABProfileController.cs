@@ -121,6 +121,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
             vm.CabLegislativeAreas.LegislativeAreaId = legislativeAreaId;
             vm.CabLegislativeAreas.LegislativeAreaName = la.Name;
+            vm.CabLegislativeAreas.ShowArchivedStatus = cabDocument.DocumentLegislativeAreas
+                .Where(l => l.Archived == true).Select(l => l.LegislativeAreaId).Contains(legislativeAreaId);
             vm.CabLegislativeAreas.Regulation = la.Regulation;
 
             if (productId.HasValue)
@@ -570,22 +572,25 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             cab.CabLegislativeAreas = new CABLegislativeAreasModel
             {
                 CabUrl = cab.CABUrl,
-                LegislativeAreasModel = listCabLegislateArea,
+                ActiveLegislativeAreas = listCabLegislateArea.Where(l => !l.IsArchived).ToList(),
+                ArchivedLegislativeAreas = listCabLegislateArea.Where(l => l.IsArchived).ToList()
             };
             return cab;
         }
 
-        private async Task<List<LegislativeAreasViewModel>> GetCABLegislativeAreasAsync(
+        private async Task<List<LegislativeAreaViewModel>> GetCABLegislativeAreasAsync(
             IEnumerable<DocumentLegislativeArea> documentLegislativeAreas)
         {
             var allLegislativeAreas = (await _legislativeAreaService.GetAllLegislativeAreasAsync()).ToList();
 
-            var legislativeAreasList = documentLegislativeAreas.Select(x => new LegislativeAreasViewModel
+            var legislativeAreasList = documentLegislativeAreas.Select(x => new LegislativeAreaViewModel
             {
                 LegislativeAreaId = x.LegislativeAreaId,
                 Name = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).Name,
                 Regulation = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).Regulation,
                 IsProvisional = x.IsProvisional != null && x.IsProvisional.Value,
+                IsArchived = x.Archived != null && x.Archived.Value
+                
             }).ToList();
 
             return legislativeAreasList;

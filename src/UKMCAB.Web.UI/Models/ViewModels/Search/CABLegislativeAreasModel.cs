@@ -2,10 +2,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search;
 
 public class CABLegislativeAreasModel
 {
-    public List<LegislativeAreasViewModel> LegislativeAreasModel { get; set; } = new();
+    public List<LegislativeAreaViewModel> ActiveLegislativeAreas { get; set; } = new();
+    public List<LegislativeAreaViewModel> ArchivedLegislativeAreas { get; set; } = new();
     public string CabUrl { get; set; } = string.Empty;
     public Guid LegislativeAreaId { get; set; }
     public string? LegislativeAreaName { get; set; }
+    
+    public bool ShowArchivedStatus { get; set; }
     public string? Regulation { get; set; }
     public List<(Guid Id, string Name)> PurposeOfAppointments { get; set; } = new();
     public (Guid? Id, string? Name) PurposeOfAppointment { get; set; }
