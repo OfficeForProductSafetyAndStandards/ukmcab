@@ -125,7 +125,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (productId.HasValue)
             {
-                await GetProceduresAsync(null,purposeOfAppointmentId, categoryId, subCategoryId, productId, cabDocument, vm);
+                await GetProceduresAsync(null,null, null, null, productId, cabDocument, vm);
+            }
+            if (subCategoryId.HasValue)
+            {
+                await GetProductsAsync(null,null, null, subCategoryId, cabDocument, vm);
             }
             else if (categoryId.HasValue)
             {
@@ -297,7 +301,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 prodIds = cabDocument.ScopeOfAppointments
                     .Where(s => s.SubCategoryId != null &&
-                                s.SubCategoryId == categoryId && s.ProductIds.Any()).Select(s => s.ProductIds)
+                                s.SubCategoryId == subCategoryId && s.ProductIds.Any()).Select(s => s.ProductIds)
                     .SelectMany(p => p).ToList();
             }
             else
