@@ -100,7 +100,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         {
             return bool.Parse(value) ? "Provisional legislative area: Yes" : "Provisional legislative area: No";
         }
-
+        public string LegislativeAreaStatusLabel(string value)
+        {
+            return  bool.Parse(value) ? "Legislative area status: Archived" : "Legislative area status: Published";
+        }
 
         public List<SortOption> SortOptions => new List<SortOption>
         {

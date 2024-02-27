@@ -234,7 +234,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             
             if (model.InternalSearch)
             {
-                IEnumerable<string> test2 = new[] { "Product schedule"};
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
                 model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User group", facets.CreatedByUserGroup, model.UserGroups);
                 var pendingApprovalSubStatus = facets.SubStatus.Where(s => s != ((int)SubStatus.None).ToString()).ToList();
@@ -244,7 +243,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 } 
                 model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
                 model.LegislativeAreaProvisionalOptions = GetFilterOptions(nameof(model.ProvisionalLegislativeAreas), "Provisional legislative area", facets.ProvisionalLegislativeAreas.OrderByDescending(x => x), model.ProvisionalLegislativeAreas);
-                model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.LegislativeAreaStatus), "Legislative area status", facets.LegislativeAreaStatus, model.LegislativeAreaStatus);
+                model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.LegislativeAreaStatus), "Legislative area status", facets.LegislativeAreaStatus.OrderByDescending(x => x), model.LegislativeAreaStatus);
             }
             else
             {
