@@ -223,8 +223,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task SetFacetOptions(SearchViewModel model, bool? selectAllPendingApproval)
         {
-           // var facets = await  _cachedSearchService.GetFacetsAsync(model.InternalSearch);
-           var facets = await  _cachedSearchService.GetFacetsAsync(true);
+            var facets = await  _cachedSearchService.GetFacetsAsync(model.InternalSearch);
 
             facets.LegislativeAreas = facets.LegislativeAreas.Select(la => la.ToSentenceCase()).ToList()!;
 

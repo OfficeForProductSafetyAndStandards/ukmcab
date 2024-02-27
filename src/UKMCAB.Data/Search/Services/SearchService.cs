@@ -184,8 +184,7 @@ namespace UKMCAB.Data.Search.Services
             if (options is { InternalSearch: true, LegislativeAreaStatusFilter: not null } &&
                 options.LegislativeAreaStatusFilter.Any())
             {
-                //Gopi - todo
-                if (options.LegislativeAreaStatusFilter.Count() == 1)
+                 if (options.LegislativeAreaStatusFilter.Count() == 1)
                 {
                     if (options.LegislativeAreaStatusFilter.Contains("True"))
                     {

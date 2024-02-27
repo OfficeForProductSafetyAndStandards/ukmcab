@@ -102,7 +102,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         }
         public string LegislativeAreaStatusLabel(string value)
         {
-            return  bool.Parse(value) ? "Legislative area status: Archived" : "Legislative area status: Published";
+            return  bool.Parse(value) ? "Archived legislative area" : "Published legislative area";
         }
 
         public List<SortOption> SortOptions => new List<SortOption>
