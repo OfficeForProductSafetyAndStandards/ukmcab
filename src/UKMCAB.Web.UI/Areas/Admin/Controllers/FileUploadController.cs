@@ -1214,7 +1214,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             List<SelectListItem> selectList = legislativeareas.Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => new SelectListItem
             { Text = x, Value = x }).ToList();
 
-            selectList.Insert(0,  new SelectListItem() { Text = "Not assigned", Value ="" });
+            selectList.Insert(0,  new SelectListItem() { Text = Constants.NotAssigned, Value ="" });
 
             return selectList;
         }

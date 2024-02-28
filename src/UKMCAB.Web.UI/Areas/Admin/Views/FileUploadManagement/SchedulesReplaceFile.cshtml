@@ -51,7 +51,7 @@
                                 Filename:
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @file.FileName
+                                <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@file.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@file.FileName</a>
                             </dd>
                         </div>
                         <div class="govuk-summary-list__row  govuk-!-padding-top-5">
