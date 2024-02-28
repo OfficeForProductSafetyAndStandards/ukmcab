@@ -1,0 +1,23 @@
+﻿@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+@using UKMCAB.Web.UI.Models.ViewModels.Shared;
+@model CABAuditLogHistoryViewModel
+
+@{
+    var currentUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+}
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a href="@Model.ReturnUrl" class="govuk-back-link">Back</a>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-body">
+    <partial name="~/Areas/Search/Views/CABProfile/Partials/_HistoryTable.cshtml" model="new AuditLogHistoryTableViewModel { AuditLogHistory = Model.AuditLogHistory, ReturnUrl = currentUrl }" />
+</div>
+
