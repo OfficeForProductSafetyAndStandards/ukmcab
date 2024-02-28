@@ -426,7 +426,11 @@
                 </div>
             </div>
 
-            <partial name="Partials/_LegislativeAreas" model="Model.CabLegislativeAreas"/>
+            <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="legislative-areas">
+                <div class="cab-detail-section">
+                    <partial name="Partials/_LegislativeAreas" model="Model.CabLegislativeAreas"/>
+                </div>
+            </div>
             <partial name="Partials/_Documents" model="Model.ProductSchedules"/>
 
             @if (User.Identity.IsAuthenticated /*todo: what claim?*/)

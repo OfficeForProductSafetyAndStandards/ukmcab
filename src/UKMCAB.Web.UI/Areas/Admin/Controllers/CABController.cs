@@ -42,6 +42,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CabPublish = "cab.publish";
             public const string CabGovernmentUserNotes = "cab.governmentusernotes";
             public const string AddLegislativeArea = "cab.addlegislativearea";
+            public const string CabHistory = "cab.history";
         }
 
         public CABController(
@@ -423,6 +424,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 PublishedDate = publishedAudit?.DateTime ?? null,
                 GovernmentUserNoteCount = latest.GovernmentUserNotes?.Count ?? 0,
                 LastGovermentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
+                LastAuditLogHistoryDate = Enumerable.MaxBy(latest.AuditLog!, u => u.DateTime)?.DateTime,
             };
 
             //Lock Record for edit
@@ -553,6 +555,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(model);
         }
 
+        [HttpGet("admin/cab/history/{cabId}", Name = Routes.CabHistory)]
+        public async Task<IActionResult> History(string cabId, string? returnUrl, int pageNumber = 1)
+        {
+            var latest = await _cabAdminService.GetLatestDocumentAsync(cabId);
+            if (latest == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var model = new CABAuditLogHistoryViewModel
+            {
+                AuditLogHistory = new AuditLogHistoryViewModel(latest.AuditLog, pageNumber),
+                ReturnUrl = returnUrl,
+            };
+
+            return View("History", model);
+        }
+
         /// <summary>
         /// Sends an email and notification for Request to publish a cab
         /// </summary>
@@ -644,10 +664,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea
                         .LegislativeAreaId);
 
-                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel()
+                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
                 {
                     Name = legislativeArea.Name,
                     IsProvisional = documentLegislativeArea.IsProvisional,
+                    IsArchived = documentLegislativeArea.Archived,
                     AppointmentDate = documentLegislativeArea.AppointmentDate,
                     ReviewDate = documentLegislativeArea.ReviewDate,
                     Reason = documentLegislativeArea.Reason,
@@ -699,7 +720,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
-                viewModel.LegislativeAreas.Add(legislativeAreaViewModel);
+                if (legislativeAreaViewModel.IsArchived == true)
+                {
+                    viewModel.ArchivedLegislativeAreas.Add(legislativeAreaViewModel);
+                }
+                else
+                {
+                    viewModel.ActiveLegislativeAreas.Add(legislativeAreaViewModel);
+                }
+
             }
 
             return viewModel;

@@ -14,15 +14,24 @@
                 <div>
                     <h3 class="govuk-heading-m govuk-!-margin-bottom-1">@Model.LegislativeAreaName</h3>
                 </div>
-
-                @if (Model.ShowArchivedStatus)
-                {
-                    <div class="tag-container">
-                        <strong class="cab-status-tag govuk-tag--grey">
-                            Archived
-                        </strong>
-                    </div>
-                }
+                <div class="display-flex">
+                    @if (Model.ShowProvisionalTag)
+                    {
+                        <div class="tag-container">
+                            <strong class="cab-status-tag govuk-tag--yellow">
+                                Provisional
+                            </strong>
+                        </div>
+                    }
+                    @if (Model.ShowArchivedTag)
+                    {
+                        <div class="tag-container govuk-!-margin-left-2">
+                            <strong class="cab-status-tag govuk-tag--grey">
+                                Archived
+                            </strong>
+                        </div>
+                    }
+                </div>
             </div>
             @if (!string.IsNullOrWhiteSpace(Model.Regulation))
             {
@@ -178,7 +187,6 @@ else if (Model.PurposeOfAppointments.Any())
 }
 else
 {
-    <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden govuk-body" id="legislative-areas">
         <div>
             <h2 class="govuk-heading-l govuk-!-margin-top-2 govuk-!-margin-bottom-2">Legislative areas</h2>
         </div>
@@ -202,5 +210,4 @@ else
                 }
             </dl>
         }
-    </div>
 }

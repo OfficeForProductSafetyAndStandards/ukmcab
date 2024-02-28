@@ -70,6 +70,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
                 return isProvisional ? "Yes" : "No";
             }
+
+            if (prefix.Equals("Legislativeareastatus", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var isArchived = bool.Parse(value);
+
+                return isArchived ? "Archived" : "Published";
+            }
             return value;
         }
 
