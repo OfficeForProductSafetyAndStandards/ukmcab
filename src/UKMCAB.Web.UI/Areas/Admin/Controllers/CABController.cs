@@ -664,10 +664,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea
                         .LegislativeAreaId);
 
-                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel()
+                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
                 {
                     Name = legislativeArea.Name,
                     IsProvisional = documentLegislativeArea.IsProvisional,
+                    IsArchived = documentLegislativeArea.Archived,
                     AppointmentDate = documentLegislativeArea.AppointmentDate,
                     ReviewDate = documentLegislativeArea.ReviewDate,
                     Reason = documentLegislativeArea.Reason,
@@ -719,7 +720,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
-                viewModel.LegislativeAreas.Add(legislativeAreaViewModel);
+                if (legislativeAreaViewModel.IsArchived == true)
+                {
+                    viewModel.ArchivedLegislativeAreas.Add(legislativeAreaViewModel);
+                }
+                else
+                {
+                    viewModel.ActiveLegislativeAreas.Add(legislativeAreaViewModel);
+                }
+
             }
 
             return viewModel;

@@ -14,15 +14,24 @@
                 <div>
                     <h3 class="govuk-heading-m govuk-!-margin-bottom-1">@Model.LegislativeAreaName</h3>
                 </div>
-
-                @if (Model.ShowArchivedStatus)
-                {
-                    <div class="tag-container">
-                        <strong class="cab-status-tag govuk-tag--grey">
-                            Archived
-                        </strong>
-                    </div>
-                }
+                <div class="display-flex">
+                    @if (Model.ShowProvisionalTag)
+                    {
+                        <div class="tag-container">
+                            <strong class="cab-status-tag govuk-tag--yellow">
+                                Provisional
+                            </strong>
+                        </div>
+                    }
+                    @if (Model.ShowArchivedTag)
+                    {
+                        <div class="tag-container govuk-!-margin-left-2">
+                            <strong class="cab-status-tag govuk-tag--grey">
+                                Archived
+                            </strong>
+                        </div>
+                    }
+                </div>
             </div>
             @if (!string.IsNullOrWhiteSpace(Model.Regulation))
             {

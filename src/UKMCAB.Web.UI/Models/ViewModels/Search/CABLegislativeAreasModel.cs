@@ -7,8 +7,9 @@ public class CABLegislativeAreasModel
     public string CabUrl { get; set; } = string.Empty;
     public Guid LegislativeAreaId { get; set; }
     public string? LegislativeAreaName { get; set; }
-    
-    public bool ShowArchivedStatus { get; set; }
+ 
+    public bool ShowProvisionalTag { get; set; }
+    public bool ShowArchivedTag { get; set; }
     public string? Regulation { get; set; }
     public List<(Guid Id, string Name)> PurposeOfAppointments { get; set; } = new();
     public (Guid? Id, string? Name) PurposeOfAppointment { get; set; }
