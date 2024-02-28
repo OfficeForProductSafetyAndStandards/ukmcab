@@ -420,9 +420,9 @@ else if (Model.IsEditLocked)
     </div>
 </dl>
 
-@if (Model.CabLegislativeAreasViewModel.LegislativeAreas.Any())
+@if (Model.CabLegislativeAreasViewModel.ActiveLegislativeAreas.Any())
 {
-    @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.LegislativeAreas)
+    @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.ActiveLegislativeAreas)
     {
         <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
             <summary class="govuk-details__summary">
@@ -431,6 +431,21 @@ else if (Model.IsEditLocked)
                 </span>
             </summary>
            <partial name="./LegislativeArea/Partials/_Summary" model="legislativeArea" />
+        </details>
+    }
+}
+else if (Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.Any())
+{
+    <h4 class="govuk-heading-m govuk-!-padding-top-5 govuk-!-display-block">Legislative areas</h4>
+    @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas)
+    {
+        <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    @legislativeArea.Name
+                </span>
+            </summary>
+            <partial name="./LegislativeArea/Partials/_Summary" model="legislativeArea" />
         </details>
     }
 }
