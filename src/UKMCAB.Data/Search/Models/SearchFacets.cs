@@ -9,5 +9,6 @@
         public List<string> CreatedByUserGroup { get; set; }
         public List<string> SubStatus { get; set; }
         public List<string> ProvisionalLegislativeAreas { get; set; }
+        public List<string> LegislativeAreaStatus { get; set; }
     }
 }

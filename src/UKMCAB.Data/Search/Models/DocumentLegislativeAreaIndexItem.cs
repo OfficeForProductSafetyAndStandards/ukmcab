@@ -20,7 +20,8 @@ namespace UKMCAB.Data.Search.Models
         public DateTime? ReviewDate { get; set; }
 
         public string? Reason { get; set; }
-
+        
+        [SimpleField(IsFacetable = true, IsFilterable = true)]
         public bool? Archived { get; set; }
     }
 }
