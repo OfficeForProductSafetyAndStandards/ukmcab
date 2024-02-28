@@ -89,5 +89,7 @@ namespace UKMCAB.Core.Services.CAB
         Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId);        
 
         Task ArchiveSchedulesAsync(Guid cabId, List<Guid> ScheduleIds);
+
+        Document? GetLatestDocumentFromDocuments(List<Document> documents);
     }
 }

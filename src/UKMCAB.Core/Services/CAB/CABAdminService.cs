@@ -542,6 +542,23 @@ namespace UKMCAB.Core.Services.CAB
                 .ToList();
         }
 
+        public Document? GetLatestDocumentFromDocuments(List<Document> documents)
+        {   
+            // if a newly create cab or a draft version exists this will be the latest version, there should be no more than one
+            if (documents.Any(d => d is { StatusValue: Status.Draft }))
+            {
+                return documents.Single(d => d is { StatusValue: Status.Draft });
+            }
+
+            // if no draft or created version exists then see if a published version exists, again should only ever be one
+            if (documents.Any(d => d is { StatusValue: Status.Published }))
+            {
+                return documents.Single(d => d is { StatusValue: Status.Published });
+            }
+
+            return null;
+        }
+
         private async Task RefreshCaches(string cabId, string slug)
         {
             await _cachedSearchService.ClearAsync();

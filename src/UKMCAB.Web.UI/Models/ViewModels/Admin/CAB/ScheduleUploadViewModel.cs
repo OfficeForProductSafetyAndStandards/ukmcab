@@ -6,7 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     {
         public string? Title { get; set; }
         public string? CABId { get; set; }
-        public List<FileViewModel>? UnArchivedFiles { get; set; }       
+        public List<FileViewModel>? ActiveFiles { get; set; }       
         public string? SelectedScheduleId { get; set; }
         public string? SelectedArchivedScheduleId { get; set; }
     }

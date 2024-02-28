@@ -169,63 +169,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? SelectedScheduleId,
             string? fromAction)
         {
-            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
+            var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
+            var latestDocument = _cabAdminService.GetLatestDocumentFromDocuments(cabDocuments);
 
-            if (latestVersion == null) // Implies no document or document archived
+            if (latestDocument == null) // Implies no document or document archived
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            if (!latestVersion.DocumentLegislativeAreas.Any(a => a.Archived is null or false))
+            if (!latestDocument.DocumentLegislativeAreas.Any(a => a.Archived is null or false))
             {
                 return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id });
-            }            
-            
+            }                        
 
-            //if (fromAction is nameof(FileUploadManagementController.SchedulesReplaceFile)
-            //    or nameof(FileUploadManagementController.SchedulesUseFileAgain))
-            //{
-            //    if (fromAction == nameof(FileUploadManagementController.SchedulesReplaceFile) &&
-            //        latestVersion.Schedules != null &&
-            //        int.TryParse(indexOfSelectedFile, out var indexOfFileToReplace) &&
-            //        indexOfFileToReplace < latestVersion.Schedules.Count)
-            //    {
-            //        UpdateFileVMIsReplacedPropertyAndLoad(latestVersion.Schedules, uploadedFileViewModels,
-            //            indexOfFileToReplace);
-            //    }
-
-            //    //if (fromAction == nameof(FileUploadManagementController.SchedulesUseFileAgain) &&
-            //    //    latestVersion.Schedules != null && int.TryParse(indexOfSelectedFile, out var fileToUseAgainIndex) &&
-            //    //    fileToUseAgainIndex < latestVersion.Schedules.Count)
-            //    //{
-            //    //    uploadedFileViewModels = latestVersion.Schedules?.Select(s => new FileViewModel
-            //    //    {
-            //    //        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-            //    //        LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
-            //    //    }).ToList() ?? new List<FileViewModel>();
-
-            //    //    var selectedViewModel = latestVersion.Schedules[fileToUseAgainIndex];
-            //    //    AddSelectedVMToUploadedFileViewModels(uploadedFileViewModels, selectedViewModel);
-            //    //}
-
-            //    UpdateShowBannerAndSuccessBanner(uploadedFileViewModels, out bool showBanner,
-            //        out string successBannerContent);
-            //    var viewModel = new FileListViewModel
-            //    {
-            //        Title = SchedulesOptions.ListTitle,
-            //        UploadedFiles = uploadedFileViewModels,
-            //        CABId = id,
-            //        IsFromSummary = fromSummary,
-            //        DocumentStatus = latestVersion.StatusValue,
-            //        SuccessBannerTitle = successBannerContent,
-            //        ShowBanner = showBanner,
-            //        LegislativeAreas = legislativeAreas
-            //    };
-
-            //    return View(viewModel);
-            //}
-
-            var uploadedFileViewModels = latestVersion.Schedules?.Select(s => new FileViewModel
+            var uploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel
             {
                 FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
                 LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
@@ -247,11 +204,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 Title = SchedulesOptions.ListTitle,
                 ArchivedFiles = uploadedFileViewModels.Where(n => n.Archived == true).ToList(),
-                UnArchivedFiles = uploadedFileViewModels.Where(n => n.Archived is null or false).ToList(),
+                ActiveFiles = uploadedFileViewModels.Where(n => n.Archived is null or false).ToList(),
                 CABId = id,
                 IsFromSummary = fromSummary,
-                DocumentStatus = latestVersion.StatusValue,
-                LegislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestVersion)
+                DocumentStatus = latestDocument.StatusValue,
+                LegislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestDocument),
+                ShowArchiveAction = !(cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
             });
         }
 
@@ -260,14 +218,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public async Task<IActionResult> SchedulesList(string id, string submitType, ScheduleFileUploadViewModel model, 
             bool fromSummary)
         {
-            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
+            var latestDocument = _cabAdminService.GetLatestDocumentFromDocuments(cabDocuments);
 
             if (latestDocument == null) // Implies no document or document archived
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            latestDocument.Schedules ??= new List<FileUpload>();
+            var schedules = latestDocument.Schedules ?? new List<FileUpload>();
 
             if (submitType is Constants.SubmitType.Cancel)
             {
@@ -286,8 +245,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {                
                 ModelState.AddModelError("SelectedScheduleId", "Select a schedule");
             }
-
-            if (submitType is Constants.SubmitType.Remove && string.IsNullOrEmpty(model.SelectedArchivedScheduleId))
+            
+            if (submitType is Constants.SubmitType.RemoveArchived && string.IsNullOrEmpty(model.SelectedArchivedScheduleId))
             {
                 ModelState.AddModelError("SelectedArchivedScheduleId", "Select a schedule");
             }
@@ -306,10 +265,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 if (submitType is Constants.SubmitType.RemoveOrArchive)
                 {
-                    var filesInViewModel = model.UnArchivedFiles ?? new List<FileViewModel>();
-
-                    var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
-                    var schedule = latestDocument.Schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First();
+                    var filesInViewModel = model.ActiveFiles ?? new List<FileViewModel>();
+                    var schedule = schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First();
 
                     if (schedule != null)
                     {
@@ -333,17 +290,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 if (submitType is Constants.SubmitType.RemoveArchived)
                 {
-                    var filesInViewModel = model.UnArchivedFiles ?? new List<FileViewModel>();
-
-                    var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
-                    var schedule = latestDocument.Schedules.Where(n => n.Id == Guid.Parse(model.SelectedArchivedScheduleId)).First();
+                    var filesInViewModel = model.ActiveFiles ?? new List<FileViewModel>();
+                    var schedule = schedules.Where(n => n.Id == Guid.Parse(model.SelectedArchivedScheduleId)).First();
 
                     if (schedule != null)
                     {
                         // only one document and draft mode then remove the schedule else give user an option to remove or archive the schedule
                         if (cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
                         {
-                            latestDocument.Schedules.Remove(schedule);
+                            schedules.Remove(schedule);
 
                             var userAccount =
                                 await _userService.GetAsync(User.Claims
@@ -360,7 +315,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else if (submitType is Constants.SubmitType.UseFileAgain)
                 {
-                    var schedule = latestDocument.Schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First() ?? throw new InvalidOperationException("Can't find selected schedule"); 
+                    var schedule = schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First() ?? throw new InvalidOperationException("Can't find selected schedule"); 
 
                     var newSchedule = new FileUpload()
                     { 
@@ -374,7 +329,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         UploadDateTime = DateTime.UtcNow,
                     };
 
-                    latestDocument.Schedules.Add(newSchedule);
+                    schedules.Add(newSchedule);
 
                     var userAccount =  await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
@@ -384,7 +339,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else if (submitType is Constants.SubmitType.ReplaceFile)
                 {
-                    var schedule = latestDocument.Schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First() ?? throw new InvalidOperationException("Can't find selected schedule");
+                    var schedule = schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First() ?? throw new InvalidOperationException("Can't find selected schedule");
                     return RedirectToAction("SchedulesReplaceFile", "FileUploadManagement", new { id, scheduleId = schedule.Id, fromSummary });
                 }
                 else if (submitType == Constants.SubmitType.UploadAnother)
@@ -397,7 +352,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
                 else
                 {
-                    if (UpdateFiles(latestDocument, model.UnArchivedFiles))
+                    if (UpdateFiles(latestDocument, model.ActiveFiles))
                     {
                         var userAccount =
                             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
@@ -420,7 +375,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            var uploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel
+            var uploadedFileViewModels = schedules.Select(s => new FileViewModel
             {
                 FileName = s.FileName,
                 UploadDateTime = s.UploadDateTime,
@@ -433,7 +388,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new ScheduleFileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
-                UnArchivedFiles = model.UnArchivedFiles,
+                ActiveFiles = model.ActiveFiles,
                 ArchivedFiles = uploadedFileViewModels.Where(n => n.Archived == true).ToList(),
                 CABId = id,
                 IsFromSummary = fromSummary,
@@ -879,9 +834,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private void AddLegislativeLabelAndFileModelStateErrors(ScheduleFileUploadViewModel model)
         {
-            if (model.UnArchivedFiles != null && model.UnArchivedFiles.Any())
+            if (model.ActiveFiles != null && model.ActiveFiles.Any())
             {
-                var duplicatedFileAndLabels = model.UnArchivedFiles
+                var duplicatedFileAndLabels = model.ActiveFiles
                     .Where(x => string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label))
                     .GroupBy(x => new { FileName = x.FileName.ToLower(), Label = x.Label!.ToLower() })
                     .Where(g => g.Count() > 1).Select(y => y.Key).ToList();
@@ -889,7 +844,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (duplicatedFileAndLabels != null && duplicatedFileAndLabels.Count > 0)
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UnArchivedFiles)
+                    foreach (var uploadedFile in model.ActiveFiles)
                     {
                         foreach (var uploadedFileLabel in duplicatedFileAndLabels)
                         {
@@ -899,7 +854,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) &&
                                 uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"UnArchivedFiles[{index}].Label",
+                                ModelState.AddModelError($"ActiveFiles[{index}].Label",
                                     "A file already exists with this title. Change the title or upload a different file.");
                             }
                         }
@@ -908,7 +863,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
-                var duplicatedLabelsAndLegislativeAreas = model.UnArchivedFiles
+                var duplicatedLabelsAndLegislativeAreas = model.ActiveFiles
                     .Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label))
                     .GroupBy(x => new { Label = x.Label!.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() })
                     .Where(g => g.Count() > 1).Select(y => y.Key).ToList();
@@ -916,7 +871,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (duplicatedLabelsAndLegislativeAreas is { Count: > 0 })
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UnArchivedFiles)
+                    foreach (var uploadedFile in model.ActiveFiles)
                     {
                         foreach (var uploadedFileLabel in duplicatedLabelsAndLegislativeAreas)
                         {
@@ -927,7 +882,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 (uploadedFile.LegislativeArea ?? string.Empty).Equals(legislativeArea,
                                     StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"UnArchivedFiles[{index}].Label",
+                                ModelState.AddModelError($"ActiveFiles[{index}].Label",
                                     "A label already exists in this legislative area. Change the title or legislative area.");
                             }
                         }
@@ -936,7 +891,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     }
                 }
 
-                var filesWithRepeatedNamesAndLegislativeAreas = model.UnArchivedFiles
+                var filesWithRepeatedNamesAndLegislativeAreas = model.ActiveFiles
                     .Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea))
                     .GroupBy(x => new
                         { FileName = x.FileName.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() })
@@ -945,7 +900,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (filesWithRepeatedNamesAndLegislativeAreas is { Count: > 0 })
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UnArchivedFiles)
+                    foreach (var uploadedFile in model.ActiveFiles)
                     {
                         foreach (var repeatedFiles in filesWithRepeatedNamesAndLegislativeAreas)
                         {
@@ -956,7 +911,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 (uploadedFile.LegislativeArea ?? string.Empty).Equals(legislativeArea,
                                     StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"UnArchivedFiles[{index}].LegislativeArea",
+                                ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
                                     "The file already exists in this legislative area.");
                             }
                         }
@@ -1060,16 +1015,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private void AddLegislativeSelectionModelStateErrors(ScheduleFileUploadViewModel model)
         {
-            if (model.UnArchivedFiles != null && model.UnArchivedFiles.Any())
+            if (model.ActiveFiles != null && model.ActiveFiles.Any())
             {   
-                if (model.UnArchivedFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
+                if (model.ActiveFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UnArchivedFiles)
+                    foreach (var uploadedFile in model.ActiveFiles)
                     {
                         if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
                         {
-                            ModelState.AddModelError($"UnArchivedFiles[{index}].LegislativeArea",
+                            ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
                                 "Select a legislative area");
                         }
 

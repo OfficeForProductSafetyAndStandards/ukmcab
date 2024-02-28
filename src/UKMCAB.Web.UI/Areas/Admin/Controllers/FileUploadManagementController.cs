@@ -25,56 +25,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _fileStorage = fileStorage;
             _userService = userService;
             _fileUploadUtils = fileUploadUtils;
-        }
-
-        [HttpGet("admin/cab/schedules-use-file-again/{id}/{scheduleId}")]
-        public async Task<IActionResult> SchedulesUseFileAgain(string id, string scheduleId, bool fromSummary)
-        {
-            var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
-            if (latestVersion == null) // Implies no document or archived
-            {
-                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
-            }
-
-            return View(new FileUploadViewModel
-            {
-                Title = SchedulesOptions.UseFileAgainTitle,
-                UploadedFiles = latestVersion.Schedules?.Where(n => n.Id == Guid.Parse(scheduleId)).Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>(),
-                CABId = id,
-                IsFromSummary = fromSummary,
-                DocumentStatus = latestVersion.StatusValue
-            });
-        }
-
-        [HttpPost("admin/cab/schedules-use-file-again/{id}")]
-        public async Task<IActionResult> SchedulesUseFileAgain(string id, string submitType, FileUploadViewModel model, bool fromSummary)
-        {
-            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
-
-            if (latestDocument == null) // Implies no document or archived
-            {
-                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
-            }
-            latestDocument.Schedules ??= new List<FileUpload>();
-
-            if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain) && model.IndexofSelectedFile == null)
-            {
-                ModelState.AddModelError(nameof(model.IndexofSelectedFile), "Select the file you want to use again");
-                return View(new FileUploadViewModel
-                {
-                    Title = SchedulesOptions.UseFileAgainTitle,
-                    UploadedFiles = latestDocument.Schedules?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>(),
-                    CABId = id,
-                    IsFromSummary = fromSummary,
-                    DocumentStatus = latestDocument.StatusValue
-                });
-            }
-
-            return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, model.IndexofSelectedFile, fromAction = nameof(SchedulesUseFileAgain) });
-        }
+        }       
 
         [HttpGet("admin/cab/schedules-replace-file/{id}/{scheduleId}")]
-        public async Task<IActionResult> SchedulesReplaceFile(string id, string scheduleId, bool fromSummary)
+        public async Task<IActionResult> SchedulesReplaceFile(string id, string scheduleId)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
@@ -87,13 +41,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Title = SchedulesOptions.ReplaceFile,
                 UploadedFiles = latestVersion.Schedules?.Where(n => n.Id == Guid.Parse(scheduleId)).Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
-                IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
             });
         }
 
         [HttpPost("admin/cab/schedules-replace-file/{id}/{scheduleId}")]
-        public async Task<IActionResult> SchedulesReplaceFile(string id, string scheduleId, FileUploadViewModel model, bool fromSummary)
+        public async Task<IActionResult> SchedulesReplaceFile(string id, string scheduleId, FileUploadViewModel model)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
 
@@ -106,13 +59,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var contentType = _fileUploadUtils.GetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes);
 
             if (_fileUploadUtils.ValidateUploadFileAndAddAnyModelStateError(ModelState, file, contentType, SchedulesOptions.AcceptedFileTypes))
-            {
-                await UploadAndReplaceWithValidatedFile(model, latestDocument, file, contentType, DataConstants.Storage.Schedules);
+            {   
+                await UploadAndReplaceScheduleWithValidatedFile(scheduleId, latestDocument, file, contentType, DataConstants.Storage.Schedules);
             }
 
             if (ModelState.IsValid)
             {
-                return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, model.IndexofSelectedFile, fromAction = "SchedulesReplaceFile" });
+                return RedirectToAction("SchedulesList", "FileUpload", new { id, IndexofSelectedFile = model.IndexofSelectedFile, fromAction = "SchedulesReplaceFile" });
             }
 
             model.Title = SchedulesOptions.ReplaceFile;
@@ -197,6 +150,26 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var scheduleToReplace = latestFileUploads[indexOfFileToReplace];
                 
+                scheduleToReplace.FileName = replacementUploadedSchedule.FileName;
+                scheduleToReplace.BlobName = replacementUploadedSchedule.BlobName;
+                scheduleToReplace.UploadDateTime = replacementUploadedSchedule.UploadDateTime;
+
+                var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            }
+        }
+
+        private async Task UploadAndReplaceScheduleWithValidatedFile(string scheduleId, Document? latestDocument, IFormFile? file, string contentType, string directoryName)
+        {
+            var newFileName = AppendDateTimeToFileName(DateTime.UtcNow, file.FileName);
+
+            var replacementUploadedSchedule = await _fileStorage.UploadCABFile(latestDocument.CABId, file.FileName, newFileName, directoryName,
+                file.OpenReadStream(), contentType);
+
+            var scheduleToReplace = latestDocument.Schedules?.Where(n => n.Id == Guid.Parse(scheduleId)).FirstOrDefault();
+            
+            if (scheduleToReplace != null)
+            {
                 scheduleToReplace.FileName = replacementUploadedSchedule.FileName;
                 scheduleToReplace.BlobName = replacementUploadedSchedule.BlobName;
                 scheduleToReplace.UploadDateTime = replacementUploadedSchedule.UploadDateTime;

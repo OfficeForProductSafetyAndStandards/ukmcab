@@ -46,7 +46,7 @@
                         From legislative area:
                     </dt>
                     <dd class="govuk-summary-list__value">
-                        @file.LegislativeArea
+                        @Html.Conditional(!string.IsNullOrWhiteSpace(file.LegislativeArea), file.LegislativeArea, @Constants.NotAssigned)
                     </dd>
                 </div>
             </dl>            
