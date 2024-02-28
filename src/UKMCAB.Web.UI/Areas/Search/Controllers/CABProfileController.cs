@@ -361,11 +361,23 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     .Where(s => s.LegislativeAreaId == legislativeAreaId && s.ProductIdAndProcedureIds.Any());
             }
 
-            var procIds = scopeOfAppointments.ToList()
-                .Select(s => s.ProductIdAndProcedureIds)
-                .SelectMany(pp => pp)
-                .SelectMany(pr => pr.ProcedureIds);
-
+            IEnumerable<Guid> procIds;
+            if (productId.HasValue)
+            {
+                procIds = scopeOfAppointments.ToList()
+                    .Select(s => s.ProductIdAndProcedureIds)
+                    .SelectMany(pp => pp)
+                    .Where(i => i.ProductId == productId)
+                    .SelectMany(pr => pr.ProcedureIds);
+            }
+            else
+            {
+                procIds = scopeOfAppointments.ToList()
+                    .Select(s => s.ProductIdAndProcedureIds)
+                    .SelectMany(pp => pp)
+                    .SelectMany(pr => pr.ProcedureIds);
+            }
+            
             foreach (var procId in procIds)
             {
                 vm.CabLegislativeAreas.Procedures.Add(new ValueTuple<Guid, string>
