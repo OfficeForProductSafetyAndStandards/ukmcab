@@ -648,6 +648,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     Name = legislativeArea.Name,
                     IsProvisional = documentLegislativeArea.IsProvisional,
+                    IsArchived = documentLegislativeArea.Archived,
                     AppointmentDate = documentLegislativeArea.AppointmentDate,
                     ReviewDate = documentLegislativeArea.ReviewDate,
                     Reason = documentLegislativeArea.Reason,

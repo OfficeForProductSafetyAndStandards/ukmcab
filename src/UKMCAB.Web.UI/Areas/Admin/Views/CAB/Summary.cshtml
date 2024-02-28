@@ -434,9 +434,10 @@ else if (Model.IsEditLocked)
         </details>
     }
 }
-else if (Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.Any())
+
+@if (Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.Any())
 {
-    <h4 class="govuk-heading-m govuk-!-padding-top-5 govuk-!-display-block">Legislative areas</h4>
+    <h4 class="govuk-heading-m govuk-!-padding-top-5 govuk-!-display-block">Archived legislative areas</h4>
     @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas)
     {
         <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
@@ -449,7 +450,9 @@ else if (Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.Any())
         </details>
     }
 }
-else
+
+@if(!Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.Any() 
+    && !Model.CabLegislativeAreasViewModel.ActiveLegislativeAreas.Any())
 {
     <div class="govuk-warning-text">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
