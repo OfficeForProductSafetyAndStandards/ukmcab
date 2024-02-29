@@ -271,6 +271,18 @@
     }
 }
 
+.width-one-fortieth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-one-fortieth {
+        width: 2.5% !important;
+    }
+}
+
 .width-full {
     width: 100% !important;
 }
+
+
