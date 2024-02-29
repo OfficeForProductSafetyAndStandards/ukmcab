@@ -1,6 +1,6 @@
 @using UKMCAB.Data
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule.RemoveScheduleViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule.RemoveScheduleWithOptionViewModel
 
 @section BackButton
 {
@@ -23,8 +23,7 @@
     </div>
     <div class="govuk-grid-column-two-thirds">
         <form id="scheduleForm" method="post" novalidate>
-            <input type="hidden" asp-for="Title" />   
-            <input type="hidden" asp-for="RemoveScheduleAction" />
+            <input type="hidden" asp-for="Title" />            
             <h2 class="govuk-heading-s">You have selected: </h2>
             <dl class="govuk-summary-list govuk-summary-list--no-border">
                 <div class="govuk-summary-list__row  govuk-!-padding-top-5">
@@ -51,7 +50,35 @@
                         @Html.Conditional(!string.IsNullOrWhiteSpace(file.LegislativeArea), file.LegislativeArea, @Constants.NotAssigned)
                     </dd>
                 </div>
-            </dl>                  
+            </dl>          
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-visually-hidden">Warning</span>
+                    The legislative area below will have no product schedules linked to it.
+                    Select if it should be archived, removed or marked as provisional.
+                </strong>
+            </div>
+            <dl class="govuk-summary-list govuk-summary-list--no-border">                
+                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        Legislative area:
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Html.Conditional(!string.IsNullOrWhiteSpace(file.LegislativeArea), file.LegislativeArea, @Constants.NotAssigned)
+                    </dd>
+                </div>
+            </dl>
+            <govuk-radios asp-for="RemoveLegislativeAction">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend class="govuk-label--s">
+                            Select an option for the legislative area
+                        </govuk-radios-fieldset-legend>
+                    <govuk-radios-item value="@LegislativeAreaActionEnum.Archive">Archive</govuk-radios-item>
+                    <govuk-radios-item value="@LegislativeAreaActionEnum.Remove">Remove</govuk-radios-item>                    
+                    <govuk-radios-item value="@LegislativeAreaActionEnum.Archive">Show as provisional</govuk-radios-item>
+                    </govuk-radios-fieldset>
+            </govuk-radios>            
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
                 <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CabId">Cancel</a>

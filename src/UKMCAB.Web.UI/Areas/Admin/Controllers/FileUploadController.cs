@@ -34,6 +34,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             public const string SchedulesList = "file-upload.schedules-list";
             public const string SchedulesListRemove = "file-upload.schedules-list-remove";
+            public const string SchedulesListRemoveWithOption = "file-upload.schedules-list-remove-with-option";
         }
 
         public FileUploadController(
@@ -226,7 +227,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            var schedules = latestDocument.Schedules ?? new List<FileUpload>();
+            var schedules = latestDocument.Schedules ?? new List<UKMCAB.Data.Models.FileUpload>();
 
             if (submitType is Constants.SubmitType.Cancel)
             {
@@ -240,8 +241,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            if((submitType is Constants.SubmitType.RemoveOrArchive || submitType is Constants.SubmitType.ReplaceFile || submitType is Constants.SubmitType.UseFileAgain) 
-                && string.IsNullOrEmpty(model.SelectedScheduleId))
+            if((submitType is Constants.SubmitType.Remove || submitType is Constants.SubmitType.Archive || submitType is Constants.SubmitType.ReplaceFile || submitType is Constants.SubmitType.UseFileAgain) && string.IsNullOrEmpty(model.SelectedScheduleId))
             {                
                 ModelState.AddModelError("SelectedScheduleId", "Select a schedule");
             }
@@ -263,7 +263,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                if (submitType is Constants.SubmitType.RemoveOrArchive)
+                if (submitType is Constants.SubmitType.Remove)
                 {
                     var filesInViewModel = model.ActiveFiles ?? new List<FileViewModel>();
                     var schedule = schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First();
@@ -280,15 +280,44 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                                     .Value);
                             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
-                        }
-                        // ask user to remove or archive
+                        }                        
                         else
-                        {
-                            return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id });
+                        {   
+                            // check if no legislative area assigned to schedule or legislative area have more than 1 product schedule
+                            var redirectToRemoveSchedule = string.IsNullOrWhiteSpace(schedule.LegislativeArea) || schedules.Where(n => n.LegislativeArea == schedule.LegislativeArea).Count() > 1;
+
+                            if (redirectToRemoveSchedule)
+                            {
+                                return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id, actionType = "remove" });                                
+                            }
+                            else
+                            {
+                                return RedirectToRoute(Routes.SchedulesListRemoveWithOption, new { id, scheduleId = schedule.Id, actionType = "remove" });
+                            }                            
                         }
                     }                                       
                 }
-                if (submitType is Constants.SubmitType.RemoveArchived)
+                else if (submitType is Constants.SubmitType.Archive)
+                {
+                    var filesInViewModel = model.ActiveFiles ?? new List<FileViewModel>();
+                    var schedule = schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First();
+
+                    if (schedule != null)
+                    {
+                        var legislativearea = schedule.LegislativeArea;
+                        var redirectToRemoveSchedule = string.IsNullOrWhiteSpace(schedule.LegislativeArea) || schedules.Where(n => n.LegislativeArea == schedule.LegislativeArea).Count() > 1;
+
+                        if (redirectToRemoveSchedule)
+                        {
+                            return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id, actionType = "archive" });
+                        }
+                        else
+                        {
+                            return RedirectToRoute(Routes.SchedulesListRemoveWithOption, new { id, scheduleId = schedule.Id, actionType = "archive" });
+                        }
+                    }
+                }
+                else if (submitType is Constants.SubmitType.RemoveArchived)
                 {
                     var filesInViewModel = model.ActiveFiles ?? new List<FileViewModel>();
                     var schedule = schedules.Where(n => n.Id == Guid.Parse(model.SelectedArchivedScheduleId)).First();
@@ -305,11 +334,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     .First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                                     .Value);
                             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
-                        }
-                        // ask user to remove or archive
+                        }                       
                         else
-                        {
-                            return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id });
+                        {                               
+                            // check if no legislative area assigned to schedule or legislative area have more than 1 product schedule
+                            var redirectToRemoveSchedule = string.IsNullOrWhiteSpace(schedule.LegislativeArea) || schedules.Where(n => n.LegislativeArea == schedule.LegislativeArea).Count() > 1;
+
+                            if (redirectToRemoveSchedule)
+                            {
+                                return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id, actionType = "remove" });
+                            }
+                            else
+                            {
+                                return RedirectToRoute(Routes.SchedulesListRemoveWithOption, new { id, scheduleId = schedule.Id, actionType = "remove" });
+                            }
                         }
                     }
                 }
@@ -317,7 +355,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     var schedule = schedules.Where(n => n.Id == Guid.Parse(model.SelectedScheduleId)).First() ?? throw new InvalidOperationException("Can't find selected schedule"); 
 
-                    var newSchedule = new FileUpload()
+                    var newSchedule = new UKMCAB.Data.Models.FileUpload()
                     { 
                         Id = Guid.NewGuid(),
                         Label = schedule.Label,
@@ -394,6 +432,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestDocument.StatusValue,
                 LegislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestDocument),
+                ShowArchiveAction = !(cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
             });
         }
 
@@ -697,10 +736,39 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet]
-        [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}", Name = Routes.SchedulesListRemove)]
-        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId)
+        [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemove)]
+        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, string actionType)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var schedules = latestDocument?.Schedules ?? new();
+            var fileUpload = schedules.Where(n => n.Id == Guid.Parse(scheduleId)).First() ?? throw new InvalidOperationException("No schedule found");
+
+            var removeActionType = actionType.ToLower() == "remove" ? RemoveActionEnum.Remove : RemoveActionEnum.Archive;
+            var actionText = removeActionType == RemoveActionEnum.Remove ? "Remove" : "Archive";
+
+            var vm = new RemoveScheduleViewModel
+            {
+                CabId = Guid.Parse(id),
+                Title = $"{actionText} product schedule",
+                RemoveScheduleAction = removeActionType,
+                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime)
+            };
+
+            return View("~/Areas/Admin/views/FileUpload/SchedulesRemove.cshtml", vm);
+        
+        }
+
+        [HttpPost]
+        [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemove)]
+        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, string actionType, RemoveScheduleViewModel vm)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+
             if (latestDocument == null) // Implies no document or archived
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
@@ -709,34 +777,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var schedules = latestDocument?.Schedules ?? new();
             var fileUpload = schedules.Where(n => n.Id == Guid.Parse(scheduleId)).First() ?? throw new InvalidOperationException("No schedule found"); 
 
-            var vm = new RemoveScheduleViewModel
-            {
-                CabId = Guid.Parse(id),
-                Title = "CAB Remove Schedules",
-                LastSchedule = schedules.Count == 1,
-                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime)
-            };
-
-            return View("~/Areas/Admin/views/FileUpload/SchedulesRemove.cshtml", vm);
-        }
-
-        [HttpPost]
-        [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}", Name = Routes.SchedulesListRemove)]
-        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, RemoveScheduleViewModel vm)
-        {
-            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
-
-            if (latestDocument == null) // Implies no document or archived
-            {
-                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
-            }
-
-            var schedules = latestDocument?.Schedules ?? new();
-            var fileUpload = schedules.Where(n => n.Id == Guid.Parse(scheduleId)).First() ?? throw new InvalidOperationException("No schedule found"); ;
-
             if (ModelState.IsValid)
             { 
-                if (vm.RemoveAction == RemoveActionEnum.Remove)
+                if (vm.RemoveScheduleAction == RemoveActionEnum.Remove)
                 {
                     schedules.Remove(fileUpload);
 
@@ -754,9 +797,77 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             vm.FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime);
-            vm.LastSchedule = schedules.Count == 1;
-
+            
             return View("~/Areas/Admin/views/FileUpload/SchedulesRemove.cshtml", vm);
+        }
+       
+
+        [HttpGet]
+        [Route("admin/cab/schedules-list/remove-option/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemoveWithOption)]
+        public async Task<IActionResult> SchedulesListRemoveOption(string id, string scheduleId, string actionType)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var schedules = latestDocument?.Schedules ?? new();
+            var fileUpload = schedules.Where(n => n.Id == Guid.Parse(scheduleId)).First() ?? throw new InvalidOperationException("No schedule found");
+
+            var removeActionType = actionType.ToLower() == "remove" ? RemoveActionEnum.Remove : RemoveActionEnum.Archive;
+            var actionText = removeActionType == RemoveActionEnum.Remove ? "Remove" : "Archive";
+
+            // check if no legislative area assigned to schedule or legislative area have no other no product schedule linked to it
+            var redirectToRemoveScheduleWithLARemoveAction = string.IsNullOrWhiteSpace(fileUpload.LegislativeArea) || schedules.Where(n => n.LegislativeArea == fileUpload.LegislativeArea).Count() <= 1;
+
+            var vm = new RemoveScheduleWithOptionViewModel
+            {
+                CabId = Guid.Parse(id),
+                Title = $"{actionText} product schedule",
+                RemoveScheduleAction = removeActionType,
+                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime)
+            };
+
+            return View("~/Areas/Admin/views/FileUpload/SchedulesRemoveWithOption.cshtml", vm);
+        }
+
+        [HttpPost]
+        [Route("admin/cab/schedules-list/remove-option/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemoveWithOption)]
+        public async Task<IActionResult> SchedulesListRemoveOption(string id, string scheduleId, string actionType, RemoveScheduleWithOptionViewModel vm)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var schedules = latestDocument?.Schedules ?? new();
+            var fileUpload = schedules.Where(n => n.Id == Guid.Parse(scheduleId)).First() ?? throw new InvalidOperationException("No schedule found"); 
+
+            if (ModelState.IsValid)
+            {
+                if (vm.RemoveScheduleAction == RemoveActionEnum.Remove)
+                {
+                    schedules.Remove(fileUpload);
+
+                    var userAccount =
+                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                            .Value);
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                }
+                else
+                {
+                    await _cabAdminService.ArchiveSchedulesAsync(Guid.Parse(id), new List<Guid>() { Guid.Parse(scheduleId) });
+                }
+
+                return RedirectToAction("SchedulesList", new { id });
+            }
+
+            vm.FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime);
+
+            return View("~/Areas/Admin/views/FileUpload/SchedulesRemoveWithOption.cshtml", vm);
         }
 
         #region Private methods
@@ -1122,13 +1233,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private static bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
-            var newSchedules = new List<FileUpload>();
+            var newSchedules = new List<UKMCAB.Data.Models.FileUpload>();
             if (latestDocument.Schedules != null && latestDocument.Schedules.Any())
             {
                 foreach (var fileViewModel in fileViewModels)
                 {
                     var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
-                    newSchedules.Add(new FileUpload
+                    newSchedules.Add(new UKMCAB.Data.Models.FileUpload
                     {
                         Id = fileViewModel.Id,
                         FileName = fileViewModel.FileName,

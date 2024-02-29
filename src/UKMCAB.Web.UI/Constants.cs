@@ -50,7 +50,6 @@ public static class Constants
         public const string ReplaceFile = nameof(ReplaceFile);
         public const string Approve = nameof(Approve);
         public const string Reject = nameof(Reject);
-        public const string RemoveOrArchive = nameof(RemoveOrArchive);
         public const string Remove = nameof(Remove);
         public const string Cancel = nameof(Cancel);
         public const string AdditionalInfo = nameof(AdditionalInfo);
