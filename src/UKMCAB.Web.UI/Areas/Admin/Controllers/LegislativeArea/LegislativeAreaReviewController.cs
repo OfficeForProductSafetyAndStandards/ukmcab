@@ -175,8 +175,14 @@ public class LegislativeAreaReviewController : Controller
                 }
             }
 
+            var distinctSoa = legislativeAreaViewModel.ScopeOfAppointments.GroupBy(s => s.ScopeId).ToList();
+            foreach (var item in distinctSoa)
+            {
+                var scopeOfApps = legislativeAreaViewModel.ScopeOfAppointments;
+                scopeOfApps.First(soa => soa.ScopeId == item.Key).NoOfProductsInScopeOfAppointment = scopeOfApps.Count(soa => soa.ScopeId == item.Key);
+            }
             viewModel.LAItems.Add(legislativeAreaViewModel);
-        }
+        };
 
         return viewModel;
     }
