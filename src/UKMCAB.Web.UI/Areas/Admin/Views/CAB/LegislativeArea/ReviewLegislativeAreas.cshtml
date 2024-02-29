@@ -1,6 +1,5 @@
 @using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review.ReviewLegislativeAreasViewModel
-
 @section BackButton
 {
     <div class="govuk-width-container ">
@@ -12,13 +11,38 @@
     </div>
 }
 
+@if (Model.ShowBanner && ViewData.ModelState.IsValid)
+{
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+                     aria-labelledby="govuk-notification-banner-title"
+                     data-module="govuk-notification-banner">
+                    <div class="govuk-notification-banner__header">
+                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                            Success
+                        </h2>
+                    </div>
+                    <div class="govuk-notification-banner__content">
+                        <h3 class="govuk-notification-banner__heading">
+                            @Model.SuccessBannerTitle
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="govuk-grid-row">
     <form method="post" enctype="multipart/form-data" novalidate>
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                        <span class="govuk-caption-m">Legislative area added</span>
+                        <span class="govuk-caption-m">@Model.Title</span>
+                        <h1 class="govuk-heading-l">@Model.Title</h1>
                     </legend>
                     @if (Model.LAItems.Any())
                     {
@@ -31,7 +55,6 @@
                                 removeLegislativeAreaLabel = $"{(legislativeArea.IsArchived is null or false ? "Remove or archive" : "Remove")} legislative area";
                             }
                             <input type="hidden" asp-for="CABId">
-                            <input type="hidden" asp-for="ReturnUrl">
                             <input type="hidden" asp-for="LAItems[i].Name">
                             <input type="hidden" asp-for="LAItems[i].LegislativeAreaId">
 
@@ -46,12 +69,12 @@
                                                        asp-route-id="@Model.CABId" asp-route-laId="@legislativeArea.LegislativeAreaId" class="govuk-button--secondary">
                                         Edit legislative area additional information
                                     </govuk-button-link>
-                                    <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveLegislativeArea" class="govuk-button--secondary"
+                                    <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveLegislativeArea" class="govuk-button--secondary ukmcab-margin-left-10"
                                                        asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area">
                                         @removeLegislativeAreaLabel
                                     </govuk-button-link>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3">
-                                        <caption class="govuk-table__caption govuk-table__caption--m">Scope of appointment</caption>
+                                        <caption class="govuk-table__caption govuk-table__caption--m" id="@legislativeArea.Name">Scope of appointment</caption>
                                         <thead class="govuk-table__head">
                                             <tr class="govuk-table__row">
 
@@ -87,6 +110,7 @@
                                             {
                                                 var scopeOfAppointment = legislativeArea.ScopeOfAppointments[j];
                                                 var noOfProductsInScopeOfAppointment = scopeOfAppointment.NoOfProductsInScopeOfAppointment;
+                                                var nextProductIndex = j;
 
                                                 @for (int k = 0; k < noOfProductsInScopeOfAppointment; k++)
                                                 {
@@ -96,7 +120,7 @@
                                                         {
                                                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                 <div>
-                                                                    <input type="radio" asp-for="LAItems[i].IndexofSelectedScopeofAppointment" value="@j">
+                                                                    <input type="radio" asp-for="LAItems[i].SelectedScopeofAppointmentId" value="@scopeOfAppointment.ScopeId">
                                                                     <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].ScopeId">
                                                                     <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Id">
                                                                     <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Title">
@@ -142,7 +166,7 @@
                                                         {
                                                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                 <label aria-hidden="true">Product</label>
-                                                                @Html.ValueOrNotProvided(scopeOfAppointment.Product)
+                                                                @Html.ValueOrNotApplicable(scopeOfAppointment.Product)
                                                             </td>
                                                         }
                                                         <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
@@ -159,7 +183,20 @@
                                                                 <span>Not provided</span>
                                                             }
                                                         </td> 
-                                                    </tr>
+                                                    </tr>                                                    
+
+                                                    if ((nextProductIndex + 1) < (j + noOfProductsInScopeOfAppointment))
+                                                    {
+                                                        nextProductIndex += 1;
+                                                        scopeOfAppointment = legislativeArea.ScopeOfAppointments[nextProductIndex];
+                                                        <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[nextProductIndex].ScopeId">
+                                                        <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[nextProductIndex].LegislativeArea.Id">
+                                                        <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[nextProductIndex].LegislativeArea.Title">
+                                                    }
+                                                    else
+                                                    {
+                                                        j = nextProductIndex;
+                                                    }
                                                 }
                                             }
                                         </tbody>
@@ -168,8 +205,8 @@
                                     <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="Add-@legislativeArea.LegislativeAreaId">Add scope of appointment</govuk-button>
                                     @if (legislativeArea.ScopeOfAppointments.Any())
                                     {
-                                        <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="@Constants.SubmitType.Edit">Edit scope of appointment</govuk-button>
-                                        <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="@Constants.SubmitType.Remove">Remove scope of appointment</govuk-button>
+                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Edit">Edit scope of appointment</govuk-button>
+                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Remove">Remove scope of appointment</govuk-button>
                                     }
                                 </div>
                             </details>

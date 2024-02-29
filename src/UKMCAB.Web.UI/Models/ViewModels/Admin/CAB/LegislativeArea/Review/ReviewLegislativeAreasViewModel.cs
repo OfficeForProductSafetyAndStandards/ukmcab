@@ -5,6 +5,8 @@
         public Guid CABId { get; set; }
         public string? ReturnUrl { get; set; }
         public List<CABLegislativeAreasItemViewModel> LAItems { get; set; } = new();
-        public string? Title => "Legislative areas added";
+        public string? Title => "Legislative areas";
+        public bool ShowBanner { get; set; } = false;
+        public string? SuccessBannerTitle { get; set; } 
     }
 }

@@ -163,6 +163,23 @@
     padding-top: 50px !important;
 }
 
+.ukmcab-margin-left-10 {
+    margin-left: 0 !important;
+}
+
+.ukmcab-margin-left-15 {
+    margin-left: 0 !important;
+}
+
+@media (min-width: 40.0625em) {
+    .ukmcab-margin-left-10 {
+        margin-left: 10px !important;
+    }
+    .ukmcab-margin-left-15 {
+        margin-left: 15px !important;
+    }
+}
+
 .ukmcab-text-align-left {
     text-align: left !important;
 }
