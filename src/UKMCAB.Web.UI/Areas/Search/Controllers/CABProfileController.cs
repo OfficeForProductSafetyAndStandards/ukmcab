@@ -25,6 +25,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using System.Text.Json;
+using UKMCAB.Infrastructure.Cache;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -42,7 +43,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly ILegislativeAreaService _legislativeAreaService;
         private readonly IUserService _userService;
         private readonly IWorkflowTaskService _workflowTaskService;
+        private readonly IDistCache _distCache;
         private readonly TelemetryClient _telemetryClient;
+        private const string CacheKey = "audit_history_{0}";
 
         public static class Routes
         {
@@ -59,7 +62,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             ICABAdminService cabAdminService, IFileStorage fileStorage, TelemetryClient telemetryClient,
             IFeedService feedService, IUserService userService, IOptions<CoreEmailTemplateOptions> templateOptions,
             IAsyncNotificationClient notificationClient, IWorkflowTaskService workflowTaskService,
-            IEditLockService editLockService, ILegislativeAreaService legislativeAreaService)
+            IEditLockService editLockService, ILegislativeAreaService legislativeAreaService, IDistCache distCache)
         {
             _cabAdminService = cabAdminService;
             _cachedPublishedCabService = cachedPublishedCabService;
@@ -72,6 +75,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             _templateOptions = templateOptions.Value;
             _userService = userService;
             _workflowTaskService = workflowTaskService;
+            _distCache = distCache;
         }
 
         [HttpGet("~/__subscriptions/__inbound/cab/{id}", Name = Routes.TrackInboundLinkCabDetails)]
@@ -892,21 +896,26 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         #region CabHistory
 
         [HttpGet("search/cab/history-details")]
-        public IActionResult ShowCABHistoryDetails()
+        public async Task<IActionResult> ShowCABHistoryDetails(Guid tempId)
         {
-            var auditHistoryItemViewModel = TempData.ContainsKey("auditHistoryData")
-                ? JsonSerializer.Deserialize<AuditHistoryItemViewModel>(
-                    (TempData.Peek("auditHistoryData") as string)!)
-                : new AuditHistoryItemViewModel();
+            var auditHistoryItemViewModel = await _distCache.GetAsync<AuditHistoryItemViewModel>(string.Format(CacheKey, tempId.ToString()));
+
+            if (auditHistoryItemViewModel == null) 
+            {
+                // If not found, e.g. user refreshes screen after an hour, redirect to root.
+                return Redirect("/");
+            }
 
             return View(auditHistoryItemViewModel);
         }
 
         [HttpPost("search/cab/history-details", Name = Routes.CabProfileHistoryDetails)]
-        public IActionResult CABHistoryDetails(AuditHistoryItemViewModel auditHistoryItemViewModel)
+        public async Task<IActionResult> CABHistoryDetails(AuditHistoryItemViewModel auditHistoryItemViewModel)
         {
-            TempData["auditHistoryData"] = JsonSerializer.Serialize(auditHistoryItemViewModel);
-            return RedirectToAction(nameof(CABHistoryDetails));
+            var tempId = Guid.NewGuid();
+            await _distCache.SetAsync(string.Format(CacheKey, tempId.ToString()), auditHistoryItemViewModel, TimeSpan.FromHours(1));
+
+            return RedirectToAction(nameof(CABHistoryDetails), new { tempId });
         }
 
         #endregion
