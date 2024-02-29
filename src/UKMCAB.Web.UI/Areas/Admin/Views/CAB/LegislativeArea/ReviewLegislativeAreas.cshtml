@@ -74,7 +74,7 @@
                                         @removeLegislativeAreaLabel
                                     </govuk-button-link>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3">
-                                        <caption class="govuk-table__caption govuk-table__caption--m" id="@legislativeArea.Name">Scope of appointment</caption>
+                                        <caption class="govuk-table__caption govuk-table__caption--m">Scope of appointment</caption>
                                         <thead class="govuk-table__head">
                                             <tr class="govuk-table__row">
 
@@ -111,7 +111,6 @@
                                                 var scopeOfAppointment = legislativeArea.ScopeOfAppointments[j];
                                                 var noOfProductsInScopeOfAppointment = scopeOfAppointment.NoOfProductsInScopeOfAppointment;
                                                 var nextProductIndex = j;
-
                                                 @for (int k = 0; k < noOfProductsInScopeOfAppointment; k++)
                                                 {
                                                     var showBorder = k == noOfProductsInScopeOfAppointment - 1;
