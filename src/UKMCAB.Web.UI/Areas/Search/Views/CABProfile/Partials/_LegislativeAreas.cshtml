@@ -15,7 +15,7 @@
                     <h3 class="govuk-heading-m govuk-!-margin-bottom-1">@Model.LegislativeAreaName</h3>
                 </div>
                 <div class="display-flex">
-                    @if (Model.ShowProvisionalTag)
+                    @if (Model.ShowArchivedTag)
                     {
                         <div class="tag-container">
                             <strong class="cab-status-tag govuk-tag--grey">
@@ -23,7 +23,7 @@
                             </strong>
                         </div>
                     }
-                    @if (Model.ShowArchivedTag)
+                    @if (Model.ShowProvisionalTag)
                     {
                         <div class="tag-container govuk-!-margin-left-2">
                             <strong class="cab-status-tag govuk-tag--yellow">
