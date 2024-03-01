@@ -11,25 +11,16 @@
     </div>
 }
 
-@if (Model.ShowBanner && ViewData.ModelState.IsValid)
+@if (Model.SuccessBannerAction == "Remove")
 {
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
-                     aria-labelledby="govuk-notification-banner-title"
-                     data-module="govuk-notification-banner">
-                    <div class="govuk-notification-banner__header">
-                        <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                            Success
-                        </h2>
-                    </div>
-                    <div class="govuk-notification-banner__content">
-                        <h3 class="govuk-notification-banner__heading">
-                            @Model.SuccessBannerTitle
-                        </h3>
-                    </div>
-                </div>
+                <govuk-notification-banner type="Success">
+                    <p class="govuk-notification-banner__heading">
+                        The applicable conformity assessment procedure has been removed.
+                    </p>
+                </govuk-notification-banner>
             </div>
         </div>
     </div>
@@ -39,7 +30,13 @@
     <form method="post" enctype="multipart/form-data" novalidate>
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <govuk-error-summary>
+                        <govuk-error-summary-item href="#@Model.ErrorLink">Select a scope of appointment</govuk-error-summary-item>
+                    </govuk-error-summary>
+                }
+                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">                                        
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <span class="govuk-caption-m">@Model.Title</span>
                         <h1 class="govuk-heading-l">@Model.Title</h1>
@@ -74,6 +71,10 @@
                                         @removeLegislativeAreaLabel
                                     </govuk-button-link>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3">
+                                        @if (!ViewData.ModelState.IsValid && Model.ErrorLink == legislativeArea.Name)
+                                        {
+                                            <govuk-error-message id="@legislativeArea.Name">Select a scope of appointment</govuk-error-message>
+                                        }
                                         <caption class="govuk-table__caption govuk-table__caption--m">Scope of appointment</caption>
                                         <thead class="govuk-table__head">
                                             <tr class="govuk-table__row">
@@ -118,8 +119,8 @@
                                                         @if (k == 0)
                                                         {
                                                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                                <div>
-                                                                    <input type="radio" asp-for="LAItems[i].SelectedScopeofAppointmentId" value="@scopeOfAppointment.ScopeId">
+                                                                <div>  
+                                                                    <input class="radio" type="radio" asp-for="LAItems[i].SelectedScopeofAppointmentId" value="@scopeOfAppointment.ScopeId">
                                                                     <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].ScopeId">
                                                                     <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Id">
                                                                     <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Title">
@@ -204,8 +205,8 @@
                                     <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="Add-@legislativeArea.LegislativeAreaId">Add scope of appointment</govuk-button>
                                     @if (legislativeArea.ScopeOfAppointments.Any())
                                     {
-                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Edit">Edit scope of appointment</govuk-button>
-                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Remove">Remove scope of appointment</govuk-button>
+                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Edit-@legislativeArea.Name">Edit scope of appointment</govuk-button>
+                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Remove-@legislativeArea.Name">Remove scope of appointment</govuk-button>
                                     }
                                 </div>
                             </details>

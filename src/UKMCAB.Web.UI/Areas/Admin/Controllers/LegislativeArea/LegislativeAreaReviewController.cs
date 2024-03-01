@@ -43,12 +43,7 @@ public class LegislativeAreaReviewController : Controller
         }
 
         var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
-        
-        if (!string.IsNullOrWhiteSpace(actionType) && actionType.Equals("Remove"))
-        {
-            vm.ShowBanner = true;
-            vm.SuccessBannerTitle = "The applicable conformity assessment procedure has been removed.";
-        }
+        vm.SuccessBannerAction = actionType;
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
 
@@ -74,9 +69,12 @@ public class LegislativeAreaReviewController : Controller
 
         var cabLaOfSelectedScopeofAppointment = reviewLaVM.LAItems.FirstOrDefault(la => la.SelectedScopeofAppointmentId != null);
         if (cabLaOfSelectedScopeofAppointment == null)
-        {
+        {            
             ModelState.AddModelError("ScopeOfAppointment", "Select a scope of apppointment to edit");
-            return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", await PopulateCABLegislativeAreasViewModelAsync(latestDocument));
+            var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
+            var len = submitType.StartsWith("Edit-") ? 5 : 7;
+            vm.ErrorLink = submitType.Substring(len);
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
         }
 
         var laOfSelectedSoa = cabLaOfSelectedScopeofAppointment.ScopeOfAppointments.First(soa => soa.ScopeId == cabLaOfSelectedScopeofAppointment.SelectedScopeofAppointmentId);
@@ -88,11 +86,11 @@ public class LegislativeAreaReviewController : Controller
 
         if (ModelState.IsValid)
         {
-            if (submitType == Constants.SubmitType.Edit)
+            if (submitType.StartsWith(Constants.SubmitType.Edit) )
             {
                 return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, compareScopeId = selectedScopeOfAppointmentId, legislativeAreaId });
             }
-            if (submitType == Constants.SubmitType.Remove)
+            if (submitType.StartsWith(Constants.SubmitType.Remove))
             {
                 var soaToRemove = latestDocument.ScopeOfAppointments.First(s => s.Id == selectedScopeOfAppointmentId);
                 if (soaToRemove != null)
