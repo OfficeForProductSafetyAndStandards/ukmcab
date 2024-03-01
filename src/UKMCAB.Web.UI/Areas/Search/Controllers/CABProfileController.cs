@@ -24,7 +24,6 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
-using System.Text.Json;
 using UKMCAB.Infrastructure.Cache;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
@@ -607,7 +606,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Name = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).Name,
                 Regulation = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).Regulation,
                 IsProvisional = x.IsProvisional != null && x.IsProvisional.Value,
-                IsArchived = x.Archived != null && x.Archived.Value
+                IsArchived = x.Archived != null && x.Archived.Value,
+                AppointmentDate = x.AppointmentDate,
+                ReviewDate = x.ReviewDate,
+                Reason = x.Reason,
+                PointOfContactName = x.PointOfContactName,
+                PointOfContactEmail = x.PointOfContactEmail,
+                PointOfContactPhone = x.PointOfContactPhone,
+                IsPointOfContactPublicDisplay = x.IsPointOfContactPublicDisplay,
                 
             }).ToList();
 
