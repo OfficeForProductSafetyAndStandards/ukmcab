@@ -497,6 +497,14 @@ namespace UKMCAB.Core.Services.CAB
                 latestDocument.ScopeOfAppointments.Remove(scopeOfAppointment);
             }
 
+            // remove product schedule
+            var productSchedules = latestDocument.Schedules.Where(n => n.LegislativeArea == documentLegislativeArea.LegislativeAreaName).ToList();
+
+            foreach (var productSchedule in productSchedules)
+            {
+                productSchedule.LegislativeArea = null;
+            }
+
             await _cabRepository.UpdateAsync(latestDocument);
         }
 

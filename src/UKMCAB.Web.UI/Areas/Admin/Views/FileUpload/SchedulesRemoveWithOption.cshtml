@@ -23,7 +23,10 @@
     </div>
     <div class="govuk-grid-column-two-thirds">
         <form id="scheduleForm" method="post" novalidate>
-            <input type="hidden" asp-for="Title" />            
+            <input type="hidden" asp-for="Title" />
+            <input type="hidden" asp-for="CabId" />
+            <input type="hidden" asp-for="RemoveScheduleAction" />
+
             <h2 class="govuk-heading-s">You have selected: </h2>
             <dl class="govuk-summary-list govuk-summary-list--no-border">
                 <div class="govuk-summary-list__row  govuk-!-padding-top-5">
@@ -76,7 +79,7 @@
                         </govuk-radios-fieldset-legend>
                     <govuk-radios-item value="@LegislativeAreaActionEnum.Archive">Archive</govuk-radios-item>
                     <govuk-radios-item value="@LegislativeAreaActionEnum.Remove">Remove</govuk-radios-item>                    
-                    <govuk-radios-item value="@LegislativeAreaActionEnum.Archive">Show as provisional</govuk-radios-item>
+                    <govuk-radios-item value="@LegislativeAreaActionEnum.MarkAsProvisional">Show as provisional</govuk-radios-item>
                     </govuk-radios-fieldset>
             </govuk-radios>            
             <div class="govuk-button-group">

@@ -47,6 +47,11 @@
     }
 
     <form method="post" enctype="multipart/form-data" novalidate>
+        <input type="hidden" asp-for="CABId" />
+        <input type="hidden" asp-for="Title" />
+        <input type="hidden" asp-for="ShowArchiveAction" />
+        <input type="hidden" asp-for="IsFromSummary" />
+
         <div class="govuk-grid-column-full">
             <partial name="Partials/_ValidationSummary" model="null" />
             <div>
@@ -212,10 +217,9 @@
                 </div>
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ArchivedFiles))">
                     <fieldset class="govuk-fieldset" aria-describedby="enter-file-title-hint">
-                        <p id="archivedfilederrors" class="govuk-error-message">
-                            <span class="govuk-error-message">@Html.ValidationMessage("SelectedArchivedScheduleId")</span>
-                        </p>
-
+                        <govuk-error-summary id="SelectArchivedScheduleErrorSummary">
+                            <govuk-error-summary-item asp-for="SelectedArchivedScheduleId" />
+                        </govuk-error-summary>
                         @* Header*@
                         <div>
                             <div class="width-half ukmcab-float__left mobile-no-display">

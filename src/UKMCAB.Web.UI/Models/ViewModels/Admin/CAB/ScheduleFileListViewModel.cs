@@ -14,5 +14,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public IEnumerable<SelectListItem> LegislativeAreas { get; set; } = new List<SelectListItem>();
         public RemoveActionEnum RemoveAction { get; set; }     
         public bool ShowArchiveAction { get; set; }
+        public string? SelectedArchivedScheduleId { get; set; }
+
+        public string? SelectedScheduleId { get; set; }
     }
 }
