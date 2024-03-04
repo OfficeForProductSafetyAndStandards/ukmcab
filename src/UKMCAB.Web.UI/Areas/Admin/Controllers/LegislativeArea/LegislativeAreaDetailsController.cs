@@ -587,7 +587,7 @@ public class LegislativeAreaDetailsController : Controller
             PurposeOfAppointment = purposeOfAppointment?.Name,
             Category = category?.Name,
             SubCategory = subCategory?.Name,
-            ShowContinueToNextStep = indexOfProduct >= scopeOfAppointment.ProductIds.Count - 1
+            IsLastAction = indexOfProduct >= scopeOfAppointment.ProductIds.Count - 1
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProcedure.cshtml", vm);

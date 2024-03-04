@@ -24,7 +24,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public IEnumerable<SelectListItem> Procedures { get; set; } = new List<SelectListItem>();
 
         public int IndexOfProduct { get; set; }
-        public bool ShowContinueToNextStep { get; set; } = true;
+        public bool IsLastAction { get; set; } = true;
 
     }
 }
