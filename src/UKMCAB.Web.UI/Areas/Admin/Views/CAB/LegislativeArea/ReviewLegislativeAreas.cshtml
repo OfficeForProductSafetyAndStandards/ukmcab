@@ -36,10 +36,10 @@
                         <govuk-error-summary-item href="#@Model.ErrorLink">Select a scope of appointment</govuk-error-summary-item>
                     </govuk-error-summary>
                 }
-                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">                                        
+                <fieldset class="govuk-fieldset" aria-describedby="fieldset-title">                                        
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <span class="govuk-caption-m">@Model.Title</span>
-                        <h1 class="govuk-heading-l">@Model.Title</h1>
+                        <h1 id="fieldset-title" class="govuk-heading-l">@Model.Title</h1>
                     </legend>
                     @if (Model.LAItems.Any())
                     {
