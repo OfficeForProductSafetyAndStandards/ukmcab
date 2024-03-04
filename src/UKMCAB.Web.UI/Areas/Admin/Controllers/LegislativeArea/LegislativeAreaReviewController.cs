@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using MoreLinq.Extensions;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
