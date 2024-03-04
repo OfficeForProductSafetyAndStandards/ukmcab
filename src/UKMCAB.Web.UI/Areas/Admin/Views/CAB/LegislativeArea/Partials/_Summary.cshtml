@@ -35,6 +35,51 @@
                     @Html.ValueOrNotProvided(Model.Reason)
                 </dd>
             </div>
+
+            @if (!string.IsNullOrEmpty(Model.PointOfContactName))
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Legislative area contact name (optional)
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.PointOfContactName
+                    </dd>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.PointOfContactEmail))
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Legislative area contact email (optional)
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.PointOfContactEmail
+                    </dd>
+                </div>
+            }
+            @if (!string.IsNullOrEmpty(Model.PointOfContactPhone))
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Legislative area contact telephone (optional)
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.PointOfContactPhone
+                    </dd>
+                </div>
+            }
+            @if (Model.IsPointOfContactPublicDisplay.HasValue)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Display legislative area contact details
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @(Model.IsPointOfContactPublicDisplay.Value ? "Public" : "Restricted")
+                    </dd>
+                </div>
+            }
         </dl>
     </div>
 

@@ -83,11 +83,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 if (model.Statuses != null && model.Statuses.Any(s => s == ((int)Status.Archived).ToString()))
                 {
-                    model.Statuses = new string[] { ((int)Status.Archived).ToString() };
+                    model.Statuses = new[] { ((int)Status.Archived).ToString() };
                 }
                 else
                 {
-                    model.Statuses = new string[] { ((int)Status.Published).ToString() };
+                    model.Statuses = new[] { ((int)Status.Published).ToString() };
                 }                
             } 
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;

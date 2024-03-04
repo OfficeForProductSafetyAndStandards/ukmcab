@@ -46,7 +46,11 @@ public class LegislativeAreaAdditionalInformationController : Controller
             IsProvisionalLegislativeArea = legislativeArea.IsProvisional,
             AppointmentDate = legislativeArea.AppointmentDate,
             ReviewDate = legislativeArea.ReviewDate,
-            Reason = legislativeArea.Reason
+            Reason = legislativeArea.Reason,
+            PointOfContactName = legislativeArea.PointOfContactName,
+            PointOfContactEmail = legislativeArea.PointOfContactEmail,
+            PointOfContactPhone = legislativeArea.PointOfContactPhone,
+            IsPointOfContactPublicDisplay = legislativeArea.IsPointOfContactPublicDisplay,
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);
@@ -81,6 +85,15 @@ public class LegislativeAreaAdditionalInformationController : Controller
                 vm.ReviewDate.Value.Year.ToString(), nameof(vm.ReviewDate), "review date");
         }
 
+        if ((!string.IsNullOrWhiteSpace(vm.PointOfContactName) ||
+            !string.IsNullOrWhiteSpace(vm.PointOfContactEmail) ||
+            !string.IsNullOrWhiteSpace(vm.PointOfContactPhone)) &&
+                !vm.IsPointOfContactPublicDisplay.HasValue)
+        {
+            ModelState.AddModelError("IsPointOfContactPublicDisplay",
+                "Select who should see the legislative area contact details");
+        }
+
         if (!ModelState.IsValid)
         {
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);
@@ -92,7 +105,11 @@ public class LegislativeAreaAdditionalInformationController : Controller
         documentLegislativeArea.AppointmentDate = vm.AppointmentDate;
         documentLegislativeArea.ReviewDate = vm.ReviewDate;
         documentLegislativeArea.Reason = vm.Reason;
-        
+        documentLegislativeArea.PointOfContactName = vm.PointOfContactName;
+        documentLegislativeArea.PointOfContactEmail = vm.PointOfContactEmail;
+        documentLegislativeArea.PointOfContactPhone = vm.PointOfContactPhone;
+        documentLegislativeArea.IsPointOfContactPublicDisplay = vm.IsPointOfContactPublicDisplay;
+
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 

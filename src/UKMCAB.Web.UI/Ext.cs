@@ -69,6 +69,8 @@ public static class Ext
 
     public static IHtmlContent ValueOrNotProvided(this IHtmlHelper htmlHelper, string? text) =>
         string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.NotProvided) : htmlHelper.Raw(text);
+    public static IHtmlContent ValueOrNotApplicable(this IHtmlHelper htmlHelper, string? text) =>
+        string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.NotApplicable) : htmlHelper.Raw(text);
     public static IHtmlContent ValueOrNone(this IHtmlHelper htmlHelper, string? text) =>
         string.IsNullOrWhiteSpace(text) ? htmlHelper.Raw(Constants.None) : htmlHelper.Raw(text);
 

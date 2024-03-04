@@ -672,6 +672,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     AppointmentDate = documentLegislativeArea.AppointmentDate,
                     ReviewDate = documentLegislativeArea.ReviewDate,
                     Reason = documentLegislativeArea.Reason,
+                    PointOfContactName = documentLegislativeArea.PointOfContactName,
+                    PointOfContactEmail = documentLegislativeArea.PointOfContactEmail,
+                    PointOfContactPhone = documentLegislativeArea.PointOfContactPhone,
+                    IsPointOfContactPublicDisplay = documentLegislativeArea.IsPointOfContactPublicDisplay,
                     CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
                 };
 
