@@ -66,6 +66,10 @@ namespace UKMCAB.Data.Models
                         CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbPublicComment, previousFileUploads, currentFileUploads, docType);
                     }
                 }
+
+                var previousLAs = previousDocument.DocumentLegislativeAreas ?? new();
+                var currentLAs = publishedDocument.DocumentLegislativeAreas ?? new();
+                CalculateChangesToLegislativeAreas(previousLAs, currentLAs, sbPublicComment);
             }
 
             if (sbComment.Length > 0)
@@ -88,6 +92,26 @@ namespace UKMCAB.Data.Models
             Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbComment.ToString()));
             PublicComment = string.Join("", HttpUtility.HtmlEncode(publicComment), HttpUtility.HtmlEncode(sbPublicComment.ToString()));
         }
+
+        private static void CalculateChangesToLegislativeAreas(List<DocumentLegislativeArea> previousLAs, List<DocumentLegislativeArea> currentLAs, StringBuilder sb)
+        {
+            //var existingLAs = currentLAs.Where(la => previousLAs.Any(pla => pla.LegislativeAreaName == la.LegislativeAreaName));
+            var newlyAddedLAs = currentLAs.Where(la => !previousLAs.Any(pla => pla.LegislativeAreaName == la.LegislativeAreaName));
+            var removedLAs = previousLAs.Where(la => !currentLAs.Any(cla => cla.LegislativeAreaName == la.LegislativeAreaName));
+
+            foreach (var la in newlyAddedLAs) 
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\">{0} was added to legislative area.</p>",
+                    la.LegislativeAreaName);
+            }
+            foreach (var la in removedLAs) 
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\">{0} was removed from legislative area.</p>",
+                    la.LegislativeAreaName);
+            }
+        }  
 
         private static void CalculateChangesToScheduleOrDocument(Document publishedDocument, Document? previousDocument, StringBuilder sb, List<FileUpload> previousFileUploads, List<FileUpload> currentFileUploads, string docType)
         {
