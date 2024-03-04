@@ -136,13 +136,13 @@ namespace UKMCAB.Core.Services.CAB
             document.CreatedByUserGroup = userAccount.Role!.ToLower();
 
             var rv = await _cabRepository.CreateAsync(document);
-            await UpdateSearchIndex(rv);
+            await UpdateSearchIndexAsync(rv);
             await RecordStatsAsync();
 
             return rv;
         }
 
-        public async Task UpdateSearchIndex(Document document)
+        public async Task UpdateSearchIndexAsync(Document document)
         {
             await _cachedSearchService.ReIndexAsync(new CABIndexItem
             {
@@ -199,8 +199,8 @@ namespace UKMCAB.Core.Services.CAB
                 await _cabRepository.UpdateAsync(draft);
             }
 
-            await UpdateSearchIndex(draft);
-            await RefreshCaches(draft.CABId, draft.URLSlug);
+            await UpdateSearchIndexAsync(draft);
+            await RefreshCachesAsync(draft.CABId, draft.URLSlug);
             await RecordStatsAsync();
 
             return draft;
@@ -234,12 +234,12 @@ namespace UKMCAB.Core.Services.CAB
                 previous.SubStatus = SubStatus.None;
 
                 await _cabRepository.UpdateAsync(previous);
-                await UpdateSearchIndex(previous);
+                await UpdateSearchIndexAsync(previous);
             }
 
             // Update the search index & caches
             await _cachedSearchService.RemoveFromIndexAsync(draft.id);
-            await RefreshCaches(draft.CABId, draft.URLSlug);
+            await RefreshCachesAsync(draft.CABId, draft.URLSlug);
             await RecordStatsAsync();
         }
 
@@ -263,8 +263,8 @@ namespace UKMCAB.Core.Services.CAB
             document.SubStatus = subStatus;
             document.AuditLog.Add(audit);
             await _cabRepository.UpdateAsync(document);
-            await UpdateSearchIndex(document);
-            await RefreshCaches(document.CABId, document.URLSlug);
+            await UpdateSearchIndexAsync(document);
+            await RefreshCachesAsync(document.CABId, document.URLSlug);
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument,
@@ -302,9 +302,9 @@ namespace UKMCAB.Core.Services.CAB
                 ? publishedOrArchivedDocument.URLSlug
                 : latestDocument.URLSlug;
 
-            await UpdateSearchIndex(latestDocument);
+            await UpdateSearchIndexAsync(latestDocument);
 
-            await RefreshCaches(latestDocument.CABId, urlSlug);
+            await RefreshCachesAsync(latestDocument.CABId, urlSlug);
 
             await RecordStatsAsync();
 
@@ -334,7 +334,7 @@ namespace UKMCAB.Core.Services.CAB
                 internalReason));
             await _cabRepository.UpdateAsync(publishedVersion);
 
-            await RefreshCaches(publishedVersion.CABId, publishedVersion.URLSlug);
+            await RefreshCachesAsync(publishedVersion.CABId, publishedVersion.URLSlug);
 
             await _cachedSearchService.RemoveFromIndexAsync(publishedVersion.id);
 
@@ -360,7 +360,7 @@ namespace UKMCAB.Core.Services.CAB
                 unarchivePublicReason));
             archivedDoc.SubStatus = SubStatus.None;
             await _cabRepository.UpdateAsync(archivedDoc);
-            await UpdateSearchIndex(archivedDoc);
+            await UpdateSearchIndexAsync(archivedDoc);
 
             // Create new draft or publish from latest with unarchive entry and reset audit
             archivedDoc.StatusValue = Status.Draft;
@@ -375,9 +375,9 @@ namespace UKMCAB.Core.Services.CAB
             archivedDoc.CreatedByUserGroup = requestedByUkas ? Roles.UKAS.Id : userAccount.Role!.ToLower();
 
             archivedDoc = await _cabRepository.CreateAsync(archivedDoc);
-            await UpdateSearchIndex(archivedDoc);
+            await UpdateSearchIndexAsync(archivedDoc);
 
-            await RefreshCaches(archivedDoc.CABId, archivedDoc.URLSlug);
+            await RefreshCachesAsync(archivedDoc.CABId, archivedDoc.URLSlug);
 
             await RecordStatsAsync();
 
@@ -418,9 +418,9 @@ namespace UKMCAB.Core.Services.CAB
                 archivePublicReason));
             await _cabRepository.UpdateAsync(publishedVersion);
 
-            await UpdateSearchIndex(publishedVersion);
+            await UpdateSearchIndexAsync(publishedVersion);
 
-            await RefreshCaches(publishedVersion.CABId, publishedVersion.URLSlug);
+            await RefreshCachesAsync(publishedVersion.CABId, publishedVersion.URLSlug);
 
             await RecordStatsAsync();
 
@@ -474,6 +474,8 @@ namespace UKMCAB.Core.Services.CAB
             });
             latestDocument.LegislativeAreas.Add(laName);
             await _cabRepository.UpdateAsync(latestDocument);
+            await UpdateSearchIndexAsync(latestDocument);
+            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
             return guid;
         }
 
@@ -498,6 +500,8 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             await _cabRepository.UpdateAsync(latestDocument);
+            await UpdateSearchIndexAsync(latestDocument);
+            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
         }
 
         public async Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId)
@@ -510,6 +514,8 @@ namespace UKMCAB.Core.Services.CAB
             documentLegislativeArea.Archived = true;
 
             await _cabRepository.UpdateAsync(latestDocument);
+            await UpdateSearchIndexAsync(latestDocument);
+            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
         }
 
         public async Task ArchiveSchedulesAsync(Guid cabId, List<Guid> ScheduleIds)
@@ -542,7 +548,7 @@ namespace UKMCAB.Core.Services.CAB
                 .ToList();
         }
 
-        private async Task RefreshCaches(string cabId, string slug)
+        private async Task RefreshCachesAsync(string cabId, string slug)
         {
             await _cachedSearchService.ClearAsync();
             await _cachedSearchService.ClearAsync(cabId);
