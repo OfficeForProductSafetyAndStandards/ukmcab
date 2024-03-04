@@ -235,7 +235,10 @@
                 <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })">Add legislative area</govuk-button-link>
                 <div class="govuk-button-group">
                     <govuk-button-link asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId">Continue</govuk-button-link>
-                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <govuk-button-link class="govuk-button--secondary" asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId">
+                        Save as draft
+                    </govuk-button-link>
+                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 </div>
             </div>
         </div>

@@ -55,11 +55,14 @@
                     }
                 </govuk-checkboxes-fieldset>
             </govuk-checkboxes>
-            <div class="govuk-button-group">                
-                <govuk-button class="govuk-button--secondary" name="submitType" type="submit" value="@Constants.SubmitType.Add">Add more to this legislative area</govuk-button>
-            </div>
+              @if (Model.IsLastAction)
+            {
+                <div class="govuk-button-group">
+                    <govuk-button class="govuk-button--secondary" name="submitType" type="submit" value="@Constants.SubmitType.Add">Add more to this legislative area</govuk-button>
+                </div>
+            }
             <div class="govuk-button-group">
-                @if(Model.ShowContinueToNextStep){
+                @if(Model.IsLastAction){
                         <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
                 }
                 else
