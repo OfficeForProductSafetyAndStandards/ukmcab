@@ -372,6 +372,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
+                
+            if (latest.StatusValue == Status.Published && subSectionEditAllowed == true)
+            {
+                var userAccount =
+                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                await _cabAdminService.CreateDocumentAsync(userAccount!, latest);
+            }
 
             //Check Edit lock
             var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
