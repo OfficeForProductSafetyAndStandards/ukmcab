@@ -707,10 +707,10 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     private async Task<List<string>> SetHiddenScopeOfAppointmentsAsync(
-        IEnumerable<DocumentScopeOfAppointment> ScopeOfAppointments)
+        IEnumerable<DocumentScopeOfAppointment> scopeOfAppointments)
     {
         var hiddenScopeOfAppointments = new List<string>();
-        var documentScopeOfAppointments = ScopeOfAppointments.ToList();
+        var documentScopeOfAppointments = scopeOfAppointments.ToList();
         var legislativeAreaIds = documentScopeOfAppointments.Select(a => a.LegislativeAreaId)
             .Distinct()
             .ToList();
