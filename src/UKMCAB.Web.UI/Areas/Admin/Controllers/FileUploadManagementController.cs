@@ -6,6 +6,7 @@ using UKMCAB.Data;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Storage;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 
@@ -65,7 +66,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                return RedirectToAction("SchedulesList", "FileUpload", new { id, IndexofSelectedFile = model.IndexofSelectedFile, fromAction = "SchedulesReplaceFile" });
+                return RedirectToAction("SchedulesList", "FileUpload", new { id, SelectedScheduleId = scheduleId, fromAction = ProductScheduleActionMessageEnum.ProductScheduleFileReplaced.ToString() });
             }
 
             model.Title = SchedulesOptions.ReplaceFile;

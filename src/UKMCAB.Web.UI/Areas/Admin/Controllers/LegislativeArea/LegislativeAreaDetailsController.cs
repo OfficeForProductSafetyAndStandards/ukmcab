@@ -129,10 +129,12 @@ public class LegislativeAreaDetailsController : Controller
                 documentScopeOfAppointment.LegislativeAreaId);
         var legislativeArea =
             await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentScopeOfAppointment.LegislativeAreaId);
+
         if (legislativeArea == null)
         {
+            string message = $"Legislative Area not found for {documentScopeOfAppointment.LegislativeAreaId}";
             throw new InvalidOperationException(
-                $"Legislative Area not found for {documentScopeOfAppointment.LegislativeAreaId}");
+                message);
         }
 
         if (!options.PurposeOfAppointments.Any())

@@ -268,7 +268,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument,
-            string? publishInternalReason = default(string), string? publishPublicReason = default(string))
+            string? publishInternalReason = default, string? publishPublicReason = default)
         {
             if (latestDocument.StatusValue == Status.Published)
             {
@@ -461,8 +461,8 @@ namespace UKMCAB.Core.Services.CAB
 
         public async Task<Guid> AddLegislativeAreaAsync(Guid cabId, Guid laToAdd, string laName)
         {
-            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
-            if (latestDocument == null) throw new InvalidOperationException("No document found");
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
+
             if (latestDocument.DocumentLegislativeAreas.Any(l => l.LegislativeAreaId == laToAdd))
                 throw new ArgumentException("Legislative id already exists on cab");
             var guid = Guid.NewGuid();
@@ -479,8 +479,7 @@ namespace UKMCAB.Core.Services.CAB
 
         public async Task RemoveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId, string laName)
         {
-            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
-            if (latestDocument == null) throw new InvalidOperationException("No document found");
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
             // remove document legislative area
             var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException("No legislative area found");
@@ -506,24 +505,28 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             await _cabRepository.UpdateAsync(latestDocument);
+
+            await UpdateSearchIndex(latestDocument);
+            await RefreshCaches(latestDocument.CABId, latestDocument.URLSlug);
         }
 
         public async Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId)
         {
-            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
-            if (latestDocument == null) throw new InvalidOperationException("No document found");
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
             // archive document legislative area
             var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException("No legislative area found");
             documentLegislativeArea.Archived = true;
 
             await _cabRepository.UpdateAsync(latestDocument);
+
+            await UpdateSearchIndex(latestDocument);
+            await RefreshCaches(latestDocument.CABId, latestDocument.URLSlug);
         }
 
         public async Task ArchiveSchedulesAsync(Guid cabId, List<Guid> ScheduleIds)
         {
-            var latestDocument = await GetLatestDocumentAsync(cabId.ToString());
-            if (latestDocument == null) throw new InvalidOperationException("No document found");
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
             if (ScheduleIds != null && ScheduleIds.Any())
             {
@@ -535,10 +538,10 @@ namespace UKMCAB.Core.Services.CAB
                     {
                         schedule.Archived = true;
                     }
-                }
-            }
 
-            await _cabRepository.UpdateAsync(latestDocument);
+                    await _cabRepository.UpdateAsync(latestDocument);
+                }                
+            }           
         }
 
         public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)

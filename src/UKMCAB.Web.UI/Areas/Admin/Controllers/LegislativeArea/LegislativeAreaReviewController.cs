@@ -16,8 +16,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 public class LegislativeAreaReviewController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
-    private readonly ILegislativeAreaService _legislativeAreaService;
-    private readonly IUserService _userService;
+    private readonly ILegislativeAreaService _legislativeAreaService;    
 
     public LegislativeAreaReviewController(
         ICABAdminService cabAdminService,
@@ -25,8 +24,7 @@ public class LegislativeAreaReviewController : Controller
         IUserService userService)
     {
         _cabAdminService = cabAdminService;
-        _legislativeAreaService = legislativeAreaService;
-        _userService = userService;
+        _legislativeAreaService = legislativeAreaService;        
     }
 
     public static class Routes

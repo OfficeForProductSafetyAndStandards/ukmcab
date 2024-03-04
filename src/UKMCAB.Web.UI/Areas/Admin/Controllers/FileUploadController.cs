@@ -111,8 +111,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var contentType =
                         _fileUploadUtils.GetContentType(file, SchedulesOptions.AcceptedFileExtensionsContentTypes);
 
-                    if (ValidateUploadFile(file, contentType, SchedulesOptions.AcceptedFileTypes,
-                            latestVersion.Schedules))
+                    if (ValidateUploadFile(file, contentType, latestVersion.Schedules))
                     {
                         var result = await _fileStorage.UploadCABFile(latestVersion.CABId, file.FileName, file.FileName,
                             DataConstants.Storage.Schedules,
@@ -205,8 +204,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if(!string.IsNullOrWhiteSpace(fromAction))
             {
-                ProductScheduleRemoveMessageEnum actionEnum = (ProductScheduleRemoveMessageEnum)Enum.Parse(typeof(ProductScheduleRemoveMessageEnum), fromAction);
-                successBannerTitle = AlertMessagesUtils.ProductScheduleRemovalArchiveMessages[actionEnum];
+                ProductScheduleActionMessageEnum actionEnum = (ProductScheduleActionMessageEnum)Enum.Parse(typeof(ProductScheduleActionMessageEnum), fromAction);
+                successBannerTitle = AlertMessagesUtils.ProductScheduleActionMessages[actionEnum];
                 showBanner = true;
             }
 
@@ -293,7 +292,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     .Value);
                             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
-                            return RedirectToAction("SchedulesList", new { id, fromAction = ProductScheduleRemoveMessageEnum.ProductScheduleRemoved.ToString() });
+                            return RedirectToAction("SchedulesList", new { id, fromAction = ProductScheduleActionMessageEnum.ProductScheduleRemoved.ToString() });
                         }                        
                         else
                         {   
@@ -386,7 +385,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var userAccount =  await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
-                    return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, model.SelectedScheduleId });
+                    return RedirectToAction("SchedulesList", "FileUpload", new { id, fromSummary, model.SelectedScheduleId, fromAction = ProductScheduleActionMessageEnum.ProductScheduleFileUsedAgain.ToString() });
 
                 }
                 else if (submitType is Constants.SubmitType.ReplaceFile)
@@ -490,8 +489,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     var contentType =
                         _fileUploadUtils.GetContentType(file, DocumentsOptions.AcceptedFileExtensionsContentTypes);
 
-                    if (ValidateUploadFile(file, contentType, DocumentsOptions.AcceptedFileTypes,
-                            latestVersion.Documents))
+                    if (ValidateUploadFile(file, contentType, latestVersion.Documents))
                     {
                         var result = await _fileStorage.UploadCABFile(latestVersion.CABId, file.FileName, file.FileName,
                             DataConstants.Storage.Documents,
@@ -787,7 +785,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var fromAction = ProductScheduleRemoveMessageEnum.ProductScheduleRemoved;
+                var fromAction = ProductScheduleActionMessageEnum.ProductScheduleRemoved;
 
                 if (vm.RemoveScheduleAction == RemoveActionEnum.Remove)
                 {
@@ -801,7 +799,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 else
                 {
                     await _cabAdminService.ArchiveSchedulesAsync(Guid.Parse(id), new List<Guid>() { Guid.Parse(scheduleId) });
-                    fromAction = ProductScheduleRemoveMessageEnum.ProductScheduleArchived;
+                    fromAction = ProductScheduleActionMessageEnum.ProductScheduleArchived;
                 }
 
                 return RedirectToAction("SchedulesList", new { id, fromAction = fromAction.ToString() });
@@ -861,7 +859,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.Where(n => n.LegislativeAreaName == fileUpload.LegislativeArea).First();
                 var legislativeAreaId = documentLegislativeArea?.LegislativeAreaId;
-                var fromAction = ProductScheduleRemoveMessageEnum.ProductScheduleRemoved;
+                var fromAction = ProductScheduleActionMessageEnum.ProductScheduleRemoved;
 
                 if (documentLegislativeArea != null && legislativeAreaId.HasValue)
                 {
@@ -894,9 +892,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                     fromAction = vm.RemoveLegislativeAction switch
                     {
-                        LegislativeAreaActionEnum.Remove => ProductScheduleRemoveMessageEnum.ProductScheduleRemovedLegislativeAreaRemoved,
-                        LegislativeAreaActionEnum.Archive => ProductScheduleRemoveMessageEnum.ProductScheduleRemovedLegislativeAreaArchived,     
-                        _ => ProductScheduleRemoveMessageEnum.ProductScheduleRemovedLegislativeAreaProvisional,
+                        LegislativeAreaActionEnum.Remove => ProductScheduleActionMessageEnum.ProductScheduleRemovedLegislativeAreaRemoved,
+                        LegislativeAreaActionEnum.Archive => ProductScheduleActionMessageEnum.ProductScheduleRemovedLegislativeAreaArchived,     
+                        _ => ProductScheduleActionMessageEnum.ProductScheduleRemovedLegislativeAreaProvisional,
                     };
 
                 }
@@ -906,9 +904,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                     fromAction = vm.RemoveLegislativeAction switch
                     {
-                        LegislativeAreaActionEnum.Remove => ProductScheduleRemoveMessageEnum.ProductScheduleArchivedLegislativeAreaRemoved,
-                        LegislativeAreaActionEnum.Archive => ProductScheduleRemoveMessageEnum.ProductScheduleArchivedLegislativeAreaArchived,
-                        _ => ProductScheduleRemoveMessageEnum.ProductScheduleArchivedLegislativeAreaProvisional,
+                        LegislativeAreaActionEnum.Remove => ProductScheduleActionMessageEnum.ProductScheduleArchivedLegislativeAreaRemoved,
+                        LegislativeAreaActionEnum.Archive => ProductScheduleActionMessageEnum.ProductScheduleArchivedLegislativeAreaArchived,
+                        _ => ProductScheduleActionMessageEnum.ProductScheduleArchivedLegislativeAreaProvisional,
                     };
                 }
 
@@ -922,8 +920,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         #region Private methods
 
-        private bool ValidateUploadFile(IFormFile? file, string contentType, string acceptedFileTypes,
-            List<FileUpload> currentDocuments)
+        private bool ValidateUploadFile(IFormFile? file, string contentType, List<FileUpload> currentDocuments)
         {
             var isValidFile = _fileUploadUtils.ValidateUploadFileAndAddAnyModelStateError(ModelState, file, contentType,
                 SchedulesOptions.AcceptedFileTypes);
@@ -985,10 +982,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 var s = latestFileUploads[i];
                 var uploadedfile = new FileViewModel
                 {
-                    FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                    LegislativeArea = s.LegislativeArea, Category = s.Category, Id = s.Id,
+                    FileName = s.FileName,
+                    UploadDateTime = s.UploadDateTime,
+                    Label = s.Label,
+                    LegislativeArea = s.LegislativeArea,
+                    Category = s.Category,
+                    Id = s.Id,
+                    IsReplaced = i == indexOfFileToReplace
                 };
-                uploadedfile.IsReplaced = i == indexOfFileToReplace;
                 uploadedFiles.Add(uploadedfile);
             }
         }
@@ -1354,7 +1355,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 new { Area = "admin", unlockCab = document.CABId });
         }
 
-        private IEnumerable<SelectListItem> GetDocumentAreaDistinctLegislativeAreas(Document latestDocument)
+        private static IEnumerable<SelectListItem> GetDocumentAreaDistinctLegislativeAreas(Document latestDocument)
         {
             var legislativeareas = latestDocument.DocumentLegislativeAreas.Where(x => x.Archived is null or false)
                .Select(x => x.LegislativeAreaName)

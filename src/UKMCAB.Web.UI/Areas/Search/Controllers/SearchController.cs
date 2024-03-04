@@ -27,8 +27,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly ICachedSearchService _cachedSearchService;
         private readonly IFeedService _feedService;
         private readonly BasicAuthenticationOptions _basicAuthOptions;
-        private readonly TelemetryClient _telemetry;
-        private readonly IOptionsMonitor<OpenIdConnectOptions> _options;
+        private readonly TelemetryClient _telemetry;        
         private readonly IEditLockService _editLockService;
         private static readonly List<string> _select = new()
         {
@@ -58,8 +57,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             public const string SearchFeed = "search.feed";
         }
         public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry, IOptionsMonitor<OpenIdConnectOptions> options, IEditLockService editLockService)
-        {
-            _options = options;
+        {   
             _editLockService = editLockService;
             _cachedSearchService = cachedSearchService;
             _feedService = feedService;

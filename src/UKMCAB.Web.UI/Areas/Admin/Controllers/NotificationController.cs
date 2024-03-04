@@ -41,7 +41,7 @@ public class NotificationController : Controller
     private readonly IDistCache _distCache;
     private readonly ICachedPublishedCABService _cachedPublishedCABService;
     
-    public NotificationController(IWorkflowTaskService workflowTaskService, ICABAdminService cabAdminService,
+    public NotificationController(IWorkflowTaskService workflowTaskService, 
         IDistCache distCache, 
         ICachedPublishedCABService cachedPublishedCABService)
     {
@@ -167,10 +167,12 @@ public class NotificationController : Controller
 
     private List<Tuple<string, string, bool>> BuildMobileSortOptions(string tabName, string sortField)
     {
-        var items = new Dictionary<string, Tuple<string, string, bool>>();
-        items.Add(From, new(From, From, false));
-        items.Add(Subject, new(Subject, Subject, false));
-        items.Add(CabNameValue, new(CabNameValue, CABNameLabel, false));
+        var items = new Dictionary<string, Tuple<string, string, bool>>
+        {
+            { From, new(From, From, false) },
+            { Subject, new(Subject, Subject, false) },
+            { CabNameValue, new(CabNameValue, CABNameLabel, false) }
+        };
 
         switch (tabName)
         {
