@@ -81,9 +81,7 @@ public class LegislativeAreaReviewController : Controller
         var legislativeAreaId = laOfSelectedSoa.LegislativeArea.Id;
         var selectedScopeOfAppointmentId = laOfSelectedSoa.ScopeId;
         Guard.IsTrue(selectedScopeOfAppointmentId != Guid.Empty, "Scope Id Guid cannot be empty");
-
-
-
+        
         if (ModelState.IsValid)
         {
             if (submitType.StartsWith(Constants.SubmitType.Edit) )
