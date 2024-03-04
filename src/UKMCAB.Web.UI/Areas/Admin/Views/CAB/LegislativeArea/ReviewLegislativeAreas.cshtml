@@ -57,7 +57,7 @@
                             <input type="hidden" asp-for="LAItems[i].Name">
                             <input type="hidden" asp-for="LAItems[i].LegislativeAreaId">
 
-                            <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                            <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0" @(Model.ErrorLink == legislativeArea.Name ? "open" : "")>
                                 <summary class="govuk-details__summary">
                                     <span class="govuk-details__summary-text">
                                         @legislativeArea.Name
@@ -73,7 +73,7 @@
                                         @removeLegislativeAreaLabel
                                     </govuk-button-link>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3">
-                                        @if (!ViewData.ModelState.IsValid && Model.ErrorLink == legislativeArea.Name)
+                                        @if (Model.ErrorLink == legislativeArea.Name)
                                         {
                                             <govuk-error-message id="@legislativeArea.Name">Select a scope of appointment</govuk-error-message>
                                         }
@@ -123,7 +123,7 @@
                                                         <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                             <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
                                                                 <div class="govuk-radios__item">
-                                                                    <input class="govuk-radios__input" type="radio" asp-for="LAItems[i].SelectedScopeofAppointmentId" value="@scopeOfAppointment.ScopeId">
+                                                                    <input id="LA-items[@(i)]-radio-[@(j)]" class="govuk-radios__input" type="radio" asp-for="LAItems[i].SelectedScopeofAppointmentId" value="@scopeOfAppointment.ScopeId">
                                                                     <label class="govuk-label govuk-radios__label govuk-!-display-block"></label>
                                                                 </div>
                                                             </div>
