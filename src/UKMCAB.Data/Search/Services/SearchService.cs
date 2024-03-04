@@ -85,6 +85,7 @@ namespace UKMCAB.Data.Search.Services
             searchOptions.HighlightFields.Add(nameof(CABIndexItem.HiddenText));
             searchOptions.HighlightFields.Add(nameof(CABIndexItem.CABNumber));
             searchOptions.HighlightFields.Add(nameof(CABIndexItem.LegislativeAreas));
+            searchOptions.HighlightFields.Add(nameof(CABIndexItem.HiddenScopeOfAppointments));
 
             if (options.Select.Count > 0)
             {
@@ -266,6 +267,7 @@ namespace UKMCAB.Data.Search.Services
                         //$"{nameof(CABIndexItem.ScheduleLabels)}:(\"{input}\")",        // TODO: removed from 2.0 phrase-match
                         $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4", //phrase-match, boosted x4
                         $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6", //phrase-match, boosted x6
+                        $"{nameof(CABIndexItem.HiddenScopeOfAppointments)}:(\"{input}\")^6", //phrase-match, boosted x6
                         $"{nameof(CABIndexItem.UKASReference)}:(\"{input}\")", //phrase-match
                     };
                     if (internalSearch)

@@ -473,6 +473,7 @@ namespace UKMCAB.Core.Services.CAB
                 LegislativeAreaId = laToAdd
             });
             latestDocument.LegislativeAreas.Add(laName);
+            latestDocument.HiddenScopeOfAppointments.Add(laName);
             await _cabRepository.UpdateAsync(latestDocument);
             return guid;
         }
