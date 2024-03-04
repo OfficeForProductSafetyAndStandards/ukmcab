@@ -16,6 +16,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public string? Reason { get; set; }
 
+        public string? PointOfContactName { get; set; }
+        public string? PointOfContactEmail { get; set; }
+        public string? PointOfContactPhone { get; set; }
+        public bool? IsPointOfContactPublicDisplay { get; set; }
+
         public List<LegislativeAreaListItemViewModel> ScopeOfAppointments { get; set; } = new();
 
         public bool CanChooseScopeOfAppointment { get; set; }
