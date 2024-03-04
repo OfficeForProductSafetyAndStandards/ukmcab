@@ -21,7 +21,7 @@ public class LegislativeAreaDetailsController : Controller
     private readonly ILegislativeAreaService _legislativeAreaService;
     private readonly IUserService _userService;
     private const string CacheKey = "soa_create_{0}";
-    
+
     public static class Routes
     {
         public const string AddLegislativeArea = "legislative.area.add-legislativearea";
@@ -392,6 +392,7 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     #endregion
+
     #endregion
 
     #region AddProduct
@@ -521,6 +522,7 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     #endregion
+
     #endregion
 
     #region AddProcedure
@@ -622,12 +624,14 @@ public class LegislativeAreaDetailsController : Controller
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                                  throw new InvalidOperationException();
             latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
-
+            latestDocument.HiddenScopeOfAppointments =
+                await SetHiddenScopeOfAppointmentsAsync(latestDocument.ScopeOfAppointments);
             var userAccount =
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             var updatedDocument = await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
             var existingScopeOfAppointment =
                 updatedDocument.ScopeOfAppointments.FirstOrDefault(s => s.Id == compareScopeId);
+
             if (existingScopeOfAppointment != null)
             {
                 updatedDocument.ScopeOfAppointments.Remove(existingScopeOfAppointment);
@@ -657,6 +661,7 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     #region PrivateMethods
+
     private async Task<IEnumerable<SelectListItem>> GetProcedureSelectListItemsAsync(Guid? productId, Guid? categoryId,
         Guid? purposeOfAppointmentId)
     {
@@ -701,7 +706,83 @@ public class LegislativeAreaDetailsController : Controller
         return new List<SelectListItem>();
     }
 
+    private async Task<List<string>> SetHiddenScopeOfAppointmentsAsync(
+        IEnumerable<DocumentScopeOfAppointment> scopeOfAppointments)
+    {
+        var hiddenScopeOfAppointments = new List<string>();
+        var documentScopeOfAppointments = scopeOfAppointments.ToList();
+        var legislativeAreaIds = documentScopeOfAppointments.Select(a => a.LegislativeAreaId)
+            .Distinct()
+            .ToList();
+
+        var allLegislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
+        var regulation = allLegislativeAreas
+            .Where(n => legislativeAreaIds.Contains(n.Id) && !string.IsNullOrWhiteSpace(n.Regulation))
+            .Select(a => a.Regulation)
+            .Distinct()
+            .ToList();
+
+        var purposeOfAppointmentIds = documentScopeOfAppointments.Where(a => a.PurposeOfAppointmentId != null)
+            .Select(a => a.PurposeOfAppointmentId)
+            .Distinct()
+            .ToList();
+        var returnHiddenScopeOfAppointments = hiddenScopeOfAppointments.Concat(regulation).ToList();
+
+        if (purposeOfAppointmentIds.Any())
+        {
+            foreach (Guid purposeOfAppointmentId in purposeOfAppointmentIds)
+            {
+                var purposeOfAppointment =
+                    await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(purposeOfAppointmentId);
+                if (purposeOfAppointment?.Name != null)
+                    returnHiddenScopeOfAppointments.Add(purposeOfAppointment.Name);
+            }
+        }
+
+        var categoryIds = documentScopeOfAppointments.Where(a => a.CategoryId != null)
+            .Select(a => a.CategoryId)
+            .Distinct()
+            .ToList();
+
+        if (categoryIds.Any())
+        {
+            foreach (Guid categoryId in categoryIds)
+            {
+                var category = await _legislativeAreaService.GetCategoryByIdAsync(categoryId);
+                if (category?.Name != null) returnHiddenScopeOfAppointments.Add(category.Name);
+            }
+        }
+
+        var subcategoryIds = documentScopeOfAppointments.Where(a => a.SubCategoryId != null)
+            .Select(a => a.SubCategoryId)
+            .Distinct()
+            .ToList();
+
+        if (subcategoryIds.Any())
+        {
+            foreach (Guid subcategoryId in subcategoryIds)
+            {
+                var subcategory = await _legislativeAreaService.GetSubCategoryByIdAsync(subcategoryId);
+                if (subcategory?.Name != null) returnHiddenScopeOfAppointments.Add(subcategory.Name);
+            }
+        }
+
+        var productIdList = documentScopeOfAppointments
+            .Select(a => a.ProductIds)
+            .ToList();
+
+        if (!productIdList.Any()) return returnHiddenScopeOfAppointments;
+        foreach (var productId in productIdList.SelectMany(productIds => productIds).Distinct())
+        {
+            var product = await _legislativeAreaService.GetProductByIdAsync(productId);
+            if (product?.Name != null) returnHiddenScopeOfAppointments.Add(product.Name);
+        }
+
+        return returnHiddenScopeOfAppointments;
+    }
+
     #endregion
+
     #endregion
 
     #region RemoveLegislativeArea
