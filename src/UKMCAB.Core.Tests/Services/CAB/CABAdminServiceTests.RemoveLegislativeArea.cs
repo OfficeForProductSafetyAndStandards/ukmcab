@@ -49,10 +49,11 @@ namespace UKMCAB.Core.Tests.Services.CAB
         {
             // Arrange
             var cabId = Guid.NewGuid();
+            var laToRemove = "La to Remove";
             var legislativeAreaId = Guid.NewGuid();
             var documentLegislativeArea = new DocumentLegislativeArea() { LegislativeAreaId = legislativeAreaId };
-            var documentScopeOfAppointment = new DocumentScopeOfAppointment() { LegislativeAreaId = legislativeAreaId };  
-            var laToRemove = "La to Remove";
+            var documentScopeOfAppointment = new DocumentScopeOfAppointment() { LegislativeAreaId = legislativeAreaId };
+            var productSchedule = new FileUpload() { LegislativeArea = laToRemove };           
            
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
                 .ReturnsAsync(new List<Document>
@@ -64,6 +65,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                         DocumentLegislativeAreas = new() { documentLegislativeArea } ,
                         ScopeOfAppointments = new() { documentScopeOfAppointment },
                         LegislativeAreas = new() { laToRemove },
+                        Schedules = new () { productSchedule },
                     }
                 });
 
@@ -74,8 +76,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
-                    d.CABId == cabId.ToString() && !d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && !d.ScopeOfAppointments.Contains(documentScopeOfAppointment) && !d.LegislativeAreas.Contains(laToRemove))), Times.Once);
-           
+                    d.CABId == cabId.ToString() && !d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && !d.ScopeOfAppointments.Contains(documentScopeOfAppointment) && !d.LegislativeAreas.Contains(laToRemove))), Times.Once);           
 
             _mockCABRepository.VerifyNoOtherCalls();
         }
@@ -141,7 +142,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     d.CABId == cabId.ToString() && d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && d.DocumentLegislativeAreas.First().Archived == true)), Times.Once);
 
             _mockCABRepository.VerifyNoOtherCalls();
-
         }
     }
 }

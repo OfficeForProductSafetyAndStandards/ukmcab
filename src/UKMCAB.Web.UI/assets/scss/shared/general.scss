@@ -48,6 +48,10 @@
     float: right;
 }
 
+.ukmcab-float__unset {
+    float: unset !important;
+}
+
 .ukmcab-padding-bottom-5 {
     padding-bottom: 5px !important;
 }
@@ -265,6 +269,16 @@
 @media (min-width: 40.0625em) {
     .width-two-fifth {
         width: 40% !important;
+    }
+}
+
+.width-half {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-half {
+        width: 50% !important;
     }
 }
 

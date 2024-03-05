@@ -1,6 +1,6 @@
 ﻿@using UKMCAB.Data
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.FileListViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.ScheduleFileListViewModel
 
 @section BackButton
 {
@@ -47,10 +47,13 @@
     }
 
     <form method="post" enctype="multipart/form-data" novalidate>
+        <input type="hidden" asp-for="CABId" />
+        <input type="hidden" asp-for="Title" />
+        <input type="hidden" asp-for="ShowArchiveAction" />
+        <input type="hidden" asp-for="IsFromSummary" />
+
         <div class="govuk-grid-column-full">
-
-            <partial name="Partials/_ValidationSummary" model="null"/>
-
+            <partial name="Partials/_ValidationSummary" model="null" />
             <div>
                 <span class="govuk-caption-m">@Model.Title</span>
                 <h1 class="govuk-heading-l">@Model.Title</h1>
@@ -59,7 +62,7 @@
                 <h2 class="govuk-heading-s">
                     Files you have uploaded
                 </h2>
-                @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
+                @if (Model.ActiveFiles.Any())
                 {
                     <div id="enter-file-title-hint" class="govuk-hint">
                         Enter a clear and relevant title for the file. This will be shown to the public.
@@ -67,68 +70,60 @@
                 }
             </div>
 
-            @if (Model.UploadedFiles == null || !Model.UploadedFiles.Any())
+            @if (!Model.ActiveFiles.Any())
             {
                 @* Header*@
                 <div style="margin-bottom:0">
                     <div class="ukmcab-float__clear width-full">
-                        <hr class="ukmcab-border"/>
+                        <hr class="ukmcab-border" />
                     </div>
                 </div>
 
                 <p class="govuk-label ukmcab-float__left ukmcab-padding-top-10">0 files uploaded</p>
                 <div class="ukmcab-float__left width-full ukmcab-padding-bottom-40">
-                    <hr class="ukmcab-border"/>
+                    <hr class="ukmcab-border" />
                 </div>
             }
             else
             {
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.UploadedFiles))">
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ActiveFiles))">
                     <fieldset class="govuk-fieldset" aria-describedby="enter-file-title-hint">
-                        <p id="UploadedFiles" class="govuk-error-message">
-                            <span asp-validation-for="UploadedFiles" class="govuk-error-message"></span>
+                        <p id="activefileerrors" class="govuk-error-message">
+                            <span class="govuk-error-message">@Html.ValidationMessage("SelectedScheduleId")</span>
+                            <span asp-validation-for="ActiveFiles" class="govuk-error-message"></span>
                         </p>
 
                         @* Header*@
                         <div>
-                            <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display">
+                            <div class="width-half ukmcab-float__left mobile-no-display">
                                 <h3 class="govuk-heading-s">File</h3>
                             </div>
                             <div class="ukmcab-float__left">
                                 <h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Legislative area</h3>
                             </div>
-                            <div class="ukmcab-float__clear width-full">
-                                <hr class="ukmcab-border"/>
+                            <div class="ukmcab-float__clear width-full govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+                                <hr class="ukmcab-border" />
                             </div>
                         </div>
 
-                        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
 
-                            @for (int i = 0; i < Model.UploadedFiles.Count; i++)
+                            @for (int i = 0; i < Model.ActiveFiles.Count; i++)
                             {
-                                var uploadedFile = Model.UploadedFiles[i];
-                                var archived = uploadedFile.Archived.GetValueOrDefault();
-                                
-                                <div class="govuk-checkboxes__item">
-                                    @*Row 1: Checkbox Row*@
-                                    <div class="row">                                       
-                                        <div class="width-one-tenth">                                          
-                                            <input type="hidden" asp-for="UploadedFiles![i].FileIndex" value="@i"/>
-                                            <input type="hidden" asp-for="UploadedFiles![i].Archived" value="@archived" />
-                                            <input type="hidden" asp-for="UploadedFiles![i].Id" value="@uploadedFile.Id" />
+                                var uploadedFile = Model.ActiveFiles[i];
+
+                                <div class="govuk-radios__item">
+                                    <div class="row">
+                                        <div class="width-one-tenth">
+                                            <input type="hidden" asp-for="ActiveFiles![i].FileIndex" value="@i" />
+                                            <input type="hidden" asp-for="ActiveFiles![i].Id" value="@uploadedFile.Id" />
                                         </div>
 
                                         <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
-                                            @if(archived)
-                                            {
-                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected" disabled />
-                                            }
-                                            else
-                                            {
-                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles[i].IsSelected" />
-                                            }                                            
-                                            <label class="govuk-label govuk-checkboxes__label" asp-for="UploadedFiles![i].IsSelected">
-                                                <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
+                                            <input class="govuk-radios__input" type="radio" id="SelectedScheduleId" name="SelectedScheduleId" value="@uploadedFile.Id" checked="@uploadedFile.IsSelected" />
+                                            <label class="govuk-label govuk-radios__label" asp-for="ActiveFiles![i].IsSelected">
+                                                <span class="file-number">@(i + 1).</span>
+                                                <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
                                             </label>
                                             @if (uploadedFile.IsDuplicated || uploadedFile.IsReplaced)
                                             {
@@ -140,45 +135,40 @@
 
                                 @*Row 2: Inputbox Row*@
                                 <div class="document-list">
-                                    <div class="document-item width-three-fifth ukmcab-padding-right-10 ukmcab-padding-left-35 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
-                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Label">File</label>
+                                    <div class="document-item ukmcab-padding-right-10 ukmcab-padding-left-35 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
+                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
-                                            <span asp-validation-for="UploadedFiles![i].Label" class="govuk-error-message"></span>
+                                            <span asp-validation-for="ActiveFiles![i].Label" class="govuk-error-message"></span>
                                         </p>
-                                        <input asp-for="UploadedFiles![i].Label" type="text" id="UploadedFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")" disabled="@archived" value="@uploadedFile.Label" aria-required="true" maxlength="150">
-                                        @if(archived)
-                                        {
-                                            <input asp-for="UploadedFiles![i].Label" type="hidden" value="@uploadedFile.Label" />
-                                        }
-                                        <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName" />
-                                        <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated" disabled="@archived">
-                                        <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">                                        
+                                        <input asp-for="ActiveFiles![i].Label" type="text" id="ActiveFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
+                                        <input asp-for="ActiveFiles![i].FileName" type="hidden" value="@uploadedFile.FileName" />
+                                        <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                     </div>
 
-                                    <div class="document-item width-three-tenth ukmcab-padding-left-40 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")">
-                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].LegislativeArea">Legislative area</label>
+                                    <div class="document-item ukmcab-padding-left-40 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
+                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].LegislativeArea">Legislative area</label>
                                         <p class="govuk-error-message">
-                                            <span asp-validation-for="UploadedFiles![i].LegislativeArea" class="govuk-error-message"></span>
+                                            <span asp-validation-for="ActiveFiles![i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
-                                        <select id="UploadedFiles[@i].LegislativeArea" name="UploadedFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].LegislativeArea")" @(archived ? "disabled" : string.Empty)>
-                                            @foreach (var la in Model.LegislativeAreas.Where(x => x != null))
+                                        <select id="ActiveFiles[@i].LegislativeArea" name="ActiveFiles[@i].LegislativeArea" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
+                                            @foreach (var la in Model.LegislativeAreas)
                                             {
-                                                var legislativeArea = uploadedFile.LegislativeArea ?? string.Empty;
-                                                if (la.Equals(legislativeArea.Trim()))
+                                                var legislativeArea = uploadedFile.LegislativeArea?.Trim() ?? string.Empty;
+                                                if (la.Value.Equals(legislativeArea))
                                                 {
-                                                    <option value="@la" selected="selected">@la</option>
+                                                    <option value="@la.Value" selected="selected">@la.Text</option>
                                                 }
                                                 else
                                                 {
-                                                    <option value="@la">@la</option>
+                                                    <option value="@la.Value">@la.Text</option>
                                                 }
                                             }
                                         </select>
                                     </div>
 
                                 </div>
-                                <div class="ukmcab-float__left width-full">
-                                    <hr class="ukmcab-border"/>
+                                <div class="ukmcab-float__left width-full govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+                                    <hr class="ukmcab-border" />
                                 </div>
                             }
                         </div>
@@ -186,33 +176,118 @@
                 </div>
             }
         </div>
-
-        <div class="govuk-grid-column-two-thirds">
-            @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
+       
+        <div class="govuk-grid-column-full">
+            @if (Model.ActiveFiles != null && Model.ActiveFiles.Any())
             {
                 <div class="govuk-button-group">
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Use file again</button>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
+                    @if (Model.ShowArchiveAction)
+                    {
+                        <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Archive">
+                            Archive product schedule
+                        </button>
+                    }
                     <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove">
-                        Remove schedule
-                    </button>                    
-                    <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
-                    <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
+                        Remove product schedule
+                    </button>
                 </div>
             }
         </div>
-
-        @if (Model.UploadedFiles != null && Model.UploadedFiles.Count < SchedulesOptions.MaxFileCount)
+        @if (Model.ActiveFiles != null && Model.ActiveFiles.Count < SchedulesOptions.MaxFileCount)
         {
-            <div class="govuk-grid-column-one-third ukmcab-text-align-rightx">
+            <div class="govuk-grid-column-full">
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
-                    @Html.Conditional(Model.UploadedFiles.Any(), "Save and upload another file", "Upload a file")
+                    @Html.Conditional(Model.ActiveFiles.Any(), "Upload another file", "Upload a file")
                 </button>
             </div>
         }
+       
+        @if (Model.ArchivedFiles.Any())
+        {
+            <div class="govuk-grid-column-full">
+                <div>
+                    <div class="ukmcab-float__clear width-full govuk-!-margin-top-2 govuk-!-margin-bottom-4">
+                        <hr class="ukmcab-border" />
+                    </div>
+                    <h2 class="govuk-heading-s">
+                        Archived product schedules
+                    </h2>
+                </div>
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ArchivedFiles))">
+                    <fieldset class="govuk-fieldset" aria-describedby="enter-file-title-hint">
+                        <govuk-error-summary id="SelectArchivedScheduleErrorSummary">
+                            <govuk-error-summary-item asp-for="SelectedArchivedScheduleId" />
+                        </govuk-error-summary>
+                        @* Header*@
+                        <div>
+                            <div class="width-half ukmcab-float__left mobile-no-display">
+                                <h3 class="govuk-heading-s">Title</h3>
+                            </div>
+                            <div class="ukmcab-float__left">
+                                <h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Legislative area</h3>
+                            </div>
+                            <div class="ukmcab-float__clear width-full govuk-!-margin-top-4">
+                                <hr class="ukmcab-border" />
+                            </div>
+                        </div>
+
+                        <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                            @for (int i = 0; i < Model.ArchivedFiles.Count; i++)
+                            {
+                                var uploadedFile = Model.ArchivedFiles[i];
+
+                                <div class="document-list document-list-align-normal">
+                                    <div class="document-item ukmcab-padding-right-10 ukmcab-float__left govuk-radios__item">
+                                              <input class="govuk-radios__input" type="radio" id="SelectedArchivedScheduleId" name="SelectedArchivedScheduleId" value="@uploadedFile.Id" checked="@uploadedFile.IsSelected" />                                            
+                                        <label class="govuk-label govuk-radios__label">
+                                            <span class="file-number">@uploadedFile.Label</span>                                            
+                                        </label>                                            
+                                    </div>
+                                    <div class="document-item ukmcab-padding-left-40 ukmcab-float__left mobile-no-display">
+                                        <label class="govuk-label legislative-area-label">@(String.IsNullOrEmpty(uploadedFile.LegislativeArea) ? "Not assigned" : uploadedFile.LegislativeArea)</label>
+                                    </div>                                    
+                                </div>
+                                <div class="document-list document-list-align-normal">
+                                    <div class="document-item width-three-fifth ukmcab-padding-right-10 ukmcab-padding-left-35 ukmcab-float__left">
+                                        <label class="govuk-label govuk-label--s desktop-no-display">Title</label>
+                                        <div>
+                                            <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
+                                        </div>
+                                    </div>
+                                    <div class="document-item width-three-tenth ukmcab-padding-left-40 ukmcab-float__left desktop-no-display">
+                                        <label class="govuk-label govuk-label--s">Legislative area</label>
+                                        <label class="govuk-label">@(String.IsNullOrEmpty(uploadedFile.LegislativeArea) ? "Not assigned" : uploadedFile.LegislativeArea)</label>
+                                    </div>
+                                </div>
+                                <div class="ukmcab-float__left width-full govuk-!-margin-top-2 govuk-!-margin-bottom-2">
+                                    <hr class="ukmcab-border " />
+                                </div>
+                            }
+                        </div>
+                    </fieldset>
+                </div>
+           
+                <div class="govuk-grid-row">
+                    <div class="govuk-grid-column-two-thirds">
+                        @if (Model.ArchivedFiles != null && Model.ArchivedFiles.Any())
+                        {
+                            <div class="govuk-button-group">                            
+                                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.RemoveArchived">
+                                    Remove archived product schedule
+                                </button>                            
+                            </div>
+                        }
+                    </div>               
+                </div>
+            </div>
+        }            
 
         <div class="govuk-grid-column-two-thirds ukmcab-float__clear">
             <div class="govuk-button-group ukmcab-padding-top-50">
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
-                    @Html.Conditional(Model.UploadedFiles != null && Model.UploadedFiles.Any(), "Save and continue", "Save")
+                    @Html.Conditional(Model.ActiveFiles != null && Model.ActiveFiles.Any(), "Save and continue", "Save")
                 </button>
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft
