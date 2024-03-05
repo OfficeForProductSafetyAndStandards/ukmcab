@@ -83,6 +83,12 @@ public class LegislativeAreaDetailsController : Controller
             // add document new legislative area;
             await _cabAdminService.AddLegislativeAreaAsync(id, vm.SelectedLegislativeAreaId, legislativeArea.Name);
 
+            if (!legislativeArea.HasDataModel)
+            {
+                return RedirectToRoute(LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
+                    new { id, laId = vm.SelectedLegislativeAreaId });
+            }
+
             // add new document scope of appointment to cache;
             var scopeOfAppointmentId = Guid.NewGuid();
             await CreateScopeOfAppointmentInCacheAsync(scopeOfAppointmentId, vm.SelectedLegislativeAreaId);
