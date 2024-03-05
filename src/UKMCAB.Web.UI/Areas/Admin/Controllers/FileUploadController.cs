@@ -1,28 +1,18 @@
-﻿using Humanizer;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.AspNetCore.Razor.Language;
-using Microsoft.Azure.Cosmos.Serialization.HybridRow.Schemas;
-using StackExchange.Redis;
-using System.Runtime.InteropServices;
 using System.Security.Claims;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Storage;
 using UKMCAB.Infrastructure.Cache;
-using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
-using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Helpers;
-using static UKMCAB.Web.UI.Constants;
-using System;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -1285,11 +1275,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private static bool UpdateFiles(Document latestDocument, List<FileViewModel> fileViewModels)
         {
             var newSchedules = new List<FileUpload>();
-            if (latestDocument.Schedules != null && latestDocument.Schedules.Any())
+            var activeSchedules = latestDocument?.Schedules?.Where(n => n.Archived is null or false);
+            if (activeSchedules != null && activeSchedules.Any())
             {
                 foreach (var fileViewModel in fileViewModels)
                 {
-                    var current = latestDocument.Schedules.First(fu => fu.FileName.Equals(fileViewModel.FileName));
+                    var current = activeSchedules.First(fu => fu.Id.Equals(fileViewModel.Id));
                     newSchedules.Add(new FileUpload
                     {
                         Id = fileViewModel.Id,
@@ -1303,11 +1294,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             var fileUploadComparer = new FileUploadComparer();
-            var newNotOld = newSchedules.Except(latestDocument.Schedules, fileUploadComparer);
-            var oldNotNew = latestDocument.Schedules.Except(newSchedules, fileUploadComparer);
-            if (newNotOld.Any() || oldNotNew.Any())
+            var updatedSchedules = newSchedules.Except(activeSchedules, fileUploadComparer);
+            
+            if (updatedSchedules.Any())
             {
-                latestDocument.Schedules = newSchedules;
+                foreach(var update in updatedSchedules)
+                {
+                    var schedule = latestDocument.Schedules.First(fu => fu.Id.Equals(update.Id));
+
+                    if (schedule != null)
+                    {   
+                        schedule.Label = update.Label;
+                        schedule.LegislativeArea = update.LegislativeArea;
+                    }
+                }
                 return true;
             }
 

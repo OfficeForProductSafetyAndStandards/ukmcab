@@ -31,7 +31,7 @@ namespace UKMCAB.Core.Services.CAB
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
             ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient,
-            IUserService userService, IMapper mapper)
+            IMapper mapper)
         {
             _cabRepository = cabRepository;
             _cachedSearchService = cachedSearchService;
