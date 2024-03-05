@@ -16,7 +16,7 @@
                     Appointment date (optional)
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @Html.ValueOrNotProvided(Model.AppointmentDate.ToStringBeisFormat())
+                    @Html.ValueOrNotProvided(Model.AppointmentDate.ToStringBeisDateFormat())
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -24,7 +24,7 @@
                     Review date (optional)
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @Html.ValueOrNotProvided(Model.ReviewDate.ToStringBeisFormat())
+                    @Html.ValueOrNotProvided(Model.ReviewDate.ToStringBeisDateFormat())
                 </dd>
             </div>
             @if (!string.IsNullOrWhiteSpace(Model.Reason))
