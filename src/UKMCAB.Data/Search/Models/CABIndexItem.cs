@@ -1,5 +1,4 @@
 ﻿using Azure.Search.Documents.Indexes;
-using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data.Search.Models
 {
@@ -49,6 +48,9 @@ namespace UKMCAB.Data.Search.Models
 
         [SearchableField(AnalyzerName = "en.microsoft")]
         public string HiddenText { get; set; } = string.Empty;
+        
+        [SearchableField(AnalyzerName = "en.microsoft")]
+        public string[] HiddenScopeOfAppointments { get; set; } = Array.Empty<string>();
 
         [SearchableField] public string CABNumber { get; set; } = string.Empty;
 

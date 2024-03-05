@@ -11,13 +11,17 @@
 
         public DateTime? AppointmentDate { get; set; }
 
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
         public bool? IsProvisional { get; set; }
 
         public DateTime? ReviewDate { get; set; }
 
         public string? Reason { get; set; }
-
+        
         public bool? Archived { get; set; }
+
+        public string? PointOfContactName { get; set; }
+        public string? PointOfContactEmail { get; set; }
+        public string? PointOfContactPhone { get; set; }
+        public bool? IsPointOfContactPublicDisplay { get; set; }
     }
 }

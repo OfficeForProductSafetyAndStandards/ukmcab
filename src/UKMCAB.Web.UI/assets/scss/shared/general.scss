@@ -163,6 +163,23 @@
     padding-top: 50px !important;
 }
 
+.ukmcab-margin-left-10 {
+    margin-left: 0 !important;
+}
+
+.ukmcab-margin-left-15 {
+    margin-left: 0 !important;
+}
+
+@media (min-width: 40.0625em) {
+    .ukmcab-margin-left-10 {
+        margin-left: 10px !important;
+    }
+    .ukmcab-margin-left-15 {
+        margin-left: 15px !important;
+    }
+}
+
 .ukmcab-text-align-left {
     text-align: left !important;
 }
@@ -281,6 +298,72 @@
     }
 }
 
+.width-one-fortieth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-one-fortieth {
+        width: 2.5% !important;
+    }
+}
+
 .width-full {
     width: 100% !important;
 }
+
+.container {
+    display: block;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 22px;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 26px;
+    width: 26px;
+    border: 2px solid black;
+    border-radius: 50%;
+}
+
+.container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+.container input:checked ~ .checkmark {
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.container .checkmark:after {
+    top: 4px;
+    left: 4px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: black;
+}
+

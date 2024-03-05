@@ -5,6 +5,7 @@ public static class Constants
     public const string MainLayoutPath = "~/Views/Shared/_Layout.cshtml";
     public const string SiteName = "UK Market Conformity Assessment Bodies";
     public const string NotProvided = "Not provided";
+    public const string NotApplicable = "Not applicable";
     public const string None = "None";
     public const string NotAssigned = "Not assigned";
 
@@ -54,6 +55,8 @@ public static class Constants
         public const string Cancel = nameof(Cancel);
         public const string AdditionalInfo = nameof(AdditionalInfo);
         public const string Confirm = nameof(Confirm);
+        public const string Add = nameof(Add);
+        public const string Edit = nameof(Edit);
         public const string Archive = nameof(Archive);
         public const string RemoveArchived = nameof(RemoveArchived);
     }

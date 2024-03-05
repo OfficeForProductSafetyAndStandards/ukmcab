@@ -18,10 +18,18 @@ namespace UKMCAB.Data.Search.Services
         public async Task<SearchFacets> GetFacetsAsync(bool internalSearch)
         {
             var provisionalLegislativeAreaPath = "DocumentLegislativeAreas/IsProvisional";
+            var legislativeAreaStatus = "DocumentLegislativeAreas/Archived";
+
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
             {
-                Facets = { $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0", $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0", $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0", $"{provisionalLegislativeAreaPath},count:0" },
+                Facets =
+                {
+                    $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0",
+                    $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0",
+                    $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0",
+                    $"{provisionalLegislativeAreaPath},count:0", $"{legislativeAreaStatus},count:0"
+                },
                 Filter = internalSearch ? "" : "StatusValue eq '30' or StatusValue eq '40'"
             });
 
@@ -30,12 +38,15 @@ namespace UKMCAB.Data.Search.Services
                 var facets = search.Value.Facets;
 
                 result.BodyTypes = GetFacetList(facets[nameof(result.BodyTypes)]);
-                result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)]).Select(x => x.ToSentenceCase()).ToList()!;
+                result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)])
+                    .Select(x => x.ToSentenceCase()).ToList()!;
                 result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
                 result.StatusValue = GetFacetList(facets[nameof(result.StatusValue)]);
                 result.CreatedByUserGroup = GetFacetList(facets[nameof(result.CreatedByUserGroup)]);
                 result.SubStatus = GetFacetList(facets[nameof(result.SubStatus)]);
-                result.ProvisionalLegislativeAreas = GetFacetList(facets[provisionalLegislativeAreaPath]).OrderBy(x => x).ToList();
+                result.ProvisionalLegislativeAreas =
+                    GetFacetList(facets[provisionalLegislativeAreaPath]).OrderBy(x => x).ToList();
+                result.LegislativeAreaStatus = GetFacetList(facets[legislativeAreaStatus]).OrderBy(x => x).ToList();
             }
 
             return result;
@@ -58,7 +69,9 @@ namespace UKMCAB.Data.Search.Services
             {
                 Size = options.IgnorePaging ? null : DataConstants.Search.SearchResultsPerPage,
                 IncludeTotalCount = true,
-                Skip = options.IgnorePaging ? null : DataConstants.Search.SearchResultsPerPage * (options.PageNumber - 1),
+                Skip = options.IgnorePaging
+                    ? null
+                    : DataConstants.Search.SearchResultsPerPage * (options.PageNumber - 1),
                 Filter = filter,
                 OrderBy = { sort },
                 QueryType = SearchQueryType.Full,
@@ -71,6 +84,7 @@ namespace UKMCAB.Data.Search.Services
             searchOptions.HighlightFields.Add(nameof(CABIndexItem.HiddenText));
             searchOptions.HighlightFields.Add(nameof(CABIndexItem.CABNumber));
             searchOptions.HighlightFields.Add(nameof(CABIndexItem.LegislativeAreas));
+            searchOptions.HighlightFields.Add(nameof(CABIndexItem.HiddenScopeOfAppointments));
 
             if (options.Select.Count > 0)
             {
@@ -99,8 +113,9 @@ namespace UKMCAB.Data.Search.Services
 
         public async Task ReIndexAsync(CABIndexItem cabIndexItem)
         {
-            var response = await _indexClient.MergeOrUploadDocumentsAsync(new List<CABIndexItem> { cabIndexItem} );
-            Guard.IsTrue(response.HasValue && response.Value.Results.First().Succeeded, $"Failed to update index for {cabIndexItem.CABId}");
+            var response = await _indexClient.MergeOrUploadDocumentsAsync(new List<CABIndexItem> { cabIndexItem });
+            Guard.IsTrue(response.HasValue && response.Value.Results.First().Succeeded,
+                $"Failed to update index for {cabIndexItem.CABId}");
         }
 
         public async Task RemoveFromIndexAsync(string id)
@@ -113,35 +128,46 @@ namespace UKMCAB.Data.Search.Services
             var filters = new List<string>();
             if (options.BodyTypesFilter != null && options.BodyTypesFilter.Any())
             {
-                var bodyTypes = string.Join(" or ", options.BodyTypesFilter.Select(bt => $"BodyTypes/any(bt: bt eq '{bt}')"));
+                var bodyTypes = string.Join(" or ",
+                    options.BodyTypesFilter.Select(bt => $"BodyTypes/any(bt: bt eq '{bt}')"));
                 filters.Add($"({bodyTypes})");
             }
+
             if (options.LegislativeAreasFilter != null && options.LegislativeAreasFilter.Any())
             {
-                var legislativeAreas = string.Join(" or ", options.LegislativeAreasFilter.Select(bt => $"LegislativeAreas/any(la: la eq '{bt}')"));
+                var legislativeAreas = string.Join(" or ",
+                    options.LegislativeAreasFilter.Select(la => $"LegislativeAreas/any(la: la eq '{la}')"));
                 filters.Add($"({legislativeAreas})");
             }
+
             if (options.RegisteredOfficeLocationsFilter != null && options.RegisteredOfficeLocationsFilter.Any())
             {
-                var registeredOfficeLocations = string.Join(" or ", options.RegisteredOfficeLocationsFilter.Select(bt => $"RegisteredOfficeLocation eq '{bt}'"));
+                var registeredOfficeLocations = string.Join(" or ",
+                    options.RegisteredOfficeLocationsFilter.Select(rol => $"RegisteredOfficeLocation eq '{rol}'"));
                 filters.Add($"({registeredOfficeLocations})");
             }
+
             if (options.StatusesFilter != null && options.StatusesFilter.Any())
             {
                 var statuses = string.Join(" or ", options.StatusesFilter.Select(st => $"StatusValue eq '{st}'"));
                 filters.Add($"({statuses})");
             }
+
             if (options.InternalSearch && options.UserGroupsFilter != null && options.UserGroupsFilter.Any())
             {
-                 var userGroups = string.Join(" or ", options.UserGroupsFilter.Select(ug => $"CreatedByUserGroup eq '{ug}'"));
-                 filters.Add($"({userGroups})");
+                var userGroups = string.Join(" or ",
+                    options.UserGroupsFilter.Select(ug => $"CreatedByUserGroup eq '{ug}'"));
+                filters.Add($"({userGroups})");
             }
+
             if (options.InternalSearch && options.SubStatusesFilter != null && options.SubStatusesFilter.Any())
             {
                 var subStatuses = string.Join(" or ", options.SubStatusesFilter.Select(st => $"SubStatus eq '{st}'"));
                 filters.Add($"({subStatuses})");
             }
-            if (options.InternalSearch && options.ProvisionalLegislativeAreasFilter != null && options.ProvisionalLegislativeAreasFilter.Any())
+
+            if (options.InternalSearch && options.ProvisionalLegislativeAreasFilter != null &&
+                options.ProvisionalLegislativeAreasFilter.Any())
             {
                 if (options.ProvisionalLegislativeAreasFilter.Length == 1)
                 {
@@ -155,12 +181,26 @@ namespace UKMCAB.Data.Search.Services
                     }
                 }
             }
-
+            if (options is { InternalSearch: true, LegislativeAreaStatusFilter: not null } &&
+                options.LegislativeAreaStatusFilter.Any())
+            {
+                 if (options.LegislativeAreaStatusFilter.Count() == 1)
+                {
+                    if (options.LegislativeAreaStatusFilter.Contains("True"))
+                    {
+                        filters.Add($"DocumentLegislativeAreas/any(la: la/Archived eq true)");
+                    }
+                    else
+                    {
+                        filters.Add($"DocumentLegislativeAreas/all(la: la/Archived ne true)");
+                    }
+                }
+            }
             // if internal search (user logged in) and non opss user (ukas user) then exclude opss draft cab from search
 
             if (options.InternalSearch && !options.IsOPSSUser)
             {
-                 filters.Add($"not (CreatedByUserGroup eq 'opss' and StatusValue eq '{(int)Status.Draft}')");
+                filters.Add($"not (CreatedByUserGroup eq 'opss' and StatusValue eq '{(int)Status.Draft}')");
             }
 
             return filters.Count > 1 ? $"({string.Join(" and ", filters)})" : filters.FirstOrDefault() ?? string.Empty;
@@ -181,8 +221,7 @@ namespace UKMCAB.Data.Search.Services
 
                 case DataConstants.SortOptions.Default:
                 default:
-                    return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : 
-                        string.Empty;
+                    return string.IsNullOrWhiteSpace(options.Keywords) ? "RandomSort asc" : string.Empty;
             }
         }
 
@@ -220,22 +259,25 @@ namespace UKMCAB.Data.Search.Services
                     input = SpecialCharsRegex.Replace(input, " ");
                     var tokens = new List<string>
                     {
-                        $"{nameof(CABIndexItem.Name)}:({input})^3",                    //any-match, boosted x3
-                        $"{nameof(CABIndexItem.TownCity)}:({input})",                  //any-match
-                        $"{nameof(CABIndexItem.Postcode)}:(\"{input}\")",              //phrase-match
-                        $"{nameof(CABIndexItem.HiddenText)}:(\"{input}\")",            //phrase-match
+                        $"{nameof(CABIndexItem.Name)}:({input})^3", //any-match, boosted x3
+                        $"{nameof(CABIndexItem.TownCity)}:({input})", //any-match
+                        $"{nameof(CABIndexItem.Postcode)}:(\"{input}\")", //phrase-match
+                        $"{nameof(CABIndexItem.HiddenText)}:(\"{input}\")", //phrase-match
                         //$"{nameof(CABIndexItem.ScheduleLabels)}:(\"{input}\")",        // TODO: removed from 2.0 phrase-match
-                        $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4",           //phrase-match, boosted x4
-                        $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6",    //phrase-match, boosted x6
-                        $"{nameof(CABIndexItem.UKASReference)}:(\"{input}\")",            //phrase-match
+                        $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4", //phrase-match, boosted x4
+                        $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6", //phrase-match, boosted x6
+                        $"{nameof(CABIndexItem.HiddenScopeOfAppointments)}:(\"{input}\")^6", //phrase-match, boosted x6
+                        $"{nameof(CABIndexItem.UKASReference)}:(\"{input}\")", //phrase-match
                     };
                     if (internalSearch)
                     {
                         tokens.Add($"{nameof(CABIndexItem.DocumentLabels)}:(\"{input}\")"); //phrase-match
                     }
+
                     retVal = string.Join(" ", tokens);
                 }
             }
+
             return retVal;
         }
     }

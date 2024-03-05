@@ -12,29 +12,77 @@
     </div>
 }
 
+@if (Model.SuccessBannerAction == "Remove")
+{
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <govuk-notification-banner type="Success">
+                    <p class="govuk-notification-banner__heading">
+                        The applicable conformity assessment procedure has been removed.
+                    </p>
+                </govuk-notification-banner>
+            </div>
+        </div>
+    </div>
+}
+
 <div class="govuk-grid-row">
     <form method="post" enctype="multipart/form-data" novalidate>
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group">
-                <fieldset class="govuk-fieldset" aria-describedby="waste-hint">
+                @if (!ViewData.ModelState.IsValid)
+                {
+                    <govuk-error-summary>
+                        <govuk-error-summary-item href="#@Model.ErrorLink">Select a scope of appointment</govuk-error-summary-item>
+                    </govuk-error-summary>
+                }
+                <fieldset class="govuk-fieldset" aria-describedby="fieldset-title">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
-                        <span class="govuk-caption-m">Legislative area added</span>
+                        <span class="govuk-caption-m">@Model.Title</span>
+                        <h1 id="fieldset-title" class="govuk-heading-l">@Model.Title</h1>
                     </legend>
                     @if (Model.LAItems.Any())
                     {
-                        @foreach (var legislativeArea in Model.LAItems)
+                        @for (int i = 0; i < Model.LAItems.Count; i++)
                         {
-                            <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+                            var legislativeArea = Model.LAItems[i];
+                            var removeLegislativeAreaLabel = "Remove legislative area";
+                            if (Model.LAItems.Count > 1)
+                            {
+                                removeLegislativeAreaLabel = $"{(legislativeArea.IsArchived is null or false ? "Remove or archive" : "Remove")} legislative area";
+                            }
+
+                            <input type="hidden" asp-for="CABId">
+                            <input type="hidden" asp-for="LAItems[i].Name">
+                            <input type="hidden" asp-for="LAItems[i].LegislativeAreaId">
+
+                            <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0" @(Model.ErrorLink == legislativeArea.Name ? "open" : "")>
                                 <summary class="govuk-details__summary">
                                     <span class="govuk-details__summary-text">
                                         @legislativeArea.Name
                                     </span>
                                 </summary>
                                 <div class="govuk-details__text govuk-!-padding-top-1">
-                                    <govuk-button-link class="govuk-button--secondary" href="/">Remove legislative area</govuk-button-link>
-                                    <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
+                                    <govuk-button-link asp-route="@LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation"
+                                                       asp-route-id="@Model.CABId" asp-route-laId="@legislativeArea.LegislativeAreaId" class="govuk-button--secondary">
+                                        Edit legislative area additional information
+                                    </govuk-button-link>
+                                    <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveLegislativeArea" class="govuk-button--secondary ukmcab-margin-left-10"
+                                                       asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area">
+                                        @removeLegislativeAreaLabel
+                                    </govuk-button-link>
+                                    <table class="govuk-table ukmcab-table govuk-!-margin-top-3">
+                                        @if (Model.ErrorLink == legislativeArea.Name)
+                                        {
+                                            <govuk-error-message id="@legislativeArea.Name">Select a scope of appointment</govuk-error-message>
+                                        }
+                                        <caption class="govuk-table__caption govuk-table__caption--m">Scope of appointment</caption>
                                         <thead class="govuk-table__head">
                                         <tr class="govuk-table__row">
+
+                                            <th scope="col" class="govuk-table__header width-one-twentieth"></th>
+
                                             @if (legislativeArea.ShowPurposeOfAppointmentColumn)
                                             {
                                                 <th scope="col" class="govuk-table__header">Purpose of appointment</th>
@@ -60,58 +108,112 @@
                                                 <td>No scope of appointments</td>
                                             </tr>
                                         }
-                                        @foreach (var scopeOfAppointment in legislativeArea.ScopeOfAppointments)
+
+                                        @for (int j = 0; j < legislativeArea.ScopeOfAppointments.Count; j++)
                                         {
-                                            <tr class="govuk-table__row">
-                                                @if (legislativeArea.ShowPurposeOfAppointmentColumn)
-                                                {
-                                                    <td class="govuk-table__cell">
-                                                        <label aria-hidden="true">Purpose of appointment</label>
-                                                        @scopeOfAppointment.PurposeOfAppointment
-                                                    </td>
-                                                }
-                                                @if (legislativeArea.ShowCategoryColumn)
-                                                {
-                                                    <td class="govuk-table__cell">
-                                                        <label aria-hidden="true">Product category</label>
-                                                        @scopeOfAppointment.Category
-                                                        @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
-                                                        {
-                                                            <div class="govuk-!-margin-top-3">Product sub-category</div>
-                                                            <div>@scopeOfAppointment.SubCategory</div>
-                                                        }
-                                                    </td>
-                                                }
-                                                @if (legislativeArea.ShowProductColumn)
-                                                {
-                                                    <td class="govuk-table__cell">
-                                                        <label aria-hidden="true">Product</label>
-                                                        @Html.ValueOrNotProvided(scopeOfAppointment.Product)
-                                                    </td>
-                                                }
-                                                <td class="govuk-table__cell">
-                                                    <label aria-hidden="true">Applicable conformity assessment procedure</label>
-                                                    @if (scopeOfAppointment.Procedures != null)
+                                            var scopeOfAppointment = legislativeArea.ScopeOfAppointments[j];
+                                            var noOfProductsInScopeOfAppointment = scopeOfAppointment.NoOfProductsInScopeOfAppointment;
+                                            var nextProductIndex = j;
+                                            @for (int k = 0; k < noOfProductsInScopeOfAppointment; k++)
+                                            {
+                                                var showBorder = k == noOfProductsInScopeOfAppointment - 1;
+                                                <tr class="govuk-table__row">
+                                                    @if (k == 0)
                                                     {
-                                                        @foreach (var procedure in scopeOfAppointment.Procedures)
+                                                        <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                            <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
+                                                                <div class="govuk-radios__item">
+                                                                    <input id="LA-items[@(i)]-radio-[@(j)]" class="govuk-radios__input" type="radio" asp-for="LAItems[i].SelectedScopeofAppointmentId" value="@scopeOfAppointment.ScopeId">
+                                                                    <label class="govuk-label govuk-radios__label govuk-!-display-block"></label>
+                                                                </div>
+                                                            </div>
+                                                            <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].ScopeId">
+                                                            <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Id">
+                                                            <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[j].LegislativeArea.Title">
+                                                        </td>
+                                                        @if (legislativeArea.ShowPurposeOfAppointmentColumn)
                                                         {
-                                                            <p>@procedure</p>
+                                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                <label aria-hidden="true">Purpose of appointment</label>
+                                                                @scopeOfAppointment.PurposeOfAppointment
+                                                            </td>
+                                                        }
+
+                                                        @if (legislativeArea.ShowCategoryColumn)
+                                                        {
+                                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                <label aria-hidden="true">Product category</label>
+                                                                @scopeOfAppointment.Category
+                                                                @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
+                                                                {
+                                                                    <div class="govuk-!-margin-top-3">Product sub-category</div>
+                                                                    <div>@scopeOfAppointment.SubCategory</div>
+                                                                }
+                                                            </td>
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        <span>Not provided</span>
+                                                        <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                        </td>
+                                                        @if (legislativeArea.ShowPurposeOfAppointmentColumn)
+                                                        {
+                                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                            </td>
+                                                        }
+
+                                                        @if (legislativeArea.ShowCategoryColumn)
+                                                        {
+                                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                            </td>
+                                                        }
                                                     }
-                                                </td>
-                                            </tr>
+
+                                                    @if (legislativeArea.ShowProductColumn)
+                                                    {
+                                                        <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                            <label aria-hidden="true">Product</label>
+                                                            @Html.ValueOrNotApplicable(scopeOfAppointment.Product)
+                                                        </td>
+                                                    }
+                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                        <label aria-hidden="true">Applicable conformity assessment procedure</label>
+                                                        @if (scopeOfAppointment.Procedures != null)
+                                                        {
+                                                            @foreach (var procedure in scopeOfAppointment.Procedures)
+                                                            {
+                                                                <p>@procedure</p>
+                                                            }
+                                                        }
+                                                        else
+                                                        {
+                                                            <span>Not provided</span>
+                                                        }
+                                                    </td>
+                                                </tr>
+
+                                                if ((nextProductIndex + 1) < (j + noOfProductsInScopeOfAppointment))
+                                                {
+                                                    nextProductIndex += 1;
+                                                    scopeOfAppointment = legislativeArea.ScopeOfAppointments[nextProductIndex];
+                                                    <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[nextProductIndex].ScopeId">
+                                                    <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[nextProductIndex].LegislativeArea.Id">
+                                                    <input type="hidden" asp-for="LAItems[i].ScopeOfAppointments[nextProductIndex].LegislativeArea.Title">
+                                                }
+                                                else
+                                                {
+                                                    j = nextProductIndex;
+                                                }
+                                            }
                                         }
                                         </tbody>
                                     </table>
-                                    <govuk-button-link class="govuk-button--secondary" href="/">Add scope of appointment</govuk-button-link>
+
+                                    <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="Add-@legislativeArea.LegislativeAreaId">Add scope of appointment</govuk-button>
                                     @if (legislativeArea.ScopeOfAppointments.Any())
                                     {
-                                        <govuk-button-link class="govuk-button--secondary" href="/">Edit scope of appointment</govuk-button-link>
-                                        <govuk-button-link class="govuk-button--secondary" href="/">Remove scope of appointment</govuk-button-link>
+                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Edit-@legislativeArea.Name">Edit scope of appointment</govuk-button>
+                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Remove-@legislativeArea.Name">Remove scope of appointment</govuk-button>
                                     }
                                 </div>
                             </details>
@@ -133,7 +235,10 @@
                 <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })">Add legislative area</govuk-button-link>
                 <div class="govuk-button-group">
                     <govuk-button-link asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId">Continue</govuk-button-link>
-                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <govuk-button-link class="govuk-button--secondary" asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId">
+                        Save as draft
+                    </govuk-button-link>
+                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 </div>
             </div>
         </div>

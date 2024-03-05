@@ -1,6 +1,4 @@
-﻿using UKMCAB.Data.Models.Workflow;
-
-namespace UKMCAB.Data.Models
+﻿namespace UKMCAB.Data.Models
 {
     public class Document
     {
@@ -78,6 +76,7 @@ namespace UKMCAB.Data.Models
         public List<UserNote> GovernmentUserNotes { get; set; } = new();
 
         public string HiddenText { get; set; } = string.Empty;
+        public List<string> HiddenScopeOfAppointments { get; set; } = new(); 
         public string RandomSort { get; set; } = string.Empty;
         public string LegacyCabId { get; set; } = string.Empty;
     }

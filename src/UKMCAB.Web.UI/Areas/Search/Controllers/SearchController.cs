@@ -81,11 +81,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 if (model.Statuses != null && model.Statuses.Any(s => s == ((int)Status.Archived).ToString()))
                 {
-                    model.Statuses = new string[] { ((int)Status.Archived).ToString() };
+                    model.Statuses = new[] { ((int)Status.Archived).ToString() };
                 }
                 else
                 {
-                    model.Statuses = new string[] { ((int)Status.Published).ToString() };
+                    model.Statuses = new[] { ((int)Status.Published).ToString() };
                 }                
             } 
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
@@ -165,6 +165,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 StatusesFilter = model.Statuses,
                 SubStatusesFilter = model.SubStatuses,
                 ProvisionalLegislativeAreasFilter = model.ProvisionalLegislativeAreas,
+                LegislativeAreaStatusFilter = model.LegislativeAreaStatus,
                 UserGroupsFilter = model.UserGroups,
                 IsOPSSUser = model.IsOPSSUser,
                 Select = _select,
@@ -220,7 +221,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task SetFacetOptions(SearchViewModel model, bool? selectAllPendingApproval)
         {
-            var facets = await _cachedSearchService.GetFacetsAsync(model.InternalSearch);
+            var facets = await  _cachedSearchService.GetFacetsAsync(model.InternalSearch);
 
             facets.LegislativeAreas = facets.LegislativeAreas.Select(la => la.ToSentenceCase()).ToList()!;
 
@@ -239,6 +240,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 } 
                 model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
                 model.LegislativeAreaProvisionalOptions = GetFilterOptions(nameof(model.ProvisionalLegislativeAreas), "Provisional legislative area", facets.ProvisionalLegislativeAreas.OrderByDescending(x => x), model.ProvisionalLegislativeAreas);
+                model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.LegislativeAreaStatus), "Legislative area status", facets.LegislativeAreaStatus.OrderByDescending(x => x), model.LegislativeAreaStatus);
             }
             else
             {

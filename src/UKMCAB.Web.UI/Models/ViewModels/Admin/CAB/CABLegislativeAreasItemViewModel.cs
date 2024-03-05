@@ -1,11 +1,11 @@
-﻿using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.LegislativeAreas;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+﻿using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABLegislativeAreasItemViewModel
     {
+        public Guid? LegislativeAreaId { get; set; }
+        
         public string? Name { get; set; }
 
         public bool? IsProvisional { get; set; }
@@ -16,11 +16,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public string? Reason { get; set; }
 
+        public string? PointOfContactName { get; set; }
+        public string? PointOfContactEmail { get; set; }
+        public string? PointOfContactPhone { get; set; }
+        public bool? IsPointOfContactPublicDisplay { get; set; }
+
         public List<LegislativeAreaListItemViewModel> ScopeOfAppointments { get; set; } = new();
 
         public bool CanChooseScopeOfAppointment { get; set; }
-
-
+        public bool? IsArchived { get; init; }
+        public Guid? SelectedScopeofAppointmentId { get; set; }
         public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PurposeOfAppointment));
         public bool ShowCategoryColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
         public bool ShowProductColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));

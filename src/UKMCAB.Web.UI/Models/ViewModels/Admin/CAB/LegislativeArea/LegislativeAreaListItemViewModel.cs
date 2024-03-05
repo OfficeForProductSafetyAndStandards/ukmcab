@@ -4,7 +4,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class LegislativeAreaListItemViewModel : LegislativeAreaBaseViewModel
     {
-        public ListItem? LegislativeArea { get; set; }
+        public ListItem? LegislativeArea { get; set; } = new();
 
         public string? PurposeOfAppointment { get; set; }
 
@@ -14,7 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? Product { get; set; }
 
-        public List<string>? Procedures { get; set; } = new();
-
+        public List<string>? Procedures { get; set; } = new();     
+        public int NoOfProductsInScopeOfAppointment { get; set; }
     }
 }

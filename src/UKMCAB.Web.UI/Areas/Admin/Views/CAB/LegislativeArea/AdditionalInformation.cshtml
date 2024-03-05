@@ -98,6 +98,41 @@
                 </govuk-character-count>
             </div>
 
+            <div class="cab-detail-group">
+                <govuk-fieldset>
+                    <govuk-fieldset-legend class="govuk-fieldset__legend--s">Legislative area contact details (optional)</govuk-fieldset-legend>
+                    <div class="govuk-form-group">
+                        <span class="govuk-caption-m">
+                            Enter the contact details for this legislative area if they are different to the
+                            contact details for the CAB.
+                        </span>
+                    </div>
+
+                    <govuk-input name="PointOfContactName" asp-for="PointOfContactName" spellcheck="false">
+                        <govuk-input-label is-page-heading="true" class="govuk-label--s">Legislative area contact name (optional)</govuk-input-label>
+                    </govuk-input>
+
+                    <govuk-input name="PointOfContactEmail" asp-for="PointOfContactEmail" spellcheck="false">
+                        <govuk-input-label is-page-heading="true" class="govuk-label--s">Legislative area contact email (optional)</govuk-input-label>
+                    </govuk-input>
+
+                    <govuk-input name="PointOfContactPhone" asp-for="PointOfContactPhone" spellcheck="false">
+                        <govuk-input-label is-page-heading="true" class="govuk-label--s">Legislative area contact telephone (optional)</govuk-input-label>
+                        <govuk-input-hint>For international numbers include the country code</govuk-input-hint>
+                    </govuk-input>
+
+                    <govuk-radios name="IsPointOfContactPublicDisplay" asp-for="IsPointOfContactPublicDisplay">
+                        <govuk-radios-fieldset>
+                            <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+                                Who should see the legislative area contact details?
+                            </govuk-radios-fieldset-legend>
+                            <govuk-radios-item value="@bool.TrueString">All users</govuk-radios-item>
+                            <govuk-radios-item value="@bool.FalseString">Internal users</govuk-radios-item>
+                        </govuk-radios-fieldset>
+                    </govuk-radios>
+                </govuk-fieldset>
+            </div>
+
             <div class="govuk-button-group">
                 <govuk-button type="submit" name="submitType" value="@Constants.SubmitType.Continue">Save and continue</govuk-button>
                 <govuk-button class="govuk-button--secondary" name="submitType" value="@Constants.SubmitType.Save">Save as draft</govuk-button>

@@ -4,9 +4,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 public class CABLegislativeAreasViewModel
 {
-    public List<CABLegislativeAreasItemViewModel> LegislativeAreas { get; set; } = new();
+    public List<CABLegislativeAreasItemViewModel> ActiveLegislativeAreas { get; } = new();
 
     public bool IsCompleted { get; set; }
+    public List<CABLegislativeAreasItemViewModel> ArchivedLegislativeAreas { get; } = new();
 }
 
 public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegislativeAreasViewModel>
@@ -19,7 +20,7 @@ public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegisl
         //   must be at least one ScopeOfAppointment object with at least one procedure.
         //   If any ScopeOfAppointment doesn't have a procedure, or the procedure is null or empty, validation will fail.
 
-        RuleFor(x => x.LegislativeAreas)
+        RuleFor(x => x.ActiveLegislativeAreas)
             .Must((model, legislativeAreas) =>
             {
                 bool complete = legislativeAreas.Any() && legislativeAreas.All(x => x.IsProvisional.HasValue &&

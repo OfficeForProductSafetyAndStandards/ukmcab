@@ -26,6 +26,8 @@
     {
         isPointOfContactPublicDisplay = Model.CabContactViewModel.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted";
     }
+
+    var currentUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
 }
 
 <div class="govuk-width-container ">
@@ -311,7 +313,7 @@ else if (Model.IsEditLocked)
         </div>
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-                Display of point of contact details
+                Display point of contact details
             </dt>
             <dd class="govuk-summary-list__value">
                 @Html.ValueOrNotProvided(isPointOfContactPublicDisplay)
@@ -401,8 +403,7 @@ else if (Model.IsEditLocked)
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions)
             {
-                var summaryReturnUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
-                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@summaryReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@currentUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CabLegislativeAreasViewModel.IsCompleted)
             {
@@ -420,9 +421,9 @@ else if (Model.IsEditLocked)
     </div>
 </dl>
 
-@if (Model.CabLegislativeAreasViewModel.LegislativeAreas.Any())
+@if (Model.CabLegislativeAreasViewModel.ActiveLegislativeAreas.Any())
 {
-    @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.LegislativeAreas)
+    @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.ActiveLegislativeAreas)
     {
         <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
             <summary class="govuk-details__summary">
@@ -434,7 +435,25 @@ else if (Model.IsEditLocked)
         </details>
     }
 }
-else
+
+@if (Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.Any())
+{
+    <h4 class="govuk-heading-m govuk-!-padding-top-5 govuk-!-display-block">Archived legislative areas</h4>
+    @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas)
+    {
+        <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    @legislativeArea.Name
+                </span>
+            </summary>
+            <partial name="./LegislativeArea/Partials/_Summary" model="legislativeArea" />
+        </details>
+    }
+}
+
+@if(!Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.Any() 
+    && !Model.CabLegislativeAreasViewModel.ActiveLegislativeAreas.Any())
 {
     <div class="govuk-warning-text">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -587,15 +606,12 @@ else
                     Notes
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @{
-                        var userNotesReturnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
-                    }
                     @if (Model.GovernmentUserNoteCount > 0)
                     {
                         <p>Last note added: @Model.LastGovermentUserNoteDate?.ToStringBeisFormat()</p>
 
                         <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
-                           asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl" class="govuk-link govuk-link--no-visited-state">
+                           asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@currentUrl" class="govuk-link govuk-link--no-visited-state">
                             View government user notes (@Model.GovernmentUserNoteCount)
                         </a>
                     }
@@ -603,7 +619,7 @@ else
                     {
                         <p>There are no notes</p>
 
-                        <a asp-area="Search" asp-controller="UserNote" asp-action="Create" asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@userNotesReturnUrl"
+                        <a asp-area="Search" asp-controller="UserNote" asp-action="Create" asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@currentUrl"
                            class="govuk-link govuk-link--no-visited-state">
                             Add note
                         </a>
@@ -613,6 +629,34 @@ else
         </dl>
     </div>
 }
+
+<dl class="govuk-summary-list cab-summary-list">
+    <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+        <dt class="govuk-summary-list__key">
+            <div class="cab-summary-header  govuk-!-padding-top-5">
+                <h3 class="govuk-heading-l">History</h3>
+            </div>
+        </dt>
+    </div>
+</dl>
+
+<div class="cab-summary-detail">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                Actions
+            </dt>
+            <dd class="govuk-summary-list__value">
+                <p>Last action: @Model.LastAuditLogHistoryDate?.ToStringBeisFormat()</p>
+
+                <a asp-area="admin" asp-controller="Cab" asp-action="History" asp-route-cabId="@Model.CABId"
+                    asp-route-returnUrl="@currentUrl" class="govuk-link govuk-link--no-visited-state">
+                    View history
+                </a>
+            </dd>
+        </div>
+    </dl>
+</div>
 
 @if (Model is { ValidCAB: true, CanPublish: true })
 {

@@ -8,6 +8,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         [Required(ErrorMessage = "Select an applicable conformity assessment procedure")]
         public IEnumerable<Guid>? SelectedProcedureIds { get; set; }
 
+        public Guid? LegislativeAreaId { get; set; }
+
         public string? LegislativeArea { get; set; }
 
         public string? PurposeOfAppointment { get; set; }
@@ -22,7 +24,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public IEnumerable<SelectListItem> Procedures { get; set; } = new List<SelectListItem>();
 
         public int IndexOfProduct { get; set; }
-        public bool ShowContinueToNextStep { get; set; } = true;
+        public bool IsLastAction { get; set; } = true;
 
     }
 }
