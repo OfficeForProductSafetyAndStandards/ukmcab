@@ -7,7 +7,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     public class LegislativeAreaRemoveViewModel : ILayoutModel
     {
         [Required(ErrorMessage = "Select an option")]
-        public RemoveActionEnum Action { get; set; }
+        public RemoveActionEnum? RemoveAction { get; set; }
 
         public Guid CabId { get; set; }
 
