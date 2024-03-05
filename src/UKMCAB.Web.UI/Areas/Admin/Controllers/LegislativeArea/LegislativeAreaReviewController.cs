@@ -58,42 +58,30 @@ public class LegislativeAreaReviewController : Controller
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
 
-        // Extract laIdOrLaName using switch
         var laIdOrLaName = string.Empty;
-        var action = submitType.StartsWith("Add-") ? "Add" : submitType.StartsWith("Edit-") ? "Edit" : "Remove";
-        switch (action)
+
+        if (submitType.StartsWith("Add-"))
         {
-            case "Add":
-                laIdOrLaName = submitType.Substring(4);
-                break;
-
-            case "Edit":
-                laIdOrLaName = submitType.Substring(5);
-                break;
-
-            default:
-                laIdOrLaName = submitType.Substring(7);
-                break;
-        }
-
-        if (submitType != null && submitType.StartsWith("Add-"))
-        {
-            //var legislativeAreaIdString = submitType.Substring(4);
-            //if (Guid.TryParse(legislativeAreaIdString, out Guid laId))
+            laIdOrLaName = submitType[4..];
             if (Guid.TryParse(laIdOrLaName, out Guid laId))
             {
                 return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, legislativeAreaId = laId });
             }
         }
+        else if(submitType.StartsWith("Edit-"))
+        {
+            laIdOrLaName = submitType[5..];
+        }
+        else if (submitType.StartsWith("Remove-"))
+        {
+            laIdOrLaName = submitType[7..];
+        }
 
-        //var cabLaOfSelectedScopeofAppointment = reviewLaVM.LAItems.FirstOrDefault(la => la.SelectedScopeofAppointmentId != null);
         var cabLaOfSelectedScopeofAppointment = reviewLaVM.LAItems.FirstOrDefault(la => la.SelectedScopeofAppointmentId != null && la.Name == laIdOrLaName);
         if (cabLaOfSelectedScopeofAppointment == null)
         {            
             ModelState.AddModelError("ScopeOfAppointment", "Select a scope of apppointment to edit");
             var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
-            //var len = submitType.StartsWith("Edit-") ? 5 : 7;
-            //vm.ErrorLink = submitType.Substring(len);
             vm.ErrorLink = laIdOrLaName;
             return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
         }
