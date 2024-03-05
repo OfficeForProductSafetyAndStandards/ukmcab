@@ -212,8 +212,8 @@
                                     <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="Add-@legislativeArea.LegislativeAreaId">Add scope of appointment</govuk-button>
                                     @if (legislativeArea.ScopeOfAppointments.Any())
                                     {
-                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Edit-@legislativeArea.Name">Edit scope of appointment</govuk-button>
-                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Remove-@legislativeArea.Name">Remove scope of appointment</govuk-button>
+                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Edit-@Model.LAItems[i].Name">Edit scope of appointment</govuk-button>
+                                        <govuk-button class="govuk-button--secondary ukmcab-margin-left-10" type="submit" name="submitType" value="@Constants.SubmitType.Remove-@Model.LAItems[i].Name">Remove scope of appointment</govuk-button>
                                     }
                                 </div>
                             </details>
