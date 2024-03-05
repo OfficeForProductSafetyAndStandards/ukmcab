@@ -96,7 +96,7 @@ public class LegislativeAreaDetailsController : Controller
                 return RedirectToRoute(CabManagementController.Routes.CABManagement,
                     new { unlockCab = latestDocument.CABId });
 
-            ModelState.AddModelError(nameof(vm.SelectedLegislativeAreaId), "Select a Legislative Area");
+            ModelState.AddModelError(nameof(vm.SelectedLegislativeAreaId), "Select a Legislative area");
         }
 
         if (ModelState.IsValid)
