@@ -95,9 +95,8 @@ namespace UKMCAB.Data.Models
 
         private static void CalculateChangesToLegislativeAreas(List<DocumentLegislativeArea> previousLAs, List<DocumentLegislativeArea> currentLAs, StringBuilder sb)
         {
-            //var existingLAs = currentLAs.Where(la => previousLAs.Any(pla => pla.LegislativeAreaName == la.LegislativeAreaName));
-            var newlyAddedLAs = currentLAs.Where(la => !previousLAs.Any(pla => pla.LegislativeAreaName == la.LegislativeAreaName));
-            var removedLAs = previousLAs.Where(la => !currentLAs.Any(cla => cla.LegislativeAreaName == la.LegislativeAreaName));
+            var newlyAddedLAs = currentLAs.Where(la => !previousLAs.Any(pla => pla.LegislativeAreaId == la.LegislativeAreaId));
+            var removedLAs = previousLAs.Where(la => !currentLAs.Any(cla => cla.LegislativeAreaId == la.LegislativeAreaId));
 
             foreach (var la in newlyAddedLAs) 
             {
