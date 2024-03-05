@@ -5,6 +5,7 @@ public class LegislativeAreaViewModel
     public Guid LegislativeAreaId { get; set; }
     public string Name { get; set; } = string.Empty;
     public string? Regulation { get; set; }
+    public bool HasDataModel { get; set; }
     public bool IsProvisional { get; set; }
     public DateTime? AppointmentDate { get; set; }
     public DateTime? ReviewDate { get; set; }

@@ -3,9 +3,16 @@
     <dt class="govuk-summary-list__key">
         <div class="display-flex">
             <div>
-                <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
-                    @Model.LegislativeArea.Name
-                </a>
+                @if (Model.LegislativeArea.HasDataModel)
+                {
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeArea.LegislativeAreaId" asp-fragment="legislative-areas">
+                        @Model.LegislativeArea.Name
+                    </a>
+                }
+                else
+                {
+                    <span>@Model.LegislativeArea.Name</span>
+                }
             </div>
             @if (Model.LegislativeArea.IsProvisional)
             {
