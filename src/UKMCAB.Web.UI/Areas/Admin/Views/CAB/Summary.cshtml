@@ -3,26 +3,17 @@
 @using UKMCAB.Core.Security;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
-@using UKMCAB.Web.UI.Areas.Search.Controllers
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
 @{
     var returnUrl = Model.ReturnUrl == "/" ? "/?" : Model.ReturnUrl;
-    string appointmentDate = Constants.NotProvided;
-    string reviewDate = Constants.NotProvided;
-
-    if (DateOnly.TryParse(Model.CabDetailsViewModel.AppointmentDate, out var aptDate))
-    {
-        appointmentDate = aptDate.ToString("d MMM yyyy");
-    }
-
-    if (DateOnly.TryParse(Model.CabDetailsViewModel.ReviewDate, out var revwDate))
-    {
-        reviewDate = revwDate.ToString("d MMM yyyy");
-    }
+    var appointmentDate = Model.CabDetailsViewModel?.AppointmentDate.ToStringBeisDateFormat();
+    appointmentDate = !string.IsNullOrEmpty(appointmentDate) ? appointmentDate : Constants.NotProvided;
+    var reviewDate = Model.CabDetailsViewModel?.ReviewDate.ToStringBeisDateFormat();
+    reviewDate = !string.IsNullOrEmpty(reviewDate) ? reviewDate : Constants.NotProvided;
 
     var isPointOfContactPublicDisplay = string.Empty;
 
-    if (Model.CabContactViewModel.IsPointOfContactPublicDisplay != null)
+    if (Model.CabContactViewModel?.IsPointOfContactPublicDisplay != null)
     {
         isPointOfContactPublicDisplay = Model.CabContactViewModel.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted";
     }
@@ -69,9 +60,9 @@ else if (Model.IsEditLocked)
         <div class="cab-detail-date-meta">
             @if (Model.PublishedDate.HasValue)
             {
-                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")</span>
+                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToStringBeisDateFormat()</span>
             }
-            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
+            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @Model.LastModifiedDate.ToStringBeisDateFormat()</span>
             <div>
                 <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
                 @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
