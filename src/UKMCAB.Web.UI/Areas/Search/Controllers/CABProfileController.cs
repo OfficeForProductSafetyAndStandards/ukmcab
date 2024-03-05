@@ -605,6 +605,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 LegislativeAreaId = x.LegislativeAreaId,
                 Name = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).Name,
                 Regulation = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).Regulation,
+                HasDataModel = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).HasDataModel,
                 IsProvisional = x.IsProvisional != null && x.IsProvisional.Value,
                 IsArchived = x.Archived != null && x.Archived.Value,
                 AppointmentDate = x.AppointmentDate,
