@@ -16,7 +16,7 @@ namespace UKMCAB.Data.Storage
 
     public class FileStorageService : IFileStorage
     {
-        private BlobContainerClient _client;
+        private readonly BlobContainerClient _client;
         public FileStorageService(IConfiguration config)
         {
             _client = new BlobContainerClient(config["DataConnectionString"], DataConstants.Storage.Container);

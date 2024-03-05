@@ -24,8 +24,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
         private Mock<ICABRepository> _mockCABRepository = null!;
         private Mock<ICachedPublishedCABService> _mockCachedPublishedCAB = null!;
         private Mock<ICachedSearchService> _mockCachedSearchService = null!;
-        private TelemetryClient _telemetryClient = null!;
-        private Mock<IUserService> _mockUserService = null!;
+        private TelemetryClient _telemetryClient = null!;        
         private ICABAdminService _sut = null!;
         private readonly Faker _faker = new();
 
@@ -34,11 +33,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository = new Mock<ICABRepository>();
             _mockCachedPublishedCAB = new Mock<ICachedPublishedCABService>();
             _mockCachedSearchService = new Mock<ICachedSearchService>();
-            _telemetryClient = new TelemetryClient();
-            _mockUserService = new Mock<IUserService>();
+            _telemetryClient = new TelemetryClient();            
             var mapper = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); }).CreateMapper();
 
-            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _telemetryClient, _mockUserService.Object, mapper);
+            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _telemetryClient, mapper);
         }
 
         [Theory]

@@ -9,8 +9,7 @@ namespace UKMCAB.Data.Search.Services
 {
     public class SearchService : ISearchService
     {
-        private SearchClient _indexClient;
-
+        private readonly SearchClient _indexClient;
         public SearchService(SearchClient searchClient)
         {
             _indexClient = searchClient;
@@ -170,7 +169,7 @@ namespace UKMCAB.Data.Search.Services
             if (options.InternalSearch && options.ProvisionalLegislativeAreasFilter != null &&
                 options.ProvisionalLegislativeAreasFilter.Any())
             {
-                if (options.ProvisionalLegislativeAreasFilter.Count() == 1)
+                if (options.ProvisionalLegislativeAreasFilter.Length == 1)
                 {
                     if (options.ProvisionalLegislativeAreasFilter.Contains("True"))
                     {
