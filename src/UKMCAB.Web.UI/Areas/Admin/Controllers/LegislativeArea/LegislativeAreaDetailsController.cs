@@ -73,12 +73,10 @@ public class LegislativeAreaDetailsController : Controller
         {
             TempData[Constants.TempDraftKey] =
                 $"Draft record saved for {latestDocument.Name} <br>CAB number {latestDocument.CABNumber}";
-            return RedirectToAction("CABManagement", "CabManagement",
-                new { Area = "admin", unlockCab = latestDocument.CABId });
         }
 
-        LegislativeAreaModel legislativeArea = new LegislativeAreaModel();
-        List<Guid> cabLegislativeAreaIds = new List<Guid>();
+        var legislativeArea = new LegislativeAreaModel();
+        var cabLegislativeAreaIds = new List<Guid>();
         if (vm.SelectedLegislativeAreaId != Guid.Empty)
         {
             cabLegislativeAreaIds =
@@ -94,6 +92,10 @@ public class LegislativeAreaDetailsController : Controller
         }
         else
         {
+            if (submitType == Constants.SubmitType.Save)
+                return RedirectToRoute(CabManagementController.Routes.CABManagement,
+                    new { unlockCab = latestDocument.CABId });
+
             ModelState.AddModelError(nameof(vm.SelectedLegislativeAreaId), "Select a Legislative Area");
         }
 
@@ -122,6 +124,9 @@ public class LegislativeAreaDetailsController : Controller
                     return RedirectToRoute(
                         LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
                         new { id, laId = vm.SelectedLegislativeAreaId });
+                case Constants.SubmitType.Save:
+                    return RedirectToRoute(CabManagementController.Routes.CABManagement,
+                        new { unlockCab = latestDocument.CABId });
             }
         }
 
