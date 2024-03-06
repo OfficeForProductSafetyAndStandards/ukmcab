@@ -68,7 +68,7 @@ public class LegislativeAreaReviewController : Controller
                 return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, legislativeAreaId = laId });
             }
         }
-        else if(submitType.StartsWith("Edit-"))
+        else if (submitType.StartsWith("Edit-"))
         {
             laIdOrLaName = submitType[5..];
         }
@@ -77,9 +77,9 @@ public class LegislativeAreaReviewController : Controller
             laIdOrLaName = submitType[7..];
         }
 
-        var cabLaOfSelectedScopeofAppointment = reviewLaVM.LAItems.FirstOrDefault(la => la.SelectedScopeofAppointmentId != null && la.Name == laIdOrLaName);
+        var cabLaOfSelectedScopeofAppointment = reviewLaVM.ActiveLAItems.FirstOrDefault(la => la.SelectedScopeofAppointmentId != null && la.Name == laIdOrLaName);
         if (cabLaOfSelectedScopeofAppointment == null)
-        {            
+        {
             ModelState.AddModelError("ScopeOfAppointment", "Select a scope of apppointment to edit");
             var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
             vm.ErrorLink = laIdOrLaName;
@@ -90,10 +90,10 @@ public class LegislativeAreaReviewController : Controller
         var legislativeAreaId = laOfSelectedSoa.LegislativeArea.Id;
         var selectedScopeOfAppointmentId = laOfSelectedSoa.ScopeId;
         Guard.IsTrue(selectedScopeOfAppointmentId != Guid.Empty, "Scope Id Guid cannot be empty");
-        
+
         if (ModelState.IsValid)
         {
-            if (submitType.StartsWith(Constants.SubmitType.Edit) )
+            if (submitType.StartsWith(Constants.SubmitType.Edit))
             {
                 return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, compareScopeId = selectedScopeOfAppointmentId, legislativeAreaId });
             }
@@ -105,7 +105,7 @@ public class LegislativeAreaReviewController : Controller
                     var userAccount =
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     latestDocument.ScopeOfAppointments.Remove(soaToRemove);
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
                     return RedirectToRoute(Routes.LegislativeAreaSelected, new { id, actionType = "Remove" });
                 }
             }
@@ -191,7 +191,14 @@ public class LegislativeAreaReviewController : Controller
                 var scopeOfApps = legislativeAreaViewModel.ScopeOfAppointments;
                 scopeOfApps.First(soa => soa.ScopeId == item.Key).NoOfProductsInScopeOfAppointment = scopeOfApps.Count(soa => soa.ScopeId == item.Key);
             }
-            viewModel.LAItems.Add(legislativeAreaViewModel);
+            if (legislativeAreaViewModel.IsArchived != true)
+            {
+                viewModel.ActiveLAItems.Add(legislativeAreaViewModel);
+            }
+            else
+            {
+                viewModel.ArchivedLAItems.Add(legislativeAreaViewModel);
+            }
         };
 
         return viewModel;
