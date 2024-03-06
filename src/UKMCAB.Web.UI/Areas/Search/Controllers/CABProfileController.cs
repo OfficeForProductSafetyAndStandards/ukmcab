@@ -534,13 +534,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 IsPointOfContactPublicDisplay = cabDocument.IsPointOfContactPublicDisplay,
                 BodyNumber = cabDocument.CABNumber,
                 CabNumberVisibility = cabDocument.CabNumberVisibility,
-                BodyTypes = cabDocument.BodyTypes ?? new List<string>(),
+                BodyTypes = cabDocument.BodyTypes,
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
-                RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
+                RegisteredTestLocations = cabDocument.TestingLocations,
                 Status = cabDocument.Status,
                 SubStatus = cabDocument.SubStatus.GetEnumDescription(),
                 StatusCssStyle = CssClassUtils.CabStatusStyle(cabDocument.StatusValue),
-                LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
+                LegislativeAreas = cabDocument.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName).ToList(),
                 ProductSchedules = new CABDocumentsViewModel
                 {
                     Id = "product-schedules",
