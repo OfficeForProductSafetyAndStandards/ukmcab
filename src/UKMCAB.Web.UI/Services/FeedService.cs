@@ -18,7 +18,7 @@ namespace UKMCAB.Web.UI.Services
                 GetFeedElement("Email address", document.Email),
                 GetFeedElement("Website", document.Website),
                 GetList("Body types", document.BodyTypes),
-                GetList("Legislative areas", document.LegislativeAreas)
+                GetLaList("Legislative areas", document.DocumentLegislativeAreas)
                 );
 
             var item = new SyndicationItem
@@ -99,19 +99,29 @@ namespace UKMCAB.Web.UI.Services
         {
             var sb = new StringBuilder($"<h2>{title}:</h2>");
             sb.Append("<div><ul>");
-            if (list == null || !list.Any())
+
+            var listItems = list.ToList();
+            if (!listItems.Any())
+
             {
                 sb.Append("<li>Not provided</li>");
             }
             else
             {
-                foreach (var listItem in list)
+
+                foreach (var listItem in listItems)
                 {
+
                     sb.AppendFormat("<li>{0}</li>", listItem);
                 }
             }
             sb.Append("</ul></div>");
             return sb.ToString();
+        }
+        
+        private string GetLaList(string title, IEnumerable<DocumentLegislativeArea> list)
+        {
+            return GetList(title, list.Select(l => l.LegislativeAreaName));
         }
 
 
