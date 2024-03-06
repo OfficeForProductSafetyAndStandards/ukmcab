@@ -1,13 +1,11 @@
-﻿using UKMCAB.Core.Domain.CAB;
-using UKMCAB.Data.Models;
+﻿using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Services.CAB
 {
     public interface ICABAdminService
     {
-        //todo Change these methods to use CabModel as return value / params instead of Document
-        Task<List<CabModel>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
+        Task<List<Document>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
             string? ukasReference);
 
         Task<bool> DocumentWithSameNameExistsAsync(Document document);
@@ -21,7 +19,7 @@ namespace UKMCAB.Core.Services.CAB
         /// </summary>
         /// <param name="userRole"></param>
         /// <returns>If null userRole returns all documents</returns>
-        Task<List<CabModel>> FindAllCABManagementQueueDocumentsForUserRole(string userRole);
+        Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string userRole);
 
         Task<Document?> GetLatestDocumentAsync(string cabId);
 

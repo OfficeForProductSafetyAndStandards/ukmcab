@@ -28,7 +28,7 @@
                                         <li class="search-result-list-item-detail">Body type: @cab.BodyTypes.Sentenceify(Constants.NotProvided)</li>
                                         <li class="search-result-list-item-detail">Registered office location: @Html.Conditional(!string.IsNullOrWhiteSpace(cab.RegisteredOfficeLocation), cab.RegisteredOfficeLocation, @Constants.NotProvided)</li>
                                         <li class="search-result-list-item-detail">Testing location: @cab.TestingLocations.Sentenceify(Constants.NotProvided)</li>
-                                        <li class="search-result-list-item-detail">Legislative area: @cab.LegislativeAreas.Sentenceify(Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Legislative area: @cab.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName).Sentenceify(Constants.NotProvided)</li>
                                     </ul>
                                 </li>
                             }
@@ -101,7 +101,7 @@
                                         <li class="search-result-list-item-detail">Body type: @cab.BodyTypes.Sentenceify(Constants.NotProvided)</li>
                                         <li class="search-result-list-item-detail">Registered office location: @Html.Conditional(!string.IsNullOrWhiteSpace(cab.RegisteredOfficeLocation), cab.RegisteredOfficeLocation, @Constants.NotProvided)</li>
                                         <li class="search-result-list-item-detail">Testing location: @cab.TestingLocations.Sentenceify(Constants.NotProvided)</li>
-                                        <li class="search-result-list-item-detail">Legislative area: @cab.LegislativeAreas.Sentenceify(Constants.NotProvided)</li>
+                                        <li class="search-result-list-item-detail">Legislative area: @cab.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName).Sentenceify(Constants.NotProvided)</li>
                                     </ul>
                                 </li>
                             }
