@@ -156,8 +156,9 @@ namespace UKMCAB.Core.Services.CAB
                 Website = document.Website,
                 BodyTypes = document.BodyTypes?.ToArray() ?? Array.Empty<string>(),
                 TestingLocations = document.TestingLocations?.ToArray() ?? Array.Empty<string>(),
+                //to-do change to document la
                 LegislativeAreas =
-                    document.LegislativeAreas?.Where(la => la != null).ToArray() ?? Array.Empty<string>(),
+                    document.DocumentLegislativeAreas.Select(la => la.LegislativeAreaName).ToArray(), 
                 RegisteredOfficeLocation = document.RegisteredOfficeLocation,
                 URLSlug = document.URLSlug,
                 LastUpdatedDate = document.LastUpdatedDate,
@@ -462,7 +463,6 @@ namespace UKMCAB.Core.Services.CAB
                 LegislativeAreaName = laName,
                 LegislativeAreaId = laToAdd
             });
-            latestDocument.LegislativeAreas.Add(laName);
             await _cabRepository.UpdateAsync(latestDocument);
             await UpdateSearchIndexAsync(latestDocument);
             await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
