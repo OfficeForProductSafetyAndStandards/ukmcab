@@ -77,8 +77,6 @@ namespace UKMCAB.Core.Services.CAB
         /// <inheritdoc />
         public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            var docs = new List<Document>();
-
             if (!string.IsNullOrWhiteSpace(userRole))
             {
                return await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
