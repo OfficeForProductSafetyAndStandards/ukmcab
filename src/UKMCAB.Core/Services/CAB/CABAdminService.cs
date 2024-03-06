@@ -6,7 +6,6 @@ using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.CAB;
 using UKMCAB.Core.Mappers;
 using UKMCAB.Core.Security;
-using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
@@ -14,7 +13,6 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
-using static System.Formats.Asn1.AsnWriter;
 
 // ReSharper disable SpecifyStringComparison - Not For Cosmos
 
@@ -459,7 +457,7 @@ namespace UKMCAB.Core.Services.CAB
             return latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId) ?? throw new InvalidOperationException();
         }
 
-        public async Task<Guid> AddLegislativeAreaAsync(Guid cabId, Guid laToAdd, string laName)
+        public async Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd, string laName)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
@@ -473,13 +471,11 @@ namespace UKMCAB.Core.Services.CAB
                 LegislativeAreaId = laToAdd
             });
             latestDocument.LegislativeAreas.Add(laName);
-            await _cabRepository.UpdateAsync(latestDocument);
-            await UpdateSearchIndexAsync(latestDocument);
-            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);            
             return guid;
         }
 
-        public async Task RemoveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId, string laName)
+        public async Task RemoveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string laName)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
@@ -498,20 +494,10 @@ namespace UKMCAB.Core.Services.CAB
                 latestDocument.ScopeOfAppointments.Remove(scopeOfAppointment);
             }
 
-            // remove product schedule
-            var productSchedules = latestDocument.Schedules.Where(n => n.LegislativeArea == documentLegislativeArea.LegislativeAreaName).ToList();
-
-            foreach (var productSchedule in productSchedules)
-            {
-                productSchedule.LegislativeArea = null;
-            }
-
-            await _cabRepository.UpdateAsync(latestDocument);
-            await UpdateSearchIndexAsync(latestDocument);
-            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
-        public async Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId)
+        public async Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
@@ -519,12 +505,10 @@ namespace UKMCAB.Core.Services.CAB
             var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException("No legislative area found");
             documentLegislativeArea.Archived = true;
 
-            await _cabRepository.UpdateAsync(latestDocument);
-            await UpdateSearchIndexAsync(latestDocument);
-            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
-        public async Task ArchiveSchedulesAsync(Guid cabId, List<Guid> ScheduleIds)
+        public async Task ArchiveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
@@ -539,9 +523,52 @@ namespace UKMCAB.Core.Services.CAB
                         schedule.Archived = true;
                     }
 
-                    await _cabRepository.UpdateAsync(latestDocument);
+                    await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 }                
             }           
+        }
+
+        public async Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
+
+            if (ScheduleIds != null && ScheduleIds.Any())
+            {
+                var selectedSchedules = latestDocument.Schedules?.Where(n => ScheduleIds.Contains(n.Id)).ToList();
+
+                if (selectedSchedules != null && selectedSchedules.Any())
+                {
+                    foreach (var schedule in selectedSchedules)
+                    {
+                        latestDocument.Schedules?.Remove(schedule);
+                    }
+
+                    await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                }
+            }
+        }
+
+        public async Task ArchiveAllActiveSchedulesAsync(UserAccount userAccount, Guid cabId)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
+
+            if (latestDocument.ActiveSchedules.Any())
+            {
+                foreach (var schedule in latestDocument.ActiveSchedules)
+                {
+                    schedule.Archived = true;
+                }
+
+                await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            }            
+        }
+
+        public async Task RemoveAllSchedulesAsync(UserAccount userAccount, Guid cabId)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
+
+            latestDocument.Schedules = new();
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
         public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)

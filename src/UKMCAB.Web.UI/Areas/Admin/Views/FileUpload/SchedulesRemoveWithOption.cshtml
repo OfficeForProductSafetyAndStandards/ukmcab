@@ -78,7 +78,10 @@
                             Select an option for the legislative area
                         </govuk-radios-fieldset-legend>
                     <govuk-radios-item value="@LegislativeAreaActionEnum.Archive">Archive</govuk-radios-item>
-                    <govuk-radios-item value="@LegislativeAreaActionEnum.Remove">Remove</govuk-radios-item>                    
+                    @if (Model.RemoveScheduleAction == RemoveActionEnum.Remove)
+                    {
+                        <govuk-radios-item value="@LegislativeAreaActionEnum.Remove">Remove</govuk-radios-item>
+                    }
                     <govuk-radios-item value="@LegislativeAreaActionEnum.MarkAsProvisional">Show as provisional</govuk-radios-item>
                     </govuk-radios-fieldset>
             </govuk-radios>            

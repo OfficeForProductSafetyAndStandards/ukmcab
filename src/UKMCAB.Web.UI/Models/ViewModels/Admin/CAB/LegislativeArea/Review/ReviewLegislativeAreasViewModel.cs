@@ -6,7 +6,7 @@
         public string? ReturnUrl { get; set; }
         public List<CABLegislativeAreasItemViewModel> LAItems { get; set; } = new();
         public string? Title => "Legislative areas";
-        public string? SuccessBannerAction { get; set; } 
+        public string? SuccessBannerMessage { get; set; } 
         public string? ErrorLink { get; set; }
     }
 }

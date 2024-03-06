@@ -1,0 +1,113 @@
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
+@using UKMCAB.Data
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeAreaRemoveWithOptionViewModel
+
+@section BackButton
+{
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
+                <govuk-back-link asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CabId" />
+            </div>
+        </div>
+    </div>
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">Edit a CAB</span>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">       
+        <form id="legislativeForm" method="post" novalidate>
+            <input type="hidden" asp-for="Title" />
+            <input type="hidden" asp-for="CabId" />
+            <input type="hidden" asp-for="LegislativeAreaRemoveAction" />
+            <h2 class="govuk-heading-s">You have selected: </h2>
+            <p class="govuk-body">@Model.LegislativeArea.Name</p>
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-visually-hidden">Warning</span>
+                    @if (Model.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
+                    {
+                        @:Removing this legislative area will also remove the details shown below.
+                    }
+                    else
+                    {
+                        @:Archiving this legislative area will also archive the details shown below.
+                    }                    
+                </strong>
+            </div>
+            <partial name="~/Areas/Admin/views/CAB/LegislativeArea/Partials/_Summary.cshtml" model="Model.LegislativeArea" />
+            @if (Model.ProductSchedules.Any())
+            {
+                <div class="govuk-warning-text govuk-!-margin-top-4">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                        @if (Model.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
+                        {
+                            @:Removing this legislative area will also remove the product schedules associated with it, as shown below.
+                        }
+                        else
+                        {
+                            <text>
+                                The product schedules below are linked to this legislative area. <br />
+                                Select if they should be archived or removed.
+                            </text>
+                        }
+                       
+                    </strong>
+                </div>
+                <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Title</th>
+                            <th scope="col" class="govuk-table__header">Filename</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var productSchedule in Model.ProductSchedules)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Title</label>
+                                    @productSchedule.Label
+                                </td>
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Filename</label>
+                                    <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CabId" asp-route-file="@productSchedule.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@productSchedule.Label</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            @if (Model.LegislativeAreaRemoveAction == RemoveActionEnum.Archive)
+            {
+                <div class="govuk-!-margin-top-4">
+                    <govuk-radios asp-for="ProductScheduleAction">
+                        <govuk-radios-fieldset>
+                            <govuk-radios-fieldset-legend class="govuk-label--s">
+                                Select an option for the product schedules
+                            </govuk-radios-fieldset-legend>
+                            <govuk-radios-item value="@RemoveActionEnum.Remove">Remove</govuk-radios-item>
+                            <govuk-radios-item value="@RemoveActionEnum.Archive">Archive</govuk-radios-item>                        
+                        </govuk-radios-fieldset>
+                     </govuk-radios>
+                </div>
+            }
+            else
+            {
+                <input type="hidden" asp-for="ProductScheduleAction" value="@RemoveActionEnum.Remove" />
+            }
+            <div class="govuk-button-group govuk-!-margin-top-4">
+                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
+                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
