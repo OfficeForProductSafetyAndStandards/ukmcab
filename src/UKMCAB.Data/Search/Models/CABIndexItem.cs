@@ -56,10 +56,7 @@ namespace UKMCAB.Data.Search.Models
 
         [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string[] BodyTypes { get; set; }= Array.Empty<string>();
-
-        [SearchableField(IsFacetable = true, IsFilterable = true, AnalyzerName = "en.microsoft")]
-        public string[] LegislativeAreas { get; set; } = Array.Empty<string>();
-
+        
         [SearchableField] public string[] TestingLocations { get; set; } = Array.Empty<string>();
 
         [SearchableField(IsFacetable = true, IsFilterable = true)]

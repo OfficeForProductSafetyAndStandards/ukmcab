@@ -5,11 +5,11 @@ namespace UKMCAB.Data.Search.Models
 {
     public class DocumentLegislativeAreaIndexItem
     {
-        [JsonIgnore]
+        [FieldBuilderIgnore]
         public Guid Id { get; set; }
-
+        [SimpleField(IsFacetable = true, IsFilterable = true)]
         public string LegislativeAreaName { get; set; } = string.Empty;
-        [JsonIgnore]
+        [FieldBuilderIgnore]
         public Guid LegislativeAreaId { get; set; }
 
         public DateTime? AppointmentDate { get; set; }
