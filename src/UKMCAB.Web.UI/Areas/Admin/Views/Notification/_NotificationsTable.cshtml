@@ -28,9 +28,6 @@
             <th scope="col" class="govuk-table__header">
                 <sort tab-to-show="@Model.TabName" target="LastUpdated" sort="@Model.SortField" sort-direction="@Model.SortDirection">@Model.LastUpdatedLabel</sort>
             </th>
-            <th scope="col" class="govuk-table__header">
-                Action
-            </th>
         }
     </tr>
     </thead>
@@ -45,10 +42,13 @@
                     @item.From.Ellipsis(20)
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">Subject</label>@(Model.TabName.Equals(NotificationController.AssignedToGroupTabName) ? item.Subject.Ellipsis(18) : item.Subject.Ellipsis(20))
+                    <label aria-hidden="true">Subject</label>
+                    <a class="govuk-link" href="@item.DetailLink">
+                         @item.Subject.Ellipsis(35)
+                    </a>
                 </td>
                 <td class="govuk-table__cell">
-                    <label aria-hidden="true">CAB name</label>@item.CABName.Ellipsis(20)
+                    <label aria-hidden="true">CAB name</label>@item.CABName.Ellipsis(30)
                 </td>
                 @if (Model.TabName.Equals(NotificationController.AssignedToGroupTabName))
                 {
@@ -59,16 +59,13 @@
                 <td class="govuk-table__cell">
                     <label aria-hidden="true">Sent on</label>@item.LastUpdated.ToStringBeisFormat()
                 </td>
-                <td class="govuk-table__cell">
-                    <label aria-hidden="true">Action</label><a class="govuk-link" href="@item.DetailLink">View</a>
-                </td>
             </tr>
         }
     }
     else
     {
         <tr class="govuk-table__row">
-            <td colspan="5">
+            <td colspan="4">
                 <p class="govuk-body">@Model.NoItemsLabel</p>
             </td>
         </tr>
