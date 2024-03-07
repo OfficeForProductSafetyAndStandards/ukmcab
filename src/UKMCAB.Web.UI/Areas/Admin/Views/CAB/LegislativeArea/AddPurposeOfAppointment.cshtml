@@ -12,6 +12,7 @@
         <form id="poaForm" method="post">
             <h2 class="govuk-heading-s">Legislative area</h2>
             <p class="govuk-body">@Model.LegislativeArea</p>
+            <input type="hidden" asp-for="IsFromSummary" />
             <input type="hidden" asp-for="@Model.LegislativeArea"/>
             <input type="hidden" asp-for="@Model.ScopeId" value="@Model.ScopeId"/>
             <govuk-radios asp-for="SelectedPurposeOfAppointmentId">
