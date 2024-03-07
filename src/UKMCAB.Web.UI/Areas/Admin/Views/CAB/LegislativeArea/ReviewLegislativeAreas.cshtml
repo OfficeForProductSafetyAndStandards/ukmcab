@@ -1,13 +1,22 @@
 @using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review.ReviewLegislativeAreasViewModel
-
+@{
+    var id = this.Url.ActionContext.HttpContext.Request.RouteValues.GetValueOrDefault("id").ToString();
+    var cabId = Model.CABId.ToString() ?? id;
+}
 @section BackButton
 {
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })"/>
-            </div>
+                @if (Model.IsFromSummary && cabId != null)
+                {
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" />
+                }
+                else
+                {
+                   <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })"/>
+                }                
         </div>
     </div>
 }

@@ -12,7 +12,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model.IsFromSummary && cabId != null)
             {               
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" class="govuk-back-link">Back</a>
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" class="govuk-back-link">Back</a>
             }
             else
             {

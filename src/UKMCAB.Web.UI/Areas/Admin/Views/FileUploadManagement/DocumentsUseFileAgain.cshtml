@@ -7,14 +7,7 @@
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                @if (Model.IsFromSummary)
-                {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
-                }
-                else
-                {
                     <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
-                }
             </div>
         </div>
     </div>
