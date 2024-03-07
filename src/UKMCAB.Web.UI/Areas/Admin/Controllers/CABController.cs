@@ -240,11 +240,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    return model.IsFromSummary
-                        ? RedirectToAction("Summary", "CAB",
-                            new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
-                        : RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails",
-                            new { Area = "admin", id = latestDocument.CABId });
+                    if(model.IsFromSummary)
+                    {
+                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true });
+                    }
+                    else if (!latestDocument.DocumentLegislativeAreas.Any())
+                    {
+                         return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId });
+                    }
+                    else
+                    {
+                        return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id = latestDocument.CABId });
+                    }
                 }
 
                 return SaveDraft(latestDocument);
