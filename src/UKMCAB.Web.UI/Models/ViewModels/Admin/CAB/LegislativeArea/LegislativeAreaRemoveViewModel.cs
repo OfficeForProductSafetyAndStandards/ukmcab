@@ -20,5 +20,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowArchiveOption { get; set; }
 
         public string? ReturnUrl { get; set; }
+
+        public bool IsFromSummary { get; set; }
     }
 }

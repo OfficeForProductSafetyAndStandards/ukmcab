@@ -8,5 +8,6 @@
         public string? Title => "Legislative areas";
         public string? SuccessBannerAction { get; set; }
         public string? ErrorLink { get; set; }
+        public bool IsFromSummary { get; set; }
     }
 }

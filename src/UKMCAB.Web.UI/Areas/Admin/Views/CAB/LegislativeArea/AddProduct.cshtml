@@ -10,6 +10,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="legislativeForm" method="post" novalidate>
+            <input type="hidden" asp-for="IsFromSummary" />
             <input type="hidden" asp-for="LegislativeArea"/>
             <input type="hidden" asp-for="PurposeOfAppointment"/>
             <input type="hidden" asp-for="Category"/>
