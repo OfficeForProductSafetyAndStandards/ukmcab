@@ -6,7 +6,14 @@
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })"/>
+                @if (Model.IsFromSummary)
+                {
+                    <govuk-back-link href="@Url.RouteUrl(CABController.Routes.CabSummary, new { id = Model.CABId, fromSummary = true })" />
+                }
+                else
+                {
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
+                }
             </div>
         </div>
     </div>
