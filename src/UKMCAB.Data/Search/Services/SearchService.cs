@@ -10,6 +10,7 @@ namespace UKMCAB.Data.Search.Services
     public class SearchService : ISearchService
     {
         private readonly SearchClient _indexClient;
+        private const string LaDocumentsName = "DocumentLegislativeAreas/LegislativeAreaName";
         public SearchService(SearchClient searchClient)
         {
             _indexClient = searchClient;
@@ -25,7 +26,7 @@ namespace UKMCAB.Data.Search.Services
             {
                 Facets =
                 {
-                    $"{nameof(result.BodyTypes)},count:0", $"{nameof(result.LegislativeAreas)},count:0",
+                    $"{nameof(result.BodyTypes)},count:0", $"{LaDocumentsName},count:0",
                     $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0",
                     $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0",
                     $"{provisionalLegislativeAreaPath},count:0", $"{legislativeAreaStatus},count:0"
@@ -38,8 +39,7 @@ namespace UKMCAB.Data.Search.Services
                 var facets = search.Value.Facets;
 
                 result.BodyTypes = GetFacetList(facets[nameof(result.BodyTypes)]);
-                result.LegislativeAreas = GetFacetList(facets[nameof(result.LegislativeAreas)])
-                    .Select(x => x.ToSentenceCase()).ToList()!;
+                result.LegislativeAreas = GetFacetList(facets[LaDocumentsName]).ToList();
                 result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
                 result.StatusValue = GetFacetList(facets[nameof(result.StatusValue)]);
                 result.CreatedByUserGroup = GetFacetList(facets[nameof(result.CreatedByUserGroup)]);
@@ -77,14 +77,6 @@ namespace UKMCAB.Data.Search.Services
                 QueryType = SearchQueryType.Full,
                 SearchMode = SearchMode.Any,
             };
-
-            searchOptions.HighlightFields.Add(nameof(CABIndexItem.Name));
-            searchOptions.HighlightFields.Add(nameof(CABIndexItem.TownCity));
-            searchOptions.HighlightFields.Add(nameof(CABIndexItem.Postcode));
-            searchOptions.HighlightFields.Add(nameof(CABIndexItem.HiddenText));
-            searchOptions.HighlightFields.Add(nameof(CABIndexItem.CABNumber));
-            searchOptions.HighlightFields.Add(nameof(CABIndexItem.LegislativeAreas));
-            searchOptions.HighlightFields.Add(nameof(CABIndexItem.HiddenScopeOfAppointments));
 
             if (options.Select.Count > 0)
             {
@@ -136,7 +128,7 @@ namespace UKMCAB.Data.Search.Services
             if (options.LegislativeAreasFilter != null && options.LegislativeAreasFilter.Any())
             {
                 var legislativeAreas = string.Join(" or ",
-                    options.LegislativeAreasFilter.Select(la => $"LegislativeAreas/any(la: la eq '{la}')"));
+                    options.LegislativeAreasFilter.Select(la => $"DocumentLegislativeAreas/any(la: la/LegislativeAreaName eq '{la}')"));
                 filters.Add($"({legislativeAreas})");
             }
 
@@ -265,7 +257,7 @@ namespace UKMCAB.Data.Search.Services
                         $"{nameof(CABIndexItem.HiddenText)}:(\"{input}\")", //phrase-match
                         //$"{nameof(CABIndexItem.ScheduleLabels)}:(\"{input}\")",        // TODO: removed from 2.0 phrase-match
                         $"{nameof(CABIndexItem.CABNumber)}:(\"{input}\")^4", //phrase-match, boosted x4
-                        $"{nameof(CABIndexItem.LegislativeAreas)}:(\"{input}\")^6", //phrase-match, boosted x6
+                         $"{LaDocumentsName}:(\"{input}\")^6", //phrase-match, boosted x6 //todo
                         $"{nameof(CABIndexItem.HiddenScopeOfAppointments)}:(\"{input}\")^6", //phrase-match, boosted x6
                         $"{nameof(CABIndexItem.UKASReference)}:(\"{input}\")", //phrase-match
                     };

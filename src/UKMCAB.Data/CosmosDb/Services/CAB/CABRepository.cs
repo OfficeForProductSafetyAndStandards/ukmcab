@@ -63,6 +63,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                                             Id = Guid.NewGuid(),
                                             LegislativeAreaId = dbLegislativeArea.Id,
                                             IsProvisional = false,
+                                            LegislativeAreaName = dbLegislativeArea.Name
                                         });
                                     }
                                 }

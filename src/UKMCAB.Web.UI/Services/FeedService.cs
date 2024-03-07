@@ -18,7 +18,7 @@ namespace UKMCAB.Web.UI.Services
                 GetFeedElement("Email address", document.Email),
                 GetFeedElement("Website", document.Website),
                 GetList("Body types", document.BodyTypes),
-                GetList("Legislative areas", document.LegislativeAreas)
+                GetLaList("Legislative areas", document.DocumentLegislativeAreas)
                 );
 
             var item = new SyndicationItem
@@ -44,7 +44,7 @@ namespace UKMCAB.Web.UI.Services
             {
                 var summaryText = string.Format("<div>{0}{1}</div>",
                     GetFeedElement("Address", cabIndexItem.AddressLine1, cabIndexItem.AddressLine2, cabIndexItem.TownCity, cabIndexItem.County, cabIndexItem.Postcode, cabIndexItem.Country),
-                    GetList("Legislative areas", cabIndexItem.LegislativeAreas));
+                    GetList("Legislative areas", cabIndexItem.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName)));
                 var item = new SyndicationItem
                 {
                     Id = $"tag:www.gov.uk,2005:/search/cab-profile/{cabIndexItem.URLSlug}",
@@ -99,19 +99,29 @@ namespace UKMCAB.Web.UI.Services
         {
             var sb = new StringBuilder($"<h2>{title}:</h2>");
             sb.Append("<div><ul>");
-            if (list == null || !list.Any())
+
+            var listItems = list.ToList();
+            if (!listItems.Any())
+
             {
                 sb.Append("<li>Not provided</li>");
             }
             else
             {
-                foreach (var listItem in list)
+
+                foreach (var listItem in listItems)
                 {
+
                     sb.AppendFormat("<li>{0}</li>", listItem);
                 }
             }
             sb.Append("</ul></div>");
             return sb.ToString();
+        }
+        
+        private string GetLaList(string title, IEnumerable<DocumentLegislativeArea> list)
+        {
+            return GetList(title, list.Select(l => l.LegislativeAreaName));
         }
 
 

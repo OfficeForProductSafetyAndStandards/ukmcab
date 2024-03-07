@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Core.Services.CAB;
 using Microsoft.ApplicationInsights;
-using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.CosmosDb.Services.CAB;
@@ -72,8 +71,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var ukasResults = await _sut.FindAllCABManagementQueueDocumentsForUserRole(role);
 
-            var expectedResultsCABModel = expectedResults.Select(d => d.MapToCabModel()).ToList();
-            var expectedOtherCABModel = expectedOther.Select(d => d.MapToCabModel()).ToList();
+            var expectedResultsCABModel = expectedResults;
+            var expectedOtherCABModel = expectedOther.ToList();
 
             // Assert
             Assert.AreEqual(ukasResults[0].CABId, expectedResultsCABModel[0].CABId);

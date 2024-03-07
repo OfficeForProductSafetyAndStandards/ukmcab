@@ -534,13 +534,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 IsPointOfContactPublicDisplay = cabDocument.IsPointOfContactPublicDisplay,
                 BodyNumber = cabDocument.CABNumber,
                 CabNumberVisibility = cabDocument.CabNumberVisibility,
-                BodyTypes = cabDocument.BodyTypes ?? new List<string>(),
+                BodyTypes = cabDocument.BodyTypes,
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
-                RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
+                RegisteredTestLocations = cabDocument.TestingLocations,
                 Status = cabDocument.Status,
                 SubStatus = cabDocument.SubStatus.GetEnumDescription(),
                 StatusCssStyle = CssClassUtils.CabStatusStyle(cabDocument.StatusValue),
-                LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
+                LegislativeAreas = cabDocument.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName).ToList(),
                 ProductSchedules = new CABDocumentsViewModel
                 {
                     Id = "product-schedules",
@@ -605,6 +605,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 LegislativeAreaId = x.LegislativeAreaId,
                 Name = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).Name,
                 Regulation = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).Regulation,
+                HasDataModel = allLegislativeAreas.Single(y => y.Id == x.LegislativeAreaId).HasDataModel,
                 IsProvisional = x.IsProvisional != null && x.IsProvisional.Value,
                 IsArchived = x.Archived != null && x.Archived.Value,
                 AppointmentDate = x.AppointmentDate,
@@ -843,10 +844,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     Email = cabDocument.Email,
                     Phone = cabDocument.Phone,
                     BodyNumber = cabDocument.CABNumber,
-                    BodyTypes = cabDocument.BodyTypes ?? new List<string>(),
+                    BodyTypes = cabDocument.BodyTypes,
                     RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
-                    RegisteredTestLocations = cabDocument.TestingLocations ?? new List<string>(),
-                    LegislativeAreas = cabDocument.LegislativeAreas ?? new List<string>(),
+                    RegisteredTestLocations = cabDocument.TestingLocations,
+                    LegislativeAreas = cabDocument.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName).ToList(),
                     ProductSchedules = cabDocument.Schedules?.Select(pdf => new SubscriptionsCoreCabFileModel
                     {
                         BlobName = pdf.BlobName,

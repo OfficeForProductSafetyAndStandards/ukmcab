@@ -14,5 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string Title { get; set; } = string.Empty;
 
         public string? ReturnUrl { get; set; }
+
+        public bool IsFromSummary { get; set; }
     }
 }

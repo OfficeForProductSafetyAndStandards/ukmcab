@@ -31,7 +31,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
     }
 
     [HttpGet("additional-information/{laId}", Name = Routes.LegislativeAreaAdditionalInformation)]
-    public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl)
+    public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl, bool fromSummary)
     {
         var legislativeArea = await _cabAdminService.GetDocumentLegislativeAreaByLaIdAsync(id, laId);
         var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeArea.LegislativeAreaId);
@@ -49,6 +49,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
             PointOfContactEmail = legislativeArea.PointOfContactEmail,
             PointOfContactPhone = legislativeArea.PointOfContactPhone,
             IsPointOfContactPublicDisplay = legislativeArea.IsPointOfContactPublicDisplay,
+            IsFromSummary = fromSummary,
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);
@@ -117,7 +118,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         return submitType switch
         {
             Constants.SubmitType.Continue => RedirectToRoute(
-                LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id }),
+                LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary = vm.IsFromSummary }),
             _ => RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true })
         };
     }

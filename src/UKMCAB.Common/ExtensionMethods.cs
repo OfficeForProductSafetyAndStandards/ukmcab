@@ -46,6 +46,20 @@ public static class ExtensionMethods
     {
         return dateTime.HasValue ? dateTime.Value.ToString("dd/MM/yyyy HH:mm") : string.Empty;
     }
+    public static string ToStringBeisDateFormat(this DateTime dateTime)
+    {
+        return dateTime.ToString("d MMM yyyy");
+    }
+    public static string ToStringBeisDateFormat(this DateTime? dateTime)
+    {
+        return dateTime.HasValue ? dateTime.Value.ToString("d MMM yyyy") : string.Empty;
+    }
+
+    public static string ToStringBeisDateFormat(this string? dateTime)
+    {
+        var isValidDate = DateOnly.TryParse(dateTime, out var dateOnly);
+        return isValidDate ? dateOnly.ToString("d MMM yyyy") : string.Empty;
+    }
     public static string AsYesNo(this bool b)
     {
         return b ? "yes" : "no";
