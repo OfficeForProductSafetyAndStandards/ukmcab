@@ -128,7 +128,7 @@ namespace UKMCAB.Data.Search.Services
             if (options.LegislativeAreasFilter != null && options.LegislativeAreasFilter.Any())
             {
                 var legislativeAreas = string.Join(" or ",
-                    options.LegislativeAreasFilter.Select(la => $"DocumentLegislativeAreas/any(la: la/LegislativeAreaName eq '{la}')"));
+                    options.LegislativeAreasFilter.Select(la => $"DocumentLegislativeAreas/any(la: la/LegislativeAreaName eq '{la}' and la/Archived ne true)"));
                 filters.Add($"({legislativeAreas})");
             }
 
