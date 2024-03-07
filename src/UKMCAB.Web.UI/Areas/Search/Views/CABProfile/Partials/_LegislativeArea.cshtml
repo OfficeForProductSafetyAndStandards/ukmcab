@@ -1,4 +1,9 @@
+@using Ganss.Xss;
 @model (string CabUrl, LegislativeAreaViewModel LegislativeArea)
+@{
+    var htmlSanitizer = new HtmlSanitizer();
+    htmlSanitizer.AllowedTags.Clear();
+}
 <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">
         <div class="display-flex">
@@ -45,9 +50,9 @@
                     @if (!string.IsNullOrWhiteSpace(Model.LegislativeArea.Reason))
                     {
                         <dt class="govuk-!-font-weight-bold">Reason for change of review date</dt>
-                        <dd class="govuk-!-margin-bottom-4">@Html.Raw(Model.LegislativeArea.Reason)</dd>
+                        <dd class="govuk-!-margin-bottom-4">@Html.Raw(htmlSanitizer.Sanitize(Model.LegislativeArea.Reason))</dd>
                     }
-                    
+
                     @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity.IsAuthenticated)
                     {
                         @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactName))
@@ -55,11 +60,13 @@
                             <dt class="govuk-!-font-weight-bold">Legislative area contact name</dt>
                             <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.PointOfContactName</dd>
                         }
+
                         @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactEmail))
                         {
                             <dt class="govuk-!-font-weight-bold">Legislative area contact email</dt>
                             <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.PointOfContactEmail</dd>
                         }
+
                         @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactPhone))
                         {
                             <dt class="govuk-!-font-weight-bold">Legislative area contact telephone</dt>
