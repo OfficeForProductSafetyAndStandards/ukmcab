@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
-using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 

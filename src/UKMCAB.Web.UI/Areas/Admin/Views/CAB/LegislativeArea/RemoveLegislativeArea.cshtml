@@ -42,7 +42,7 @@
                 </strong>
             </div>
             <partial name="~/Areas/Admin/views/CAB/LegislativeArea/Partials/_Summary.cshtml" model="Model.LegislativeArea" />            
-            <div class="govuk-button-group">
+            <div class="govuk-button-group govuk-!-margin-top-4">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
                 <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>

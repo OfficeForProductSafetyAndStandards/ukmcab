@@ -87,48 +87,5 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     d.CABId == cabId.ToString() && !d.Schedules.Contains(productSchedule))), Times.Once);
             
         }
-
-        [Test]
-        public Task DocumentNotFound_RemoveAllSchedulesAsync_ThrowsException()
-        {
-            // Arrange
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>());
-
-            // Act and Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _sut.RemoveAllSchedulesAsync(new Mock<UserAccount>().Object, Guid.NewGuid()), "No document found");
-            return Task.CompletedTask;
-        }       
-
-        [Test]
-        public async Task RemoveAllSchedulesAsync_CabUpdated()
-        {
-            // Arrange
-            var cabId = Guid.NewGuid();
-            var scheduleId = Guid.NewGuid();
-            var scheduleIds = new List<Guid> { scheduleId };
-            var productSchedule = new FileUpload() { Id = scheduleId };
-
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>
-                {
-                    new()
-                    {
-                        CABId = cabId.ToString(),
-                        StatusValue = Status.Draft,
-                        Schedules = new () { productSchedule },
-                    }
-                });
-
-            // Act
-            await _sut.RemoveAllSchedulesAsync(new Mock<UserAccount>().Object, cabId);
-
-            // Assert
-            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
-            _mockCABRepository.Verify(
-                r => r.UpdateAsync(It.Is<Document>(d =>
-                    d.CABId == cabId.ToString() && d.Schedules.Count == 0)), Times.Once);
-        }
     }
 }

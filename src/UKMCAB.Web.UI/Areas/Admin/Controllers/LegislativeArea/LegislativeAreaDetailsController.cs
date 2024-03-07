@@ -883,7 +883,7 @@ public class LegislativeAreaDetailsController : Controller
                 LegislativeAreaRemoveAction = actionType,
                 CabId = id,
                 LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
-                ProductSchedules = latestDocument.Schedules,
+                ProductSchedules = latestDocument.Schedules?.Where(n => n.LegislativeArea == legislativeArea.Name).ToList(),
                 ReturnUrl = returnUrl
             };
             return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaWithOption.cshtml", vm);
@@ -895,6 +895,7 @@ public class LegislativeAreaDetailsController : Controller
         string? returnUrl)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
 
         if (ModelState.IsValid)
         {
@@ -912,17 +913,31 @@ public class LegislativeAreaDetailsController : Controller
             {
                 await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
 
+                List<Guid>? scheduleIds = null;
+
+                if (latestDocument?.Schedules != null && latestDocument.Schedules.Any())
+                {   
+                    scheduleIds = latestDocument.Schedules.Where(n => n.LegislativeArea == legislativeArea.Name).Select(n => n.Id).ToList();                    
+                }
+
                 // product schedule selected to remove
                 if (vm.ProductScheduleAction == RemoveActionEnum.Remove)
                 {
-                    await _cabAdminService.RemoveAllSchedulesAsync(userAccount, id);
+                    if (scheduleIds != null && scheduleIds.Any())
+                    {
+                        await _cabAdminService.RemoveSchedulesAsync(userAccount, id, scheduleIds);
+                    }
+
                     laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleRemoved;
                     
                 }
                 // product schedule selected to archive
                 else
                 {
-                    await _cabAdminService.ArchiveAllActiveSchedulesAsync(userAccount, id);
+                    if (scheduleIds != null && scheduleIds.Any())
+                    {
+                        await _cabAdminService.ArchiveSchedulesAsync(userAccount, id, scheduleIds);
+                    }                    
                     laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleArchived;
                 }
             }
@@ -932,7 +947,7 @@ public class LegislativeAreaDetailsController : Controller
         else
         {   
             vm.LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId);
-            vm.ProductSchedules = latestDocument.Schedules;
+            vm.ProductSchedules = latestDocument.Schedules?.Where(n => n.LegislativeArea == legislativeArea.Name).ToList();
             return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaWithOption.cshtml", vm);
         }
     }

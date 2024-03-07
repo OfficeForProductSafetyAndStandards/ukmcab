@@ -92,10 +92,6 @@ namespace UKMCAB.Core.Services.CAB
 
         Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds);
 
-        Task ArchiveAllActiveSchedulesAsync(UserAccount userAccount, Guid cabId);
-
-        Task RemoveAllSchedulesAsync(UserAccount userAccount, Guid cabId);
-
         Document? GetLatestDocumentFromDocuments(List<Document> documents);
     }
 }

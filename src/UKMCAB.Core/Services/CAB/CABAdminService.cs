@@ -494,6 +494,17 @@ namespace UKMCAB.Core.Services.CAB
                 latestDocument.ScopeOfAppointments.Remove(scopeOfAppointment);
             }
 
+            // remove product schedules     
+            if (latestDocument.Schedules != null && latestDocument.Schedules.Any())
+            {
+                var schedules = latestDocument.Schedules.Where(n => n.LegislativeArea == laName).ToList();
+
+                foreach (var schedule in schedules)
+                {
+                    latestDocument.Schedules.Remove(schedule);
+                }
+            }
+
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
@@ -546,30 +557,7 @@ namespace UKMCAB.Core.Services.CAB
                     await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 }
             }
-        }
-
-        public async Task ArchiveAllActiveSchedulesAsync(UserAccount userAccount, Guid cabId)
-        {
-            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
-
-            if (latestDocument.ActiveSchedules.Any())
-            {
-                foreach (var schedule in latestDocument.ActiveSchedules)
-                {
-                    schedule.Archived = true;
-                }
-
-                await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-            }            
-        }
-
-        public async Task RemoveAllSchedulesAsync(UserAccount userAccount, Guid cabId)
-        {
-            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
-
-            latestDocument.Schedules = new();
-            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-        }
+        }       
 
         public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {  
