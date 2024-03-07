@@ -3,10 +3,7 @@ using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
-using UKMCAB.Core.Domain.CAB;
-using UKMCAB.Core.Mappers;
 using UKMCAB.Core.Security;
-using UKMCAB.Core.Services.Users;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
@@ -14,7 +11,6 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
-using static System.Formats.Asn1.AsnWriter;
 
 // ReSharper disable SpecifyStringComparison - Not For Cosmos
 
@@ -40,7 +36,7 @@ namespace UKMCAB.Core.Services.CAB
             _mapper = mapper;
         }
 
-        public async Task<List<CabModel>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
+        public async Task<List<Document>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
             string? ukasReference)
         {
             var documents = await _cabRepository.Query<Document>(d =>
@@ -48,8 +44,7 @@ namespace UKMCAB.Core.Services.CAB
                  d.CABNumber!.Equals(cabNumber)) ||
                 (!string.IsNullOrWhiteSpace(ukasReference) && d.UKASReference.Equals(ukasReference)));
             //Do not identify same Cab Id as a duplicate
-            var documentsFound = documents.Where(d => !d.CABId.Equals(cabId)).ToList();
-            return documentsFound.Select(document => document.MapToCabModel()).ToList();
+            return documents.Where(d => !d.CABId.Equals(cabId)).ToList();
         }
 
         public async Task<bool> DocumentWithSameNameExistsAsync(Document document)
@@ -80,22 +75,17 @@ namespace UKMCAB.Core.Services.CAB
 
 
         /// <inheritdoc />
-        public async Task<List<CabModel>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
+        public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            var docs = new List<Document>();
-
             if (!string.IsNullOrWhiteSpace(userRole))
             {
-                docs = await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
+               return await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
                                                                   d.StatusValue == Status.Draft) ||
                                                                  d.StatusValue == Status.Archived);
-
-                return docs.Select(document => document.MapToCabModel()).ToList();
             }
 
-            docs = await _cabRepository.Query<Document>(d =>
+            return await _cabRepository.Query<Document>(d =>
                 d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
-            return docs.Select(document => document.MapToCabModel()).ToList();
         }
 
         public async Task<Document?> GetLatestDocumentAsync(string cabId)
@@ -166,8 +156,6 @@ namespace UKMCAB.Core.Services.CAB
                 Website = document.Website,
                 BodyTypes = document.BodyTypes?.ToArray() ?? Array.Empty<string>(),
                 TestingLocations = document.TestingLocations?.ToArray() ?? Array.Empty<string>(),
-                LegislativeAreas =
-                    document.LegislativeAreas?.Where(la => la != null).ToArray() ?? Array.Empty<string>(),
                 RegisteredOfficeLocation = document.RegisteredOfficeLocation,
                 URLSlug = document.URLSlug,
                 LastUpdatedDate = document.LastUpdatedDate,
@@ -472,7 +460,6 @@ namespace UKMCAB.Core.Services.CAB
                 LegislativeAreaName = laName,
                 LegislativeAreaId = laToAdd
             });
-            latestDocument.LegislativeAreas.Add(laName);
             await _cabRepository.UpdateAsync(latestDocument);
             await UpdateSearchIndexAsync(latestDocument);
             await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
@@ -487,9 +474,6 @@ namespace UKMCAB.Core.Services.CAB
             var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException("No legislative area found");
             latestDocument.DocumentLegislativeAreas.Remove(documentLegislativeArea);
             
-            // remove legislative area
-            latestDocument.LegislativeAreas.Remove(laName);
-
             // remove scope of appointment
             var scopeOfAppointments = latestDocument.ScopeOfAppointments.Where(n => n.LegislativeAreaId == legislativeAreaId).ToList();
 
