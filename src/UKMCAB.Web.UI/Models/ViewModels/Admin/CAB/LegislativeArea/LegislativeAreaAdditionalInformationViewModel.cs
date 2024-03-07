@@ -30,4 +30,6 @@ public record LegislativeAreaAdditionalInformationViewModel(
     public string? PointOfContactPhone { get; set; }
 
     public bool? IsPointOfContactPublicDisplay { get; set; }
+
+    public bool IsFromSummary { get; set; }
 }
