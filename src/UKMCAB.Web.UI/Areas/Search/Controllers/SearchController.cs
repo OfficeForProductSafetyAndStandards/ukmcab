@@ -45,10 +45,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.BodyTypes),
             nameof(CABIndexItem.RegisteredOfficeLocation),
             nameof(CABIndexItem.TestingLocations),
-            nameof(CABIndexItem.LegislativeAreas),
             nameof(CABIndexItem.LastUpdatedDate),
             nameof(CABIndexItem.LastUserGroup),
             nameof(CABIndexItem.CreatedByUserGroup),
+            "DocumentLegislativeAreas/LegislativeAreaName"
         };
 
         public static class Routes
@@ -222,9 +222,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private async Task SetFacetOptions(SearchViewModel model, bool? selectAllPendingApproval)
         {
             var facets = await  _cachedSearchService.GetFacetsAsync(model.InternalSearch);
-
-            facets.LegislativeAreas = facets.LegislativeAreas.Select(la => la.ToSentenceCase()).ToList()!;
-
+            
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
             model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);  

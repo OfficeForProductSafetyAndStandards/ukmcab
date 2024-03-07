@@ -44,7 +44,7 @@ namespace UKMCAB.Web.UI.Services
             {
                 var summaryText = string.Format("<div>{0}{1}</div>",
                     GetFeedElement("Address", cabIndexItem.AddressLine1, cabIndexItem.AddressLine2, cabIndexItem.TownCity, cabIndexItem.County, cabIndexItem.Postcode, cabIndexItem.Country),
-                    GetList("Legislative areas", cabIndexItem.LegislativeAreas));
+                    GetList("Legislative areas", cabIndexItem.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName)));
                 var item = new SyndicationItem
                 {
                     Id = $"tag:www.gov.uk,2005:/search/cab-profile/{cabIndexItem.URLSlug}",

@@ -17,7 +17,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             BodyType = ListItems(cab.BodyTypes);
             RegisteredOfficeLocation = cab.RegisteredOfficeLocation;
             RegisteredTestLocation = ListItems(cab.TestingLocations);
-            LegislativeArea = ListItems(cab.LegislativeAreas);
+            LegislativeArea = ListItems(cab.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName));
             UserGroup = cab.CreatedByUserGroup;
         }
 

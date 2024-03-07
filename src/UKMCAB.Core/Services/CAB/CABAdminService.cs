@@ -156,9 +156,6 @@ namespace UKMCAB.Core.Services.CAB
                 Website = document.Website,
                 BodyTypes = document.BodyTypes?.ToArray() ?? Array.Empty<string>(),
                 TestingLocations = document.TestingLocations?.ToArray() ?? Array.Empty<string>(),
-                //to-do change to document la
-                LegislativeAreas =
-                    document.DocumentLegislativeAreas.Select(la => la.LegislativeAreaName).ToArray(), 
                 RegisteredOfficeLocation = document.RegisteredOfficeLocation,
                 URLSlug = document.URLSlug,
                 LastUpdatedDate = document.LastUpdatedDate,
