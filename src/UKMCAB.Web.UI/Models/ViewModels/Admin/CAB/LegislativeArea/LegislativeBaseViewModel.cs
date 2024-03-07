@@ -9,5 +9,7 @@
         public string? ReturnUrl { get; set; }
 
         public Guid ScopeId { get; set; }
+
+        public bool IsFromSummary { get; set; }
     }
 }

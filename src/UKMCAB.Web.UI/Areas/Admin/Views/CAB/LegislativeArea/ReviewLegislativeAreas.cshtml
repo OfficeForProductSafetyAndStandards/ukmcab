@@ -29,6 +29,7 @@
 
 <div class="govuk-grid-row">
     <form method="post" enctype="multipart/form-data" novalidate>
+        <input type="hidden" asp-for="IsFromSummary" />
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group">
                 @if (!ViewData.ModelState.IsValid)
@@ -65,11 +66,13 @@
                                 </summary>
                                 <div class="govuk-details__text govuk-!-padding-top-1">
                                     <govuk-button-link asp-route="@LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation"
-                                                       asp-route-id="@Model.CABId" asp-route-laId="@legislativeArea.LegislativeAreaId" class="govuk-button--secondary">
+                                                       asp-route-id="@Model.CABId" asp-route-laId="@legislativeArea.LegislativeAreaId" 
+                                                       asp-route-fromSummary="@Model.IsFromSummary" class="govuk-button--secondary">
                                         Edit legislative area additional information
                                     </govuk-button-link>
                                     <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveLegislativeArea" class="govuk-button--secondary ukmcab-margin-left-10"
-                                                       asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area">
+                                                       asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area"
+                                                       asp-route-fromSummary="@Model.IsFromSummary">
                                         @removeLegislativeAreaLabel
                                     </govuk-button-link>
 
@@ -237,7 +240,7 @@
             </div>
 
             <div>
-                <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })">Add legislative area</govuk-button-link>
+                <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId, fromSummary = Model.IsFromSummary })">Add legislative area</govuk-button-link>
             </div>
             <div>
                 <hr class="ukmcab-border" />
@@ -261,7 +264,8 @@
                                 </summary>
                                 <div class="govuk-details__text govuk-!-padding-top-1">
                                     <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveLegislativeArea" class="govuk-button--secondary"
-                                               asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@archivedLegislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area">
+                                        asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@archivedLegislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area"
+                                                       asp-route-fromSummary="@Model.IsFromSummary">
                                         Remove archived legislative area
                                     </govuk-button-link>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3">
@@ -385,11 +389,28 @@
             </div>
             <div>
                 <div class="govuk-button-group">
-                    <govuk-button-link asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId">Continue</govuk-button-link>
+                    
+                    @if (Model.IsFromSummary)
+                    {
+                        <govuk-button-link asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="true">Continue</govuk-button-link>
+                    }
+                    else
+                    {
+                        <govuk-button-link asp-area="admin" asp-controller="FileUpload" asp-action="SchedulesUpload" asp-route-id="@Model.CABId">Continue</govuk-button-link>
+                    }
+                    
                     <govuk-button-link class="govuk-button--secondary" asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId">
                         Save as draft
                     </govuk-button-link>
-                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+
+                    @if (Model.IsFromSummary)
+                    {
+                        <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
+                    else
+                    {
+                        <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
                 </div>
             </div>
         </div>

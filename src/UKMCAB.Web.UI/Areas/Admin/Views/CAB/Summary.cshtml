@@ -387,7 +387,8 @@ else if (Model.IsEditLocked)
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions)
             {
-                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@currentUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@currentUrl"
+                    asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CabLegislativeAreasViewModel.IsCompleted)
             {
