@@ -490,12 +490,12 @@ namespace UKMCAB.Core.Services.CAB
             // remove product schedules     
             if (latestDocument.Schedules != null && latestDocument.Schedules.Any())
             {
-                var schedules = latestDocument.Schedules.Where(n => n.LegislativeArea != null && n.LegislativeArea == laName).ToList();              
+                var schedules = latestDocument.Schedules.Where(n => n.LegislativeArea != null && n.LegislativeArea == laName).ToList();   
 
                 foreach (var schedule in schedules)
                 {
-                    // only one file exists
-                    if (latestDocument?.Schedules?.Where(n => n.BlobName == schedule.BlobName).Count() == 1)
+                    // check if same blob not used by any other schedule, delete it if not
+                    if (latestDocument?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
                     {
                         blobsToBeDeleted.Add(schedule.BlobName);
                     }
@@ -556,9 +556,9 @@ namespace UKMCAB.Core.Services.CAB
                     List<string> blobsToBeDeleted = new();
 
                     foreach (var schedule in selectedSchedules)
-                    {
-                        // only one file exists
-                        if (latestDocument?.Schedules?.Where(n => n.BlobName == schedule.BlobName).Count() == 1)
+                    {   
+                        // check if same blob not used by any other schedule, delete it if not
+                        if (latestDocument?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
                         {
                             blobsToBeDeleted.Add(schedule.BlobName);
                         }
