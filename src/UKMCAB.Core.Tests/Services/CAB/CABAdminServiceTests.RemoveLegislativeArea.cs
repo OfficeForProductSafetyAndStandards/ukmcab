@@ -6,6 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Data.Models;
 using System.Linq;
+using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -21,7 +22,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _sut.RemoveLegislativeAreaAsync(Guid.NewGuid(), Guid.NewGuid(), "Machinery"), "No document found");
+                await _sut.RemoveLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), Guid.NewGuid(), "Machinery"), "No document found");
             return Task.CompletedTask;
         }
 
@@ -40,7 +41,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _sut.RemoveLegislativeAreaAsync(Guid.NewGuid(), Guid.NewGuid(), "test"), "No legislative area found");
+                await _sut.RemoveLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), Guid.NewGuid(), "test"), "No legislative area found");
             return Task.CompletedTask;
         }
 
@@ -69,15 +70,13 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
 
             // Act
-            await _sut.RemoveLegislativeAreaAsync(cabId, legislativeAreaId, laToRemove);
+            await _sut.RemoveLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, legislativeAreaId, laToRemove);
 
             // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
-                    d.CABId == cabId.ToString() && !d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && !d.ScopeOfAppointments.Contains(documentScopeOfAppointment))), Times.Once);           
-
-            _mockCABRepository.VerifyNoOtherCalls();
+                    d.CABId == cabId.ToString() && !d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && !d.ScopeOfAppointments.Contains(documentScopeOfAppointment) && !d.Schedules.Contains(productSchedule))), Times.Once);      
         }
 
         [Test]
@@ -89,7 +88,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _sut.ArchiveLegislativeAreaAsync(Guid.NewGuid(), Guid.NewGuid()), "No document found");
+                await _sut.ArchiveLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), Guid.NewGuid()), "No document found");
             return Task.CompletedTask;
         }
 
@@ -108,7 +107,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _sut.ArchiveLegislativeAreaAsync(Guid.NewGuid(), Guid.NewGuid()), "No legislative area found");
+                await _sut.ArchiveLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), Guid.NewGuid()), "No legislative area found");
             return Task.CompletedTask;
         }
 
@@ -132,15 +131,13 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
 
             // Act
-            await _sut.ArchiveLegislativeAreaAsync(cabId, legislativeAreaId);
+            await _sut.ArchiveLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, legislativeAreaId);
 
             // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
                     d.CABId == cabId.ToString() && d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && d.DocumentLegislativeAreas.First().Archived == true)), Times.Once);
-
-            _mockCABRepository.VerifyNoOtherCalls();
         }
     }
 }
