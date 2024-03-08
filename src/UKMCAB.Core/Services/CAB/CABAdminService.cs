@@ -188,7 +188,6 @@ namespace UKMCAB.Core.Services.CAB
             }
             else if (draft.StatusValue == Status.Draft)
             {
-                draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.Saved));
                 await _cabRepository.UpdateAsync(draft);
             }
 
