@@ -16,7 +16,11 @@
         public List<Audit> AuditLog { get; set; } = new();
 
         // Used by the search index, saves a lot of effort to flatten the model in the data source
-        public DateTime LastUpdatedDate => AuditLog.Any() ? AuditLog.Max(al => al.DateTime) : DateTime.MinValue;
+        public DateTime LastUpdatedDate
+        {
+            get;
+            set;
+        }
 
         /// <summary>
         /// Last Audit Log entry using User Role Label

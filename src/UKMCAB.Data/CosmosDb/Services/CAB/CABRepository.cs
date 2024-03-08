@@ -130,9 +130,10 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             document.CabNumberVisibility = DataConstants.CabNumberVisibilityOptions.Public;
         }
 
-        public async Task<Document> CreateAsync(Document document)
+        public async Task<Document> CreateAsync(Document document, DateTime lastUpdatedDateTime)
         {
             document.id = Guid.NewGuid().ToString();
+            document.LastUpdatedDate = lastUpdatedDateTime;
             var response = await _container.CreateItemAsync(document);
             if (response.StatusCode == HttpStatusCode.Created)
             {
@@ -162,15 +163,9 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             return list;
         }
 
-        [Obsolete("Use " + nameof(UpdateAsync))]
-        public async Task<bool> Update(Document document)
-        {
-            var response = await _container.UpsertItemAsync(document);
-            return response.StatusCode == HttpStatusCode.OK;
-        }
-
         public async Task UpdateAsync(Document document)
         {
+            document.LastUpdatedDate = DateTime.Now;
             var response = await _container.UpsertItemAsync(document);
             Guard.IsTrue(response.StatusCode == HttpStatusCode.OK,
                 $"The CAB document was not updated; http status={response.StatusCode}");
