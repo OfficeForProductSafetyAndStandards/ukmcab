@@ -11,15 +11,15 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if(cabId == null){
-                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-back-link">Back</a>
+                    <govuk-back-link asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" />
             }
             else if (Model.IsFromSummary)
             {
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" class="govuk-back-link">Back</a>
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" />
             }
             else
             {
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@cabId" class="govuk-back-link">Back</a>
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@cabId" />
             }
         </div>
     </div>
@@ -117,7 +117,7 @@
                 }
                 else
                 {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
 

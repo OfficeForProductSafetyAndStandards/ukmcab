@@ -10,14 +10,7 @@
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                @if (Model.IsFromSummary)
-                {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
-                }
-                else
-                {
-                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" class="govuk-back-link">Back</a>
-                }
+                <govuk-back-link asp-area="admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" />
             </div>
         </div>
     </div>
@@ -158,14 +151,7 @@
                 <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">
                     Save as draft
                 </a>
-                @if (Model.IsFromSummary)
-                {
-                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
-                else
-                {
-                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                }
+                    <a asp-area="admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>

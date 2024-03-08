@@ -12,11 +12,11 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model.IsFromSummary && cabId != null)
             {               
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" class="govuk-back-link">Back</a>
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" />
             }
             else
             {
-                <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@cabId" class="govuk-back-link">Back</a>
+                    <govuk-back-link asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@cabId" />
             }
         </div>
     </div>
@@ -197,7 +197,7 @@
                     </button>
                     @if (Model.IsFromSummary)
                     {
-                        <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }                   
                     else
                     {

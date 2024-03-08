@@ -277,8 +277,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     .Value);
                             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
-                            return RedirectToAction("SchedulesList", new { id, actionType = ProductScheduleActionMessageEnum.ProductScheduleRemoved });
-                        }                        
+                            return RedirectToAction("SchedulesList", new { id, actionType = ProductScheduleActionMessageEnum.ProductScheduleRemoved, fromSummary });
+
+                        }
                         else
                         {   
                             // check if no legislative area assigned to schedule or legislative area have more than 1 product schedule
@@ -286,12 +287,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                             if (redirectToRemoveSchedule)
                             {
-                                return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id, actionType = RemoveActionEnum.Remove });                                
+                                return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id, actionType = RemoveActionEnum.Remove, fromSummary });                                
                             }
                             else
                             {
-                                return RedirectToRoute(Routes.SchedulesListRemoveWithOption, new { id, scheduleId = schedule.Id, actionType = RemoveActionEnum.Remove });
-                            }                            
+                                return RedirectToRoute(Routes.SchedulesListRemoveWithOption, new { id, scheduleId = schedule.Id, actionType = RemoveActionEnum.Remove, fromSummary });
+
+                            }
                         }
                     }                                       
                 }
@@ -728,7 +730,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemove)]
-        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, RemoveActionEnum actionType)
+        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, RemoveActionEnum actionType, bool fromSummary)
+
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -745,7 +748,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabId = Guid.Parse(id),
                 Title = $"{actionText} product schedule",
                 RemoveScheduleAction = actionType,
-                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime)
+                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime),
+                IsFromSummary = fromSummary
+
             };
 
             return View("~/Areas/Admin/views/FileUpload/SchedulesRemove.cshtml", vm);
@@ -793,7 +798,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/remove-option/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemoveWithOption)]
-        public async Task<IActionResult> SchedulesListRemoveOption(string id, string scheduleId, RemoveActionEnum actionType)
+        public async Task<IActionResult> SchedulesListRemoveOption(string id, string scheduleId, RemoveActionEnum actionType, bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -814,7 +819,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabId = Guid.Parse(id),
                 Title = $"{actionText} product schedule",
                 RemoveScheduleAction = actionType,
-                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime)
+                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime),
+                IsFromSummary = fromSummary
             };
 
             return View("~/Areas/Admin/views/FileUpload/SchedulesRemoveWithOption.cshtml", vm);
