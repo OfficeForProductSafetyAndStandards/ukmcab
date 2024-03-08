@@ -21,36 +21,48 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act 
             var result = await _sut.FindAllDocumentsByCABIdAsync(_faker.Random.Word());
-            
+
             // Assert
             Assert.False(result.Any());
-        }        
-        
-        
+        }
+
+
         [Test]
         public async Task FindAllDocumentsByCABIdAsync_ReturnsList()
         {
             var auditLog1 = new Audit { DateTime = DateTime.Now.AddDays(1) }; // audit log
             var auditLog2 = new Audit { DateTime = DateTime.Now.AddDays(2) }; // audit log
-            var auditLog3 = new Audit { DateTime = DateTime.Now.AddDays(3)}; // audit log
+            var auditLog3 = new Audit { DateTime = DateTime.Now.AddDays(3) }; // audit log
 
             var expectedResults = new List<Document>
             {
-                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(),  StatusValue = Status.Draft, AuditLog = new List<Audit>{auditLog1} },
-                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(),  StatusValue = Status.Draft, AuditLog = new List<Audit>{auditLog2} },
-                new() {id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(),  StatusValue = Status.Archived, AuditLog = new List<Audit>{auditLog3}}
+                new()
+                {
+                    id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), StatusValue = Status.Draft,
+                    AuditLog = new List<Audit> { auditLog1 }, LastUpdatedDate = auditLog1.DateTime
+                },
+                new()
+                {
+                    id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), StatusValue = Status.Draft,
+                    AuditLog = new List<Audit> { auditLog2 }, LastUpdatedDate = auditLog2.DateTime
+                },
+                new()
+                {
+                    id = Guid.NewGuid().ToString(), CABId = Guid.NewGuid().ToString(), StatusValue = Status.Archived,
+                    AuditLog = new List<Audit> { auditLog3 }, LastUpdatedDate = auditLog3.DateTime
+                }
             };
 
             _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
-               .ReturnsAsync(expectedResults);
+                .ReturnsAsync(expectedResults);
 
             // Act 
             var result = await _sut.FindAllDocumentsByCABIdAsync(_faker.Random.Word());
 
             // Assert
-            Assert.AreEqual(result[0].CABId, expectedResults[2].CABId);
-            Assert.AreEqual(result[1].CABId, expectedResults[1].CABId);
-            Assert.AreEqual(result[2].CABId, expectedResults[0].CABId);
-        }      
+            Assert.AreEqual(expectedResults[2].CABId, result[0].CABId);
+            Assert.AreEqual(expectedResults[1].CABId, result[1].CABId);
+            Assert.AreEqual(expectedResults[0].CABId, result[2].CABId);
+        }
     }
 }
