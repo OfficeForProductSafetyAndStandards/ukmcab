@@ -9,5 +9,7 @@
         public string? SuccessBannerMessage { get; set; } 
         public string? ErrorLink { get; set; }
         public bool IsFromSummary { get; set; }
+        public bool ShowArchiveLegislativeAreaAction { get; set; }
+
     }
 }

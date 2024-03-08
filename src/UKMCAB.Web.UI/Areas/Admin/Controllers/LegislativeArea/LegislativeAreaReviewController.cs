@@ -42,8 +42,10 @@ public class LegislativeAreaReviewController : Controller
         {
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
-
+        
         var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
+        var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
+        vm.ShowArchiveLegislativeAreaAction = !singleDraftDoc;
 
         if (actionType.HasValue)
         {

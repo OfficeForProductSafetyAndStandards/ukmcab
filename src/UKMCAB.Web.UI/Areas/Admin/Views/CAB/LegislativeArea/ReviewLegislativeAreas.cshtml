@@ -74,10 +74,9 @@
                                         Edit legislative area additional information
                                     </govuk-button-link>
 
-                                    @if (legislativeArea.IsArchived is null or false)
+                                    @if (Model.ShowArchiveLegislativeAreaAction && legislativeArea.IsArchived is null or false)
                                     {
-                                        <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveOrArchiveLegislativeArea" class="govuk-button--secondary ukmcab-margin-left-10"
-                                                           asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-actionType="@RemoveActionEnum.Archive" asp-route-returnURl="remove-legislative-area" asp-route-fromSummary="@Model.IsFromSummary">
+                                        <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveOrArchiveLegislativeArea" class="govuk-button--secondary ukmcab-margin-left-10" asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-actionType="@RemoveActionEnum.Archive" asp-route-returnURl="remove-legislative-area" asp-route-fromSummary="@Model.IsFromSummary">
                                             Archive legislative area
                                         </govuk-button-link>
                                     }
@@ -274,8 +273,7 @@
                                 </summary>
                                 <div class="govuk-details__text govuk-!-padding-top-1">
                                     <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveOrArchiveLegislativeArea" class="govuk-button--secondary"
-                                        asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@archivedLegislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area"
-                                                       asp-route-fromSummary="@Model.IsFromSummary">
+                                        asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@archivedLegislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area" asp-route-actionType="@RemoveActionEnum.Remove" asp-route-fromSummary="@Model.IsFromSummary">
                                         Remove archived legislative area
                                     </govuk-button-link>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3">

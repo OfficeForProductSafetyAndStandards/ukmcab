@@ -164,9 +164,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
         public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? SelectedScheduleId,
             ProductScheduleActionMessageEnum? actionType)
-        {
-            var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
-            var latestDocument = _cabAdminService.GetLatestDocumentFromDocuments(cabDocuments);
+        {   
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             string? successBannerTitle = default;            
 
             if (latestDocument == null) // Implies no document or document archived
@@ -207,7 +206,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 SuccessBannerTitle = successBannerTitle,                
                 DocumentStatus = latestDocument.StatusValue,
                 LegislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestDocument),
-                ShowArchiveAction = !(cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
+                ShowArchiveAction = !await _cabAdminService.IsSingleDraftDocAsync(Guid.Parse(id))
             }); 
         }
 

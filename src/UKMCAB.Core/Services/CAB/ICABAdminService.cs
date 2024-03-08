@@ -91,5 +91,7 @@ namespace UKMCAB.Core.Services.CAB
         Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds);
 
         Document? GetLatestDocumentFromDocuments(List<Document> documents);
+
+        Task<bool> IsSingleDraftDocAsync(Guid cabId);        
     }
 }

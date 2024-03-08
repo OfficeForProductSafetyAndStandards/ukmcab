@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
+using System.ComponentModel;
+using System.Xml.Schema;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
@@ -11,6 +13,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+using UKMCAB.Data.Storage;
 
 // ReSharper disable SpecifyStringComparison - Not For Cosmos
 
@@ -24,9 +27,10 @@ namespace UKMCAB.Core.Services.CAB
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
         private readonly TelemetryClient _telemetryClient;
         private readonly IMapper _mapper;
+        private readonly IFileStorage _fileStorage;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient,
+            ICachedPublishedCABService cachedPublishedCabService, IFileStorage fileStorage, TelemetryClient telemetryClient,
             IMapper mapper)
         {
             _cabRepository = cabRepository;
@@ -34,6 +38,7 @@ namespace UKMCAB.Core.Services.CAB
             _cachedPublishedCabService = cachedPublishedCabService;
             _telemetryClient = telemetryClient;
             _mapper = mapper;
+            _fileStorage = fileStorage;
         }
 
         public async Task<List<Document>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
@@ -475,6 +480,7 @@ namespace UKMCAB.Core.Services.CAB
             
             // remove scope of appointment
             var scopeOfAppointments = latestDocument.ScopeOfAppointments.Where(n => n.LegislativeAreaId == legislativeAreaId).ToList();
+            List<string> blobsToBeDeleted = new();
 
             foreach (var scopeOfAppointment in scopeOfAppointments)
             {
@@ -484,15 +490,26 @@ namespace UKMCAB.Core.Services.CAB
             // remove product schedules     
             if (latestDocument.Schedules != null && latestDocument.Schedules.Any())
             {
-                var schedules = latestDocument.Schedules.Where(n => n.LegislativeArea == laName).ToList();
+                var schedules = latestDocument.Schedules.Where(n => n.LegislativeArea != null && n.LegislativeArea == laName).ToList();              
 
                 foreach (var schedule in schedules)
                 {
+                    // only one file exists
+                    if (latestDocument?.Schedules?.Where(n => n.BlobName == schedule.BlobName).Count() == 1)
+                    {
+                        blobsToBeDeleted.Add(schedule.BlobName);
+                    }
+
                     latestDocument.Schedules.Remove(schedule);
                 }
             }
 
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+
+            if (blobsToBeDeleted.Any())
+            {
+                await DeleteBlobs(blobsToBeDeleted);
+            }
         }
 
         public async Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId)
@@ -536,12 +553,25 @@ namespace UKMCAB.Core.Services.CAB
 
                 if (selectedSchedules != null && selectedSchedules.Any())
                 {
+                    List<string> blobsToBeDeleted = new();
+
                     foreach (var schedule in selectedSchedules)
                     {
-                        latestDocument.Schedules?.Remove(schedule);
+                        // only one file exists
+                        if (latestDocument?.Schedules?.Where(n => n.BlobName == schedule.BlobName).Count() == 1)
+                        {
+                            blobsToBeDeleted.Add(schedule.BlobName);
+                        }
+
+                        latestDocument?.Schedules?.Remove(schedule);                        
                     }
 
                     await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+
+                    if (blobsToBeDeleted.Any())
+                    {
+                        await DeleteBlobs(blobsToBeDeleted);
+                    }
                 }
             }
         }       
@@ -572,11 +602,25 @@ namespace UKMCAB.Core.Services.CAB
             return null;
         }
 
+        public async Task<bool> IsSingleDraftDocAsync(Guid cabId)
+        {
+            var cabDocuments = await FindAllDocumentsByCABIdAsync(cabId.ToString());
+            return cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft;
+        }
+
         private async Task RefreshCachesAsync(string cabId, string slug)
         {
             await _cachedSearchService.ClearAsync();
             await _cachedSearchService.ClearAsync(cabId);
             await _cachedPublishedCabService.ClearAsync(cabId, slug);
+        }  
+        
+        private async Task DeleteBlobs(List<string> blobNamesList)
+        {
+            foreach(var blobName in blobNamesList)
+            {
+                await _fileStorage.DeleteCABSchedule(blobName);
+            }
         }
     }
 }

@@ -829,20 +829,19 @@ public class LegislativeAreaDetailsController : Controller
 
     [HttpGet("remove/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeArea)]
     public async Task<IActionResult> RemoveOrArchiveLegislativeArea(Guid id, Guid legislativeAreaId, RemoveActionEnum actionType, string? returnUrl)
-    {
-        var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
+    {  
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
-        var latestDocument = _cabAdminService.GetLatestDocumentFromDocuments(cabDocuments);
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
         
         // only one document and draft mode the remove else give user an option to remove or archive
-        if (cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
+        if (await _cabAdminService.IsSingleDraftDocAsync(id))
         {            
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, legislativeArea.Name);
             return RedirectToAction("Summary", "CAB", new { Area = "admin", id, subSectionEditAllowed = true, });
         }
         // if legislative area has any schedules then give an option to remove/archive product schedules
-        else if (latestDocument.Schedules.Where(n => n.LegislativeArea.ToLower() == legislativeArea.Name.ToLower()).Any())
+        else if (latestDocument.Schedules.Where(n => n.LegislativeArea != null &&  n.LegislativeArea.ToLower() == legislativeArea.Name.ToLower()).Any())
         {
             return RedirectToRoute( Routes.RemoveOrArchiveLegislativeAreaOption, new { id, legislativeAreaId, actionType });
         }
@@ -894,13 +893,12 @@ public class LegislativeAreaDetailsController : Controller
 
     [HttpGet("remove-with-option/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeAreaOption)]
     public async Task<IActionResult> RemoveOrArchiveLegislativeAreaWithOption(Guid id, Guid legislativeAreaId, RemoveActionEnum actionType, string? returnUrl)
-    {
-        var cabDocuments = await _cabAdminService.FindAllDocumentsByCABIdAsync(id.ToString());
+    {   
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
         LegislativeAreaActionMessageEnum? laActionMessageActionType = null;
 
         // only one document and draft mode the remove else give user an option to remove or archive
-        if (cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft)
+        if (await _cabAdminService.IsSingleDraftDocAsync(id))
         {
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, legislativeArea.Name);
@@ -910,7 +908,7 @@ public class LegislativeAreaDetailsController : Controller
         }
         else
         {
-            var latestDocument = _cabAdminService.GetLatestDocumentFromDocuments(cabDocuments);            
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());            
             var actionText = actionType == RemoveActionEnum.Remove ? "Remove" : "Archive";
 
             var vm = new LegislativeAreaRemoveWithOptionViewModel
@@ -941,7 +939,7 @@ public class LegislativeAreaDetailsController : Controller
             // legislative arease selected to remove
             if (vm.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
             {
-                await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, vm.Title);
+                await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, legislativeArea.Name);
                 laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaRemovedProductScheduleRemoved;
             }
             // legislative area selected to archive
@@ -949,12 +947,7 @@ public class LegislativeAreaDetailsController : Controller
             {
                 await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
 
-                List<Guid>? scheduleIds = null;
-
-                if (latestDocument?.Schedules != null && latestDocument.Schedules.Any())
-                {   
-                    scheduleIds = latestDocument.Schedules.Where(n => n.LegislativeArea == legislativeArea.Name).Select(n => n.Id).ToList();                    
-                }
+                List<Guid> scheduleIds = latestDocument?.Schedules?.Where(n => n.LegislativeArea != null && n.LegislativeArea == legislativeArea.Name).Select(n => n.Id).ToList();
 
                 // product schedule selected to remove
                 if (vm.ProductScheduleAction == RemoveActionEnum.Remove)
