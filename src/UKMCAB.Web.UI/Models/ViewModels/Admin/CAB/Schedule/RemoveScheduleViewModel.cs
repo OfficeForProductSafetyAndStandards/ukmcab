@@ -12,5 +12,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule
         public FileUpload? FileUpload { get; set; }
 
         public RemoveActionEnum? RemoveScheduleAction { get; set; }
+        public bool IsFromSummary { get; set; }
     }
 }

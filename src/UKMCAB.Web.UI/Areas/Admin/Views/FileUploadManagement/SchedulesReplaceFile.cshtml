@@ -6,7 +6,7 @@
     <div class="govuk-width-container ">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link asp-area="admin" asp-controller="cab" asp-action="schedules-list" asp-route-id="@Model.CABId" />
+                <govuk-back-link asp-area="admin" asp-controller="cab" asp-action="schedules-list" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" />
             </div>
         </div>
     </div>
@@ -36,6 +36,7 @@
                 <input asp-for="UploadedFiles![0].LegislativeArea" type="hidden" value="@file.LegislativeArea">
                 <input asp-for="UploadedFiles![0].IsReplaced" type="hidden" value="@file.IsReplaced">
                 <input asp-for="CABId" type="hidden" />
+                <input asp-for="IsFromSummary" type="hidden" />
                 <fieldset class="govuk-fieldset" aria-describedby="selectFileToReplaceHint">
                     <dl class="govuk-summary-list govuk-summary-list--no-border">
                         <div class="govuk-summary-list__row  govuk-!-padding-top-5">
@@ -81,7 +82,7 @@
                 <button class="govuk-button js-submit-button" id="replace-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile" data-submitting-text="Uploading...">
                     Replace
                 </button>
-                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary">Cancel</a>
             </div>
         </div>
     }

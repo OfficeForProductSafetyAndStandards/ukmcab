@@ -29,7 +29,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }       
 
         [HttpGet("admin/cab/schedules-replace-file/{id}/{scheduleId}")]
-        public async Task<IActionResult> SchedulesReplaceFile(string id, string scheduleId)
+        public async Task<IActionResult> SchedulesReplaceFile(string id, string scheduleId, bool fromSummary)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
@@ -42,7 +42,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Title = SchedulesOptions.ReplaceFile,
                 UploadedFiles = latestVersion.Schedules?.Where(n => n.Id == Guid.Parse(scheduleId)).Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
-                DocumentStatus = latestVersion.StatusValue
+                DocumentStatus = latestVersion.StatusValue,
+                IsFromSummary = fromSummary
             });
         }
 
@@ -66,7 +67,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                return RedirectToAction("SchedulesList", "FileUpload", new { id, SelectedScheduleId = scheduleId, fromAction = ProductScheduleActionMessageEnum.ProductScheduleFileReplaced.ToString() });
+                return RedirectToAction("SchedulesList", "FileUpload", new { id, SelectedScheduleId = scheduleId, fromAction = ProductScheduleActionMessageEnum.ProductScheduleFileReplaced.ToString(), fromSummary = model.IsFromSummary });
             }
 
             model.Title = SchedulesOptions.ReplaceFile;

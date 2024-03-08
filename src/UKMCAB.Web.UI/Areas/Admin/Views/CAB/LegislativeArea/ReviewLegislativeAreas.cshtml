@@ -414,7 +414,7 @@
 
                     @if (Model.IsFromSummary)
                     {
-                        <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }
                     else
                     {

@@ -282,7 +282,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     .Value);
                             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
-                            return RedirectToAction("SchedulesList", new { id, fromAction = ProductScheduleActionMessageEnum.ProductScheduleRemoved.ToString() });
+                            return RedirectToAction("SchedulesList", new { id, fromAction = ProductScheduleActionMessageEnum.ProductScheduleRemoved.ToString(), fromSummary });
                         }                        
                         else
                         {   
@@ -291,11 +291,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                             if (redirectToRemoveSchedule)
                             {
-                                return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id, actionType = "remove" });                                
+                                return RedirectToRoute(Routes.SchedulesListRemove, new { id, scheduleId = schedule.Id, actionType = "remove", fromSummary });                                
                             }
                             else
                             {
-                                return RedirectToRoute(Routes.SchedulesListRemoveWithOption, new { id, scheduleId = schedule.Id, actionType = "remove" });
+                                return RedirectToRoute(Routes.SchedulesListRemoveWithOption, new { id, scheduleId = schedule.Id, actionType = "remove", fromSummary });
                             }                            
                         }
                     }                                       
@@ -733,7 +733,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemove)]
-        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, string actionType)
+        public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, string actionType, bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -752,7 +752,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabId = Guid.Parse(id),
                 Title = $"{actionText} product schedule",
                 RemoveScheduleAction = removeActionType,
-                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime)
+                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime),
+                IsFromSummary = fromSummary
             };
 
             return View("~/Areas/Admin/views/FileUpload/SchedulesRemove.cshtml", vm);
@@ -803,7 +804,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/remove-option/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemoveWithOption)]
-        public async Task<IActionResult> SchedulesListRemoveOption(string id, string scheduleId, string actionType)
+        public async Task<IActionResult> SchedulesListRemoveOption(string id, string scheduleId, string actionType, bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -825,7 +826,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabId = Guid.Parse(id),
                 Title = $"{actionText} product schedule",
                 RemoveScheduleAction = removeActionType,
-                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime)
+                FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime),
+                IsFromSummary = fromSummary
             };
 
             return View("~/Areas/Admin/views/FileUpload/SchedulesRemoveWithOption.cshtml", vm);
