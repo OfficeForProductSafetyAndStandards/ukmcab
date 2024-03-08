@@ -96,6 +96,9 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         }
                     }
 
+                    // 1644 - Delete Audit entries for "Saved" events.
+                    document.AuditLog.RemoveAll(a => a.Action == "Saved");
+
                     await UpdateAsync(document);
                 }
             }

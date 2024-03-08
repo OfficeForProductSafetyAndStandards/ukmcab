@@ -6,8 +6,10 @@
         public List<CABLegislativeAreasItemViewModel> ActiveLAItems { get; set; } = new();
         public List<CABLegislativeAreasItemViewModel> ArchivedLAItems { get; set; } = new();
         public string? Title => "Legislative areas";
-        public string? SuccessBannerAction { get; set; }
+        public string? SuccessBannerMessage { get; set; } 
         public string? ErrorLink { get; set; }
         public bool IsFromSummary { get; set; }
+        public bool ShowArchiveLegislativeAreaAction { get; set; }
+
     }
 }

@@ -3,7 +3,9 @@ using System.Security.Claims;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
 
@@ -32,19 +34,25 @@ public class LegislativeAreaReviewController : Controller
     }
 
     [HttpGet(Name = Routes.LegislativeAreaSelected)]
-    public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string? returnUrl, string? actionType, bool fromSummary)
+    public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string? returnUrl, LegislativeAreaActionMessageEnum? actionType, bool fromSummary)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-
         // Implies no document or archived
         if (latestDocument == null)
         {
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
-
+        
         var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
-        vm.SuccessBannerAction = actionType;
+        var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
+        vm.ShowArchiveLegislativeAreaAction = !singleDraftDoc;
+
+        if (actionType.HasValue)
+        {
+            vm.SuccessBannerMessage = AlertMessagesUtils.LegislativeAreaActionMessages[actionType.Value];
+        }
         vm.IsFromSummary = fromSummary;
+
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
 
@@ -107,7 +115,7 @@ public class LegislativeAreaReviewController : Controller
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     latestDocument.ScopeOfAppointments.Remove(soaToRemove);
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
-                    return RedirectToRoute(Routes.LegislativeAreaSelected, new { id, actionType = "Remove", fromSummary = reviewLaVM.IsFromSummary });
+                    return RedirectToRoute(Routes.LegislativeAreaSelected, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.IsFromSummary });
                 }
             }
         }

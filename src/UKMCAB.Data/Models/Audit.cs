@@ -110,6 +110,23 @@ namespace UKMCAB.Data.Models
                     "<p class=\"govuk-body\">{0} was removed from legislative area.</p>",
                     la.LegislativeAreaName);
             }
+
+            foreach(var currentLa in currentLAs)
+            {
+                var previousLa = previousLAs.FirstOrDefault(x => x.Id == currentLa.Id);
+
+                if (previousLa != null)
+                {
+                    if (previousLa.PointOfContactName != currentLa.PointOfContactName ||
+                        previousLa.PointOfContactEmail != currentLa.PointOfContactEmail ||
+                        previousLa.PointOfContactPhone != currentLa.PointOfContactPhone)
+                    {
+                        sb.AppendFormat(
+                            "<p class=\"govuk-body\">{0} contact details changed</p>",
+                            currentLa.LegislativeAreaName);
+                    }
+                }
+            }
         }  
 
         private static void CalculateChangesToScheduleOrDocument(Document publishedDocument, Document? previousDocument, StringBuilder sb, List<FileUpload> previousFileUploads, List<FileUpload> currentFileUploads, string docType)
@@ -184,7 +201,6 @@ namespace UKMCAB.Data.Models
     public class AuditCABActions
     {
         public const string Created = nameof(Created);
-        public const string Saved = nameof(Saved);
         public const string Published = nameof(Published);
         public const string RePublished = nameof(RePublished);
         public const string Archived = nameof(Archived); 

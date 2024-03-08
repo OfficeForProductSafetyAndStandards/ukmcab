@@ -67,7 +67,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                return RedirectToAction("SchedulesList", "FileUpload", new { id, SelectedScheduleId = scheduleId, fromAction = ProductScheduleActionMessageEnum.ProductScheduleFileReplaced.ToString(), fromSummary = model.IsFromSummary });
+                return RedirectToAction("SchedulesList", "FileUpload", new { id, SelectedScheduleId = scheduleId, actionType = ProductScheduleActionMessageEnum.ProductScheduleFileReplaced, fromSummary = model.IsFromSummary  });
+
             }
 
             model.Title = SchedulesOptions.ReplaceFile;
@@ -229,10 +230,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private static string AppendDateTimeToFileName(DateTime date, string fileName)
         {
-            string extension = System.IO.Path.GetExtension(fileName);
+            string extension = Path.GetExtension(fileName);
             string formattedDateTime = date.ToString("yyyyMMddHHmmss");
 
-            string fileNameWithoutExtension = System.IO.Path.GetFileNameWithoutExtension(fileName);
+            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileName);
 
             string newFileName = $"{fileNameWithoutExtension}-{formattedDateTime}{extension}";
 
