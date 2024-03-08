@@ -14,6 +14,7 @@ using UKMCAB.Core.Mappers;
 using System.Linq;
 using AutoMapper;
 using Bogus;
+using UKMCAB.Data.Storage;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -23,6 +24,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
         private Mock<ICABRepository> _mockCABRepository = null!;
         private Mock<ICachedPublishedCABService> _mockCachedPublishedCAB = null!;
         private Mock<ICachedSearchService> _mockCachedSearchService = null!;
+        private Mock<IFileStorage> _mockFileStorage = null!;
         private TelemetryClient _telemetryClient = null!;        
         private ICABAdminService _sut = null!;
         private readonly Faker _faker = new();
@@ -32,10 +34,11 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository = new Mock<ICABRepository>();
             _mockCachedPublishedCAB = new Mock<ICachedPublishedCABService>();
             _mockCachedSearchService = new Mock<ICachedSearchService>();
-            _telemetryClient = new TelemetryClient();            
+            _telemetryClient = new TelemetryClient();
+            _mockFileStorage = new Mock<IFileStorage>();
             var mapper = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); }).CreateMapper();
 
-            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _telemetryClient, mapper);
+            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _mockFileStorage.Object, _telemetryClient, mapper);
         }
 
         [Theory]

@@ -17,5 +17,17 @@ namespace UKMCAB.Web.UI.Helpers
             {ProductScheduleActionMessageEnum.ProductScheduleFileReplaced, "The replacement file has been uploaded."},
             {ProductScheduleActionMessageEnum.ProductScheduleFileUsedAgain, "The file has been used again."},
         };
+
+
+        public readonly static Dictionary<LegislativeAreaActionMessageEnum, string> LegislativeAreaActionMessages = new Dictionary<LegislativeAreaActionMessageEnum, string>
+        {
+            {LegislativeAreaActionMessageEnum.LegislativeAreaRemoved, "The legislative area has been removed."},
+            {LegislativeAreaActionMessageEnum.LegislativeAreaRemovedProductScheduleRemoved, "The  legislative area and associated product schedules have been removed."},
+            {LegislativeAreaActionMessageEnum.LegislativeAreaArchived, "The legislative area has been archived."},
+            {LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleArchived, "The legislative area and associated product schedules have been archived."},
+            {LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleRemoved, "The legislative area has been archived and the associated product schedules removed."},
+            {LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, "The applicable conformity assessment procedure has been removed."},
+            
+        };
     }
 }
