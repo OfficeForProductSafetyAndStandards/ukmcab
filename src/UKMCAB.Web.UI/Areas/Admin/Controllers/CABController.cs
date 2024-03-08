@@ -72,8 +72,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
                         new CABDetailsViewModel { IsNew = true };
             model.IsFromSummary = fromSummary;
-            model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
-
+            model.IsOPSSUser = User.IsInRole(Roles.OPSS.Id);
+            model.IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id);
             return View(model);
         }
 
@@ -392,7 +392,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
 
             // Pre-populate model for edit
-            var cabDetails = new CABDetailsViewModel(latest);
+            var cabDetails = new CABDetailsViewModel(latest)
+            {
+                IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id)
+            };
             var cabContact = new CABContactViewModel(latest);
             var cabBody = new CABBodyDetailsViewModel(latest);
             var cabLegislativeAreas = await PopulateCABLegislativeAreasViewModelAsync(latest);
@@ -449,6 +452,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _editLockService.SetAsync(latest.CABId, User.GetUserId()!);
             }
 
+            var draftUpdated = Enumerable.MaxBy(
+                latest.AuditLog.Where(l => l.Action == AuditCABActions.Created),
+                u => u.DateTime)?.DateTime != latest.LastUpdatedDate;
+            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
+            model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
+            model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
+                                    model.SubStatus !=
+                                    SubStatus.PendingApprovalToPublish &&
+                                    (model.Status == Status.Published ||
+                                     model.IsOPSSOrInCreatorUserGroup);
+            model.EditByGroupPermitted =
+                model.SubStatus != SubStatus.PendingApprovalToPublish &&
+                (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
+
             return View(model);
         }
 
@@ -464,10 +481,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType == Constants.SubmitType.Save)
             {
-                var userAccount =
-                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
-                    userAccount ?? throw new InvalidOperationException(), latest);
                 return RedirectToCabManagementWithUnlockCab(latest.CABId);
             }
 
@@ -627,33 +640,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     null, null,
                     false, Guid.Parse(publishModel.CABId ?? throw new InvalidOperationException())));
             }
-        }
-
-        public override void OnActionExecuted(ActionExecutedContext context)
-        {
-            if (context.Result is ViewResult viewResult)
-            {
-                if (viewResult.Model is CABSummaryViewModel summaryViewModel)
-                {
-                    summaryViewModel.CanPublish = User.IsInRole(Roles.OPSS.Id);
-                    summaryViewModel.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id);
-                    summaryViewModel.ShowEditActions = summaryViewModel.SubSectionEditAllowed &&
-                                                       !summaryViewModel.IsEditLocked &&
-                                                       summaryViewModel.SubStatus !=
-                                                       SubStatus.PendingApprovalToPublish &&
-                                                       (summaryViewModel.Status == Status.Published ||
-                                                        summaryViewModel.IsOPSSOrInCreatorUserGroup);
-                    summaryViewModel.EditByGroupPermitted =
-                        summaryViewModel.SubStatus != SubStatus.PendingApprovalToPublish &&
-                        (summaryViewModel.Status == Status.Published || summaryViewModel.IsOPSSOrInCreatorUserGroup);
-                }
-                else if (viewResult.Model is CABDetailsViewModel detailsViewModel)
-                {
-                    detailsViewModel.IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id);
-                }
-            }
-
-            base.OnActionExecuted(context);
         }
 
         private IActionResult SaveDraft(Document document)
