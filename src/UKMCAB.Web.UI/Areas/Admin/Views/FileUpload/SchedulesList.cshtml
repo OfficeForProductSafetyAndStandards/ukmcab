@@ -22,7 +22,7 @@
 
 <div id="schedule-list-container" class="govuk-grid-row">
 
-    @if (Model.ShowBanner && ViewData.ModelState.IsValid)
+    @if (!string.IsNullOrWhiteSpace(Model.SuccessBannerTitle) && ViewData.ModelState.IsValid)
     {
         <div class="govuk-width-container">
             <div class="govuk-grid-row">

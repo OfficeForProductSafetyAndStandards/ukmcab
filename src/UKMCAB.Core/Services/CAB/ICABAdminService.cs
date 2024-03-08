@@ -80,14 +80,18 @@ namespace UKMCAB.Core.Services.CAB
         /// <param name="laToAdd">New Legislative area id to create</param>
         /// <param name="laName">Name of Legislative Area to add to labels</param>
         /// <returns>DocumentLegislativeId created</returns>
-        Task<Guid> AddLegislativeAreaAsync(Guid cabId, Guid laToAdd, string laName);
+        Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd, string laName);
 
-        Task RemoveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId, string laName);
+        Task RemoveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string laName);
 
-        Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId);        
+        Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId);        
 
-        Task ArchiveSchedulesAsync(Guid cabId, List<Guid> ScheduleIds);
+        Task ArchiveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds);
+
+        Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds);
 
         Document? GetLatestDocumentFromDocuments(List<Document> documents);
+
+        Task<bool> IsSingleDraftDocAsync(Guid cabId);        
     }
 }

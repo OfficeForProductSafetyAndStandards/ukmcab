@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
+using System.ComponentModel;
+using System.Xml.Schema;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
@@ -11,6 +13,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
+using UKMCAB.Data.Storage;
 
 // ReSharper disable SpecifyStringComparison - Not For Cosmos
 
@@ -24,9 +27,10 @@ namespace UKMCAB.Core.Services.CAB
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
         private readonly TelemetryClient _telemetryClient;
         private readonly IMapper _mapper;
+        private readonly IFileStorage _fileStorage;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, TelemetryClient telemetryClient,
+            ICachedPublishedCABService cachedPublishedCabService, IFileStorage fileStorage, TelemetryClient telemetryClient,
             IMapper mapper)
         {
             _cabRepository = cabRepository;
@@ -34,6 +38,7 @@ namespace UKMCAB.Core.Services.CAB
             _cachedPublishedCabService = cachedPublishedCabService;
             _telemetryClient = telemetryClient;
             _mapper = mapper;
+            _fileStorage = fileStorage;
         }
 
         public async Task<List<Document>> FindOtherDocumentsByCabNumberOrUkasReference(string cabId, string? cabNumber,
@@ -447,7 +452,7 @@ namespace UKMCAB.Core.Services.CAB
             return latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId) ?? throw new InvalidOperationException();
         }
 
-        public async Task<Guid> AddLegislativeAreaAsync(Guid cabId, Guid laToAdd, string laName)
+        public async Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd, string laName)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
@@ -460,13 +465,12 @@ namespace UKMCAB.Core.Services.CAB
                 LegislativeAreaName = laName,
                 LegislativeAreaId = laToAdd
             });
-            await _cabRepository.UpdateAsync(latestDocument);
-            await UpdateSearchIndexAsync(latestDocument);
-            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
+            
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);            
             return guid;
         }
 
-        public async Task RemoveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId, string laName)
+        public async Task RemoveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string laName)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
@@ -476,26 +480,39 @@ namespace UKMCAB.Core.Services.CAB
             
             // remove scope of appointment
             var scopeOfAppointments = latestDocument.ScopeOfAppointments.Where(n => n.LegislativeAreaId == legislativeAreaId).ToList();
+            List<string> blobsToBeDeleted = new();
 
             foreach (var scopeOfAppointment in scopeOfAppointments)
             {
                 latestDocument.ScopeOfAppointments.Remove(scopeOfAppointment);
             }
 
-            // remove product schedule
-            var productSchedules = latestDocument.Schedules.Where(n => n.LegislativeArea == documentLegislativeArea.LegislativeAreaName).ToList();
-
-            foreach (var productSchedule in productSchedules)
+            // remove product schedules     
+            if (latestDocument.Schedules != null && latestDocument.Schedules.Any())
             {
-                productSchedule.LegislativeArea = null;
+                var schedules = latestDocument.Schedules.Where(n => n.LegislativeArea != null && n.LegislativeArea == laName).ToList();   
+
+                foreach (var schedule in schedules)
+                {
+                    // check if same blob not used by any other schedule, delete it if not
+                    if (latestDocument?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
+                    {
+                        blobsToBeDeleted.Add(schedule.BlobName);
+                    }
+
+                    latestDocument.Schedules.Remove(schedule);
+                }
             }
 
-            await _cabRepository.UpdateAsync(latestDocument);
-            await UpdateSearchIndexAsync(latestDocument);
-            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+
+            if (blobsToBeDeleted.Any())
+            {
+                await DeleteBlobs(blobsToBeDeleted);
+            }
         }
 
-        public async Task ArchiveLegislativeAreaAsync(Guid cabId, Guid legislativeAreaId)
+        public async Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
@@ -503,12 +520,10 @@ namespace UKMCAB.Core.Services.CAB
             var documentLegislativeArea = latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ?? throw new InvalidOperationException("No legislative area found");
             documentLegislativeArea.Archived = true;
 
-            await _cabRepository.UpdateAsync(latestDocument);
-            await UpdateSearchIndexAsync(latestDocument);
-            await RefreshCachesAsync(latestDocument.CABId, latestDocument.URLSlug);
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
-        public async Task ArchiveSchedulesAsync(Guid cabId, List<Guid> ScheduleIds)
+        public async Task ArchiveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
 
@@ -523,10 +538,43 @@ namespace UKMCAB.Core.Services.CAB
                         schedule.Archived = true;
                     }
 
-                    await _cabRepository.UpdateAsync(latestDocument);
+                    await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 }                
             }           
         }
+
+        public async Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ?? throw new InvalidOperationException("No document found");
+
+            if (ScheduleIds != null && ScheduleIds.Any())
+            {
+                var selectedSchedules = latestDocument.Schedules?.Where(n => ScheduleIds.Contains(n.Id)).ToList();
+
+                if (selectedSchedules != null && selectedSchedules.Any())
+                {
+                    List<string> blobsToBeDeleted = new();
+
+                    foreach (var schedule in selectedSchedules)
+                    {   
+                        // check if same blob not used by any other schedule, delete it if not
+                        if (latestDocument?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
+                        {
+                            blobsToBeDeleted.Add(schedule.BlobName);
+                        }
+
+                        latestDocument?.Schedules?.Remove(schedule);                        
+                    }
+
+                    await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+
+                    if (blobsToBeDeleted.Any())
+                    {
+                        await DeleteBlobs(blobsToBeDeleted);
+                    }
+                }
+            }
+        }       
 
         public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {  
@@ -554,11 +602,25 @@ namespace UKMCAB.Core.Services.CAB
             return null;
         }
 
+        public async Task<bool> IsSingleDraftDocAsync(Guid cabId)
+        {
+            var cabDocuments = await FindAllDocumentsByCABIdAsync(cabId.ToString());
+            return cabDocuments.Count == 1 && cabDocuments.First().StatusValue == Status.Draft;
+        }
+
         private async Task RefreshCachesAsync(string cabId, string slug)
         {
             await _cachedSearchService.ClearAsync();
             await _cachedSearchService.ClearAsync(cabId);
             await _cachedPublishedCabService.ClearAsync(cabId, slug);
+        }  
+        
+        private async Task DeleteBlobs(List<string> blobNamesList)
+        {
+            foreach(var blobName in blobNamesList)
+            {
+                await _fileStorage.DeleteCABSchedule(blobName);
+            }
         }
     }
 }
