@@ -189,6 +189,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
                 IgnorePaging = true,
                 Select = _select,
+                InternalSearch = false,
+                StatusesFilter = new[] { ((int)Status.Published).ToString() } // RSS published CABs only
             });
 
             var feed = _feedService.GetSyndicationFeed(GetFeedName(model), Request, searchResult.CABs, Url);
