@@ -36,25 +36,25 @@
                 <partial name="Partials/_SearchFilter" model="Model.BodyTypeOptions"/>
                 <partial name="Partials/_SearchFilter" model="Model.RegisteredOfficeLocationOptions"/>
                 <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaOptions"/>
-                @if (Model.StatusOptions != null && Model.StatusOptions.FilterOptions.Any())
+                @if (Model.StatusOptions != null && Model.StatusOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
                 {
                     <partial name="Partials/_SearchFilter" model="Model.StatusOptions"/>
                 }
                 @if (Model.InternalSearch)
                 {
-                    @if (Model.SubStatusOptions != null && Model.SubStatusOptions.FilterOptions.Any())
+                    @if (Model.SubStatusOptions != null && Model.SubStatusOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
                     {
                         <partial name="Partials/_SearchFilter" model="Model.SubStatusOptions"/>
                     }
-                    @if (Model.CreatedByUserGroupOptions != null && Model.CreatedByUserGroupOptions.FilterOptions.Any())
+                    @if (Model.CreatedByUserGroupOptions != null &&   Model.CreatedByUserGroupOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
                     {
                         <partial name="Partials/_SearchFilter" model="Model.CreatedByUserGroupOptions"/>
                     }
-                    @if (Model.LegislativeAreaProvisionalOptions != null && Model.LegislativeAreaProvisionalOptions.FilterOptions.Any())
+                    @if (Model.LegislativeAreaProvisionalOptions != null && Model.LegislativeAreaProvisionalOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
                     {
                         <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaProvisionalOptions"/>
                     }
-                    @if (Model.LegislativeAreaStatusOptions != null && Model.LegislativeAreaStatusOptions.FilterOptions.Any())
+                    @if (Model.LegislativeAreaStatusOptions != null && Model.LegislativeAreaStatusOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
                     {
                         <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaStatusOptions"/>
                     }
