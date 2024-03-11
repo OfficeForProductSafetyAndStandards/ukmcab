@@ -87,6 +87,7 @@ public static class Ext
     {
         var htmlSanitizer = new HtmlSanitizer();
         htmlSanitizer.AllowedTags.Clear();
+        htmlSanitizer.AllowedTags.Add("br");
         return string.IsNullOrWhiteSpace(text)
             ? htmlHelper.Raw(Constants.NotProvided)
             : htmlHelper.Raw(htmlSanitizer.Sanitize(text));
@@ -96,6 +97,7 @@ public static class Ext
     {
         var htmlSanitizer = new HtmlSanitizer();
         htmlSanitizer.AllowedTags.Clear();
+        htmlSanitizer.AllowedTags.Add("br");
         return string.IsNullOrWhiteSpace(text)
             ? htmlHelper.Raw(Constants.NotApplicable)
             : htmlHelper.Raw(htmlSanitizer.Sanitize(text));
@@ -105,6 +107,7 @@ public static class Ext
     {
         var htmlSanitizer = new HtmlSanitizer();
         htmlSanitizer.AllowedTags.Clear();
+        htmlSanitizer.AllowedTags.Add("br");
         return string.IsNullOrWhiteSpace(text)
             ? htmlHelper.Raw(Constants.None)
             : htmlHelper.Raw(htmlSanitizer.Sanitize(text));
