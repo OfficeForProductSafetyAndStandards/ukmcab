@@ -9,7 +9,7 @@ namespace UKMCAB.Data.Search.Models
         public Guid Id { get; set; }
         
         [SearchableField(IsFacetable = true, IsFilterable = true)]
-        public string LegislativeAreaName { get; set; } = string.Empty; //DocumentLegislativeAreas/LegislativeAreaName
+        public string LegislativeAreaName { get; set; } = string.Empty;
         [JsonIgnore]
         public Guid LegislativeAreaId { get; set; }
 
