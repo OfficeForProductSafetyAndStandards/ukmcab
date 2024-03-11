@@ -537,12 +537,10 @@
         "name": "Regulation 50",
         "legislativeAreaId": "a4be7faf-5cd9-4b67-ad47-021a12319764",
         "purposeOfAppointmentIds": [
-            "0c5ee20a-0907-43f1-b9f5-7d52e8c813a8"
+            "2add9b12-6f01-49bb-8842-ceb91ae8f983"
         ],
-        "productIds": "",
-        "categoryIds": [
-            "9b7b079a-66f0-4172-bbe9-3d8e13c94fde"
-        ]
+        "productIds": [],
+        "categoryIds": []
     },
     {
         "id": "6c2809f3-f4b8-4a9a-abd2-abb3eae60ff5",
