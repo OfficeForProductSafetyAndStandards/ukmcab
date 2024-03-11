@@ -773,7 +773,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
-                var fromAction = ProductScheduleActionMessageEnum.ProductScheduleRemoved;
+                var actionType = ProductScheduleActionMessageEnum.ProductScheduleRemoved;
                 var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                 var scheduleIds = new List<Guid> { Guid.Parse(scheduleId) };
 
@@ -784,10 +784,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 else
                 {
                     await _cabAdminService.ArchiveSchedulesAsync(userAccount, Guid.Parse(id), scheduleIds);
-                    fromAction = ProductScheduleActionMessageEnum.ProductScheduleArchived;
+                    actionType = ProductScheduleActionMessageEnum.ProductScheduleArchived;
                 }
 
-                return RedirectToAction("SchedulesList", new { id, fromAction = fromAction.ToString() });
+                return RedirectToAction("SchedulesList", new { id, actionType });
             }
 
             vm.FileUpload = new Core.Domain.FileUpload(fileUpload.Id, fileUpload.Label, fileUpload.LegislativeArea, null, fileUpload.FileName, fileUpload.BlobName, fileUpload.UploadDateTime);
