@@ -7,8 +7,9 @@ namespace UKMCAB.Data.Search.Models
     {
         [JsonIgnore]
         public Guid Id { get; set; }
-        [SimpleField(IsFacetable = true, IsFilterable = true)]
-        public string LegislativeAreaName { get; set; } = string.Empty;
+        
+        [SearchableField(IsFacetable = true, IsFilterable = true)]
+        public string LegislativeAreaName { get; set; } = string.Empty; //DocumentLegislativeAreas/LegislativeAreaName
         [JsonIgnore]
         public Guid LegislativeAreaId { get; set; }
 
