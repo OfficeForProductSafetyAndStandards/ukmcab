@@ -22,7 +22,7 @@ namespace UKMCAB.Web.UI.Helpers
         public readonly static Dictionary<LegislativeAreaActionMessageEnum, string> LegislativeAreaActionMessages = new Dictionary<LegislativeAreaActionMessageEnum, string>
         {
             {LegislativeAreaActionMessageEnum.LegislativeAreaRemoved, "The legislative area has been removed."},
-            {LegislativeAreaActionMessageEnum.LegislativeAreaRemovedProductScheduleRemoved, "The  legislative area and associated product schedules have been removed."},
+            {LegislativeAreaActionMessageEnum.LegislativeAreaRemovedProductScheduleRemoved, "The legislative area and associated product schedules have been removed."},
             {LegislativeAreaActionMessageEnum.LegislativeAreaArchived, "The legislative area has been archived."},
             {LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleArchived, "The legislative area and associated product schedules have been archived."},
             {LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleRemoved, "The legislative area has been archived and the associated product schedules removed."},

@@ -273,8 +273,8 @@
                     <div class="govuk-grid-column-two-thirds">
                         @if (Model.ArchivedFiles != null && Model.ArchivedFiles.Any())
                         {
-                            <div class="govuk-button-group">                            
-                                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.RemoveArchived">
+                            <div class="govuk-button-group">
+                                <button class="govuk-button govuk-button--secondary" id="RemoveArchived" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.RemoveArchived">
                                     Remove archived product schedule
                                 </button>                            
                             </div>
