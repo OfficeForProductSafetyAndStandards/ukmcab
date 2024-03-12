@@ -46,7 +46,7 @@ namespace UKMCAB.Data.Search.Services
                 result.SubStatus = GetFacetList(facets[nameof(result.SubStatus)]);
                 result.ProvisionalLegislativeAreas =
                     GetFacetList(facets[provisionalLegislativeAreaPath]).OrderBy(x => x).ToList();
-                result.LegislativeAreaStatus = GetFacetList(facets[legislativeAreaStatus]).OrderBy(x => x).ToList();
+                result.LegislativeAreaStatus = GetLegislativeAreaStatusFacetList(facets[legislativeAreaStatus]).OrderBy(x => x).ToList();
             }
 
             return result;
@@ -240,7 +240,14 @@ namespace UKMCAB.Data.Search.Services
 
             return list;
         }
-
+        private IEnumerable<string> GetLegislativeAreaStatusFacetList(IEnumerable<FacetResult> facets)
+        {
+            var list = facets.Select(f => f.Value.ToString()).OrderBy(f => f).ToList();
+            //NOTE: Add default value for Published - LA
+            list.Add("False");
+            return list;
+        }
+        
         private static readonly Regex SpecialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
 
         private string GetKeywordsQuery(string? keywords, bool internalSearch)
