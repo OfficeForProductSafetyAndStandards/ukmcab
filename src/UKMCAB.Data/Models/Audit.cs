@@ -134,13 +134,13 @@ namespace UKMCAB.Data.Models
                 if (countScopesAdded > 0)
                 {
                     sb.Append(
-                        $"<p class=\"govuk-body\">{countScopesAdded} scope of appointment{(legislativeAreasRemained.Count > 1 ? "s" : null)} {(legislativeAreasRemained.Count > 1 ? "have" : "has")} been added to {la.Value}</p>");
+                        $"<p class=\"govuk-body\">{countScopesAdded} scope of appointment{(countScopesAdded > 1 ? "s" : null)} {(legislativeAreasRemained.Count > 1 ? "have" : "has")} been added to {la.Value}</p>");
                 }
 
                 if (countScopesRemoved > 0)
                 {
                     sb.Append(
-                        $"<p class=\"govuk-body\">{countScopesRemoved} scope of appointment{(legislativeAreasRemained.Count > 1 ? "s" : null)} {(legislativeAreasRemained.Count > 1 ? "have" : "has")} been removed from {la.Value}</p>");
+                        $"<p class=\"govuk-body\">{countScopesRemoved} scope of appointment{(countScopesRemoved > 1 ? "s" : null)} {(legislativeAreasRemained.Count > 1 ? "have" : "has")} been removed from {la.Value}</p>");
                 }
             }
         }
