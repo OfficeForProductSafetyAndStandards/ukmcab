@@ -41,6 +41,10 @@
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
+else if (Model is { EditByGroupPermitted: false, Status: Status.Draft } )
+{
+    <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner"/>
+}
 else if (!Model.EditByGroupPermitted)
 {
     <partial model="@("This CAB profile cannot be edited as it was created by an OPSS user.")" name="Partials/_PageContentBanner"/>
