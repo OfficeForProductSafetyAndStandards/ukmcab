@@ -33,11 +33,11 @@ public class SubscriptionsCabService : ICabService
         var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABIdAsync(id.ToString());
         if (cabDocument != null)
         {
-            var publishedAudit = cabDocument.AuditLog.Single(al => al.Action == AuditCABActions.Published);
+            var publishedAudit = Enumerable.MaxBy(cabDocument.AuditLog.Where(al => al.Action == AuditCABActions.Published), u => u.DateTime);
             var cab = new SubscriptionsCoreCabModel
             {
                 CABId = cabDocument.CABId,
-                PublishedDate = publishedAudit.DateTime,
+                PublishedDate = publishedAudit?.DateTime,
                 LastModifiedDate = cabDocument.LastUpdatedDate,
                 Name = cabDocument.Name,
                 UKASReferenceNumber = string.Empty,
