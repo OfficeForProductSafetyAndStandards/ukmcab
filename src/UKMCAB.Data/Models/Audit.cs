@@ -66,10 +66,10 @@ namespace UKMCAB.Data.Models
                         CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbPublicComment, previousFileUploads, currentFileUploads, docType);
                     }
                 }
-
-                var previousLAs = previousDocument.DocumentLegislativeAreas ?? new();
-                var currentLAs = publishedDocument.DocumentLegislativeAreas ?? new();
-                CalculateChangesToLegislativeAreas(previousLAs, currentLAs, sbPublicComment);
+                
+                CalculateChangesToLegislativeAreas(previousDocument.DocumentLegislativeAreas, publishedDocument.DocumentLegislativeAreas, sbPublicComment);
+                
+                CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbPublicComment);
             }
 
             if (sbComment.Length > 0)
@@ -93,10 +93,34 @@ namespace UKMCAB.Data.Models
             PublicComment = string.Join("", HttpUtility.HtmlEncode(publicComment), HttpUtility.HtmlEncode(sbPublicComment.ToString()));
         }
 
+        private static void CalculateChangesToScopeOfAppointments(Document previousDocument, Document publishedDocument, StringBuilder sb)
+        {
+            var previousLaNames = previousDocument.DocumentLegislativeAreas.ToDictionary(l => l.LegislativeAreaId, l => l.LegislativeAreaName);
+            var currentLaNames = publishedDocument.DocumentLegislativeAreas.ToDictionary(l => l.LegislativeAreaId, l => l.LegislativeAreaName);
+            var previousScopes = previousDocument.ScopeOfAppointments;
+            var currentScopes = publishedDocument.ScopeOfAppointments;
+            var newlyAddedScopes = currentScopes.Where(cs => previousScopes.All(ps => ps.LegislativeAreaId != cs.LegislativeAreaId)).GroupBy(s => s.LegislativeAreaId).ToList();
+            var removedScopes = previousScopes.Where(ps => currentScopes.All(cs => cs.LegislativeAreaId != ps.LegislativeAreaId)).GroupBy(s => s.LegislativeAreaId).ToList();
+
+            foreach (var ns in newlyAddedScopes)
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\">{0} have been added to {1}</p>",
+                    ns.Count(), currentLaNames[ns.Key]);
+            }
+            
+            foreach (var rs in removedScopes)
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\">{0} have been removed from {1}</p>",
+                    rs.Count(), previousLaNames[rs.Key]);
+            }
+        }
+        
         private static void CalculateChangesToLegislativeAreas(List<DocumentLegislativeArea> previousLAs, List<DocumentLegislativeArea> currentLAs, StringBuilder sb)
         {
-            var newlyAddedLAs = currentLAs.Where(la => !previousLAs.Any(pla => pla.LegislativeAreaId == la.LegislativeAreaId));
-            var removedLAs = previousLAs.Where(la => !currentLAs.Any(cla => cla.LegislativeAreaId == la.LegislativeAreaId));
+            var newlyAddedLAs = currentLAs.Where(la => previousLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
+            var removedLAs = previousLAs.Where(la => currentLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
 
             foreach (var la in newlyAddedLAs) 
             {
