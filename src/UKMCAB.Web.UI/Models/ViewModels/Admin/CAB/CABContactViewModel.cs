@@ -46,7 +46,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public string? County { get; set; }
 
-        [Required(ErrorMessage = "Enter a country")]
+        [Required(ErrorMessage = "Select a country")]
         public string? Country { get; set; }
 
         public string? FormattedAddress => string.Join("<br />",
@@ -75,7 +75,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public bool? IsPointOfContactPublicDisplay { get; set; }
 
-        [Required(ErrorMessage = "Enter a registered office location")]
+        [Required(ErrorMessage = "Select a registered office location")]
         public string? RegisteredOfficeLocation { get; set; }
 
         public string? Title => "Contact details";
