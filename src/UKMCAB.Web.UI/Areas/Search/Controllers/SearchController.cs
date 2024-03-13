@@ -99,19 +99,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
 
-            if (model.LegislativeAreaStatus != null && model.LegislativeAreaStatus.Any(a => !bool.Parse(a)))
-            {
-                model.SearchResults = searchResults.CABs.Where(a => a.DocumentLegislativeAreas.Any())
-                .Select(c => new ResultViewModel(c)).ToList();
-            }
-            else
-            {
-                model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
-            }           
+            model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();           
             
             model.Pagination = new PaginationViewModel
             {
-                Total = model.SearchResults.Count,
+                Total = searchResults.Total,
                 PageNumber = model.PageNumber,
                 ResultsPerPage = DataConstants.Search.SearchResultsPerPage,
                 ResultType = "bodies"
