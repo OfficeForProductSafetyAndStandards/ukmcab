@@ -231,11 +231,4 @@ public class LegislativeAreaReviewController : Controller
 
         return viewModel;
     }
-
-    private async Task<IEnumerable<SelectListItem>> GetLegislativeSelectListItemsAsync(
-       List<Guid> excludeLegislativeAreaIds)
-    {
-        var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
-        return legislativeAreas.Take(4).Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
-    }
 }
