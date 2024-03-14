@@ -196,7 +196,7 @@ namespace UKMCAB.Data.Search.Services
                     }
                     else
                     {
-                        filters.Add($"DocumentLegislativeAreas/all(la: la/Archived ne true)");
+                        filters.Add($"DocumentLegislativeAreas/all(la: la/Archived ne true) and DocumentLegislativeAreas/any()");
                     }
                 }
             }
