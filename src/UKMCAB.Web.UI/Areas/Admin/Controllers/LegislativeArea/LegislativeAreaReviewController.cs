@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
@@ -67,6 +68,24 @@ public class LegislativeAreaReviewController : Controller
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
 
+        if(submitType == "AddLegislativeArea")
+        {
+            var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
+            var remainingLegislativeAreasToSelect = await _legislativeAreaService.GetLegislativeAreasAsync(cabLegislativeAreaIds);
+
+            // if all legislative area added and none left to add
+            if (remainingLegislativeAreasToSelect.Count() == 0)
+            {
+                ModelState.AddModelError("AddLegislativeArea", "All legislative areas have already been added to this CAB profile.");
+                var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);                
+                return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
+            }
+            else
+            {
+                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id, fromSummary = reviewLaVM.IsFromSummary });
+            }
+        }
+
         var laIdOrLaName = string.Empty;
 
         if (submitType.StartsWith("Add-"))
@@ -89,7 +108,7 @@ public class LegislativeAreaReviewController : Controller
         var cabLaOfSelectedScopeofAppointment = reviewLaVM.ActiveLAItems.FirstOrDefault(la => la.SelectedScopeofAppointmentId != null && la.Name == laIdOrLaName);
         if (cabLaOfSelectedScopeofAppointment == null)
         {
-            ModelState.AddModelError("ScopeOfAppointment", "Select a scope of apppointment to edit");
+            ModelState.AddModelError(laIdOrLaName, "Select a scope of appointment");
             var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
             vm.ErrorLink = laIdOrLaName;
             return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);

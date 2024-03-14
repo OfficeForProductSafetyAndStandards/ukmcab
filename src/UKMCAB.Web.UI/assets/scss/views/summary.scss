@@ -14,7 +14,8 @@
     .govuk-summary-list__value {
       padding-right: 0;
       @include govuk-media-query($until: tablet) {
-        margin-bottom: 50px;
+        margin-top: 10px;
+        margin-bottom: 20px;
       }
     }
 
@@ -51,11 +52,6 @@
       clear: both;
       dt {
         width: 40%;
-      }
-    }
-    @include govuk-media-query($until: tablet) {
-      .cab-summary-header {
-        float: left;
       }
     }
   }

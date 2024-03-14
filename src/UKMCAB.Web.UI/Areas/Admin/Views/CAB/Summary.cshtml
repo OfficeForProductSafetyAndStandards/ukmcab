@@ -26,11 +26,11 @@
         <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
             @if (string.IsNullOrWhiteSpace(returnUrl))
             {
-                <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement"/>
+                <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement" />
             }
             else
             {
-                <govuk-back-link href="@returnUrl?&unlockCab=@Model.CABId"/>
+                <govuk-back-link href="@returnUrl?&unlockCab=@Model.CABId" />
             }
 
         </div>
@@ -39,19 +39,19 @@
 
 @if (Model.SubStatus == SubStatus.PendingApprovalToPublish)
 {
-    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
+    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner" />
 }
-else if (Model is { EditByGroupPermitted: false, Status: Status.Draft } )
+else if (Model is { EditByGroupPermitted: false, Status: Status.Draft })
 {
-    <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner"/>
+    <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner" />
 }
 else if (!Model.EditByGroupPermitted)
 {
-    <partial model="@("This CAB profile cannot be edited as it was created by an OPSS user.")" name="Partials/_PageContentBanner"/>
+    <partial model="@("This CAB profile cannot be edited as it was created by an OPSS user.")" name="Partials/_PageContentBanner" />
 }
 else if (Model.IsEditLocked)
 {
-    <partial model="@("This CAB profile cannot be edited as it's being edited by another user.")" name="Partials/_PageContentBanner"/>
+    <partial model="@("This CAB profile cannot be edited as it's being edited by another user.")" name="Partials/_PageContentBanner" />
 }
 
 <div class="govuk-grid-row">
@@ -114,9 +114,9 @@ else if (Model.IsEditLocked)
     <div class="govuk-grid-column-full">
         <fieldset class="govuk-fieldset cab-summary-header-list">
             <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header">
+                        <div class="cab-summary-header govuk-!-padding-top-5">
                             <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
                         </div>
                     </dt>
@@ -213,11 +213,11 @@ else if (Model.IsEditLocked)
             </div>
 
             <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                <div class="govuk-summary-list__row">
 
                     <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header">
-                            <h3 class="govuk-heading-l govuk-!-padding-top-5">Contact details</h3>
+                        <div class="cab-summary-header govuk-!-padding-top-5">
+                            <h3 class="govuk-heading-l">Contact details</h3>
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
@@ -227,7 +227,7 @@ else if (Model.IsEditLocked)
                         }
                         @if (Model.CabContactViewModel.IsCompleted)
                         {
-                            <div class="cab-result-status-label cab-result-completed">
+                            <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
                                 COMPLETED
                             </div>
                         }
@@ -319,10 +319,10 @@ else if (Model.IsEditLocked)
             </div>
 
             <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header">
-                            <h3 class="govuk-heading-l govuk-!-padding-top-5">Body details</h3>
+                        <div class="cab-summary-header govuk-!-padding-top-5">
+                            <h3 class="govuk-heading-l">Body details</h3>
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
@@ -332,7 +332,7 @@ else if (Model.IsEditLocked)
                         }
                         @if (Model.CabBodyDetailsViewModel.IsCompleted)
                         {
-                            <div class="cab-result-status-label cab-result-completed">
+                            <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
                                 COMPLETED
                             </div>
                         }
@@ -382,27 +382,27 @@ else if (Model.IsEditLocked)
             </div>
 
             <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                        <div class="cab-summary-header">
-                            <h3 class="govuk-heading-l govuk-!-padding-top-5">Legislative areas</h3>
+                        <div class="cab-summary-header govuk-!-padding-top-5">
+                            <h3 class="govuk-heading-l">Legislative areas</h3>
                         </div>
                     </dt>
                     <dd class="govuk-summary-list__value">
                         @if (Model.ShowEditActions)
                         {
                             <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@currentUrl"
-                                                asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                           asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
                         }
                         @if (Model.CabLegislativeAreasViewModel.IsCompleted)
                         {
-                            <div class="cab-result-status-label cab-result-completed">
+                            <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
                                 COMPLETED
                             </div>
                         }
                         else
                         {
-                            <div class="cab-result-status-label cab-result-not-completed">
+                            <div class="cab-result-status-label cab-result-not-completed cab-details-result-status-label">
                                 NOT COMPLETED
                             </div>
                         }
@@ -442,7 +442,7 @@ else if (Model.IsEditLocked)
                                 @legislativeArea.Name
                             </span>
                         </summary>
-                        <partial name="./LegislativeArea/Partials/_Summary" model="legislativeArea"/>
+                        <partial name="./LegislativeArea/Partials/_Summary" model="legislativeArea" />
                     </details>
                 }
             }
@@ -460,7 +460,7 @@ else if (Model.IsEditLocked)
             }
 
             <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         <div class="cab-summary-header  govuk-!-padding-top-5">
                             <h3 class="govuk-heading-l">Product schedules</h3>
@@ -473,13 +473,13 @@ else if (Model.IsEditLocked)
                         }
                         @if (Model.CABProductScheduleDetailsViewModel.IsCompleted)
                         {
-                            <div class="cab-result-status-label cab-result-completed">
+                            <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
                                 COMPLETED
                             </div>
                         }
                         else
                         {
-                            <div class="cab-result-status-label cab-result-not-completed">
+                            <div class="cab-result-status-label cab-result-not-completed cab-details-result-status-label">
                                 NOT COMPLETED
                             </div>
                         }
@@ -521,8 +521,8 @@ else if (Model.IsEditLocked)
                 </dl>
             </div>
 
-            <dl class="govuk-summary-list cab-summary-list">
-                <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+            <dl class="govuk-summary-list cab-summary-list ukmcab-padding-top-40">
+                <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
                         <div class="cab-summary-header govuk-!-padding-top-5">
                             <h3 class="govuk-heading-l">Supporting documents</h3>
@@ -535,13 +535,13 @@ else if (Model.IsEditLocked)
                         }
                         @if (Model.CABSupportingDocumentDetailsViewModel.IsCompleted)
                         {
-                            <div class="cab-result-status-label cab-result-completed">
+                            <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
                                 COMPLETED
                             </div>
                         }
                         else
                         {
-                            <div class="cab-result-status-label cab-result-not-completed">
+                            <div class="cab-result-status-label cab-result-not-completed cab-details-result-status-label">
                                 NOT COMPLETED
                             </div>
                         }
@@ -678,8 +678,8 @@ else if (Model.IsEditLocked)
             {
                 <div class="govuk-!-margin-top-5">
                     <form method="post">
-            <input type="hidden" asp-for="Id"/>
-            <input type="hidden" asp-for="CABId"/>
+                        <input type="hidden" asp-for="Id" />
+                        <input type="hidden" asp-for="CABId" />
                         <div class="govuk-button-group">
                             @if (Model.CanPublish)
                             {

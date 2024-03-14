@@ -193,7 +193,7 @@ public class LegislativeAreaDetailsController : Controller
         if (legislativeArea == null)
         {
             throw new InvalidOperationException(
-                $"Legislative Area not found for {documentScopeOfAppointment.LegislativeAreaId}");
+                $"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         }
 
         if (!options.PurposeOfAppointments.Any())
