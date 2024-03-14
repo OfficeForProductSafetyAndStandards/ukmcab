@@ -2,9 +2,17 @@
 
 public static class Roles
 {
-    public static Role OPSS { get; } = new Role("opss", "OPSS");
-    public static Role UKAS { get; } = new Role("ukas", "UKAS");
-    public static Role[] List { get; } = { OPSS, UKAS };
+    public static Role DFTP { get; } = new("dftp", "DFTP");
+    public static Role DFTR { get; } = new("dftr", "DFTR");
+    public static Role DLUHC { get; } = new("dluhc", "DLUHC");
+    public static Role MCGA { get; } = new("mcga", "MCGA");
+    public static Role MHRA { get; } = new("mhra", "MHRA");
+    public static Role OPSS { get; } = new("opss", "OPSS");
+    public static Role OPSS_OGD { get; } = new("opss_ogd", "OPSS (OGD)");
+    public static Role UKAS { get; } = new("ukas", "UKAS");
+
+    public static IEnumerable<Role> List { get; } =
+        new List<Role> { DFTP, DFTR, DLUHC, MCGA, MHRA, OPSS, OPSS_OGD, UKAS };
 
     public static string? NameFor(string? roleId) => List.FirstOrDefault(x => x.Id == roleId)?.Label;
 
