@@ -403,25 +403,7 @@
                                     }
                                 }
                             </dd>
-                        </div>
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                Legislative area
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @if (!Model.LegislativeAreas.Any())
-                                {
-                                    <text>@Constants.NotProvided</text>
-                                }
-                                else
-                                {
-                                    @foreach (var legislativeArea in Model.LegislativeAreas)
-                                    {
-                                        <span class="cab-detail-list-item">@legislativeArea</span>
-                                    }
-                                }
-                            </dd>
-                        </div>
+                        </div>                        
                     </dl>
                 </div>
             </div>
