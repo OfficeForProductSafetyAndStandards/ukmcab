@@ -70,3 +70,21 @@
     padding: 0 0 12px 0;
   }
 }
+
+.provisional-la {
+    width: calc(100% - 38px);
+    display: flex !important;
+    justify-content: space-between;
+
+    @include govuk-media-query($until: tablet) {
+        flex-direction: column;
+
+        .govuk-details__summary-text {
+            margin-bottom: 12px;
+        }
+
+        strong.cab-status-tag {
+            margin: 0;
+        }
+    }
+}
