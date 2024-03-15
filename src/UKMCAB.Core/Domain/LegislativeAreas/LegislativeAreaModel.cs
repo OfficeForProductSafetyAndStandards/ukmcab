@@ -9,5 +9,6 @@
         public string Regulation { get; set; }
 
         public bool HasDataModel { get; set; }
+        public string RoleId { get; set; }
     }
 }
