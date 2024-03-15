@@ -23,7 +23,8 @@ public static class ClaimsIssuer
                 new(Claims.UserManagement, string.Empty), // can manage users
             };
         }
-        else if (role == Roles.UKAS.Id)
+
+        if (role == Roles.UKAS.Id)
         {
             return new Claim[]
             {
@@ -32,9 +33,16 @@ public static class ClaimsIssuer
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
             };
         }
-        else
+
+        //TODO : Permission will be assigned later
+        if (Roles.OgdRolesList.Contains(role))
         {
-            throw new NotSupportedException($"Role '{role}' not supported");
+            return new Claim[]
+            {
+                new(Claims.IsOneLoginUser, "*"),
+            };
         }
+
+        throw new NotSupportedException($"Role '{role}' not supported");
     }
 }
