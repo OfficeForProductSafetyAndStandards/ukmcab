@@ -23,7 +23,8 @@ public static class ClaimsIssuer
                 new(Claims.UserManagement, string.Empty), // can manage users
             };
         }
-        else if (role == Roles.UKAS.Id)
+
+        if (role == Roles.UKAS.Id)
         {
             return new Claim[]
             {
@@ -32,9 +33,17 @@ public static class ClaimsIssuer
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
             };
         }
-        else
+
+        //TODO : Permission will be assigned later
+        if (role == Roles.DLUHC.Id || role == Roles.DFTR.Id || role == Roles.DFTP.Id
+            || role == Roles.MHRA.Id || role == Roles.MCGA.Id || role == Roles.OPSS_OGD.Id)
         {
-            throw new NotSupportedException($"Role '{role}' not supported");
+            return new Claim[]
+            {
+                new(Claims.IsOneLoginUser, "*"),
+            };
         }
+
+        throw new NotSupportedException($"Role '{role}' not supported");
     }
 }
