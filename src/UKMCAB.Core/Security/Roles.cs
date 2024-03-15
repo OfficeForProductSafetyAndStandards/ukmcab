@@ -11,6 +11,9 @@ public static class Roles
     public static Role OPSS_OGD { get; } = new("opss_ogd", "OPSS (OGD)");
     public static Role UKAS { get; } = new("ukas", "UKAS");
 
+    public static IEnumerable<string> OgdRolesList { get; } =
+        new List<string> { DFTP.Id, DFTR.Id, DLUHC.Id, MCGA.Id, MHRA.Id, OPSS_OGD.Id };
+
     public static IEnumerable<Role> List { get; } =
         new List<Role> { DFTP, DFTR, DLUHC, MCGA, MHRA, OPSS, OPSS_OGD, UKAS };
 

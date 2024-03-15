@@ -35,8 +35,7 @@ public static class ClaimsIssuer
         }
 
         //TODO : Permission will be assigned later
-        if (role == Roles.DLUHC.Id || role == Roles.DFTR.Id || role == Roles.DFTP.Id
-            || role == Roles.MHRA.Id || role == Roles.MCGA.Id || role == Roles.OPSS_OGD.Id)
+        if (Roles.OgdRolesList.Contains(role))
         {
             return new Claim[]
             {
