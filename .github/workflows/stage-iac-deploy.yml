@@ -2,8 +2,6 @@ name: stage-iac-deploy
 
 on: 
   push:
-    branches:
-    - master
     paths:
       - 'bicep/**/*'
   workflow_dispatch:
