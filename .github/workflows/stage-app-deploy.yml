@@ -3,8 +3,6 @@ name: stage-app-deploy
 on:
   workflow_dispatch:
   push:
-   branches:
-     - master
    paths:
      - 'src/**/*'
 
