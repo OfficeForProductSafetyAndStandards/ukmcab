@@ -26,4 +26,27 @@ namespace UKMCAB.Data.Models
         [Description("Pending approval to unpublish CAB")]
         PendingApprovalToUnpublish,
     }
+    public enum LAStatus
+    {
+        [Description("None")]
+        None,
+        [Description("Approved")]
+        Approved,
+        [Description("Declined")]
+        Declined,
+        [Description("Published")]
+        Published,
+        [Description("Pending approval from DFTP")]
+        PendingApprovalFromDFTP,
+        [Description("Pending approval from DFTR")]
+        PendingApprovalFromDFTR,
+        [Description("Pending approval from DLUHC")]
+        PendingApprovalFromDLUHC,
+        [Description("Pending approval from MCGA")]
+        PendingApprovalFromMCGA,
+        [Description("Pending approval from MHRA")]
+        PendingApprovalFromMHRA,
+        [Description("Pending approval from OPSS (OGD)")]
+        PendingApprovalFromOPSS_OGD
+    }
 }

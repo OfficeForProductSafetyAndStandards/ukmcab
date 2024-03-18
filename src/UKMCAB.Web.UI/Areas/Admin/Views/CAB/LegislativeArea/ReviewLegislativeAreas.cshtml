@@ -44,12 +44,7 @@
         <input type="hidden" asp-for="IsFromSummary"/>
         <div class="govuk-grid-column-full">
             <div class="govuk-form-group">
-                @if (!ViewData.ModelState.IsValid)
-                {
-                    <govuk-error-summary>
-                        <govuk-error-summary-item href="#@Model.ErrorLink">Select a scope of appointment</govuk-error-summary-item>
-                    </govuk-error-summary>
-                }
+                <partial name="Partials/_ValidationSummary" model="null" />                
                 <fieldset class="govuk-fieldset" aria-describedby="fieldset-title">
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                         <span class="govuk-caption-m">@Model.Title</span>
@@ -253,7 +248,7 @@
             </div>
 
             <div>
-                <govuk-button-link class="govuk-button--secondary" href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId, fromSummary = Model.IsFromSummary })">Add legislative area</govuk-button-link>
+                <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="AddLegislativeArea">Add legislative area</govuk-button>               
             </div>
             <div>
                 <hr class="ukmcab-border"/>
