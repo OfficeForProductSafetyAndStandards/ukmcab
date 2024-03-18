@@ -1,4 +1,7 @@
-﻿using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+﻿using UKMCAB.Common.Extensions;
+using UKMCAB.Core.Security;
+using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -29,5 +32,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PurposeOfAppointment));
         public bool ShowCategoryColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
         public bool ShowProductColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));
+        public LAStatus Status { get; set; }
+        public string StatusName => Status.GetEnumDescription();
     }
 }

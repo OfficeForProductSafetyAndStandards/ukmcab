@@ -23,5 +23,7 @@
         public string? PointOfContactEmail { get; set; }
         public string? PointOfContactPhone { get; set; }
         public bool? IsPointOfContactPublicDisplay { get; set; }
+        public LAStatus Status { get; set; }
+        public string? RoleId { get; set; }
     }
 }

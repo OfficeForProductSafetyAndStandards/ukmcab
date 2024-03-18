@@ -419,6 +419,12 @@ else if (Model.IsEditLocked)
                             <div class="govuk-details__summary-text">
                                 <span>@legislativeArea.Name</span>                               
                             </div>
+                            @if (legislativeArea.Status != LAStatus.None)
+                            {
+                                <div>
+                                    <strong class="cab-status-tag govuk-tag--yellow">@legislativeArea.StatusName</strong>
+                                </div>                                
+                            }
                             @if (legislativeArea.IsProvisional == true)
                             {
                                 <div>

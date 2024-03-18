@@ -179,6 +179,7 @@ namespace UKMCAB.Core.Services.CAB
             {
                 draft.SubStatus = SubStatus.PendingApprovalToPublish;
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+                draft.DocumentLegislativeAreas.ForEach(la => la.Status = GetLAStatus(la.RoleId));
             }
 
             if (draft.StatusValue == Status.Published)
@@ -199,6 +200,20 @@ namespace UKMCAB.Core.Services.CAB
             await RecordStatsAsync();
 
             return draft;
+        }
+
+        private static LAStatus GetLAStatus(string? roleId)
+        {
+            return roleId switch
+            {
+                "dftp" => LAStatus.PendingApprovalFromDFTP,
+                "dftr" => LAStatus.PendingApprovalFromDFTR,
+                "dluhc" => LAStatus.PendingApprovalFromDLUHC,
+                "mcga" => LAStatus.PendingApprovalFromMCGA,
+                "mhra" => LAStatus.PendingApprovalFromMHRA,
+                "opss_ogd" => LAStatus.PendingApprovalFromOPSS_OGD,
+                _ => LAStatus.None,
+            };
         }
 
         public async Task DeleteDraftDocumentAsync(UserAccount userAccount, Guid cabId, string? deleteReason)
@@ -459,7 +474,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd,
-            string laName)
+            string laName, string? RoleId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
@@ -471,7 +486,8 @@ namespace UKMCAB.Core.Services.CAB
             {
                 Id = guid,
                 LegislativeAreaName = laName,
-                LegislativeAreaId = laToAdd
+                LegislativeAreaId = laToAdd,
+                RoleId = RoleId
             });
 
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
