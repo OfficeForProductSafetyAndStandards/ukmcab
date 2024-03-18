@@ -415,7 +415,7 @@ else if (Model.IsEditLocked)
                 @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.ActiveLegislativeAreas)
                 {
                     <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-                        <summary class="govuk-details__summary @(legislativeArea.IsProvisional == true ? "provisional-la" : "")">
+                        <summary class="govuk-details__summary @(legislativeArea.IsProvisional == true && legislativeArea.Status != LAStatus.None ? "provisional-la" : "provisional-la-single-tag")">
                             <div class="govuk-details__summary-text">
                                 <span>@legislativeArea.Name</span>                               
                             </div>
