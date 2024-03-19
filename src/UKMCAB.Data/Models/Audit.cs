@@ -71,18 +71,12 @@ namespace UKMCAB.Data.Models
                 foreach (var docType in schedulesAndDocsType)
                 {
                     if (docType.Equals("Documents"))
-                    {
-                        var previousFileUploads = previousDocument.Documents ?? new List<FileUpload>();
-                        var currentFileUploads = publishedDocument.Documents ?? new List<FileUpload>();
-                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbComment,
-                            previousFileUploads, currentFileUploads, docType);
+                    {  
+                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbComment, docType);
                     }
                     else
-                    {
-                        var previousFileUploads = previousDocument.Schedules ?? new List<FileUpload>();
-                        var currentFileUploads = publishedDocument.Schedules ?? new List<FileUpload>();
-                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbPublicComment,
-                            previousFileUploads, currentFileUploads, docType);
+                    { 
+                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbPublicComment, docType);
                     }
                 }
 
@@ -148,22 +142,42 @@ namespace UKMCAB.Data.Models
         private static void CalculateChangesToLegislativeAreas(List<DocumentLegislativeArea> previousLAs,
             List<DocumentLegislativeArea> currentLAs, StringBuilder sb)
         {
-            var newlyAddedLAs =
-                currentLAs.Where(la => previousLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
-            var removedLAs =
-                previousLAs.Where(la => currentLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
+            var currentActiveLAs = currentLAs.Where(n => n.Archived is null or false);
+            var currentArchivedLAs = currentLAs.Where(n => n.Archived == true);
+
+            var previousActiveLAs = previousLAs.Where(n => n.Archived is null or false);
+            var previousArchivedLAs = previousLAs.Where(n => n.Archived == true);
+
+            var newlyAddedLAs = currentActiveLAs.Where(la => previousActiveLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
+            var removedLAs =  previousLAs.Where(la => currentLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
+            var newAndArchivedLAs = currentArchivedLAs.Where(la => previousLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
+            var archivedLAs = currentArchivedLAs.Where(la => previousArchivedLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId)).Except(newAndArchivedLAs);            
 
             foreach (var la in newlyAddedLAs)
             {
                 sb.AppendFormat(
                     "<p class=\"govuk-body\">{0} was added to legislative area.</p>",
                     la.LegislativeAreaName);
-            }
+            }           
 
             foreach (var la in removedLAs)
             {
                 sb.AppendFormat(
                     "<p class=\"govuk-body\">{0} was removed from legislative area.</p>",
+                    la.LegislativeAreaName);
+            }
+
+            foreach (var la in archivedLAs)
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\">{0} was archived from legislative area.</p>",
+                    la.LegislativeAreaName);
+            }
+
+            foreach (var la in newAndArchivedLAs)
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\">{0} was added and archived from legislative area.</p>",
                     la.LegislativeAreaName);
             }
 
@@ -186,16 +200,54 @@ namespace UKMCAB.Data.Models
         }
 
         private static void CalculateChangesToScheduleOrDocument(Document publishedDocument, Document? previousDocument,
-            StringBuilder sb, List<FileUpload> previousFileUploads, List<FileUpload> currentFileUploads, string docType)
+            StringBuilder sb, string docType)
         {
             var isSchedule = docType.Equals("Schedules");
             var docTypes = isSchedule ? "product schedules" : "supporting documents";
             var docTypeName = isSchedule ? "product schedule" : "supporting document";
 
+            List<FileUpload> previousFileUploads = new();
+            List<FileUpload> currentFileUploads = new();
+            List<FileUpload> previousActiveFileUploads = new();
+            List<FileUpload> currentActiveFileUploads = new();
+            List<FileUpload> previousArchiveFileUploads = new();
+            List<FileUpload> currentArchiveFileUploads = new();
+
+            if (isSchedule)
+            {
+                if (previousDocument?.Schedules != null)
+                {
+                    previousFileUploads = previousDocument.Schedules;
+                    previousActiveFileUploads = previousDocument.ActiveSchedules;
+                    previousArchiveFileUploads = previousDocument.ArchivedSchedules;
+                }
+
+                if (publishedDocument.Schedules != null)
+                {
+                    currentFileUploads = publishedDocument.Schedules;
+                    currentActiveFileUploads = publishedDocument.ActiveSchedules;
+                    currentArchiveFileUploads = publishedDocument.ArchivedSchedules;
+                }
+            }
+            else
+            {
+                if (previousDocument?.Documents != null)
+                {
+                    previousFileUploads = previousDocument.Documents;
+                }
+
+                if (publishedDocument.Documents != null)
+                {
+                    currentFileUploads = publishedDocument.Documents;
+                }
+            }           
+
             var existingFileUploads = currentFileUploads
                 .Where(sch => previousFileUploads.Any(prev => prev.UploadDateTime.Equals(sch.UploadDateTime)));
-            var newFileUploads = currentFileUploads.Where(sch =>
-                previousFileUploads.All(prev => !prev.UploadDateTime.Equals(sch.UploadDateTime)));
+
+            var newFileUploads = currentActiveFileUploads.Where(sch =>
+                previousActiveFileUploads.All(prev => !prev.UploadDateTime.Equals(sch.UploadDateTime)));
+
             var removedFileUploads = previousFileUploads.Where(sch =>
                 currentFileUploads.All(pub => !pub.UploadDateTime.Equals(sch.UploadDateTime)));
 
@@ -203,6 +255,7 @@ namespace UKMCAB.Data.Models
             {
                 var previousFileUpload =
                     previousFileUploads.Single(sch => sch.UploadDateTime.Equals(fileupload.UploadDateTime));
+
                 if (isSchedule)
                 {
                     if (!previousFileUpload.LegislativeArea.Equals(fileupload.LegislativeArea))
@@ -249,6 +302,31 @@ namespace UKMCAB.Data.Models
                     "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the {2} page.</p>",
                     ScheduleOrDocumentLink(publishedDocument.CABId, removedFileUpload.FileName, docType),
                     removedFileUpload.Label, docTypes);
+            }
+
+            if (isSchedule)
+            {
+                var newAndArchivedFileUploads = currentArchiveFileUploads.Where(sch =>
+                   previousFileUploads.All(pre => !pre.UploadDateTime.Equals(sch.UploadDateTime)));
+
+                var archivedFileUploads = currentArchiveFileUploads.Where(sch =>
+                previousArchiveFileUploads.All(pre => !pre.UploadDateTime.Equals(sch.UploadDateTime))).Except(newAndArchivedFileUploads);
+
+                foreach (var archivedFileUpload in archivedFileUploads)
+                {
+                    sb.AppendFormat(
+                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was archived from the {2} page.</p>",
+                        ScheduleOrDocumentLink(publishedDocument.CABId, archivedFileUpload.FileName, docType),
+                        archivedFileUpload.Label, docTypes);
+                }
+
+                foreach (var newAndArchivedFileUpload in newAndArchivedFileUploads)
+                {
+                    sb.AppendFormat(
+                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was added and archived from the {2} page.</p>",
+                        ScheduleOrDocumentLink(publishedDocument.CABId, newAndArchivedFileUpload.FileName, docType),
+                        newAndArchivedFileUpload.Label, docTypes);
+                }
             }
         }
 
