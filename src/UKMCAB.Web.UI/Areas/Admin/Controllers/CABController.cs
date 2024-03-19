@@ -240,13 +240,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    if(model.IsFromSummary)
+                    if (model.IsFromSummary)
                     {
                         return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true });
                     }
                     else if (!latestDocument.DocumentLegislativeAreas.Any())
                     {
-                         return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId });
+                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId });
                     }
                     else
                     {
@@ -379,7 +379,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-                
+
             if (latest.StatusValue == Status.Published && subSectionEditAllowed == true)
             {
                 var userAccount =
@@ -458,13 +458,27 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
-                                    model.SubStatus !=
-                                    SubStatus.PendingApprovalToPublish &&
-                                    (model.Status == Status.Published ||
-                                     model.IsOPSSOrInCreatorUserGroup);
+                                    model.SubStatus != SubStatus.PendingApprovalToPublish &&
+                                    (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
+            model.IsPendingOgdApproval = IsPendingOgdApproval(latest);
+            model.IsMatchingOgdUser = IsMatchingOgdUser(latest);
+            model.ShowOgdActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
+                                    model.IsPendingOgdApproval && model.IsMatchingOgdUser;
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                 (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
+
+            // During OGD approval, after clicking the Edit button, only display the LA(s) that the current user's role is linked to.
+            if (model.ShowOgdActions)
+            {
+                var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
+                          throw new InvalidOperationException();
+                var userRoleId = Roles.List.First(r =>
+                    r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+
+                model.CabLegislativeAreasViewModel.ActiveLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
+                model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
+            }
 
             return View(model);
         }
@@ -680,6 +694,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     Status = documentLegislativeArea.Status,
                     StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
                     RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
+                    RoleId = documentLegislativeArea.RoleId,
                 };
 
                 var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
@@ -717,7 +732,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 await _legislativeAreaService.GetProductByIdAsync(productProcedure.ProductId.Value);
                             soaViewModel.Product = product!.Name;
                         }
-                        
+
                         foreach (var procedureId in productProcedure.ProcedureIds)
                         {
                             var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
@@ -763,6 +778,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ModelState.Clear();
             cabLegislativeAreas.IsCompleted = TryValidateModel(cabLegislativeAreas);
             ModelState.Clear();
+        }
+
+        private bool IsPendingOgdApproval(Document document)
+        {
+            return document.StatusValue == Status.Draft &&
+                   document.SubStatus == SubStatus.PendingApprovalToPublish &&
+                   document.DocumentLegislativeAreas.Any(d => d.Status == LAStatus.PendingApproval);
+        }
+
+        private bool IsMatchingOgdUser(Document document)
+        {
+            return document.DocumentLegislativeAreas.Any(dla => dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId));
         }
     }
 }

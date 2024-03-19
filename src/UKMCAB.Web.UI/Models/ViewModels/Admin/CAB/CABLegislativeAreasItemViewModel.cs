@@ -35,5 +35,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string StatusName => Status == LAStatus.PendingApproval ? $"{Status.GetEnumDescription()} from {RoleName}" : Status.GetEnumDescription();
         public string StatusCssStyle { get; set; } = string.Empty;
         public string? RoleName { get; set; }
+        public string? RoleId { get; set; }
     }
 }
