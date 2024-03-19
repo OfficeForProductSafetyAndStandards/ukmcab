@@ -7,7 +7,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     public class CABLegislativeAreasItemViewModel
     {
         public Guid? LegislativeAreaId { get; set; }
-        
+
         public string? Name { get; set; }
 
         public bool? IsProvisional { get; set; }
@@ -32,7 +32,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowCategoryColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
         public bool ShowProductColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));
         public LAStatus Status { get; set; }
-        public string StatusName => Status.GetEnumDescription();
+        public string StatusName => Status == LAStatus.PendingApproval ? $"{Status.GetEnumDescription()} from {RoleName}" : Status.GetEnumDescription();
         public string StatusCssStyle { get; set; } = string.Empty;
+        public string? RoleName { get; set; }
     }
 }

@@ -177,7 +177,7 @@ namespace UKMCAB.Core.Services.CAB
             {
                 draft.SubStatus = SubStatus.PendingApprovalToPublish;
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
-                draft.DocumentLegislativeAreas.ForEach(la => la.Status = GetLAStatus(la.RoleId));
+                draft.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.PendingApproval);
             }
 
             if (draft.StatusValue == Status.Published)
@@ -199,21 +199,6 @@ namespace UKMCAB.Core.Services.CAB
 
             return draft;
         }
-
-        private static LAStatus GetLAStatus(string? roleId)
-        {
-            return roleId switch
-            {
-                "dftp" => LAStatus.PendingApprovalFromDFTP,
-                "dftr" => LAStatus.PendingApprovalFromDFTR,
-                "dluhc" => LAStatus.PendingApprovalFromDLUHC,
-                "mcga" => LAStatus.PendingApprovalFromMCGA,
-                "mhra" => LAStatus.PendingApprovalFromMHRA,
-                "opss_ogd" => LAStatus.PendingApprovalFromOPSS_OGD,
-                _ => LAStatus.Draft,
-            };
-        }
-
         public async Task DeleteDraftDocumentAsync(UserAccount userAccount, Guid cabId, string? deleteReason)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId.ToString());

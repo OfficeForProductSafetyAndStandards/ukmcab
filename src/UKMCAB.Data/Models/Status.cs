@@ -38,17 +38,7 @@ namespace UKMCAB.Data.Models
         Draft,
         [Description("Published")]
         Published,
-        [Description("Pending approval from DFTP")]
-        PendingApprovalFromDFTP,
-        [Description("Pending approval from DFTR")]
-        PendingApprovalFromDFTR,
-        [Description("Pending approval from DLUHC")]
-        PendingApprovalFromDLUHC,
-        [Description("Pending approval from MCGA")]
-        PendingApprovalFromMCGA,
-        [Description("Pending approval from MHRA")]
-        PendingApprovalFromMHRA,
-        [Description("Pending approval from OPSS (OGD)")]
-        PendingApprovalFromOPSS_OGD
+        [Description("Pending approval")]
+        PendingApproval,     
     }
 }
