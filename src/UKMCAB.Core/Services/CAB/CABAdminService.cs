@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
-using System.ComponentModel;
-using System.Xml.Schema;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
@@ -212,7 +210,7 @@ namespace UKMCAB.Core.Services.CAB
                 "mcga" => LAStatus.PendingApprovalFromMCGA,
                 "mhra" => LAStatus.PendingApprovalFromMHRA,
                 "opss_ogd" => LAStatus.PendingApprovalFromOPSS_OGD,
-                _ => LAStatus.None,
+                _ => LAStatus.Draft,
             };
         }
 
@@ -487,7 +485,8 @@ namespace UKMCAB.Core.Services.CAB
                 Id = guid,
                 LegislativeAreaName = laName,
                 LegislativeAreaId = laToAdd,
-                RoleId = RoleId
+                RoleId = RoleId,
+                Status = LAStatus.Draft,
             });
 
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);

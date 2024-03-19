@@ -34,6 +34,8 @@ namespace UKMCAB.Data.Models
         Approved,
         [Description("Declined")]
         Declined,
+        [Description("Draft")]
+        Draft,
         [Description("Published")]
         Published,
         [Description("Pending approval from DFTP")]
