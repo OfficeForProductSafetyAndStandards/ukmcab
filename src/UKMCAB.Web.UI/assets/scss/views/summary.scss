@@ -70,6 +70,45 @@
 .provisional-la {
     width: calc(100% - 38px);
     display: flex !important;
+    justify-content: flex-end;
+    align-items: flex-start;
+
+    @include govuk-media-query($until: tablet) {
+        flex-direction: column;
+
+        .govuk-details__summary-text {
+            margin-bottom: 12px;
+        }
+
+        strong.cab-status-tag {
+            margin: 0;
+        }
+    }
+}
+
+.provisional-la div:first-child {
+    margin-right:auto;
+}
+
+.provisional-la div:nth-child(2) {
+    margin-left: 5px;
+
+    @include govuk-media-query($until: tablet) {
+        margin-left: 0;
+    }
+}
+
+.provisional-la div:last-child {
+
+    @include govuk-media-query($until: tablet) {
+        margin-top: 15px;
+        margin-left: 0;
+    }
+}
+
+.provisional-la-single-tag {
+    width: calc(100% - 38px);
+    display: flex !important;
     justify-content: space-between;
 
     @include govuk-media-query($until: tablet) {

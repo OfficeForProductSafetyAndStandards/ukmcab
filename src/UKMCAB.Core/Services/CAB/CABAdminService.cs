@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
-using System.ComponentModel;
-using System.Xml.Schema;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
@@ -179,6 +177,7 @@ namespace UKMCAB.Core.Services.CAB
             {
                 draft.SubStatus = SubStatus.PendingApprovalToPublish;
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+                draft.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.PendingApproval);
             }
 
             if (draft.StatusValue == Status.Published)
@@ -200,7 +199,6 @@ namespace UKMCAB.Core.Services.CAB
 
             return draft;
         }
-
         public async Task DeleteDraftDocumentAsync(UserAccount userAccount, Guid cabId, string? deleteReason)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId.ToString());
@@ -459,7 +457,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd,
-            string laName)
+            string laName, string? RoleId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
@@ -471,7 +469,9 @@ namespace UKMCAB.Core.Services.CAB
             {
                 Id = guid,
                 LegislativeAreaName = laName,
-                LegislativeAreaId = laToAdd
+                LegislativeAreaId = laToAdd,
+                RoleId = RoleId,
+                Status = LAStatus.Draft,
             });
 
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);

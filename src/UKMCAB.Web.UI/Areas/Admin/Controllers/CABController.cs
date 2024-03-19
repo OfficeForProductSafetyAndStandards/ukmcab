@@ -677,6 +677,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     PointOfContactPhone = documentLegislativeArea.PointOfContactPhone,
                     IsPointOfContactPublicDisplay = documentLegislativeArea.IsPointOfContactPublicDisplay,
                     CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
+                    Status = documentLegislativeArea.Status,
+                    StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
+                    RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
                 };
 
                 var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
