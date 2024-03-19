@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
 [Area("admin"), Route("admin/cab/{id}/legislative-area-decline/"), Authorize]
-public class LegislativeAreaDeclineController
+public class LegislativeAreaDeclineController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly ILegislativeAreaService _legislativeAreaService;
@@ -26,8 +27,9 @@ public class LegislativeAreaDeclineController
     }
 
     [HttpGet("decline", Name = Routes.LegislativeAreaDecline)]
-    public async Task<IActionResult> AdditionalInformationAsync(Guid id)
+    public async Task<IActionResult> DeclineAsync(Guid id)
     {
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);
+        var vm = new DeclineLAViewModel("Decline Legislative area (name to add)", id);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/Decline.cshtml", vm);
     }
 }
