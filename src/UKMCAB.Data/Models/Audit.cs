@@ -13,8 +13,7 @@ namespace UKMCAB.Data.Models
         }
 
         public Audit(string userId, string username, string userrole, DateTime date, string action,
-            string? comment = null, string? publicComment = null, bool isUserInputComment = true,
-            bool isUserEnteredPublicComment = true)
+            string? comment = null, string? publicComment = null)
         {
             UserId = userId;
             UserName = username;
@@ -23,14 +22,11 @@ namespace UKMCAB.Data.Models
             Action = action;
             Comment = comment;
             PublicComment = publicComment;
-            IsUserInputComment = isUserInputComment;
-            IsUserEnteredPublicComment = isUserEnteredPublicComment;
         }
 
-        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null,
-            bool isUserInputComment = true, bool isUserEnteredPublicComment = true) : this(userAccount?.Id,
+        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null) : this(userAccount?.Id,
             $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment,
-            publicComment, isUserInputComment, isUserEnteredPublicComment)
+            publicComment)
         {
         }
 
@@ -44,6 +40,7 @@ namespace UKMCAB.Data.Models
 
             HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
             htmlSanitizer.AllowedTags.Clear();
+            htmlSanitizer.AllowedTags.Add("br");
 
             if (!string.IsNullOrWhiteSpace(comment))
             {
@@ -95,15 +92,6 @@ namespace UKMCAB.Data.Models
             if (sbInternalComment.Length > 0)
             {
                 sbInternalComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
-                if (string.IsNullOrWhiteSpace(comment))
-                    IsUserInputComment = false;
-            }
-
-            if (sbPublicComment.Length > 0)
-            {
-                sbPublicComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
-                if (string.IsNullOrWhiteSpace(publicComment))
-                    IsUserEnteredPublicComment = false;
             }
 
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
@@ -269,8 +257,6 @@ namespace UKMCAB.Data.Models
         public string Action { get; set; }
         public string? Comment { get; set; }
         public string? PublicComment { get; set; }
-        public bool? IsUserInputComment { get; set; }
-        public bool? IsUserEnteredPublicComment { get; set; }
     }
 
     public class AuditCABActions
