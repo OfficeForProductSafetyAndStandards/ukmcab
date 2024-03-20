@@ -21,10 +21,9 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
     [Area("admin"), Authorize]
-    public class CABController : Controller
+    public class CABController : UI.Controllers.ControllerBase
     {
         private readonly ICABAdminService _cabAdminService;
-        private readonly IUserService _userService;
         private readonly IWorkflowTaskService _workflowTaskService;
         private readonly IAsyncNotificationClient _notificationClient;
         private readonly CoreEmailTemplateOptions _templateOptions;
@@ -53,10 +52,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             IOptions<CoreEmailTemplateOptions> templateOptions,
             IEditLockService editLockService,
             IUserNoteService userNoteService,
-            ILegislativeAreaService legislativeAreaService)
+            ILegislativeAreaService legislativeAreaService) : base(userService)
         {
             _cabAdminService = cabAdminService;
-            _userService = userService;
             _workflowTaskService = workflowTaskService;
             _notificationClient = notificationClient;
             _editLockService = editLockService;
@@ -389,7 +387,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             //Check Edit lock
             var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
+            var isEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock;
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
+            var isMatchingOgdUser = IsMatchingOgdUser(latest);
+            var showOgdActions = subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
+                latest.IsPendingOgdApproval && isMatchingOgdUser;
+            if (showOgdActions)
+            {
+                await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latest, UserRoleId);
+            }
 
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest)
@@ -435,13 +441,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         : "Check details before publishing"
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
-                IsEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
+                IsEditLocked = isEditLocked,
                 SubSectionEditAllowed = subSectionEditAllowed ?? false,
                 LastModifiedDate = latest.LastUpdatedDate,
                 PublishedDate = publishedAudit?.DateTime ?? null,
                 GovernmentUserNoteCount = latest.GovernmentUserNotes?.Count ?? 0,
                 LastGovermentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
                 LastAuditLogHistoryDate = Enumerable.MaxBy(latest.AuditLog!, u => u.DateTime)?.DateTime,
+                IsPendingOgdApproval = latest.IsPendingOgdApproval,
+                IsMatchingOgdUser = isMatchingOgdUser,
+                ShowOgdActions = showOgdActions,
             };
 
             //Lock Record for edit
@@ -460,25 +469,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
                                     model.SubStatus != SubStatus.PendingApprovalToPublish &&
                                     (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
-            model.IsPendingOgdApproval = IsPendingOgdApproval(latest);
-            model.IsMatchingOgdUser = IsMatchingOgdUser(latest);
-            model.ShowOgdActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
-                                    model.IsPendingOgdApproval && model.IsMatchingOgdUser;
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                 (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
-
-            // During OGD approval, after clicking the Edit button, only display the LA(s) that the current user's role is linked to.
-            if (model.ShowOgdActions)
-            {
-                var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
-                          throw new InvalidOperationException();
-                var userRoleId = Roles.List.First(r =>
-                    r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-
-                model.CabLegislativeAreasViewModel.ActiveLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
-                model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
-            }
 
             return View(model);
         }
@@ -811,13 +804,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ModelState.Clear();
             cabLegislativeAreas.IsCompleted = TryValidateModel(cabLegislativeAreas);
             ModelState.Clear();
-        }
-
-        private bool IsPendingOgdApproval(Document document)
-        {
-            return document.StatusValue == Status.Draft &&
-                   document.SubStatus == SubStatus.PendingApprovalToPublish &&
-                   document.DocumentLegislativeAreas.Any(d => d.Status == LAStatus.PendingApproval);
         }
 
         private bool IsMatchingOgdUser(Document document)
