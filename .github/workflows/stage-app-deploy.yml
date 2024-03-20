@@ -2,11 +2,6 @@ name: stage-app-deploy
 
 on:
   workflow_dispatch:
-  push:
-   branches:
-     - master
-   paths:
-     - 'src/**/*'
 
 env:
   AZURE_WEBAPP_NAME: app-opss-ukmcab-stage

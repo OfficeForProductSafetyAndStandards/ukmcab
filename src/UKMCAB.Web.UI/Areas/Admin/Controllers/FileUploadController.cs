@@ -924,7 +924,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var uploadedFileToDuplicate = new FileViewModel
             {
                 FileName = selectedViewModel.FileName,
-                UploadDateTime = selectedViewModel.UploadDateTime,
+                UploadDateTime = DateTime.UtcNow,
                 Label = selectedViewModel.FileName,
                 LegislativeArea = string.Empty,
                 Category = string.Empty,
@@ -1312,23 +1312,35 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 foreach (var fileViewModel in fileViewModels)
                 {
-                    var current = latestDocument.Documents.First(fu => fu.FileName.Equals(fileViewModel.FileName));
+                    var findById = latestDocument.Documents.FirstOrDefault(fu => fu.Id.Equals(fileViewModel.Id));
+                    var findByFileName = latestDocument.Documents.FirstOrDefault(fu => fu.FileName.Equals(fileViewModel.FileName));
+
+                    var uploadDateTime = fileViewModel.IsDuplicated ? DateTime.UtcNow : findByFileName?.UploadDateTime;
+                    var blobName = findByFileName?.BlobName;
+
+                    // check if record exists with the Id
+                    if (findById != null)
+                    {
+                        uploadDateTime = findById.UploadDateTime;
+                        blobName = findById.BlobName;
+                    }                    
+
                     newDocuments.Add(new FileUpload
                     {
                         FileName = fileViewModel.FileName,
-                        BlobName = current.BlobName,
+                        BlobName = blobName,
                         Label = fileViewModel.Label,
                         Category = fileViewModel.Category,
-                        UploadDateTime = current.UploadDateTime,
+                        UploadDateTime = uploadDateTime??DateTime.UtcNow,
                         Id = fileViewModel.Id
                     });
                 }
             }
 
             var fileUploadComparer = new FileUploadComparer();
-            latestDocument.Schedules ??= new();
-            var newNotOld = newDocuments.Except(latestDocument.Schedules, fileUploadComparer);
-            var oldNotNew = latestDocument.Schedules.Except(newDocuments, fileUploadComparer);
+            latestDocument.Documents ??= new();
+            var newNotOld = newDocuments.Except(latestDocument.Documents, fileUploadComparer);
+            var oldNotNew = latestDocument.Documents.Except(newDocuments, fileUploadComparer);
             if (newNotOld.Any() || oldNotNew.Any())
             {
                 latestDocument.Documents = newDocuments;
