@@ -71,9 +71,9 @@
         public List<FileUpload>? Schedules { get; set; } = new();
 
         // Schedules of accreditation
-        public List<FileUpload> ActiveSchedules => Schedules.Any() ? Schedules.Where(n => n.Archived is false or null).ToList() : new();
+        public List<FileUpload> ActiveSchedules => Schedules != null && Schedules.Any() ? Schedules.Where(n => n.Archived is false or null).ToList() : new();
 
-        public List<FileUpload> ArchivedSchedules => Schedules.Any() ? Schedules.Where(n => n.Archived == true).ToList() : new();
+        public List<FileUpload> ArchivedSchedules => Schedules != null && Schedules.Any() ? Schedules.Where(n => n.Archived == true).ToList() : new();
 
         public string ScheduleLabels => string.Join(", ", Schedules?.Select(sch => sch.Label) ?? new List<string>());
 
