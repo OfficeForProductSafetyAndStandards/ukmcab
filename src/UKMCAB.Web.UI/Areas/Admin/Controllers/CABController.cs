@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using System.Security.Claims;
 using Microsoft.Extensions.Options;
