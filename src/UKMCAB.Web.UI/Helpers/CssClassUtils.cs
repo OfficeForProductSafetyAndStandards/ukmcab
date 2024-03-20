@@ -14,4 +14,15 @@ public class CssClassUtils
             _ => ""
         };
     }
+    public static string LAStatusStyle(LAStatus status)
+    {
+        return status switch
+        {
+            LAStatus.Published => "govuk-tag--green",
+            LAStatus.Approved => "govuk-tag--green",
+            LAStatus.Declined => "govuk-tag--orange",
+            LAStatus.Draft => "govuk-tag--blue",   
+            _ => "govuk-tag--yellow"
+        };
+    }
 }
