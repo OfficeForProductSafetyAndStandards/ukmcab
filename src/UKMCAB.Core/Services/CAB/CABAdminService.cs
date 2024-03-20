@@ -81,11 +81,16 @@ namespace UKMCAB.Core.Services.CAB
         /// <inheritdoc />
         public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            if (!string.IsNullOrWhiteSpace(userRole))
+            if (userRole == Roles.UKAS.Id)
             {
                 return await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
                                                                   d.StatusValue == Status.Draft) ||
                                                                  d.StatusValue == Status.Archived);
+            }
+            if (!string.IsNullOrWhiteSpace(userRole))
+            {
+                return await _cabRepository.Query<Document>(d =>
+                d.StatusValue == Status.Draft);
             }
 
             return await _cabRepository.Query<Document>(d =>
