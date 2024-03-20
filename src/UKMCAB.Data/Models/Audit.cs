@@ -36,8 +36,7 @@ namespace UKMCAB.Data.Models
             action, comment, publicComment)
         {
             var sbInternalComment = new StringBuilder();
-            var sbPublicComment = new StringBuilder();
-
+            
             HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
             htmlSanitizer.AllowedTags.Clear();
             htmlSanitizer.AllowedTags.Add("br");
@@ -69,23 +68,23 @@ namespace UKMCAB.Data.Models
                 {
                     if (docType.Equals("Documents"))
                     {  
-                        CalculateChangesToDocuments(publishedDocument, previousDocument, sbComment);
+                        CalculateChangesToDocuments(publishedDocument, previousDocument, sbInternalComment);
                     }
                     else
                     { 
-                        CalculateChangesToSchedules(publishedDocument, previousDocument, sbComment);
+                        CalculateChangesToSchedules(publishedDocument, previousDocument, sbInternalComment);
                     }
                 }
 
                 CalculateChangesToLegislativeAreas(previousDocument.DocumentLegislativeAreas,
-                    publishedDocument.DocumentLegislativeAreas, sbComment);
+                    publishedDocument.DocumentLegislativeAreas, sbInternalComment);
 
-                CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbComment);
+                CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbInternalComment);
             }
 
-            if (sbComment.Length > 0)
+            if (sbInternalComment.Length > 0)
             {
-                sbComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");                
+                sbInternalComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");                
             }
 
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
@@ -93,7 +92,7 @@ namespace UKMCAB.Data.Models
                 ? $"<p class=\"govuk-body\">{publicComment}</p>"
                 : string.Empty;
 
-            Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbComment.ToString()));
+            Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbInternalComment.ToString()));
             PublicComment = HttpUtility.HtmlEncode(publicComment);
         }
 
