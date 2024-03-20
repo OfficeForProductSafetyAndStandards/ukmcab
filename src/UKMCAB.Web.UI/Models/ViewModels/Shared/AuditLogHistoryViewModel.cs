@@ -16,7 +16,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchivedToDraft,
             AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved,
             AuditCABActions.CABDeclined, AuditCABActions.SubmittedForApproval, AuditCABActions.UnarchiveApprovalRequest,
-            AuditCABActions.DraftDeleted, AuditCABActions.UnArchiveApprovalRequestDeclined,AuditCABActions.ArchiveApprovalRequest, AuditCABActions.UnpublishApprovalRequest, AuditCABActions.UnpublishApprovalRequestDeclined
+            AuditCABActions.DraftDeleted, AuditCABActions.UnArchiveApprovalRequestDeclined,
+            AuditCABActions.ArchiveApprovalRequest, AuditCABActions.UnpublishApprovalRequest,
+            AuditCABActions.UnpublishApprovalRequestDeclined, AuditCABActions.DeclineLegislativeArea
         };
 
 
@@ -37,7 +39,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 {
                     UserId = al.UserId,
                     Username = al.UserName,
-                    UserGroup =  Roles.NameFor(al.UserRole),
+                    UserGroup = Roles.NameFor(al.UserRole),
                     DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
                     InternalComment = al.Comment
@@ -53,14 +55,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         }
 
 
-        public AuditLogHistoryViewModel(IEnumerable<Document?> documents, int pageNumber, bool showLoggedInAuditActions = false)
+        public AuditLogHistoryViewModel(IEnumerable<Document?> documents, int pageNumber,
+            bool showLoggedInAuditActions = false)
         {
             documents = documents
                 .Where(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived ||
                             d.StatusValue == Status.Historical)
                 .OrderBy(d => d.LastUpdatedDate);
 
-            var auditActionsToShow = showLoggedInAuditActions ? LoggedInUserAuditActionsToShow : PublicAuditActionsToShow;
+            var auditActionsToShow =
+                showLoggedInAuditActions ? LoggedInUserAuditActionsToShow : PublicAuditActionsToShow;
 
             var auditLog = documents
                 .SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action))))

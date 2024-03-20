@@ -81,15 +81,15 @@ namespace UKMCAB.Data.Models
                     {
                         var previousFileUploads = previousDocument.Schedules ?? new List<FileUpload>();
                         var currentFileUploads = publishedDocument.Schedules ?? new List<FileUpload>();
-                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbPublicComment,
+                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbComment,
                             previousFileUploads, currentFileUploads, docType);
                     }
                 }
 
                 CalculateChangesToLegislativeAreas(previousDocument.DocumentLegislativeAreas,
-                    publishedDocument.DocumentLegislativeAreas, sbPublicComment);
+                    publishedDocument.DocumentLegislativeAreas, sbComment);
 
-                CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbPublicComment);
+                CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbComment);
             }
 
             if (sbComment.Length > 0)
@@ -301,6 +301,8 @@ namespace UKMCAB.Data.Models
         public const string
             UnpublishApprovalRequestDeclined =
                 "Request to unpublish declined"; // UKAS request to un publish and create draft
+
+        public const string DeclineLegislativeArea = "Legislative area declined";
     }
 
     public class AuditUserActions
