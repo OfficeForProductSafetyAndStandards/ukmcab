@@ -1,16 +1,16 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.DeclineLAViewModel 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
         <span class="govuk-caption-m">Edit a CAB</span>
         <h1 class="govuk-heading-l">@Model.Title</h1>
     </div>
 </div>
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <form id="declineLAForm" method="post" novalidate>
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+        <form id="declineLAForm" method="post">
 
-            <div class="govuk-!-width-two-thirds @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.DeclineReason))">
+            <div class="@Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.DeclineReason))">
                 <govuk-character-count asp-for="DeclineReason" max-length="1000" rows="5">
                     <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
                         Reason
