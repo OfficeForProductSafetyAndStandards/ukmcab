@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
-    public class CABSummaryViewModel: ILayoutModel
+    public class CABSummaryViewModel : ILayoutModel
     {
         public string? Id { get; set; }
         public Status Status { get; set; }
@@ -24,6 +24,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CanPublish { get; set; }
         public bool CanSubmitForApproval { get; set; }
         public bool ShowEditActions { get; set; }
+        public bool IsPendingOgdApproval { get; set; }
+        public bool IsMatchingOgdUser { get; set; }
+        public bool ShowOgdActions { get; set; }
         public bool IsOPSSOrInCreatorUserGroup { get; set; }
         public bool IsEditLocked { get; set; }
         public bool EditByGroupPermitted { get; set; }
