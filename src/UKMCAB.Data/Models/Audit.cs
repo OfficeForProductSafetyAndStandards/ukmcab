@@ -39,7 +39,7 @@ namespace UKMCAB.Data.Models
             userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow,
             action, comment, publicComment)
         {
-            var sbComment = new StringBuilder();
+            var sbInternalComment = new StringBuilder();
             var sbPublicComment = new StringBuilder();
 
             HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
@@ -57,11 +57,11 @@ namespace UKMCAB.Data.Models
 
             if (previousDocument == null)
             {
-                sbComment.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>",
+                sbInternalComment.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>",
                     publishedDocument.AppointmentDate.HasValue
                         ? publishedDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00"
                         : "Not provided");
-                sbComment.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>",
+                sbInternalComment.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>",
                     DateTime.UtcNow.ToString("dd/MM/yyyy"));
             }
             else
@@ -74,27 +74,27 @@ namespace UKMCAB.Data.Models
                     {
                         var previousFileUploads = previousDocument.Documents ?? new List<FileUpload>();
                         var currentFileUploads = publishedDocument.Documents ?? new List<FileUpload>();
-                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbComment,
+                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbInternalComment,
                             previousFileUploads, currentFileUploads, docType);
                     }
                     else
                     {
                         var previousFileUploads = previousDocument.Schedules ?? new List<FileUpload>();
                         var currentFileUploads = publishedDocument.Schedules ?? new List<FileUpload>();
-                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbPublicComment,
+                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbInternalComment,
                             previousFileUploads, currentFileUploads, docType);
                     }
                 }
 
                 CalculateChangesToLegislativeAreas(previousDocument.DocumentLegislativeAreas,
-                    publishedDocument.DocumentLegislativeAreas, sbPublicComment);
+                    publishedDocument.DocumentLegislativeAreas, sbInternalComment);
 
-                CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbPublicComment);
+                CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbInternalComment);
             }
 
-            if (sbComment.Length > 0)
+            if (sbInternalComment.Length > 0)
             {
-                sbComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+                sbInternalComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
                 if (string.IsNullOrWhiteSpace(comment))
                     IsUserInputComment = false;
             }
@@ -111,7 +111,7 @@ namespace UKMCAB.Data.Models
                 ? $"<p class=\"govuk-body\">{publicComment}</p>"
                 : string.Empty;
 
-            Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbComment.ToString()));
+            Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbInternalComment.ToString()));
             PublicComment = string.Join("", HttpUtility.HtmlEncode(publicComment),
                 HttpUtility.HtmlEncode(sbPublicComment.ToString()));
         }
