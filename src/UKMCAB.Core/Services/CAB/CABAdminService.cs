@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
+using System.Security.Claims;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
@@ -23,18 +24,20 @@ namespace UKMCAB.Core.Services.CAB
         private readonly ICABRepository _cabRepository;
         private readonly ICachedSearchService _cachedSearchService;
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
+        private readonly ILegislativeAreaService _legislativeAreaService;
         private readonly TelemetryClient _telemetryClient;
         private readonly IMapper _mapper;
         private readonly IFileStorage _fileStorage;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, IFileStorage fileStorage,
+            ICachedPublishedCABService cachedPublishedCabService, ILegislativeAreaService legislativeAreaService, IFileStorage fileStorage,
             TelemetryClient telemetryClient,
             IMapper mapper)
         {
             _cabRepository = cabRepository;
             _cachedSearchService = cachedSearchService;
             _cachedPublishedCabService = cachedPublishedCabService;
+            _legislativeAreaService = legislativeAreaService;
             _telemetryClient = telemetryClient;
             _mapper = mapper;
             _fileStorage = fileStorage;
@@ -108,6 +111,19 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             return null;
+        }
+
+        public async Task FilterCabContentsByLaIfPendingOgdApproval(Document latestDocument, string userRoleId)
+        {
+            // Check if the CAB is pending OGD approval. If so, only display data for the LAs that the current user's role is linked to.
+            if (latestDocument.IsPendingOgdApproval)
+            {
+                latestDocument.DocumentLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
+
+                var ogdLegislativeAreas = await _legislativeAreaService.GetLegislativeAreasByRoleId(userRoleId);
+                var ogdLaNames = ogdLegislativeAreas.Select(la => la.Name).ToList();
+                latestDocument.Schedules.RemoveAll(s => s.LegislativeArea != null && !ogdLaNames.Contains(s.LegislativeArea));
+            }
         }
 
         public IAsyncEnumerable<string> GetAllCabIds()

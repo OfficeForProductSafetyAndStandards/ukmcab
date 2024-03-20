@@ -24,6 +24,16 @@ namespace UKMCAB.Core.Services.CAB
         Task<Document?> GetLatestDocumentAsync(string cabId);
 
         /// <summary>
+        /// Checks if the supplied CAB is pending approval by OGDs, and if so, removes any LA-related data
+        /// for LAs that the current user is not linked to. Useful for screens where OGD users can only see
+        /// the data for their own LA.
+        /// </summary>
+        /// <param name="latestDocument">The CAB document to filter.</param>
+        /// <param name="userRoleId">RoleId of current user.</param>
+        /// <returns></returns>
+        Task FilterCabContentsByLaIfPendingOgdApproval(Document latestDocument, string userRoleId);
+
+        /// <summary>
         /// Creates a new draft document with audit log Created
         /// </summary>
         /// <param name="userAccount"></param>
