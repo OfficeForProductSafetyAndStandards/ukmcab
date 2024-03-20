@@ -13,8 +13,7 @@ namespace UKMCAB.Data.Models
         }
 
         public Audit(string userId, string username, string userrole, DateTime date, string action,
-            string? comment = null, string? publicComment = null, bool isUserInputComment = true,
-            bool isUserEnteredPublicComment = true)
+            string? comment = null, string? publicComment = null)
         {
             UserId = userId;
             UserName = username;
@@ -23,14 +22,11 @@ namespace UKMCAB.Data.Models
             Action = action;
             Comment = comment;
             PublicComment = publicComment;
-            IsUserInputComment = isUserInputComment;
-            IsUserEnteredPublicComment = isUserEnteredPublicComment;
         }
 
-        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null,
-            bool isUserInputComment = true, bool isUserEnteredPublicComment = true) : this(userAccount?.Id,
+        public Audit(UserAccount? userAccount, string action, string? comment = null, string? publicComment = null) : this(userAccount?.Id,
             $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow, action, comment,
-            publicComment, isUserInputComment, isUserEnteredPublicComment)
+            publicComment)
         {
         }
 
@@ -39,10 +35,12 @@ namespace UKMCAB.Data.Models
             userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow,
             action, comment, publicComment)
         {
-            var sbComment = new StringBuilder();
+            var sbInternalComment = new StringBuilder();
+            var sbPublicComment = new StringBuilder();
 
             HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
             htmlSanitizer.AllowedTags.Clear();
+            htmlSanitizer.AllowedTags.Add("br");
 
             if (!string.IsNullOrWhiteSpace(comment))
             {
@@ -56,11 +54,11 @@ namespace UKMCAB.Data.Models
 
             if (previousDocument == null)
             {
-                sbComment.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>",
+                sbInternalComment.AppendFormat("<p class=\"govuk-body\">Appointment date: {0}</p>",
                     publishedDocument.AppointmentDate.HasValue
                         ? publishedDocument.AppointmentDate.Value.ToString("dd/MM/yyyy") + " 12:00"
                         : "Not provided");
-                sbComment.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>",
+                sbInternalComment.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>",
                     DateTime.UtcNow.ToString("dd/MM/yyyy"));
             }
             else
@@ -378,8 +376,6 @@ namespace UKMCAB.Data.Models
         public string Action { get; set; }
         public string? Comment { get; set; }
         public string? PublicComment { get; set; }
-        public bool? IsUserInputComment { get; set; }
-        public bool? IsUserEnteredPublicComment { get; set; }
     }
 
     public class AuditCABActions

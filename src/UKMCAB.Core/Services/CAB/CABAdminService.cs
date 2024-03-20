@@ -167,6 +167,7 @@ namespace UKMCAB.Core.Services.CAB
                 LastUpdatedDate = document.LastUpdatedDate,
                 RandomSort = document.RandomSort,
                 UKASReference = document.UKASReference,
+                HiddenScopeOfAppointments = document.HiddenScopeOfAppointments.ToArray(),
                 DocumentLegislativeAreas =
                     _mapper.Map<List<DocumentLegislativeAreaIndexItem>>(document.DocumentLegislativeAreas)
             });

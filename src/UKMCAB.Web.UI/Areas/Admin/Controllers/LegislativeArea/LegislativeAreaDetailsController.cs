@@ -155,7 +155,7 @@ public class LegislativeAreaDetailsController : Controller
         List<Guid> excludeLegislativeAreaIds)
     {
         var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
-        return legislativeAreas.Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
+        return legislativeAreas.OrderBy(la => la.Name).Select(x => new SelectListItem() { Text = x.Name, Value = x.Id.ToString() });
     }
 
     #endregion
