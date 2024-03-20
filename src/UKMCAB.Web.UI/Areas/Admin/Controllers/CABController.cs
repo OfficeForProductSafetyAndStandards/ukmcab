@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using System.Security.Claims;
+using AngleSharp.Common;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core.Domain.Workflow;
@@ -530,7 +530,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         latest.Name ?? throw new InvalidOperationException(), publishModel);
 
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
-
+                    foreach (var latestDocumentLegislativeArea in latest.DocumentLegislativeAreas)
+                    {
+                        await SendNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                            latest.Name, userAccount, latestDocumentLegislativeArea.RoleId,
+                            latestDocumentLegislativeArea.LegislativeAreaName);
+                    }
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
                 }
             }
@@ -656,6 +661,34 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
+        private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
+            UserAccount userAccount, string legislativeAreaRoleId, string legislativeArea)
+        {
+            if (string.IsNullOrWhiteSpace(legislativeAreaRoleId)) throw new ArgumentNullException(nameof(legislativeAreaRoleId));
+            if (_templateOptions.NotificationLegislativeAreaEmails.ToDictionary().Keys.All(a => a != legislativeAreaRoleId))
+                throw new ArgumentException($"Legislative Area email not found - {legislativeAreaRoleId}", nameof(legislativeAreaRoleId));
+            
+            var receiverEmailId =
+                _templateOptions.NotificationLegislativeAreaEmails.ToDictionary()[legislativeAreaRoleId];
+
+            var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
+                userAccount.Role ?? throw new InvalidOperationException(),
+                userAccount.EmailAddress ?? throw new InvalidOperationException());
+
+            var personalisation = new Dictionary<string, dynamic?>
+            {
+                { "CABName", cabName },
+                { "CABUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(Routes.CabSummary, new { id = cabId }))
+                },
+                { "userGroup", user.UserGroup },
+                { "userName", user.FirstAndLastName },
+                { "legislativeAreaName", legislativeArea }
+            };
+            await _notificationClient.SendEmailAsync(receiverEmailId,
+                _templateOptions.NotificationLegislativeAreaCabApproval, personalisation);
+        }
         private IActionResult SaveDraft(Document document)
         {
             TempData[Constants.TempDraftKey] =
