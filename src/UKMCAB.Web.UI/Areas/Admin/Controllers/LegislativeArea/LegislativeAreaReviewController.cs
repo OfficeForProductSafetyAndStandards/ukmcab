@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
@@ -13,20 +12,18 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
 [Area("admin"), Route("admin/cab/{id}/legislative-area/review-legislative-areas"), Authorize]
-public class LegislativeAreaReviewController : Controller
+public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly ILegislativeAreaService _legislativeAreaService;
-    private readonly IUserService _userService;
 
     public LegislativeAreaReviewController(
         ICABAdminService cabAdminService,
         ILegislativeAreaService legislativeAreaService,
-        IUserService userService)
+        IUserService userService) : base(userService)
     {
         _cabAdminService = cabAdminService;
         _legislativeAreaService = legislativeAreaService;
-        _userService = userService;
     }
 
     public static class Routes
@@ -43,7 +40,8 @@ public class LegislativeAreaReviewController : Controller
         {
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
-        
+
+        await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
         var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
         var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
         vm.ShowArchiveLegislativeAreaAction = !singleDraftDoc;
@@ -109,6 +107,7 @@ public class LegislativeAreaReviewController : Controller
         if (cabLaOfSelectedScopeofAppointment == null)
         {
             ModelState.AddModelError(laIdOrLaName, "Select a scope of appointment");
+            await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
             var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
             vm.ErrorLink = laIdOrLaName;
             return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
@@ -146,7 +145,8 @@ public class LegislativeAreaReviewController : Controller
     {
         var viewModel = new ReviewLegislativeAreasViewModel
         {
-            CABId = Guid.Parse(cab.CABId)
+            CABId = Guid.Parse(cab.CABId),
+            ShowAddLegislativeAreaAction = !cab.IsPendingOgdApproval,
         };
 
         foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)

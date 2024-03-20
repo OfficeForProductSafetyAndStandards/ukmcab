@@ -88,5 +88,11 @@
         public List<string> HiddenScopeOfAppointments { get; set; } = new(); 
         public string RandomSort { get; set; } = string.Empty;
         public string LegacyCabId { get; set; } = string.Empty;
+
+        public bool IsPendingOgdApproval =>
+            StatusValue == Models.Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            DocumentLegislativeAreas.Any(d => d.Status == LAStatus.PendingApproval);
+        
     }
 }
