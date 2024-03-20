@@ -247,9 +247,12 @@
                 </fieldset>
             </div>
 
-            <div>
-                <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="AddLegislativeArea">Add legislative area</govuk-button>               
-            </div>
+            @if (Model.ShowAddLegislativeAreaAction)
+            {
+                <div>
+                    <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="AddLegislativeArea">Add legislative area</govuk-button>               
+                </div>
+            }
             <div>
                 <hr class="ukmcab-border"/>
             </div>
