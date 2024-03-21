@@ -38,7 +38,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockFileStorage = new Mock<IFileStorage>();
             var mapper = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); }).CreateMapper();
 
-            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, _mockFileStorage.Object, _telemetryClient, mapper);
+            _sut = new CABAdminService(_mockCABRepository.Object, _mockCachedSearchService.Object,_mockCachedPublishedCAB.Object, new Mock<ILegislativeAreaService>().Object, _mockFileStorage.Object, _telemetryClient, mapper);
         }
 
         [Theory]
