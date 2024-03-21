@@ -10,4 +10,5 @@ public class Claims
     public const string UserManagement = "user-mgt";
     public const string IsOneLoginUser = "one.login.gov.uk";
     public const string IsFakeUser = "user.is-fake";
+    public const string LegislativeAreaApprove = "la.approve";
 }
