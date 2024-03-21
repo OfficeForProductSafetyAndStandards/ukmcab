@@ -93,9 +93,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                     DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
                     InternalComment = al.Comment,
-                    PublicComment = al.PublicComment,
-                    IsUserInputComment = al.IsUserInputComment,
-                    IsUserEnteredPublicComment = al.IsUserEnteredPublicComment
+                    PublicComment = al.PublicComment
                 });
 
             Pagination = new PaginationViewModel
