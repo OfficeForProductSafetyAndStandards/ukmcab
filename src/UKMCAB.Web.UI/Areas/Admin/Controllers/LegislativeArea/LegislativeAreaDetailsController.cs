@@ -1030,6 +1030,7 @@ public class LegislativeAreaDetailsController : Controller
                     PurposeOfAppointment = purposeOfAppointment,
                     Category = category,
                     SubCategory = subCategory,
+                    ScopeId = scopeOfAppointment.Id,
                 };
 
                 if (productProcedure.ProductId.HasValue)
@@ -1047,6 +1048,13 @@ public class LegislativeAreaDetailsController : Controller
 
                 legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
             }
+        }
+
+        var distinctSoa = legislativeAreaViewModel.ScopeOfAppointments.GroupBy(s => s.ScopeId).ToList();
+        foreach (var item in distinctSoa)
+        {
+            var scopeOfApps = legislativeAreaViewModel.ScopeOfAppointments;
+            scopeOfApps.First(soa => soa.ScopeId == item.Key).NoOfProductsInScopeOfAppointment = scopeOfApps.Count(soa => soa.ScopeId == item.Key);
         }
 
         return legislativeAreaViewModel;
