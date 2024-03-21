@@ -26,4 +26,5 @@ public partial class CoreEmailTemplateOptions
     public string AccountUnarchived { get; set; } = null!;
 
     public string UkasGroupEmail { get; set; } = null!;
+    public LegislativeAreaEmail NotificationLegislativeAreaEmails { get; set; }
 }

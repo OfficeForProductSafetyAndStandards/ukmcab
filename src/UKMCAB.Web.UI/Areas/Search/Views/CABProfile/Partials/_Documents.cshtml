@@ -19,7 +19,7 @@
             @if(isSchedule && archivedGroupedSchedules.Any())
             {
                 <hr class="govuk-!-margin-top-9" />
-                <h2 class="govuk-heading-m govuk-!-font-size-27 govuk-!-margin-bottom-6">Archived @(@Model.Title.ToLower())</h2>
+                <h2 class="govuk-heading-l">Archived @(@Model.Title.ToLower())</h2>
 
                 <partial name="Partials/_DocumentsTable" model="@(new CABDocumentsTableViewModel { CABId = Model.CABId, DocumentType = Model.DocumentType, GroupedDocuments = archivedGroupedSchedules })" />
             }
