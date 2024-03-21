@@ -473,6 +473,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                 (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
 
+            if (TempData.ContainsKey(Constants.DeclinedLA))
+            {
+                TempData.Remove(Constants.DeclinedLA);
+                model.SuccessBannerMessage = "Legislative area has been declined.";
+            }
             return View(model);
         }
 

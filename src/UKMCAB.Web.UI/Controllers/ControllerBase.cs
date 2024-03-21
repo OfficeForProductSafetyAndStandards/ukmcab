@@ -14,7 +14,7 @@
             _userService = userService;
         }
 
-        public UserAccount? CurrentUser
+        public UserAccount CurrentUser
         {
             get
             {
@@ -22,7 +22,7 @@
             }
         }
 
-        public string? UserRoleId
+        public string UserRoleId
         {
             get
             {
