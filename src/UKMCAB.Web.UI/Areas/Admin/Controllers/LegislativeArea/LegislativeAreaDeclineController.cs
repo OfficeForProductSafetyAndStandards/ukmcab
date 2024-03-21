@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.LegislativeAreas;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
@@ -9,7 +10,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
-[Area("admin"), Route("admin/cab/{id}/legislative-area/"), Authorize]
+[Area("admin"), Route("admin/cab/{id}/legislative-area/"), Authorize(Claims.LegislativeAreaApprove)]
 public class LegislativeAreaDeclineController : UKMCAB.Web.UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
