@@ -14,20 +14,8 @@
             _userService = userService;
         }
 
-        public UserAccount? CurrentUser
-        {
-            get
-            {
-                return _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)).Result ?? throw new InvalidOperationException();
-            }
-        }
+        public UserAccount CurrentUser => _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)).Result ?? throw new InvalidOperationException();
 
-        public string? UserRoleId
-        {
-            get
-            {
-                return Roles.List.First(r => r.Label != null && r.Label.Equals(CurrentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
-            }
-        }
+        public string UserRoleId => CurrentUser.Role ?? throw new InvalidOperationException();
     }
 }
