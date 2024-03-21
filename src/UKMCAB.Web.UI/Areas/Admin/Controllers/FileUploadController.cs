@@ -1027,7 +1027,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     StringComparison.OrdinalIgnoreCase))
                             {
                                 ModelState.AddModelError($"ActiveFiles[{index}].Label",
-                                    "A label already exists in this legislative area. Change the title or legislative area.");
+                                    "A file associated with this legislative area is already using this title. Change the title of the file.");
                             }
                         }
 
@@ -1118,7 +1118,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     StringComparison.OrdinalIgnoreCase))
                             {
                                 ModelState.AddModelError($"UploadedFiles[{index}].Label",
-                                    "A label already exists in this category. Change the title or category.");
+                                    "A file associated with this category is already using this title. Change the title of the file.");
                             }
                         }
 
