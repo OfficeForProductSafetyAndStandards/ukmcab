@@ -33,11 +33,11 @@
                     <span class="govuk-visually-hidden">Warning</span>
                     @if (Model.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
                     {
-                        @:Removing this legislative area will also remove the details shown below.
+                        @:Removing this legislative area will remove the details shown below.
                     }
                     else
                     {
-                        @:Archiving this legislative area will also archive the details shown below.
+                        @:Archiving this legislative area will archive the details shown below.
                     }                    
                 </strong>
             </div>
@@ -50,7 +50,7 @@
                         <span class="govuk-visually-hidden">Warning</span>
                         @if (Model.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
                         {
-                            @:Removing this legislative area will also remove the product schedules associated with it, as shown below.
+                            @:Removing this legislative area will remove the product schedules associated with it.
                         }
                         else
                         {
