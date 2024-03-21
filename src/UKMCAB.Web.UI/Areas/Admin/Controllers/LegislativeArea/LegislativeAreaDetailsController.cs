@@ -201,7 +201,7 @@ public class LegislativeAreaDetailsController : Controller
             return RedirectToRoute(Routes.AddCategory, new { id, scopeId, compareScopeId, fromSummary });
         }
 
-        var selectListItems = options.PurposeOfAppointments
+        var selectListItems = options.PurposeOfAppointments.OrderBy(poa => poa.Name)
             .Select(poa => new SelectListItem(poa.Name, poa.Id.ToString())).ToList();
 
 
@@ -328,7 +328,7 @@ public class LegislativeAreaDetailsController : Controller
 
             if (scopeOfAppointmentOptionsModel.Categories.Any())
             {
-                return scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Categories.OrderBy(c => c.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -338,7 +338,7 @@ public class LegislativeAreaDetailsController : Controller
                 .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId);
 
         return scopeOfAppointmentOptionsModel.Categories.Any()
-            ? scopeOfAppointmentOptionsModel.Categories.Select(x => new SelectListItem
+            ? scopeOfAppointmentOptionsModel.Categories.OrderBy(c => c.Name).Select(x => new SelectListItem
                 { Text = x.Name, Value = x.Id.ToString() })
             : new List<SelectListItem>();
     }
@@ -421,7 +421,7 @@ public class LegislativeAreaDetailsController : Controller
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync((Guid)categoryId);
             if (scopeOfAppointmentOptionsModel.Subcategories.Any())
             {
-                return scopeOfAppointmentOptionsModel.Subcategories.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Subcategories.OrderBy(s => s.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -510,14 +510,14 @@ public class LegislativeAreaDetailsController : Controller
         Guid? categoryId,
         Guid? purposeOfAppointmentId, Guid? legislativeAreaId)
     {
-        ScopeOfAppointmentOptionsModel scopeOfAppointmentOptionsModel;
+        ScopeOfAppointmentOptionsModel scopeOfAppointmentOptionsModel;                                                                                                              
         if (subCategoryId != null)
         {
             scopeOfAppointmentOptionsModel =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForSubCategoryAsync(subCategoryId.Value);
             if (scopeOfAppointmentOptionsModel.Products.Any())
             {
-                return scopeOfAppointmentOptionsModel.Products.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Products.OrderBy(p => p.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -528,7 +528,7 @@ public class LegislativeAreaDetailsController : Controller
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(categoryId.Value);
             if (scopeOfAppointmentOptionsModel.Products.Any())
             {
-                return scopeOfAppointmentOptionsModel.Products.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Products.OrderBy(p => p.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -540,7 +540,7 @@ public class LegislativeAreaDetailsController : Controller
                     purposeOfAppointmentId.Value);
             if (scopeOfAppointmentOptionsModel.Products.Any())
             {
-                return scopeOfAppointmentOptionsModel.Products.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Products.OrderBy(p => p.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -552,7 +552,7 @@ public class LegislativeAreaDetailsController : Controller
                     .GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId.Value);
             if (scopeOfAppointmentOptionsModel.Products.Any())
             {
-                return scopeOfAppointmentOptionsModel.Products.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Products.OrderBy(p => p.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -714,7 +714,7 @@ public class LegislativeAreaDetailsController : Controller
                     .GetNextScopeOfAppointmentOptionsForProductAsync(productId.Value);
             if (scopeOfAppointmentOptionsModel.Procedures.Any())
             {
-                return scopeOfAppointmentOptionsModel.Procedures.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Procedures.OrderBy(p => p.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -726,7 +726,7 @@ public class LegislativeAreaDetailsController : Controller
                     .GetNextScopeOfAppointmentOptionsForCategoryAsync(categoryId.Value);
             if (scopeOfAppointmentOptionsModel.Procedures.Any())
             {
-                return scopeOfAppointmentOptionsModel.Procedures.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Procedures.OrderBy(p => p.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
@@ -738,7 +738,7 @@ public class LegislativeAreaDetailsController : Controller
                     .GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(purposeOfAppointmentId.Value);
             if (scopeOfAppointmentOptionsModel.Procedures.Any())
             {
-                return scopeOfAppointmentOptionsModel.Procedures.Select(x => new SelectListItem
+                return scopeOfAppointmentOptionsModel.Procedures.OrderBy(p => p.Name).Select(x => new SelectListItem
                     { Text = x.Name, Value = x.Id.ToString() });
             }
         }
