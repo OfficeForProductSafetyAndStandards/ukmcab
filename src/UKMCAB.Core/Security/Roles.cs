@@ -1,4 +1,5 @@
-﻿namespace UKMCAB.Core.Security;
+﻿using System.Reflection;
+namespace UKMCAB.Core.Security;
 
 public static class Roles
 {
@@ -13,6 +14,22 @@ public static class Roles
 
     public static IEnumerable<string> OgdRolesList { get; } =
         new List<string> { DFTP.Id, DFTR.Id, DLUHC.Id, MCGA.Id, MHRA.Id, OPSS_OGD.Id };
+
+    public static Role GetRoleByName(string roleName)
+    {
+        foreach (var property in typeof(Roles).GetProperties(BindingFlags.Public | BindingFlags.Static))
+        {
+            if (property.PropertyType == typeof(Role))
+            {
+                var role = property.GetValue(null) as Role;
+                if (role != null && string.Equals(role.Id, roleName, StringComparison.OrdinalIgnoreCase))
+                {
+                    return role; 
+                }
+            }
+        }
+        return null; 
+    }
 
     public static IEnumerable<Role> List { get; } =
         new List<Role> { DFTP, DFTR, DLUHC, MCGA, MHRA, OPSS, OPSS_OGD, UKAS };

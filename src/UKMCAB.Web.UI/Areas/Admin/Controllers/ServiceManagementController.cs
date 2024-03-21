@@ -42,7 +42,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             await _editLockService.RemoveEditLockForUserAsync(userAccount.Id);
             var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
             var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
-            var userRole = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
+            var userRole = Roles.GetRoleByName(userAccount.Role!);
             var unassignedNotifications = await _workflowTaskService.GetUnassignedByForRoleIdAsync(userRole.Id);
             var assignedNotifications =
                 await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(userRole.Id, userAccount.Id);
