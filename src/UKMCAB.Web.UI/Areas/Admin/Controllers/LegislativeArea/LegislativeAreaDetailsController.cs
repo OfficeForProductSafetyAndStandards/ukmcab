@@ -828,15 +828,16 @@ public class LegislativeAreaDetailsController : Controller
     #region RemoveLegislativeArea
 
     [HttpGet("remove/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeArea)]
-    public async Task<IActionResult> RemoveOrArchiveLegislativeArea(Guid id, Guid legislativeAreaId, RemoveActionEnum actionType, string? returnUrl)
+    public async Task<IActionResult> RemoveOrArchiveLegislativeArea(Guid id, Guid legislativeAreaId, RemoveActionEnum actionType, string? returnUrl, bool fromSummary)
     {  
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());        
        
         // if legislative area has any schedules then give an option to remove/archive product schedules
-        if (latestDocument.Schedules.Where(n => n.LegislativeArea != null &&  n.LegislativeArea.ToLower() == legislativeArea.Name.ToLower()).Any())
+        var schedules = latestDocument!.Schedules;
+        if (schedules != null && schedules.Any(n => n.LegislativeArea != null &&  string.Equals(n.LegislativeArea, legislativeArea.Name, StringComparison.CurrentCultureIgnoreCase)))
         {
-            return RedirectToRoute( Routes.RemoveOrArchiveLegislativeAreaOption, new { id, legislativeAreaId, actionType });
+            return RedirectToRoute( Routes.RemoveOrArchiveLegislativeAreaOption, new { id, legislativeAreaId, actionType, fromSummary });
         }
         else
         {   
@@ -848,15 +849,15 @@ public class LegislativeAreaDetailsController : Controller
                 LegislativeAreaRemoveAction = actionType,
                 CabId = id,
                 LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),                
-                ReturnUrl = returnUrl
+                ReturnUrl = returnUrl,
+                FromSummary = fromSummary
             };
             return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
         }
     }
 
     [HttpPost("remove/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeArea)]
-    public async Task<IActionResult> RemoveOrArchiveLegislativeArea(Guid id, Guid legislativeAreaId, LegislativeAreaRemoveViewModel vm,
-        string? returnUrl)
+    public async Task<IActionResult> RemoveOrArchiveLegislativeArea(Guid id, Guid legislativeAreaId, LegislativeAreaRemoveViewModel vm)
     {
         if (ModelState.IsValid)
         {
@@ -874,14 +875,12 @@ public class LegislativeAreaDetailsController : Controller
                 laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchived;
             }
 
-            return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType });
+            return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
         }
-        else
-        {
-            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-            vm.LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId);
-            return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
-        }
+
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+        vm.LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
     }
 
     [HttpGet("remove-with-option/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeAreaOption)]
