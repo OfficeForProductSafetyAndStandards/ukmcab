@@ -682,13 +682,13 @@ else if (Model.IsEditLocked && !Model.IsPendingOgdApproval)
                 </dl>
             </div>
 
-            @if (Model is { ValidCAB: true, CanPublish: true })
+            @if (Model is { ValidCAB: true, CanPublish: true, ShowEditActions: true })
             {
                 <div class="govuk-warning-text govuk-!-margin-top-5">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        <text>Once published this record will be visible to the public.</text>
+                        <text>Everyone can see a CAB profile when it is published.</text>
                     </strong>
                 </div>
             }

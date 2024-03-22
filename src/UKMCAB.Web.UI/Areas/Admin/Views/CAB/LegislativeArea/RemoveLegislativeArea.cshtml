@@ -7,7 +7,7 @@
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
-                <govuk-back-link asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CabId" />
+                <govuk-back-link asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" />
             </div>
         </div>
     </div>
@@ -22,7 +22,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">       
         <form id="legislativeForm" method="post" novalidate>
-            <input type="hidden" asp-for="IsFromSummary" />
+            <input type="hidden" asp-for="FromSummary" />
             <input type="hidden" asp-for="Title" />
             <input type="hidden" asp-for="CabId" />
             <input type="hidden" asp-for="LegislativeAreaRemoveAction" />
