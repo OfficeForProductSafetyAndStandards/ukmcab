@@ -1,13 +1,13 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
 @using UKMCAB.Data
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeAreaRemoveWithOptionViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaRemoveWithOptionViewModel
 
 @section BackButton
 {
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
-                <govuk-back-link asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CabId" />
+                <govuk-back-link asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-fromSummary="@Model.FromSummary" />
             </div>
         </div>
     </div>
@@ -25,6 +25,7 @@
             <input type="hidden" asp-for="Title" />
             <input type="hidden" asp-for="CabId" />
             <input type="hidden" asp-for="LegislativeAreaRemoveAction" />
+            <input type="hidden" asp-for="FromSummary" />
             <h2 class="govuk-heading-s">You have selected: </h2>
             <p class="govuk-body">@Model.LegislativeArea.Name</p>
             <div class="govuk-warning-text">
@@ -105,7 +106,7 @@
             }
             <div class="govuk-button-group govuk-!-margin-top-4">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
-                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-returnUrl="@Model.ReturnUrl" asp-route-fromSummary="@Model.FromSummary" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>

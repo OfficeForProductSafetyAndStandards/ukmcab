@@ -574,6 +574,20 @@ namespace UKMCAB.Core.Services.CAB
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
+        public async Task ApproveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
+                                 throw new InvalidOperationException("No document found");
+
+            // Approve document legislative area
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+            documentLegislativeArea.Status = LAStatus.Approved;
+            var comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " approved.";
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ApproveLegislativeArea, comment));
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+        }
+
         public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
@@ -583,8 +597,8 @@ namespace UKMCAB.Core.Services.CAB
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Status = LAStatus.Declined;
-            reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + "declined: </br>" + reason;
-            latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,latestDocument,null,reason));
+            reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " declined: </br>" + reason;
+            latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,reason));
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 

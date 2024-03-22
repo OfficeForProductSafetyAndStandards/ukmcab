@@ -473,6 +473,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                 (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
 
+            if (TempData.ContainsKey(Constants.ApprovedLA))
+            {
+                TempData.Remove(Constants.ApprovedLA);
+                model.SuccessBannerMessage = "Legislative area has been approved.";
+            }
             if (TempData.ContainsKey(Constants.DeclinedLA))
             {
                 TempData.Remove(Constants.DeclinedLA);
@@ -705,9 +710,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved.",
                     user,
                     DateTime.Now,
-                    true,
                     null,
-                    true,
+                    null,
+                    false,
                     cabId));
         }
         private IActionResult SaveDraft(Document document)

@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 
-namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class LegislativeAreaRemoveWithOptionViewModel : LegislativeAreaRemoveViewModel
     {

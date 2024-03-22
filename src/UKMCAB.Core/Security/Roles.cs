@@ -9,7 +9,7 @@ public static class Roles
     public static Role MCGA { get; } = new("mcga", "MCGA");
     public static Role MHRA { get; } = new("mhra", "MHRA");
     public static Role OPSS { get; } = new("opss", "OPSS");
-    public static Role OPSS_OGD { get; } = new("opss_ogd", "OPSS (OGD)");
+    public static Role OPSS_OGD { get; } = new("opss (ogd)", "OPSS (OGD)");
     public static Role UKAS { get; } = new("ukas", "UKAS");
 
     public static IEnumerable<string> OgdRolesList { get; } =

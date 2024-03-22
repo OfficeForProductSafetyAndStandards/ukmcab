@@ -1056,7 +1056,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     StringComparison.OrdinalIgnoreCase))
                             {
                                 ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
-                                    "The file already exists in this legislative area.");
+                                    "The file is already associated with this legislative area.");
                             }
                         }
 
@@ -1147,7 +1147,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     StringComparison.OrdinalIgnoreCase))
                             {
                                 ModelState.AddModelError($"UploadedFiles[{index}].Category",
-                                    "The file already exists in this category.");
+                                    "The file is already associated with this category.");
                             }
                         }
 

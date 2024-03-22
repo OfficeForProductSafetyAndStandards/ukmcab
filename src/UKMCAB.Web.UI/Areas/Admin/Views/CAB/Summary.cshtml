@@ -3,6 +3,7 @@
 @using UKMCAB.Core.Security;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
 @{
     var returnUrl = Model.ReturnUrl == "/" ? "/?" : Model.ReturnUrl;
@@ -681,13 +682,13 @@ else if (Model.IsEditLocked && !Model.IsPendingOgdApproval)
                 </dl>
             </div>
 
-            @if (Model is { ValidCAB: true, CanPublish: true })
+            @if (Model is { ValidCAB: true, CanPublish: true, ShowEditActions: true })
             {
                 <div class="govuk-warning-text govuk-!-margin-top-5">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        <text>Once published this record will be visible to the public.</text>
+                        <text>Everyone can see a CAB profile when it is published.</text>
                     </strong>
                 </div>
             }
@@ -760,10 +761,13 @@ else if (Model.IsEditLocked && !Model.IsPendingOgdApproval)
 
                 <div class="govuk-!-margin-top-5">
                     <div class="govuk-button-group">
-                        <govuk-button-link id="approveLegislativeArea" asp-area="admin" asp-controller="cab" asp-action="approveLegislativeArea" asp-route-id="@Model.CABId"
-                                           asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Approve</govuk-button-link>
-                        <govuk-button-link id="declineLegislativeArea" class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="declineLegislativeArea"
+                        <form method="post" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprove" asp-route-id="@Model.CABId">
+                            <govuk-button id="approveLegislativeArea" type="submit" class="govuk-!-display-block" >Approve</govuk-button>
+                        </form>
+                        <govuk-button-link id="declineLegislativeArea" class="govuk-button--secondary"
+                                           asp-route="@LegislativeAreaDeclineController.Routes.LegislativeAreaDecline"
                                            asp-route-id="@Model.CABId">Decline</govuk-button-link>
+                        
                         <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     </div>
                 </div>

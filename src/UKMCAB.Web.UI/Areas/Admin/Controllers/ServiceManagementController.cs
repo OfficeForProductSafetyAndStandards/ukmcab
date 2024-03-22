@@ -11,10 +11,9 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.ServiceManagement;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
     [Area("admin"), Authorize]
-    public class ServiceManagementController : Controller
+    public class ServiceManagementController : UI.Controllers.ControllerBase
     {
         private readonly ICABAdminService _cabAdminService;
-        private readonly IUserService _userService;
         private readonly IWorkflowTaskService _workflowTaskService;
         private readonly IEditLockService _editLockService;
 
@@ -24,10 +23,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         public ServiceManagementController(ICABAdminService cabAdminService, IUserService userService,
-            IWorkflowTaskService workflowTaskService, IEditLockService editLockService)
+            IWorkflowTaskService workflowTaskService, IEditLockService editLockService) : base(userService)
         {
             _cabAdminService = cabAdminService;
-            _userService = userService;
             _workflowTaskService = workflowTaskService;
             _editLockService = editLockService;
         }
@@ -40,12 +38,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                     .Value) ?? throw new InvalidOperationException("User account not found");
             await _editLockService.RemoveEditLockForUserAsync(userAccount.Id);
-            var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
-            var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
-            var userRole = Roles.GetRoleByName(userAccount.Role!);
-            var unassignedNotifications = await _workflowTaskService.GetUnassignedByForRoleIdAsync(userRole.Id);
+            var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(UserRoleId);
+            var unassignedNotifications = await _workflowTaskService.GetUnassignedByForRoleIdAsync(UserRoleId);
             var assignedNotifications =
-                await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(userRole.Id, userAccount.Id);
+                await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(UserRoleId, userAccount.Id);
             var assignedNotificationToSpecificUser = await _workflowTaskService.GetByAssignedUserAsync(userAccount.Id);
             
             return View(new InternalLandingPageViewModel
@@ -56,7 +52,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 UnassignedNotification = unassignedNotifications.Count,
                 AssignedNotification = assignedNotifications.Count,
                 AssignedToMeNotification = assignedNotificationToSpecificUser.Count,
-                UserRoleLabel = userRole.Label
+                UserRoleLabel = Roles.NameFor(UserRoleId) 
             });
         }
     }

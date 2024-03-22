@@ -50,7 +50,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         {
             vm.SuccessBannerMessage = AlertMessagesUtils.LegislativeAreaActionMessages[actionType.Value];
         }
-        vm.IsFromSummary = fromSummary;
+        vm.FromSummary = fromSummary;
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
@@ -80,7 +80,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             }
             else
             {
-                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id, fromSummary = reviewLaVM.IsFromSummary });
+                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id, fromSummary = reviewLaVM.FromSummary });
             }
         }
 
@@ -91,7 +91,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             laIdOrLaName = submitType[4..];
             if (Guid.TryParse(laIdOrLaName, out Guid laId))
             {
-                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, legislativeAreaId = laId, fromSummary = reviewLaVM.IsFromSummary });
+                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, legislativeAreaId = laId, fromSummary = reviewLaVM.FromSummary });
             }
         }
         else if (submitType.StartsWith("Edit-"))
@@ -122,7 +122,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         {
             if (submitType.StartsWith(Constants.SubmitType.Edit))
             {
-                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, compareScopeId = selectedScopeOfAppointmentId, legislativeAreaId, fromSummary = reviewLaVM.IsFromSummary });
+                return RedirectToRoute(LegislativeAreaDetailsController.Routes.AddPurposeOfAppointment, new { id, scopeId = Guid.Empty, compareScopeId = selectedScopeOfAppointmentId, legislativeAreaId, fromSummary = reviewLaVM.FromSummary });
             }
             if (submitType.StartsWith(Constants.SubmitType.Remove))
             {
@@ -133,7 +133,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     latestDocument.ScopeOfAppointments.Remove(soaToRemove);
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
-                    return RedirectToRoute(Routes.LegislativeAreaSelected, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.IsFromSummary });
+                    return RedirectToRoute(Routes.LegislativeAreaSelected, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.FromSummary });
                 }
             }
         }
