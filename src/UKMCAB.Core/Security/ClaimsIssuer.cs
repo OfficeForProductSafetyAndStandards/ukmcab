@@ -41,7 +41,9 @@ public static class ClaimsIssuer
             {
                 new(Claims.IsOneLoginUser, "*"),
                 new(Claims.CabEdit, "*"), // can edit any cab
-                new(Claims.LegislativeAreaApprove, role) // Approve/Decline Legislative Area
+                new(Claims.LegislativeAreaApprove, role), // Approve/Decline Legislative Area
+                new(Claims.CabCanApprove, "*"), // can approve any cab
+                new(Claims.CabManagement, string.Empty) // can manage all cabs
             };
         }
 

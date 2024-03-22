@@ -884,7 +884,7 @@ public class LegislativeAreaDetailsController : Controller
     }
 
     [HttpGet("remove-with-option/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeAreaOption)]
-    public async Task<IActionResult> RemoveOrArchiveLegislativeAreaWithOption(Guid id, Guid legislativeAreaId, RemoveActionEnum actionType, string? returnUrl)
+    public async Task<IActionResult> RemoveOrArchiveLegislativeAreaWithOption(Guid id, Guid legislativeAreaId, RemoveActionEnum actionType, bool fromSummary, string? returnUrl)
     {   
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
         LegislativeAreaActionMessageEnum? laActionMessageActionType = null;
@@ -899,7 +899,8 @@ public class LegislativeAreaDetailsController : Controller
             CabId = id,
             LegislativeArea = await PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
             ProductSchedules = latestDocument.Schedules?.Where(n => n.LegislativeArea == legislativeArea.Name).ToList(),
-            ReturnUrl = returnUrl
+            ReturnUrl = returnUrl,
+            FromSummary = fromSummary
         };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaWithOption.cshtml", vm);
     }
@@ -951,7 +952,7 @@ public class LegislativeAreaDetailsController : Controller
                 }
             }
            
-            return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType });
+            return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
         }
         else
         {   
