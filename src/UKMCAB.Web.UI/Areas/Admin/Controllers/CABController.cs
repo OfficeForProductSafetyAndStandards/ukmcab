@@ -541,10 +541,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 nameof(latestDocumentLegislativeArea.RoleId));
 
                         var receiverEmailId = legislativeAreaSenderEmailIds[latestDocumentLegislativeArea.RoleId];
-
-                        await SendNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
-                            latest.Name, userAccount, receiverEmailId,
-                            latestDocumentLegislativeArea.LegislativeAreaName);
+                        if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
+                        {
+                            await SendNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                                latest.Name, userAccount, receiverEmailId,
+                                latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId);
+                        }
                     }
 
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
@@ -673,7 +675,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
-            UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName)
+            UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName, string legislativeAreaRoleId)
         {
             var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
                 userAccount.Role ?? throw new InvalidOperationException(),
@@ -692,6 +694,21 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             };
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
                 _templateOptions.NotificationLegislativeAreaCabApproval, personalisation);
+
+            await _workflowTaskService.CreateAsync(
+                new WorkflowTask(
+                    TaskType.LegislativeAreaApproveRequestForCab,
+                    user,
+                    legislativeAreaRoleId,
+                    null, 
+                    DateTime.Now,
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved.",
+                    user,
+                    DateTime.Now,
+                    true,
+                    null,
+                    true,
+                    cabId));
         }
         private IActionResult SaveDraft(Document document)
         {

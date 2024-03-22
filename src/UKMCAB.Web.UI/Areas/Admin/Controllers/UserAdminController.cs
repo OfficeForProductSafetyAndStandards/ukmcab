@@ -330,8 +330,7 @@ public class UserAdminController : Controller
         var reviewerId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var reviewer = await _userService.GetAsync(reviewerId);
 
-        await _userService.ApproveAsync(account.Id, role, reviewer); // todo!!!!!!!!!!!!!! add role in service
-
+        await _userService.ApproveAsync(account.Id, role, reviewer); 
         return RedirectToRoute(Routes.UserAccountRequestsList); //RedirectToRoute(Routes.RequestApproved, new { account.Id });
     }
 

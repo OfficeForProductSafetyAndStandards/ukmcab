@@ -38,7 +38,7 @@ public class UserAccount
     public string? LockInternalNotes { get; set; }
     
     /// <summary>
-    /// The Role Label from Roles.
+    /// The Role ID from Roles.
     /// </summary>
     public string? Role { get; set; }
     public string? GetEmailAddress() => ContactEmailAddress ?? EmailAddress;
