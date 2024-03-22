@@ -13,7 +13,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
 [Area("admin"), Route("admin/notifications"), Authorize]
-public class NotificationDetailsController : Controller
+public class NotificationDetailsController : UI.Controllers.ControllerBase
 {
     public static class Routes
     {
@@ -21,17 +21,15 @@ public class NotificationDetailsController : Controller
     }
 
     private readonly ICABAdminService _cabAdminService;
-    private readonly IUserService _userService;
     private readonly IWorkflowTaskService _workflowTaskService;
 
     public NotificationDetailsController(ICABAdminService cabAdminService,
         IWorkflowTaskService workflowTaskService,
         IUserService userService
-    )
+    ): base(userService)
     {
         _cabAdminService = cabAdminService;
         _workflowTaskService = workflowTaskService;
-        _userService = userService;
     }
 
 
@@ -81,11 +79,11 @@ public class NotificationDetailsController : Controller
     {
         var options =
             new UserAccountListOptions(SkipTake.FromPage(-1, 500), new SortBy("firstName", null));
-        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
+       // var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS.Id : Roles.UKAS.Id;
         var users = await _userService.ListAsync(options);
-        var assignees = users.Where(x => x.Role == role)
+        var assignees = users.Where(x => x.Role == UserRoleId)
             .Select(user => new ValueTuple<string, string>(user.Id, user.FirstName! + " " + user.Surname)).ToList();
-        return (assignees, role);
+        return (assignees, UserRoleId);
     }
 
 
