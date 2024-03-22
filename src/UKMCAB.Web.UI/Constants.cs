@@ -9,6 +9,7 @@ public static class Constants
     public const string None = "None";
     public const string NotAssigned = "Not assigned";
     public const string DeclinedLA = nameof(DeclinedLA);
+    public const string ApprovedLA = nameof(ApprovedLA);
 
     public const string TempDraftKey = nameof(TempDraftKey);
     public const string TempCookieChangeKey = nameof(TempCookieChangeKey);
