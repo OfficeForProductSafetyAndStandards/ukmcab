@@ -305,8 +305,20 @@ namespace UKMCAB.Core.Services.CAB
                 await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
+            //TESTING - START
+            if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
+            {
+                latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
+            }
+            else
+            {
+                latestDocument.DocumentLegislativeAreas.Select(la => la.Status == LAStatus.Approved ? la.Status = LAStatus.Published : la.Status);
+            }
+            //TESTING - END
+
             latestDocument.StatusValue = Status.Published;
             latestDocument.SubStatus = SubStatus.None;
+            
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
                 publishedOrArchivedDocument, publishInternalReason, publishPublicReason));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
