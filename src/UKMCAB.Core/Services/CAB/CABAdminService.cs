@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
-using System.Security.Claims;
+using MoreLinq;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
@@ -312,7 +312,7 @@ namespace UKMCAB.Core.Services.CAB
             }
             else
             {
-                latestDocument.DocumentLegislativeAreas.Select(la => la.Status == LAStatus.Approved ? la.Status = LAStatus.Published : la.Status);
+                latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ForEach(la => la.Status = LAStatus.Published);
             }
             //TESTING - END
 

@@ -585,7 +585,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             ShareUtils.AddDetails(HttpContext, cab.FeedLinksViewModel);
 
             var listCabLegislateArea =
-                await GetCABLegislativeAreasAsync(cabDocument.DocumentLegislativeAreas);
+                await GetCABLegislativeAreasAsync(cabDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Published));
             cab.CabLegislativeAreas = new CABLegislativeAreasModel
             {
                 CabUrl = cab.CABUrl,
