@@ -60,8 +60,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, id, la.Id);
         TempData.Add(Constants.ApprovedLA, true);
 
-        var requestTask = await MarkTaskAsCompleteAsync(id, approver);
-        await SendNotificationOfLegislativeAreaApprovalAsync(new Guid(document.CABId), document.Name!, la.Name, requestTask.Submitter, currentUser);
+        await MarkTaskAsCompleteAsync(id, approver);
+        await SendNotificationOfLegislativeAreaApprovalAsync(new Guid(document.CABId), document.Name!, la.Name, currentUser);
 
         return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
     }
@@ -71,7 +71,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         return (await _legislativeAreaService.GetLegislativeAreasByRoleId(UserRoleId)).ToList();
     }
 
-    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, string legislativeAreaName, User submitter, UserAccount approver)
+    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, string legislativeAreaName, UserAccount approver)
     {
         var approverUser = new User(approver.Id, approver.FirstName, approver.Surname,
             approver.Role ?? throw new InvalidOperationException(),
@@ -88,9 +88,6 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 { "userName", approverUser.FirstAndLastName },
                 { "legislativeAreaName", legislativeAreaName }
             };
-
-        await _notificationClient.SendEmailAsync(submitter.EmailAddress,
-            _templateOptions.NotificationCabApproved, personalisation);
 
         await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
             _templateOptions.NotificationLegislativeAreaApproved, personalisation);
