@@ -21,9 +21,7 @@ public class WorkflowTaskService : IWorkflowTaskService
             w.ForRoleId.ToLower() == roleId.ToLower() &&
             w.Assignee == null &&
             !w.Completed);
-        var result = items.Select(w => w.MapToWorkflowTaskModel()).ToList();
-        return result;
-        //return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
+        return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 
     public async Task<List<WorkflowTask>> GetAssignedToGroupForRoleIdAsync(string roleId, string? userIdToExclude = null)
