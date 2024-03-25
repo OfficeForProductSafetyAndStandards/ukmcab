@@ -1,11 +1,17 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using Notify.Client;
+using Notify.Interfaces;
+using Org.BouncyCastle.Asn1.Ocsp;
+using System.Security.Claims;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.LegislativeAreas;
+using UKMCAB.Core.Domain.Workflow;
+using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
-using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.Users;
+using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
@@ -15,17 +21,28 @@ public class LegislativeAreaDeclineController : UKMCAB.Web.UI.Controllers.Contro
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly ILegislativeAreaService _legislativeAreaService;
+    private readonly IWorkflowTaskService _workflowTaskService;
+    private readonly IAsyncNotificationClient _notificationClient;
+    private readonly CoreEmailTemplateOptions _templateOptions;
 
     public static class Routes
     {
         public const string LegislativeAreaDecline = "legislative.area.decline";
     }
 
-    public LegislativeAreaDeclineController(ICABAdminService cabAdminService,
-        ILegislativeAreaService legislativeAreaService, IUserService userService) : base(userService)
+    public LegislativeAreaDeclineController(
+        ICABAdminService cabAdminService,
+        ILegislativeAreaService legislativeAreaService,
+        IUserService userService,
+        IWorkflowTaskService workflowTaskService,
+        IAsyncNotificationClient notificationClient,
+        IOptions<CoreEmailTemplateOptions> templateOptions) : base(userService)
     {
         _cabAdminService = cabAdminService;
+        _workflowTaskService = workflowTaskService;
         _legislativeAreaService = legislativeAreaService;
+        _notificationClient = notificationClient;
+        _templateOptions = templateOptions.Value;
     }
 
     [HttpGet("decline", Name = Routes.LegislativeAreaDecline)]
@@ -53,7 +70,11 @@ public class LegislativeAreaDeclineController : UKMCAB.Web.UI.Controllers.Contro
         {
             await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, id,
                 la.Id, vm.DeclineReason);
-            TempData.Add(Constants.DeclinedLA, true);
+            TempData.Add(Constants.DeclinedLA, true);           
+            
+            // send legislative area decline notification
+            await SendNotificationOfDeclineAsync(id, document.Name, la.Name, vm.DeclineReason);
+
             return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
         }
 
@@ -65,5 +86,54 @@ public class LegislativeAreaDeclineController : UKMCAB.Web.UI.Controllers.Contro
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
     {
         return (await _legislativeAreaService.GetLegislativeAreasByRoleId(UserRoleId)).ToList();
+    }
+
+    /// <summary>
+    /// Sends an email and notification for declined legislative area
+    /// </summary>
+    /// <param name="cabId">CAB id</param>
+    /// <param name="cabName">Name of CAB</param>
+    /// <param name="legislativeAreaName">Name of legislative area</param>
+    /// <param name="declineReason">Decline reason</param>
+    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, string legislativeAreaName, string declineReason)
+    {
+        if (cabName == null) throw new ArgumentNullException(nameof(cabName));       
+
+        var approver = new User(CurrentUser.Id, CurrentUser.FirstName, CurrentUser.Surname,
+            CurrentUser.Role ?? throw new InvalidOperationException(),
+            CurrentUser.EmailAddress ?? throw new InvalidOperationException());
+
+        var personalisation = new Dictionary<string, dynamic?>
+        {
+            { "CABName", cabName },
+            {
+                "CABUrl",
+                UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
+            },
+            { "declineReason", declineReason },
+            { "userGroup", approver.UserGroup },
+            { "userName", approver.FirstAndLastName },
+            { "legislativeAreaName", legislativeAreaName }
+        };
+
+        // send email to submitter group email 
+        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+            _templateOptions.NotificationLegislativeAreaDeclined, personalisation);      
+
+        await _workflowTaskService.CreateAsync(
+            new WorkflowTask(
+                TaskType.LegislativeAreaDeclined,
+                approver,
+                Roles.UKAS.Id,
+                null,
+                DateTime.Now,
+                $"{approver.FirstAndLastName} from {approver.UserGroup} has declined the {legislativeAreaName} legislative area.",
+                approver,
+                DateTime.Now,
+                false,
+                declineReason,
+                false,
+                cabId));
     }
 }
