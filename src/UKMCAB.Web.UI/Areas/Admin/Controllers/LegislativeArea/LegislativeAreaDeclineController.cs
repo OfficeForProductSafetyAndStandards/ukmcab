@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
-using Notify.Client;
 using Notify.Interfaces;
-using Org.BouncyCastle.Asn1.Ocsp;
-using System.Security.Claims;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Core.Domain.Workflow;
@@ -16,7 +13,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
-[Area("admin"), Route("admin/cab/{id}/legislative-area/"), Authorize(Claims.LegislativeAreaApprove)]
+[Area("admin"), Route("admin/cab/{id}/legislative-area/"), Authorize]
 public class LegislativeAreaDeclineController : UKMCAB.Web.UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
