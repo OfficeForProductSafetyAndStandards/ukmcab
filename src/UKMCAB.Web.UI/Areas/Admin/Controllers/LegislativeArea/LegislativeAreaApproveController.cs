@@ -51,11 +51,17 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         {
             throw new PermissionDeniedException("No legislative area on CAB owned by this OGD");
         }
-        
+
+        var currentUser = CurrentUser;
+        var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
+            UserRoleId ?? throw new InvalidOperationException(),
+            currentUser.EmailAddress ?? throw new InvalidOperationException());
+
         await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, id, la.Id);
         TempData.Add(Constants.ApprovedLA, true);
 
-        await SendNotificationOfLegislativeAreaApprovalAsync(new Guid(document.CABId), document.Name, la.Name, CurrentUser);
+        var requestTask = await MarkTaskAsCompleteAsync(id, approver);
+        await SendNotificationOfLegislativeAreaApprovalAsync(new Guid(document.CABId), document.Name!, la.Name, requestTask.Submitter, currentUser);
 
         return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
     }
@@ -65,11 +71,11 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         return (await _legislativeAreaService.GetLegislativeAreasByRoleId(UserRoleId)).ToList();
     }
 
-    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, string legislativeAreaName, UserAccount userAccount)
+    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, string legislativeAreaName, User submitter, UserAccount approver)
     {
-        var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
-            userAccount.Role ?? throw new InvalidOperationException(),
-            userAccount.EmailAddress ?? throw new InvalidOperationException());
+        var approverUser = new User(approver.Id, approver.FirstName, approver.Surname,
+            approver.Role ?? throw new InvalidOperationException(),
+            approver.EmailAddress ?? throw new InvalidOperationException());
 
         var personalisation = new Dictionary<string, dynamic?>
             {
@@ -78,10 +84,13 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                     UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
                         Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))
                 },
-                { "userGroup", user.UserGroup },
-                { "userName", user.FirstAndLastName },
+                { "userGroup", approverUser.UserGroup },
+                { "userName", approverUser.FirstAndLastName },
                 { "legislativeAreaName", legislativeAreaName }
             };
+
+        await _notificationClient.SendEmailAsync(submitter.EmailAddress,
+            _templateOptions.NotificationCabApproved, personalisation);
 
         await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
             _templateOptions.NotificationLegislativeAreaApproved, personalisation);
@@ -89,12 +98,12 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
                 TaskType.LegislativeAreaApproved,
-                user,
+                approverUser,
                 Roles.OPSS.Id,
                 null,
                 DateTime.Now,
-                $"{user.FirstAndLastName} from {user.UserGroup} has approved the {legislativeAreaName} legislative area.",
-                user,
+                $"{approverUser.FirstAndLastName} from {approverUser.UserGroup} has approved the {legislativeAreaName} legislative area.",
+                approverUser,
                 DateTime.Now,
                 true,
                 null,
@@ -102,4 +111,18 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 cabId));
     }
 
+    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
+    {
+        var task = await GetWorkflowTaskAsync(cabId, userLastUpdatedBy.RoleId);
+        await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
+        return task;
+    }
+
+    private async Task<WorkflowTask> GetWorkflowTaskAsync(Guid cabId, string approverRoleId)
+    {
+        var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
+        var task = tasks.First(t =>
+            t.TaskType is TaskType.LegislativeAreaApproveRequestForCab && t.ForRoleId == approverRoleId && !t.Completed);
+        return task;
+    }
 }
