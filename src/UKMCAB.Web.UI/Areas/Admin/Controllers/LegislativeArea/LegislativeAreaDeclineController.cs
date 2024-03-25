@@ -70,7 +70,7 @@ public class LegislativeAreaDeclineController : UKMCAB.Web.UI.Controllers.Contro
         {
             await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, id,
                 la.Id, vm.DeclineReason);
-            TempData.Add(Constants.DeclinedLA, true);           
+            TempData.Add(Constants.DeclinedLA, true);
             
             // send legislative area decline notification
             await SendNotificationOfDeclineAsync(id, document.Name, la.Name, vm.DeclineReason);

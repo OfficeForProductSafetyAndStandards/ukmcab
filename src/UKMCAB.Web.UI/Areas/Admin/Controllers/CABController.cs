@@ -710,9 +710,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved.",
                     user,
                     DateTime.Now,
-                    true,
                     null,
-                    true,
+                    null,
+                    false,
                     cabId));
         }
         private IActionResult SaveDraft(Document document)

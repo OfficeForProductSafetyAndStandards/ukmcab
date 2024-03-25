@@ -20,7 +20,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public bool ShowRequestToUnpublish { get; set; }
         public bool IsPublished { get; set; }
         public bool HasDraft { get; set; }
-        public AuditLogHistoryViewModel AuditLogHistory { get; set; }
+        public AuditLogHistoryViewModel? AuditLogHistory { get; set; }
 
         public string CABId { get; set; }
         public string CABUrl { get; set; }
@@ -51,16 +51,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
         public string? RegisteredOfficeLocation { get; set; }
         // Body details
-        public List<string> RegisteredTestLocations { get; set; }
+        public List<string> RegisteredTestLocations { get; set; } = new();
         public string BodyNumber { get; set; }
         public string? CabNumberVisibility { get;  set; }
-        public List<string> BodyTypes { get; set; }
-        public List<string> LegislativeAreas { get; set; }
-        public CABDocumentsViewModel ProductSchedules { get; set; }
-        public CABLegislativeAreasModel CabLegislativeAreas { get; set; }
-        public CABDocumentsViewModel SupportingDocuments { get; set; }
-        public FeedLinksViewModel FeedLinksViewModel { get; set; }
-        public UserNoteListViewModel GovernmentUserNotes { get; set; }
+        public List<string> BodyTypes { get; set; } = new();
+        public List<string> LegislativeAreas { get; set; } = new();
+        public CABDocumentsViewModel ProductSchedules { get; set; } = new();
+        public CABLegislativeAreasModel CabLegislativeAreas { get; set; } = new();
+        public CABDocumentsViewModel SupportingDocuments { get; set; } = new();
+        public FeedLinksViewModel FeedLinksViewModel { get; set; } = new();
+        public UserNoteListViewModel? GovernmentUserNotes { get; set; } 
     
         public string? RequestFirstAndLastName { get; set; }
         public string? RequestUserGroup { get; set; }
