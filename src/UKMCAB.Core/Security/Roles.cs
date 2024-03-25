@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-namespace UKMCAB.Core.Security;
+﻿namespace UKMCAB.Core.Security;
 
 public static class Roles
 {
