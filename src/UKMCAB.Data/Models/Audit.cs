@@ -36,8 +36,7 @@ namespace UKMCAB.Data.Models
             action, comment, publicComment)
         {
             var sbInternalComment = new StringBuilder();
-            var sbPublicComment = new StringBuilder();
-
+            
             HtmlSanitizer htmlSanitizer = new HtmlSanitizer();
             htmlSanitizer.AllowedTags.Clear();
             htmlSanitizer.AllowedTags.Add("br");
@@ -68,18 +67,12 @@ namespace UKMCAB.Data.Models
                 foreach (var docType in schedulesAndDocsType)
                 {
                     if (docType.Equals("Documents"))
-                    {
-                        var previousFileUploads = previousDocument.Documents ?? new List<FileUpload>();
-                        var currentFileUploads = publishedDocument.Documents ?? new List<FileUpload>();
-                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbInternalComment,
-                            previousFileUploads, currentFileUploads, docType);
+                    {  
+                        CalculateChangesToDocuments(publishedDocument, previousDocument, sbInternalComment);
                     }
                     else
-                    {
-                        var previousFileUploads = previousDocument.Schedules ?? new List<FileUpload>();
-                        var currentFileUploads = publishedDocument.Schedules ?? new List<FileUpload>();
-                        CalculateChangesToScheduleOrDocument(publishedDocument, previousDocument, sbInternalComment,
-                            previousFileUploads, currentFileUploads, docType);
+                    { 
+                        CalculateChangesToSchedules(publishedDocument, previousDocument, sbInternalComment);
                     }
                 }
 
@@ -91,7 +84,7 @@ namespace UKMCAB.Data.Models
 
             if (sbInternalComment.Length > 0)
             {
-                sbInternalComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");
+                sbInternalComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");                
             }
 
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
@@ -100,8 +93,7 @@ namespace UKMCAB.Data.Models
                 : string.Empty;
 
             Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbInternalComment.ToString()));
-            PublicComment = string.Join("", HttpUtility.HtmlEncode(publicComment),
-                HttpUtility.HtmlEncode(sbPublicComment.ToString()));
+            PublicComment = HttpUtility.HtmlEncode(publicComment);
         }
 
         private static void CalculateChangesToScopeOfAppointments(Document previousDocument, Document publishedDocument,
@@ -136,22 +128,42 @@ namespace UKMCAB.Data.Models
         private static void CalculateChangesToLegislativeAreas(List<DocumentLegislativeArea> previousLAs,
             List<DocumentLegislativeArea> currentLAs, StringBuilder sb)
         {
-            var newlyAddedLAs =
-                currentLAs.Where(la => previousLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
-            var removedLAs =
-                previousLAs.Where(la => currentLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
+            var currentActiveLAs = currentLAs.Where(n => n.Archived is null or false);
+            var currentArchivedLAs = currentLAs.Where(n => n.Archived == true);
+
+            var previousActiveLAs = previousLAs.Where(n => n.Archived is null or false);
+            var previousArchivedLAs = previousLAs.Where(n => n.Archived == true);
+
+            var newlyAddedLAs = currentActiveLAs.Where(la => previousActiveLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
+            var removedLAs =  previousLAs.Where(la => currentLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
+            var newlyAddedAndArchivedLAs = currentArchivedLAs.Where(la => previousLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
+            var archivedLAs = currentArchivedLAs.Where(la => previousArchivedLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId)).Except(newlyAddedAndArchivedLAs);            
 
             foreach (var la in newlyAddedLAs)
             {
                 sb.AppendFormat(
                     "<p class=\"govuk-body\">{0} was added to legislative area.</p>",
                     la.LegislativeAreaName);
-            }
+            }           
 
             foreach (var la in removedLAs)
             {
                 sb.AppendFormat(
                     "<p class=\"govuk-body\">{0} was removed from legislative area.</p>",
+                    la.LegislativeAreaName);
+            }
+
+            foreach (var la in archivedLAs)
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\">{0} was archived from legislative area.</p>",
+                    la.LegislativeAreaName);
+            }
+
+            foreach (var la in newlyAddedAndArchivedLAs)
+            {
+                sb.AppendFormat(
+                    "<p class=\"govuk-body\">{0} was added and archived from legislative area.</p>",
                     la.LegislativeAreaName);
             }
 
@@ -173,72 +185,178 @@ namespace UKMCAB.Data.Models
             }
         }
 
-        private static void CalculateChangesToScheduleOrDocument(Document publishedDocument, Document? previousDocument,
-            StringBuilder sb, List<FileUpload> previousFileUploads, List<FileUpload> currentFileUploads, string docType)
-        {
-            var isSchedule = docType.Equals("Schedules");
-            var docTypes = isSchedule ? "product schedules" : "supporting documents";
-            var docTypeName = isSchedule ? "product schedule" : "supporting document";
+        private static void CalculateChangesToSchedules(Document publishedDocument, Document? previousDocument,  StringBuilder sb)
+        {   
+            var docTypes = "product schedules";
+            var docTypeName = "product schedule";
+            var docType = "Schedules";
 
-            var existingFileUploads = currentFileUploads
-                .Where(sch => previousFileUploads.Any(prev => prev.UploadDateTime.Equals(sch.UploadDateTime)));
-            var newFileUploads = currentFileUploads.Where(sch =>
-                previousFileUploads.All(prev => !prev.UploadDateTime.Equals(sch.UploadDateTime)));
-            var removedFileUploads = previousFileUploads.Where(sch =>
-                currentFileUploads.All(pub => !pub.UploadDateTime.Equals(sch.UploadDateTime)));
+            var newFileUploads = publishedDocument.ActiveSchedules?.Where(pub => previousDocument.Schedules.All(prev => prev.Id != pub.Id));
+            var removedFileUploads = previousDocument?.Schedules?.Where(prev =>  publishedDocument.Schedules.All(pub => pub.Id != prev.Id));
 
-            foreach (var fileupload in existingFileUploads)
+            var newlyAddedFileUploadsAndArchived = publishedDocument.ArchivedSchedules.Where(pub => previousDocument.Schedules.All(prev => prev.Id != pub.Id));
+            var archivedFileUploads = publishedDocument.ArchivedSchedules.Where(pub => previousDocument.ArchivedSchedules.All(prev => prev.Id != pub.Id)).Except(newlyAddedFileUploadsAndArchived);
+
+            // existing schedules
+            if (publishedDocument.Schedules != null && publishedDocument.Schedules.Any())
             {
-                var previousFileUpload =
-                    previousFileUploads.Single(sch => sch.UploadDateTime.Equals(fileupload.UploadDateTime));
-                if (isSchedule)
+                foreach (var fileupload in publishedDocument.Schedules)
                 {
-                    if (!previousFileUpload.LegislativeArea.Equals(fileupload.LegislativeArea))
-                    {
-                        sb.AppendFormat(
-                            "<p class=\"govuk-body\">The legislative area {0} has been changed to {1} on this product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>",
-                            previousFileUpload.LegislativeArea, fileupload.LegislativeArea,
-                            ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
-                            fileupload.Label);
-                    }
-                }
-                else
-                {
-                    if (!previousFileUpload.Category.Equals(fileupload.Category))
-                    {
-                        sb.AppendFormat(
-                            "<p class=\"govuk-body\">The category {0} has been changed to {1} on this supporting document <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>",
-                            previousFileUpload.Category, fileupload.Category,
-                            ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
-                            fileupload.Label);
-                    }
-                }
+                    var previousFileUpload = previousDocument.Schedules.FirstOrDefault(sch => sch.Id.Equals(fileupload.Id));
 
-                if (!previousFileUpload.Label.Equals(fileupload.Label))
+                    if (previousFileUpload != null)
+                    {
+
+                        if (!previousFileUpload.LegislativeArea.Equals(fileupload.LegislativeArea))
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The legislative area for the product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a> has been changed from {0} to {1}.</p>",
+                                previousFileUpload.LegislativeArea, fileupload.LegislativeArea,
+                                ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label);
+                        }
+
+                        if (!previousFileUpload.Label.Equals(fileupload.Label))
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The title of the {0} <a href=\"{1}\" target=\"_blank\" class=\"govuk-link\">{2}</a> has been changed from {3} to {4}.</p>",
+                                docTypeName, ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label, previousFileUpload.Label, fileupload.Label);
+                        }
+
+                        if (!previousFileUpload.FileName.Equals(fileupload.FileName))
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The file for <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been replaced.</p>",
+                                ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label);
+                        }
+                    }
+                }
+            }
+
+            // new file uploads
+            if (newFileUploads != null && newFileUploads.Any())
+            {
+                // new file uploads
+                foreach (var newFileUpload in newFileUploads)
                 {
                     sb.AppendFormat(
-                        "<p class=\"govuk-body\">The title of this {0} <a href=\"{1}\" target=\"_blank\" class=\"govuk-link\">{2}</a> has been changed from {3} to {4}.</p>",
-                        docTypeName, ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
-                        fileupload.Label, previousFileUpload.Label, fileupload.Label);
+                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was added to the {2} page.</p>",
+                        ScheduleOrDocumentLink(publishedDocument.CABId, newFileUpload.FileName, docType),
+                        newFileUpload.Label, docTypes);
                 }
             }
 
-            foreach (var newFileUpload in newFileUploads)
+            // newly added and then archived file uploads
+            if (newlyAddedFileUploadsAndArchived != null && newlyAddedFileUploadsAndArchived.Any())
             {
-                sb.AppendFormat(
-                    "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was added to the {2} page.</p>",
-                    ScheduleOrDocumentLink(publishedDocument.CABId, newFileUpload.FileName, docType),
-                    newFileUpload.Label, docTypes);
+                foreach (var newAndArchivedFileUpload in newlyAddedFileUploadsAndArchived)
+                {
+                    sb.AppendFormat(
+                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was added and archived from the {2} page.</p>",
+                        ScheduleOrDocumentLink(publishedDocument.CABId, newAndArchivedFileUpload.FileName, docType),
+                        newAndArchivedFileUpload.Label, docTypes);
+                }
             }
 
-            foreach (var removedFileUpload in removedFileUploads)
+            // archived file uploads
+            if (archivedFileUploads != null && archivedFileUploads.Any())
             {
-                sb.AppendFormat(
-                    "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the {2} page.</p>",
-                    ScheduleOrDocumentLink(publishedDocument.CABId, removedFileUpload.FileName, docType),
-                    removedFileUpload.Label, docTypes);
+                foreach (var archivedFileUpload in archivedFileUploads)
+                {
+                    sb.AppendFormat(
+                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was archived from the {2} page.</p>",
+                        ScheduleOrDocumentLink(publishedDocument.CABId, archivedFileUpload.FileName, docType),
+                        archivedFileUpload.Label, docTypes);
+                }
+            }            
+
+            // removed file uploads
+            if (removedFileUploads != null && removedFileUploads.Any())
+            {
+                foreach (var removedFileUpload in removedFileUploads)
+                {
+                    sb.AppendFormat(
+                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the {2} page.</p>",
+                        ScheduleOrDocumentLink(publishedDocument.CABId, removedFileUpload.FileName, docType),
+                        removedFileUpload.Label, docTypes);
+                }
             }
         }
+
+        private static void CalculateChangesToDocuments(Document publishedDocument, Document? previousDocument, StringBuilder sb)
+        {
+            var docTypes = "supporting documents";
+            var docTypeName = "supporting document";
+            var docType = "Documents";
+
+            var newFileUploads = publishedDocument.Documents?.Where(pub => previousDocument.Documents.All(prev => prev.Id != pub.Id));
+            var removedFileUploads = previousDocument?.Documents?.Where(prev => publishedDocument.Documents.All(pub => pub.Id != prev.Id));           
+
+            // existing document
+            if (publishedDocument.Documents != null && publishedDocument.Documents.Any())
+            {
+                foreach (var fileupload in publishedDocument.Documents)
+                {
+                    var previousFileUpload = previousDocument.Documents.FirstOrDefault(sch => sch.Id.Equals(fileupload.Id));
+
+                    if (previousFileUpload != null)
+                    {
+
+                        if (!previousFileUpload.Category.Equals(fileupload.Category))
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The category for the supporting document <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a> has been changed from {0} to {1}.</p>",
+                                previousFileUpload.Category, fileupload.Category,
+                                ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label);
+                        }
+
+                        if (!previousFileUpload.Label.Equals(fileupload.Label))
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The title of the {0} <a href=\"{1}\" target=\"_blank\" class=\"govuk-link\">{2}</a> has been changed from {3} to {4}.</p>",
+                                docTypeName, ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label, previousFileUpload.Label, fileupload.Label);
+                        }
+
+                        if (!previousFileUpload.FileName.Equals(fileupload.FileName))
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The file for <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been replaced.</p>",
+                                ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label);
+                        }
+                    }
+                }
+            }
+
+            // new file uploads
+            if (newFileUploads != null && newFileUploads.Any())
+            {
+                // new file uploads
+                foreach (var newFileUpload in newFileUploads)
+                {
+                    sb.AppendFormat(
+                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was added to the {2} page.</p>",
+                        ScheduleOrDocumentLink(publishedDocument.CABId, newFileUpload.FileName, docType),
+                        newFileUpload.Label, docTypes);
+                }
+            }
+
+            // removed file uploads
+            if (removedFileUploads != null && removedFileUploads.Any())
+            {
+                foreach (var removedFileUpload in removedFileUploads)
+                {
+                    sb.AppendFormat(
+                        "<p class=\"govuk-body\"><a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> was removed from the {2} page.</p>",
+                        ScheduleOrDocumentLink(publishedDocument.CABId, removedFileUpload.FileName, docType),
+                        removedFileUpload.Label, docTypes);
+                }
+            }
+        }       
 
         private static string ScheduleOrDocumentLink(string cabId, string fileName, string docType)
         {
@@ -287,6 +405,9 @@ namespace UKMCAB.Data.Models
         public const string
             UnpublishApprovalRequestDeclined =
                 "Request to unpublish declined"; // UKAS request to un publish and create draft
+
+        public const string ApproveLegislativeArea = "Legislative area approved";
+        public const string DeclineLegislativeArea = "Legislative area declined";
     }
 
     public class AuditUserActions

@@ -6,4 +6,5 @@ public static class Policies
     public const string SuperAdmin = "sa";
     public const string GovernmentUserNotes = "gov-user-notes";
     public const string ApproveRequests = "approve-requests";
+    public const string LegislativeAreaApprove = "la.approve";
 }

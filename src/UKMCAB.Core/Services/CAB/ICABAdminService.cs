@@ -24,6 +24,16 @@ namespace UKMCAB.Core.Services.CAB
         Task<Document?> GetLatestDocumentAsync(string cabId);
 
         /// <summary>
+        /// Checks if the supplied CAB is pending approval by OGDs, and if so, removes any LA-related data
+        /// for LAs that the current user is not linked to. Useful for screens where OGD users can only see
+        /// the data for their own LA.
+        /// </summary>
+        /// <param name="latestDocument">The CAB document to filter.</param>
+        /// <param name="userRoleId">RoleId of current user.</param>
+        /// <returns></returns>
+        Task FilterCabContentsByLaIfPendingOgdApproval(Document latestDocument, string userRoleId);
+
+        /// <summary>
         /// Creates a new draft document with audit log Created
         /// </summary>
         /// <param name="userAccount"></param>
@@ -76,15 +86,22 @@ namespace UKMCAB.Core.Services.CAB
         /// <summary>
         /// Adds a Legislative area and sets the labels for search
         /// </summary>
+        /// <param name="userAccount"></param>
         /// <param name="cabId">cab to update</param>
         /// <param name="laToAdd">New Legislative area id to create</param>
         /// <param name="laName">Name of Legislative Area to add to labels</param>
+        /// <param name="roleId"></param>
         /// <returns>DocumentLegislativeId created</returns>
-        Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd, string laName);
+        Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd, string laName,
+            string roleId);
 
         Task RemoveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string laName);
 
-        Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId);        
+        Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId);
+
+        Task ApproveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId);
+
+        Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason);       
 
         Task ArchiveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds);
 

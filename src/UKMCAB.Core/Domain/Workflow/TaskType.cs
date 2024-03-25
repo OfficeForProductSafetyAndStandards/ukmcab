@@ -38,4 +38,6 @@ public enum TaskType
     RequestToUnpublishDeclined,
     [Description("CAB unpublished")]
     RequestToUnpublishApproved,
+    [Description("Approve legislative area request")]
+    LegislativeAreaApproveRequestForCab
 }

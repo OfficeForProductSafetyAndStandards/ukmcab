@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
-using System.ComponentModel;
-using System.Xml.Schema;
+using System.Security.Claims;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
@@ -25,18 +24,20 @@ namespace UKMCAB.Core.Services.CAB
         private readonly ICABRepository _cabRepository;
         private readonly ICachedSearchService _cachedSearchService;
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
+        private readonly ILegislativeAreaService _legislativeAreaService;
         private readonly TelemetryClient _telemetryClient;
         private readonly IMapper _mapper;
         private readonly IFileStorage _fileStorage;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, IFileStorage fileStorage,
+            ICachedPublishedCABService cachedPublishedCabService, ILegislativeAreaService legislativeAreaService, IFileStorage fileStorage,
             TelemetryClient telemetryClient,
             IMapper mapper)
         {
             _cabRepository = cabRepository;
             _cachedSearchService = cachedSearchService;
             _cachedPublishedCabService = cachedPublishedCabService;
+            _legislativeAreaService = legislativeAreaService;
             _telemetryClient = telemetryClient;
             _mapper = mapper;
             _fileStorage = fileStorage;
@@ -83,11 +84,16 @@ namespace UKMCAB.Core.Services.CAB
         /// <inheritdoc />
         public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            if (!string.IsNullOrWhiteSpace(userRole))
+            if (userRole == Roles.UKAS.Id)
             {
                 return await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
                                                                   d.StatusValue == Status.Draft) ||
                                                                  d.StatusValue == Status.Archived);
+            }
+            if (!string.IsNullOrWhiteSpace(userRole))
+            {
+                return await _cabRepository.Query<Document>(d =>
+                d.StatusValue == Status.Draft);
             }
 
             return await _cabRepository.Query<Document>(d =>
@@ -110,6 +116,19 @@ namespace UKMCAB.Core.Services.CAB
             }
 
             return null;
+        }
+
+        public async Task FilterCabContentsByLaIfPendingOgdApproval(Document latestDocument, string userRoleId)
+        {
+            // Check if the CAB is pending OGD approval. If so, only display data for the LAs that the current user's role is linked to.
+            if (latestDocument.IsPendingOgdApproval)
+            {
+                latestDocument.DocumentLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
+
+                var ogdLegislativeAreas = await _legislativeAreaService.GetLegislativeAreasByRoleId(userRoleId);
+                var ogdLaNames = ogdLegislativeAreas.Select(la => la.Name).ToList();
+                latestDocument.Schedules.RemoveAll(s => s.LegislativeArea != null && !ogdLaNames.Contains(s.LegislativeArea));
+            }
         }
 
         public IAsyncEnumerable<string> GetAllCabIds()
@@ -180,6 +199,7 @@ namespace UKMCAB.Core.Services.CAB
             {
                 draft.SubStatus = SubStatus.PendingApprovalToPublish;
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+                draft.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.PendingApproval);
             }
 
             if (draft.StatusValue == Status.Published)
@@ -201,7 +221,6 @@ namespace UKMCAB.Core.Services.CAB
 
             return draft;
         }
-
         public async Task DeleteDraftDocumentAsync(UserAccount userAccount, Guid cabId, string? deleteReason)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId.ToString());
@@ -460,7 +479,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd,
-            string laName)
+            string laName, string roleId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
@@ -472,7 +491,9 @@ namespace UKMCAB.Core.Services.CAB
             {
                 Id = guid,
                 LegislativeAreaName = laName,
-                LegislativeAreaId = laToAdd
+                LegislativeAreaId = laToAdd,
+                RoleId = roleId,
+                Status = LAStatus.Draft,
             });
 
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
@@ -535,10 +556,37 @@ namespace UKMCAB.Core.Services.CAB
 
             // archive document legislative area
             var documentLegislativeArea =
-                latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ??
-                throw new InvalidOperationException("No legislative area found");
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Archived = true;
 
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+        }
+
+        public async Task ApproveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
+                                 throw new InvalidOperationException("No document found");
+
+            // Approve document legislative area
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+            documentLegislativeArea.Status = LAStatus.Approved;
+            var comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " approved.";
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ApproveLegislativeArea, comment));
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+        }
+
+        public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
+                                 throw new InvalidOperationException("No document found");
+
+            // decline document legislative area
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+            documentLegislativeArea.Status = LAStatus.Declined;
+            reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " declined: </br>" + reason;
+            latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,reason));
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 

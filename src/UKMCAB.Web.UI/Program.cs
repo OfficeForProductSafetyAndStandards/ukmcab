@@ -94,6 +94,11 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim(Claims.CabCanApprove);
+    });    
+    options.AddPolicy(Policies.LegislativeAreaApprove, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.LegislativeAreaApprove);
     });
 });
 

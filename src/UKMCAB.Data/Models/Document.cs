@@ -61,6 +61,7 @@
 
         /*This needs to be kept post data model (v3.0) for a few reasons:
         Search Filter, Data models are used in Controllers and Views*/
+        [Obsolete("Use DocumentLegislativeAreas instead, only used for initialising release v3.0. Can be removed post release v3.0")]
         public List<string> LegislativeAreas { get; set; } = new(); 
         
         public List<DocumentLegislativeArea> DocumentLegislativeAreas { get; set; } = new();
@@ -88,5 +89,11 @@
         public List<string> HiddenScopeOfAppointments { get; set; } = new(); 
         public string RandomSort { get; set; } = string.Empty;
         public string LegacyCabId { get; set; } = string.Empty;
+
+        public bool IsPendingOgdApproval =>
+            StatusValue == Models.Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            DocumentLegislativeAreas.Any(d => d.Status == LAStatus.PendingApproval);
+        
     }
 }

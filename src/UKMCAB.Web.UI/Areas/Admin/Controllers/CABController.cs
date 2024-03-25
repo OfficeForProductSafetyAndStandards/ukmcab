@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Filters;
 using System.Net;
 using System.Security.Claims;
+using AngleSharp.Common;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core.Domain.Workflow;
@@ -21,10 +21,9 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
     [Area("admin"), Authorize]
-    public class CABController : Controller
+    public class CABController : UI.Controllers.ControllerBase
     {
         private readonly ICABAdminService _cabAdminService;
-        private readonly IUserService _userService;
         private readonly IWorkflowTaskService _workflowTaskService;
         private readonly IAsyncNotificationClient _notificationClient;
         private readonly CoreEmailTemplateOptions _templateOptions;
@@ -53,10 +52,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             IOptions<CoreEmailTemplateOptions> templateOptions,
             IEditLockService editLockService,
             IUserNoteService userNoteService,
-            ILegislativeAreaService legislativeAreaService)
+            ILegislativeAreaService legislativeAreaService) : base(userService)
         {
             _cabAdminService = cabAdminService;
-            _userService = userService;
             _workflowTaskService = workflowTaskService;
             _notificationClient = notificationClient;
             _editLockService = editLockService;
@@ -240,13 +238,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    if(model.IsFromSummary)
+                    if (model.IsFromSummary)
                     {
                         return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true });
                     }
                     else if (!latestDocument.DocumentLegislativeAreas.Any())
                     {
-                         return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId });
+                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId });
                     }
                     else
                     {
@@ -379,7 +377,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
-                
+
             if (latest.StatusValue == Status.Published && subSectionEditAllowed == true)
             {
                 var userAccount =
@@ -389,7 +387,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             //Check Edit lock
             var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
+            var isEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock;
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
+            var isMatchingOgdUser = IsMatchingOgdUser(latest);
+            var showOgdActions = subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
+                latest.IsPendingOgdApproval && isMatchingOgdUser;
+            if (showOgdActions)
+            {
+                await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latest, UserRoleId);
+            }
 
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest)
@@ -435,13 +441,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         : "Check details before publishing"
                     : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
                 IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
-                IsEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock,
+                IsEditLocked = isEditLocked,
                 SubSectionEditAllowed = subSectionEditAllowed ?? false,
                 LastModifiedDate = latest.LastUpdatedDate,
                 PublishedDate = publishedAudit?.DateTime ?? null,
                 GovernmentUserNoteCount = latest.GovernmentUserNotes?.Count ?? 0,
                 LastGovermentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
                 LastAuditLogHistoryDate = Enumerable.MaxBy(latest.AuditLog!, u => u.DateTime)?.DateTime,
+                IsPendingOgdApproval = latest.IsPendingOgdApproval,
+                IsMatchingOgdUser = isMatchingOgdUser,
+                ShowOgdActions = showOgdActions,
             };
 
             //Lock Record for edit
@@ -458,14 +467,22 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
-                                    model.SubStatus !=
-                                    SubStatus.PendingApprovalToPublish &&
-                                    (model.Status == Status.Published ||
-                                     model.IsOPSSOrInCreatorUserGroup);
+                                    model.SubStatus != SubStatus.PendingApprovalToPublish &&
+                                    (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                 (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
 
+            if (TempData.ContainsKey(Constants.ApprovedLA))
+            {
+                TempData.Remove(Constants.ApprovedLA);
+                model.SuccessBannerMessage = "Legislative area has been approved.";
+            }
+            if (TempData.ContainsKey(Constants.DeclinedLA))
+            {
+                TempData.Remove(Constants.DeclinedLA);
+                model.SuccessBannerMessage = "Legislative area has been declined.";
+            }
             return View(model);
         }
 
@@ -516,6 +533,26 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         latest.Name ?? throw new InvalidOperationException(), publishModel);
 
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
+                    var legislativeAreaSenderEmailIds =
+                        _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
+                    foreach (var latestDocumentLegislativeArea in latest.DocumentLegislativeAreas)
+                    {
+                        if (string.IsNullOrWhiteSpace(latestDocumentLegislativeArea.RoleId))
+                            throw new ArgumentNullException(nameof(latestDocumentLegislativeArea.RoleId));
+                        
+                        if (legislativeAreaSenderEmailIds.Keys.All(a => a != latestDocumentLegislativeArea.RoleId))
+                            throw new ArgumentException(
+                                $"Legislative area email not found - {latestDocumentLegislativeArea.RoleId}",
+                                nameof(latestDocumentLegislativeArea.RoleId));
+
+                        var receiverEmailId = legislativeAreaSenderEmailIds[latestDocumentLegislativeArea.RoleId];
+                        if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
+                        {
+                            await SendNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                                latest.Name, userAccount, receiverEmailId,
+                                latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId);
+                        }
+                    }
 
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
                 }
@@ -642,6 +679,42 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
+        private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
+            UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName, string legislativeAreaRoleId)
+        {
+            var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
+                userAccount.Role ?? throw new InvalidOperationException(),
+                userAccount.EmailAddress ?? throw new InvalidOperationException());
+
+            var personalisation = new Dictionary<string, dynamic?>
+            {
+                { "CABName", cabName },
+                { "CABUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(Routes.CabSummary, new { id = cabId }))
+                },
+                { "userGroup", user.UserGroup },
+                { "userName", user.FirstAndLastName },
+                { "legislativeAreaName", legislativeAreaName }
+            };
+            await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
+                _templateOptions.NotificationLegislativeAreaCabApproval, personalisation);
+
+            await _workflowTaskService.CreateAsync(
+                new WorkflowTask(
+                    TaskType.LegislativeAreaApproveRequestForCab,
+                    user,
+                    legislativeAreaRoleId,
+                    null, 
+                    DateTime.Now,
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved.",
+                    user,
+                    DateTime.Now,
+                    null,
+                    null,
+                    false,
+                    cabId));
+        }
         private IActionResult SaveDraft(Document document)
         {
             TempData[Constants.TempDraftKey] =
@@ -677,6 +750,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     PointOfContactPhone = documentLegislativeArea.PointOfContactPhone,
                     IsPointOfContactPublicDisplay = documentLegislativeArea.IsPointOfContactPublicDisplay,
                     CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
+                    Status = documentLegislativeArea.Status,
+                    StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
+                    RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
+                    RoleId = documentLegislativeArea.RoleId,
                 };
 
                 var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
@@ -714,7 +791,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 await _legislativeAreaService.GetProductByIdAsync(productProcedure.ProductId.Value);
                             soaViewModel.Product = product!.Name;
                         }
-                        
+
                         foreach (var procedureId in productProcedure.ProcedureIds)
                         {
                             var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
@@ -760,6 +837,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ModelState.Clear();
             cabLegislativeAreas.IsCompleted = TryValidateModel(cabLegislativeAreas);
             ModelState.Clear();
+        }
+
+        private bool IsMatchingOgdUser(Document document)
+        {
+            return document.DocumentLegislativeAreas.Any(dla => dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId));
         }
     }
 }
