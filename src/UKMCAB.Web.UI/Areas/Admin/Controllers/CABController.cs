@@ -752,9 +752,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
                     Status = documentLegislativeArea.Status,
                     StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
-
-                    //RoleName = documentLegislativeArea.RoleId == "opss_ogd" ? Roles.NameFor("opss (ogd)") : Roles.NameFor(documentLegislativeArea.RoleId), // Need to change "opss_ogd" in Cosmos LAs to "opss (ogd)" to reverse this
-
                     RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
                     RoleId = documentLegislativeArea.RoleId,
                 };

@@ -305,7 +305,6 @@ namespace UKMCAB.Core.Services.CAB
                 await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
-            //TESTING - START
             if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
             {
                 latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
@@ -314,7 +313,6 @@ namespace UKMCAB.Core.Services.CAB
             {
                 latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ForEach(la => la.Status = LAStatus.Published);
             }
-            //TESTING - END
 
             latestDocument.StatusValue = Status.Published;
             latestDocument.SubStatus = SubStatus.None;
