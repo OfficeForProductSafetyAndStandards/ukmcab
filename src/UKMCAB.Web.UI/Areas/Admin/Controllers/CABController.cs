@@ -661,8 +661,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         Url.RouteUrl(CabManagementController.Routes.CABManagement))
                 }
             };
-            var userRoleId = Roles.List.First(r =>
-                r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+            var userRoleId = Roles.List.First(r => r.Id == userAccount.Role).Id;
             await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
                 _templateOptions.NotificationRequestToPublish, personalisation);
             if (publishModel.CabDetailsViewModel != null)
