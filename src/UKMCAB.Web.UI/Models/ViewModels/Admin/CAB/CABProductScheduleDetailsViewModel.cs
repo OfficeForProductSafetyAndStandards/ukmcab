@@ -8,12 +8,14 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public CABProductScheduleDetailsViewModel(Document document)
         {
-            CABId = document.CABId;
-            Schedules = document.Schedules ?? new List<FileUpload>();
+            CABId = document.CABId;            
+            ActiveSchedules = document.ActiveSchedules ?? new List<FileUpload>();
+            ArchivedSchedules = document.ArchivedSchedules ?? new List<FileUpload>();
             IsCompleted = this.ProductSchedulesCompleted();
         }
 
-        public List<FileUpload>? Schedules { get; set; }
+        public List<FileUpload>? ActiveSchedules { get; set; }
+        public List<FileUpload>? ArchivedSchedules { get; set; }
 
         public bool IsCompleted { get; set; }
 
@@ -21,25 +23,25 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public bool ProductSchedulesCompleted()
         {
-            if (this.Schedules != null && this.Schedules.Any())
+            if (this.ActiveSchedules != null && this.ActiveSchedules.Any())
             {
                 // any file where file label is empty/null
-                if (this.Schedules.Any(u => string.IsNullOrWhiteSpace(u.Label)))
+                if (this.ActiveSchedules.Any(u => string.IsNullOrWhiteSpace(u.Label)))
                 {
                     return false;
                 }
                 // any file where legislative area not selected
-                else if (this.Schedules.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
+                else if (this.ActiveSchedules.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
                 {
                     return false;
                 }
                 // any duplicate file labels/legislative area
-                else if(this.Schedules.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { Label = x.Label!.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() }).Any(g => g.Count() > 1))
+                else if(this.ActiveSchedules.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea) && !string.IsNullOrWhiteSpace(x.Label)).GroupBy(x => new { Label = x.Label!.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower() }).Any(g => g.Count() > 1))
                 {
                     return false;
                 }
                 // any duplicate files/legislative area
-                else if(this.Schedules.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea)).GroupBy(x => new { FileName = x.FileName.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower()}).Any(g => g.Count() > 1))
+                else if(this.ActiveSchedules.Where(x => !string.IsNullOrWhiteSpace(x.LegislativeArea)).GroupBy(x => new { FileName = x.FileName.ToLower(), LegislativeArea = x.LegislativeArea!.ToLower()}).Any(g => g.Count() > 1))
                 {
                     return false;
                 }
