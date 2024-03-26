@@ -465,8 +465,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var unpublishRequests = await _workflowTaskService.GetByCabIdAndTaskTypeAsync(
                 cabDocument.CABId.ToGuid()!.Value,
                 new List<TaskType> { TaskType.RequestToArchive, TaskType.RequestToUnpublish });
-            var requireApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Label,
-                StringComparison.CurrentCultureIgnoreCase);
+            var requireApproval = userAccount != null && !string.Equals(userAccount.Role, Roles.OPSS.Id);
 
             var cab = await GetCabProfileViewModel(
                 cabDocument,

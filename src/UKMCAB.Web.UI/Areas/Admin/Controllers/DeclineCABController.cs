@@ -77,8 +77,7 @@ public class DeclineCABController : Controller
         var user =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
             throw new InvalidOperationException();
-        var userRoleId = Roles.List.First(r =>
-            r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        var userRoleId = Roles.List.First(r => r.Id == user.Role).Id;
         await _cabAdminService.SetSubStatusAsync(cabId, Status.Draft, SubStatus.None,
             new Audit(user, AuditCABActions.CABDeclined, vm.DeclineReason));
 

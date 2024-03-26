@@ -78,8 +78,8 @@ public class DeclineUnpublishCABController : Controller
 
         var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
                           throw new InvalidOperationException();
-        var userRoleId = Roles.List.First(r =>
-            r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        var userRoleId = Roles.List.First(r => r.Id == currentUser.Role).Id;
+             
 
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             userRoleId ?? throw new InvalidOperationException(),
