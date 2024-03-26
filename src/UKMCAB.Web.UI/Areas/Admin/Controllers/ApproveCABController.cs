@@ -140,8 +140,7 @@ public class ApproveCABController : Controller
         var user =
            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
            throw new InvalidOperationException("User account not found");
-        var userRoleId = Roles.List.First(r =>
-            r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        var userRoleId = Roles.List.First(r => r.Id == user.Role).Id;
         await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason);
         var submitTask = await MarkTaskAsCompleteAsync(cabId,
             new User(user.Id, user.FirstName, user.Surname, userRoleId,
