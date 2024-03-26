@@ -521,13 +521,41 @@ else if (Model.IsEditLocked && !Model.IsPendingOgdApproval)
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row govuk-!-padding-top-5">
                         <dt class="govuk-summary-list__key">
-                            Schedule (optional)
+                            Product Schedule (optional)
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.CABProductScheduleDetailsViewModel.Schedules.Any())
+                            @if (Model.CABProductScheduleDetailsViewModel.ActiveSchedules.Any())
                             {
                                 <ol class="govuk-list govuk-list--number">
-                                    @foreach (var schedule in Model.CABProductScheduleDetailsViewModel.Schedules)
+                                    @foreach (var schedule in Model.CABProductScheduleDetailsViewModel.ActiveSchedules)
+                                    {
+                                        <li class="cab-summary-schedule-item">
+                                            <div>
+                                                <div>
+                                                    <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@schedule.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@schedule.Label</a>
+                                                </div>
+                                                <div>@schedule.LegislativeArea</div>
+                                            </div>
+
+                                        </li>
+                                    }
+                                </ol>
+                            }
+                            else
+                            {
+                                <text>@Constants.NotProvided</text>
+                            }
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                        <dt class="govuk-summary-list__key">
+                            Archived Product Schedule (optional)
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            @if (Model.CABProductScheduleDetailsViewModel.ArchivedSchedules.Any())
+                            {
+                                <ol class="govuk-list govuk-list--number">
+                                    @foreach (var schedule in Model.CABProductScheduleDetailsViewModel.ArchivedSchedules)
                                     {
                                         <li class="cab-summary-schedule-item">
                                             <div>
