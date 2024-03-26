@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
-using System.Security.Claims;
+using MoreLinq;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
@@ -305,8 +305,18 @@ namespace UKMCAB.Core.Services.CAB
                 await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
+            if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
+            {
+                latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
+            }
+            else
+            {
+                latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ForEach(la => la.Status = LAStatus.Published);
+            }
+
             latestDocument.StatusValue = Status.Published;
             latestDocument.SubStatus = SubStatus.None;
+            
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
                 publishedOrArchivedDocument, publishInternalReason, publishPublicReason));
             latestDocument.RandomSort = Guid.NewGuid().ToString();

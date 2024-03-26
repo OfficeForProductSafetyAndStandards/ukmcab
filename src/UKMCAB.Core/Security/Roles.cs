@@ -13,7 +13,6 @@ public static class Roles
 
     public static IEnumerable<string> OgdRolesList { get; } =
         new List<string> { DFTP.Id, DFTR.Id, DLUHC.Id, MCGA.Id, MHRA.Id, OPSS_OGD.Id };
-
     public static IEnumerable<Role> List { get; } =
         new List<Role> { DFTP, DFTR, DLUHC, MCGA, MHRA, OPSS, OPSS_OGD, UKAS };
 

@@ -19,7 +19,7 @@ public class CssClassUtils
         return status switch
         {
             LAStatus.Published => "govuk-tag--green",
-            LAStatus.Approved => "govuk-tag--green",
+            LAStatus.Approved => "govuk-tag--turquoise",
             LAStatus.Declined => "govuk-tag--orange",
             LAStatus.Draft => "govuk-tag--blue",   
             _ => "govuk-tag--yellow"

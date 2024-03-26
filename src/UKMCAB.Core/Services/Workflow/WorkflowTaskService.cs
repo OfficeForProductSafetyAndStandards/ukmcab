@@ -21,7 +21,6 @@ public class WorkflowTaskService : IWorkflowTaskService
             w.ForRoleId.ToLower() == roleId.ToLower() &&
             w.Assignee == null &&
             !w.Completed);
-
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
 

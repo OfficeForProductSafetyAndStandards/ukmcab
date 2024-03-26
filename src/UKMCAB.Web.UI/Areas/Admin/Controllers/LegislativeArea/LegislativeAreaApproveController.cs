@@ -13,7 +13,7 @@ using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
-[Area("admin"), Route("admin/cab/{id}/legislative-area/"), Authorize]
+[Area("admin"), Route("admin/cab/{id}/legislative-area/"), Authorize(Claims.LegislativeAreaApprove)]
 public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
