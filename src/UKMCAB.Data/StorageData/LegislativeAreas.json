@@ -4,119 +4,119 @@
         "name": "Electromagnetic compatibility",
         "regulation": "The Electromagnetic Compatibility Regulations 2016",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "cdbed358-8536-11ee-b9d1-0242ac120002",
         "name": "Machinery",
         "regulation": "The Supply of Machinery (Safety) Regulations 2008",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "a59f88aa-c6ae-4c90-939b-89c16e478728",
         "name": "Radio equipment",
         "regulation": "Radio Equipment Regulations 2017",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "fbf97235-0987-430c-a1d9-4439665aa9ba",
         "name": "Equipment and protective systems for use in potentially explosive atmospheres",
         "regulation": "The equipment and protective systems for use in potentially explosive atmospheres regulations 2016",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
         "name": "Lifts",
         "regulation": "The Lifts Regulations 2016",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "a4be7faf-5cd9-4b67-ad47-021a12319764",
         "name": "Pressure equipment",
         "regulation": "Pressure Equipment (Safety) Regulations 2016",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "e3751919-8b26-4059-ae34-8540146e262a",
         "name": "Pressure vessels",
         "regulation": "Simple Pressure Vessels (Safety) Regulations 2016",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
         "name": "Gas appliances and related",
         "regulation": "Regulation 2016/426 on appliances burning gaseous fuels",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
         "name": "Noise emissions in the environment by equipment for use outdoors",
         "regulation": "The Noise Emission in the Environment by Equipment for use Outdoors Regulations 2001",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "32d80c5e-0314-483b-8985-a35d507cad52",
         "name": "Ecodesign",
         "regulation": "The Boiler (Efficiency) Regulations 1993",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "0f5fa73e-6a8b-46e3-8b69-f5b7537468d2",
         "name": "Recreational craft",
         "regulation": "Recreational Crafts Regulation 2017",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
         "name": "Cableway installation",
         "regulation": "Cableway Installations (Regulation (EU) 2016/424 as brought into UK law and amended)",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "e840c3d0-6153-4baa-82ab-0374b81d46fe",
         "name": "Explosives",
         "regulation": "Explosives Regulations 2014, as amended",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "53067ecd-1fba-431e-a3e4-d0f772bf62ed",
         "name": "Pyrotechnics",
         "regulation": "Pyrotechnic Articles (Safety) Regulations 2015",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "8e686be5-727f-4d70-875f-58109fd03856",
         "name": "Toys",
         "regulation": "The Toys (Safety) Regulations 2011",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "ecc739f4-0be4-4651-8598-1e6a1d0808fc",
         "name": "Non-automatic weighing instruments",
         "regulation": "Non Automatic Weighing Instruments Regulations",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "92728722-d721-4da0-8d9a-f22f3829a551",
         "name": "Measuring instruments",
         "regulation": "Measuring Instruments Regulations",
         "hasDataModel": "true",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "8256e281-9ec9-436b-8357-bd4792deab01",
@@ -144,7 +144,7 @@
         "name": "Personal protective equipment",
         "regulation": "",
         "hasDataModel": "false",
-        "roleId": "opss (ogd)"
+        "roleId": "opss_ogd "
     },
     {
         "id": "eb2e7f0b-4f7a-424b-a77a-e39579a724eb",
