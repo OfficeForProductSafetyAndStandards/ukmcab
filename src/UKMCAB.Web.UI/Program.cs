@@ -148,6 +148,7 @@ builder.Services.AddTransient<IUserNoteService, UserNoteService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddTransient<IFileUploadUtils, FileUploadUtils>();
 builder.Services.AddTransient<ILegislativeAreaService, LegislativeAreaService>();
+builder.Services.AddTransient<ILegislativeAreaDetailService, LegislativeAreaDetailService>();
 
 builder.Services.AddCustomHttpErrorHandling();
 builder.Services.AddGovUkFrontend();
