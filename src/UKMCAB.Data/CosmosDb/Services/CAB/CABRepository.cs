@@ -36,6 +36,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
+                    //Set LA status
                     foreach (var la in document.DocumentLegislativeAreas)
                     {
                         switch (document.StatusValue)
@@ -49,7 +50,12 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                                 la.Status = LAStatus.Draft;
                                 break;
                         }
+                        //Set LA Role Id
+                        la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
                     }
+                    
+                    
+                    
 
                     await UpdateAsync(document);
                 }
