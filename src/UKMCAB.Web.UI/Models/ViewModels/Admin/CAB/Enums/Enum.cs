@@ -27,6 +27,12 @@
         MarkAsProvisional = 2
     }
 
+    public enum LegislativeAreaApproveActionEnum
+    {
+        Approve = 0,
+        Decline = 1,
+    }
+
     public enum LegislativeAreaActionMessageEnum
     {
         LegislativeAreaRemoved = 0,        
