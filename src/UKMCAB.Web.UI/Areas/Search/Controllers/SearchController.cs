@@ -243,7 +243,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 model.LegislativeAreaProvisionalOptions = GetFilterOptions(nameof(model.ProvisionalLegislativeAreas), "Provisional legislative area", facets.ProvisionalLegislativeAreas.OrderByDescending(x => x), model.ProvisionalLegislativeAreas);
                 model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.LegislativeAreaStatus), "Archived Legislative area", facets.LegislativeAreaStatus.OrderByDescending(x => x), model.LegislativeAreaStatus);
 
-                model.LAStatusOptions = GetFilterOptions(nameof(model.LAStatus), "Legislative area status 2", facets.LAStatus.OrderByDescending(x => x), model.LAStatus);
+                model.LAStatusOptions = GetFilterOptions(nameof(model.LAStatus), "Legislative area status", facets.LAStatus.OrderByDescending(x => x), model.LAStatus);
             }
             else
             {
