@@ -389,7 +389,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
             var isEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock;
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
-            var laPendingApprovalCount = LAPendingApprovalCountForOgdUser(latest);
+            var laPendingApprovalCount = LAPendingApprovalCountForUser(latest);
             var showOgdActions = subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
                 latest.IsPendingOgdApproval && laPendingApprovalCount > 0;
             if (showOgdActions)
@@ -839,7 +839,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ModelState.Clear();
         }
 
-        private int LAPendingApprovalCountForOgdUser(Document document)
+        private int LAPendingApprovalCountForUser(Document document)
         {
             return document.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId));
         }
