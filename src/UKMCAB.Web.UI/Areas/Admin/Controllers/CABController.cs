@@ -389,9 +389,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
             var isEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock;
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
-            var isMatchingOgdUser = IsMatchingOgdUser(latest);
+            var laPendingApprovalCount = LAPendingApprovalCountForOgdUser(latest);
             var showOgdActions = subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
-                latest.IsPendingOgdApproval && isMatchingOgdUser;
+                latest.IsPendingOgdApproval && laPendingApprovalCount > 0;
             if (showOgdActions)
             {
                 await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latest, UserRoleId);
@@ -449,10 +449,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LastGovermentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
                 LastAuditLogHistoryDate = Enumerable.MaxBy(latest.AuditLog!, u => u.DateTime)?.DateTime,
                 IsPendingOgdApproval = latest.IsPendingOgdApproval,
-                IsMatchingOgdUser = isMatchingOgdUser,
+                IsMatchingOgdUser = laPendingApprovalCount > 0,
                 ShowOgdActions = showOgdActions,
-                OpssOgdLegislativeAreasCount = latest.DocumentLegislativeAreas.Count(dla =>
-                    dla.Status == LAStatus.PendingApproval && dla.RoleId == Roles.OPSS_OGD.Id)
+                LegislativeAreasPendingApprovalCount = laPendingApprovalCount
             };
 
             //Lock Record for edit
@@ -840,9 +839,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ModelState.Clear();
         }
 
-        private bool IsMatchingOgdUser(Document document)
+        private int LAPendingApprovalCountForOgdUser(Document document)
         {
-            return document.DocumentLegislativeAreas.Any(dla => dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId!));
+            return document.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId));
         }
     }
 }

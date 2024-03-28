@@ -782,10 +782,10 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
 }
 else if (Model is { ShowOgdActions: true })
 {
-    if (Model.OpssOgdLegislativeAreasCount > 1)
+    if (Model.LegislativeAreasPendingApprovalCount > 1)
     {
         <govuk-warning-text icon-fallback-text="Warning">
-            You have @Model.OpssOgdLegislativeAreasCount.ToWords() legislative areas to approve or decline.
+            You have @Model.LegislativeAreasPendingApprovalCount.ToWords() legislative areas to approve or decline.
         </govuk-warning-text>
         <div class="govuk-button-group govuk-!-margin-top-5">
             <govuk-button-link id="reviewLa" asp-area="admin" asp-controller="LegislativeAreaApprove" asp-action="list" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Review</govuk-button-link>
