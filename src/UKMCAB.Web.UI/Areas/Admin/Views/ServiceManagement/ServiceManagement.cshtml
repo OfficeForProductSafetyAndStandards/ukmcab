@@ -17,7 +17,7 @@
             <table class="govuk-table">
                 <caption class="govuk-table__caption govuk-table__caption--m">
                     <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications">
-                        Notifications
+                        @("Notifications for " + Model.UserRoleLabel)
                     </a>
                 </caption>
                 <tbody class="govuk-table__body">
