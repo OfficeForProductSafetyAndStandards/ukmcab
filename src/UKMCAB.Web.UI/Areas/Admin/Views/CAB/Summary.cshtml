@@ -808,7 +808,7 @@ else if (Model is { ShowOgdActions: true })
                 <govuk-button id="approveLegislativeArea" type="submit" class="govuk-!-display-block">Approve</govuk-button>
             </form>
             <govuk-button-link id="declineLegislativeArea" class="govuk-button--secondary"
-                               asp-route="@LegislativeAreaDeclineController.Routes.LegislativeAreaDecline"
+                               asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaDecline"
                                asp-route-id="@Model.CABId">
                 Decline
             </govuk-button-link>
