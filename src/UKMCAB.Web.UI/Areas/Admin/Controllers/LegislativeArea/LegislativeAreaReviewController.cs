@@ -146,7 +146,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         var viewModel = new ReviewLegislativeAreasViewModel
         {
             CABId = Guid.Parse(cab.CABId),
-            ShowAddLegislativeAreaAction = !cab.IsPendingOgdApproval,
+            ShowAddRemoveLegislativeAreaActions = !cab.IsPendingOgdApproval,
         };
 
         foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
