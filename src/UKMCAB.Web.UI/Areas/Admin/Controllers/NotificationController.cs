@@ -108,7 +108,7 @@ public class NotificationController : UI.Controllers.ControllerBase
 
         var model = new NotificationsViewModel
         (
-            Constants.PageTitle.Notifications,
+            $"{Constants.PageTitle.Notifications} {Roles.NameFor(UserRoleId)}",
             new NotificationsViewModelTable((await unAssignedItemsTask).Any(), sf, sd,
                 (await unAssignedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {

@@ -21,30 +21,30 @@
                     </a>
                 </caption>
                 <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.UnassignedTabName" asp-route-pagenumber="1">
-                                @("Assigned to " + Model.UserRoleLabel)
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell">@Model.UnassignedNotification</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.AssignedToGroupTabName" asp-route-pagenumber="1">
-                                @("Assigned to another " + Model.UserRoleLabel + " user")
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell">@Model.AssignedNotification</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.AssignedToMeTabName">
-                                Assigned to me
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell">@Model.AssignedToMeNotification</td>
-                    </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.UnassignedTabName" asp-route-pagenumber="1">
+                            Unassigned
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell">@Model.UnassignedNotification</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.AssignedToMeTabName">
+                            Assigned to me
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell">@Model.AssignedToMeNotification</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__cell">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@NotificationController.Routes.Notifications" asp-fragment="@NotificationController.AssignedToGroupTabName" asp-route-pagenumber="1">
+                            Assigned to another user
+                        </a>
+                    </th>
+                    <td class="govuk-table__cell">@Model.AssignedNotification</td>
+                </tr>
                 </tbody>
             </table>
         </div>
