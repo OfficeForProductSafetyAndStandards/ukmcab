@@ -58,6 +58,10 @@
                     {
                         <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaStatusOptions"/>
                     }
+                    @if (Model.LAStatusOptions != null && Model.LAStatusOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
+                    {
+                        <partial name="Partials/_SearchFilter" model="Model.LAStatusOptions" />
+                    }
                 }
                 <div id="search-filter-button-wrapper">
                     <button class="govuk-button">Apply filters</button>
