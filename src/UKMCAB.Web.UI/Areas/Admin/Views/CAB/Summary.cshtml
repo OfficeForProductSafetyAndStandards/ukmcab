@@ -1,4 +1,5 @@
 ﻿@using System.Net
+@using Humanizer
 @using UKMCAB.Core.Domain;
 @using UKMCAB.Core.Security;
 @using UKMCAB.Data.Models
@@ -779,11 +780,23 @@ else if (Model.IsEditLocked && !Model.IsPendingOgdApproval)
             }
             else if (Model is { ShowOgdActions: true })
             {
+                if (Model.OpssOgdLegislativeAreasCount > 1)
+                {
+                    <govuk-warning-text icon-fallback-text="Warning">
+                        You have @Model.OpssOgdLegislativeAreasCount.ToWords() legislative areas to approve or decline.
+                    </govuk-warning-text>
+                }
+                else
+                {
+                    <govuk-warning-text icon-fallback-text="Warning">
+                        The legislative area will be approved or declined and not the entire CAB profile.
+                    </govuk-warning-text>
+                }
+
                 <div class="govuk-warning-text govuk-!-margin-top-7 govuk-!-margin-bottom-8">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-warning-text__assistive">Warning</span>
-                        The legislative area will be approved or declined and not the entire CAB profile.
                     </strong>
                 </div>
 

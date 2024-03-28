@@ -451,6 +451,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 IsPendingOgdApproval = latest.IsPendingOgdApproval,
                 IsMatchingOgdUser = isMatchingOgdUser,
                 ShowOgdActions = showOgdActions,
+                OpssOgdLegislativeAreasCount = latest.DocumentLegislativeAreas.Count(dla =>
+                    dla.Status == LAStatus.PendingApproval && dla.RoleId == Roles.OPSS.Id)
             };
 
             //Lock Record for edit
@@ -840,7 +842,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private bool IsMatchingOgdUser(Document document)
         {
-            return document.DocumentLegislativeAreas.Any(dla => dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId));
+            return document.DocumentLegislativeAreas.Any(dla => dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId!));
         }
     }
 }
