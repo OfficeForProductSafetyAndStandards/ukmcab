@@ -452,7 +452,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 IsMatchingOgdUser = isMatchingOgdUser,
                 ShowOgdActions = showOgdActions,
                 OpssOgdLegislativeAreasCount = latest.DocumentLegislativeAreas.Count(dla =>
-                    dla.Status == LAStatus.PendingApproval && dla.RoleId == Roles.OPSS.Id)
+                    dla.Status == LAStatus.PendingApproval && dla.RoleId == Roles.OPSS_OGD.Id)
             };
 
             //Lock Record for edit
