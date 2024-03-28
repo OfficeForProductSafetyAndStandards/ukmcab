@@ -788,7 +788,7 @@ else if (Model is { ShowOgdActions: true })
             You have @Model.LegislativeAreasPendingApprovalCount.ToWords() legislative areas to approve or decline.
         </govuk-warning-text>
         <div class="govuk-button-group govuk-!-margin-top-5">
-            <govuk-button-link id="reviewLa" asp-area="admin" asp-controller="LegislativeAreaApprove" asp-action="list" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Review</govuk-button-link>
+            <govuk-button-link id="reviewLa" asp-area="admin" asp-controller="LegislativeAreaApprove" asp-action="List" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Review</govuk-button-link>
             <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
         </div>
     }
