@@ -9,6 +9,7 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
@@ -28,6 +29,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
     public static class Routes
     {
+        public const string LegislativeAreaApprovalList = "legislative.area.approval.list";
         public const string LegislativeAreaApprove = "legislative.area.approve";
         public const string LegislativeAreaApproveDeclineSelection = "legislative.area.approve.decline.selection";
         public const string LegislativeAreaDecline = "legislative.area.decline";
@@ -47,6 +49,30 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         _templateOptions = templateOptions.Value;
         _workflowTaskService = workflowTaskService;
         _legislativeAreaDetailService = legislativeAreaDetailService;
+    }
+
+    [HttpGet("approvallist", Name = Routes.LegislativeAreaApprovalList)]
+    public async Task<IActionResult> ApprovalListAsync(Guid id)
+    {
+        var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
+                       throw new InvalidOperationException("CAB not found");
+
+        var lasToApprove = document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.PendingApproval).ToList();
+        if (!lasToApprove.Any())
+        {
+            return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+        }
+
+        var las = await GetLegislativeAreasForUserAsync();
+        var vm = new ApprovalListViewModel() { CabId = id };
+
+        foreach (var dla in lasToApprove)
+        {
+            var laName = las.Single(l => l.Id == dla.LegislativeAreaId).Name;
+            vm.LasToApprove.Add(new(dla.LegislativeAreaId, laName));
+        }
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/ApprovalList.cshtml", vm);
     }
 
     [HttpGet("approve-decline-selection/{legislativeAreaId}", Name = Routes.LegislativeAreaApproveDeclineSelection)]
@@ -97,7 +123,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 await DeclineLegislativeAreaAsync(la, latestDocument, vm.DeclineReason);
             }
 
-            // return View("~/Areas/Admin/views/CAB/LegislativeArea/ApproveDeclineLegislativeAreaSelection.cshtml");
+            return RedirectToRoute(Routes.LegislativeAreaApprovalList, new { id });
         }
         else
         {
