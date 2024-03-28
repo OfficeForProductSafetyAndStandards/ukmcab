@@ -793,7 +793,7 @@ else if (Model.IsEditLocked && !Model.IsPendingOgdApproval)
                             <govuk-button id="approveLegislativeArea" type="submit" class="govuk-!-display-block" >Approve</govuk-button>
                         </form>
                         <govuk-button-link id="declineLegislativeArea" class="govuk-button--secondary"
-                                           asp-route="@LegislativeAreaDeclineController.Routes.LegislativeAreaDecline"
+                                           asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaDecline"
                                            asp-route-id="@Model.CABId">Decline</govuk-button-link>
                         
                         <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
