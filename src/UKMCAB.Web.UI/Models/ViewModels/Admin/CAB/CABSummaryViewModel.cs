@@ -37,5 +37,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public DateTime? LastGovermentUserNoteDate { get; set; }
         public DateTime? LastAuditLogHistoryDate { get; set; }
         public string? SuccessBannerMessage { get; set; }
+        public int LegislativeAreasPendingApprovalCount { get; set; }
     }
 }
