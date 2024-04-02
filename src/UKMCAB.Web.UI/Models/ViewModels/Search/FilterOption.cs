@@ -81,7 +81,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             if (prefix.Equals("LAstatus", StringComparison.CurrentCultureIgnoreCase))
             {
                 var laStatus = Enum.Parse<LAStatus>(value);
-                return laStatus == LAStatus.PendingApproval ? "Pending approval" : laStatus.GetEnumDescription();
+                return laStatus.GetEnumDescription();
             }
             return value;
         }
