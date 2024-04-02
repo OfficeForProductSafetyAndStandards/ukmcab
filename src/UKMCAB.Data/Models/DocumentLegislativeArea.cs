@@ -15,6 +15,7 @@
 
         public DateTime? ReviewDate { get; set; }
 
+        public string? UserNotes { get; set; }
         public string? Reason { get; set; }
         
         public bool? Archived { get; set; }
