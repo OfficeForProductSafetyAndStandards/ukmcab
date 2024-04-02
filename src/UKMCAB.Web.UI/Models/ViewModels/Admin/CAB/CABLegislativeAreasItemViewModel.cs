@@ -1,6 +1,7 @@
 ﻿using UKMCAB.Common.Extensions;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+using UKMCAB.Web.UI.Services.Subscriptions;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -27,14 +28,24 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public bool CanChooseScopeOfAppointment { get; set; }
         public bool? IsArchived { get; init; }
-        public Guid? SelectedScopeofAppointmentId { get; set; }
+        public Guid? SelectedScopeOfAppointmentId { get; set; }
         public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PurposeOfAppointment));
         public bool ShowCategoryColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
         public bool ShowProductColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));
         public LAStatus Status { get; set; }
-        public string StatusName => Status == LAStatus.PendingApproval ? $"{Status.GetEnumDescription()} from {RoleName}" : Status.GetEnumDescription();
+        public string StatusName => GetStatusName();
         public string StatusCssStyle { get; set; } = string.Empty;
-        public string? RoleName { get; set; }
-        public string? RoleId { get; set; }
+        public string RoleName { get; set; } = string.Empty;
+        public string RoleId { get; set; } = string.Empty;
+
+        private string GetStatusName()
+        {
+            return Status switch
+            {
+                LAStatus.Approved => $"{Status.GetEnumDescription()} by {RoleName}",
+                LAStatus.PendingApproval => $"{Status.GetEnumDescription()} from {RoleName}",
+                _ => Status.GetEnumDescription()
+            };
+        }
     }
 }
