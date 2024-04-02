@@ -130,6 +130,17 @@ public class LegislativeAreaAdditionalInformationController : Controller
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
+        if (!string.IsNullOrWhiteSpace(vm.UserNotes) || !string.IsNullOrWhiteSpace(vm.Reason))
+        {
+            latestDocument.AuditLog.Add(new Audit(userAccount: userAccount,
+                action: AuditCABActions.LegislativeAreaAdditionalInformationUpdated,
+                comment: string.IsNullOrWhiteSpace(vm.UserNotes) ? null : vm.UserNotes,
+                publicComment: string.IsNullOrWhiteSpace(vm.Reason)
+                    ? null
+                    : $"The review date for the {documentLegislativeArea.LegislativeAreaName} legislative area was changed for the following reason: {vm.Reason}"
+            ));
+        }
+
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
         
         TempData.Remove(StoragePageTitle);
