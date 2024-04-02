@@ -66,7 +66,7 @@
                                         @legislativeArea.Name
                                     </span>
                                 </summary>
-                                <div class="govuk-details__text govuk-!-padding-top-1">
+                                <div class="govuk-details__text govuk-!-padding-top-1 govuk-!-padding-bottom-0">
                                     <govuk-button-link asp-route="@LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation"
                                                        asp-route-id="@Model.CABId" asp-route-laId="@legislativeArea.LegislativeAreaId"
                                                        asp-route-fromSummary="@Model.FromSummary" class="govuk-button--secondary">
@@ -79,10 +79,13 @@
                                             Archive legislative area
                                         </govuk-button-link>
                                     }
-                                    <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveOrArchiveLegislativeArea" class="govuk-button--secondary ukmcab-margin-left-10"
-                                                       asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-actionType="@RemoveActionEnum.Remove" asp-route-returnURl="remove-legislative-area" asp-route-fromSummary="@Model.FromSummary">
-                                        Remove legislative area
-                                    </govuk-button-link>
+                                    @if (Model.ShowAddRemoveLegislativeAreaActions)
+                                    {
+                                        <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveOrArchiveLegislativeArea" class="govuk-button--secondary ukmcab-margin-left-10"
+                                            asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@legislativeArea.LegislativeAreaId" asp-route-actionType="@RemoveActionEnum.Remove" asp-route-returnURl="remove-legislative-area" asp-route-fromSummary="@Model.FromSummary">
+                                            Remove legislative area
+                                        </govuk-button-link>
+                                    }
 
                                     @if (legislativeArea.CanChooseScopeOfAppointment)
                                     {
@@ -247,14 +250,14 @@
                 </fieldset>
             </div>
 
-            @if (Model.ShowAddLegislativeAreaAction)
+            @if (Model.ShowAddRemoveLegislativeAreaActions)
             {
-                <div>
-                    <govuk-button class="govuk-button--secondary" type="submit" name="submitType" value="AddLegislativeArea">Add legislative area</govuk-button>               
+                <div class="govuk-!-margin-top-6">
+                    <govuk-button class="govuk-button--secondary govuk-!-margin-bottom-0" type="submit" name="submitType" value="AddLegislativeArea">Add legislative area</govuk-button>
                 </div>
             }
-            <div>
-                <hr class="ukmcab-border"/>
+            <div class="govuk-!-margin-top-6">
+                <hr class="ukmcab-border" />
             </div>
             <div class="govuk-form-group">
                 <fieldset class="govuk-fieldset" aria-describedby="fieldset-title">

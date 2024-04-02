@@ -1,0 +1,46 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.ApprovalListViewModel
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
+@using UKMCAB.Web.UI.Areas.Admin.Controllers
+
+@section BackButton
+{
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
+                <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CabId" asp-route-subSectionEditAllowed="true" />
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds-from-desktop">
+        <span class="govuk-caption-m">Edit a CAB</span>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <div class="la-approval-list">
+            @foreach(var la in Model.LasToApprove)
+            {
+                <div class="display-flex-space-between">
+                    <div>
+                        <span class="govuk-body">@la.Item2</span>
+                    </div>
+                    <div>
+                        <govuk-button-link asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApproveDeclineSelection" class="govuk-button--secondary"
+                            asp-route-id="@Model.CabId" asp-route-legislativeAreaId="@la.Item1">
+                            Review
+                        </govuk-button-link>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<govuk-button-link asp-route="@CABController.Routes.CabSummary" class="govuk-button--primary" asp-route-id="@Model.CabId" asp-route-subSectionEditAllowed="true">
+    Return to summary
+</govuk-button-link>

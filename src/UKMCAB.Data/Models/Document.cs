@@ -58,11 +58,6 @@
         // Body details
         public List<string> TestingLocations { get; set; } = new();
         public List<string> BodyTypes { get; set; } = new();
-
-        /*This needs to be kept post data model (v3.0) for a few reasons:
-        Search Filter, Data models are used in Controllers and Views*/
-        [Obsolete("Use DocumentLegislativeAreas instead, only used for initialising release v3.0. Can be removed post release v3.0")]
-        public List<string> LegislativeAreas { get; set; } = new(); 
         
         public List<DocumentLegislativeArea> DocumentLegislativeAreas { get; set; } = new();
 

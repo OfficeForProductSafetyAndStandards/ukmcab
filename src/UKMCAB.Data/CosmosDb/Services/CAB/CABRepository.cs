@@ -36,68 +36,26 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
-                    // ReSharper disable once *** Existing CABs can have null List of La ***
-                    document.LegislativeAreas ??= new List<string>();
-                    // Populate new DocumentLegislativeAreas and DocumentScopeOfAppointments for each existing LegislativeAreas string.
-                    if (document.LegislativeAreas.Any())
+                    //Set LA status
+                    foreach (var la in document.DocumentLegislativeAreas)
                     {
-                        var las = document.LegislativeAreas.ToList();
-                        foreach (var legislativeArea in las)
+                        switch (document.StatusValue)
                         {
-                            if (string.Equals(legislativeArea, "Not assigned", StringComparison.OrdinalIgnoreCase))
-                            {
-                                document.LegislativeAreas.Remove(legislativeArea);
-                            }
-                            else
-                            {
-                                var dbLegislativeArea = legislativeAreas.FirstOrDefault(x =>
-                                    x.Name.Equals(legislativeArea, StringComparison.OrdinalIgnoreCase));
-
-                                if (dbLegislativeArea != null)
-                                {
-                                    if (document.DocumentLegislativeAreas.All(x =>
-                                            x.LegislativeAreaId != dbLegislativeArea.Id))
-                                    {
-                                        document.DocumentLegislativeAreas.Add(new DocumentLegislativeArea
-                                        {
-                                            Id = Guid.NewGuid(),
-                                            LegislativeAreaId = dbLegislativeArea.Id,
-                                            IsProvisional = false,
-                                            LegislativeAreaName = dbLegislativeArea.Name
-                                        });
-                                    }
-                                }
-                            }
+                            case Status.Archived:
+                            case Status.Historical:
+                            case Status.Published:
+                                la.Status = LAStatus.Published;
+                                break;
+                            default:
+                                la.Status = LAStatus.Draft;
+                                break;
                         }
+                        //Set LA Role Id
+                        la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
                     }
-
-                    // if guid is 00000000-0000-0000-0000-000000000000
-                    var defaultGuid = new Guid();
-
-                    if (document.Schedules != null && document.Schedules.Any())
-                    {
-                       foreach(var schedule in document.Schedules)
-                        {
-                            if (string.IsNullOrEmpty(schedule.Id.ToString()) || schedule.Id == defaultGuid)
-                            {
-                                schedule.Id = Guid.NewGuid();
-                            }
-                        }
-                    }
-
-                    if (document.Documents != null &&  document.Documents.Any())
-                    {
-                        foreach (var supportingDocument in document.Documents)
-                        {
-                            if (string.IsNullOrEmpty(supportingDocument.Id.ToString()) || supportingDocument.Id == defaultGuid)
-                            {
-                                supportingDocument.Id = Guid.NewGuid();
-                            }
-                        }
-                    }
-
-                    // 1644 - Delete Audit entries for "Saved" events.
-                    document.AuditLog.RemoveAll(a => a.Action == "Saved");
+                    
+                    
+                    
 
                     await UpdateAsync(document);
                 }
