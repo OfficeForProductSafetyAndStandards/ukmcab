@@ -16,6 +16,7 @@ public static class ClaimsIssuer
         {
             return new Claim[]
             {
+                new(Claims.CabCreateDraft, string.Empty), // can create drafts of CABs
                 new(Claims.CabEdit, "*"), // can edit any cab
                 new(Claims.CabCanApprove, "*"), // can approve any cab
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
