@@ -88,13 +88,24 @@
                 </div>
             </div>
 
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.UserNotes))">
+                <govuk-character-count asp-for="UserNotes" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--s" is-page-heading="false">
+                        @Model.UserNotesLabel
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        These notes will only be seen by users that are signed in to the UKMCAB service.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+            </div>
+            
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Reason))">
                 <govuk-character-count asp-for="Reason" max-length="1000" rows="5">
                     <govuk-character-count-label class="govuk-label--s" is-page-heading="false">
-                        Reason for change of review date (optional)
+                         Reason (optional)
                     </govuk-character-count-label>
                     <govuk-character-count-hint>
-                        Enter the reason for changing the review date for this legislative area.
+                        Enter the reason for publishing this CAB. This will be shown to all users in the CAB history page.
                     </govuk-character-count-hint>
                 </govuk-character-count>
             </div>
