@@ -138,7 +138,9 @@ public class LegislativeAreaAdditionalInformationController : Controller
             latestDocument.AuditLog.Add(new Audit(userAccount: userAccount,
                 action: AuditCABActions.LegislativeAreaAdditionalInformationUserNotes,
                 comment: vm.UserNotes,
-                publicComment: string.Format(reviewDateReason, documentLegislativeArea.LegislativeAreaName, vm.Reason)
+                publicComment: string.IsNullOrWhiteSpace(vm.Reason)
+                    ? null
+                    : string.Format(reviewDateReason, documentLegislativeArea.LegislativeAreaName, vm.Reason)
             ));
         }
 
