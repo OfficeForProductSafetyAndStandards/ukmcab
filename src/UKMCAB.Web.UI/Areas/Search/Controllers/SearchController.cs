@@ -165,7 +165,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 StatusesFilter = model.Statuses,
                 SubStatusesFilter = model.SubStatuses,
                 ProvisionalLegislativeAreasFilter = model.ProvisionalLegislativeAreas,
-                LegislativeAreaStatusFilter = model.LegislativeAreaStatus,
+                LegislativeAreaStatusFilter = model.ArchivedLegislativeArea,
                 LAStatusFilter = model.LAStatus,
                 UserGroupsFilter = model.UserGroups,
                 IsOPSSUser = model.IsOPSSUser,
@@ -241,7 +241,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 } 
                 model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
                 model.LegislativeAreaProvisionalOptions = GetFilterOptions(nameof(model.ProvisionalLegislativeAreas), "Provisional legislative area", facets.ProvisionalLegislativeAreas.OrderByDescending(x => x), model.ProvisionalLegislativeAreas);
-                model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.LegislativeAreaStatus), "Archived Legislative area", facets.LegislativeAreaStatus.OrderByDescending(x => x), model.LegislativeAreaStatus);
+                model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.ArchivedLegislativeArea), "Archived Legislative area", facets.LegislativeAreaStatus.OrderByDescending(x => x), model.ArchivedLegislativeArea);
 
                 model.LAStatusOptions = GetFilterOptions(nameof(model.LAStatus), "Legislative area status", facets.LAStatus.OrderByDescending(x => x), model.LAStatus);
             }
