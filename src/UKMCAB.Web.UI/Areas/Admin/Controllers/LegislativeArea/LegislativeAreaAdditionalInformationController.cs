@@ -132,23 +132,21 @@ public class LegislativeAreaAdditionalInformationController : Controller
 
         const string reviewDateReason =
             "The review date for the {0} legislative area was changed for the following reason: {1}";
-        if (!string.IsNullOrWhiteSpace(vm.UserNotes) )
+
+        if (!string.IsNullOrWhiteSpace(vm.UserNotes))
         {
             latestDocument.AuditLog.Add(new Audit(userAccount: userAccount,
                 action: AuditCABActions.LegislativeAreaAdditionalInformationUserNotes,
-                comment: string.IsNullOrWhiteSpace(vm.UserNotes) ? null : vm.UserNotes,
-                publicComment: string.IsNullOrWhiteSpace(vm.Reason)
-                    ? null
-                    : string.Format(reviewDateReason,documentLegislativeArea.LegislativeAreaName,vm.Reason)
+                comment: vm.UserNotes,
+                publicComment: string.Format(reviewDateReason, documentLegislativeArea.LegislativeAreaName, vm.Reason)
             ));
         }
-        if (  !string.IsNullOrWhiteSpace(vm.Reason))
+
+        if (!string.IsNullOrWhiteSpace(vm.Reason))
         {
             latestDocument.AuditLog.Add(new Audit(userAccount: userAccount,
                 action: AuditCABActions.LegislativeAreaAdditionalInformationReason,
-                publicComment: string.IsNullOrWhiteSpace(vm.Reason)
-                    ? null
-                    : string.Format(reviewDateReason,documentLegislativeArea.LegislativeAreaName,vm.Reason)
+                publicComment: string.Format(reviewDateReason, documentLegislativeArea.LegislativeAreaName, vm.Reason)
             ));
         }
 
