@@ -408,6 +408,7 @@ namespace UKMCAB.Data.Models
 
         public const string ApproveLegislativeArea = "Legislative area approved";
         public const string DeclineLegislativeArea = "Legislative area declined";
+        public const string LegislativeAreaAdditionalInformationUpdated = "Review date updated";
     }
 
     public class AuditUserActions
