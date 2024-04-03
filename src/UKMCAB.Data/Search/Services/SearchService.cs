@@ -20,7 +20,7 @@ namespace UKMCAB.Data.Search.Services
         {
             var provisionalLegislativeAreaPath = "DocumentLegislativeAreas/IsProvisional";
             var legislativeAreaStatus = "DocumentLegislativeAreas/Archived";
-            var lastatus = "DocumentLegislativeAreas/Status";
+            var laStatus = "DocumentLegislativeAreas/Status";
 
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
@@ -31,7 +31,7 @@ namespace UKMCAB.Data.Search.Services
                     $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0",
                     $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0",
                     $"{provisionalLegislativeAreaPath},count:0", $"{legislativeAreaStatus},count:0",
-                    $"{lastatus},count:0"
+                    $"{laStatus},count:0"
                 },
                 Filter = internalSearch ? "" : "StatusValue eq '30' or StatusValue eq '40'"
             });
@@ -49,7 +49,7 @@ namespace UKMCAB.Data.Search.Services
                 result.ProvisionalLegislativeAreas =
                     GetFacetList(facets[provisionalLegislativeAreaPath]).OrderBy(x => x).ToList();
                 result.LegislativeAreaStatus = GetLegislativeAreaStatusFacetList(facets[legislativeAreaStatus]).OrderBy(x => x).ToList();
-                result.LAStatus = GetFacetList(facets[lastatus]);
+                result.LAStatus = GetFacetList(facets[laStatus]);
             }
 
             return result;
