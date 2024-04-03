@@ -130,14 +130,25 @@ public class LegislativeAreaAdditionalInformationController : Controller
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
-        if (!string.IsNullOrWhiteSpace(vm.UserNotes) || !string.IsNullOrWhiteSpace(vm.Reason))
+        const string reviewDateReason =
+            "The review date for the {0} legislative area was changed for the following reason: {1}";
+        if (!string.IsNullOrWhiteSpace(vm.UserNotes) )
         {
             latestDocument.AuditLog.Add(new Audit(userAccount: userAccount,
-                action: AuditCABActions.LegislativeAreaAdditionalInformationUpdated,
+                action: AuditCABActions.LegislativeAreaAdditionalInformationUserNotes,
                 comment: string.IsNullOrWhiteSpace(vm.UserNotes) ? null : vm.UserNotes,
                 publicComment: string.IsNullOrWhiteSpace(vm.Reason)
                     ? null
-                    : $"The review date for the {documentLegislativeArea.LegislativeAreaName} legislative area was changed for the following reason: {vm.Reason}"
+                    : string.Format(reviewDateReason,documentLegislativeArea.LegislativeAreaName,vm.Reason)
+            ));
+        }
+        if (  !string.IsNullOrWhiteSpace(vm.Reason))
+        {
+            latestDocument.AuditLog.Add(new Audit(userAccount: userAccount,
+                action: AuditCABActions.LegislativeAreaAdditionalInformationReason,
+                publicComment: string.IsNullOrWhiteSpace(vm.Reason)
+                    ? null
+                    : string.Format(reviewDateReason,documentLegislativeArea.LegislativeAreaName,vm.Reason)
             ));
         }
 
