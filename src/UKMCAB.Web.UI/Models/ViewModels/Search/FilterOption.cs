@@ -77,6 +77,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
                 return isArchived ? "Archived" : "Published";
             }
+
+            if (prefix.Equals("LAstatus", StringComparison.CurrentCultureIgnoreCase))
+            {
+                var laStatus = Enum.Parse<LAStatus>(value);
+                return laStatus.GetEnumDescription();
+            }
             return value;
         }
 

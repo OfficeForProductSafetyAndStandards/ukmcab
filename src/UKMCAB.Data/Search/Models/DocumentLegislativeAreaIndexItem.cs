@@ -24,5 +24,8 @@ namespace UKMCAB.Data.Search.Models
         
         [SimpleField(IsFacetable = true, IsFilterable = true)]
         public bool? Archived { get; set; }
+        
+        [SimpleField(IsFacetable = true, IsFilterable = true)]
+        public string? Status { get; set; }
     }
 }

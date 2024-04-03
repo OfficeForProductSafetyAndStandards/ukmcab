@@ -20,6 +20,7 @@ namespace UKMCAB.Data.Search.Services
         {
             var provisionalLegislativeAreaPath = "DocumentLegislativeAreas/IsProvisional";
             var legislativeAreaStatus = "DocumentLegislativeAreas/Archived";
+            var laStatus = "DocumentLegislativeAreas/Status";
 
             var result = new SearchFacets();
             var search = await _indexClient.SearchAsync<CABIndexItem>("*", new SearchOptions
@@ -29,7 +30,8 @@ namespace UKMCAB.Data.Search.Services
                     $"{nameof(result.BodyTypes)},count:0", $"{LaDocumentsName},count:0",
                     $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0",
                     $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0",
-                    $"{provisionalLegislativeAreaPath},count:0", $"{legislativeAreaStatus},count:0"
+                    $"{provisionalLegislativeAreaPath},count:0", $"{legislativeAreaStatus},count:0",
+                    $"{laStatus},count:0"
                 },
                 Filter = internalSearch ? "" : "StatusValue eq '30' or StatusValue eq '40'"
             });
@@ -47,6 +49,7 @@ namespace UKMCAB.Data.Search.Services
                 result.ProvisionalLegislativeAreas =
                     GetFacetList(facets[provisionalLegislativeAreaPath]).OrderBy(x => x).ToList();
                 result.LegislativeAreaStatus = GetLegislativeAreaStatusFacetList(facets[legislativeAreaStatus]).OrderBy(x => x).ToList();
+                result.LAStatus = GetFacetList(facets[laStatus]);
             }
 
             return result;
@@ -199,6 +202,13 @@ namespace UKMCAB.Data.Search.Services
                         filters.Add($"DocumentLegislativeAreas/all(la: la/Archived ne true) and DocumentLegislativeAreas/any()");
                     }
                 }
+            }
+
+            if (options is { InternalSearch: true, LAStatusFilter: not null } &&
+                options.LAStatusFilter.Any())
+            {
+                var lastatuses = string.Join(" or ", options.LAStatusFilter.Select(st => $"DocumentLegislativeAreas/any(la: la/Status eq '{st}')"));
+                filters.Add($"({lastatuses})");
             }
             // if internal search (user logged in) and non opss user (ukas user) then exclude opss draft cab from search
 
