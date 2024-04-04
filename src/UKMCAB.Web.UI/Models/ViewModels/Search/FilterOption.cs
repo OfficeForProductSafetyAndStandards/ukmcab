@@ -71,11 +71,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                 return isProvisional ? "Yes" : "No";
             }
 
-            if (prefix.Equals("Legislativeareastatus", StringComparison.CurrentCultureIgnoreCase))
+            if (prefix.Equals("ArchivedLegislativearea", StringComparison.CurrentCultureIgnoreCase))
             {
                 var isArchived = bool.Parse(value);
 
-                return isArchived ? "Archived" : "Published";
+                return isArchived ? "Yes" : "No";
             }
 
             if (prefix.Equals("LAstatus", StringComparison.CurrentCultureIgnoreCase))

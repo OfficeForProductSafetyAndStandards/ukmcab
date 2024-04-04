@@ -39,7 +39,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string[]? UserGroups { get; set; }
         public string[]? SubStatuses { get; set; }
         public string[]? ProvisionalLegislativeAreas { get; set; }
-        public string[]? LegislativeAreaStatus { get; set; }
+        public string[]? ArchivedLegislativeArea { get; set; }
         public string[]? LAStatus { get; set; }
         public string? Sort { get; set; }
         public int PageNumber { get; set; } = 1;
@@ -68,7 +68,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                                   (ProvisionalLegislativeAreas != null && InternalSearch
                                       ? ProvisionalLegislativeAreas.Length
                                       : 0) +
-                                  (LegislativeAreaStatus != null && InternalSearch ? LegislativeAreaStatus.Length : 0) +
+                                  (ArchivedLegislativeArea != null && InternalSearch ? ArchivedLegislativeArea.Length : 0) +
                                   (LAStatus != null && InternalSearch ? LAStatus.Length : 0);                                  
 
         public Dictionary<string, string[]> SelectedFilters => new()
@@ -80,7 +80,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             { nameof(UserGroups), UserGroups ?? Array.Empty<string>() },
             { nameof(SubStatuses), SubStatuses ?? Array.Empty<string>() },
             { nameof(ProvisionalLegislativeAreas), ProvisionalLegislativeAreas ?? Array.Empty<string>() },
-            { nameof(LegislativeAreaStatus), LegislativeAreaStatus ?? Array.Empty<string>()},
+            { nameof(ArchivedLegislativeArea), ArchivedLegislativeArea ?? Array.Empty<string>()},
             { nameof(LAStatus), LAStatus ?? Array.Empty<string>()}
         };
 
@@ -105,7 +105,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         }
         public string LegislativeAreaStatusLabel(string value)
         {
-            return  bool.Parse(value) ? "Archived legislative area" : "Published legislative area";
+            return  bool.Parse(value) ? "Archived legislative area: Yes" : "Archived legislative area: No";
         }
         public string LAStatusLabel(string status)
         {
