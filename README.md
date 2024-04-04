@@ -9,12 +9,11 @@ Built by the Office for Product Safety and Standards
 For enquiries, contact opss.enquiries@beis.gov.uk
 
 ## Overview
-UKMCAB is written in C# / .NET 6, HTML/CSS/JavaScript.  The front-end depends on the GDS Design System.
-It's backed Redis cache and Azure Cosmos DB.
-
-Unit tests are found in the Test assembly and code unit test code coverage measurement is a manual execise at present. 
-
-Email and SMS Notifications are facilitated via GOV.UK Notify.
+- UKMCAB is written in C# / .NET 6, HTML/CSS/JavaScript.  The front-end depends on the GDS Design System.
+- It's backed Redis cache and Azure Cosmos DB.
+- Unit tests are found in each projects test assembly, unit test code coverage measurement is manual at present. 
+- Email and SMS Notifications are facilitated via GOV.UK Notify.
+- Authentication and Authorisation is via GOV.UK One Login
 
 
 ## Running for the first time
