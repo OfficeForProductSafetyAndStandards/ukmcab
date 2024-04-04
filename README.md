@@ -52,14 +52,13 @@ _This can be done one of the following ways:_
 **Note: for local development, you'll want the `DataProtectionX509CertBase64` to be the same as the remote dev environment so that you can share the Cosmos DB between local and remote dev, otherwise data encryption wil fail.
 The output can be copied into the github secret or `secrets.json` file.
 
-## Setup tests
+## Setup steps
 1. Setup environment variable for Nuget Package source see [src/NuGetPackageSourceSetup.md](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/blob/b772867f448daa8f8eb44a14af47ae5f885debf6/src/NuGetPackageSourceSetup.md)
 2. Install Node and NPM locally
 3. Run `npm install` from src/UKMCAB.Web.UI
 4. Run `npx webpack` from src/UKMCAB.Web.UI to run the webpack script
 5. Update secrets file accordingly
-6. Open the Visual Studio solution file and hit run or use the command `dotnet run`
-
+6. Open the solution file in preferred ide and run or use the command `dotnet run`
 
 ## Generating an X509 self-signed certificate for data protection/encipherment
 To create a new X509 cert, feel free to use the code below:
