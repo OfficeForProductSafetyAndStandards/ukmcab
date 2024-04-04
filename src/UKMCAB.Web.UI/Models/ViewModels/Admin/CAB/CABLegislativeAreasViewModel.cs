@@ -24,11 +24,11 @@ public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegisl
             .Must((_, legislativeAreas) =>
             {
                 var complete = legislativeAreas.Any() && legislativeAreas.All(x => x.IsProvisional.HasValue &&
-                    (string.IsNullOrWhiteSpace(x.ReviewDate.ToString()) ||
-                     !string.IsNullOrWhiteSpace(x.ReviewDate.ToString()) && x.ReviewDate > DateTime.Today) &&
-                    (!x.CanChooseScopeOfAppointment || (x.ScopeOfAppointments.Any() && x.ScopeOfAppointments.All(y =>
-                        y.Procedures != null && y.Procedures.Any() &&
-                        y.Procedures.All(z => !string.IsNullOrEmpty(z))))));
+                    (x.ReviewDate == null || (x.ReviewDate != null && x.ReviewDate >= DateTime.Today)) &&
+                        (!x.CanChooseScopeOfAppointment || (x.ScopeOfAppointments.Any() && x.ScopeOfAppointments.All(
+                            y =>
+                                y.Procedures != null && y.Procedures.Any() &&
+                                y.Procedures.All(z => !string.IsNullOrEmpty(z))))));
                 return complete;
             })
             .WithMessage("Legislative areas are incomplete");
