@@ -1,4 +1,5 @@
-﻿using UKMCAB.Common.Extensions;
+﻿using System.Diagnostics;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services.Subscriptions;
@@ -43,6 +44,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             return Status switch
             {
                 LAStatus.Approved => $"{Status.GetEnumDescription()} by {RoleName}",
+                LAStatus.Declined => $"{Status.GetEnumDescription()} by {RoleName}",
                 LAStatus.PendingApproval => $"{Status.GetEnumDescription()} from {RoleName}",
                 _ => Status.GetEnumDescription()
             };
