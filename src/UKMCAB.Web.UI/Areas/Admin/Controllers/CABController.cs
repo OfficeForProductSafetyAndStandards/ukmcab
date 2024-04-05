@@ -389,7 +389,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
             var isEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock;
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
-            var laPendingApprovalCount = LAPendingApprovalCountForUser(latest);
+            var laPendingApprovalCount = LAPendingApprovalCountForUser(latest, UserRoleId == Roles.OPSS.Id);
             var showOgdActions = subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
                 latest.IsPendingOgdApproval && laPendingApprovalCount > 0;
             if (showOgdActions)
@@ -446,12 +446,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LastModifiedDate = latest.LastUpdatedDate,
                 PublishedDate = publishedAudit?.DateTime ?? null,
                 GovernmentUserNoteCount = latest.GovernmentUserNotes?.Count ?? 0,
-                LastGovermentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
+                LastGovernmentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
                 LastAuditLogHistoryDate = Enumerable.MaxBy(latest.AuditLog!, u => u.DateTime)?.DateTime,
                 IsPendingOgdApproval = latest.IsPendingOgdApproval,
                 IsMatchingOgdUser = laPendingApprovalCount > 0,
                 ShowOgdActions = showOgdActions,
-                LegislativeAreasPendingApprovalCount = laPendingApprovalCount
+                LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
+                IsOpssAdmin = UserRoleId == Roles.OPSS.Id
             };
 
             //Lock Record for edit
@@ -509,7 +510,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabContactViewModel = new CABContactViewModel(latest),
                 CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
                 CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latest),
-                CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latest),
+                CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latest)
             };
             ModelState.Clear();
 
@@ -839,9 +840,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ModelState.Clear();
         }
 
-        private int LAPendingApprovalCountForUser(Document document)
+        private int LAPendingApprovalCountForUser(Document document, bool isOpssAdmin = false)
         {
-            return document.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId));
+            if (!isOpssAdmin)
+            {
+                return document.DocumentLegislativeAreas.Count(dla =>
+                    dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId));
+            }
+
+            return document.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.Approved);
         }
     }
 }

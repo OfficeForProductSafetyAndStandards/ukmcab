@@ -1,20 +1,19 @@
 # UK Market Conformity Assessment Bodies
 ---
-![dev-build](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-dev.yml/badge.svg)
-![stage-build](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-app-to-stage.yml/badge.svg)
-![IaC-dev](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-bicep-dev.yml/badge.svg)
-![IaC-stage](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/deploy-bicep-stage.yml/badge.svg)
+[![dev-app-deploy](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/dev-app-deploy.yml/badge.svg)](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/dev-app-deploy.yml)
+[![stage-app-deploy](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/stage-app-deploy.yml/badge.svg)](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/stage-app-deploy.yml)
+[![preprod-app-deploy](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/preprod-app-deploy.yml/badge.svg)](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/preprod-app-deploy.yml)
+[![prod-app-deploy](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/prod-app-deploy.yml/badge.svg)](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/actions/workflows/prod-app-deploy.yml)
 
 Built by the Office for Product Safety and Standards
 For enquiries, contact opss.enquiries@beis.gov.uk
 
 ## Overview
-UKMCAB is written in C# / .NET 6, HTML/CSS/JavaScript.  The front-end depends on the GDS Design System.
-It's backed Redis cache and Azure Cosmos DB.
-
-Unit tests are found in the Test assembly and code unit test code coverage measurement is a manual execise at present. 
-
-Email and SMS Notifications are facilitated via GOV.UK Notify.
+- UKMCAB is written in C# / .NET 6, HTML/CSS/JavaScript.  The front-end depends on the GDS Design System.
+- It's backed Redis cache and Azure Cosmos DB.
+- Unit tests are found in each projects test assembly, unit test code coverage measurement is manual at present. 
+- Email and SMS Notifications are facilitated via GOV.UK Notify.
+- Authentication and Authorisation is via GOV.UK One Login
 
 
 ## Running for the first time
@@ -50,9 +49,15 @@ _This can be done one of the following ways:_
   - DataProtectionX509CertBase64
   
 **Note: for local development, you'll want the `DataProtectionX509CertBase64` to be the same as the remote dev environment so that you can share the Cosmos DB between local and remote dev, otherwise data encryption wil fail.
+The output can be copied into the github secret or `secrets.json` file.
 
-- Open the Visual Studio solution file and hit run or use the command `dotnet run`
-
+## Setup steps
+1. Setup environment variable for Nuget Package source see [src/NuGetPackageSourceSetup.md](https://github.com/OfficeForProductSafetyAndStandards/ukmcab/blob/b772867f448daa8f8eb44a14af47ae5f885debf6/src/NuGetPackageSourceSetup.md)
+2. Install Node and NPM locally
+3. Run `npm install` from src/UKMCAB.Web.UI
+4. Run `npx webpack` from src/UKMCAB.Web.UI to run the webpack script
+5. Update secrets file accordingly
+6. Open the solution file in preferred ide and run or use the command `dotnet run`
 
 ## Generating an X509 self-signed certificate for data protection/encipherment
 To create a new X509 cert, feel free to use the code below:
@@ -79,9 +84,6 @@ static X509Certificate2 GenerateSelfSignedCertificate()
     return pfxGeneratedCert;
 }
 ```
-The output can be copied into the github secret or `secrets.json` file.
-
-
 
 
 ## Unit test code coverage
