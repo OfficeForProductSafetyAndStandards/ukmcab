@@ -56,8 +56,10 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
-
-        var lasToApprove = document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.PendingApproval).ToList();
+        
+        var lasToApprove =
+            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ToList() :
+                document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.PendingApproval && la.RoleId == UserRoleId).ToList();
         if (!lasToApprove.Any())
         {
             return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
@@ -71,6 +73,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             var laName = las.Single(l => l.Id == dla.LegislativeAreaId).Name;
             vm.LasToApprove.Add(new(dla.LegislativeAreaId, laName));
         }
+        
+        //todo: need to clear temp data for success message
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApprovalList.cshtml", vm);
     }
@@ -116,11 +120,11 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         {           
             if(vm.LegislativeAreaApproveActionEnum == LegislativeAreaApproveActionEnum.Approve)
             {
-                await ApproveLegislativeAreaAsync(la, latestDocument);
+                await ApproveLegislativeAreaAsync(la.Id, la.Name, latestDocument);
             }
             else
             {
-                await DeclineLegislativeAreaAsync(la, latestDocument, vm.DeclineReason);
+                await DeclineLegislativeAreaAsync(la.Id, la.Name, latestDocument, vm.DeclineReason);
             }
 
             return RedirectToRoute(Routes.LegislativeAreaApprovalList, new { id });
@@ -139,13 +143,17 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
-        var la = (await GetLegislativeAreasForUserAsync()).First(); //todo multiples incoming for OPSS OGD
-        if (!document.DocumentLegislativeAreas.Select(l => l.LegislativeAreaId).Contains(la.Id))
-        {
-            throw new PermissionDeniedException("No legislative area on CAB owned by this OGD");
-        }
         
-        await ApproveLegislativeAreaAsync(la, document);
+        var docLasPendingApproval =
+            document.DocumentLegislativeAreas.Where(l =>
+                l.Status == LAStatus.PendingApproval && l.RoleId == UserRoleId).ToList();
+        if (!docLasPendingApproval.Any())
+        {
+            throw new PermissionDeniedException("No legislative area for approval on CAB for this OGD");
+        }
+
+        var la = docLasPendingApproval.First();
+        await ApproveLegislativeAreaAsync(la.LegislativeAreaId, la.LegislativeAreaName, document);
         return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
     }
 
@@ -164,24 +172,28 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
-        var la = (await GetLegislativeAreasForUserAsync()).First(); //todo multiples incoming for OPSS OGD
-        if (!document.DocumentLegislativeAreas.Select(l => l.LegislativeAreaId).Contains(la.Id))
+        var docLasPendingApproval =
+            document.DocumentLegislativeAreas.Where(l =>
+                l.Status == LAStatus.PendingApproval && l.RoleId == UserRoleId).ToList();
+        if (!docLasPendingApproval.Any())
         {
-            throw new PermissionDeniedException("No legislative area on CAB owned by this OGD");
+            throw new PermissionDeniedException("No legislative area for approval on CAB for this OGD");
         }
+
+        var la = docLasPendingApproval.First();
 
         if (ModelState.IsValid)
         {
-            await DeclineLegislativeAreaAsync(la, document, vm.DeclineReason);
+            await DeclineLegislativeAreaAsync(la.Id, la.LegislativeAreaName, document, vm.DeclineReason);
             return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
         }
 
-        var viewModel = new DeclineLAViewModel($"Decline Legislative area {la.Name}", id);
+        var viewModel = new DeclineLAViewModel($"Decline Legislative area {la.LegislativeAreaName}", id);
         vm.DeclineReason = vm.DeclineReason;
         return View("~/Areas/Admin/views/CAB/LegislativeArea/Decline.cshtml", viewModel);
     }
 
-    private async Task ApproveLegislativeAreaAsync(LegislativeAreaModel legislativeAreaModel, Data.Models.Document document)
+    private async Task ApproveLegislativeAreaAsync(Guid legislativeAreaId, string laName, Document document)
     {
         var currentUser = CurrentUser;
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
@@ -189,27 +201,29 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
         var cabId = new Guid(document.CABId);
-        await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, legislativeAreaModel.Id);
+        await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, legislativeAreaId);
         TempData.Add(Constants.ApprovedLA, true);
 
         await MarkTaskAsCompleteAsync(cabId, approver);
-        await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, legislativeAreaModel.Name, currentUser);
+        await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, laName, currentUser);
     }
 
-    private async Task DeclineLegislativeAreaAsync(LegislativeAreaModel legislativeAreaModel, Data.Models.Document document, string declineReason)
+    private async Task DeclineLegislativeAreaAsync(Guid laId, string laName, Document document, string? declineReason)
     { 
         var cabId = new Guid(document.CABId);
-
-        await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, legislativeAreaModel.Id, declineReason);
+        declineReason ??= string.Empty;
+        await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, laId, declineReason);
         TempData.Add(Constants.DeclinedLA, true);
 
         // send legislative area decline notification
-        await SendNotificationOfDeclineAsync(cabId, document.Name, legislativeAreaModel.Name, declineReason);
+        await SendNotificationOfDeclineAsync(cabId, document.Name, laName, declineReason);
     }
 
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
     {
-        return (await _legislativeAreaService.GetLegislativeAreasByRoleId(UserRoleId)).ToList();
+        return UserRoleId != Roles.OPSS.Id 
+            ? (await _legislativeAreaService.GetLegislativeAreasByRoleId(UserRoleId)).ToList() 
+            : (await _legislativeAreaService.GetAllLegislativeAreasAsync()).ToList();
     }
 
     private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, string legislativeAreaName, UserAccount approver)
@@ -256,7 +270,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     /// <param name="cabName">Name of CAB</param>
     /// <param name="legislativeAreaName">Name of legislative area</param>
     /// <param name="declineReason">Decline reason</param>
-    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, string legislativeAreaName, string declineReason)
+    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, string legislativeAreaName, string? declineReason)
     {
         if (cabName == null) throw new ArgumentNullException(nameof(cabName));
 
