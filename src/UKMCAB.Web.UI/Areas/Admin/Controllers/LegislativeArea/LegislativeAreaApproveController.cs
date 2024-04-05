@@ -60,7 +60,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         
         var lasToApprove =
             UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ToList() :
-                document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.PendingApproval).ToList();
+                document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.PendingApproval && la.RoleId == UserRoleId).ToList();
         if (!lasToApprove.Any())
         {
             return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
