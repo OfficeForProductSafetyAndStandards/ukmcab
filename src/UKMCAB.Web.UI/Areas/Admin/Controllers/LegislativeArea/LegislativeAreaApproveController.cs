@@ -211,8 +211,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     private async Task DeclineLegislativeAreaAsync(Guid laId, string laName, Document document, string? declineReason)
     { 
         var cabId = new Guid(document.CABId);
-
-        await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, laId, declineReason ?? string.Empty);
+        declineReason ??= string.Empty;
+        await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, laId, declineReason);
         TempData.Add(Constants.DeclinedLA, true);
 
         // send legislative area decline notification
