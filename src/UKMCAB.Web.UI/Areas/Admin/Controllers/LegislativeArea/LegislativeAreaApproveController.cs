@@ -221,7 +221,9 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
     {
-        return (await _legislativeAreaService.GetLegislativeAreasByRoleId(UserRoleId)).ToList();
+        return UserRoleId != Roles.OPSS.Id 
+            ? (await _legislativeAreaService.GetLegislativeAreasByRoleId(UserRoleId)).ToList() 
+            : (await _legislativeAreaService.GetAllLegislativeAreasAsync()).ToList();
     }
 
     private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, string legislativeAreaName, UserAccount approver)
