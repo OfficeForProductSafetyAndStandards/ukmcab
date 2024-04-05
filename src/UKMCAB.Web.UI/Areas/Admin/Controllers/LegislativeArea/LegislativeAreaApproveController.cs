@@ -73,6 +73,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             var laName = las.Single(l => l.Id == dla.LegislativeAreaId).Name;
             vm.LasToApprove.Add(new(dla.LegislativeAreaId, laName));
         }
+        
+        //todo: need to clear temp data for success message
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApprovalList.cshtml", vm);
     }
