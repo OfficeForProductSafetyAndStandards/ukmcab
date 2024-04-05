@@ -22,6 +22,7 @@ public static class ClaimsIssuer
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
                 new(Claims.CabGovernmentUserNotes, string.Empty), // can view/add Government user notes on cabs
                 new(Claims.UserManagement, string.Empty), // can manage users
+                new (Claims.LegislativeAreaApprove, string.Empty) // Opss admin approve LAs after OGDs
             };
         }
 
@@ -34,13 +35,11 @@ public static class ClaimsIssuer
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
             };
         }
-
-        //TODO : Permission will be assigned later
+        
         if (Roles.OgdRolesList.Contains(role))
         {
             return new Claim[]
             {
-                new(Claims.IsOneLoginUser, "*"),
                 new(Claims.LegislativeAreaApprove, role), // Approve/Decline Legislative Area
                 new(Claims.CabManagement, string.Empty) // can manage all cabs
             };
