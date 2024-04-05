@@ -56,8 +56,10 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     {
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
-
-        var lasToApprove = document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.PendingApproval).ToList();
+        
+        var lasToApprove =
+            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ToList() :
+                document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.PendingApproval && la.RoleId == UserRoleId).ToList();
         if (!lasToApprove.Any())
         {
             return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
