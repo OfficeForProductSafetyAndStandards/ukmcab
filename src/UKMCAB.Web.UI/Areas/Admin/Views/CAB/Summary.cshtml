@@ -60,11 +60,11 @@ else if (Model is { EditByGroupPermitted: false, Status: Status.Draft, IsPending
 {
     <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner"/>
 }
-else if (!Model.EditByGroupPermitted && !Model.IsPendingOgdApproval)
+else if (Model is { EditByGroupPermitted: false, IsPendingOgdApproval: false })
 {
     <partial model="@("This CAB profile cannot be edited as it was created by an OPSS user.")" name="Partials/_PageContentBanner"/>
 }
-else if (Model.IsEditLocked && !Model.IsPendingOgdApproval)
+else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
 {
     <partial model="@("This CAB profile cannot be edited as it's being edited by another user.")" name="Partials/_PageContentBanner"/>
 }
@@ -669,7 +669,7 @@ else if (Model.IsEditLocked && !Model.IsPendingOgdApproval)
                 <dd class="govuk-summary-list__value">
                     @if (Model.GovernmentUserNoteCount > 0)
                     {
-                        <p>Last note added: @Model.LastGovermentUserNoteDate?.ToStringBeisFormat()</p>
+                        <p>Last note added: @Model.LastGovernmentUserNoteDate?.ToStringBeisFormat()</p>
 
                         <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
                            asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@currentUrl" class="govuk-link govuk-link--no-visited-state">
@@ -800,6 +800,7 @@ else if (Model is { ShowOgdActions: true })
     }
     else
     {
+        //TODO: OPSS admin hide this message
         <govuk-warning-text icon-fallback-text="Warning">
             The legislative area will be approved or declined and not the entire CAB profile.
         </govuk-warning-text>

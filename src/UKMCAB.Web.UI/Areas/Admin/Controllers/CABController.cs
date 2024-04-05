@@ -446,12 +446,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LastModifiedDate = latest.LastUpdatedDate,
                 PublishedDate = publishedAudit?.DateTime ?? null,
                 GovernmentUserNoteCount = latest.GovernmentUserNotes?.Count ?? 0,
-                LastGovermentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
+                LastGovernmentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
                 LastAuditLogHistoryDate = Enumerable.MaxBy(latest.AuditLog!, u => u.DateTime)?.DateTime,
                 IsPendingOgdApproval = latest.IsPendingOgdApproval,
                 IsMatchingOgdUser = laPendingApprovalCount > 0,
                 ShowOgdActions = showOgdActions,
-                LegislativeAreasPendingApprovalCount = laPendingApprovalCount
+                LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
+                IsOpssAdmin = UserRoleId == Roles.OPSS.Id
             };
 
             //Lock Record for edit
@@ -509,7 +510,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 CabContactViewModel = new CABContactViewModel(latest),
                 CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
                 CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latest),
-                CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latest),
+                CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latest)
             };
             ModelState.Clear();
 
