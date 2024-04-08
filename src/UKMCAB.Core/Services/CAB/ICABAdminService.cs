@@ -99,7 +99,7 @@ namespace UKMCAB.Core.Services.CAB
 
         Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId);
 
-        Task ApproveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId);
+        Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId);
 
         Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason);       
 
