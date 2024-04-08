@@ -77,13 +77,14 @@ public class WorkflowTaskServiceTests
     }
 
     private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User? userAssigned = null,
-        Guid? cabId = null, bool completed = false)
+        Guid? cabId = null, bool completed = false, Guid? documentLAId = null)
     {
         var task = new WorkflowTask(TaskType.RequestToPublish, userSubmitter,
             forRoleId, userAssigned,
             DateTime.UtcNow, _faker.Random.Words(), userSubmitter, _faker.Date.Past(), null, null,
             completed,
-            cabId ?? _faker.Random.Guid()
+            cabId ?? _faker.Random.Guid(),
+            documentLAId ?? _faker.Random.Guid()
         );
         return task;
     }
@@ -307,7 +308,7 @@ public class WorkflowTaskServiceTests
             });
 
         // Act
-        var result = await _sut.GetByCabIdAndTaskTypeAsync(cabId, new List<TaskType> { TaskType.RequestToPublish });
+        var result = await _sut.GetByCabIdAsync(cabId, new List<TaskType> { TaskType.RequestToPublish });
 
         // Arrange
         Assert.AreEqual(2, result.Count);
@@ -318,6 +319,31 @@ public class WorkflowTaskServiceTests
         }
     }
 
+    [Test]
+    public async Task TasksFound_GetByDocumentLAIdAsync_ReturnsTasks()
+    {
+        // Arrange
+        var documentLAId = _faker.Random.Guid();
+        var userAssigned = CreateFakeOpssUser();
+        _mockWorkflowTaskRepository.Setup(r =>
+                r.QueryAsync(It.IsAny<Expression<Func<Data.Models.Workflow.WorkflowTask, bool>>>()))
+            .ReturnsAsync(new List<Data.Models.Workflow.WorkflowTask>
+            {
+                CreateValidTask(CreateFakeOpssUser(), Roles.OPSS.Id, userAssigned, documentLAId: documentLAId).MapToWorkflowTaskData(),
+                CreateValidTask(CreateFakeUkasUser(), Roles.UKAS.Id, userAssigned, documentLAId: documentLAId).MapToWorkflowTaskData(),
+            });
+
+        // Act
+        var result = await _sut.GetByDocumentLAIdAsync(documentLAId);
+
+        // Arrange
+        Assert.AreEqual(2, result.Count);
+        foreach (var task in result)
+        {
+            Assert.AreEqual(documentLAId, task.DocumentLAId);
+        }
+    }
+    
     private User CreateFakeUkasUser()
     {
         var ukasUser = new User(_faker.Random.Word(), _faker.Random.Word(), _faker.Random.Word(),
