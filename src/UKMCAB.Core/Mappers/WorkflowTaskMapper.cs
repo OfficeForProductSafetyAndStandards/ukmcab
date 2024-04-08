@@ -7,8 +7,8 @@ public static class WorkflowTaskMapper
 {
     public static WorkflowTask MapToWorkflowTaskModel(this Data.Models.Workflow.WorkflowTask source)
     {
-        TaskType taskType = Enum.Parse<TaskType>(source.TaskType);
-        WorkflowTask task = new WorkflowTask(
+        var taskType = Enum.Parse<TaskType>(source.TaskType);
+        var task = new WorkflowTask(
             taskType, 
             new User(source.Submitter.Id, source.Submitter.FirstName, source.Submitter.Surname, source.Submitter.Role, source.Submitter.EmailAddress),
             source.ForRoleId,
@@ -23,9 +23,13 @@ public static class WorkflowTaskMapper
             source.Approved,
             source.DeclineReason,
             source.Completed,
-            source.CabId);
-        task.Id = Guid.Parse(source.Id);
-        task.SentOn = source.SentOn;
+            source.CabId,
+            source.DocumentLAId
+            )
+        {
+            Id = Guid.Parse(source.Id),
+            SentOn = source.SentOn
+        };
         return task;
     }
 
@@ -69,7 +73,8 @@ public static class WorkflowTaskMapper
             source.Approved,
             source.DeclineReason,
             source.Completed,
-            source.CABId);
+            source.CABId,
+            source.DocumentLAId);
         return task;
     }
 }
