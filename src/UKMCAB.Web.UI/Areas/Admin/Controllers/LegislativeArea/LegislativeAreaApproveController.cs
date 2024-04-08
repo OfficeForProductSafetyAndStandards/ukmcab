@@ -213,7 +213,11 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var cabId = new Guid(document.CABId);
         declineReason ??= string.Empty;
         await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, laId, declineReason);
-        TempData.Add(Constants.DeclinedLA, true);
+        if (TempData.ContainsKey(Constants.DeclinedLA))
+        {
+            TempData.Remove(Constants.DeclinedLA);
+            TempData.Add(Constants.DeclinedLA, true);
+        }
 
         // send legislative area decline notification
         await SendNotificationOfDeclineAsync(cabId, document.Name, laName, declineReason);
