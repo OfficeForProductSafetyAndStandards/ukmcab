@@ -551,8 +551,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
                         {
                             await SendNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
-                                latest.Name, userAccount, receiverEmailId,
-                                latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId);
+                                latest.Name, userAccount, receiverEmailId, latestDocumentLegislativeArea);
                         }
                     }
 
@@ -681,7 +680,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
-            UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName, string legislativeAreaRoleId)
+            UserAccount userAccount, string legislativeAreaReceiverEmailId, DocumentLegislativeArea documentLegislativeArea)
         {
             var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
                 userAccount.Role ?? throw new InvalidOperationException(),
@@ -696,7 +695,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 },
                 { "userGroup", user.UserGroup },
                 { "userName", user.FirstAndLastName },
-                { "legislativeAreaName", legislativeAreaName }
+                { "legislativeAreaName", documentLegislativeArea.LegislativeAreaName }
             };
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
                 _templateOptions.NotificationLegislativeAreaCabApproval, personalisation);
@@ -705,16 +704,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 new WorkflowTask(
                     TaskType.LegislativeAreaApproveRequestForCab,
                     user,
-                    legislativeAreaRoleId,
+                    documentLegislativeArea.RoleId,
                     null, 
                     DateTime.Now,
-                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved.",
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {documentLegislativeArea.LegislativeAreaName} legislative area is approved.",
                     user,
                     DateTime.Now,
                     null,
                     null,
                     false,
-                    cabId));
+                    cabId,
+                    documentLegislativeArea.Id
+                    ));
         }
         private IActionResult SaveDraft(Document document)
         {

@@ -53,17 +53,24 @@ public class WorkflowTaskService : IWorkflowTaskService
             w.CabId.HasValue && w.CabId.Value == cabId);
         return items.Select(w => w.MapToWorkflowTaskModel()).OrderByDescending(t => t.LastUpdatedOn).ToList();
     }
-
+    
+    public async Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId, IEnumerable<TaskType> taskTypes)
+    {
+        var tasks = await GetByCabIdAsync(cabId);
+        var items = tasks.Where(t => taskTypes.Contains(t.TaskType));
+        return items.OrderByDescending(t => t.LastUpdatedOn).ToList();
+    }
+    
     public async Task<List<WorkflowTask>> GetByDocumentLAIdAsync(Guid docLaId)
     {
         var items = await _workflowTaskRepository.QueryAsync(w =>
             w.DocumentLAId.HasValue && w.DocumentLAId.Value == docLaId);
         return items.Select(w => w.MapToWorkflowTaskModel()).OrderByDescending(t => t.LastUpdatedOn).ToList();
     }
-
-    public async Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId, IEnumerable<TaskType> taskTypes)
+    
+    public async Task<List<WorkflowTask>> GetByDocumentLAIdAsync(Guid docLaId, IEnumerable<TaskType> taskTypes)
     {
-        var tasks = await GetByCabIdAsync(cabId);
+        var tasks = await GetByDocumentLAIdAsync(docLaId);
         var items = tasks.Where(t => taskTypes.Contains(t.TaskType));
         return items.OrderByDescending(t => t.LastUpdatedOn).ToList();
     }

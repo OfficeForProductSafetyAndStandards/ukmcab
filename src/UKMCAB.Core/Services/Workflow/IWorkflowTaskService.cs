@@ -30,6 +30,14 @@ public interface IWorkflowTaskService
     /// <param name="laId">LA to search for</param>
     /// <returns>Ordered tasks found</returns>
     public Task<List<WorkflowTask>> GetByDocumentLAIdAsync(Guid laId);
+    
+    /// <summary>
+    /// Get tasks by Document LA id and task type ordered by last updated date descending
+    /// </summary>
+    /// <param name="laId">cab to search for</param>
+    /// <param name="taskTypes">task types to filter by</param>
+    /// <returns>Ordered tasks found</returns>
+    public Task<List<WorkflowTask>> GetByDocumentLAIdAsync(Guid laId, IEnumerable<TaskType> taskTypes);
 
     public Task<WorkflowTask> GetAsync(Guid id);
     public Task<WorkflowTask> CreateAsync(WorkflowTask workflowTask);
