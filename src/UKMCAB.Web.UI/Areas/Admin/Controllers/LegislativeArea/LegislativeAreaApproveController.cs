@@ -322,8 +322,12 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     private async Task<WorkflowTask> GetWorkflowTaskAsync(Guid cabId, string approverRoleId)
     {
         var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
-        var task = tasks.First(t =>
-            t.TaskType is TaskType.LegislativeAreaApproveRequestForCab && t.ForRoleId == approverRoleId && !t.Completed);
+        //todo: retrieve Tasks based of LA id
+        var task = 
+            approverRoleId != Roles.OPSS.Id ?
+            tasks.First(t =>
+            t.TaskType is TaskType.LegislativeAreaApproveRequestForCab && t.ForRoleId == approverRoleId && !t.Completed)
+            : tasks.First(t => t.TaskType is TaskType.LegislativeAreaApproved && !t.Completed);
         return task;
     }
 }
