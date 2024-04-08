@@ -301,10 +301,10 @@ namespace UKMCAB.Data.Models
                 {
                     var previousFileUpload = previousDocument.Documents.FirstOrDefault(sch => sch.Id.Equals(fileupload.Id));
 
-                    if (previousFileUpload != null)
+                    if (previousFileUpload != null) 
                     {
 
-                        if (!previousFileUpload.Category.Equals(fileupload.Category))
+                        if (previousFileUpload.Category != null && !previousFileUpload.Category.Equals(fileupload.Category))
                         {
                             sb.AppendFormat(
                                 "<p class=\"govuk-body\">The category for the supporting document <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a> has been changed from {0} to {1}.</p>",
