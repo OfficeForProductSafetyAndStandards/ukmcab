@@ -572,7 +572,7 @@ namespace UKMCAB.Core.Services.CAB
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
-        public async Task ApproveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId)
+        public async Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
@@ -580,10 +580,10 @@ namespace UKMCAB.Core.Services.CAB
             // Approve document legislative area
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-            documentLegislativeArea.Status = LAStatus.Approved;
+            documentLegislativeArea.Status = approver.Role == Roles.OPSS.Id ? LAStatus.ApprovedByOpssAdmin : LAStatus.Approved;
             var comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " approved.";
-            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ApproveLegislativeArea, comment));
-            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            latestDocument.AuditLog.Add(new Audit(approver, AuditCABActions.ApproveLegislativeArea, comment));
+            await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
         public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason)
