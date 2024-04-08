@@ -17,6 +17,13 @@ public interface IWorkflowTaskService
     public Task<List<WorkflowTask>> GetByCabIdAsync(Guid cabId);
     
     /// <summary>
+    /// Get tasks by Document LA id and ordered by last updated date descending
+    /// </summary>
+    /// <param name="laId">LA to search for</param>
+    /// <returns>Ordered tasks found</returns>
+    public Task<List<WorkflowTask>> GetByDocumentLAIdAsync(Guid laId);
+    
+    /// <summary>
     /// Get tasks by CabId and task type ordered by last updated date descending
     /// </summary>
     /// <param name="cabId">cab to search for</param>
