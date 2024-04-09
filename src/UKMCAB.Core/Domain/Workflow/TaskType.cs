@@ -43,5 +43,11 @@ public enum TaskType
     [Description("Legislative area approved")]
     LegislativeAreaApproved,   
     [Description("Legislative area declined")]
-    LegislativeAreaDeclined
+    LegislativeAreaDeclined,
+    [Description("Legislative area request to remove")]
+    LegislativeAreaRequestToRemove,
+    [Description("Legislative area request to archive and remove product schedule")]
+    LegislativeAreaRequestToArchiveAndRemoveSchedule,
+    [Description("Legislative area request to archive and archive product schedule")]
+    LegislativeAreaRequestToArchiveAndArchiveSchedule
 }

@@ -13,6 +13,8 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Core.Security;
 using System.Net;
+using System.Drawing;
+using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -1014,7 +1016,14 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         if (ModelState.IsValid)
         {
-            // to do
+            // set document legislative area status to pending approval to remove
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+            documentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
+            documentLegislativeArea.ReasonToRemoveOrArchive = vm.UserNotes;
+
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!, latestDocument);
+            return RedirectToAction("summary", "cab", new { Area = "admin", id });
         }
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaRequest.cshtml", vm);
