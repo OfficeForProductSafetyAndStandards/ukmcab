@@ -539,7 +539,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     var legislativeAreaSenderEmailIds =
                         _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
-                    var emailsToSends = new List<Tuple<string, int, string>>();
+                    var emailsToSends = new List<ValueTuple<string, int, string>>();
 
                     foreach (var latestDocumentLegislativeArea in latest.DocumentLegislativeAreas)
                     {
@@ -559,14 +559,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 latestDocumentLegislativeArea.RoleId);
                             if (emailsToSends.All(a => a.Item1 != receiverEmailId))
                             {
-                                emailsToSends.Add(new Tuple<string, int, string>(receiverEmailId, 1,
+                                emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId, 1,
                                     latestDocumentLegislativeArea.LegislativeAreaName));
                             }
                             else
                             {
                                 var laName = emailsToSends.First(x => x.Item1 == receiverEmailId);
                                 emailsToSends.Remove(laName);
-                                emailsToSends.Add(new Tuple<string, int, string>(receiverEmailId,
+                                emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId,
                                     laName.Item2 + 1,
                                     string.Concat(laName.Item3, ", ",
                                         latestDocumentLegislativeArea.LegislativeAreaName)));
