@@ -583,10 +583,16 @@ namespace UKMCAB.Core.Services.CAB
                                  throw new InvalidOperationException("No document found");
 
             // Approve document legislative area
+            var isOpssAdmin = approver.Role == Roles.OPSS.Id;
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-            documentLegislativeArea.Status = approver.Role == Roles.OPSS.Id ? LAStatus.ApprovedByOpssAdmin : LAStatus.Approved;
+            documentLegislativeArea.Status = isOpssAdmin ? LAStatus.ApprovedByOpssAdmin : LAStatus.Approved;
             var comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " approved.";
+            if (isOpssAdmin)
+            {
+                comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName +
+                          " approved by OPSS admin.";
+            }
             latestDocument.AuditLog.Add(new Audit(approver, AuditCABActions.ApproveLegislativeArea, comment));
             await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
