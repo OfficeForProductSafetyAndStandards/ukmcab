@@ -11,8 +11,8 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @if (Model.IsFromSummary && cabId != null)
-            {               
-                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" />
+            {
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" />
             }
             else
             {
@@ -37,7 +37,8 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="cabdetailsform" method="post" novalidate>
-            <input type="hidden" asp-for="IsFromSummary"/>
+            <input type="hidden" asp-for="IsFromSummary" />
+            <input type="hidden" asp-for="ReturnUrl" />
             <fieldset class="govuk-fieldset">
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.Name))">
                     <h3 class="govuk-label-wrapper">
@@ -197,7 +198,7 @@
                     </button>
                     @if (Model.IsFromSummary)
                     {
-                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }                   
                     else
                     {
