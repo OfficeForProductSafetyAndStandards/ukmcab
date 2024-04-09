@@ -51,6 +51,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             vm.SuccessBannerMessage = AlertMessagesUtils.LegislativeAreaActionMessages[actionType.Value];
         }
         vm.FromSummary = fromSummary;
+        vm.ReturnUrl = returnUrl;
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }

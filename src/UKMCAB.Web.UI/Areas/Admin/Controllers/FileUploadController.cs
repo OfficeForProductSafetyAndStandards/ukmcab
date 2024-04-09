@@ -161,7 +161,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
-        public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? SelectedScheduleId,
+        public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? returnUrl, string? SelectedScheduleId,
             ProductScheduleActionMessageEnum? actionType)
         {   
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -204,6 +204,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ActiveFiles = uploadedFileViewModels.Where(n => n.Archived is null or false).ToList(),
                 CABId = id,
                 IsFromSummary = fromSummary,
+                ReturnUrl = returnUrl,
                 SuccessBannerTitle = successBannerTitle,                
                 DocumentStatus = latestDocument.StatusValue,
                 LegislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestDocument),
@@ -520,7 +521,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/documents-list/{id}")]
-        public async Task<IActionResult> DocumentsList(string id, bool fromSummary, string? indexOfSelectedFile,
+        public async Task<IActionResult> DocumentsList(string id, bool fromSummary, string? returnUrl, string? indexOfSelectedFile,
             string? fromAction)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -567,6 +568,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     UploadedFiles = uploadedFileViewModels,
                     CABId = id,
                     IsFromSummary = fromSummary,
+                    ReturnUrl = returnUrl,
                     DocumentStatus = latestDocument.StatusValue,
                     SuccessBannerTitle = successBannerContent,
                     ShowBanner = showBanner
@@ -589,6 +591,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 UploadedFiles = uploadedFileViewModels,
                 CABId = id,
                 IsFromSummary = fromSummary,
+                ReturnUrl = returnUrl,
                 DocumentStatus = latestDocument.StatusValue
             });
         }

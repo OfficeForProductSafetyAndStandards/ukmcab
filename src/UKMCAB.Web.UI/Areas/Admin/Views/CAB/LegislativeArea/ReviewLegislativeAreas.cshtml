@@ -13,7 +13,7 @@
             <div class="govuk-grid-column-two-thirds">
                 @if (Model.FromSummary && cabId != null)
                 {
-                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true"/>
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl"/>
                 }
                 else
                 {
@@ -405,7 +405,7 @@
 
                     @if (Model.FromSummary)
                     {
-                        <govuk-button-link asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="true">Continue</govuk-button-link>
+                        <govuk-button-link asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl">Continue</govuk-button-link>
                     }
                     else
                     {
@@ -418,7 +418,7 @@
 
                     @if (Model.FromSummary)
                     {
-                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }
                     else
                     {
