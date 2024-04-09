@@ -142,7 +142,7 @@ public class ApproveCABController : Controller
            throw new InvalidOperationException("User account not found");
         var userRoleId = Roles.List.First(r => r.Id == user.Role).Id;
         await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason);
-        if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+        if (document.DocumentLegislativeAreas.All(la => la.Status != LAStatus.PendingApproval))
         {
             var submitTask = await MarkTaskAsCompleteAsync(cabId,
             new User(user.Id, user.FirstName, user.Surname, userRoleId,
