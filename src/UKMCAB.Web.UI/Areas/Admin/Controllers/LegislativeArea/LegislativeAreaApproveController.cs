@@ -97,7 +97,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             CabId = id,
             Title = "Approve legislative area",
             LegislativeArea = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
-            ActiveProductSchedules = latestDocument.ActiveSchedules?.Where(n => n.LegislativeArea == la.Name).ToList(),
+            ActiveProductSchedules = latestDocument.ActiveSchedules.Where(n => n.LegislativeArea == la.Name).ToList(),
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApproveDeclineLegislativeAreaSelection.cshtml", vm);
@@ -206,7 +206,10 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         TempData.Add(Constants.ApprovedLA, true);
 
         await MarkLARequestTaskAsCompleteAsync(cabId, approver);
-        await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa.LegislativeAreaName, currentUser);
+        if (UserRoleId != Roles.OPSS.Id)
+        {
+            await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser);
+        }
     }
 
     private async Task DeclineLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document, string? declineReason)
@@ -221,7 +224,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         }
 
         // send legislative area decline notification
-        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa.LegislativeAreaName, declineReason);
+        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, declineReason);
     }
 
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
@@ -231,7 +234,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             : (await _legislativeAreaService.GetAllLegislativeAreasAsync()).ToList();
     }
 
-    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, string legislativeAreaName, UserAccount approver)
+    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, DocumentLegislativeArea docLa, UserAccount approver)
     {
         var approverUser = new User(approver.Id, approver.FirstName, approver.Surname,
             approver.Role ?? throw new InvalidOperationException(),
@@ -246,7 +249,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 },
                 { "userGroup", approverUser.UserGroup },
                 { "userName", approverUser.FirstAndLastName },
-                { "legislativeAreaName", legislativeAreaName }
+                { "legislativeAreaName", docLa.LegislativeAreaName }
             };
 
         await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
@@ -259,13 +262,15 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 Roles.OPSS.Id,
                 null,
                 DateTime.Now,
-                $"{approverUser.FirstAndLastName} from {approverUser.UserGroup} has approved the {legislativeAreaName} legislative area.",
+                $"{approverUser.FirstAndLastName} from {approverUser.UserGroup} has approved the {docLa.LegislativeAreaName} legislative area.",
                 approverUser,
                 DateTime.Now,
                 true,
                 null,
                 true,
-                cabId));
+                cabId,
+                docLa.Id
+                ));
     }
 
     /// <summary>
@@ -273,9 +278,9 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     /// </summary>
     /// <param name="cabId">CAB id</param>
     /// <param name="cabName">Name of CAB</param>
-    /// <param name="legislativeAreaName">Name of legislative area</param>
+    /// <param name="docLa">Document Legislative Area</param>
     /// <param name="declineReason">Decline reason</param>
-    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, string legislativeAreaName, string? declineReason)
+    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, DocumentLegislativeArea docLa, string? declineReason)
     {
         if (cabName == null) throw new ArgumentNullException(nameof(cabName));
 
@@ -294,7 +299,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             { "declineReason", declineReason },
             { "userGroup", approver.UserGroup },
             { "userName", approver.FirstAndLastName },
-            { "legislativeAreaName", legislativeAreaName }
+            { "legislativeAreaName", docLa.LegislativeAreaName }
         };
 
         // send email to submitter group email 
@@ -308,16 +313,18 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 Roles.UKAS.Id,
                 null,
                 DateTime.Now,
-                $"{approver.FirstAndLastName} from {approver.UserGroup} has declined the {legislativeAreaName} legislative area.",
+                $"{approver.FirstAndLastName} from {approver.UserGroup} has declined the {docLa.LegislativeAreaName} legislative area.",
                 approver,
                 DateTime.Now,
                 false,
                 declineReason,
                 false,
-                cabId));
+                cabId,
+                docLa.Id
+                ));
     }
 
-    private async Task<WorkflowTask> MarkLARequestTaskAsCompleteAsync(Guid documentLAId, User approver)
+    private async Task MarkLARequestTaskAsCompleteAsync(Guid documentLAId, User approver)
     {
         var tasks = await _workflowTaskService.GetByDocumentLAIdAsync(documentLAId);
         var task = 
@@ -326,6 +333,5 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                     t.TaskType is TaskType.LegislativeAreaApproveRequestForCab && t.ForRoleId == approver.RoleId && !t.Completed)
                 : tasks.First(t => t.TaskType is TaskType.LegislativeAreaApproved && !t.Completed);
         await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, approver);
-        return task;
     }
 }
