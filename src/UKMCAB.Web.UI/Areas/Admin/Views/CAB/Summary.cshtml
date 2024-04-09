@@ -23,19 +23,23 @@
     var currentUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
 }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
-        @if (string.IsNullOrWhiteSpace(returnUrl))
-        {
-            <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement"/>
-        }
-        else
-        {
-            <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId"/>
-        }
-
+@section BackButton
+{
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (string.IsNullOrWhiteSpace(returnUrl))
+                {
+                    <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement"/>
+                }
+                else
+                {
+                    <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId"/>
+                }
+            </div>
+        </div>
     </div>
-</div>
+}
 
 @if (!string.IsNullOrWhiteSpace(Model.SuccessBannerMessage))
 {
@@ -144,7 +148,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions)
             {
-                <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CabDetailsViewModel.IsCompleted)
             {
@@ -244,7 +248,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions)
             {
-                <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                            <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CabContactViewModel.IsCompleted)
             {
@@ -349,7 +353,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions)
             {
-                <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CabBodyDetailsViewModel.IsCompleted)
             {
@@ -412,7 +416,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions || Model.ShowOgdActions)
             {
-                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@currentUrl"
+                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@Model.ReturnUrl"
                    asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">
                     Edit
                 </a>
@@ -504,7 +508,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions || Model.ShowOgdActions)
             {
-                <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                            <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CABProductScheduleDetailsViewModel.IsCompleted)
             {
@@ -594,7 +598,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions || Model.ShowOgdActions)
             {
-                <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                            <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CABSupportingDocumentDetailsViewModel.IsCompleted)
             {

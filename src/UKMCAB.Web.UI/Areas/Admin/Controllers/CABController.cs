@@ -64,12 +64,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
-        public async Task<IActionResult> About(string id, bool fromSummary)
+        public async Task<IActionResult> About(string id, bool fromSummary, string returnUrl)
         {
             var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
                         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
                         new CABDetailsViewModel { IsNew = true };
             model.IsFromSummary = fromSummary;
+            model.ReturnUrl = returnUrl;
             model.IsOPSSUser = User.IsInRole(Roles.OPSS.Id);
             model.IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id);
             return View(model);
@@ -165,9 +166,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     if (submitType == Constants.SubmitType.Continue)
                     {
                         return !model.IsNew
-                            ? RedirectToAction("Summary", "CAB",
-                                new { Area = "admin", id = createdDocument.CABId, subSectionEditAllowed = true })
-                            : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
+                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl })
+                            : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId, returnUrl = model.ReturnUrl });
                     }
 
                     return SaveDraft(document);
@@ -180,7 +180,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/body-details/{id}")]
-        public async Task<IActionResult> BodyDetails(string id, bool fromSummary)
+        public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -198,6 +198,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.DocumentStatus = latest.StatusValue;
             model.IsFromSummary = fromSummary;
+            model.ReturnUrl = returnUrl;
             return View(model);
         }
 
@@ -240,15 +241,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     if (model.IsFromSummary)
                     {
-                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true });
+                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl });
                     }
                     else if (!latestDocument.DocumentLegislativeAreas.Any())
                     {
-                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId });
+                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
                     }
                     else
                     {
-                        return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id = latestDocument.CABId });
+                        return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
                     }
                 }
 
@@ -294,7 +295,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/contact/{id}")]
-        public async Task<IActionResult> Contact(string id, bool fromSummary)
+        public async Task<IActionResult> Contact(string id, bool fromSummary, string returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -305,6 +306,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             // Pre-populate model for edit
             var model = new CABContactViewModel(latest);
             model.IsFromSummary = fromSummary;
+            model.ReturnUrl = returnUrl;
             return View(model);
         }
 
@@ -354,8 +356,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     return model.IsFromSummary
                         ? RedirectToAction("Summary", "CAB",
-                            new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
-                        : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
+                            new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl })
+                        : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
                 }
 
                 return SaveDraft(latestDocument);
@@ -367,7 +369,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/create", Name = Routes.CreateNewCab)]
-        public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid() });
+        public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid(), returnUrl = "/service-management" });
 
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
         public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed)
