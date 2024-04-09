@@ -722,14 +722,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var personalisation = new Dictionary<string, dynamic?>
             {
                 { "CABName", cabName },
-                {
-                    "CABUrl",
-                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                        Url.RouteUrl(Routes.CabSummary, new { id = cabId }))
-                },
-                {
-                    "emailBody", emailBody
-                },
+                { "emailBody", emailBody },
                 { "userGroup", user.UserGroup },
             };
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
