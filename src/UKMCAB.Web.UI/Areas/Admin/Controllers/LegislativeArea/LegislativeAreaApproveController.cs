@@ -205,10 +205,10 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId);
         TempData.Add(Constants.ApprovedLA, true);
 
-        await MarkLARequestTaskAsCompleteAsync(cabId, approver);
+        await MarkRequestTaskAsCompleteAsync(docLa.Id, approver);
         if (UserRoleId != Roles.OPSS.Id)
-        {
-            await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser);
+        {    
+            await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser, document.CreatedByUserGroup);
         }
     }
 
@@ -224,7 +224,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         }
 
         // send legislative area decline notification
-        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, declineReason);
+        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, declineReason, document.CreatedByUserGroup);
     }
 
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
@@ -234,7 +234,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             : (await _legislativeAreaService.GetAllLegislativeAreasAsync()).ToList();
     }
 
-    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, DocumentLegislativeArea docLa, UserAccount approver)
+    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, DocumentLegislativeArea docLa, UserAccount approver, string createdByUserGroup)
     {
         var approverUser = new User(approver.Id, approver.FirstName, approver.Surname,
             approver.Role ?? throw new InvalidOperationException(),
@@ -267,7 +267,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 DateTime.Now,
                 true,
                 null,
-                true,
+                false,
                 cabId,
                 docLa.Id
                 ));
@@ -280,7 +280,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     /// <param name="cabName">Name of CAB</param>
     /// <param name="docLa">Document Legislative Area</param>
     /// <param name="declineReason">Decline reason</param>
-    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, DocumentLegislativeArea docLa, string? declineReason)
+    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, DocumentLegislativeArea docLa, string? declineReason, string createdByUserGroup)
     {
         if (cabName == null) throw new ArgumentNullException(nameof(cabName));
 
@@ -310,7 +310,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             new WorkflowTask(
                 TaskType.LegislativeAreaDeclined,
                 approver,
-                Roles.UKAS.Id,
+                createdByUserGroup,
                 null,
                 DateTime.Now,
                 $"{approver.FirstAndLastName} from {approver.UserGroup} has declined the {docLa.LegislativeAreaName} legislative area.",
@@ -318,13 +318,13 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 DateTime.Now,
                 false,
                 declineReason,
-                false,
+                true,
                 cabId,
                 docLa.Id
                 ));
     }
 
-    private async Task MarkLARequestTaskAsCompleteAsync(Guid documentLAId, User approver)
+    private async Task MarkRequestTaskAsCompleteAsync(Guid documentLAId, User approver)
     {
         var tasks = await _workflowTaskService.GetByDocumentLAIdAsync(documentLAId);
         var task = 
