@@ -341,7 +341,7 @@ namespace UKMCAB.Core.Services.CAB
 
             await RecordStatsAsync();
 
-            if (latestDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+            if (latestDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined))
             {
                 await CreateDocumentAsync(userAccount!, latestDocument);
             }
