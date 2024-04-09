@@ -114,17 +114,18 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             throw new PermissionDeniedException("No legislative area on CAB");
         }
 
-        var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
-
+        var documentLa = latestDocument.DocumentLegislativeAreas
+            .First(l => l.LegislativeAreaId == legislativeAreaId);
+        
         if (ModelState.IsValid)
         {           
             if(vm.LegislativeAreaApproveActionEnum == LegislativeAreaApproveActionEnum.Approve)
             {
-                await ApproveLegislativeAreaAsync(la.Id, la.Name, latestDocument);
+                await ApproveLegislativeAreaAsync(documentLa, latestDocument);
             }
             else
             {
-                await DeclineLegislativeAreaAsync(la.Id, la.Name, latestDocument, vm.DeclineReason);
+                await DeclineLegislativeAreaAsync(documentLa, latestDocument, vm.DeclineReason);
             }
 
             return RedirectToRoute(Routes.LegislativeAreaApprovalList, new { id });
@@ -132,7 +133,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         else
         {
             vm.LegislativeArea = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId);
-            vm.ActiveProductSchedules = latestDocument.ActiveSchedules?.Where(n => n.LegislativeArea == la.Name).ToList();
+            vm.ActiveProductSchedules = latestDocument.ActiveSchedules.Where(n => n.LegislativeArea == documentLa.LegislativeAreaName).ToList();
         }      
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApproveDeclineLegislativeAreaSelection.cshtml", vm);
@@ -152,8 +153,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             throw new PermissionDeniedException("No legislative area for approval on CAB for this OGD");
         }
 
-        var la = docLasPendingApproval.First();
-        await ApproveLegislativeAreaAsync(la.LegislativeAreaId, la.LegislativeAreaName, document);
+        var docLa = docLasPendingApproval.First();
+        await ApproveLegislativeAreaAsync(docLa, document);
         return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
     }
 
@@ -180,20 +181,20 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             throw new PermissionDeniedException("No legislative area for approval on CAB for this OGD");
         }
 
-        var la = docLasPendingApproval.First();
+        var docLa = docLasPendingApproval.First();
 
         if (ModelState.IsValid)
         {
-            await DeclineLegislativeAreaAsync(la.Id, la.LegislativeAreaName, document, vm.DeclineReason);
+            await DeclineLegislativeAreaAsync(docLa, document, vm.DeclineReason);
             return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
         }
 
-        var viewModel = new DeclineLAViewModel($"Decline Legislative area {la.LegislativeAreaName}", id);
+        var viewModel = new DeclineLAViewModel($"Decline Legislative area {docLa.LegislativeAreaName}", id);
         vm.DeclineReason = vm.DeclineReason;
         return View("~/Areas/Admin/views/CAB/LegislativeArea/Decline.cshtml", viewModel);
     }
 
-    private async Task ApproveLegislativeAreaAsync(Guid legislativeAreaId, string laName, Document document)
+    private async Task ApproveLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document)
     {
         var currentUser = CurrentUser;
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
@@ -201,18 +202,18 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
         var cabId = new Guid(document.CABId);
-        await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, legislativeAreaId);
+        await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId);
         TempData.Add(Constants.ApprovedLA, true);
 
-        await MarkTaskAsCompleteAsync(cabId, approver);
-        await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, laName, currentUser);
+        await MarkLARequestTaskAsCompleteAsync(cabId, approver);
+        await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa.LegislativeAreaName, currentUser);
     }
 
-    private async Task DeclineLegislativeAreaAsync(Guid laId, string laName, Document document, string? declineReason)
+    private async Task DeclineLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document, string? declineReason)
     { 
         var cabId = new Guid(document.CABId);
         declineReason ??= string.Empty;
-        await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, laId, declineReason);
+        await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId, declineReason);
         if (TempData.ContainsKey(Constants.DeclinedLA))
         {
             TempData.Remove(Constants.DeclinedLA);
@@ -220,7 +221,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         }
 
         // send legislative area decline notification
-        await SendNotificationOfDeclineAsync(cabId, document.Name, laName, declineReason);
+        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa.LegislativeAreaName, declineReason);
     }
 
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
@@ -316,22 +317,15 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 cabId));
     }
 
-    private async Task<WorkflowTask> MarkTaskAsCompleteAsync(Guid cabId, User userLastUpdatedBy)
+    private async Task<WorkflowTask> MarkLARequestTaskAsCompleteAsync(Guid documentLAId, User approver)
     {
-        var task = await GetWorkflowTaskAsync(cabId, userLastUpdatedBy.RoleId);
-        await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, userLastUpdatedBy);
-        return task;
-    }
-
-    private async Task<WorkflowTask> GetWorkflowTaskAsync(Guid cabId, string approverRoleId)
-    {
-        var tasks = await _workflowTaskService.GetByCabIdAsync(cabId);
-        //todo: retrieve Tasks based of LA id
+        var tasks = await _workflowTaskService.GetByDocumentLAIdAsync(documentLAId);
         var task = 
-            approverRoleId != Roles.OPSS.Id ?
-            tasks.First(t =>
-            t.TaskType is TaskType.LegislativeAreaApproveRequestForCab && t.ForRoleId == approverRoleId && !t.Completed)
-            : tasks.First(t => t.TaskType is TaskType.LegislativeAreaApproved && !t.Completed);
+            approver.RoleId != Roles.OPSS.Id ?
+                tasks.First(t =>
+                    t.TaskType is TaskType.LegislativeAreaApproveRequestForCab && t.ForRoleId == approver.RoleId && !t.Completed)
+                : tasks.First(t => t.TaskType is TaskType.LegislativeAreaApproved && !t.Completed);
+        await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, approver);
         return task;
     }
 }
