@@ -539,34 +539,35 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     var legislativeAreaSenderEmailIds =
                         _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
-                    var emailsToSends = new List<Tuple<string, int , string>>();
-                    
+                    var emailsToSends = new List<Tuple<string, int, string>>();
+
                     foreach (var latestDocumentLegislativeArea in latest.DocumentLegislativeAreas)
                     {
                         if (string.IsNullOrWhiteSpace(latestDocumentLegislativeArea.RoleId))
                             throw new ArgumentNullException(nameof(latestDocumentLegislativeArea.RoleId));
-                        
+
                         if (legislativeAreaSenderEmailIds.Keys.All(a => a != latestDocumentLegislativeArea.RoleId))
                             throw new ArgumentException(
                                 $"Legislative area email not found - {latestDocumentLegislativeArea.RoleId}",
                                 nameof(latestDocumentLegislativeArea.RoleId));
 
                         var receiverEmailId = legislativeAreaSenderEmailIds[latestDocumentLegislativeArea.RoleId];
-                       if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
+                        if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
                         {
                             await SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
                                 userAccount, latestDocumentLegislativeArea.LegislativeAreaName,
                                 latestDocumentLegislativeArea.RoleId);
-                            if(emailsToSends.All(a => a.Item1 != receiverEmailId))
+                            if (emailsToSends.All(a => a.Item1 != receiverEmailId))
                             {
-                                emailsToSends.Add(new Tuple<string, int, string>(receiverEmailId, 1,latestDocumentLegislativeArea.LegislativeAreaName));
+                                emailsToSends.Add(new Tuple<string, int, string>(receiverEmailId, 1,
+                                    latestDocumentLegislativeArea.LegislativeAreaName));
                             }
                             else
                             {
                                 var laName = emailsToSends.First(x => x.Item1 == receiverEmailId);
                                 emailsToSends.Remove(laName);
-                                emailsToSends.Add(new Tuple<string, int, string>(receiverEmailId, 
-                                    laName.Item2 + 1 ,
+                                emailsToSends.Add(new Tuple<string, int, string>(receiverEmailId,
+                                    laName.Item2 + 1,
                                     string.Concat(laName.Item3, ", ",
                                         latestDocumentLegislativeArea.LegislativeAreaName)));
                             }
@@ -704,7 +705,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
-          private async Task SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
+        private async Task SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
             UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName,
             int legislativeAreaCount)
         {
