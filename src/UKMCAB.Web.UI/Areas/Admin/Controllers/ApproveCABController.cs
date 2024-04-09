@@ -10,6 +10,7 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.PublishApproval;
 
@@ -142,7 +143,16 @@ public class ApproveCABController : Controller
            throw new InvalidOperationException("User account not found");
         var userRoleId = Roles.List.First(r => r.Id == user.Role).Id;
         await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason);
-        if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+        if (document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+        {
+            await _cabAdminService.CreateDocumentAsync(user, document);
+            await _cabAdminService.SetSubStatusAsync(Guid.Parse(document.CABId), Status.Draft, SubStatus.PendingApprovalToPublish, new Audit(user, AuditCABActions.Created));
+        }
+        else if (document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Declined))
+        {
+            await _cabAdminService.CreateDocumentAsync(user, document);
+        }
+        else
         {
             var submitTask = await MarkTaskAsCompleteAsync(cabId,
             new User(user.Id, user.FirstName, user.Surname, userRoleId,
