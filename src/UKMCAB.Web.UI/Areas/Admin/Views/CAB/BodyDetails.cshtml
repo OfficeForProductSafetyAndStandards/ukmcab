@@ -15,11 +15,11 @@
             }
             else if (Model.IsFromSummary)
             {
-                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" />
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" />
             }
             else
             {
-                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@cabId" />
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@cabId" asp-route-returnUrl="@Model.ReturnUrl" />
             }
         </div>
     </div>
@@ -40,7 +40,8 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="cab-body-details-form" method="post">
-            <input type="hidden" asp-for="IsFromSummary"/>
+            <input type="hidden" asp-for="IsFromSummary" />
+            <input type="hidden" asp-for="ReturnUrl" />
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.TestingLocations))">
                 <h3 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--s" for="TestingLocations1" id="TestingLocations">
@@ -111,13 +112,13 @@
                 <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
                     Save as draft
                 </button>
-                @if (cabId == null)
+                @if (Model.IsFromSummary)
                 {
-                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@cabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
             </div>
 
