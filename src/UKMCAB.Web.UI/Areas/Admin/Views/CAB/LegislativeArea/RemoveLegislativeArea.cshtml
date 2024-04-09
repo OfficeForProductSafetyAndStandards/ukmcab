@@ -1,5 +1,6 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
 @using UKMCAB.Data
+@using UKMCAB.Core.Security
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeAreaRemoveViewModel
 
 @section BackButton
@@ -27,7 +28,7 @@
             <input type="hidden" asp-for="CabId" />
             <input type="hidden" asp-for="LegislativeAreaRemoveAction" />
 
-            <h2 class="govuk-heading-s">You have selected: </h2>
+            <h2 class="govuk-heading-s">You have selected:</h2>
             <p class="govuk-body">@Model.LegislativeArea.Name</p>
             <div class="govuk-warning-text">
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -44,7 +45,14 @@
             </div>
             <partial name="~/Areas/Admin/views/CAB/LegislativeArea/Partials/_Summary.cshtml" model="Model.LegislativeArea" />            
             <div class="govuk-button-group govuk-!-margin-top-4">
-                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
+                @if (Model.UserRoleId == Roles.UKAS.Id)
+                {
+                    <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue</govuk-button>
+                }
+                else
+                {
+                    <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>                    
+                }
                 <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-fromSummary="@Model.FromSummary" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
