@@ -142,11 +142,14 @@ public class ApproveCABController : Controller
            throw new InvalidOperationException("User account not found");
         var userRoleId = Roles.List.First(r => r.Id == user.Role).Id;
         await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason);
-        var submitTask = await MarkTaskAsCompleteAsync(cabId,
+        if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+        {
+            var submitTask = await MarkTaskAsCompleteAsync(cabId,
             new User(user.Id, user.FirstName, user.Surname, userRoleId,
                 user.EmailAddress ?? throw new InvalidOperationException()));
-        await SendNotificationOfApprovalAsync(cabId, document.Name ?? throw new InvalidOperationException(),
-            submitTask.Submitter);
+            await SendNotificationOfApprovalAsync(cabId, document.Name ?? throw new InvalidOperationException(),
+                submitTask.Submitter);
+        }        
     }
 
     private async Task<Document> GetDocumentAsync(Guid cabId)

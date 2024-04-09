@@ -148,7 +148,14 @@ namespace UKMCAB.Core.Services.CAB
             document.CABId ??= Guid.NewGuid().ToString();
             document.AuditLog.Add(auditItem);
             document.StatusValue = Status.Draft;
-            document.CreatedByUserGroup = userAccount.Role!.ToLower();
+            if (document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+            {
+                document.SubStatus = SubStatus.PendingApprovalToPublish;
+            }
+            else
+            {
+                document.CreatedByUserGroup = userAccount.Role!.ToLower();
+            }            
 
             var rv = await _cabRepository.CreateAsync(document, auditItem.DateTime);
             await UpdateSearchIndexAsync(rv);
@@ -333,6 +340,11 @@ namespace UKMCAB.Core.Services.CAB
             await RefreshCachesAsync(latestDocument.CABId, urlSlug);
 
             await RecordStatsAsync();
+
+            if (latestDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+            {
+                await CreateDocumentAsync(userAccount!, latestDocument);
+            }
 
             return latestDocument;
         }
