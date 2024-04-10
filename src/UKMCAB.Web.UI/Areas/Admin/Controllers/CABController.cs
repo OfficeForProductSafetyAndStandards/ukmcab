@@ -392,7 +392,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var isEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock;
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
             var laPendingApprovalCount = LAPendingApprovalCountForUser(latest, UserRoleId == Roles.OPSS.Id);
-            var showOgdActions = subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
+            var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
+            var showOgdActions = isOgdUser && subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
                 latest.IsPendingOgdApproval && laPendingApprovalCount > 0;
             if (showOgdActions)
             {
@@ -454,7 +455,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 IsMatchingOgdUser = laPendingApprovalCount > 0,
                 ShowOgdActions = showOgdActions,
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
-                IsOpssAdmin = UserRoleId == Roles.OPSS.Id
+                IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
+                HasAtLeastOneOgdApproval = latest.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Approved || la.Status == LAStatus.Declined),
             };
 
             //Lock Record for edit
@@ -471,8 +473,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
-                                    model.SubStatus != SubStatus.PendingApprovalToPublish &&
-                                    (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
+                                    ((model.SubStatus != SubStatus.PendingApprovalToPublish && model.IsOPSSOrInCreatorUserGroup) ||
+                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.HasAtLeastOneOgdApproval));
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                 (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
