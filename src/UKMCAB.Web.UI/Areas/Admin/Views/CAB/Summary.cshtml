@@ -787,7 +787,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
         </form>
     </div>
 }
-else if (Model.ShowOgdActions || Model is { IsOpssAdmin: true, LegislativeAreasPendingApprovalCount: > 0 })
+else if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPendingApprovalCount: > 0 })
 {
         <govuk-warning-text icon-fallback-text="Warning">
             @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area {(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
@@ -798,9 +798,11 @@ else if (Model.ShowOgdActions || Model is { IsOpssAdmin: true, LegislativeAreasP
         </div>
     
 }
-else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish } 
-         or { IsOpssAdmin: true, LegislativeAreasPendingApprovalCount: 1 })
+else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish, LegislativeAreasApprovedByAdminCount: > 0 })
 {
+    <govuk-warning-text icon-fallback-text="Warning">
+        Only legislative areas that have received approval from OPSS will be published.
+    </govuk-warning-text>
     <div class="govuk-!-margin-top-5">
         <div class="govuk-button-group">
             <govuk-button-link id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Approve</govuk-button-link>

@@ -40,5 +40,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public int LegislativeAreasPendingApprovalCount { get; set; }
         
         public bool IsOpssAdmin { get; set; }
+        public int LegislativeAreasApprovedByAdminCount { get; set; }
     }
 }
