@@ -789,7 +789,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
 }
 else if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPendingApprovalCount: > 0 })
 {
-        <govuk-warning-text icon-fallback-text="Warning">
+        <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
             @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area {(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
         </govuk-warning-text>
         <div class="govuk-button-group govuk-!-margin-top-5">
@@ -800,7 +800,7 @@ else if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPe
 }
 else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish, LegislativeAreasApprovedByAdminCount: > 0 })
 {
-    <govuk-warning-text icon-fallback-text="Warning">
+    <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
         Only legislative areas that have received approval from OPSS will be published.
     </govuk-warning-text>
     <div class="govuk-!-margin-top-5">
