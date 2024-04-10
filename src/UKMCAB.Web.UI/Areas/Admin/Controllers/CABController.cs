@@ -539,11 +539,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     var legislativeAreaSenderEmailIds =
                         _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
+                    var emailsToSends = new List<ValueTuple<string, int, string>>();
+
                     foreach (var latestDocumentLegislativeArea in latest.DocumentLegislativeAreas)
                     {
                         if (string.IsNullOrWhiteSpace(latestDocumentLegislativeArea.RoleId))
                             throw new ArgumentNullException(nameof(latestDocumentLegislativeArea.RoleId));
-                        
+
                         if (legislativeAreaSenderEmailIds.Keys.All(a => a != latestDocumentLegislativeArea.RoleId))
                             throw new ArgumentException(
                                 $"Legislative area email not found - {latestDocumentLegislativeArea.RoleId}",
@@ -552,10 +554,32 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         var receiverEmailId = legislativeAreaSenderEmailIds[latestDocumentLegislativeArea.RoleId];
                         if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
                         {
-                            await SendNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
-                                latest.Name, userAccount, receiverEmailId, latestDocumentLegislativeArea);
+                            await SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                                userAccount, latestDocumentLegislativeArea.LegislativeAreaName,
+                                latestDocumentLegislativeArea.RoleId);
+                            if (emailsToSends.All(a => a.Item1 != receiverEmailId))
+                            {
+                                emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId, 1,
+                                    latestDocumentLegislativeArea.LegislativeAreaName));
+                            }
+                            else
+                            {
+                                var laName = emailsToSends.First(x => x.Item1 == receiverEmailId);
+                                emailsToSends.Remove(laName);
+                                emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId,
+                                    laName.Item2 + 1,
+                                    string.Concat(laName.Item3, ", ",
+                                        latestDocumentLegislativeArea.LegislativeAreaName)));
+                            }
                         }
                     }
+
+                    emailsToSends.ForEach(async emailsToSend =>
+                    {
+                        await SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                            latest.Name, userAccount, emailsToSend.Item1,
+                            emailsToSend.Item3, emailsToSend.Item2);
+                    });
 
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
                 }
@@ -681,43 +705,51 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
-        private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
-            UserAccount userAccount, string legislativeAreaReceiverEmailId, DocumentLegislativeArea documentLegislativeArea)
+        private async Task SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
+            UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName,
+            int legislativeAreaCount)
         {
             var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
                 userAccount.Role ?? throw new InvalidOperationException(),
                 userAccount.EmailAddress ?? throw new InvalidOperationException());
 
+            var emailBody =
+                $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved for CAB [{cabName}]({UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request, Url.RouteUrl(Routes.CabSummary, new { id = cabId }))}).";
+            if (legislativeAreaCount > 1)
+                emailBody =
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the following legislative areas are approved for CAB [{cabName}]({UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request, Url.RouteUrl(Routes.CabSummary, new { id = cabId }))}) : {legislativeAreaName}.";
+
             var personalisation = new Dictionary<string, dynamic?>
             {
                 { "CABName", cabName },
-                { "CABUrl",
-                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                        Url.RouteUrl(Routes.CabSummary, new { id = cabId }))
-                },
+                { "emailBody", emailBody },
                 { "userGroup", user.UserGroup },
-                { "userName", user.FirstAndLastName },
-                { "legislativeAreaName", documentLegislativeArea.LegislativeAreaName }
             };
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
                 _templateOptions.NotificationLegislativeAreaCabApproval, personalisation);
+        }
+
+        private async Task SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid cabId, UserAccount userAccount,
+            string legislativeAreaName, string legislativeAreaRoleId)
+        {
+            var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
+                userAccount.Role ?? throw new InvalidOperationException(),
+                userAccount.EmailAddress ?? throw new InvalidOperationException());
 
             await _workflowTaskService.CreateAsync(
                 new WorkflowTask(
                     TaskType.LegislativeAreaApproveRequestForCab,
                     user,
-                    documentLegislativeArea.RoleId,
-                    null, 
+                    legislativeAreaRoleId,
+                    null,
                     DateTime.Now,
-                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {documentLegislativeArea.LegislativeAreaName} legislative area is approved.",
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved.",
                     user,
                     DateTime.Now,
                     null,
                     null,
                     false,
-                    cabId,
-                    documentLegislativeArea.Id
-                    ));
+                    cabId));
         }
         private IActionResult SaveDraft(Document document)
         {
