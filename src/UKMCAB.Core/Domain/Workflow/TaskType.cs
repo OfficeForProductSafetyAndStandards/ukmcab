@@ -43,5 +43,8 @@ public enum TaskType
     [Description("Legislative area approved")]
     LegislativeAreaApproved,   
     [Description("Legislative area declined")]
-    LegislativeAreaDeclined
+    LegislativeAreaDeclined,
+    [Description("LegislativeAreaRequestToRemove")]
+    LegislativeAreaRequestToRemove
+    
 }
