@@ -38,7 +38,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public DateTime? LastAuditLogHistoryDate { get; set; }
         public string? SuccessBannerMessage { get; set; }
         public int LegislativeAreasPendingApprovalCount { get; set; }
-        
         public bool IsOpssAdmin { get; set; }
+        public bool HasAtLeastOneOgdApproval { get; set; }
     }
 }
