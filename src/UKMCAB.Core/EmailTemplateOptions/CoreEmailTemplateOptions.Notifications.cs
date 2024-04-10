@@ -8,6 +8,9 @@ public partial class CoreEmailTemplateOptions
     public string NotificationLegislativeAreaCabApproval { get; set; } = null!;
     public string NotificationLegislativeAreaApproved { get; set; } = null!;
     public string NotificationLegislativeAreaDeclined { get; set; } = null!;
+    public string NotificationLegislativeAreaRequestToRemove { get; set; } = null!;
+    public string NotificationLegislativeAreaRequestToRemoveApproved { get; set; } = null!;
+    public string NotificationLegislativeAreaRequestToRemoveDeclined { get; set; } = null!;
     public string NotificationCabDeclined { get; set; } = null!;
     public string NotificationUnarchiveForApproval { get; set; } = null!;
     public string NotificationDraftCabDeleted { get; set; } = null!;

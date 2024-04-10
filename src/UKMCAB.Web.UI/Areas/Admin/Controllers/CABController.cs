@@ -17,6 +17,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+using System.Drawing;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -554,6 +555,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 latest.Name, userAccount, receiverEmailId,
                                 latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId);
                         }
+                        else if(latestDocumentLegislativeArea.Status == LAStatus.PendingApprovalToRemove)
+                        {
+                            await SendNotificationOfLegislativeAreaRequestToRemoveAsync(Guid.Parse(latest.CABId),
+                                latest.Name, userAccount, receiverEmailId,
+                                latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId, latestDocumentLegislativeArea.ReasonToRemoveOrArchive!);
+                        }
                     }
 
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
@@ -696,7 +703,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 },
                 { "userGroup", user.UserGroup },
                 { "userName", user.FirstAndLastName },
-                { "legislativeAreaName", legislativeAreaName }
+                { "legislativeAreaName", legislativeAreaName }               
             };
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
                 _templateOptions.NotificationLegislativeAreaCabApproval, personalisation);
@@ -716,6 +723,45 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     false,
                     cabId));
         }
+
+        private async Task SendNotificationOfLegislativeAreaRequestToRemoveAsync(Guid cabId, string cabName,
+          UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName, string legislativeAreaRoleId, string reason)
+        {
+            var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
+                userAccount.Role ?? throw new InvalidOperationException(),
+                userAccount.EmailAddress ?? throw new InvalidOperationException());
+
+            var personalisation = new Dictionary<string, dynamic?>
+            {
+                { "CABName", cabName },
+                { "CABUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(Routes.CabSummary, new { id = cabId }))
+                },
+                { "userGroup", user.UserGroup },
+                { "userName", user.FirstAndLastName },
+                { "legislativeAreaName", legislativeAreaName },
+                 { "Reason", reason }
+            };
+            await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
+                _templateOptions.NotificationLegislativeAreaRequestToRemove, personalisation);
+
+            await _workflowTaskService.CreateAsync(
+                new WorkflowTask(
+                    TaskType.LegislativeAreaRequestToRemove,
+                    user,
+                    legislativeAreaRoleId,
+                    null,
+                    DateTime.Now,
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is removed from {cabName}.",
+                    user,
+                    DateTime.Now,
+                    null,
+                    reason,
+                    false,
+                    cabId));
+        }
+
         private IActionResult SaveDraft(Document document)
         {
             TempData[Constants.TempDraftKey] =

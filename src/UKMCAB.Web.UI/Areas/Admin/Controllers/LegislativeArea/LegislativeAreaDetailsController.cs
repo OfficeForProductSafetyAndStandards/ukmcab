@@ -871,9 +871,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             LegislativeAreaActionMessageEnum? laActionMessageActionType = null;
 
+            var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
+
             if (vm.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
             {
-                if (UserRoleId == Roles.UKAS.Id)
+                if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc)
                 {
                     return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, new 
                     { 
@@ -936,10 +938,12 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             LegislativeAreaActionMessageEnum? laActionMessageActionType = null;
 
+            var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
+
             // legislative arease selected to remove
             if (vm.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
             {
-                if (UserRoleId == Roles.UKAS.Id)
+                if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc)
                 {
                     return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, 
                         new 
