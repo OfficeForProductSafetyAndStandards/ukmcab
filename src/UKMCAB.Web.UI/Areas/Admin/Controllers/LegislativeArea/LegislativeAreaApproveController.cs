@@ -138,62 +138,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApproveDeclineLegislativeAreaSelection.cshtml", vm);
     }
-
-    [HttpPost("approve", Name = Routes.LegislativeAreaApprove)]
-    public async Task<IActionResult> ApprovePostAsync(Guid id)
-    {
-        var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
-                       throw new InvalidOperationException("CAB not found");
-        
-        var docLasPendingApproval =
-            document.DocumentLegislativeAreas.Where(l =>
-                l.Status == LAStatus.PendingApproval && l.RoleId == UserRoleId).ToList();
-        if (!docLasPendingApproval.Any())
-        {
-            throw new PermissionDeniedException("No legislative area for approval on CAB for this OGD");
-        }
-
-        var docLa = docLasPendingApproval.First();
-        await ApproveLegislativeAreaAsync(docLa, document);
-        return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
-    }
-
-    [HttpGet("decline", Name = Routes.LegislativeAreaDecline)]
-    public async Task<IActionResult> DeclineAsync(Guid id)
-    {
-        var la = (await GetLegislativeAreasForUserAsync()).First(); //todo multiples incoming for OPSS OGD
-        var vm = new DeclineLAViewModel($"Decline Legislative area {la.Name}", id);
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/Decline.cshtml", vm);
-    }
-
-    [HttpPost("decline")]
-    public async Task<IActionResult> DeclinePostAsync(Guid id,
-        [Bind(nameof(DeclineLAViewModel.DeclineReason))]
-        DeclineLAViewModel vm)
-    {
-        var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
-                       throw new InvalidOperationException("CAB not found");
-        var docLasPendingApproval =
-            document.DocumentLegislativeAreas.Where(l =>
-                l.Status == LAStatus.PendingApproval && l.RoleId == UserRoleId).ToList();
-        if (!docLasPendingApproval.Any())
-        {
-            throw new PermissionDeniedException("No legislative area for approval on CAB for this OGD");
-        }
-
-        var docLa = docLasPendingApproval.First();
-
-        if (ModelState.IsValid)
-        {
-            await DeclineLegislativeAreaAsync(docLa, document, vm.DeclineReason);
-            return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
-        }
-
-        var viewModel = new DeclineLAViewModel($"Decline Legislative area {docLa.LegislativeAreaName}", id);
-        vm.DeclineReason = vm.DeclineReason;
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/Decline.cshtml", viewModel);
-    }
-
+    
     private async Task ApproveLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document)
     {
         var currentUser = CurrentUser;

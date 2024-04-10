@@ -456,7 +456,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ShowOgdActions = showOgdActions,
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
-                HasAtLeastOneOgdApproval = latest.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Approved || la.Status == LAStatus.Declined),
+                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.ApprovedByOpssAdmin),
+                HasAtLeastOneOgdApproval = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined)
             };
 
             //Lock Record for edit
