@@ -787,39 +787,16 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
         </form>
     </div>
 }
-else if (Model.ShowOgdActions || Model is { IsOpssAdmin: true, LegislativeAreasPendingApprovalCount: > 1 })
+else if (Model.ShowOgdActions || Model is { IsOpssAdmin: true, LegislativeAreasPendingApprovalCount: > 0 })
 {
-    if (Model.LegislativeAreasPendingApprovalCount > 1)
-    {
         <govuk-warning-text icon-fallback-text="Warning">
-            You have @Model.LegislativeAreasPendingApprovalCount.ToWords() legislative areas to approve or decline.
+            @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area {(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
         </govuk-warning-text>
         <div class="govuk-button-group govuk-!-margin-top-5">
             <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Review</govuk-button-link>
             <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
         </div>
-    }
-    else
-    {
-        if (!Model.IsOpssAdmin)
-        {
-            <govuk-warning-text icon-fallback-text="Warning">
-                The legislative area will be approved or declined and not the entire CAB profile.
-            </govuk-warning-text>
-            <div class="govuk-button-group govuk-!-margin-top-5">
-                <form method="post" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprove" asp-route-id="@Model.CABId">
-                    <govuk-button id="approveLegislativeArea" type="submit" class="govuk-!-display-block">Approve</govuk-button>
-                </form>
-                <govuk-button-link id="declineLegislativeArea" class="govuk-button--secondary"
-                                   asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaDecline"
-                                   asp-route-id="@Model.CABId">
-                    Decline
-                </govuk-button-link>
-
-                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-            </div>
-        }
-    }
+    
 }
 else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish } 
          or { IsOpssAdmin: true, LegislativeAreasPendingApprovalCount: 1 })
