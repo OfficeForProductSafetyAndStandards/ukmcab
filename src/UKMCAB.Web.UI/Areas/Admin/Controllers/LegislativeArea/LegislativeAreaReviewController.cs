@@ -181,7 +181,6 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                 ShowEditActions = documentLegislativeArea.Status == LAStatus.Draft ||
                                   documentLegislativeArea.Status == LAStatus.PendingApproval && UserRoleId == documentLegislativeArea.RoleId ||
                                   documentLegislativeArea.Status == LAStatus.Approved && UserRoleId == Roles.OPSS.Id,
-                //!(documentLegislativeArea.Status == LAStatus.PendingApproval && UserRoleId == Roles.OPSS.Id),
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
