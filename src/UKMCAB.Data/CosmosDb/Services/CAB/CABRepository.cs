@@ -36,7 +36,11 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
-                    document.AuditLog.First(x => x.Action == "Created").Action = AuditCABActions.Created;
+                    const string created = "Created";
+                    if (document.AuditLog.Any(x => x.Action == created))
+                    {
+                        document.AuditLog.First(x => x.Action == created).Action = AuditCABActions.Created;
+                    }
                     //Set LA status
                     foreach (var la in document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.None))
                     {
