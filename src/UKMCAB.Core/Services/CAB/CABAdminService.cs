@@ -312,7 +312,7 @@ namespace UKMCAB.Core.Services.CAB
             }
             else
             {
-                latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ForEach(la => la.Status = LAStatus.Published);
+                latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.ApprovedByOpssAdmin).ForEach(la => la.Status = LAStatus.Published);
             }
 
             latestDocument.StatusValue = Status.Published;
