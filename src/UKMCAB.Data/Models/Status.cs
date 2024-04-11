@@ -40,7 +40,7 @@ namespace UKMCAB.Data.Models
         Published,
         [Description("Pending approval")]
         PendingApproval,   
-        [Description("Approved by OPSS admin")]
+        [Description("Approved by OPSS")]
         ApprovedByOpssAdmin
     }
 }
