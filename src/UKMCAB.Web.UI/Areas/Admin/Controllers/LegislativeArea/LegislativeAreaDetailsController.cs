@@ -1023,7 +1023,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             // set document legislative area status to pending approval to remove
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-            documentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
+            documentLegislativeArea.Status = LAStatus.PendingSubmissionToRemove;
             documentLegislativeArea.ReasonToRemoveOrArchive = vm.UserNotes;
 
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!, latestDocument);

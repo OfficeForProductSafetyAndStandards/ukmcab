@@ -555,11 +555,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 latest.Name, userAccount, receiverEmailId,
                                 latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId);
                         }
-                        else if(latestDocumentLegislativeArea.Status == LAStatus.PendingApprovalToRemove)
+                        else if(latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToRemove)
                         {
                             await SendNotificationOfLegislativeAreaRequestToRemoveAsync(Guid.Parse(latest.CABId),
                                 latest.Name, userAccount, receiverEmailId,
                                 latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId, latestDocumentLegislativeArea.ReasonToRemoveOrArchive!);
+
+                            latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
+                            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
                         }
                     }
 
