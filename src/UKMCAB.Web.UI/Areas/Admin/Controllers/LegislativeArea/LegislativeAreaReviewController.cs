@@ -57,7 +57,6 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         }
         vm.FromSummary = fromSummary;
         vm.ReturnUrl = returnUrl;
-        vm.IsOpssAdmin = UserRoleId == Roles.OPSS.Id;
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
