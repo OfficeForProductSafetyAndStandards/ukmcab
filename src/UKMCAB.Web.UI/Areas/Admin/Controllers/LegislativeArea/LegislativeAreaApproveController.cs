@@ -74,9 +74,24 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             vm.LasToApprove.Add(new(dla.LegislativeAreaId, laName));
         }
         
-        //todo: need to clear temp data for success message
+        ShowSuccessMessage(vm);
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApprovalList.cshtml", vm);
+    }
+
+    private void ShowSuccessMessage(ApprovalListViewModel vm)
+    {
+        if (TempData.ContainsKey(Constants.ApprovedLA))
+        {
+            TempData.Remove(Constants.ApprovedLA);
+            vm.SuccessBannerMessage = "Legislative area has been approved.";
+        }
+
+        if (TempData.ContainsKey(Constants.DeclinedLA))
+        {
+            TempData.Remove(Constants.DeclinedLA);
+            vm.SuccessBannerMessage = "Legislative area has been declined.";
+        }
     }
 
     [HttpGet("approve-decline-selection/{legislativeAreaId}", Name = Routes.LegislativeAreaApproveDeclineSelection)]
