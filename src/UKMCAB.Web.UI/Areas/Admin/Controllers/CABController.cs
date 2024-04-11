@@ -17,7 +17,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
-using System.Drawing;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
