@@ -88,7 +88,7 @@
         public bool IsPendingOgdApproval =>
             StatusValue == Models.Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            DocumentLegislativeAreas.Any(d => d.Status == LAStatus.PendingApproval);
+            DocumentLegislativeAreas.Any(d => d.Status == LAStatus.PendingApproval || d.Status ==  LAStatus.PendingApprovalToRemove || d.Status ==  LAStatus.PendingApprovalToArchiveAndArchiveSchedule || d.Status == LAStatus.PendingApprovalToArchiveAndRemoveSchedule);
         
     }
 }

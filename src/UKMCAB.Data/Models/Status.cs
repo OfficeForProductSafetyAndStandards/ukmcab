@@ -39,8 +39,20 @@ namespace UKMCAB.Data.Models
         [Description("Published")]
         Published,
         [Description("Pending approval")]
-        PendingApproval,   
+        PendingApproval,       
         [Description("Approved by OPSS")]
-        ApprovedByOpssAdmin
+        ApprovedByOpssAdmin,
+        [Description("Pending submission to remove")]
+        PendingSubmissionToRemove,
+        [Description("Pending approval")]
+        PendingApprovalToRemove,
+        [Description("Pending submission to archive and archive product schedule")]
+        PendingSubmissionToArchiveAndArchiveSchedule,
+        [Description("Pending approval")]
+        PendingApprovalToArchiveAndArchiveSchedule,
+        [Description("Pending submission to archive and remove product schedule")]
+        PendingSubmissionToArchiveAndRemoveSchedule,
+        [Description("Pending approval")]
+        PendingApprovalToArchiveAndRemoveSchedule
     }
 }

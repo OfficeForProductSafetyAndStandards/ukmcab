@@ -36,6 +36,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string StatusCssStyle { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
         public string RoleId { get; set; } = string.Empty;
+        public bool ShowEditActions { get; set; }
 
         private string GetStatusName()
         {
@@ -43,7 +44,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             {
                 LAStatus.Approved => $"{Status.GetEnumDescription()} by {RoleName}",
                 LAStatus.Declined => $"{Status.GetEnumDescription()} by {RoleName}",
-                LAStatus.PendingApproval => $"{Status.GetEnumDescription()} from {RoleName}",
+                LAStatus.PendingApproval or LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndRemoveSchedule => $"{Status.GetEnumDescription()} from {RoleName}",
                 _ => Status.GetEnumDescription()
             };
         }
