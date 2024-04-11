@@ -203,6 +203,8 @@ namespace UKMCAB.Core.Services.CAB
             {
                 draft.SubStatus = SubStatus.PendingApprovalToPublish;
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+                draft.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Draft)
+                    .ForEach(la => la.Status = LAStatus.PendingApproval);
             }
 
             if (draft.StatusValue == Status.Published)
