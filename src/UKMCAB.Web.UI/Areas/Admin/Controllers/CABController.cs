@@ -558,8 +558,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
                         {
                             await SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
-                                userAccount, latestDocumentLegislativeArea.LegislativeAreaName,
-                                latestDocumentLegislativeArea.RoleId);
+                                userAccount, latestDocumentLegislativeArea);
                             if (emailsToSends.All(a => a.Item1 != receiverEmailId))
                             {
                                 emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId, 1,
@@ -733,7 +732,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         private async Task SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid cabId, UserAccount userAccount,
-            string legislativeAreaName, string legislativeAreaRoleId)
+           DocumentLegislativeArea documentLegislativeArea)
         {
             var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
                 userAccount.Role ?? throw new InvalidOperationException(),
@@ -743,16 +742,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 new WorkflowTask(
                     TaskType.LegislativeAreaApproveRequestForCab,
                     user,
-                    legislativeAreaRoleId,
+                    documentLegislativeArea.RoleId,
                     null,
                     DateTime.Now,
-                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved.",
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {documentLegislativeArea.LegislativeAreaName} legislative area is approved.",
                     user,
                     DateTime.Now,
                     null,
                     null,
                     false,
-                    cabId));
+                    cabId,
+                    documentLegislativeArea.Id
+                    ));
         }
         private IActionResult SaveDraft(Document document)
         {
