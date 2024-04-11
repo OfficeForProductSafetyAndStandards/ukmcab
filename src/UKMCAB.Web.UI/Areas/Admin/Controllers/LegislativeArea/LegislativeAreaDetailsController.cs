@@ -11,17 +11,20 @@ using System.Security.Claims;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Services;
+using UKMCAB.Core.Security;
+using System.Net;
+using System.Drawing;
+using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
 [Area("admin"), Route("admin/cab/{id}/legislative-area"), Authorize]
-public class LegislativeAreaDetailsController : Controller
+public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly IDistCache _distCache;
     private readonly ILegislativeAreaService _legislativeAreaService;
-    private readonly ILegislativeAreaDetailService _legislativeAreaDetailService;
-    private readonly IUserService _userService;
+    private readonly ILegislativeAreaDetailService _legislativeAreaDetailService;    
     private const string CacheKey = "soa_create_{0}";
 
     public static class Routes
@@ -34,6 +37,7 @@ public class LegislativeAreaDetailsController : Controller
         public const string AddProcedure = "legislative.area.add-procedure";
         public const string RemoveOrArchiveLegislativeArea = "legislative.area.remove-archive-legislativearea";
         public const string RemoveOrArchiveLegislativeAreaOption = "legislative.area.remove-archive-legislativearea-option";
+        public const string RemoveLegislativeAreaRequest = "legislative.area.remove-legislativearea-request";
     }
 
     public LegislativeAreaDetailsController(
@@ -41,11 +45,10 @@ public class LegislativeAreaDetailsController : Controller
         ILegislativeAreaService legislativeAreaService,
         ILegislativeAreaDetailService legislativeAreaDetailService,
         IUserService userService,
-        IDistCache distCache)
+        IDistCache distCache) : base(userService)
     {
         _cabAdminService = cabAdminService;
         _legislativeAreaService = legislativeAreaService;
-        _userService = userService;
         _distCache = distCache;
         _legislativeAreaDetailService = legislativeAreaDetailService;
     }
@@ -868,10 +871,24 @@ public class LegislativeAreaDetailsController : Controller
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             LegislativeAreaActionMessageEnum? laActionMessageActionType = null;
 
+            var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
+
             if (vm.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
             {
-                await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, vm.Title);
-                laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaRemoved;
+                if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc)
+                {
+                    return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, new 
+                    { 
+                        id, 
+                        legislativeAreaId, 
+                        returnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery)
+                    });
+                }
+                else
+                {
+                    await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, vm.Title);
+                    laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaRemoved;
+                }
             }
             else
             {
@@ -921,11 +938,26 @@ public class LegislativeAreaDetailsController : Controller
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             LegislativeAreaActionMessageEnum? laActionMessageActionType = null;
 
+            var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
+
             // legislative arease selected to remove
             if (vm.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
             {
-                await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, legislativeArea.Name);
-                laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaRemovedProductScheduleRemoved;
+                if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc)
+                {
+                    return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, 
+                        new 
+                        { 
+                            id, 
+                            legislativeAreaId,
+                            returnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery)
+                        });
+                }
+                else
+                {
+                    await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, legislativeArea.Name);
+                    laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaRemovedProductScheduleRemoved;
+                }
             }
             // legislative area selected to archive
             else
@@ -964,6 +996,41 @@ public class LegislativeAreaDetailsController : Controller
             vm.ProductSchedules = latestDocument.Schedules?.Where(n => n.LegislativeArea == legislativeArea.Name).ToList();
             return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaWithOption.cshtml", vm);
         }
+    }
+
+    [HttpGet("remove-request/{legislativeAreaId}", Name = Routes.RemoveLegislativeAreaRequest)]
+    public async Task<IActionResult> RemoveLegislativeAreaRequest(Guid id, Guid legislativeAreaId, string? returnUrl)
+    {   
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);                
+        
+        var vm = new LegislativeAreaRemoveRequestViewModel
+        {
+            CabId = id,
+            Title = legislativeArea.Name,
+            ReturnUrl = returnUrl
+        };
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaRequest.cshtml", vm);
+    }
+
+    [HttpPost("remove-request/{legislativeAreaId}", Name = Routes.RemoveLegislativeAreaRequest)]
+    public async Task<IActionResult> RemoveLegislativeAreaRequest(Guid id, Guid legislativeAreaId, LegislativeAreaRemoveRequestViewModel vm)
+    {
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+
+        if (ModelState.IsValid)
+        {
+            // set document legislative area status to pending approval to remove
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+            documentLegislativeArea.Status = LAStatus.PendingSubmissionToRemove;
+            documentLegislativeArea.ReasonToRemoveOrArchive = vm.UserNotes;
+
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!, latestDocument);
+            return RedirectToAction("summary", "cab", new { Area = "admin", id });
+        }
+        
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaRequest.cshtml", vm);
     }
 
     #endregion

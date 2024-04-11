@@ -17,7 +17,9 @@
 
         public string? UserNotes { get; set; }
         public string? Reason { get; set; }
-        
+
+        public string? ReasonToRemoveOrArchive { get; set; }
+
         public bool? Archived { get; set; }
 
         public string? PointOfContactName { get; set; }
