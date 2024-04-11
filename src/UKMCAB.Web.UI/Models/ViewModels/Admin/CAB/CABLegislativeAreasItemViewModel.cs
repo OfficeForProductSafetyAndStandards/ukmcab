@@ -36,6 +36,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string StatusCssStyle { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
         public string RoleId { get; set; } = string.Empty;
+        public bool ShowEditActions { get; set; }
 
         private string GetStatusName()
         {
