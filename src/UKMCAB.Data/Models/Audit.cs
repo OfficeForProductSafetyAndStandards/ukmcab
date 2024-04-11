@@ -379,7 +379,7 @@ namespace UKMCAB.Data.Models
 
     public class AuditCABActions
     {
-        public const string Created = nameof(Created);
+        public const string Created = "Draft created";
         public const string Published = nameof(Published);
         public const string RePublished = nameof(RePublished);
         public const string Archived = nameof(Archived);

@@ -36,6 +36,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
+                    document.AuditLog.First(x => x.Action == "Created").Action = AuditCABActions.Created;
                     //Set LA status
                     foreach (var la in document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.None))
                     {
@@ -55,7 +56,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
                     }
 
-
+                    
                     await UpdateAsync(document);
                 }
             }
