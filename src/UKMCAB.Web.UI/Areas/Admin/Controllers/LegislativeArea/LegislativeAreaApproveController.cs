@@ -66,7 +66,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         }
 
         var las = await GetLegislativeAreasForUserAsync();
-        var vm = new ApprovalListViewModel() { CabId = id };
+        var vm = new ApprovalListViewModel { CabId = id };
 
         foreach (var dla in lasToApprove)
         {
@@ -148,7 +148,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         var cabId = new Guid(document.CABId);
         await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId);
-        TempData.Add(Constants.ApprovedLA, true);
+        TempData[Constants.ApprovedLA] = true;
 
         await MarkRequestTaskAsCompleteAsync(docLa.Id, approver);
         if (UserRoleId != Roles.OPSS.Id)
@@ -162,11 +162,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var cabId = new Guid(document.CABId);
         declineReason ??= string.Empty;
         await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId, declineReason);
-        if (TempData.ContainsKey(Constants.DeclinedLA))
-        {
-            TempData.Remove(Constants.DeclinedLA);
-            TempData.Add(Constants.DeclinedLA, true);
-        }
+        TempData[Constants.DeclinedLA] = true;
 
         // send legislative area decline notification
         await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, declineReason, document.CreatedByUserGroup);
