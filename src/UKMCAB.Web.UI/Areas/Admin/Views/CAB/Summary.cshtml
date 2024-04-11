@@ -248,7 +248,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions)
             {
-                            <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CabContactViewModel.IsCompleted)
             {
@@ -508,7 +508,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions || Model.ShowOgdActions)
             {
-                            <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CABProductScheduleDetailsViewModel.IsCompleted)
             {
@@ -598,7 +598,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <dd class="govuk-summary-list__value">
             @if (Model.ShowEditActions || Model.ShowOgdActions)
             {
-                            <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
             @if (Model.CABSupportingDocumentDetailsViewModel.IsCompleted)
             {
@@ -789,14 +789,13 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
 }
 else if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPendingApprovalCount: > 0 })
 {
-        <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
-            @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
-        </govuk-warning-text>
-        <div class="govuk-button-group govuk-!-margin-top-5">
-            <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Review</govuk-button-link>
-            <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-        </div>
-    
+    <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
+        @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
+    </govuk-warning-text>
+    <div class="govuk-button-group govuk-!-margin-top-5">
+        <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Review</govuk-button-link>
+        <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+    </div>
 }
 else if (Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish, LegislativeAreasApprovedByAdminCount: > 0 })
 {
