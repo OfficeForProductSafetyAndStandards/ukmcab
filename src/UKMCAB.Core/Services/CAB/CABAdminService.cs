@@ -148,7 +148,11 @@ namespace UKMCAB.Core.Services.CAB
             document.CABId ??= Guid.NewGuid().ToString();
             document.AuditLog.Add(auditItem);
             document.StatusValue = Status.Draft;
-            document.CreatedByUserGroup = userAccount.Role!.ToLower();
+
+            if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined))
+            {
+                document.CreatedByUserGroup = userAccount.Role!.ToLower();
+            }   
 
             var rv = await _cabRepository.CreateAsync(document, auditItem.DateTime);
             await UpdateSearchIndexAsync(rv);
@@ -310,7 +314,7 @@ namespace UKMCAB.Core.Services.CAB
             }
             else
             {
-                latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ForEach(la => la.Status = LAStatus.Published);
+                latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.ApprovedByOpssAdmin).ForEach(la => la.Status = LAStatus.Published);
             }
 
             latestDocument.StatusValue = Status.Published;
@@ -571,18 +575,24 @@ namespace UKMCAB.Core.Services.CAB
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
-        public async Task ApproveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId)
+        public async Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
 
             // Approve document legislative area
+            var isOpssAdmin = approver.Role == Roles.OPSS.Id;
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-            documentLegislativeArea.Status = LAStatus.Approved;
+            documentLegislativeArea.Status = isOpssAdmin ? LAStatus.ApprovedByOpssAdmin : LAStatus.Approved;
             var comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " approved.";
-            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ApproveLegislativeArea, comment));
-            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            if (isOpssAdmin)
+            {
+                comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName +
+                          " approved by OPSS admin.";
+            }
+            latestDocument.AuditLog.Add(new Audit(approver, AuditCABActions.ApproveLegislativeArea, comment));
+            await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
         public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason)

@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
@@ -41,7 +42,11 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
 
-        await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
+        var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
+        if (isOgdUser)
+        {
+            await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
+        }
         var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
         var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
         vm.ShowArchiveLegislativeAreaAction = !singleDraftDoc;
@@ -51,6 +56,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             vm.SuccessBannerMessage = AlertMessagesUtils.LegislativeAreaActionMessages[actionType.Value];
         }
         vm.FromSummary = fromSummary;
+        vm.ReturnUrl = returnUrl;
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
@@ -107,7 +113,11 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         if (cabLaOfSelectedScopeofAppointment == null)
         {
             ModelState.AddModelError(laIdOrLaName, "Select a scope of appointment");
-            await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
+            var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
+            if (isOgdUser)
+            {
+                await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
+            }
             var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
             vm.ErrorLink = laIdOrLaName;
             return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
@@ -159,12 +169,17 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             {
                 LegislativeAreaId = legislativeArea.Id,
                 Name = legislativeArea.Name,
+                Status = documentLegislativeArea.Status,
+                RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
                 IsProvisional = documentLegislativeArea.IsProvisional,
                 AppointmentDate = documentLegislativeArea.AppointmentDate,
                 ReviewDate = documentLegislativeArea.ReviewDate,
                 Reason = documentLegislativeArea.Reason,
                 CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
-                IsArchived = documentLegislativeArea.Archived
+                IsArchived = documentLegislativeArea.Archived,
+                ShowEditActions = documentLegislativeArea.Status == LAStatus.Draft ||
+                                  documentLegislativeArea.Status == LAStatus.PendingApproval && UserRoleId == documentLegislativeArea.RoleId ||
+                                  documentLegislativeArea.Status == LAStatus.Approved && UserRoleId == Roles.OPSS.Id,
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);

@@ -7,4 +7,5 @@ public record ApprovalListViewModel : ILayoutModel
     public Guid? CabId { get; set; }
 
     public List<(Guid, string)> LasToApprove { get; set; } = new();
+    public string? SuccessBannerMessage { get; set; }
 }

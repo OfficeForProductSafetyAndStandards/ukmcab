@@ -65,12 +65,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
-        public async Task<IActionResult> About(string id, bool fromSummary)
+        public async Task<IActionResult> About(string id, bool fromSummary, string returnUrl)
         {
             var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
                         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
                         new CABDetailsViewModel { IsNew = true };
             model.IsFromSummary = fromSummary;
+            model.ReturnUrl = returnUrl;
             model.IsOPSSUser = User.IsInRole(Roles.OPSS.Id);
             model.IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id);
             return View(model);
@@ -166,9 +167,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     if (submitType == Constants.SubmitType.Continue)
                     {
                         return !model.IsNew
-                            ? RedirectToAction("Summary", "CAB",
-                                new { Area = "admin", id = createdDocument.CABId, subSectionEditAllowed = true })
-                            : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId });
+                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl })
+                            : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId, returnUrl = model.ReturnUrl });
                     }
 
                     return SaveDraft(document);
@@ -181,7 +181,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/body-details/{id}")]
-        public async Task<IActionResult> BodyDetails(string id, bool fromSummary)
+        public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -199,6 +199,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.DocumentStatus = latest.StatusValue;
             model.IsFromSummary = fromSummary;
+            model.ReturnUrl = returnUrl;
             return View(model);
         }
 
@@ -241,15 +242,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     if (model.IsFromSummary)
                     {
-                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true });
+                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl });
                     }
                     else if (!latestDocument.DocumentLegislativeAreas.Any())
                     {
-                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId });
+                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
                     }
                     else
                     {
-                        return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id = latestDocument.CABId });
+                        return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
                     }
                 }
 
@@ -295,7 +296,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/contact/{id}")]
-        public async Task<IActionResult> Contact(string id, bool fromSummary)
+        public async Task<IActionResult> Contact(string id, bool fromSummary, string returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -306,6 +307,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             // Pre-populate model for edit
             var model = new CABContactViewModel(latest);
             model.IsFromSummary = fromSummary;
+            model.ReturnUrl = returnUrl;
             return View(model);
         }
 
@@ -355,8 +357,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     return model.IsFromSummary
                         ? RedirectToAction("Summary", "CAB",
-                            new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
-                        : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId });
+                            new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl })
+                        : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
                 }
 
                 return SaveDraft(latestDocument);
@@ -368,7 +370,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/create", Name = Routes.CreateNewCab)]
-        public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid() });
+        public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid(), returnUrl = "/service-management" });
 
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
         public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed)
@@ -391,7 +393,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var isEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock;
             var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
             var laPendingApprovalCount = LAPendingApprovalCountForUser(latest, UserRoleId == Roles.OPSS.Id);
-            var showOgdActions = subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
+            var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
+            var showOgdActions = isOgdUser && subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
                 latest.IsPendingOgdApproval && laPendingApprovalCount > 0;
             if (showOgdActions)
             {
@@ -453,7 +456,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 IsMatchingOgdUser = laPendingApprovalCount > 0,
                 ShowOgdActions = showOgdActions,
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
-                IsOpssAdmin = UserRoleId == Roles.OPSS.Id
+                IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
+                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.ApprovedByOpssAdmin),
+                HasAtLeastOneOgdApproval = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined)
             };
 
             //Lock Record for edit
@@ -470,8 +475,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
-                                    model.SubStatus != SubStatus.PendingApprovalToPublish &&
-                                    (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
+                                    ((model.SubStatus != SubStatus.PendingApprovalToPublish && model.IsOPSSOrInCreatorUserGroup) ||
+                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.HasAtLeastOneOgdApproval));
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                 (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
@@ -538,11 +543,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     var legislativeAreaSenderEmailIds =
                         _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
+                    var emailsToSends = new List<ValueTuple<string, int, string>>();
+
                     foreach (var latestDocumentLegislativeArea in latest.DocumentLegislativeAreas)
                     {
                         if (string.IsNullOrWhiteSpace(latestDocumentLegislativeArea.RoleId))
                             throw new ArgumentNullException(nameof(latestDocumentLegislativeArea.RoleId));
-                        
+
                         if (legislativeAreaSenderEmailIds.Keys.All(a => a != latestDocumentLegislativeArea.RoleId))
                             throw new ArgumentException(
                                 $"Legislative area email not found - {latestDocumentLegislativeArea.RoleId}",
@@ -551,9 +558,22 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         var receiverEmailId = legislativeAreaSenderEmailIds[latestDocumentLegislativeArea.RoleId];
                         if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
                         {
-                            await SendNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
-                                latest.Name, userAccount, receiverEmailId,
-                                latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId);
+                            await SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                                userAccount, latestDocumentLegislativeArea);
+                            if (emailsToSends.All(a => a.Item1 != receiverEmailId))
+                            {
+                                emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId, 1,
+                                    latestDocumentLegislativeArea.LegislativeAreaName));
+                            }
+                            else
+                            {
+                                var laName = emailsToSends.First(x => x.Item1 == receiverEmailId);
+                                emailsToSends.Remove(laName);
+                                emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId,
+                                    laName.Item2 + 1,
+                                    string.Concat(laName.Item3, ", ",
+                                        latestDocumentLegislativeArea.LegislativeAreaName)));
+                            }
                         }
                         else if(latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToRemove)
                         {
@@ -565,6 +585,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
                         }
                     }
+
+                    emailsToSends.ForEach(async emailsToSend =>
+                    {
+                        await SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                            latest.Name, userAccount, emailsToSend.Item1,
+                            emailsToSend.Item3, emailsToSend.Item2);
+                    });
 
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
                 }
@@ -690,41 +717,55 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
-        private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
-            UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName, string legislativeAreaRoleId)
+        private async Task SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
+            UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName,
+            int legislativeAreaCount)
         {
             var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
                 userAccount.Role ?? throw new InvalidOperationException(),
                 userAccount.EmailAddress ?? throw new InvalidOperationException());
 
+            var emailBody =
+                $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved for CAB [{cabName}]({UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request, Url.RouteUrl(Routes.CabSummary, new { id = cabId }))}).";
+            if (legislativeAreaCount > 1)
+                emailBody =
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the following legislative areas are approved for CAB [{cabName}]({UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request, Url.RouteUrl(Routes.CabSummary, new { id = cabId }))}) : {legislativeAreaName}.";
+
             var personalisation = new Dictionary<string, dynamic?>
             {
                 { "CABName", cabName },
-                { "CABUrl",
-                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
-                        Url.RouteUrl(Routes.CabSummary, new { id = cabId }))
-                },
+                { "emailBody", emailBody },
                 { "userGroup", user.UserGroup },
                 { "userName", user.FirstAndLastName },
                 { "legislativeAreaName", legislativeAreaName }               
             };
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
                 _templateOptions.NotificationLegislativeAreaCabApproval, personalisation);
+        }
+
+        private async Task SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid cabId, UserAccount userAccount,
+           DocumentLegislativeArea documentLegislativeArea)
+        {
+            var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
+                userAccount.Role ?? throw new InvalidOperationException(),
+                userAccount.EmailAddress ?? throw new InvalidOperationException());
 
             await _workflowTaskService.CreateAsync(
                 new WorkflowTask(
                     TaskType.LegislativeAreaApproveRequestForCab,
                     user,
-                    legislativeAreaRoleId,
-                    null, 
+                    documentLegislativeArea.RoleId,
+                    null,
                     DateTime.Now,
-                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved.",
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {documentLegislativeArea.LegislativeAreaName} legislative area is approved.",
                     user,
                     DateTime.Now,
                     null,
                     null,
                     false,
-                    cabId));
+                    cabId,
+                    documentLegislativeArea.Id
+                    ));
         }
 
         private async Task SendNotificationOfLegislativeAreaRequestToRemoveAsync(Guid cabId, string cabName,
