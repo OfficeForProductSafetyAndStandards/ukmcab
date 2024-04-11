@@ -457,7 +457,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
                 LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.ApprovedByOpssAdmin),
-                HasAtLeastOneOgdApproval = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined)
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.ApprovedByOpssAdmin)
             };
 
             //Lock Record for edit
@@ -475,7 +475,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
                                     ((model.SubStatus != SubStatus.PendingApprovalToPublish && model.IsOPSSOrInCreatorUserGroup) ||
-                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.HasAtLeastOneOgdApproval));
+                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                 (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
