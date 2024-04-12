@@ -91,18 +91,7 @@
                                     }
                                     else
                                     {
-                                        @if (legislativeArea.Status == UKMCAB.Data.Models.LAStatus.PendingApproval)
-                                        {
-                                            <span>Pending approval from @legislativeArea.RoleName</span>
-                                        }
-                                        else if (legislativeArea.Status == UKMCAB.Data.Models.LAStatus.Approved)
-                                        {
-                                            <span>Pending approval from OPSS</span>
-                                        }
-                                        else if (legislativeArea.Status == UKMCAB.Data.Models.LAStatus.ApprovedByOpssAdmin)
-                                        {
-                                            <span>Approved by OPSS</span>
-                                        }
+                                        <span>@legislativeArea.StatusName</span>
                                     }
 
                                     @if (legislativeArea.CanChooseScopeOfAppointment)
