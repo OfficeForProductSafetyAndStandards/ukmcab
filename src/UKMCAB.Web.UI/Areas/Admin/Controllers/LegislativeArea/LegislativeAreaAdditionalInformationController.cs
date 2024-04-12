@@ -125,7 +125,6 @@ public class LegislativeAreaAdditionalInformationController : Controller
         documentLegislativeArea.PointOfContactEmail = vm.PointOfContactEmail;
         documentLegislativeArea.PointOfContactPhone = vm.PointOfContactPhone;
         documentLegislativeArea.IsPointOfContactPublicDisplay = vm.IsPointOfContactPublicDisplay;
-        documentLegislativeArea.Status = LAStatus.Draft;
 
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
