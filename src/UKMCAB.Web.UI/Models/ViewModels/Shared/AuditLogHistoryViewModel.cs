@@ -19,7 +19,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             AuditCABActions.CABDeclined, AuditCABActions.SubmittedForApproval, AuditCABActions.UnarchiveApprovalRequest,
             AuditCABActions.DraftDeleted, AuditCABActions.UnArchiveApprovalRequestDeclined,
             AuditCABActions.ArchiveApprovalRequest, AuditCABActions.UnpublishApprovalRequest,
-            AuditCABActions.UnpublishApprovalRequestDeclined, AuditCABActions.DeclineLegislativeArea,
+            AuditCABActions.UnpublishApprovalRequestDeclined, AuditCABActions.ApproveLegislativeArea, AuditCABActions.DeclineLegislativeArea,
             AuditCABActions.LegislativeAreaAdditionalInformationUserNotes
         };
 
