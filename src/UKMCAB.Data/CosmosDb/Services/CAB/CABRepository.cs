@@ -59,37 +59,11 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         //Set LA Role Id
                         la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
                     }
-
-                    
                     await UpdateAsync(document);
                 }
             }
 
             return force;
-        }
-
-        private void UpdateCreatedByUserGroup(Document document)
-        {
-            var userRole = document.AuditLog.Any()
-                ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole
-                : string.Empty;
-            document.CreatedByUserGroup = userRole;
-        }
-
-        private static void ChangeUnarchiveRequestToUnarchivedToDraft(Document document)
-        {
-            const string unarchiveRequest = "UnarchiveRequest";
-            var auditLog = document.AuditLog.FirstOrDefault(a => a.Action == unarchiveRequest);
-            if (auditLog == null) return;
-
-            document.AuditLog.RemoveFirst(a => a.Action == unarchiveRequest);
-            auditLog.Action = AuditCABActions.UnarchivedToDraft;
-            document.AuditLog.Add(auditLog);
-        }
-
-        private void UpdateCabNumberVisibilityNullToPublic(Document document)
-        {
-            document.CabNumberVisibility = DataConstants.CabNumberVisibilityOptions.Public;
         }
 
         public async Task<Document> CreateAsync(Document document, DateTime lastUpdatedDateTime)
