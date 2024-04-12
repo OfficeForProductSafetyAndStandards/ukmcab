@@ -2,6 +2,7 @@
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+using System.Security.Claims;
 
 namespace UKMCAB.Web.UI.Services
 {
@@ -89,6 +90,13 @@ namespace UKMCAB.Web.UI.Services
             }
 
             return legislativeAreaViewModel;
+        }
+
+
+        public List<DocumentLegislativeArea> GetPendingAppprovalDocumentLegislativeAreaList(Document document, ClaimsPrincipal user)
+        {
+            return document.DocumentLegislativeAreas.Where(dla =>
+                    (dla.Status == LAStatus.PendingApproval || dla.Status == LAStatus.PendingApprovalToRemove || dla.Status == LAStatus.PendingApprovalToArchiveAndArchiveSchedule || dla.Status == LAStatus.PendingSubmissionToArchiveAndRemoveSchedule) && user.IsInRole(dla.RoleId)).ToList();
         }
     }
 }

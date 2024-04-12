@@ -14,6 +14,7 @@ using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
+using System.Globalization;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -26,13 +27,14 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly ILegislativeAreaDetailService _legislativeAreaDetailService;
-
+    
     public static class Routes
     {
         public const string LegislativeAreaApprovalList = "legislative.area.approval.list";
         public const string LegislativeAreaApprove = "legislative.area.approve";
         public const string LegislativeAreaApproveDeclineSelection = "legislative.area.approve.decline.selection";
         public const string LegislativeAreaDecline = "legislative.area.decline";
+        public const string LegislativeAreaDeclineReason = "legisltaive.area.decline.reason";
     }
 
     public LegislativeAreaApproveController(ICABAdminService cabAdminService,
@@ -58,8 +60,9 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                        throw new InvalidOperationException("CAB not found");
         
         var lasToApprove =
-            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ToList() :
-                document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.PendingApproval && la.RoleId == UserRoleId).ToList();
+            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ToList() :            
+                _legislativeAreaDetailService.GetPendingAppprovalDocumentLegislativeAreaList(document, User);
+
         if (!lasToApprove.Any())
         {
             return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
@@ -140,7 +143,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             }
             else
             {
-                await DeclineLegislativeAreaAsync(documentLa, latestDocument, vm.DeclineReason);
+                return RedirectToRoute(Routes.LegislativeAreaDeclineReason, new { id, legislativeAreaId });
             }
 
             return RedirectToRoute(Routes.LegislativeAreaApprovalList, new { id });
@@ -153,7 +156,64 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApproveDeclineLegislativeAreaSelection.cshtml", vm);
     }
-    
+
+    [HttpGet("decline-reason/{legislativeAreaId}/{ReviewActionEnum}", Name = Routes.LegislativeAreaDeclineReason)]
+    public async Task<IActionResult> DeclineReason(Guid id, Guid legislativeAreaId)
+    {
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
+                       throw new InvalidOperationException("CAB not found");
+
+        var documentLa = latestDocument.DocumentLegislativeAreas
+            .FirstOrDefault(l => l.LegislativeAreaId == legislativeAreaId);
+
+        if (documentLa == null)
+        {
+            throw new PermissionDeniedException("No legislative area on CAB");
+        }
+
+        var actionText = documentLa.Status switch
+        {
+            LAStatus.PendingApproval => "approve",
+            LAStatus.PendingSubmissionToRemove => "remove",
+            LAStatus.PendingSubmissionToArchiveAndRemoveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveSchedule => "archive",
+            _ => string.Empty,
+        };
+
+        var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
+        var vm = new LegislativeAreaDeclineReasonViewModel
+        {
+            CabId = id,
+            Title = $"{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(actionText.ToLower())} legislative area",
+            LegislativeAreaName = la.Name,            
+            ActionText = actionText
+        };
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/DeclineLegislativeAreaReason.cshtml", vm);
+    }
+
+    [HttpPost("decline-reason/{legislativeAreaId}/{ReviewActionEnum}", Name = Routes.LegislativeAreaDeclineReason)]
+    public async Task<IActionResult> ApproveDeclineSelection(Guid id, Guid legislativeAreaId, LegislativeAreaReviewActionEnum ReviewActionEnum, LegislativeAreaDeclineReasonViewModel vm)
+    {
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
+                       throw new InvalidOperationException("CAB not found");
+
+        if (!latestDocument.DocumentLegislativeAreas.Select(l => l.LegislativeAreaId).Contains(legislativeAreaId))
+        {
+            throw new PermissionDeniedException("No legislative area on CAB");
+        }
+
+        var documentLa = latestDocument.DocumentLegislativeAreas
+            .First(l => l.LegislativeAreaId == legislativeAreaId);
+
+        if (ModelState.IsValid)
+        {   
+            await DeclineLegislativeAreaAsync(documentLa, latestDocument, vm.DeclineReason);            
+            return RedirectToRoute(Routes.LegislativeAreaApprovalList, new { id });
+        }
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/DeclineLegislativeAreaReason.cshtml", vm);
+    }
+
     private async Task ApproveLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document)
     {
         var currentUser = CurrentUser;

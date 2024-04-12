@@ -17,6 +17,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -30,6 +31,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IEditLockService _editLockService;
         private readonly IUserNoteService _userNoteService;
         private readonly ILegislativeAreaService _legislativeAreaService;
+        private readonly ILegislativeAreaDetailService _legislativeAreaDetailService;
 
         public static class Routes
         {
@@ -52,7 +54,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             IOptions<CoreEmailTemplateOptions> templateOptions,
             IEditLockService editLockService,
             IUserNoteService userNoteService,
-            ILegislativeAreaService legislativeAreaService) : base(userService)
+            ILegislativeAreaService legislativeAreaService,
+            ILegislativeAreaDetailService legislativeAreaDetailService) : base(userService)
         {
             _cabAdminService = cabAdminService;
             _workflowTaskService = workflowTaskService;
@@ -61,6 +64,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _templateOptions = templateOptions.Value;
             _userNoteService = userNoteService;
             _legislativeAreaService = legislativeAreaService;
+            _legislativeAreaDetailService = legislativeAreaDetailService;
         }
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
@@ -933,9 +937,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (!isOpssAdmin)
             {
-                return document.DocumentLegislativeAreas.Count(dla =>
-                    dla.Status == LAStatus.PendingApproval && User.IsInRole(dla.RoleId));
-            }
+                return _legislativeAreaDetailService.GetPendingAppprovalDocumentLegislativeAreaList(document, User).Count;
+            }   
 
             return document.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.Approved);
         }

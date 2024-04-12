@@ -1,4 +1,4 @@
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.DeclineLAViewModel 
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaDeclineReasonViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">
         <span class="govuk-caption-m">Edit a CAB</span>
@@ -9,17 +9,19 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds-from-desktop">
         <form id="declineLAForm" method="post">
+            <input type="hidden" asp-for="CabId" />
+            <input type="hidden" asp-for="Title" />
             <govuk-character-count asp-for="DeclineReason" max-length="1000" rows="5">
                 <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
                     Reason
                 </govuk-character-count-label>
                 <govuk-character-count-hint>
-                    Enter the reason for declining this legislative area. This will only be shown to users that are signed in to the UKMCAB service.
+                    Enter the reason for declining to @Model.ActionText this legislative area. This will only be shown to users that are signed in to the UKMCAB service.
                 </govuk-character-count-hint>
             </govuk-character-count>
             <div class="govuk-button-group">
                 <govuk-button type="submit" name="submitType" value="decline">Decline</govuk-button>
-                <a asp-area="Admin" asp-controller="Cab" asp-action="Summary" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <a asp-area="Admin" asp-controller="LegislativeArea" asp-action="Approvallist" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>

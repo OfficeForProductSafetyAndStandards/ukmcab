@@ -42,4 +42,11 @@
         LegislativeAreaArchivedProductScheduleRemoved = 4,
         AssessmentProcedureRemoved = 5
     }
+
+    public enum LegislativeAreaReviewActionEnum
+    {
+        Add = 0,
+        Remove  = 1,
+        Archive = 2
+    }
 }
