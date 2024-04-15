@@ -36,6 +36,11 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
+                    const string created = "Created";
+                    if (document.AuditLog.Any(x => x.Action == created))
+                    {
+                        document.AuditLog.First(x => x.Action == created).Action = AuditCABActions.Created;
+                    }
                     // ReSharper disable once *** Existing CABs can have null List of La ***
                     document.LegislativeAreas ??= new List<string>();
                     // Populate new DocumentLegislativeAreas and DocumentScopeOfAppointments for each existing LegislativeAreas string.
