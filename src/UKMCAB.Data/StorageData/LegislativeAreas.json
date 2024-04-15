@@ -43,7 +43,7 @@
     },
     {
         "id": "e3751919-8b26-4059-ae34-8540146e262a",
-        "name": "Pressure vessels",
+        "name": "Simple pressure vessels",
         "regulation": "Simple Pressure Vessels (Safety) Regulations 2016",
         "hasDataModel": "true",
         "roleId": "opss_ogd"
