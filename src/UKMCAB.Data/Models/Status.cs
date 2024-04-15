@@ -53,6 +53,8 @@ namespace UKMCAB.Data.Models
         [Description("Pending submission to archive and remove product schedule")]
         PendingSubmissionToArchiveAndRemoveSchedule,
         [Description("Pending approval")]
-        PendingApprovalToArchiveAndRemoveSchedule
+        PendingApprovalToArchiveAndRemoveSchedule,
+        [Description("Declined by OPSS")]
+        DeclinedByOpssAdmin,
     }
 }
