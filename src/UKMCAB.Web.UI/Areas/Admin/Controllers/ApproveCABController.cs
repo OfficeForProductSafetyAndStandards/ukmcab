@@ -148,7 +148,7 @@ public class ApproveCABController : Controller
             await _cabAdminService.CreateDocumentAsync(user, document);
             await _cabAdminService.SetSubStatusAsync(Guid.Parse(document.CABId), Status.Draft, SubStatus.PendingApprovalToPublish, new Audit(user, AuditCABActions.Created));
         }
-        else if (document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Declined))
+        else if (document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
         {
             await _cabAdminService.CreateDocumentAsync(user, document);
         }
