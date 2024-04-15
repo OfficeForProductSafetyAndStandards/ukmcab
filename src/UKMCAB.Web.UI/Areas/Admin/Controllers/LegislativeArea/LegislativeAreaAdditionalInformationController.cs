@@ -107,7 +107,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         {
             vm.UserNotesLabel = UserNotesLabelMandatory;
             ModelState.AddModelError("UserNotes",
-                "Enter a user note for the review date change.");
+                "Enter user notes");
         }
         
         if (!ModelState.IsValid)
