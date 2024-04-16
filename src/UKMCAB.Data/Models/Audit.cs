@@ -187,39 +187,39 @@ namespace UKMCAB.Data.Models
             var removedFileUploads = previousFileUploads.Where(sch =>
                 currentFileUploads.All(pub => !pub.UploadDateTime.Equals(sch.UploadDateTime)));
 
-            foreach (var fileupload in existingFileUploads)
+            foreach (var fileUpload in existingFileUploads)
             {
                 var previousFileUpload =
-                    previousFileUploads.Single(sch => sch.UploadDateTime.Equals(fileupload.UploadDateTime));
+                    previousFileUploads.Single(sch => sch.UploadDateTime.Equals(fileUpload.UploadDateTime));
                 if (isSchedule)
                 {
-                    if (!previousFileUpload.LegislativeArea.Equals(fileupload.LegislativeArea))
+                    if (previousFileUpload.LegislativeArea != null && !previousFileUpload.LegislativeArea.Equals(fileUpload.LegislativeArea))
                     {
                         sb.AppendFormat(
                             "<p class=\"govuk-body\">The legislative area {0} has been changed to {1} on this product schedule <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>",
-                            previousFileUpload.LegislativeArea, fileupload.LegislativeArea,
-                            ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
-                            fileupload.Label);
+                            previousFileUpload.LegislativeArea, fileUpload.LegislativeArea,
+                            ScheduleOrDocumentLink(publishedDocument.CABId, fileUpload.FileName, docType),
+                            fileUpload.Label);
                     }
                 }
                 else
                 {
-                    if (!previousFileUpload.Category.Equals(fileupload.Category))
+                    if (previousFileUpload.Category != null && !previousFileUpload.Category.Equals(fileUpload.Category))
                     {
                         sb.AppendFormat(
                             "<p class=\"govuk-body\">The category {0} has been changed to {1} on this supporting document <a href=\"{2}\" target=\"_blank\" class=\"govuk-link\">{3}</a>.</p>",
-                            previousFileUpload.Category, fileupload.Category,
-                            ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
-                            fileupload.Label);
+                            previousFileUpload.Category, fileUpload.Category,
+                            ScheduleOrDocumentLink(publishedDocument.CABId, fileUpload.FileName, docType),
+                            fileUpload.Label);
                     }
                 }
 
-                if (!previousFileUpload.Label.Equals(fileupload.Label))
+                if (!previousFileUpload.Label.Equals(fileUpload.Label))
                 {
                     sb.AppendFormat(
                         "<p class=\"govuk-body\">The title of this {0} <a href=\"{1}\" target=\"_blank\" class=\"govuk-link\">{2}</a> has been changed from {3} to {4}.</p>",
-                        docTypeName, ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
-                        fileupload.Label, previousFileUpload.Label, fileupload.Label);
+                        docTypeName, ScheduleOrDocumentLink(publishedDocument.CABId, fileUpload.FileName, docType),
+                        fileUpload.Label, previousFileUpload.Label, fileUpload.Label);
                 }
             }
 
