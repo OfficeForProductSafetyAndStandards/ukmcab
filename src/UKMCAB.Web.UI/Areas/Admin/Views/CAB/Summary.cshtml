@@ -788,11 +788,11 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
         </form>
     </div>
 }
-else
+else 
 {
     var showPublishButtons = Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish, LegislativeAreasApprovedByAdminCount: > 0 };
 
-    if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPendingApprovalCount: > 0 })
+    if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPendingApprovalCount: > 0, ShowEditActions: true })
     {
         <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
             @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
@@ -806,7 +806,7 @@ else
             }
         </div>
     }
-    if (showPublishButtons)
+    if (showPublishButtons && Model.ShowEditActions)
     {
         <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
             Only legislative areas that have been reviewed and approved will be published.
