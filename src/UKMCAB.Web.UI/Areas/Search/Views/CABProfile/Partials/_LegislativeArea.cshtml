@@ -38,9 +38,6 @@
             </govuk-details-summary>
             <govuk-details-text>
                 <dl>
-                    <dt class="govuk-!-font-weight-bold">Provisional</dt>
-                    <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.IsProvisional.AsYesNo().ToSentenceCase()</dd>
-
                     <dt class="govuk-!-font-weight-bold">Appointment date</dt>
                     <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.AppointmentDate.HasValue ? Model.LegislativeArea.AppointmentDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
 
