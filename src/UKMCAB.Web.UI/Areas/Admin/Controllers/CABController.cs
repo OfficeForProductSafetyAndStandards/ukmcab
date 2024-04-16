@@ -18,6 +18,9 @@ using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
+using UKMCAB.Common.Extensions;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -548,6 +551,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
                     var emailsToSends = new List<ValueTuple<string, int, string>>();
 
+                    var updateCab = false;
+
                     foreach (var latestDocumentLegislativeArea in latest.DocumentLegislativeAreas)
                     {
                         if (string.IsNullOrWhiteSpace(latestDocumentLegislativeArea.RoleId))
@@ -578,13 +583,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                         latestDocumentLegislativeArea.LegislativeAreaName)));
                             }
                         }
-                        else if(latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToRemove)
+                        else if(latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToRemove ||
+                            latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToArchiveAndArchiveSchedule ||
+                            latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToArchiveAndRemoveSchedule)
                         {
-                            await SendNotificationOfLegislativeAreaRequestToRemoveAsync(Guid.Parse(latest.CABId),
+                            await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
                                 latest.Name, userAccount, receiverEmailId,
-                                latestDocumentLegislativeArea.LegislativeAreaName, latestDocumentLegislativeArea.RoleId, latestDocumentLegislativeArea.ReasonToRemoveOrArchive!);
+                                latestDocumentLegislativeArea);
 
                             latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
+
+                            if(!updateCab)
+                            {
+                                updateCab = true;
+                            }
+                        }
+
+                        if(updateCab)
+                        {
                             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
                         }
                     }
@@ -743,7 +759,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 { "legislativeAreaName", legislativeAreaName }               
             };
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
-                _templateOptions.NotificationLegislativeAreaCabApproval, personalisation);
+                _templateOptions.NotificationLegislativeAreaPublishApproved, personalisation);
         }
 
         private async Task SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid cabId, UserAccount userAccount,
@@ -771,12 +787,18 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     ));
         }
 
-        private async Task SendNotificationOfLegislativeAreaRequestToRemoveAsync(Guid cabId, string cabName,
-          UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName, string legislativeAreaRoleId, string reason)
+        private async Task SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid cabId, string cabName,
+          UserAccount userAccount, string legislativeAreaReceiverEmailId, DocumentLegislativeArea documentLegislativeArea)
         {
             var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
                 userAccount.Role ?? throw new InvalidOperationException(),
                 userAccount.EmailAddress ?? throw new InvalidOperationException());
+
+            var actionText = documentLegislativeArea.Status switch
+            {
+                LAStatus.PendingSubmissionToRemove => "remove",               
+                _ => "archive",
+            };           
 
             var personalisation = new Dictionary<string, dynamic?>
             {
@@ -787,24 +809,28 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 },
                 { "userGroup", user.UserGroup },
                 { "userName", user.FirstAndLastName },
-                { "legislativeAreaName", legislativeAreaName },
-                 { "Reason", reason }
+                { "legislativeAreaName", documentLegislativeArea.LegislativeAreaName },
+                { "Reason", documentLegislativeArea.ReasonToRemoveOrArchive },
+                { "action" , actionText }
             };
+
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
-                _templateOptions.NotificationLegislativeAreaRequestToRemove, personalisation);
+                _templateOptions.NotificationLegislativeAreaRequestToRemoveArchiveUnArchive, personalisation);
+
+            actionText = string.Join(actionText, "d");
 
             await _workflowTaskService.CreateAsync(
                 new WorkflowTask(
                     TaskType.LegislativeAreaRequestToRemove,
                     user,
-                    legislativeAreaRoleId,
+                    documentLegislativeArea.RoleId,
                     null,
                     DateTime.Now,
-                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is removed from {cabName}.",
+                    $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {documentLegislativeArea.LegislativeAreaName} legislative area is {actionText} for {cabName}.",
                     user,
                     DateTime.Now,
                     null,
-                    reason,
+                    documentLegislativeArea.ReasonToRemoveOrArchive,
                     false,
                     cabId));
         }

@@ -23,7 +23,8 @@
     <div class="govuk-grid-column-full">       
         <form id="legislativeForm" method="post" novalidate>
             <input type="hidden" asp-for="Title" />
-            <input type="hidden" asp-for="CabId" />            
+            <input type="hidden" asp-for="CabId" />
+            <input type="hidden" asp-for="ReviewActionEnum" />
             <h2 class="govuk-heading-s">You have selected: </h2>
             <p class="govuk-body">@Model.LegislativeArea.Name</p>
             <div class="govuk-warning-text">

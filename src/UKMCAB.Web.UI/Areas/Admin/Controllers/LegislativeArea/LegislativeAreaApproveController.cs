@@ -14,7 +14,8 @@ using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
-using System.Globalization;
+using UKMCAB.Common.Extensions;
+using System;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -80,22 +81,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         ShowSuccessMessage(vm);
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApprovalList.cshtml", vm);
-    }
-
-    private void ShowSuccessMessage(ApprovalListViewModel vm)
-    {
-        if (TempData.ContainsKey(Constants.ApprovedLA))
-        {
-            TempData.Remove(Constants.ApprovedLA);
-            vm.SuccessBannerMessage = "Legislative area has been approved.";
-        }
-
-        if (TempData.ContainsKey(Constants.DeclinedLA))
-        {
-            TempData.Remove(Constants.DeclinedLA);
-            vm.SuccessBannerMessage = "Legislative area has been declined.";
-        }
-    }
+    }   
 
     [HttpGet("approve-decline-selection/{legislativeAreaId}", Name = Routes.LegislativeAreaApproveDeclineSelection)]
     public async Task<IActionResult> ApproveDeclineSelection(Guid id, Guid legislativeAreaId)
@@ -108,14 +94,25 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             throw new PermissionDeniedException("No legislative area on CAB");
         }
 
+        var documentLa = latestDocument.DocumentLegislativeAreas
+           .First(l => l.LegislativeAreaId == legislativeAreaId);
+
         var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
 
-        var vm = new LegislativeAreaApproveViewModel
+        var reviewAction = documentLa.Status switch
         {   
+            LAStatus.PendingSubmissionToRemove => LegislativeAreaReviewActionEnum.Remove,
+            LAStatus.PendingSubmissionToArchiveAndRemoveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveSchedule => LegislativeAreaReviewActionEnum.Archive,
+            _ => LegislativeAreaReviewActionEnum.Add,
+        };
+
+        var vm = new LegislativeAreaApproveViewModel
+        {
             CabId = id,
             Title = "Approve legislative area",
             LegislativeArea = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
             ActiveProductSchedules = latestDocument.ActiveSchedules.Where(n => n.LegislativeArea == la.Name).ToList(),
+            ReviewActionEnum = reviewAction
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApproveDeclineLegislativeAreaSelection.cshtml", vm);
@@ -139,11 +136,12 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         {           
             if(vm.LegislativeAreaApproveActionEnum == LegislativeAreaApproveActionEnum.Approve)
             {
-                await ApproveLegislativeAreaAsync(documentLa, latestDocument);
+                await ApproveLegislativeAreaAsync(documentLa, latestDocument, vm.ReviewActionEnum);
+                
             }
             else
             {
-                return RedirectToRoute(Routes.LegislativeAreaDeclineReason, new { id, legislativeAreaId });
+                return RedirectToRoute(Routes.LegislativeAreaDeclineReason, new { id, legislativeAreaId, vm.ReviewActionEnum });
             }
 
             return RedirectToRoute(Routes.LegislativeAreaApprovalList, new { id });
@@ -155,10 +153,11 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         }      
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApproveDeclineLegislativeAreaSelection.cshtml", vm);
-    }
+    }    
+    
 
     [HttpGet("decline-reason/{legislativeAreaId}/{ReviewActionEnum}", Name = Routes.LegislativeAreaDeclineReason)]
-    public async Task<IActionResult> DeclineReason(Guid id, Guid legislativeAreaId)
+    public async Task<IActionResult> DeclineReason(Guid id, Guid legislativeAreaId, LegislativeAreaReviewActionEnum ReviewActionEnum)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
@@ -169,30 +168,20 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         if (documentLa == null)
         {
             throw new PermissionDeniedException("No legislative area on CAB");
-        }
+        }        
 
-        var actionText = documentLa.Status switch
-        {
-            LAStatus.PendingApproval => "approve",
-            LAStatus.PendingSubmissionToRemove => "remove",
-            LAStatus.PendingSubmissionToArchiveAndRemoveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveSchedule => "archive",
-            _ => string.Empty,
-        };
-
-        var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
         var vm = new LegislativeAreaDeclineReasonViewModel
         {
             CabId = id,
-            Title = $"{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(actionText.ToLower())} legislative area",
-            LegislativeAreaName = la.Name,            
-            ActionText = actionText
+            LegislativeAreaName = documentLa.LegislativeAreaName,
+            ReviewActionEnum = ReviewActionEnum
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/DeclineLegislativeAreaReason.cshtml", vm);
     }
 
-    [HttpPost("decline-reason/{legislativeAreaId}/{ReviewActionEnum}", Name = Routes.LegislativeAreaDeclineReason)]
-    public async Task<IActionResult> ApproveDeclineSelection(Guid id, Guid legislativeAreaId, LegislativeAreaReviewActionEnum ReviewActionEnum, LegislativeAreaDeclineReasonViewModel vm)
+    [HttpPost("decline-reason/{legislativeAreaId}", Name = Routes.LegislativeAreaDeclineReason)]
+    public async Task<IActionResult> DeclineReason(Guid id, Guid legislativeAreaId,  LegislativeAreaDeclineReasonViewModel vm)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
@@ -206,15 +195,30 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             .First(l => l.LegislativeAreaId == legislativeAreaId);
 
         if (ModelState.IsValid)
-        {   
-            await DeclineLegislativeAreaAsync(documentLa, latestDocument, vm.DeclineReason);            
+        {
+            await DeclineLegislativeAreaAsync(documentLa, latestDocument, vm.ReviewActionEnum, vm.DeclineReason);
             return RedirectToRoute(Routes.LegislativeAreaApprovalList, new { id });
         }
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/DeclineLegislativeAreaReason.cshtml", vm);
     }
 
-    private async Task ApproveLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document)
+    private void ShowSuccessMessage(ApprovalListViewModel vm)
+    {
+        if (TempData.ContainsKey(Constants.ApprovedLA))
+        {
+            TempData.Remove(Constants.ApprovedLA);
+            vm.SuccessBannerMessage = "Legislative area has been approved.";
+        }
+
+        if (TempData.ContainsKey(Constants.DeclinedLA))
+        {
+            TempData.Remove(Constants.DeclinedLA);
+            vm.SuccessBannerMessage = "Legislative area has been declined.";
+        }
+    }
+
+    private async Task ApproveLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document, LegislativeAreaReviewActionEnum ReviewActionEnum)
     {
         var currentUser = CurrentUser;
         var approver = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
@@ -228,11 +232,11 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         await MarkRequestTaskAsCompleteAsync(docLa.Id, approver);
         if (UserRoleId != Roles.OPSS.Id)
         {    
-            await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser, document.CreatedByUserGroup);
+            await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser, ReviewActionEnum, document.CreatedByUserGroup);
         }
     }
 
-    private async Task DeclineLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document, string? declineReason)
+    private async Task DeclineLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document, LegislativeAreaReviewActionEnum ReviewActionEnum, string? declineReason)
     { 
         var cabId = new Guid(document.CABId);
         declineReason ??= string.Empty;
@@ -240,7 +244,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         TempData[Constants.DeclinedLA] = true;
 
         // send legislative area decline notification
-        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, declineReason, document.CreatedByUserGroup);
+        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, ReviewActionEnum, declineReason, document.CreatedByUserGroup);        
     }
 
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
@@ -250,7 +254,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             : (await _legislativeAreaService.GetAllLegislativeAreasAsync()).ToList();
     }
 
-    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, DocumentLegislativeArea docLa, UserAccount approver, string createdByUserGroup)
+    private async Task SendNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName, DocumentLegislativeArea docLa, UserAccount approver, LegislativeAreaReviewActionEnum ReviewActionEnum, string createdByUserGroup)
     {
         var approverUser = new User(approver.Id, approver.FirstName, approver.Surname,
             approver.Role ?? throw new InvalidOperationException(),
@@ -265,11 +269,30 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 },
                 { "userGroup", approverUser.UserGroup },
                 { "userName", approverUser.FirstAndLastName },
-                { "legislativeAreaName", docLa.LegislativeAreaName }
+                { "legislativeAreaName", docLa.LegislativeAreaName },
+                { "action" , ReviewActionEnum.GetEnumDescription() }
             };
 
-        await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
-            _templateOptions.NotificationLegislativeAreaApproved, personalisation);
+        string? workFlowBody;
+
+        // if add LA
+        if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
+        {
+            // send email to submitter group email 
+            await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
+                _templateOptions.NotificationLegislativeAreaPublishApproved, personalisation);
+
+            workFlowBody = $"{approverUser.FirstAndLastName} from {approverUser.UserGroup} has approved the {docLa.LegislativeAreaName} legislative area";
+        }
+        // if remove/archive/unarchive LA
+        else 
+        {
+            // send email to submitter group email 
+            await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
+                _templateOptions.NotificationLegislativeAreaToRemoveArchiveUnArchiveApproved, personalisation);
+
+            workFlowBody = $"{approverUser.FirstAndLastName} from {approverUser.UserGroup} has approved the request to {ReviewActionEnum.GetEnumDescription()} the {docLa.LegislativeAreaName} legislative area.";
+        }       
 
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
@@ -278,7 +301,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 Roles.OPSS.Id,
                 null,
                 DateTime.Now,
-                $"{approverUser.FirstAndLastName} from {approverUser.UserGroup} has approved the {docLa.LegislativeAreaName} legislative area.",
+                workFlowBody,
                 approverUser,
                 DateTime.Now,
                 true,
@@ -295,14 +318,17 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     /// <param name="cabId">CAB id</param>
     /// <param name="cabName">Name of CAB</param>
     /// <param name="docLa">Document Legislative Area</param>
+    /// <param name="ReviewActionEnum">Review action</param>
     /// <param name="declineReason">Decline reason</param>
-    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, DocumentLegislativeArea docLa, string? declineReason, string createdByUserGroup)
+    private async Task SendNotificationOfDeclineAsync(Guid cabId, string? cabName, DocumentLegislativeArea docLa, LegislativeAreaReviewActionEnum ReviewActionEnum, string? declineReason, string createdByUserGroup)
     {
         if (cabName == null) throw new ArgumentNullException(nameof(cabName));
 
         var approver = new User(CurrentUser.Id, CurrentUser.FirstName, CurrentUser.Surname,
             CurrentUser.Role ?? throw new InvalidOperationException(),
             CurrentUser.EmailAddress ?? throw new InvalidOperationException());
+
+        string? workFlowBody;
 
         var personalisation = new Dictionary<string, dynamic?>
         {
@@ -315,12 +341,28 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             { "declineReason", declineReason },
             { "userGroup", approver.UserGroup },
             { "userName", approver.FirstAndLastName },
-            { "legislativeAreaName", docLa.LegislativeAreaName }
+            { "legislativeAreaName", docLa.LegislativeAreaName },
+            { "action" , ReviewActionEnum.GetEnumDescription() }
         };
 
-        // send email to submitter group email 
-        await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
-            _templateOptions.NotificationLegislativeAreaDeclined, personalisation);
+        // if add LA
+        if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
+        {
+            // send email to submitter group email 
+            await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+                _templateOptions.NotificationLegislativeAreaPublishDeclined, personalisation);
+
+            workFlowBody = $"{approver.FirstAndLastName} from {approver.UserGroup} has declined the {docLa.LegislativeAreaName} legislative area.";
+        }
+        // if remove/archive/unarchive LA
+        else
+        {
+            // send email to submitter group email 
+            await _notificationClient.SendEmailAsync(_templateOptions.UkasGroupEmail,
+                _templateOptions.NotificationLegislativeAreaToRemoveArchiveUnArchiveDeclined, personalisation);
+
+            workFlowBody = $"{approver.FirstAndLastName} from {approver.UserGroup} has declined the request to {ReviewActionEnum.GetEnumDescription()} the {docLa.LegislativeAreaName} legislative area.";
+        }     
 
         await _workflowTaskService.CreateAsync(
             new WorkflowTask(
@@ -329,7 +371,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 createdByUserGroup,
                 null,
                 DateTime.Now,
-                $"{approver.FirstAndLastName} from {approver.UserGroup} has declined the {docLa.LegislativeAreaName} legislative area.",
+                workFlowBody,
                 approver,
                 DateTime.Now,
                 false,
