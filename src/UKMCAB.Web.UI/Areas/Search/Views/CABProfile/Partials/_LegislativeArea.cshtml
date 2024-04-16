@@ -31,7 +31,7 @@
         {
             <p class="govuk-!-margin-bottom-2">Regulation : @Model.LegislativeArea.Regulation</p>
         }
-        @if (User.Identity.IsAuthenticated)
+         @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity!.IsAuthenticated)
         {
             <govuk-details class="govuk-!-margin-bottom-0">
                 <govuk-details-summary>
@@ -39,12 +39,20 @@
                 </govuk-details-summary>
                 <govuk-details-text>
                     <dl>
-                        <dt class="govuk-!-font-weight-bold">Appointment date</dt>
-                        <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.AppointmentDate.HasValue ? Model.LegislativeArea.AppointmentDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <dt class="govuk-!-font-weight-bold">Appointment date</dt>
+                            <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.AppointmentDate.HasValue ? Model.LegislativeArea.AppointmentDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
 
-                        <dt class="govuk-!-font-weight-bold">Review date</dt>
-                        <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.ReviewDate.HasValue ? Model.LegislativeArea.ReviewDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
+                            <dt class="govuk-!-font-weight-bold">Review date</dt>
+                            <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.ReviewDate.HasValue ? Model.LegislativeArea.ReviewDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
 
+                            @if (!string.IsNullOrWhiteSpace(Model.LegislativeArea.Reason))
+                            {
+                                <dt class="govuk-!-font-weight-bold">Reason for change of review date</dt>
+                                <dd class="govuk-!-margin-bottom-4">@Html.Raw(htmlSanitizer.Sanitize(Model.LegislativeArea.Reason))</dd>
+                            }
+                        }
                         @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity.IsAuthenticated)
                         {
                             @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactName))
