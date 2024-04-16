@@ -10,6 +10,6 @@
 
         public UserNoteListViewModel GovernmentUserNotes { get; set; }
 
-        public string ReturnUrl { get; set; }
+        public string? ReturnUrl { get; set; }
     }
 }
