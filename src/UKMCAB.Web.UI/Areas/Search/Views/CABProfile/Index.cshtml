@@ -415,7 +415,7 @@
             </div>
             <partial name="Partials/_Documents" model="Model.ProductSchedules"/>
 
-            @if (User.Identity.IsAuthenticated /*todo: what claim?*/)
+            @if (User.Identity.IsAuthenticated)
             {
                 <partial name="Partials/_Documents" model="Model.SupportingDocuments"/>
             }
