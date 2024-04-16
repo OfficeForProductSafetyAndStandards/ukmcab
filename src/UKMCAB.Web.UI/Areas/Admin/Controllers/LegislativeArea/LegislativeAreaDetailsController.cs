@@ -670,6 +670,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                                  throw new InvalidOperationException();
+            var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == scopeOfAppointment.LegislativeAreaId);
+            if (latestDocument.StatusValue == Status.Draft && latestDocument.SubStatus == SubStatus.None &&
+                    (documentLegislativeArea.Status == LAStatus.Published || documentLegislativeArea.Status == LAStatus.Declined || documentLegislativeArea.Status == LAStatus.DeclinedByOpssAdmin))
+            {
+                documentLegislativeArea.Status = LAStatus.Draft;
+            }
+
             latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
             latestDocument.HiddenScopeOfAppointments =
                 await SetHiddenScopeOfAppointmentsAsync(latestDocument.ScopeOfAppointments);
