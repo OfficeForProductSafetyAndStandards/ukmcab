@@ -373,7 +373,7 @@
                                 Registered test location
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @if (!Model.RegisteredTestLocations.Any())
+                                @if (Model.RegisteredTestLocations == null || !Model.RegisteredTestLocations.Any())
                                 {
                                     <text>@Constants.NotProvided</text>
                                 }
