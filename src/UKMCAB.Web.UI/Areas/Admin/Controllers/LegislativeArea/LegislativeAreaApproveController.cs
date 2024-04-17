@@ -173,14 +173,24 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     }
 
     private async Task DeclineLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document, string? declineReason)
-    { 
+    {
+        var currentUser = CurrentUser;
+        var decliner = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
+            UserRoleId ?? throw new InvalidOperationException(),
+            currentUser.EmailAddress ?? throw new InvalidOperationException());
+
         var cabId = new Guid(document.CABId);
         declineReason ??= string.Empty;
         await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId, declineReason);
         TempData[Constants.DeclinedLA] = true;
 
-        // send legislative area decline notification
-        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, declineReason, document.CreatedByUserGroup);
+        await MarkRequestTaskAsCompleteAsync(docLa.Id, decliner);
+        
+        if (UserRoleId != Roles.OPSS.Id)
+        {
+            // send legislative area decline notification
+            await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, declineReason, document.CreatedByUserGroup);
+        }
     }
 
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
