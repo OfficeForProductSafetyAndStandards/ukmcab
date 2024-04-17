@@ -34,7 +34,7 @@
                 }
                 else
                 {
-                    <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId"/>
+                    <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId">Back to search results</govuk-back-link>
                 }
             </div>
         </div>
@@ -107,7 +107,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
         <div class="govuk-!-margin-right-3">
             @if (Model is { SubSectionEditAllowed: false, SubStatus: SubStatus.None, IsEditLocked: false } ||
                  Model is { SubSectionEditAllowed: false, SubStatus: SubStatus.PendingApprovalToPublish, IsEditLocked: false, IsPendingOgdApproval: true, IsMatchingOgdUser: true } ||
-                 Model is { SubSectionEditAllowed: false, SubStatus: SubStatus.PendingApprovalToPublish, IsEditLocked: false, LegislativeAreaHasBeenActioned: true })
+                 Model is { SubSectionEditAllowed: false, SubStatus: SubStatus.PendingApprovalToPublish, IsEditLocked: false, LegislativeAreaHasBeenActioned: true, IsOpssAdmin: true })
             {
                 <div class="ukmcab-full-width--mobile ukmcab-float__right ukmcab-text-align-right ukmcab-padding-top-30">
                     <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="@true" asp-route-returnUrl="@returnUrl">Edit</a>
