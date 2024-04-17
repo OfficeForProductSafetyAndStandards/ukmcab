@@ -47,7 +47,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
 
     public enum LegislativeAreaReviewActionEnum
     {
-        [Description("add")]
+        [Description("approve")]
         Add = 0,
         [Description("remove")]
         Remove  = 1,

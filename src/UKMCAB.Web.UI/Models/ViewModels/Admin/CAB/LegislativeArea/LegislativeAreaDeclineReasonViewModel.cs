@@ -5,6 +5,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class LegislativeAreaDeclineReasonViewModel : ILayoutModel
     {
+        public Guid LegislativeAreaId { get; set; }
+
         public Guid CabId { get; set; }
 
         public string LegislativeAreaName { get; set; } = string.Empty;

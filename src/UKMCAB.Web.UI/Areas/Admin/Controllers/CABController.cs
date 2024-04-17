@@ -811,7 +811,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 { "userName", user.FirstAndLastName },
                 { "legislativeAreaName", documentLegislativeArea.LegislativeAreaName },
                 { "Reason", documentLegislativeArea.ReasonToRemoveOrArchive },
-                { "action" , actionText }
+                { "action", actionText }
             };
 
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,

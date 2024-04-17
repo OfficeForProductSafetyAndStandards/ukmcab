@@ -1,5 +1,6 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
 @using UKMCAB.Data
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaApproveViewModel
 
 @section BackButton
@@ -81,7 +82,7 @@
             </div>            
             <div class="govuk-grid-column-full govuk-button-group govuk-!-margin-top-4">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
-                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <a asp-area="Admin" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>                       
             </div>
         </form>
     </div>

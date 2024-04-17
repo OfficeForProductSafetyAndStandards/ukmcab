@@ -177,7 +177,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                 Reason = documentLegislativeArea.Reason,
                 CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
                 IsArchived = documentLegislativeArea.Archived,
-                ShowEditActions = documentLegislativeArea.Status == LAStatus.Draft ||
+                ShowEditActions = documentLegislativeArea.Status == LAStatus.Draft || 
                                   documentLegislativeArea.Status == LAStatus.PendingApproval && UserRoleId == documentLegislativeArea.RoleId ||
                                   documentLegislativeArea.Status == LAStatus.Approved && UserRoleId == Roles.OPSS.Id,
             };
