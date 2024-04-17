@@ -837,7 +837,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             foreach (var procedureId in pp.ProcedureIds)
             {
                 var procedureName = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                if (procedureName?.Name != null)
+                if (procedureName?.Name != null && !returnHiddenScopeOfAppointments.Contains(procedureName.Name))
                     returnHiddenScopeOfAppointments.Add(procedureName.Name);
             }
         }
