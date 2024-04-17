@@ -180,7 +180,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/body-details/{id}")]
-        public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string returnUrl)
+        public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
