@@ -57,7 +57,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         //Set LA Role Id
                         la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
                     }
-
+                    //Add procedures to the searchable field HiddenScopeOfAppointments
                     foreach (var sop in document.ScopeOfAppointments)
                     {
                         if (sop.ProductIdAndProcedureIds.Any())
