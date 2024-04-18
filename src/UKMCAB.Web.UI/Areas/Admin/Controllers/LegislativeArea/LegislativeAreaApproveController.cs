@@ -62,7 +62,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                        throw new InvalidOperationException("CAB not found");
         
         var lasToApprove =
-            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Approved).ToList() :            
+            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin).ToList() :            
                 _legislativeAreaDetailService.GetPendingAppprovalDocumentLegislativeAreaList(document, User);
 
         if (!lasToApprove.Any())
