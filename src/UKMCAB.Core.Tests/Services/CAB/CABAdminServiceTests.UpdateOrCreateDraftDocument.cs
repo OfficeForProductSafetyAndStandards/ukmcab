@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -43,6 +44,31 @@ namespace UKMCAB.Core.Tests.Services.CAB
         }
 
         [Test]
+        public async Task UpdateOrCreateDraftDocumentAsync_ShouldReturnDraftDocumentWithStatus_Draft_WhenDocumentStatusIsPublished()
+        {
+            // Arrange
+            var userAccount = new UserAccount {Role = "opss" };
+            var draftDocument = new Document
+            {
+                CABId = "2efe970d-cb83-4f1e-9ced-5489de4af8ca",
+                StatusValue = Status.Published,
+            };
+
+            var createdDocument = new Document();
+            Document intermediateDocument = null;
+            _mockCABRepository.Setup(r => r.CreateAsync(It.IsAny<Document>(), It.IsAny<DateTime>())).Callback<Document, DateTime>((doc, _) => intermediateDocument = doc).ReturnsAsync(createdDocument);            
+
+            // Act 
+            var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);
+
+            // Assert
+            Assert.AreEqual(intermediateDocument.StatusValue, Status.Draft);
+            Assert.AreEqual(intermediateDocument.AuditLog.First().Action, AuditCABActions.Created);
+            Assert.That(intermediateDocument.CreatedByUserGroup, Is.EqualTo("opss"));
+            _mockCABRepository.Verify(r => r.CreateAsync(draftDocument, It.IsAny<DateTime>()), Times.Once);
+        }
+
+        [Test]
         public async Task UpdateOrCreateDraftDocumentAsync_ShouldReturnDraftDocumentWithSubstatus_None_WhenAllLAsAreCombinationOfPublishedOrAndDeclined()
         {
             // Arrange
@@ -59,7 +85,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new DocumentLegislativeArea { Status = LAStatus.Declined},
                     new DocumentLegislativeArea { Status = LAStatus.DeclinedByOpssAdmin},
                 },
-
             };
 
             // Act 
@@ -88,7 +113,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new DocumentLegislativeArea { Status = LAStatus.Approved},
                     new DocumentLegislativeArea { Status = LAStatus.PendingApproval},
                 },
-
             };
 
             // Act 
