@@ -9,6 +9,6 @@ namespace UKMCAB.Web.UI.Services
         Task<CABLegislativeAreasItemViewModel> PopulateCABLegislativeAreasItemViewModelAsync(Document? cab,
         Guid LegislativeAreaId);
 
-        List<DocumentLegislativeArea> GetPendingAppprovalDocumentLegislativeAreaList(Document document, ClaimsPrincipal user);
+        List<DocumentLegislativeArea> GetPendingApprovalDocumentLegislativeAreaList(Document document, ClaimsPrincipal user);
     }
 }

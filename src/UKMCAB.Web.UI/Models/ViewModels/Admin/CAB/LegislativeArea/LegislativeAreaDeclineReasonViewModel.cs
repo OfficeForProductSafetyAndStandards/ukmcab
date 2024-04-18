@@ -16,6 +16,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public LegislativeAreaReviewActionEnum ReviewActionEnum { get; set; }
 
         [Required(ErrorMessage = "Enter reason", AllowEmptyStrings = false)]
+        [MaxLength(1000, ErrorMessage = "Maximum reason length is 1000 characters")]
         public string DeclineReason { get; set; } = null!;
     }
 }

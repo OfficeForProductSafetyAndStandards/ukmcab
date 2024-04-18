@@ -63,7 +63,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         
         var lasToApprove =
             UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin).ToList() :            
-                _legislativeAreaDetailService.GetPendingAppprovalDocumentLegislativeAreaList(document, User);
+                _legislativeAreaDetailService.GetPendingApprovalDocumentLegislativeAreaList(document, User);
 
         if (!lasToApprove.Any())
         {

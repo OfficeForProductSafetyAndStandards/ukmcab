@@ -967,7 +967,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             if (!isOpssAdmin)
             {
-                return _legislativeAreaDetailService.GetPendingAppprovalDocumentLegislativeAreaList(document, User).Count;
+                return _legislativeAreaDetailService.GetPendingApprovalDocumentLegislativeAreaList(document, User).Count;
             }   
 
             return document.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin);
