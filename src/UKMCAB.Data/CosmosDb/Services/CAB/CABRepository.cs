@@ -28,7 +28,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             var items = await Query<Document>(_container, document => true);
             // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             if (items.Any() && 
-                (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))
+                (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))))
             {
                 foreach (var document in items)
                 {
