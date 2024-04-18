@@ -36,7 +36,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         public const string LegislativeAreaApprove = "legislative.area.approve";
         public const string LegislativeAreaApproveDeclineSelection = "legislative.area.approve.decline.selection";
         public const string LegislativeAreaDecline = "legislative.area.decline";
-        public const string LegislativeAreaDeclineReason = "legisltaive.area.decline.reason";
+        public const string LegislativeAreaDeclineReason = "legislative.area.decline.reason";
     }
 
     public LegislativeAreaApproveController(ICABAdminService cabAdminService,
