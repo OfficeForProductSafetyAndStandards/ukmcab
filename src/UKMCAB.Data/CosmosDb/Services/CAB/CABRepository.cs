@@ -28,7 +28,8 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             var items = await Query<Document>(_container, document => true);
 
             // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
-            if (items.Any() && (force || items.Any(doc => !doc.Version?.Equals(DataConstants.Version.Number) ?? true)))
+            if (items.Any() && 
+                (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))))
             {
                 var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
                 var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
@@ -104,19 +105,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
         public IQueryable<Document> GetItemLinqQueryable() => _container.GetItemLinqQueryable<Document>();
 
-        private async Task<List<T>> Query<T>(Container container, Expression<Func<T, bool>> predicate)
-        {
-            var query = container.GetItemLinqQueryable<T>().Where(predicate).ToFeedIterator();
-            var list = new List<T>();
-            while (query.HasMoreResults)
-            {
-                var response = await query.ReadNextAsync();
-                list.AddRange(response.Resource.Select(r => r));
-            }
-
-            return list;
-        }
-
         public async Task UpdateAsync(Document document)
         {
             document.LastUpdatedDate = DateTime.Now;
@@ -152,5 +140,24 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
             return await list.Where(x => x.SubStatus == subStatus).CountAsync();
         }
+        
+        private async Task<List<T>> Query<T>(Container container, Expression<Func<T, bool>> predicate)
+        {
+            var query = container.GetItemLinqQueryable<T>().Where(predicate).ToFeedIterator();
+            var list = new List<T>();
+            while (query.HasMoreResults)
+            {
+                var response = await query.ReadNextAsync();
+                list.AddRange(response.Resource.Select(r => r));
+            }
+
+            return list;
+        }
+        
+        private Version ParseVersion(string version)
+        {
+            return Version.Parse(version.Replace("-",".").Replace("v",string.Empty));
+        }
+
     }
 }

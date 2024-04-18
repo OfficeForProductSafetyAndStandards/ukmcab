@@ -1,17 +1,20 @@
 ﻿@model CABDocumentsViewModel
-
+@{
+    var isSchedule = Model.Documents.Any(d => !string.IsNullOrWhiteSpace(d.LegislativeArea));
+}
 <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="@Model.Id">
     <div class="cab-detail-section">
         <h2 class="govuk-heading-l">@Model.Title</h2>
-        <p class="govuk-body">Product schedules are the active schedules supplied by UKAS at the time of appointment.</p>
+        @if (isSchedule && Model.Documents.Any())
+        {
+            <p class="govuk-body">Product schedules supplied by UKAS are the active schedules at the time of appointment.</p>
+        }
         @if (!Model.Documents.Any())
         { 
             <p class="govuk-body">@Constants.NotProvided</p>
         }
         else
         {
-            var isSchedule = Model.Documents.Any(d => !string.IsNullOrWhiteSpace(d.LegislativeArea));
-
             var activeGroupedSchedules = Model.Documents.Where(d => d.Archived == null || !d.Archived.Value).OrderBy(s => isSchedule ? s.LegislativeArea : s.Category).ThenBy(s => s.Label).GroupBy(s => isSchedule ? s.LegislativeArea : s.Category);
             var archivedGroupedSchedules = Model.Documents.Where(d => d.Archived.HasValue && d.Archived.Value).OrderBy(s => isSchedule ? s.LegislativeArea : s.Category).ThenBy(s => s.Label).GroupBy(s => isSchedule ? s.LegislativeArea : s.Category);
 
