@@ -3,6 +3,7 @@
 <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="@Model.Id">
     <div class="cab-detail-section">
         <h2 class="govuk-heading-l">@Model.Title</h2>
+        <p class="govuk-body">Product schedules are the active schedules supplied by UKAS at the time of appointment.</p>
         @if (!Model.Documents.Any())
         { 
             <p class="govuk-body">@Constants.NotProvided</p>

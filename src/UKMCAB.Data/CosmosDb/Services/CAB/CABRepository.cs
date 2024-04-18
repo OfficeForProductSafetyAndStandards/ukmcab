@@ -32,10 +32,14 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             {
                 var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
                 var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
+                
+                var proceduresContainer = database.GetContainer(DataConstants.CosmosDb.ProceduresContainer);
+                var procedures = await Query<Procedure>(proceduresContainer, x => true);
 
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
+                    //Change audit created
                     const string created = "Created";
                     if (document.AuditLog.Any(x => x.Action == created))
                     {
@@ -44,52 +48,40 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     //Set LA status
                     foreach (var la in document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.None))
                     {
-                        switch (document.StatusValue)
+                        la.Status = document.StatusValue switch
                         {
-                            case Status.Archived:
-                            case Status.Historical:
-                            case Status.Published:
-                                la.Status = LAStatus.Published;
-                                break;
-                            default:
-                                la.Status = LAStatus.Draft;
-                                break;
-                        }
+                            Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
+                            _ => LAStatus.Draft
+                        };
 
                         //Set LA Role Id
                         la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
                     }
-
+                    //Add procedures to the searchable field HiddenScopeOfAppointments
+                    foreach (var sop in document.ScopeOfAppointments)
+                    {
+                        if (sop.ProductIdAndProcedureIds.Any())
+                        {
+                            foreach (var piPi in sop.ProductIdAndProcedureIds)
+                            {
+                                foreach (var pId in piPi.ProcedureIds)
+                                {
+                                    var procedureName = procedures.FirstOrDefault(p => p.Id == pId);
+                                    if (!string.IsNullOrWhiteSpace(procedureName?.Name) && !document.HiddenScopeOfAppointments.Contains(procedureName.Name))
+                                    {
+                                        document.HiddenScopeOfAppointments.Add(procedureName.Name);
+                                    }
+                                }
+                            }
+                           
+                        }
+                    }
                     
                     await UpdateAsync(document);
                 }
             }
 
             return force;
-        }
-
-        private void UpdateCreatedByUserGroup(Document document)
-        {
-            var userRole = document.AuditLog.Any()
-                ? document.AuditLog.OrderBy(a => a.DateTime).First().UserRole
-                : string.Empty;
-            document.CreatedByUserGroup = userRole;
-        }
-
-        private static void ChangeUnarchiveRequestToUnarchivedToDraft(Document document)
-        {
-            const string unarchiveRequest = "UnarchiveRequest";
-            var auditLog = document.AuditLog.FirstOrDefault(a => a.Action == unarchiveRequest);
-            if (auditLog == null) return;
-
-            document.AuditLog.RemoveFirst(a => a.Action == unarchiveRequest);
-            auditLog.Action = AuditCABActions.UnarchivedToDraft;
-            document.AuditLog.Add(auditLog);
-        }
-
-        private void UpdateCabNumberVisibilityNullToPublic(Document document)
-        {
-            document.CabNumberVisibility = DataConstants.CabNumberVisibilityOptions.Public;
         }
 
         public async Task<Document> CreateAsync(Document document, DateTime lastUpdatedDateTime)

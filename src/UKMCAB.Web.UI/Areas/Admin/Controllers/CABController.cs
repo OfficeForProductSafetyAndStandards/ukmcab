@@ -187,7 +187,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/body-details/{id}")]
-        public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string returnUrl)
+        public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -302,7 +302,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/contact/{id}")]
-        public async Task<IActionResult> Contact(string id, bool fromSummary, string returnUrl)
+        public async Task<IActionResult> Contact(string id, bool fromSummary, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -311,9 +311,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             // Pre-populate model for edit
-            var model = new CABContactViewModel(latest);
-            model.IsFromSummary = fromSummary;
-            model.ReturnUrl = returnUrl;
+            var model = new CABContactViewModel(latest)
+            {
+                IsFromSummary = fromSummary,
+                ReturnUrl = returnUrl
+            };
             return View(model);
         }
 
@@ -464,7 +466,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
                 LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.ApprovedByOpssAdmin),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.ApprovedByOpssAdmin)
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedByOpssAdmin)
             };
 
             //Lock Record for edit
@@ -663,7 +665,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [Authorize(Policy = Policies.GovernmentUserNotes)]
         [HttpGet("admin/cab/governmentusernotes/{cabId}/{cabDocumentId}", Name = Routes.CabGovernmentUserNotes)]
-        public async Task<IActionResult> GovernmentUserNotes(Guid cabId, Guid cabDocumentId, string returnUrl,
+        public async Task<IActionResult> GovernmentUserNotes(Guid cabId, Guid cabDocumentId, string? returnUrl,
             int pagenumber = 1)
         {
             var userNotes = await _userNoteService.GetAllUserNotesForCabDocumentId(cabDocumentId);

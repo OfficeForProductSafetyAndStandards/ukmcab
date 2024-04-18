@@ -31,44 +31,51 @@
         {
             <p class="govuk-!-margin-bottom-2">Regulation : @Model.LegislativeArea.Regulation</p>
         }
-
-        <govuk-details class="govuk-!-margin-bottom-0">
-            <govuk-details-summary>
-                Details
-            </govuk-details-summary>
-            <govuk-details-text>
-                <dl>
-                    <dt class="govuk-!-font-weight-bold">Provisional</dt>
-                    <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.IsProvisional.AsYesNo().ToSentenceCase()</dd>
-
-                    <dt class="govuk-!-font-weight-bold">Appointment date</dt>
-                    <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.AppointmentDate.HasValue ? Model.LegislativeArea.AppointmentDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
-
-                    <dt class="govuk-!-font-weight-bold">Review date</dt>
-                    <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.ReviewDate.HasValue ? Model.LegislativeArea.ReviewDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
-
-                    @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity.IsAuthenticated)
-                    {
-                        @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactName))
+         @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity!.IsAuthenticated)
+        {
+            <govuk-details class="govuk-!-margin-bottom-0">
+                <govuk-details-summary>
+                    Details
+                </govuk-details-summary>
+                <govuk-details-text>
+                    <dl>
+                        @if (User.Identity!.IsAuthenticated)
                         {
-                            <dt class="govuk-!-font-weight-bold">Legislative area contact name</dt>
-                            <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.PointOfContactName</dd>
-                        }
+                            <dt class="govuk-!-font-weight-bold">Appointment date</dt>
+                            <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.AppointmentDate.HasValue ? Model.LegislativeArea.AppointmentDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
 
-                        @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactEmail))
-                        {
-                            <dt class="govuk-!-font-weight-bold">Legislative area contact email</dt>
-                            <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.PointOfContactEmail</dd>
-                        }
+                            <dt class="govuk-!-font-weight-bold">Review date</dt>
+                            <dd class="govuk-!-margin-bottom-4">@(Model.LegislativeArea.ReviewDate.HasValue ? Model.LegislativeArea.ReviewDate.Value.ToString("d MMM yyyy") : Constants.NotProvided)</dd>
 
-                        @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactPhone))
-                        {
-                            <dt class="govuk-!-font-weight-bold">Legislative area contact telephone</dt>
-                            <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.PointOfContactPhone</dd>
+                            @if (!string.IsNullOrWhiteSpace(Model.LegislativeArea.Reason))
+                            {
+                                <dt class="govuk-!-font-weight-bold">Reason for change of review date</dt>
+                                <dd class="govuk-!-margin-bottom-4">@Html.Raw(htmlSanitizer.Sanitize(Model.LegislativeArea.Reason))</dd>
+                            }
                         }
-                    }
-                </dl>
-            </govuk-details-text>
-        </govuk-details>
+                        @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity.IsAuthenticated)
+                        {
+                            @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactName))
+                            {
+                                <dt class="govuk-!-font-weight-bold">Legislative area contact name</dt>
+                                <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.PointOfContactName</dd>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactEmail))
+                            {
+                                <dt class="govuk-!-font-weight-bold">Legislative area contact email</dt>
+                                <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.PointOfContactEmail</dd>
+                            }
+
+                            @if (!string.IsNullOrEmpty(Model.LegislativeArea.PointOfContactPhone))
+                            {
+                                <dt class="govuk-!-font-weight-bold">Legislative area contact telephone</dt>
+                                <dd class="govuk-!-margin-bottom-4">@Model.LegislativeArea.PointOfContactPhone</dd>
+                            }
+                        }
+                    </dl>
+                </govuk-details-text>
+            </govuk-details>
+        }
     </dt>
 </div>

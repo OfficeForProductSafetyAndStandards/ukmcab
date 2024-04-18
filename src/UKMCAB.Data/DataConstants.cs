@@ -1,10 +1,10 @@
 ﻿namespace UKMCAB.Data;
 
-public class DataConstants
+public static class DataConstants
 {
     public static class Version
     {
-        public const string Number = "v3-1-2";
+        public const string Number = "v3-1-3";
     }
 
     public static class CosmosDb
@@ -12,6 +12,7 @@ public class DataConstants
         public const string Database = "main";
         public const string CabContainer = "cab-documents";
         public const string LegislativeAreasContainer = "legislative-areas";
+        public const string ProceduresContainer = "procedures";
     }
 
     public static class Search
@@ -30,7 +31,7 @@ public class DataConstants
         public const string Schedules = "schedules";
     }
 
-    public class SortOptions
+    public static class SortOptions
     {
         public const string Default = "default";
         public const string LastUpdated = "lastupd";

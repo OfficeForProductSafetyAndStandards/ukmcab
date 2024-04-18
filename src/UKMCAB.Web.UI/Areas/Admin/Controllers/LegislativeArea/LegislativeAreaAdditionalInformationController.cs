@@ -107,7 +107,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         {
             vm.UserNotesLabel = UserNotesLabelMandatory;
             ModelState.AddModelError("UserNotes",
-                "Enter a user note for the review date change.");
+                "Enter user notes");
         }
         
         if (!ModelState.IsValid)
@@ -125,7 +125,13 @@ public class LegislativeAreaAdditionalInformationController : Controller
         documentLegislativeArea.PointOfContactEmail = vm.PointOfContactEmail;
         documentLegislativeArea.PointOfContactPhone = vm.PointOfContactPhone;
         documentLegislativeArea.IsPointOfContactPublicDisplay = vm.IsPointOfContactPublicDisplay;
-        documentLegislativeArea.Status = LAStatus.Draft;
+
+        // Note: After editing a published/declined LA in a new draft cab, the LA status is changed to draft.
+        if (latestDocument.StatusValue == Status.Draft && latestDocument.SubStatus == SubStatus.None &&
+            (documentLegislativeArea.Status == LAStatus.Published || documentLegislativeArea.Status == LAStatus.Declined || documentLegislativeArea.Status == LAStatus.DeclinedByOpssAdmin))
+        {
+            documentLegislativeArea.Status = LAStatus.Draft;
+        }
 
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);

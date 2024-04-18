@@ -149,7 +149,7 @@ namespace UKMCAB.Core.Services.CAB
             document.AuditLog.Add(auditItem);
             document.StatusValue = Status.Draft;
 
-            if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined))
+            if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
             {
                 document.CreatedByUserGroup = userAccount.Role!.ToLower();
             }   
@@ -205,7 +205,7 @@ namespace UKMCAB.Core.Services.CAB
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
                 draft.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Draft)
                     .ForEach(la => la.Status = LAStatus.PendingApproval);
-            }
+            }            
 
             if (draft.StatusValue == Status.Published)
             {
@@ -217,6 +217,10 @@ namespace UKMCAB.Core.Services.CAB
             }
             else if (draft.StatusValue == Status.Draft)
             {
+                if (draft.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
+                {
+                    draft.SubStatus = SubStatus.None;
+                }
                 await _cabRepository.UpdateAsync(draft);
             }
 
@@ -603,9 +607,10 @@ namespace UKMCAB.Core.Services.CAB
                                  throw new InvalidOperationException("No document found");
 
             // decline document legislative area
+            var isOpssAdmin = userAccount.Role == Roles.OPSS.Id;
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-            documentLegislativeArea.Status = LAStatus.Declined;
+            documentLegislativeArea.Status = isOpssAdmin ? LAStatus.DeclinedByOpssAdmin : LAStatus.Declined;
             reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " declined: </br>" + reason;
             latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,reason));
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);

@@ -139,9 +139,16 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                 var soaToRemove = latestDocument.ScopeOfAppointments.First(s => s.Id == selectedScopeOfAppointmentId);
                 if (soaToRemove != null)
                 {
-                    var userAccount =
-                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                    var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     latestDocument.ScopeOfAppointments.Remove(soaToRemove);
+
+                    var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == legislativeAreaId);
+                    if (latestDocument.StatusValue == Status.Draft && latestDocument.SubStatus == SubStatus.None &&
+                        (documentLegislativeArea.Status == LAStatus.Published || documentLegislativeArea.Status == LAStatus.Declined || documentLegislativeArea.Status == LAStatus.DeclinedByOpssAdmin))
+                    {
+                        documentLegislativeArea.Status = LAStatus.Draft;
+                    }
+
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
                     return RedirectToRoute(Routes.LegislativeAreaSelected, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.FromSummary });
                 }
@@ -179,7 +186,8 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                 IsArchived = documentLegislativeArea.Archived,
                 ShowEditActions = documentLegislativeArea.Status == LAStatus.Draft || 
                                   documentLegislativeArea.Status == LAStatus.PendingApproval && UserRoleId == documentLegislativeArea.RoleId ||
-                                  documentLegislativeArea.Status == LAStatus.Approved && UserRoleId == Roles.OPSS.Id,
+                                  documentLegislativeArea.Status == LAStatus.Approved && UserRoleId == Roles.OPSS.Id ||
+                                  cab.StatusValue == Status.Draft && cab.SubStatus == SubStatus.None,
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
