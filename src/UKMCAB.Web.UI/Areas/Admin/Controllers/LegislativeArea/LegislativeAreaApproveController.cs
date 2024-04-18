@@ -317,6 +317,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 { "action" , ReviewActionEnum.GetEnumDescription() }
             };
 
+
+
         string? workFlowBody;
 
         // if add LA
@@ -332,6 +334,9 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         else 
         {
             // send email to submitter group email 
+
+            personalisation.Add("Reason", docLa.ReasonToRemoveOrArchive);
+
             await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
                 _templateOptions.NotificationLegislativeAreaToRemoveArchiveUnArchiveApproved, personalisation);
 

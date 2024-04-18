@@ -821,7 +821,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
                 _templateOptions.NotificationLegislativeAreaRequestToRemoveArchiveUnArchive, personalisation);
 
-            actionText = string.Join(actionText, "d");
+            actionText = string.Concat(actionText, "d");
 
             await _workflowTaskService.CreateAsync(
                 new WorkflowTask(
