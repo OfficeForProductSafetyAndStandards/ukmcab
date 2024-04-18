@@ -15,7 +15,8 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Common.Extensions;
-using System;
+using System.Globalization;
+using UKMCAB.Subscriptions.Core.Common;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -101,15 +102,15 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         var reviewAction = documentLa.Status switch
         {   
-            LAStatus.PendingSubmissionToRemove => LegislativeAreaReviewActionEnum.Remove,
-            LAStatus.PendingSubmissionToArchiveAndRemoveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveSchedule => LegislativeAreaReviewActionEnum.Archive,
+            LAStatus.PendingSubmissionToRemove or LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToRemoveByOpssAdmin => LegislativeAreaReviewActionEnum.Remove,
+            LAStatus.PendingSubmissionToArchiveAndRemoveSchedule or LAStatus.PendingApprovalToArchiveAndRemoveSchedule or LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.Archive,
             _ => LegislativeAreaReviewActionEnum.Add,
         };
 
         var vm = new LegislativeAreaApproveViewModel
         {
             CabId = id,           
-            Title = "Approve legislative area",
+            Title = $"{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(reviewAction.GetEnumDescription())} legislative area",
             LegislativeArea = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
             ActiveProductSchedules = latestDocument.ActiveSchedules.Where(n => n.LegislativeArea == la.Name).ToList(),
             ReviewActionEnum = reviewAction
@@ -235,24 +236,43 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         if (UserRoleId != Roles.OPSS.Id)
         {    
             await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser, ReviewActionEnum, document.CreatedByUserGroup);
-        }
 
-        if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
-        {
-            docLa.Status = LAStatus.Approved;
+            if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
+            {
+                docLa.Status = LAStatus.ApprovedByOpssAdmin;
+            }
+            else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+            {
+                docLa.Status = LAStatus.PendingApprovalToRemoveByOpssAdmin;
+            }
+            else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive && docLa.Status == LAStatus.PendingSubmissionToArchiveAndArchiveSchedule)
+            {
+                docLa.Status = LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin;
+            }
+            else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive && docLa.Status == LAStatus.PendingSubmissionToArchiveAndRemoveSchedule)
+            {
+                docLa.Status = LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin;
+            }
         }
-        else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+        else
         {
-            docLa.Status = LAStatus.PendingApprovalToRemoveByOpssAdmin;
-        }
-        else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive && docLa.Status == LAStatus.PendingSubmissionToArchiveAndArchiveSchedule)
-        {
-            docLa.Status = LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin;
-        }
-        else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive && docLa.Status == LAStatus.PendingSubmissionToArchiveAndRemoveSchedule)
-        {
-            docLa.Status = LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin;
-        }
+            if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
+            {
+                docLa.Status = LAStatus.ApprovedByOpssAdmin;
+            }
+            else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+            {
+                docLa.Status = LAStatus.ApprovedToRemoveByOpssAdmin;
+            }
+            else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive && docLa.Status == LAStatus.PendingSubmissionToArchiveAndArchiveSchedule)
+            {
+                docLa.Status = LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin;
+            }
+            else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive && docLa.Status == LAStatus.PendingSubmissionToArchiveAndRemoveSchedule)
+            {
+                docLa.Status = LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin;
+            }
+        }        
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(currentUser, document);
     }
@@ -411,7 +431,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 DateTime.Now,
                 false,
                 declineReason,
-                true,
+                false,
                 cabId,
                 docLa.Id
                 ));

@@ -96,7 +96,7 @@ namespace UKMCAB.Web.UI.Services
         public List<DocumentLegislativeArea> GetPendingAppprovalDocumentLegislativeAreaList(Document document, ClaimsPrincipal user)
         {
             return document.DocumentLegislativeAreas.Where(dla =>
-                    (dla.Status == LAStatus.PendingApproval || dla.Status == LAStatus.PendingApprovalToRemove || dla.Status == LAStatus.PendingApprovalToArchiveAndArchiveSchedule || dla.Status == LAStatus.PendingSubmissionToArchiveAndRemoveSchedule) && user.IsInRole(dla.RoleId)).ToList();
+                    (dla.Status == LAStatus.PendingApproval || dla.Status == LAStatus.PendingApprovalToRemove || dla.Status == LAStatus.PendingApprovalToArchiveAndArchiveSchedule || dla.Status == LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin) && user.IsInRole(dla.RoleId)).ToList();
         }
     }
 }

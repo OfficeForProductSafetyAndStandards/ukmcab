@@ -42,6 +42,8 @@ namespace UKMCAB.Data.Models
         PendingApproval,       
         [Description("Approved by OPSS")]
         ApprovedByOpssAdmin,
+        [Description("Declined by OPSS")]
+        DeclinedByOpssAdmin,
         [Description("Approved by OPSS")]
         ApprovedToRemoveByOpssAdmin,
         [Description("Approved by OPSS")]
@@ -63,10 +65,7 @@ namespace UKMCAB.Data.Models
         [Description("To archive and remove product schedule")]
         PendingSubmissionToArchiveAndRemoveSchedule,
         [Description("Pending approval")]
-        PendingApprovalToArchiveAndRemoveSchedule,
-        [Description("Declined by OPSS")]
-        DeclinedByOpssAdmin,
-        PendingApprovalToArchiveAndRemoveSchedule,
+        PendingApprovalToArchiveAndRemoveSchedule,               
         [Description("Pending approval")]
         PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin,
     }

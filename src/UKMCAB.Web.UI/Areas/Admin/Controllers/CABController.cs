@@ -465,8 +465,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ShowOgdActions = showOgdActions,
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
-                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.ApprovedByOpssAdmin),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedByOpssAdmin)
+                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.ApprovedByOpssAdmin or
+                LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin
+                ),
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedByOpssAdmin or LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin)
             };
 
             //Lock Record for edit
@@ -968,7 +970,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return _legislativeAreaDetailService.GetPendingAppprovalDocumentLegislativeAreaList(document, User).Count;
             }   
 
-            return document.DocumentLegislativeAreas.Count(dla => dla.Status == LAStatus.Approved);
+            return document.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.Approved or LAStatus.ApprovedByOpssAdmin or LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin);
         }
     }
 }

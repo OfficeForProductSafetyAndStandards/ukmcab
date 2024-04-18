@@ -8,7 +8,7 @@
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
-                <govuk-back-link asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" />
+                <govuk-back-link asp-area="admin" asp-controller="LegislativeAreaApprove" asp-action="approvallist" asp-route-id="@Model.CabId" />                
             </div>
         </div>
     </div>
@@ -32,7 +32,14 @@
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                 <strong class="govuk-warning-text__text">
                     <span class="govuk-visually-hidden">Warning</span>
-                    Approving this legislative area will approve the details shown below.
+                    @if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
+                    {
+                        @:Approving this legislative area will approve the details shown below.
+                    }
+                    else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+                    {
+                        @:Removing this legislative area will remove the details shown below.
+                    }
                 </strong>
             </div>
             <partial name="~/Areas/Admin/views/CAB/LegislativeArea/Partials/_Summary.cshtml" model="Model.LegislativeArea" />
@@ -42,7 +49,14 @@
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-visually-hidden">Warning</span>
-                        Approving this legislative area will approve the product schedules associated with it.
+                        @if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
+                        {
+                            @:Approving this legislative area will approve the product schedules associated with it.
+                        }
+                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+                        {
+                            @:The product schedules below are linked to this legislative area and will be removed.
+                        }                        
                     </strong>
                 </div>
                 <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
