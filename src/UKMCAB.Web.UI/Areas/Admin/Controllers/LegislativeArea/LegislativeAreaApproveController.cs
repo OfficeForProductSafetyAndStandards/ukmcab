@@ -230,9 +230,6 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var cabId = new Guid(document.CABId);
         await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId);
         TempData[Constants.ApprovedLA] = true;
-
-        // await MarkRequestTaskAsCompleteAsync(docLa.Id, approver);
-
         if (UserRoleId != Roles.OPSS.Id)
         {    
             await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser, ReviewActionEnum, document.CreatedByUserGroup);
