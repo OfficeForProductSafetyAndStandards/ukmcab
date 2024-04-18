@@ -140,6 +140,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
             return await list.Where(x => x.SubStatus == subStatus).CountAsync();
         }
+        
         private async Task<List<T>> Query<T>(Container container, Expression<Func<T, bool>> predicate)
         {
             var query = container.GetItemLinqQueryable<T>().Where(predicate).ToFeedIterator();
@@ -152,6 +153,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
             return list;
         }
+        
         private Version ParseVersion(string version)
         {
             return Version.Parse(version.Replace("-",".").Replace("v",string.Empty));
