@@ -156,7 +156,12 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         
         private Version ParseVersion(string version)
         {
-            return Version.Parse(version.Replace("-",".").Replace("v",string.Empty));
+            if (!string.IsNullOrWhiteSpace(version))
+            {
+                return Version.Parse(version.Replace("-", ".").Replace("v", string.Empty));
+            }
+
+            return new Version(DataConstants.Version.Number);
         }
 
     }
