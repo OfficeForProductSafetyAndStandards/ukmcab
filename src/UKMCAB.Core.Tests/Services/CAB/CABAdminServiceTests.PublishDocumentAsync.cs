@@ -22,7 +22,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             }).ToList();
 
         [Test]
-        public async Task DocumentFoundAndNotCreatedByOPSS_PublishDocumentAsync_LAsNotApprovedByOPSSAdminRemoved()
+        public async Task DocumentNotCreatedByOPSS_PublishDocumentAsync_LAsNotApprovedByOPSSAdminRemoved()
         {
             // Arrange
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
@@ -41,7 +41,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
         }
 
         [Test]
-        public async Task DocumentFoundAndCreatedByOPSS_PublishDocumentAsync_AllLAsPublished()
+        public async Task DocumentCreatedByOPSS_PublishDocumentAsync_AllLAsPublished()
         {
             // Arrange
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
