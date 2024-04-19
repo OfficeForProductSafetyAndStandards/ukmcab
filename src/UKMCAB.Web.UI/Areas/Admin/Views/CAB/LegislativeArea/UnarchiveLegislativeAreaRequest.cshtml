@@ -16,7 +16,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <span class="govuk-caption-m">Edit a CAB</span>
-        <h1 class="govuk-heading-l">@Model.Title</h1>
+        <h1 class="govuk-heading-l">Unarchive legislative area</h1>
     </div>
 </div>
 
@@ -68,7 +68,7 @@
                     </tbody>
                 </table>
             }
-            <div class="govuk-grid-column-full govuk-button-group govuk-!-margin-top-4">
+            <div class="govuk-button-group govuk-!-margin-top-4">
                 <govuk-button-link asp-route="@UnarchiveLegislativeAreaRequestController.Routes.UnarchiveLegislativeAreaRequestReason" asp-route-id="@Model.CabId" asp-route-legislativeAreaId="@Model.LegislativeArea.LegislativeAreaId">Continue</govuk-button-link>
                 <a asp-area="Admin" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>                       
             </div>

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Infrastructure.Cache;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
 
@@ -44,7 +45,7 @@ public class UnarchiveLegislativeAreaRequestController: UI.Controllers.Controlle
         var vm = new UnarchiveLegislativeAreaRequestViewModel
         {
             CabId = id,
-            Title = legislativeArea.Name,
+            LegislativeArea =  await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId)
         };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/UnarchiveLegislativeAreaRequest.cshtml", vm);
     }
