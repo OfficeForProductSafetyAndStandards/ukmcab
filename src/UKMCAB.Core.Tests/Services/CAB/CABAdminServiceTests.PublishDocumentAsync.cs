@@ -14,12 +14,33 @@ namespace UKMCAB.Core.Tests.Services.CAB
     [TestFixture]
     public partial class CABAdminServiceTests
     {
-        private List<DocumentLegislativeArea> DocumentLegislativeAreas() => Enum.GetValues(typeof(LAStatus)).Cast<LAStatus>()
-            .Where(s => s != LAStatus.Published)
-            .Select(s => new DocumentLegislativeArea
+        private (List<DocumentLegislativeArea>, List<DocumentScopeOfAppointment>, List<FileUpload>) CreateLAsAndScopeOfAppointments()
+        {
+            var legislativeAreas = new List<DocumentLegislativeArea>();
+            var scopeOfAppointments = new List<DocumentScopeOfAppointment>();
+            var schedules = new List<FileUpload>();
+
+            foreach (var status in Enum.GetValues(typeof(LAStatus)).Cast<LAStatus>().Where(s => s != LAStatus.Published))
             {
-                Status = s,
-            }).ToList();
+                var legislativeAreaId = Guid.NewGuid();
+                legislativeAreas.Add(new DocumentLegislativeArea
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                    LegislativeAreaName = legislativeAreaId.ToString(),
+                    Status = status,
+                });
+                scopeOfAppointments.Add(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                });
+                schedules.Add(new FileUpload
+                {
+                    LegislativeArea = legislativeAreaId.ToString(),
+                });
+            }
+
+            return (legislativeAreas, scopeOfAppointments, schedules);
+        }
 
         [Test]
         public async Task DocumentNotCreatedByOPSS_PublishDocumentAsync_LAsNotApprovedByOPSSAdminRemoved()
@@ -27,17 +48,23 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Arrange
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
 
+            (var legislativeAreas, var scopeOfAppointments, var schedules) = CreateLAsAndScopeOfAppointments();
+
             // Act
-            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object, 
+            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
                 new Document
-                { 
-                    StatusValue = Status.Draft, 
-                    DocumentLegislativeAreas = DocumentLegislativeAreas()
+                {
+                    StatusValue = Status.Draft,
+                    DocumentLegislativeAreas = legislativeAreas,
+                    ScopeOfAppointments = scopeOfAppointments,
+                    Schedules = schedules
                 });
 
             // Assert
             Assert.AreEqual(1, result.DocumentLegislativeAreas.Count);
             Assert.AreEqual(LAStatus.Published, result.DocumentLegislativeAreas.First().Status);
+            Assert.AreEqual(1, result.ScopeOfAppointments.Count);
+            Assert.AreEqual(1, result.Schedules?.Count);
         }
 
         [Test]
@@ -46,17 +73,20 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Arrange
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
 
+            (var legislativeAreas, var scopeOfAppointments, var schedules) = CreateLAsAndScopeOfAppointments();
+
             // Act
             var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
                 new Document
                 {
                     CreatedByUserGroup = Roles.OPSS.Id,
                     StatusValue = Status.Draft,
-                    DocumentLegislativeAreas = DocumentLegislativeAreas()
+                    DocumentLegislativeAreas = legislativeAreas,
+                    ScopeOfAppointments = scopeOfAppointments,
                 });
 
             // Assert
-            Assert.AreEqual(13, result.DocumentLegislativeAreas.Count);
+            Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
             Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
         }
     }

@@ -4,8 +4,9 @@
 @using UKMCAB.Core.Security;
 @using UKMCAB.Data.Models
 @using UKMCAB.Data
-@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
+
 @{
     var returnUrl = Model.ReturnUrl == "/" ? "/?" : Model.ReturnUrl;
     var appointmentDate = Model.CabDetailsViewModel?.AppointmentDate.ToStringBeisDateFormat();
