@@ -1,46 +1,21 @@
-﻿using Microsoft.AspNetCore.Html;
-using UKMCAB.Web.UI.Models.ViewModels.Shared;
+﻿using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABManagementViewModel : ILayoutModel
     {
-        public string? Title => "CAB management";
-        public string? Filter { get; set; }
-        public string? Sort { get; set; }
+        public string? Title => "Draft management";
+        public string TabName { get; set; }
+        public string SortField { get; set; }
+        public string SortDirection { get; set; }
         public List<CABManagementItemViewModel>? CABManagementItems { get; set; }
-        public int PageNumber { get; set; } = 1;
         public PaginationViewModel? Pagination { get; set; }
+        public string RoleId { get; set; } = string.Empty;
 
-        public HtmlString GetAriaSort(string sortName)
-        {
-            if (Sort != null && Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return Sort.EndsWith("desc") ? new HtmlString("descending") : new HtmlString("ascending");
-            }
-
-            return new HtmlString("none");
-        }
-
-        public HtmlString GetSortQueryValue(string sortName)
-        {
-            if (Sort != null && Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return Sort.EndsWith("desc") ? new HtmlString(sortName) : new HtmlString($"{sortName}-desc");
-            }
-
-            return new HtmlString(sortName);
-        }
-
-        public HtmlString GetSortDescription(string sortName, string sortLabel)
-        {
-            if (Sort.StartsWith(sortName, StringComparison.InvariantCultureIgnoreCase))
-            {
-                return Sort.EndsWith("desc") ? new HtmlString($"{sortLabel}<span class=\"govuk-visually-hidden\">sort the results by {sortLabel} ascending</span>") : new HtmlString($"{sortLabel}<span class=\"govuk-visually-hidden\">sort the results by {sortLabel} descending</span>");
-            }
-
-            return new HtmlString($"{sortLabel}<span class=\"govuk-visually-hidden\">sort the results by {sortLabel} ascending</span>");
-
-        }
+        public int AllCount { get; set; }
+        public int DraftCount { get; set; }
+        public int PendingPublishCount { get; set; }
+        public int PendingUnarchiveCount { get; set; }
+        public int PendingArchiveCount { get; set; }
     }
 }

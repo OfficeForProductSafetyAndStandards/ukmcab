@@ -1,14 +1,13 @@
 ﻿@using UKMCAB.Core.Security
 @using UKMCAB.Web.UI.Extensions
 @using UKMCAB.Data.Models
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABManagementViewModel
 @{
-    ViewData["nav"] = "admin";
-    var baseSortPath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
-    baseSortPath += baseSortPath.Contains("?") ? "&sort=" : "?sort=";
-
     var returnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
 }
+
+<govuk-back-link asp-controller="ServiceManagement" asp-action="ServiceManagement" />
 
 @if (TempData[Constants.TempDraftKey] != null)
 {
@@ -22,104 +21,70 @@
 }
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-l">CAB management</h1>
-    </div>
-</div>
-<div class="govuk-grid-row">
-    <form id="cab-management-form" method="get">
-        <div id="admin-cab-management">
-            <div id="cab-management-filter-container" class="govuk-grid-column-one-half">
-                <div id="cab-management-filter" class="govuk-form-group">
-                    <label class="govuk-label" asp-for="Filter">
-                        Showing
-                    </label>
-                    <select class="govuk-select cab-management-options" asp-for="Filter">
-                        <option value="">All</option>
-                        <option value="draft">Draft</option>
-                        <option value="archived">Archived</option>
-                    </select>
-                </div>
+    <div class="govuk-grid-column-full">
+        <div class="desktop display-flex-space-between">
+            <h1 class="govuk-heading-l">@Model.Title</h1>
 
-                <div id="mobile-sort" class="govuk-form-group">
-                    <label class="govuk-label" asp-for="Sort">
-                        Sort by
-                    </label>
-                    <a href="@(baseSortPath + Model.GetSortQueryValue(Model.Sort.Replace("-desc", string.Empty)))" aria-sort="@(Model.Sort.EndsWith("-desc")? "descending" : "ascending")" class="cab-manage-sort" role="button"></a>
-                    <select class="govuk-select cab-management-options" asp-for="Sort">
-                        <option value="name">CAB name</option>
-                        <option value="number">CAB number</option>
-                        <option value="lastupd-desc">Last updated</option>
-                        <option value="status">Status</option>
-                    </select>
-                </div>
-
-                <div id="cab-management-filters-submit" class="govuk-form-group">
-                    <button class="govuk-button" type="submit">Apply</button>
-                </div>
-            </div>
             @if (User.HasClaim(Claims.CabCreateDraft, string.Empty))
             {
-                <div id="cab-management-create-container" class="govuk-grid-column-one-half">
+                <div id="cab-management-create-container" class="">
                     <a class="govuk-button" asp-route="@CABController.Routes.CreateNewCab" data-module="govuk-button">
                         Create a CAB
                     </a>
                 </div>
-            }            
-            <div id="cab-management-list-container" class="govuk-grid-column-full govuk-body">
-                <table class="govuk-table ukmcab-table">
-                    <caption class="govuk-visually-hidden">List of CABs in draft or archive status</caption>
-                    <thead class="govuk-table__head">
-                        <tr class="govuk-table__row">
-                            @if (Model.CABManagementItems.Any())
+            }
+        </div>
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-body govuk-grid-column-full">
+        <div class="govuk-tabs draft-tabs" data-module="govuk-tabs">
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.All, "govuk-tabs__list-item--selected")">
+                    <a asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.All" class="tab-item-title">All (@Model.AllCount)</a>
+                </li>
+                <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.Draft, "govuk-tabs__list-item--selected")">
+                    <a asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.Draft" class="tab-item-title">Draft (@Model.DraftCount)</a>
+                </li>
+                <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.PendingPublish, "govuk-tabs__list-item--selected")">
+                    <a asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingPublish" class="tab-item-title">Pending publish (@Model.PendingPublishCount)</a>
+                </li>
+                <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.PendingUnarchive, "govuk-tabs__list-item--selected")">
+                    <a asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingUnarchive" class="tab-item-title">Pending unarchive (@Model.PendingUnarchiveCount)</a>
+                </li>
+                <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.PendingArchive, "govuk-tabs__list-item--selected")">
+                    <a asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingArchive" class="tab-item-title">Pending archive (@Model.PendingArchiveCount)</a>
+                </li>
+            </ul>
+
+            <div id="sort-form-group">
+                <form method="get" id="sortForm" class="desktop-no-display">
+                    <div id="mobile-sort" class="govuk-form-group">
+                        <label class="govuk-label" asp-for="@Model.SortField">
+                            Sort by
+                        </label>
+                        <select class="govuk-select sort-option" asp-for="@Model.SortField" name="sf" id="sortOption">
+                            <option value="@nameof(CABManagementItemViewModel.Name)">CAB name</option>
+                            @if (Model.RoleId == Roles.UKAS.Id)
                             {
-                                <th scope="col" class="govuk-table__header width-two-fifth"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("name"))" aria-sort="@Model.GetAriaSort("name")">@Model.GetSortDescription("name", "CAB name")</a></th>
-                                <th scope="col" class="govuk-table__header width-one-fifth"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("number"))" aria-sort="@Model.GetAriaSort("number")">@Model.GetSortDescription("number", "CAB number")</a></th>
-                                <th scope="col" class="govuk-table__header width-one-fifth"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("lastupd"))" aria-sort="@Model.GetAriaSort("lastupd")">@Model.GetSortDescription("lastupd", "Last updated")</a></th>
-                                <th scope="col" class="govuk-table__header width-one-tenth"><a class="cab-manage-sort" role="button" href="@(baseSortPath + Model.GetSortQueryValue("status"))" aria-sort="@Model.GetAriaSort("status")">@Model.GetSortDescription("status", "Status")</a></th>
+                                <option value="@nameof(CABManagementItemViewModel.UKASReference)">UKAS reference</option>
                             }
-                        </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                        @if (Model.CABManagementItems.Any())
-                        {
-                            @foreach (var cab in Model.CABManagementItems)
+                            else
                             {
-                                <tr class="govuk-table__row">
-                                    <td class="govuk-table__cell">
-                                        <label aria-hidden="true">Cab name</label>
-                                        @if (cab.Status == Status.Archived.ToString())
-                                        {
-                                            <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" asp-route-returnUrl="@returnUrl" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
-                                        }
-                                        else
-                                        {
-                                            <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
-                                        }
-                                    </td>
-                                    <td class="govuk-table__cell"><label aria-hidden="true">Cab reference</label>@(UKMCAB.Core.Domain.CabNumberVisibility.Display(cab.CabNumberVisibility, User, cab.CABNumber) ?? Constants.NotProvided)</td>
-                                    <td class="govuk-table__cell"><label aria-hidden="true">Last updated</label>@cab.LastUpdated.ToString("dd/MM/yyyy")</td>
-                                    <td class="govuk-table__cell"><label aria-hidden="true">Status</label>@cab.Status</td>
-                                </tr>
+                                <option value="@nameof(CABManagementItemViewModel.CABNumber)">CAB number</option>
                             }
-                        }
-                        else
-                        {
-                            <tr class="govuk-table__row">
-                                <td>
-                                    <p class="govuk-body">There are currently no items in your work queue</p>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
-                @if (Model.CABManagementItems.Any())
-                {
-                    <div id="cab-management-pagination-container">
-                        <partial name="Partials/_Pagination" model="Model.Pagination" />
+                            <option value="@nameof(CABManagementItemViewModel.CABNumber)">CAB number</option>
+                            <option value="@nameof(CABManagementItemViewModel.LastUpdated)">Last updated</option>
+                            <option value="@nameof(CABManagementItemViewModel.Status)">Status</option>
+                        </select>
+                        <input type="hidden" name="sd" id="sortDirection" value="@Model.SortDirection" />
                     </div>
-                }
+                </form>
+            </div>
+
+            <div class="govuk-tabs__panel">
+                <partial name="_CabsTable" />
             </div>
         </div>
-    </form>
+    </div>
 </div>

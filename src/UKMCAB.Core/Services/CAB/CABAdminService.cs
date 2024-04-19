@@ -86,18 +86,19 @@ namespace UKMCAB.Core.Services.CAB
         {
             if (userRole == Roles.UKAS.Id)
             {
-                return await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
-                                                                  d.StatusValue == Status.Draft) ||
-                                                                 d.StatusValue == Status.Archived);
-            }
-            if (!string.IsNullOrWhiteSpace(userRole))
-            {
-                return await _cabRepository.Query<Document>(d =>
-                d.StatusValue == Status.Draft);
+                return await _cabRepository.Query<Document>(d => d.CreatedByUserGroup == userRole && 
+                     d.StatusValue == Status.Draft ||
+                     d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToUnpublish ||
+                     d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToArchive ||
+                     d.StatusValue == Status.Archived && d.SubStatus == SubStatus.PendingApprovalToUnarchive ||
+                     d.StatusValue == Status.Archived && d.SubStatus == SubStatus.PendingApprovalToUnarchivePublish);
             }
 
-            return await _cabRepository.Query<Document>(d =>
-                d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
+            return await _cabRepository.Query<Document>(d => d.StatusValue == Status.Draft ||
+                     d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToUnpublish ||
+                     d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToArchive ||
+                     d.StatusValue == Status.Archived && d.SubStatus == SubStatus.PendingApprovalToUnarchive ||
+                     d.StatusValue == Status.Archived && d.SubStatus == SubStatus.PendingApprovalToUnarchivePublish);
         }
 
         public async Task<Document?> GetLatestDocumentAsync(string cabId)

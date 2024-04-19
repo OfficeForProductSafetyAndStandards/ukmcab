@@ -1,19 +1,17 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
-using UKMCAB.Data;
+using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
     [Area("admin"), Route("admin"), Authorize(Policy = Policies.CabManagement)]
-    public class CabManagementController : Controller
+    public class CabManagementController : UI.Controllers.ControllerBase
     {
         private readonly ICABAdminService _cabAdminService;
-        private readonly IUserService _userService;
         private readonly IEditLockService _editLockService;
 
         public static class Routes
@@ -21,93 +19,131 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             public const string CABManagement = "admin.cab-management";
         }
 
-        public CabManagementController(ICABAdminService cabAdminService, IUserService userService, IEditLockService editLockService)
+        public static class TabNames
+        {
+            public const string All = "all";
+            public const string Draft = "draft";
+            public const string PendingPublish = "pending-publish";
+            public const string PendingUnarchive = "pending-unarchive";
+            public const string PendingArchive = "pending-archive";
+        }
+
+        public CabManagementController(ICABAdminService cabAdminService, IUserService userService, IEditLockService editLockService) :
+            base(userService)
         {
             _cabAdminService = cabAdminService;
-            _userService = userService;
             _editLockService = editLockService;
         }
 
         [HttpGet, Route("cab-management", Name = Routes.CABManagement)]
-        public async Task<IActionResult> CABManagement(CABManagementViewModel model, [FromQuery] string? unlockCab)
+        public async Task<IActionResult> CABManagement([FromQuery] string? unlockCab, string? tabName = TabNames.All, int pageNumber = 1, 
+            [FromQuery(Name = "sf")] string? sortField = null, [FromQuery(Name = "sd")] string? sortDirection = null)
         {
             if (!string.IsNullOrWhiteSpace(unlockCab))
             {
                 await _editLockService.RemoveEditLockForCabAsync(unlockCab);
             }
-            if (string.IsNullOrEmpty(model.Sort))
+
+            var role = CurrentUser.Role == Roles.OPSS.Id ? null : CurrentUser.Role;
+            var allDraftCabs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
+            var draftCabs = allDraftCabs.Where(cab => cab.SubStatus == SubStatus.None).ToList();
+            var pendingPublishCabs = allDraftCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToPublish).ToList();
+            var pendingUnarchiveCabs = allDraftCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToUnarchive).ToList();
+            var pendingArchiveCabs = allDraftCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToArchive).ToList();
+
+            var model = new CABManagementViewModel
             {
-                model.Sort = "lastupd-desc";
-            }
-
-            var userAccount =
-                        await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-                            .Value) ?? throw new InvalidOperationException("User account not found");
-            var role = userAccount.Role == Roles.OPSS.Id ? null : userAccount.Role;
-            var cabManagementItems = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
-            model.CABManagementItems = cabManagementItems.Any()
-                ? cabManagementItems.Select(cmi => new CABManagementItemViewModel
+                CABManagementItems = allDraftCabs.Select(d => new CABManagementItemViewModel(d)).ToList(),
+                AllCount = allDraftCabs.Count(),
+                DraftCount = draftCabs.Count(),
+                PendingPublishCount = pendingPublishCabs.Count(),
+                PendingUnarchiveCount = pendingUnarchiveCabs.Count(),
+                PendingArchiveCount = pendingArchiveCabs.Count(),
+                Pagination = new PaginationViewModel
                 {
-                    Id = cmi.CABId.ToString(),
-                    Name = cmi.Name,
-                    URLSlug = cmi.URLSlug,
-                    CABNumber = cmi.CABNumber,
-                    CabNumberVisibility = cmi.CabNumberVisibility,
-                    Status = cmi.Status,
-                    LastUpdated = cmi.LastUpdatedDate
-                }).ToList()
-                : new List<CABManagementItemViewModel>();
+                    PageNumber = pageNumber,
+                    ResultType = string.Empty,
+                    ResultsPerPage = Constants.RowsPerPage
+                },
+                TabName = tabName,
+                SortField = sortField ?? nameof(CABManagementItemViewModel.LastUpdated),
+                SortDirection = sortDirection ?? SortDirectionHelper.Descending,
+                RoleId = UserRoleId,
+            };
 
-            FilterSortAndPaginateItems(model);
+            switch(tabName)
+            {
+                case TabNames.All:
+                    model.CABManagementItems = allDraftCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    break;
+                case TabNames.Draft:
+                    model.CABManagementItems = draftCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    break;
+                case TabNames.PendingPublish:
+                    model.CABManagementItems = pendingPublishCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    break;
+                case TabNames.PendingUnarchive:
+                    model.CABManagementItems = pendingUnarchiveCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    break;
+                case TabNames.PendingArchive:
+                    model.CABManagementItems = pendingArchiveCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    break;
+            }
+            model.Pagination.Total = model.CABManagementItems.Count();
+
+            SortAndPaginateItems(model);
 
             return View(model);
         }
-        private void FilterSortAndPaginateItems(CABManagementViewModel model)
+
+        private void SortAndPaginateItems(CABManagementViewModel model)
         {
-            if (!string.IsNullOrEmpty(model.Filter))
+            switch (model.SortField)
             {
-                model.CABManagementItems = model.CABManagementItems.Where(wqi =>
-                    model.Filter.Equals(wqi.Status, StringComparison.InvariantCultureIgnoreCase)).ToList();
-            }
-            switch (model.Sort.ToLower())
-            {
-                case "status-desc":
-                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList();
+                case nameof(CABManagementItemViewModel.Status):
+                    model.CABManagementItems = model.SortDirection == SortDirectionHelper.Ascending ? 
+                        model.CABManagementItems.OrderBy(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList() :
+                        model.CABManagementItems.OrderByDescending(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
-                case "status":
-                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList();
+                
+                case nameof(CABManagementItemViewModel.CABNumber):
+                    model.CABManagementItems = model.SortDirection == SortDirectionHelper.Ascending ?
+                        model.CABManagementItems.OrderBy(cmi => cmi.CABNumber).ThenByDescending(cmi => cmi.LastUpdated).ToList() :
+                        model.CABManagementItems.OrderByDescending(cmi => cmi.CABNumber).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
-                case "number-desc":
-                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.CABNumber).ThenByDescending(cmi => cmi.LastUpdated).ToList();
+
+                case nameof(CABManagementItemViewModel.UKASReference):
+                    model.CABManagementItems = model.SortDirection == SortDirectionHelper.Ascending ?
+                        model.CABManagementItems.OrderBy(cmi => cmi.UKASReference).ThenByDescending(cmi => cmi.LastUpdated).ToList() :
+                        model.CABManagementItems.OrderByDescending(cmi => cmi.UKASReference).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
-                case "number":
-                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.CABNumber).ThenByDescending(cmi => cmi.LastUpdated).ToList();
+
+                case nameof(CABManagementItemViewModel.Name):
+                    model.CABManagementItems = model.SortDirection == SortDirectionHelper.Ascending ?
+                        model.CABManagementItems.OrderBy(cmi => cmi.Name).ThenByDescending(cmi => cmi.LastUpdated).ToList() :
+                        model.CABManagementItems.OrderByDescending(cmi => cmi.Name).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
-                case "name-desc":
-                    model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.Name).ThenByDescending(cmi => cmi.LastUpdated).ToList();
+                
+                case nameof(CABManagementItemViewModel.LastUpdated):
+                    model.CABManagementItems = model.SortDirection == SortDirectionHelper.Ascending ?
+                        model.CABManagementItems.OrderBy(cmi => cmi.LastUpdated).ThenBy(cmi => cmi.CABNumber).ToList() :
+                        model.CABManagementItems.OrderByDescending(cmi => cmi.LastUpdated).ThenBy(cmi => cmi.CABNumber).ToList();
                     break;
-                case "name":
-                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.Name).ThenByDescending(cmi => cmi.LastUpdated).ToList();
+
+                case nameof(CABManagementItemViewModel.UserGroup):
+                    model.CABManagementItems = model.SortDirection == SortDirectionHelper.Ascending ?
+                        model.CABManagementItems.OrderBy(cmi => cmi.UserGroup).ThenByDescending(cmi => cmi.LastUpdated).ToList() :
+                        model.CABManagementItems.OrderByDescending(cmi => cmi.UserGroup).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
-                case "lastupd":
-                    model.CABManagementItems = model.CABManagementItems.OrderBy(cmi => cmi.LastUpdated).ThenBy(cmi => cmi.CABNumber).ToList();
-                    break;
-                case "lastupd-desc":
+
                 default:
                     model.CABManagementItems = model.CABManagementItems.OrderByDescending(cmi => cmi.LastUpdated).ThenBy(cmi => cmi.CABNumber).ToList();
                     break;
             }
-            model.Pagination = new PaginationViewModel
-            {
-                Total = model.CABManagementItems.Count,
-                PageNumber = model.PageNumber,
-                ResultsPerPage = DataConstants.Search.CABManagementQueueResultsPerPage,
-                ResultType = "items"
-            };
 
             if (model.Pagination.Total > 10)
             {
-                var skip = (model.PageNumber - 1) * 10; 
+                var skip = (model.Pagination.PageNumber - 1) * 10; 
                 model.CABManagementItems = model.CABManagementItems.Skip(skip).Take(10).ToList();
             }
         }

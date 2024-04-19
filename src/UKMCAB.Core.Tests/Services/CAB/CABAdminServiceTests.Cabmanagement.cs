@@ -80,7 +80,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Assert
             Assert.AreEqual(ukasResults[0].CABId, expectedResultsCABModel[0].CABId);
             Assert.AreEqual(ukasResults[1].CABId, expectedResultsCABModel[1].CABId);
-            Assert.AreEqual(ukasResults[2].CABId, expectedResultsCABModel[2].CABId);
 
             Assert.AreNotEqual(ukasResults[0].CABId, expectedOtherCABModel[0].CABId);
        
