@@ -322,9 +322,7 @@ namespace UKMCAB.Core.Services.CAB
             else
             {
                 latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.ApprovedByOpssAdmin).ForEach(la => la.Status = LAStatus.Published);
-
-                // remove LA approved to remove by OPSS Admin
-                await RemoveLegislativeAreasApprovedByOPSSAdmin(latestDocument);
+                await RemoveLegislativeAreasNotApprovedByOPSS(latestDocument);
             }
 
             latestDocument.StatusValue = Status.Published;
@@ -723,7 +721,7 @@ namespace UKMCAB.Core.Services.CAB
             }
         }
 
-        private async Task RemoveLegislativeAreasApprovedByOPSSAdmin(Document document)
+        private async Task RemoveLegislativeAreasNotApprovedByOPSS(Document document)
         {
             var documentLAList = document.DocumentLegislativeAreas.Where(la => la.Status != LAStatus.Published).ToList();
 
@@ -748,6 +746,7 @@ namespace UKMCAB.Core.Services.CAB
                     foreach (var schedule in schedules)
                     {
                         // check if same blob not used by any other schedule, delete it if not
+                        // only remove blobs for LAs approved to remove by OPSS Admin
                         if (documentLegislativeArea.Status == LAStatus.ApprovedToRemoveByOpssAdmin && 
                             document?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
                         {
