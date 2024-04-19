@@ -2,7 +2,7 @@
 
 public record ApprovalListViewModel : ILayoutModel
 {
-    public string? Title { get; set; } = "Approve legislative areas";
+    public string? Title { get; set; } = "Review legislative areas";
 
     public Guid? CabId { get; set; }
 
