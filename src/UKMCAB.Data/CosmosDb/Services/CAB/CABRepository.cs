@@ -88,6 +88,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         public async Task<Document> CreateAsync(Document document, DateTime lastUpdatedDateTime)
         {
             document.id = Guid.NewGuid().ToString();
+            document.Version = DataConstants.Version.Number;
             document.LastUpdatedDate = lastUpdatedDateTime;
             var response = await _container.CreateItemAsync(document);
             if (response.StatusCode == HttpStatusCode.Created)
@@ -156,12 +157,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         
         private Version ParseVersion(string version)
         {
-            if (!string.IsNullOrWhiteSpace(version))
-            {
-                return Version.Parse(version.Replace("-", ".").Replace("v", string.Empty));
-            }
-
-            return new Version(DataConstants.Version.Number);
+            return Version.TryParse(version.Replace("-", ".").Replace("v", string.Empty), out var semanticVersion) ? semanticVersion : Version.Parse(DataConstants.Version.Number);
         }
 
     }
