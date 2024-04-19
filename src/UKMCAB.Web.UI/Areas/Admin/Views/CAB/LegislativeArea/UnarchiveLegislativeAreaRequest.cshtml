@@ -1,0 +1,77 @@
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
+@using UKMCAB.Data
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.UnarchiveLegislativeAreaRequestViewModel
+
+@section BackButton
+{
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
+                BACK link                
+            </div>
+        </div>
+    </div>
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">Edit a CAB</span>
+        <h1 class="govuk-heading-l">@Model.Title</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">       
+        <form id="legislativeForm" method="post" novalidate>
+            <input type="hidden" asp-for="Title" />
+            <input type="hidden" asp-for="CabId" />
+            <h2 class="govuk-heading-s">You have selected: </h2>
+            <p class="govuk-body">@Model.LegislativeArea.Name</p>
+            <div class="govuk-warning-text">
+                <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                <strong class="govuk-warning-text__text">
+                    <span class="govuk-visually-hidden">Warning</span>
+                    Unarchiving this legislative area will unarchive the details shown below.
+                </strong>
+            </div>
+            <partial name="~/Areas/Admin/views/CAB/LegislativeArea/Partials/_Summary.cshtml" model="Model.LegislativeArea" />
+            @if (Model.ActiveProductSchedules.Any())
+            {
+                <div class="govuk-warning-text govuk-!-margin-top-4">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-visually-hidden">Warning</span>
+                            Unarchiving this legislative area will unarchive the product schedules associated with it.
+                    </strong>
+                </div>
+                <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Title</th>
+                            <th scope="col" class="govuk-table__header">Filename</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
+                        @foreach (var productSchedule in Model.ActiveProductSchedules)
+                        {
+                            <tr class="govuk-table__row">
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Title</label>
+                                    @productSchedule.Label
+                                </td>
+                                <td class="govuk-table__cell">
+                                    <label aria-hidden="true">Filename</label>
+                                    <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CabId" asp-route-file="@productSchedule.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@productSchedule.Label</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            <div class="govuk-grid-column-full govuk-button-group govuk-!-margin-top-4">
+                <govuk-button-link asp-route="@UnarchiveLegislativeAreaRequestController.Routes.UnarchiveLegislativeAreaRequestReason" asp-route-id="@Model.CabId" asp-route-legislativeAreaId="@Model.LegislativeArea.LegislativeAreaId">Continue</govuk-button-link>
+                <a asp-area="Admin" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>                       
+            </div>
+        </form>
+    </div>
+</div>
