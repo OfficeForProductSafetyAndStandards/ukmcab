@@ -41,7 +41,6 @@ public static class ClaimsIssuer
             return new Claim[]
             {
                 new(Claims.LegislativeAreaApprove, role), // Approve/Decline Legislative Area
-                new(Claims.CabManagement, string.Empty) // can manage all cabs
             };
         }
 

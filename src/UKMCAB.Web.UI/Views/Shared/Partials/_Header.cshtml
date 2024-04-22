@@ -62,10 +62,7 @@
                     @if (User.Identity.IsAuthenticated)
                     {
                         <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "service-management", "govuk-header__navigation-item--active")">
-                            @if (User.HasClaim(Claims.UserManagement, string.Empty) || User.HasClaim(Claims.CabManagement, string.Empty))
-                            {
-                                <a asp-route="@ServiceManagementController.Routes.ServiceManagement" class="govuk-header__link">Home</a>
-                            }
+                            <a asp-route="@ServiceManagementController.Routes.ServiceManagement" class="govuk-header__link">Home</a>
                         </li>
                     }
                     <li class="govuk-header__navigation-item @Html.Conditional(ViewData["nav"] == "search", "govuk-header__navigation-item--active")">

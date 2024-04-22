@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Core.Domain;
+using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Services.CAB
@@ -15,11 +16,11 @@ namespace UKMCAB.Core.Services.CAB
         Task<List<Document>> FindAllDocumentsByCABIdAsync(string id);
 
         /// <summary>
-        /// Find all Draft and Archived documents restricted by user role
+        /// Find all CAB documents for the CAB Management screen, restricted by user role.
         /// </summary>
         /// <param name="userRole"></param>
         /// <returns>If null userRole returns all documents</returns>
-        Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string userRole);
+        Task<CabManagementDetailsModel> FindAllCABManagementQueueDocumentsForUserRole(string userRole);
 
         Task<Document?> GetLatestDocumentAsync(string cabId);
 

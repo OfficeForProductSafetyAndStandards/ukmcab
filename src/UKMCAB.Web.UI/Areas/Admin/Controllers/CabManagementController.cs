@@ -23,8 +23,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             public const string All = "all";
             public const string Draft = "draft";
+            public const string PendingDraft = "pending-draft";
             public const string PendingPublish = "pending-publish";
-            public const string PendingUnarchive = "pending-unarchive";
             public const string PendingArchive = "pending-archive";
         }
 
@@ -45,20 +45,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             var role = CurrentUser.Role == Roles.OPSS.Id ? null : CurrentUser.Role;
-            var allDraftCabs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
-            var draftCabs = allDraftCabs.Where(cab => cab.SubStatus == SubStatus.None).ToList();
-            var pendingPublishCabs = allDraftCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToPublish).ToList();
-            var pendingUnarchiveCabs = allDraftCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToUnarchive).ToList();
-            var pendingArchiveCabs = allDraftCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToArchive).ToList();
+            var cabs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
 
             var model = new CABManagementViewModel
             {
-                CABManagementItems = allDraftCabs.Select(d => new CABManagementItemViewModel(d)).ToList(),
-                AllCount = allDraftCabs.Count(),
-                DraftCount = draftCabs.Count(),
-                PendingPublishCount = pendingPublishCabs.Count(),
-                PendingUnarchiveCount = pendingUnarchiveCabs.Count(),
-                PendingArchiveCount = pendingArchiveCabs.Count(),
+                AllCount = cabs.AllCabs.Count(),
+                DraftCount = cabs.DraftCabs.Count(),
+                PendingDraftCount = cabs.PendingDraftCabs.Count(),
+                PendingPublishCount = cabs.PendingPublishCabs.Count(),
+                PendingArchiveCount = cabs.PendingArchiveCabs.Count(),
                 Pagination = new PaginationViewModel
                 {
                     PageNumber = pageNumber,
@@ -74,19 +69,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             switch(tabName)
             {
                 case TabNames.All:
-                    model.CABManagementItems = allDraftCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    model.CABManagementItems = cabs.AllCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
                     break;
                 case TabNames.Draft:
-                    model.CABManagementItems = draftCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    model.CABManagementItems = cabs.DraftCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    break;
+                case TabNames.PendingDraft:
+                    model.CABManagementItems = cabs.PendingDraftCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
                     break;
                 case TabNames.PendingPublish:
-                    model.CABManagementItems = pendingPublishCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
-                    break;
-                case TabNames.PendingUnarchive:
-                    model.CABManagementItems = pendingUnarchiveCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    model.CABManagementItems = cabs.PendingPublishCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
                     break;
                 case TabNames.PendingArchive:
-                    model.CABManagementItems = pendingArchiveCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
+                    model.CABManagementItems = cabs.PendingArchiveCabs.Select(d => new CABManagementItemViewModel(d)).ToList();
                     break;
             }
             model.Pagination.Total = model.CABManagementItems.Count();
