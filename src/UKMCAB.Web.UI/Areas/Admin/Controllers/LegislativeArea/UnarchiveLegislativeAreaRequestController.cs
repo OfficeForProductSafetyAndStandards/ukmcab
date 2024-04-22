@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
+using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
@@ -55,9 +56,31 @@ public class UnarchiveLegislativeAreaRequestController : UI.Controllers.Controll
     }
 
     [HttpGet("unarchive-request-reason/{legislativeAreaId}", Name = Routes.UnarchiveLegislativeAreaRequestReason)]
-    public IActionResult UnarchiveLegislativeAreaRequestReason(Guid id, Guid legislativeAreaId)
+    public async Task<IActionResult> UnarchiveLegislativeAreaRequestReason(Guid id, Guid legislativeAreaId, bool fromSummary)
     {
-        var vm = new UnarchiveLegislativeAreaRequestReasonViewModel();
+        var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
+        var vm = new UnarchiveLegislativeAreaRequestReasonViewModel
+        {
+            CabId = id,
+            LegislativeAreaId = legislativeAreaId,
+            Title = la.Name,
+            FromSummary = fromSummary
+        };
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/UnarchiveLegislativeAreaRequestReason.cshtml", vm);
+    }
+
+    [HttpPost("unarchive-request-reason/{legislativeAreaId}")]
+    public async Task<IActionResult> UnarchiveLegislativeAreaRequestReasonPost(Guid id, UnarchiveLegislativeAreaRequestReasonViewModel vm)
+    {
+        if (ModelState.IsValid)
+        {
+            var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+            var la = document!.DocumentLegislativeAreas.First(d => d.LegislativeAreaId == vm.LegislativeAreaId);
+            la.Status = LAStatus.PendingSubmissionToUnarchive;
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
+            return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+        }
+        
         return View("~/Areas/Admin/views/CAB/LegislativeArea/UnarchiveLegislativeAreaRequestReason.cshtml", vm);
     }
 }
