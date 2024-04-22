@@ -1009,7 +1009,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
             return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
                 new { Area = "admin", id, legislativeAreaId });
-           //   return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
         }
         else
         {
@@ -1036,7 +1035,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     [HttpPost("remove-request/{legislativeAreaId}", Name = Routes.RemoveLegislativeAreaRequest)]
     public async Task<IActionResult> RemoveLegislativeAreaRequest(Guid id, Guid legislativeAreaId, LegislativeAreaRemoveRequestViewModel vm)
     {
-        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
 
         if (ModelState.IsValid)
