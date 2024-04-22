@@ -892,10 +892,10 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             {
                 if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc)
                 {
-                    return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, new 
-                    { 
-                        id, 
-                        legislativeAreaId, 
+                    return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, new
+                    {
+                        id,
+                        legislativeAreaId,
                         returnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery)
                     });
                 }
@@ -903,18 +903,17 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 {
                     await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, vm.Title);
                     laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaRemoved;
+                    return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview",
+                        new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
                 }
             }
             else
             {
                 //TODO : When OPSS - Admin approves the Archive request - need to invoke the below method
-               // await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
-               // laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchived;
+                // await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
                 return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
                     new { Area = "admin", id, legislativeAreaId });
             }
-
-            return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
         }
 
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
