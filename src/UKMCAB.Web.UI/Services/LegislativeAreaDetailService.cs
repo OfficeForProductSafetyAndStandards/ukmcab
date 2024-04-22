@@ -26,7 +26,7 @@ namespace UKMCAB.Web.UI.Services
                 await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea
                     .LegislativeAreaId);
 
-            var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel()
+            var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
             {
                 Name = legislativeArea.Name,
                 IsProvisional = documentLegislativeArea.IsProvisional,
@@ -34,6 +34,7 @@ namespace UKMCAB.Web.UI.Services
                 ReviewDate = documentLegislativeArea.ReviewDate,
                 Reason = documentLegislativeArea.Reason,
                 CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
+                LegislativeAreaId = legislativeArea.Id
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);

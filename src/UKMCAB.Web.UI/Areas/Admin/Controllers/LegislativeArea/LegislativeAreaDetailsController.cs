@@ -189,7 +189,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var documentScopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (documentScopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
         var options =
             await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
                 documentScopeOfAppointment.LegislativeAreaId);
@@ -238,7 +238,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var documentScopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (documentScopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary = vm.IsFromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
         if (ModelState.IsValid)
         {
             documentScopeOfAppointment.PurposeOfAppointmentId = vm.SelectedPurposeOfAppointmentId;
@@ -266,7 +266,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
         var categories = await GetCategoriesSelectListItemsAsync(scopeOfAppointment.PurposeOfAppointmentId,
             scopeOfAppointment.LegislativeAreaId);
 
@@ -304,7 +304,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary = vm.IsFromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
         if (ModelState.IsValid)
         {
             scopeOfAppointment.CategoryId = vm.SelectedCategoryId;
@@ -361,7 +361,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
         var subcategories = await GetSubCategoriesSelectListItemsAsync(scopeOfAppointment.CategoryId);
 
         var selectListItems = subcategories.ToList();
@@ -403,7 +403,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary = vm.IsFromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
         if (ModelState.IsValid)
         {
             scopeOfAppointment.SubCategoryId = vm.SelectedSubCategoryId;
@@ -447,7 +447,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
         var products = await GetProductSelectListItemsAsync(scopeOfAppointment.SubCategoryId,
             scopeOfAppointment.CategoryId,
             scopeOfAppointment.PurposeOfAppointmentId, scopeOfAppointment.LegislativeAreaId);
@@ -494,7 +494,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary = vm.IsFromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
         if (ModelState.IsValid)
         {
             scopeOfAppointment.ProductIds = vm.SelectedProductIds!;
@@ -580,7 +580,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         Guid? productId = null;
 
         if (scopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
 
         if (scopeOfAppointment.ProductIds.Any() && indexOfProduct < scopeOfAppointment.ProductIds.Count)
         {
@@ -647,7 +647,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         Guid? productId = null;
 
         if (scopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary = vm.IsFromSummary });
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
 
         if (ModelState.IsValid)
         {
@@ -1053,7 +1053,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaRequest.cshtml", vm);
     }
-
+    
     #endregion
 
     #region PrivateMethods
