@@ -32,7 +32,7 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
 
         vm.LegislativeAreaName = document.DocumentLegislativeAreas.Single(a => a.LegislativeAreaId == legislativeAreaId)
             .LegislativeAreaName;
-        return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaRequest.cshtml", vm);
+        return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaReason.cshtml", vm);
     }
 
     [HttpPost("archive-request/{legislativeAreaId}", Name = Routes.ArchiveLegislativeArea)]
