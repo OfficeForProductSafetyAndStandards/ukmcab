@@ -231,13 +231,15 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId);
         TempData[Constants.ApprovedLA] = true;
 
+        await MarkRequestTaskAsCompleteAsync(docLa.Id, approver);
+
         if (UserRoleId != Roles.OPSS.Id)
         {    
             await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser, ReviewActionEnum, document.CreatedByUserGroup);
 
             if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
             {
-                docLa.Status = LAStatus.ApprovedByOpssAdmin;
+                docLa.Status = LAStatus.Approved;
             }
             else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
             {
@@ -290,11 +292,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         await MarkRequestTaskAsCompleteAsync(docLa.Id, decliner);
 
-        if (UserRoleId != Roles.OPSS.Id)
-        {
-            // send legislative area decline notification
-            await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, ReviewActionEnum, declineReason, document.CreatedByUserGroup);
-        }
+        // send legislative area decline notification
+        await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, ReviewActionEnum, declineReason, document.CreatedByUserGroup);
 
         docLa.Status = LAStatus.Declined;
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
@@ -323,11 +322,11 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 { "userGroup", approverUser.UserGroup },
                 { "userName", approverUser.FirstAndLastName },
                 { "legislativeAreaName", docLa.LegislativeAreaName },
-                { "action" , ReviewActionEnum.GetEnumDescription() }
+                { "action" , ReviewActionEnum.GetEnumDescription() }              
             };
 
         string? workFlowBody;
-        TaskType taskType = TaskType.LegislativeAreaApproved;
+        TaskType taskType = TaskType.LegislativeAreaApproveRequestForCab;
 
         // if add LA
         if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
@@ -456,11 +455,9 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     {
         var tasks = await _workflowTaskService.GetByDocumentLAIdAsync(documentLAId);
         var task =
-            approver.RoleId != Roles.OPSS.Id ?
                 tasks.First(t =>
-                    t.TaskType is (TaskType.LegislativeAreaApproveRequestForCab or TaskType.LegislativeAreaRequestToRemove or TaskType.LegislativeAreaRequestToArchiveAndRemoveSchedule or TaskType.LegislativeAreaRequestToArchiveAndArchiveSchedule) && t.ForRoleId == approver.RoleId && !t.Completed)
-                : tasks.First(t => (t.TaskType is TaskType.LegislativeAreaApproved) && !t.Completed);
-
+                    t.TaskType is (TaskType.LegislativeAreaApproveRequestForCab or TaskType.LegislativeAreaRequestToRemove or TaskType.LegislativeAreaRequestToArchiveAndRemoveSchedule or TaskType.LegislativeAreaRequestToArchiveAndArchiveSchedule) && t.ForRoleId == approver.RoleId && !t.Completed);
+                
         await _workflowTaskService.MarkTaskAsCompletedAsync(task.Id, approver);
     }
 }
