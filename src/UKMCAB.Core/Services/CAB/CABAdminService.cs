@@ -583,23 +583,15 @@ namespace UKMCAB.Core.Services.CAB
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
-        public async Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId)
+        public async Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId, LAStatus approvedLAStatus)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
 
             // Approve document legislative area
-            var isOpssAdmin = approver.Role == Roles.OPSS.Id;
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-            documentLegislativeArea.Status = isOpssAdmin ? LAStatus.ApprovedByOpssAdmin : LAStatus.Approved;
-            var comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " approved.";
-            if (isOpssAdmin)
-            {
-                comment = "Legislative area " + documentLegislativeArea.LegislativeAreaName +
-                          " approved by OPSS admin.";
-            }
-            latestDocument.AuditLog.Add(new Audit(approver, AuditCABActions.ApproveLegislativeArea, comment));
+            documentLegislativeArea.Status = approvedLAStatus;
             await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
@@ -719,6 +711,52 @@ namespace UKMCAB.Core.Services.CAB
             {
                 await _fileStorage.DeleteCABSchedule(blobName);
             }
+        }
+
+        public async Task RemoveLegislativeAreasToApprovedToRemoveByOPSS(Document document)
+        {
+            var documentLAList = document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.ApprovedToRemoveByOpssAdmin).ToList();
+
+            foreach (DocumentLegislativeArea documentLegislativeArea in documentLAList)
+            {
+                // remove scope of appointment
+                var scopeOfAppointments = document.ScopeOfAppointments
+                    .Where(n => n.LegislativeAreaId == documentLegislativeArea.LegislativeAreaId).ToList();
+                List<string> blobsToBeDeleted = new();
+
+                foreach (var scopeOfAppointment in scopeOfAppointments)
+                {
+                    document.ScopeOfAppointments.Remove(scopeOfAppointment);
+                }
+
+                // remove product schedules     
+                if (document.Schedules != null && document.Schedules.Any())
+                {
+                    var schedules = document.Schedules
+                        .Where(n => n.LegislativeArea != null && n.LegislativeArea == documentLegislativeArea.LegislativeAreaName).ToList();
+
+                    foreach (var schedule in schedules)
+                    {
+                        // check if same blob not used by any other schedule, delete it if not
+                        // only remove blobs for LAs approved to remove by OPSS Admin
+                        if (documentLegislativeArea.Status == LAStatus.ApprovedToRemoveByOpssAdmin &&
+                            document?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
+                        {
+                            blobsToBeDeleted.Add(schedule.BlobName);
+                        }
+
+                        document.Schedules.Remove(schedule);
+                    }
+                }
+
+                if (blobsToBeDeleted.Any())
+                {
+                    await DeleteBlobs(blobsToBeDeleted);
+                }
+
+                document.DocumentLegislativeAreas.Remove(documentLegislativeArea);
+            }
+
         }
 
         private async Task RemoveLegislativeAreasNotApprovedByOPSS(Document document)

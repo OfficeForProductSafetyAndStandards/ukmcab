@@ -99,7 +99,7 @@ namespace UKMCAB.Core.Services.CAB
 
         Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId);
 
-        Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId);
+        Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId, LAStatus approvedLAStatus);
 
         Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason);       
 
@@ -109,6 +109,8 @@ namespace UKMCAB.Core.Services.CAB
 
         Document? GetLatestDocumentFromDocuments(List<Document> documents);
 
-        Task<bool> IsSingleDraftDocAsync(Guid cabId);        
+        Task<bool> IsSingleDraftDocAsync(Guid cabId);
+
+        Task RemoveLegislativeAreasToApprovedToRemoveByOPSS(Document document);
     }
 }

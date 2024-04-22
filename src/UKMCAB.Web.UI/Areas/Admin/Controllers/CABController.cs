@@ -756,14 +756,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var personalisation = new Dictionary<string, dynamic?>
             {
-                { "CABName", cabName },
+                { "CABName", cabName },                
                 { "emailBody", emailBody },
-                { "userGroup", user.UserGroup },
-                { "userName", user.FirstAndLastName },
-                { "legislativeAreaName", legislativeAreaName }               
+                { "userGroup", user.UserGroup }                
             };
             await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
-                _templateOptions.NotificationLegislativeAreaPublishApproved, personalisation);
+                _templateOptions.NotificationLegislativeAreaRequestToPublish, personalisation);
         }
 
         private async Task SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid cabId, UserAccount userAccount,
@@ -836,7 +834,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     null,
                     documentLegislativeArea.ReasonToRemoveOrArchive,
                     false,
-                    cabId));
+                    cabId,
+                    documentLegislativeArea.Id
+                    ));
         }
 
         private IActionResult SaveDraft(Document document)
