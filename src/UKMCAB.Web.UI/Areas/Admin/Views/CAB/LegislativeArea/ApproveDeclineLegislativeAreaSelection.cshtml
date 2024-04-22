@@ -1,5 +1,6 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
 @using UKMCAB.Data
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaApproveViewModel
 
 @section BackButton
@@ -7,7 +8,7 @@
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
-                <govuk-back-link asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" />
+                <govuk-back-link asp-area="admin" asp-controller="LegislativeAreaApprove" asp-action="approvallist" asp-route-id="@Model.CabId" />                
             </div>
         </div>
     </div>
@@ -23,14 +24,22 @@
     <div class="govuk-grid-column-full">       
         <form id="legislativeForm" method="post" novalidate>
             <input type="hidden" asp-for="Title" />
-            <input type="hidden" asp-for="CabId" />            
+            <input type="hidden" asp-for="CabId" />
+            <input type="hidden" asp-for="ReviewActionEnum" />
             <h2 class="govuk-heading-s">You have selected: </h2>
             <p class="govuk-body">@Model.LegislativeArea.Name</p>
             <div class="govuk-warning-text">
                 <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                 <strong class="govuk-warning-text__text">
                     <span class="govuk-visually-hidden">Warning</span>
-                    Approving this legislative area will approve the details shown below.
+                    @if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
+                    {
+                        @:Approving this legislative area will approve the details shown below.
+                    }
+                    else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+                    {
+                        @:Removing this legislative area will remove the details shown below.
+                    }
                 </strong>
             </div>
             <partial name="~/Areas/Admin/views/CAB/LegislativeArea/Partials/_Summary.cshtml" model="Model.LegislativeArea" />
@@ -40,7 +49,14 @@
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
                     <strong class="govuk-warning-text__text">
                         <span class="govuk-visually-hidden">Warning</span>
-                        Approving this legislative area will approve the product schedules associated with it.
+                        @if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Add)
+                        {
+                            @:Approving this legislative area will approve the product schedules associated with it.
+                        }
+                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+                        {
+                            @:The product schedules below are linked to this legislative area and will be removed.
+                        }                        
                     </strong>
                 </div>
                 <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
@@ -77,20 +93,10 @@
                         <govuk-radios-item value="@LegislativeAreaApproveActionEnum.Decline">Decline</govuk-radios-item>
                     </govuk-radios-fieldset>
                 </govuk-radios>
-            </div>
-            <div class="govuk-grid-column-two-thirds govuk-!-margin-top-4">
-                <govuk-character-count asp-for="DeclineReason" max-length="1000" rows="5">
-                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
-                        Reason
-                    </govuk-character-count-label>
-                    <govuk-character-count-hint>
-                        Enter the reason for declining the legislative area. This will only be shown to users that are signed in to the UKMCAB service.
-                    </govuk-character-count-hint>
-                </govuk-character-count>
-            </div>
+            </div>            
             <div class="govuk-grid-column-full govuk-button-group govuk-!-margin-top-4">
-                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue</govuk-button>
-                <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
+                <a asp-area="Admin" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>                       
             </div>
         </form>
     </div>

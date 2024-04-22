@@ -13,8 +13,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Core.Security;
 using System.Net;
-using System.Drawing;
-using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -821,15 +819,25 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
         }
 
-        var productIdList = documentScopeOfAppointments
-            .Select(a => a.ProductIds)
+        var productAndProcedures = documentScopeOfAppointments
+            .Select(a => a.ProductIdAndProcedureIds)
             .ToList();
 
-        if (!productIdList.Any()) return returnHiddenScopeOfAppointments;
-        foreach (var productId in productIdList.SelectMany(productIds => productIds).Distinct())
+        if (!productAndProcedures.Any()) return returnHiddenScopeOfAppointments;
+        
+        foreach (var pp in productAndProcedures.SelectMany(pp => pp).Distinct())
         {
-            var product = await _legislativeAreaService.GetProductByIdAsync(productId);
-            if (product?.Name != null) returnHiddenScopeOfAppointments.Add(product.Name);
+            if (!pp.ProductId.HasValue) continue;
+            var product = await _legislativeAreaService.GetProductByIdAsync(pp.ProductId.Value);
+            if (product?.Name != null) 
+                returnHiddenScopeOfAppointments.Add(product.Name);
+
+            foreach (var procedureId in pp.ProcedureIds)
+            {
+                var procedureName = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                if (procedureName?.Name != null && !returnHiddenScopeOfAppointments.Contains(procedureName.Name))
+                    returnHiddenScopeOfAppointments.Add(procedureName.Name);
+            }
         }
 
         return returnHiddenScopeOfAppointments;

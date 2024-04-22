@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
+﻿using System.ComponentModel;
+
+namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
 {
     public enum RemoveActionEnum
     {   
@@ -41,5 +43,15 @@
         LegislativeAreaArchivedProductScheduleArchived = 3,
         LegislativeAreaArchivedProductScheduleRemoved = 4,
         AssessmentProcedureRemoved = 5
+    }
+
+    public enum LegislativeAreaReviewActionEnum
+    {
+        [Description("approve")]
+        Add = 0,
+        [Description("remove")]
+        Remove  = 1,
+        [Description("archive")]
+        Archive = 2
     }
 }

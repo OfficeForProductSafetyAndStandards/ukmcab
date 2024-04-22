@@ -17,6 +17,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public List<FileUpload> ActiveProductSchedules { get; set; } = new();
 
-        public string? DeclineReason { get; set; } = string.Empty;
+        public LegislativeAreaReviewActionEnum ReviewActionEnum { get; set; }
     }
 }

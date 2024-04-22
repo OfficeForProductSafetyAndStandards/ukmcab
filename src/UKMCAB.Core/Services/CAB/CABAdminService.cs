@@ -9,6 +9,7 @@ using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
@@ -206,7 +207,7 @@ namespace UKMCAB.Core.Services.CAB
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
                 draft.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Draft)
                     .ForEach(la => la.Status = LAStatus.PendingApproval);
-            }
+            }            
 
             if (draft.StatusValue == Status.Published)
             {
@@ -218,6 +219,10 @@ namespace UKMCAB.Core.Services.CAB
             }
             else if (draft.StatusValue == Status.Draft)
             {
+                if (draft.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
+                {
+                    draft.SubStatus = SubStatus.None;
+                }
                 await _cabRepository.UpdateAsync(draft);
             }
 
@@ -318,6 +323,7 @@ namespace UKMCAB.Core.Services.CAB
             else
             {
                 latestDocument.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.ApprovedByOpssAdmin).ForEach(la => la.Status = LAStatus.Published);
+                await RemoveLegislativeAreasNotApprovedByOPSS(latestDocument);
             }
 
             latestDocument.StatusValue = Status.Published;
@@ -714,6 +720,52 @@ namespace UKMCAB.Core.Services.CAB
             {
                 await _fileStorage.DeleteCABSchedule(blobName);
             }
+        }
+
+        private async Task RemoveLegislativeAreasNotApprovedByOPSS(Document document)
+        {
+            var documentLAList = document.DocumentLegislativeAreas.Where(la => la.Status != LAStatus.Published).ToList();
+
+            foreach (DocumentLegislativeArea documentLegislativeArea in documentLAList)
+            {
+                // remove scope of appointment
+                var scopeOfAppointments = document.ScopeOfAppointments
+                    .Where(n => n.LegislativeAreaId == documentLegislativeArea.LegislativeAreaId).ToList();
+                List<string> blobsToBeDeleted = new();
+
+                foreach (var scopeOfAppointment in scopeOfAppointments)
+                {
+                    document.ScopeOfAppointments.Remove(scopeOfAppointment);
+                }
+
+                // remove product schedules     
+                if (document.Schedules != null && document.Schedules.Any())
+                {
+                    var schedules = document.Schedules
+                        .Where(n => n.LegislativeArea != null && n.LegislativeArea == documentLegislativeArea.LegislativeAreaName).ToList();
+
+                    foreach (var schedule in schedules)
+                    {
+                        // check if same blob not used by any other schedule, delete it if not
+                        // only remove blobs for LAs approved to remove by OPSS Admin
+                        if (documentLegislativeArea.Status == LAStatus.ApprovedToRemoveByOpssAdmin && 
+                            document?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
+                        {
+                            blobsToBeDeleted.Add(schedule.BlobName);
+                        }
+
+                        document.Schedules.Remove(schedule);
+                    }
+                }
+
+                if (blobsToBeDeleted.Any())
+                {
+                    await DeleteBlobs(blobsToBeDeleted);
+                }
+
+                document.DocumentLegislativeAreas.Remove(documentLegislativeArea);
+            }  
+            
         }
     }
 }

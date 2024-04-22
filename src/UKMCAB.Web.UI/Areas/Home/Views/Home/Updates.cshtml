@@ -1,5 +1,4 @@
-﻿@inject IConfiguration _configuration
-@model UKMCAB.Web.UI.Models.ViewModels.Home.UpdatesViewModel
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Home.UpdatesViewModel
 @{
     ViewData["nav"] = "updates";
     ViewData["pageTitle"] = Model?.Title.FormatTitle(ViewData.ModelState.IsValid) ?? Constants.SiteName;
@@ -28,6 +27,31 @@
             </div>
         </dl>
 
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <h2 class="govuk-heading-m">Release 3.2 - Clearer messaging for product schedules, legislative area details and CAB audit history, and a fix to a publishing issue</h2>
+                <p class="govuk-body">
+                    18 April 2024
+                </p>
+                <p class="govuk-body">Viewing CAB profiles for users that are not signed in:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>The legislative areas’ additional details section now only shows contact details, if a CAB has chosen to add them for everyone to see</li>
+                </ul>
+                <p class="govuk-body">Viewing CAB profiles for all users: </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Added a message to inform users, when viewing product schedules supplied by UKAS, that they were the active schedules supplied at the time of appointment</li>
+                </ul>
+                <p class="govuk-body">For signed-in users: </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>In the CAB audit history, the ‘Created’ action has been changed to ‘Draft saved’ so that the history of an older CAB, with multiple edits, is easier to understand</li>
+                    <li>Fixed an issue that was occurring when a CAB with a blank category assigned to a supporting document was re-published, an error was displayed, and it did not publish </li>
+                </ul>
+            </div>
+        </dl>
     </div>
 </div>
 <div class="govuk-grid-row">
@@ -81,7 +105,7 @@
                     <li>The legislative area search filter applies to the new legislative areas assigned to CABs</li>
                     <li>The ability to filter and search for archived CABs</li>
                 </ul>
-                <p class="govuk-body">Creating and updating CAB legislative areas for signed in users:</p>
+                <p class="govuk-body">Creating and updating CAB legislative areas for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>The ability to add, edit or remove legislative area additional information and scope of appointments, as well as for the legislative areas themselves</li>
                     <li>A legislative area can be marked as provisional</li>
@@ -89,21 +113,21 @@
                     <li>Appointment and review dates remain at CAB level but can be added to individual legislative areas</li>
                     <li>Contact details remain at CAB level but can be added for each legislative area where there are different contacts for each legislative area</li>
                 </ul>
-                <p class="govuk-body">Editing CAB profiles for signed in users:</p>
+                <p class="govuk-body">Editing CAB profiles for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
-                    <li>A draft profile has a main edit button which ensures that other signed in users cannot edit it at the same time</li>
+                    <li>A draft profile has a main edit button which ensures that other signed-in users cannot edit it at the same time</li>
                     <li>The ability to request to archive or remove, and to approve the archiving or removal of, legislative areas and product schedules</li>
                     <li>Product schedules linked to a legislative area that is being archived or removed, are highlighted for the user to decide if they should also be archived or removed</li>
                     <li>A legislative area with product schedules that are archived or removed, and are the only schedules linked to it, is highlighted for the user to decide if it should also be archived, removed or marked as provisional</li>
                     <li>The limit on the number of uploaded supporting documents has been removed</li>
                 </ul>
-                <p class="govuk-body">Viewing CAB summary page for signed in users:</p>
+                <p class="govuk-body">Viewing CAB summary page for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>The ability to view all legislative area details, including scope of appointment and additional information</li>
                     <li>The CAB history can be viewed from the CAB summary page</li>
-                    <li>The CAB history for signed in users contains more detailed entries than for public users</li>
+                    <li>The CAB history for signed-in users contains more detailed entries than for public users</li>
                 </ul>
-                <p class="govuk-body">Searching CAB details for signed in users:</p>
+                <p class="govuk-body">Searching CAB details for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>The UKAS reference field has been added into the search function</li>
                     <li>The ability to filter and search for archived and provisional legislative areas</li>
@@ -121,7 +145,7 @@
                     01 February 2024
                 </p>
                 <p class="govuk-body">
-                    This release provides new functionality and improvements for signed in users. It allows UKAS users to ask OPSS to unpublish a CAB,
+                    This release provides new functionality and improvements for signed-in users. It allows UKAS users to ask OPSS to unpublish a CAB,
                     and includes CAB government user notes and sub-statuses, the ability for OPSS administrators to add notes in the CAB history for
                     the public to view, replacing a file in product schedules and supporting documents, validation of draft CAB fields and deleting
                     draft CABs.
@@ -132,13 +156,13 @@
                     <li>When OPSS administrators publish a CAB, they can add a CAB number and select who sees it</li>
                     <li>The number of characters for the decline CAB request reason field has been increased</li>
                 </ul>
-                <p class="govuk-body">CAB approval process for signed in users:</p>
+                <p class="govuk-body">CAB approval process for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>UKAS users can request for a CAB to be unpublished and archived or saved as draft, so they can make changes to it</li>
                     <li>UKAS users can request for a CAB to be unarchived and published or saved as draft, so they can edit and submit it for approval</li>
                     <li>Added entries to the CAB history for approval requests, and a fix for some older entries that could not be seen</li>
                 </ul>
-                <p class="govuk-body">CAB management for signed in users:</p>
+                <p class="govuk-body">CAB management for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>Added an 'edit lock' so that a user cannot edit and make changes to a CAB when another user is editing it</li>
                     <li>Added validation for some of the fields in the create and edit CAB journey</li>
@@ -147,20 +171,20 @@
                     <li>The ability to replace a file for existing entries in both the Product schedules and Supporting documents pages</li>
                     <li>OPSS administrators and the user group that created a draft CAB can delete the draft</li>
                 </ul>
-                <p class="govuk-body">CAB management for Government signed in users:</p>
+                <p class="govuk-body">CAB management for Government signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>Government users have a notes section within each CAB profile which can only be viewed by signed-in government users</li>
                 </ul>
-                <p class="govuk-body">Search for signed in users:</p>
+                <p class="govuk-body">Search for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>New internal search filters for a CAB sub-status to show which part of the approval process it’s in</li>
                 </ul>
-                <p class="govuk-body">Notifications for signed in users:</p>
+                <p class="govuk-body">Notifications for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>When an approval request is made, the user and users in their group receive an email notification about the request</li>
                     <li>A link to the notifications area has been added to the user's homepage with direct links to notifications</li>
                 </ul>
-                <p class="govuk-body">User management for signed in users:</p>
+                <p class="govuk-body">User management for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>A change of contact email address by a user is logged in the user's history</li>
                 </ul>
@@ -186,13 +210,13 @@
                     process when UKAS create or edit records and submit them to OPSS administrators for approval, notification pages, the ability to unarchive archived
                     CAB records, and improvements to uploading product schedules and supporting documents.
                 </p>
-                <p class="govuk-body">Notifications for signed in users:</p>
+                <p class="govuk-body">Notifications for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>Notifications page shows all notifications for their user group</li>
                     <li>Detailed notification information is displayed</li>
                     <li>OPSS administrators receive a notification when a CAB is sent for review</li>
                 </ul>
-                <p class="govuk-body">CAB approval process for signed in users:</p>
+                <p class="govuk-body">CAB approval process for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>UKAS users can submit new or edited CABs to OPSS to be published</li>
                     <li>OPSS administrators can approve or decline the request to publish a CAB</li>
@@ -202,7 +226,7 @@
                     <li>When a CAB is archived, a notification is sent to the owner of a draft to notify them that the draft has been deleted</li>
                     <li>The CAB management page only shows draft CABs for the user’s user group (OPSS administrators can see all drafts)</li>
                 </ul>
-                <p class="govuk-body">CAB document improvements for signed in users:</p>
+                <p class="govuk-body">CAB document improvements for signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>Product schedule files can be referenced multiple times and added to different legislative areas with different titles</li>
                     <li>Supporting document files can be assigned to one of the folders</li>
@@ -232,7 +256,7 @@
                 <p class="govuk-body">
                     This release includes several new features and resolves small issues from previous releases.
                 </p>
-                <p class="govuk-body">For signed in users:</p>
+                <p class="govuk-body">For signed-in users:</p>
                 <ul class="govuk-list govuk-list--bullet">
                     <li>New landing page showing information and actions on one page</li>
                     <li>New CAB search filter for user groups</li>
@@ -379,10 +403,10 @@
 
                 <ul class="govuk-list govuk-list--bullet">
                     <li>The search box is now separate from the filters list. On mobile the search is now always shown at the top of the search results, and on desktop the search is above the filter list</li>
-                    <li>The search box now includes an icon to clear the current search text </li>
-                    <li>Selected search filters will appear in a list at the top of the search results and can be removed individually to update the results </li>
-                    <li>Entering a new CAB with a name that already exists displays a warning asking to check with OPSS before proceeding </li>
-                    <li>Legislative areas assigned during the product schedules upload now show as pre-selected on the legislative area list when creating or editing a CAB </li>
+                    <li>The search box now includes an icon to clear the current search text </li>
+                    <li>Selected search filters will appear in a list at the top of the search results and can be removed individually to update the results </li>
+                    <li>Entering a new CAB with a name that already exists displays a warning asking to check with OPSS before proceeding </li>
+                    <li>Legislative areas assigned during the product schedules upload now show as pre-selected on the legislative area list when creating or editing a CAB </li>
                     <li>A clearly titled button that saves the title and legislative area before uploading another product schedule has been added </li>
                     <li>A button to add a set period of time to the review date of a CAB has been added </li>
                 </ul>
@@ -407,14 +431,14 @@
                     The search results have also been expanded to show all the legislative areas and body types. The final round of accessibility updates and issues from the Minimum Viable Product (MVP) release have been completed.
                 </p>
 
-                <p class="govuk-body">Included in this release are: </p>
+                <p class="govuk-body">Included in this release are: </p>
 
                 <ul class="govuk-list govuk-list--bullet">
                     <li>Titles can be added to uploaded product schedules</li>
-                    <li>Legislative areas can be assigned to the uploaded product schedules, which are then assigned to the CAB profile </li>
-                    <li>All body types and legislative areas can be seen from the search results page </li>
-                    <li>Specific errors on fields in CAB entry process to clearly indicate where errors have occurred and why </li>
-                    <li>Some small email subscription and atom feed updates </li>
+                    <li>Legislative areas can be assigned to the uploaded product schedules, which are then assigned to the CAB profile </li>
+                    <li>All body types and legislative areas can be seen from the search results page </li>
+                    <li>Specific errors on fields in CAB entry process to clearly indicate where errors have occurred and why </li>
+                    <li>Some small email subscription and atom feed updates </li>
                     <li>More accessibility updates across the service</li>
                 </ul>
             </div>
