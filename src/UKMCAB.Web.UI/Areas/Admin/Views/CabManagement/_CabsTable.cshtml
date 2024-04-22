@@ -29,7 +29,7 @@
                 <th scope="col" class="govuk-table__header width-one-fifth">
                     <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.LastUpdated)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last updated</sort>
                 </th>
-                @if (Model.RoleId != Roles.UKAS.Id)
+                @if (Model.RoleId == Roles.OPSS.Id)
                 {
                     <th scope="col" class="govuk-table__header width-one-fifth">
                         <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.UserGroup)" sort="@Model.SortField" sort-direction="@Model.SortDirection">User group</sort>
@@ -67,7 +67,7 @@
                         <td class="govuk-table__cell"><label aria-hidden="true">Cab reference</label>@(UKMCAB.Core.Domain.CabNumberVisibility.Display(cab.CabNumberVisibility, User, cab.CABNumber) ?? Constants.NotProvided)</td>
                     }
                     <td class="govuk-table__cell"><label aria-hidden="true">Last updated</label>@cab.LastUpdated.ToStringBeisFormat()</td>
-                    @if (Model.RoleId != Roles.UKAS.Id)
+                    @if (Model.RoleId == Roles.OPSS.Id)
                     {
                         <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@Roles.NameFor(cab.UserGroup)</td>
                     }

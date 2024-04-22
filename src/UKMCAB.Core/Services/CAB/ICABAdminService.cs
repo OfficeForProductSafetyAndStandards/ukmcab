@@ -18,8 +18,8 @@ namespace UKMCAB.Core.Services.CAB
         /// <summary>
         /// Find all CAB documents for the CAB Management screen, restricted by user role.
         /// </summary>
-        /// <param name="userRole"></param>
-        /// <returns>If null userRole returns all documents</returns>
+        /// <param name="userRole">RoleId of current user.</param>
+        /// <returns></returns>
         Task<CabManagementDetailsModel> FindAllCABManagementQueueDocumentsForUserRole(string userRole);
 
         Task<Document?> GetLatestDocumentAsync(string cabId);

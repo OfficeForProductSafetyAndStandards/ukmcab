@@ -88,7 +88,7 @@ namespace UKMCAB.Core.Services.CAB
         public async Task<CabManagementDetailsModel> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
             List<Document> allCabs = await _cabRepository.Query<Document>(d =>
-                     (userRole == null || userRole == Roles.OPSS.Id || d.CreatedByUserGroup == userRole) &&
+                     (userRole == Roles.OPSS.Id || d.CreatedByUserGroup == userRole) &&
                      (d.StatusValue == Status.Draft ||
                       d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToUnpublish ||
                       d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToArchive ||

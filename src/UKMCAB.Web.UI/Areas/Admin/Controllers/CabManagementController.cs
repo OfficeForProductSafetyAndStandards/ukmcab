@@ -44,8 +44,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _editLockService.RemoveEditLockForCabAsync(unlockCab);
             }
 
-            var role = CurrentUser.Role == Roles.OPSS.Id ? null : CurrentUser.Role;
-            var cabs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(role);
+            var cabs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(CurrentUser.Role);
 
             var model = new CABManagementViewModel
             {
