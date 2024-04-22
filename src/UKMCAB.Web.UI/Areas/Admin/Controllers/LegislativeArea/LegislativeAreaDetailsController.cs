@@ -907,8 +907,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
             else
             {
-                await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
-                laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchived;
+                //TODO : When OPSS - Admin approves the Archive request - need to invoke the below method
+               // await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
+               // laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchived;
+                return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
+                    new { Area = "admin", id, legislativeAreaId });
             }
 
             return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
@@ -977,7 +980,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             // legislative area selected to archive
             else
             {
-                await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
+                //TODO : When OPSS - Admin approves the Archive request - need to invoke the below method
+              //  await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
 
                 List<Guid> scheduleIds = latestDocument?.Schedules?.Where(n => n.LegislativeArea != null && n.LegislativeArea == legislativeArea.Name).Select(n => n.Id).ToList();
 

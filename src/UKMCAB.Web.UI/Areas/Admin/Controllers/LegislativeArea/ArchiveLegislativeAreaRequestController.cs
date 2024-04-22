@@ -7,7 +7,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
 [Area("admin"), Route("admin/cab/{id}/legislative-area"), Authorize]
-public class ArchiveLegislativeAreaRequestController :  UI.Controllers.ControllerBase
+public class ArchiveLegislativeAreaRequestController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
 
@@ -29,12 +29,7 @@ public class ArchiveLegislativeAreaRequestController :  UI.Controllers.Controlle
         var vm = new LegislativeAreaArchiveRequestViewModel(id, string.Empty);
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
-        //TODO
-        // if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
-        // {
-        //     throw new PermissionDeniedException("CAB status needs to be Pending Approval for decline");
-        // }
-        //
+
         vm.LegislativeAreaName = document.DocumentLegislativeAreas.Single(a => a.LegislativeAreaId == legislativeAreaId)
             .LegislativeAreaName;
         return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaRequest.cshtml", vm);
@@ -50,14 +45,16 @@ public class ArchiveLegislativeAreaRequestController :  UI.Controllers.Controlle
             // vm.Title = "Decline CAB";
             return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaRequest.cshtml", vm);
         }
+
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
         var documentLegislativeArea =
             latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
         documentLegislativeArea.Status = LAStatus.PendingSubmissionToArchive;
         documentLegislativeArea.ReasonToRemoveOrArchive = vm.ArchiveReason;
 
-        await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!, latestDocument);
-         
+        await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!,
+            latestDocument);
+
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 }
