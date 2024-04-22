@@ -38,14 +38,15 @@ public class UnarchiveLegislativeAreaRequestController: UI.Controllers.Controlle
     }
 
     [HttpGet("unarchive-request/{legislativeAreaId}", Name = Routes.UnarchiveLegislativeAreaRequest)]
-    public async Task<IActionResult> UnarchiveLegislativeAreaRequest(Guid id, Guid legislativeAreaId)
+    public async Task<IActionResult> UnarchiveLegislativeAreaRequest(Guid id, Guid legislativeAreaId, bool fromSummary)
     {
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
         var vm = new UnarchiveLegislativeAreaRequestViewModel
         {
             CabId = id,
-            LegislativeArea =  await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId)
+            LegislativeArea =  await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
+            FromSummary = fromSummary
         };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/UnarchiveLegislativeAreaRequest.cshtml", vm);
     }

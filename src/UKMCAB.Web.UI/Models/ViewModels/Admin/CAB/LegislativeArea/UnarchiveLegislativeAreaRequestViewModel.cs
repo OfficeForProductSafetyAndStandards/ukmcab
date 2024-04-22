@@ -14,5 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public List<FileUpload> ActiveProductSchedules { get; set; } = new();
         
+        public bool FromSummary { get; set; }
+        
     }
 }
