@@ -109,6 +109,8 @@ namespace UKMCAB.Core.Services.CAB
 
         Document? GetLatestDocumentFromDocuments(List<Document> documents);
 
-        Task<bool> IsSingleDraftDocAsync(Guid cabId);        
+        Task<bool> IsSingleDraftDocAsync(Guid cabId);
+
+        Task RemoveLegislativeAreasToApprovedToRemoveByOPSS(Document document);
     }
 }
