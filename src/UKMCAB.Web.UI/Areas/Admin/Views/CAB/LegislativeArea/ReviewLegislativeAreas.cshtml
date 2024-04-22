@@ -292,10 +292,16 @@
                                     </span>
                                 </summary>
                                 <div class="govuk-details__text govuk-!-padding-top-1">
-                                    <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveOrArchiveLegislativeArea" class="govuk-button--secondary"
-                                                       asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@archivedLegislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area" asp-route-actionType="@RemoveActionEnum.Remove" asp-route-fromSummary="@Model.FromSummary">
-                                        Remove archived legislative area
-                                    </govuk-button-link>
+                                    <div class="govuk-button-group">
+                                        <govuk-button-link asp-route="@LegislativeAreaDetailsController.Routes.RemoveOrArchiveLegislativeArea" class="govuk-button--secondary"
+                                                           asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@archivedLegislativeArea.LegislativeAreaId" asp-route-returnURl="remove-legislative-area" asp-route-actionType="@RemoveActionEnum.Remove" asp-route-fromSummary="@Model.FromSummary">
+                                            Remove archived legislative area
+                                        </govuk-button-link>
+                                        <govuk-button-link asp-route="@UnarchiveLegislativeAreaRequestController.Routes.UnarchiveLegislativeAreaRequest" class="govuk-button--secondary"
+                                                           asp-route-id="@Model.CABId" asp-route-legislativeAreaId="@archivedLegislativeArea.LegislativeAreaId" >
+                                            Unarchive legislative area
+                                        </govuk-button-link>
+                                    </div>
                                     <table class="govuk-table ukmcab-table govuk-!-margin-top-3">
                                         <caption class="govuk-table__caption govuk-table__caption--m">Scope of appointment</caption>
                                         <thead class="govuk-table__head">
