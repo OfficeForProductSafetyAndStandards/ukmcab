@@ -41,8 +41,6 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
     {
         if (!ModelState.IsValid)
         {
-            // vm.CABName = document.Name ?? throw new InvalidOperationException();
-            // vm.Title = "Decline CAB";
             return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaRequest.cshtml", vm);
         }
 
@@ -54,7 +52,6 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!,
             latestDocument);
-
-        return RedirectToRoute(CabManagementController.Routes.CABManagement);
+       return RedirectToRoute(CABController.Routes.CabSummary, new { id });
     }
 }
