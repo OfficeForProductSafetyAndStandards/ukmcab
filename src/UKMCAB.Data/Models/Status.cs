@@ -50,6 +50,8 @@ namespace UKMCAB.Data.Models
         ApprovedToArchiveAndRemoveScheduleByOpssAdmin,
         [Description("Approved by OPSS")]
         ApprovedToArchiveAndArchiveScheduleByOpssAdmin,
+        [Description("To archive")]
+        PendingSubmissionToArchive,
         [Description("To remove")]
         PendingSubmissionToRemove,
         [Description("Pending approval")]

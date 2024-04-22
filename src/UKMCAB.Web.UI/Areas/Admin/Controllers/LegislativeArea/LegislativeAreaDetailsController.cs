@@ -1003,7 +1003,9 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 }
             }
 
-            return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
+            return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
+                new { Area = "admin", id, legislativeAreaId });
+           //   return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
         }
         else
         {
