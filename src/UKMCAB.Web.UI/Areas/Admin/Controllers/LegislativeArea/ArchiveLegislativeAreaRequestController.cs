@@ -47,7 +47,7 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
         var documentLegislativeArea =
             latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-        documentLegislativeArea.Status = LAStatus.PendingSubmissionToArchiveAndArchiveSchedule; //todo: GG change based on model
+        documentLegislativeArea.Status = LAStatus.PendingSubmissionToArchiveAndArchiveSchedule;
         documentLegislativeArea.RequestReason = vm.ArchiveReason;
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!,
