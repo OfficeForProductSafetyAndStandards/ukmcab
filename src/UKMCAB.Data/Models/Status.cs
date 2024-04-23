@@ -68,12 +68,6 @@ namespace UKMCAB.Data.Models
         PendingApprovalToArchiveAndRemoveSchedule,               
         [Description("Pending approval")]
         PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin,
-        [Description("To archive")]
-        ArchiveRequestSubmissionByUKAS,
-        [Description("Pending approval")]
-        ArchiveRequestPendingApprovalByOgd,
-        [Description("Pending approval")]
-        ArchiveRequestPendingApprovalByOpssAdmin,
         [Description("To unarchive")]
         PendingSubmissionToUnarchive,
         [Description("Pending approval")]
