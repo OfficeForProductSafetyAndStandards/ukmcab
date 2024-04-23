@@ -30,6 +30,12 @@ public class SortButtonTagHelper : TagHelper
     [HtmlAttributeName("tab-to-show")]
     public string? TabToShow { get; set; }
 
+    /// <summary>
+    /// Whether to append the tab name using a clientside anchor tag (#TabToShow) or add a serverside variable (&tabName=TabToShow).
+    /// </summary>
+    [HtmlAttributeName("use-serverside-tabs")]
+    public bool UseServerSideTabs { get; set; } = false;
+
     public override void Process(TagHelperContext context, TagHelperOutput output)
     {
         output.TagName = "a";
@@ -38,12 +44,12 @@ public class SortButtonTagHelper : TagHelper
         
         if(SortField == TargetField)
         {
-            output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Opposite(SortDirection)}#{TabToShow}");
+            output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Opposite(SortDirection)}{(UseServerSideTabs ? "&TabName=" + TabToShow : "#" + TabToShow)}");
             output.Attributes.EnsureAttribute("aria-sort", SortDirectionHelper.Get(SortDirection));
         }
         else
         {
-            output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Ascending}#{TabToShow}");
+            output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Ascending}{(UseServerSideTabs ? "&TabName=" + TabToShow : "#" + TabToShow)}");
             output.Attributes.EnsureAttribute("aria-sort", "none");
         }
     }
