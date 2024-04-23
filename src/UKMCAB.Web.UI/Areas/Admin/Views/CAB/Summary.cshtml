@@ -447,7 +447,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
                 @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.ActiveLegislativeAreas)
                 {
                     <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-                        <summary class="govuk-details__summary @(legislativeArea.IsProvisional == true && legislativeArea.Status != LAStatus.None ? "provisional-la" : "provisional-la-single-tag")">
+                        <summary class="govuk-details__summary @(legislativeArea.IsProvisional == true && legislativeArea.Status != LAStatus.None ? "provisional-la" : "la-single-tag")">
                             <div class="govuk-details__summary-text">
                                 <span>@legislativeArea.Name</span>
                             </div>
@@ -475,7 +475,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
                 @foreach (var legislativeArea in Model.CabLegislativeAreasViewModel.ArchivedLegislativeAreas)
                 {
                     <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
-                        <summary class="govuk-details__summary">
+                        <summary class="govuk-details__summary la-single-tag">
                             <div class="govuk-details__summary-text">
                                 <span>@legislativeArea.Name</span>
                             </div>
