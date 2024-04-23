@@ -796,13 +796,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
                 userAccount.Role ?? throw new InvalidOperationException(),
                 userAccount.EmailAddress ?? throw new InvalidOperationException());
-
-            var actionText = documentLegislativeArea.Status switch
+            TaskType? taskType = null;
+            
+            string? actionText;
+            switch (documentLegislativeArea.Status)
             {
-                LAStatus.PendingSubmissionToRemove => "remove",   
-                LAStatus.PendingSubmissionToUnarchive => "unarchive",
-                _ => "archive",
-            };           
+                case LAStatus.PendingSubmissionToRemove:
+                    actionText = "remove";
+                    taskType = TaskType.LegislativeAreaRequestToRemove;
+                    break;
+                case LAStatus.PendingSubmissionToUnarchive:
+                    actionText = "unarchive";
+                    taskType = TaskType.LegislativeAreaRequestToUnarchive;
+                    break;
+                default:
+                    actionText = "archive";
+                    taskType = TaskType.LegislativeAreaRequestToArchiveAndArchiveSchedule;
+                    break;
+            }
 
             var personalisation = new Dictionary<string, dynamic?>
             {
@@ -825,7 +836,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             await _workflowTaskService.CreateAsync(
                 new WorkflowTask(
-                    TaskType.LegislativeAreaRequestToRemove,
+                    taskType.Value,
                     user,
                     documentLegislativeArea.RoleId,
                     null,
