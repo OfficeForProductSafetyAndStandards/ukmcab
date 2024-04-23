@@ -41,7 +41,7 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
     {
         if (!ModelState.IsValid)
         {
-            return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaRequest.cshtml", vm);
+            return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaReason.cshtml", vm);
         }
 
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
