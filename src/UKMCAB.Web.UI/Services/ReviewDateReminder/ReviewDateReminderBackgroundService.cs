@@ -2,20 +2,14 @@
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using System.Diagnostics;
-using System.Security.Claims;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
-using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
-using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
-using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
-using UKMCAB.Web.UI.Areas.Admin.Controllers;
-using YamlDotNet.Core;
 
 namespace UKMCAB.Web.UI.Services.ReviewDateReminder
 {
@@ -60,11 +54,11 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                         {
                             var userAccount = new UserAccount
                             {
-                                Id = "",
+                                // Should this be hard-coded???
                                 FirstName = "OPSS",
                                 Surname = "Admin",
                                 Role = "opss",
-                                EmailAddress = "opssadmin@opss.com" // Hard-code details???
+                                EmailAddress = "opssadmin@opss.com"
                             };
                             _logger.LogInformation("{CAB} is due for renewal in {timeAhead}", cab.Name, reminderTimeAhead);
                             await SendInternalNotificationForCABRenewalDateReminderAsync(cab, userAccount, (DateTime)reviewDate);
@@ -106,7 +100,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
             var personalisation = new Dictionary<string, dynamic?>
             {
                 { "CABName", cab.Name },
-                { "CABReviewDate", cab.RenewalDate.ToStringBeisDateFormat() }
+                { "CABReviewDate", cab.RenewalDate.ToStringBeisDateFormat()}
             };
 
             await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
@@ -119,8 +113,8 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
             await _workflowTaskService.CreateAsync(
                 new WorkflowTask(
                     TaskType.ReviewCAB,
-                    user, // Who should be submitter? System or opss
-                    "opss", //Should it be hardcoded opss
+                    user, // Who should be submitter? System or opss???
+                    "opss", //Should RoleId be hard-coded
                     null,
                     DateTime.Now,
                     $"The review date for this CAB is {reviewDate}. This is a reminder to review the CAB and ensure that all information is relevant and up to date.",
