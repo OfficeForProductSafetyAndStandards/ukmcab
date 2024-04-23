@@ -476,9 +476,15 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
                 {
                     <details class="govuk-details ukmcab-expander govuk-!-margin-top-2 govuk-!-margin-bottom-0">
                         <summary class="govuk-details__summary">
-                            <span class="govuk-details__summary-text">
-                                @legislativeArea.Name
-                            </span>
+                            <div class="govuk-details__summary-text">
+                                <span>@legislativeArea.Name</span>
+                            </div>
+                            @if (legislativeArea.Status != LAStatus.None)
+                            {
+                                <div>
+                                    <strong class="cab-status-tag @legislativeArea.StatusCssStyle">@legislativeArea.StatusName</strong>
+                                </div>
+                            }
                         </summary>
                         <partial name="./LegislativeArea/Partials/_Summary" model="legislativeArea"/>
                     </details>
@@ -789,7 +795,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
         </form>
     </div>
 }
-else 
+else
 {
     var showPublishButtons = Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish, LegislativeAreasApprovedByAdminCount: > 0 };
 
@@ -800,13 +806,16 @@ else
         </govuk-warning-text>
         <div class="govuk-button-group govuk-!-margin-top-5">
             <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId"
-                asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)" class="@(showPublishButtons ? "govuk-button--secondary" : "")">Review</govuk-button-link>
+                               asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)" class="@(showPublishButtons ? "govuk-button--secondary" : "")">
+                Review
+            </govuk-button-link>
             @if (!showPublishButtons)
             {
                 <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             }
         </div>
     }
+
     if (showPublishButtons && Model.ShowEditActions)
     {
         <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
