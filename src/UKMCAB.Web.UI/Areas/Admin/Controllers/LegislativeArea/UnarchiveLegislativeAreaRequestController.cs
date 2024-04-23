@@ -76,6 +76,7 @@ public class UnarchiveLegislativeAreaRequestController : UI.Controllers.Controll
         {
             var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
             var la = document!.DocumentLegislativeAreas.First(d => d.LegislativeAreaId == vm.LegislativeAreaId);
+            la.RequestReason = vm.UserNotes;
             la.Status = LAStatus.PendingSubmissionToUnarchive;
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
             return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });

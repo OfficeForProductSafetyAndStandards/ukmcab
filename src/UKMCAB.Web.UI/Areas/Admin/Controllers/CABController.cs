@@ -814,7 +814,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 { "userGroup", user.UserGroup },
                 { "userName", user.FirstAndLastName },
                 { "legislativeAreaName", documentLegislativeArea.LegislativeAreaName },
-                { "Reason", documentLegislativeArea.ReasonToRemoveOrArchive },
+                { "Reason", documentLegislativeArea.RequestReason },
                 { "action", actionText }
             };
 
@@ -834,7 +834,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     user,
                     DateTime.Now,
                     null,
-                    documentLegislativeArea.ReasonToRemoveOrArchive,
+                    documentLegislativeArea.RequestReason,
                     false,
                     cabId,
                     documentLegislativeArea.Id
