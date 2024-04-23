@@ -2,8 +2,10 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using MoreLinq;
+using System.Collections.Generic;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Core.Domain;
 using UKMCAB.Core.Security;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
@@ -83,22 +85,26 @@ namespace UKMCAB.Core.Services.CAB
 
 
         /// <inheritdoc />
-        public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
+        public async Task<CabManagementDetailsModel> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            if (userRole == Roles.UKAS.Id)
-            {
-                return await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
-                                                                  d.StatusValue == Status.Draft) ||
-                                                                 d.StatusValue == Status.Archived);
-            }
-            if (!string.IsNullOrWhiteSpace(userRole))
-            {
-                return await _cabRepository.Query<Document>(d =>
-                d.StatusValue == Status.Draft);
-            }
+            List<Document> allCabs = await _cabRepository.Query<Document>(d =>
+                     (userRole == Roles.OPSS.Id || d.CreatedByUserGroup == userRole) &&
+                     (d.StatusValue == Status.Draft ||
+                      d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToUnpublish ||
+                      d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToArchive ||
+                      d.StatusValue == Status.Archived && d.SubStatus == SubStatus.PendingApprovalToUnarchive ||
+                      d.StatusValue == Status.Archived && d.SubStatus == SubStatus.PendingApprovalToUnarchivePublish));
 
-            return await _cabRepository.Query<Document>(d =>
-                d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
+            var model = new CabManagementDetailsModel
+            {
+                AllCabs = allCabs,
+                DraftCabs = allCabs.Where(cab => cab.SubStatus == SubStatus.None).ToList(),
+                PendingDraftCabs = allCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToUnarchive || cab.SubStatus == SubStatus.PendingApprovalToUnpublish).ToList(),
+                PendingPublishCabs = allCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToPublish || cab.SubStatus == SubStatus.PendingApprovalToUnarchivePublish).ToList(),
+                PendingArchiveCabs = allCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToArchive).ToList(),
+            };
+
+            return model;
         }
 
         public async Task<Document?> GetLatestDocumentAsync(string cabId)

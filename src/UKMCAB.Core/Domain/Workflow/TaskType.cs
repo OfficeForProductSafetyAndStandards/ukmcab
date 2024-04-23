@@ -51,5 +51,7 @@ public enum TaskType
     [Description("Legislative area request declined to remove")]
     LegislativeAreaDeclinedToRemove,
     [Description("Legislative area request declined to archive")]
-    LegislativeAreaDeclinedToArchive
+    LegislativeAreaDeclinedToArchive,
+    [Description("Legislative area request to unarchive")]
+    LegislativeAreaRequestToUnarchive
 }

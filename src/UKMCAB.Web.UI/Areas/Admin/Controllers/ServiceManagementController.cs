@@ -38,7 +38,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                     .Value) ?? throw new InvalidOperationException("User account not found");
             await _editLockService.RemoveEditLockForUserAsync(userAccount.Id);
-            var docs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(UserRoleId);
+            var cabs = await _cabAdminService.FindAllCABManagementQueueDocumentsForUserRole(UserRoleId);
             var unassignedNotifications = await _workflowTaskService.GetUnassignedByForRoleIdAsync(UserRoleId);
             var assignedNotifications =
                 await _workflowTaskService.GetAssignedToGroupForRoleIdAsync(UserRoleId, userAccount.Id);
@@ -46,8 +46,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             
             return View(new InternalLandingPageViewModel
             {
-                TotalDraftCABs = docs.Count(d => d.StatusValue == Status.Draft),
-                TotalCABsPendingApproval = docs.Count(d => d.SubStatus != SubStatus.None),
+                TotalDraftCABs = cabs.DraftCabs.Count(),
+                TotalPendingDraftCABs = cabs.PendingDraftCabs.Count(),
+                TotalPendingPublishCABs = cabs.PendingPublishCabs.Count(),
+                TotalPendingArchiveCABs = cabs.PendingArchiveCabs.Count(),
                 TotalAccountRequests = await _userService.CountRequestsAsync(UserAccountRequestStatus.Pending),
                 UnassignedNotification = unassignedNotifications.Count,
                 AssignedNotification = assignedNotifications.Count,

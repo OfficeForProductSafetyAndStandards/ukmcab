@@ -353,7 +353,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
             taskType = TaskType.LegislativeAreaRequestToRemove;
 
-            personalisation.Add("Reason", docLa.ReasonToRemoveOrArchive);
+            personalisation.Add("Reason", docLa.RequestReason);
 
             await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
                 _templateOptions.NotificationLegislativeAreaToRemoveArchiveUnArchiveApproved, personalisation);

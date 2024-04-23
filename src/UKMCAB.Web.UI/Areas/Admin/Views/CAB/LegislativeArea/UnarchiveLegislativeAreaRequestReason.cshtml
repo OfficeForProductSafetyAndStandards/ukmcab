@@ -1,3 +1,7 @@
+@using GovUk.Frontend.AspNetCore.TagHelpers
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
+@using AnchorTagHelper = GovUk.Frontend.AspNetCore.TagHelpers.AnchorTagHelper
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.UnarchiveLegislativeAreaRequestReasonViewModel
 
 @section BackButton
@@ -5,7 +9,7 @@
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
-                <govuk-back-link href="/" />
+                <govuk-back-link asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-fromSummary="@Model.FromSummary" />
             </div>
         </div>
     </div>
@@ -21,20 +25,21 @@
         <form id="legislativeRemoveRequestForm" method="post">
             <input type="hidden" asp-for="CabId" />
             <input type="hidden" asp-for="Title"/>
-            <h2 class="govuk-heading-s">You have selected:</h2>
+            <input type="hidden" asp-for="LegislativeAreaId"/>
+            <h2 class="govuk-heading-s">You have selected to unarchive:</h2>
             <p class="govuk-body">@Model.Title</p>
             <govuk-character-count asp-for="UserNotes" max-length="1000" rows="5">
                 <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
                     Reason
                 </govuk-character-count-label>
                 <govuk-character-count-hint>
-                    Enter the reason for removing the legislative area. This will only be shown
+                    Enter the reason for unarchiving the legislative area. This will only be shown
                     to users that are signed in to the UKMCAB service.
                 </govuk-character-count-hint>
             </govuk-character-count>
             <div class="govuk-button-group">
-                <govuk-button type="submit">Confirm</govuk-button>            
-                <a href="/" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <govuk-button type="submit">Confirm</govuk-button>
+                <a asp-area="Admin" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>
