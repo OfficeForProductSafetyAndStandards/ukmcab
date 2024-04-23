@@ -76,5 +76,7 @@ namespace UKMCAB.Data.Models
         ArchiveRequestPendingApprovalByOpssAdmin,
         [Description("To unarchive")]
         PendingSubmissionToUnarchive,
+        [Description("Pending approval")]
+        PendingApprovalToUnarchive
     }
 }

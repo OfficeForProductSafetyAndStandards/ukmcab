@@ -545,17 +545,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (submitType == Constants.SubmitType.SubmitForApproval)
                 {
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
-                        userAccount ?? throw new InvalidOperationException(), latest, true);
-                    await SendNotificationForApproveCab(userAccount,
-                        latest.Name ?? throw new InvalidOperationException(), publishModel);
-
-                    await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     var legislativeAreaSenderEmailIds =
                         _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
                     var emailsToSends = new List<ValueTuple<string, int, string>>();
-
-                    var updateCab = false;
 
                     foreach (var latestDocumentLegislativeArea in latest.DocumentLegislativeAreas)
                     {
@@ -568,47 +560,56 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 nameof(latestDocumentLegislativeArea.RoleId));
 
                         var receiverEmailId = legislativeAreaSenderEmailIds[latestDocumentLegislativeArea.RoleId];
-                        if (latestDocumentLegislativeArea.Status == LAStatus.PendingApproval)
+                        switch (latestDocumentLegislativeArea.Status)
                         {
-                            await SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
-                                userAccount, latestDocumentLegislativeArea);
-                            if (emailsToSends.All(a => a.Item1 != receiverEmailId))
+                            case LAStatus.PendingApproval:
                             {
-                                emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId, 1,
-                                    latestDocumentLegislativeArea.LegislativeAreaName));
+                                await SendInternalNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                                    userAccount, latestDocumentLegislativeArea);
+                                if (emailsToSends.All(a => a.Item1 != receiverEmailId))
+                                {
+                                    emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId, 1,
+                                        latestDocumentLegislativeArea.LegislativeAreaName));
+                                }
+                                else
+                                {
+                                    var laName = emailsToSends.First(x => x.Item1 == receiverEmailId);
+                                    emailsToSends.Remove(laName);
+                                    emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId,
+                                        laName.Item2 + 1,
+                                        string.Concat(laName.Item3, ", ",
+                                            latestDocumentLegislativeArea.LegislativeAreaName)));
+                                }
+
+                                break;
                             }
-                            else
+                            case LAStatus.PendingSubmissionToRemove or LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingSubmissionToArchiveAndRemoveSchedule:
                             {
-                                var laName = emailsToSends.First(x => x.Item1 == receiverEmailId);
-                                emailsToSends.Remove(laName);
-                                emailsToSends.Add(new ValueTuple<string, int, string>(receiverEmailId,
-                                    laName.Item2 + 1,
-                                    string.Concat(laName.Item3, ", ",
-                                        latestDocumentLegislativeArea.LegislativeAreaName)));
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
+                                    latest.Name, userAccount, receiverEmailId,
+                                    latestDocumentLegislativeArea);
+
+                                latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
+                                break;
                             }
-                        }
-                        else if(latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToRemove ||
-                            latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToArchiveAndArchiveSchedule ||
-                            latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToArchiveAndRemoveSchedule)
-                        {
-                            await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
+                            case LAStatus.PendingSubmissionToUnarchive:
+                            {
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
                                 latest.Name, userAccount, receiverEmailId,
                                 latestDocumentLegislativeArea);
-
-                            latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
-
-                            if(!updateCab)
-                            {
-                                updateCab = true;
+                                latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToUnarchive ;
+                                break;
                             }
                         }
-
-                        if(updateCab)
-                        {
-                            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latest);
-                        }
                     }
+                    
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
+                        userAccount ?? throw new InvalidOperationException(), latest, true);
+                    await SendNotificationForApproveCab(userAccount,
+                        latest.Name ?? throw new InvalidOperationException(), publishModel);
 
+                    await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
+                    
                     emailsToSends.ForEach(async emailsToSend =>
                     {
                         await SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
@@ -798,7 +799,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var actionText = documentLegislativeArea.Status switch
             {
-                LAStatus.PendingSubmissionToRemove => "remove",               
+                LAStatus.PendingSubmissionToRemove => "remove",   
+                LAStatus.PendingSubmissionToUnarchive => "unarchive",
                 _ => "archive",
             };           
 
