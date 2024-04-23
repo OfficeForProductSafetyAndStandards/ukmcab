@@ -468,7 +468,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.ApprovedByOpssAdmin or
                 LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin
                 ),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedByOpssAdmin or LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin)
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.DeclinedToRemoveByOPSS or LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedByOpssAdmin or LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin)
             };
 
             //Lock Record for edit

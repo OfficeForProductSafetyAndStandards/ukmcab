@@ -71,6 +71,10 @@ namespace UKMCAB.Data.Models
         [Description("To unarchive")]
         PendingSubmissionToUnarchive,
         [Description("Pending approval")]
-        PendingApprovalToUnarchive
+        PendingApprovalToUnarchive,
+        [Description("Declined")]
+        DeclinedToRemoveByOGD,
+        [Description("Declined by OPSS")]
+        DeclinedToRemoveByOPSS
     }
 }
