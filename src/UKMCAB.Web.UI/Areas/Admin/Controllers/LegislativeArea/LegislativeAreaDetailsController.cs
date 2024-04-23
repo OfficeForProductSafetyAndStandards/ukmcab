@@ -1042,7 +1042,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Status = LAStatus.PendingSubmissionToRemove;
-            documentLegislativeArea.ReasonToRemoveOrArchive = vm.UserNotes;
+            documentLegislativeArea.RequestReason = vm.UserNotes;
 
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!, latestDocument);
             return RedirectToAction("summary", "cab", new { Area = "admin", id });

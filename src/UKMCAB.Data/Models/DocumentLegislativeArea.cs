@@ -18,7 +18,7 @@
         public string? UserNotes { get; set; }
         public string? Reason { get; set; }
 
-        public string? ReasonToRemoveOrArchive { get; set; }
+        public string? RequestReason { get; set; }
 
         public bool? Archived { get; set; }
 
