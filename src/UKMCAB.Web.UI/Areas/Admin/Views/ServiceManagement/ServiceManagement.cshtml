@@ -76,49 +76,65 @@
         </form>
     </div>
 
-    <div class="govuk-grid-column-one-half">
-        <div id="manage-cabs">
-
-            <table class="govuk-table">
-
-
-                <caption class="govuk-table__caption govuk-table__caption--m">
-                    <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement">
-                        Manage CABs
-                    </a>
-                </caption>
-                <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement" asp-route-filter="draft">
-                                Draft
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell">@Model.TotalDraftCABs</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__cell">
-                            <a class="govuk-link govuk-link--no-visited-state" asp-route="@SearchController.Routes.Search" asp-route-selectAllPendingApproval="true" asp-route-filterPath="/">
-                                Pending approval
-                            </a>
-                        </th>
-                        <td class="govuk-table__cell">@Model.TotalCABsPendingApproval</td>
-                    </tr>
-                    @if (User.HasClaim(Claims.CabCreateDraft, string.Empty))
-                    {
+    @if (User.HasClaim(Claims.CabManagement))
+    {
+        <div class="govuk-grid-column-one-half">
+            <div id="manage-cabs">
+                <table class="govuk-table">
+                    <caption class="govuk-table__caption govuk-table__caption--m">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.All">
+                            Manage CABs
+                        </a>
+                    </caption>
+                    <tbody class="govuk-table__body">
+                        @if (User.HasClaim(Claims.CabCreateDraft, string.Empty))
+                        {
+                            <tr class="govuk-table__row">
+                                <th scope="row" class="govuk-table__cell">
+                                    <a class="govuk-link govuk-link--no-visited-state" asp-route="@CABController.Routes.CreateNewCab">
+                                        Create a CAB
+                                    </a>
+                                </th>
+                                <td class="govuk-table__cell"></td>
+                            </tr>
+                        }
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__cell">
-                                <a class="govuk-link govuk-link--no-visited-state" asp-route="@CABController.Routes.CreateNewCab">
-                                    Create a CAB
+                                <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.Draft">
+                                    Draft
                                 </a>
                             </th>
-                            <td class="govuk-table__cell"></td>
+                            <td class="govuk-table__cell">@Model.TotalDraftCABs</td>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__cell">
+                                <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingDraft">
+                                    Pending draft
+                                </a>
+                            </th>
+                            <td class="govuk-table__cell">@Model.TotalPendingDraftCABs</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__cell">
+                                <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingPublish">
+                                    Pending publish
+                                </a>
+                            </th>
+                            <td class="govuk-table__cell">@Model.TotalPendingPublishCABs</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__cell">
+                                <a class="govuk-link govuk-link--no-visited-state" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingArchive">
+                                    Pending archive
+                                </a>
+                            </th>
+                            <td class="govuk-table__cell">@Model.TotalPendingArchiveCABs</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
+    }
 
     @if (User.HasClaim(Claims.UserManagement))
     {

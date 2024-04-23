@@ -20,7 +20,7 @@ public class CssClassUtils
         {
             LAStatus.ApprovedByOpssAdmin or LAStatus.Published => "govuk-tag--green",
             LAStatus.Approved => "govuk-tag--turquoise",
-            LAStatus.Declined or LAStatus.DeclinedByOpssAdmin => "govuk-tag--orange",
+            LAStatus.Declined or LAStatus.DeclinedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS => "govuk-tag--orange",
             LAStatus.Draft => "govuk-tag--blue",   
             _ => "govuk-tag--yellow"
         };

@@ -39,9 +39,7 @@ public enum TaskType
     [Description("CAB unpublished")]
     RequestToUnpublishApproved,
     [Description("Approve legislative area request")]
-    LegislativeAreaApproveRequestForCab,
-    [Description("Legislative area approved")]
-    LegislativeAreaApproved,   
+    LegislativeAreaApproveRequestForCab,   
     [Description("Legislative area declined")]
     LegislativeAreaDeclined,
     [Description("Legislative area request to remove")]
@@ -53,5 +51,7 @@ public enum TaskType
     [Description("Legislative area request declined to remove")]
     LegislativeAreaDeclinedToRemove,
     [Description("Legislative area request declined to archive")]
-    LegislativeAreaDeclinedToArchive
+    LegislativeAreaDeclinedToArchive,
+    [Description("Legislative area request to unarchive")]
+    LegislativeAreaRequestToUnarchive
 }

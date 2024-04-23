@@ -29,10 +29,10 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 
     public static class Routes
     {
-        public const string LegislativeAreaSelected = "legislative.area.selected";
+        public const string ReviewLegislativeAreas = "legislative.area.selected";
     }
 
-    [HttpGet(Name = Routes.LegislativeAreaSelected)]
+    [HttpGet(Name = Routes.ReviewLegislativeAreas)]
     public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string? returnUrl, LegislativeAreaActionMessageEnum? actionType, bool fromSummary)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
@@ -61,7 +61,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
 
-    [HttpPost(Name = Routes.LegislativeAreaSelected)]
+    [HttpPost(Name = Routes.ReviewLegislativeAreas)]
     public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string submitType, ReviewLegislativeAreasViewModel reviewLaVM)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
@@ -150,7 +150,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     }
 
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
-                    return RedirectToRoute(Routes.LegislativeAreaSelected, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.FromSummary });
+                    return RedirectToRoute(Routes.ReviewLegislativeAreas, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.FromSummary });
                 }
             }
         }

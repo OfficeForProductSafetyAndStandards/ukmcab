@@ -33,10 +33,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
 
             // Assert
-            Assert.AreEqual(1, result.DocumentLegislativeAreas.Count);
+            Assert.AreEqual(3, result.DocumentLegislativeAreas.Count);
             Assert.AreEqual(LAStatus.Published, result.DocumentLegislativeAreas.First().Status);
-            Assert.AreEqual(1, result.ScopeOfAppointments.Count);
-            Assert.AreEqual(1, result.Schedules?.Count);
+            Assert.AreEqual(3, result.ScopeOfAppointments.Count);
+            Assert.AreEqual(3, result.Schedules?.Count);
         }
 
         [Test]

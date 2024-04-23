@@ -164,7 +164,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         return submitType switch
         {
             Constants.SubmitType.Continue => RedirectToRoute(
-                LegislativeAreaReviewController.Routes.LegislativeAreaSelected, new { id, fromSummary = vm.IsFromSummary }),
+                LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary }),
             _ => RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true })
         };
     }
