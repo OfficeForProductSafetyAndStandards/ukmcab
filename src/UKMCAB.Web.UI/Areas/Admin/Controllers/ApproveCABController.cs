@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
@@ -144,25 +145,39 @@ public class ApproveCABController : Controller
 
         await _cabAdminService.RemoveLegislativeAreasToApprovedToRemoveByOPSS(document);
 
-        if (document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+        var clonedDocument = document.DeepCopy();
+        clonedDocument.SubStatus = SubStatus.None;
+
+        await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason);
+
+        if (clonedDocument.CreatedByUserGroup == Roles.OPSS.Id)
         {
-            await _cabAdminService.CreateDocumentAsync(user, document);
-            await _cabAdminService.SetSubStatusAsync(Guid.Parse(document.CABId), Status.Draft, SubStatus.PendingApprovalToPublish, new Audit(user, AuditCABActions.Created));
+            clonedDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
         }
-        else if (document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
+        else
         {
-            await _cabAdminService.CreateDocumentAsync(user, document);
+            clonedDocument.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS).ForEach(la => la.Status = LAStatus.Published);
+        }
+
+        if (clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+        {
+            await _cabAdminService.CreateDocumentAsync(user, clonedDocument);
+            await _cabAdminService.SetSubStatusAsync(Guid.Parse(clonedDocument.CABId), Status.Draft, SubStatus.PendingApprovalToPublish, new Audit(user, AuditCABActions.Created));
+        }
+        else if (clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
+        {
+            await _cabAdminService.CreateDocumentAsync(user, clonedDocument);
         }        
 
         var submitTask = await MarkTaskAsCompleteAsync(cabId,
            new User(user.Id, user.FirstName, user.Surname, userRoleId,
                user.EmailAddress ?? throw new InvalidOperationException()));
         await SendNotificationOfApprovalAsync(cabId, document.Name ?? throw new InvalidOperationException(),
-            submitTask.Submitter);
-
-        await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason);
+            submitTask.Submitter);      
 
     }
+
+
 
     private async Task<Document> GetDocumentAsync(Guid cabId)
     {

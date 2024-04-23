@@ -296,7 +296,15 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         // send legislative area decline notification
         await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, ReviewActionEnum, declineReason, document.CreatedByUserGroup);
 
-        docLa.Status = LAStatus.Declined;
+        if(ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+        {
+            docLa.Status = currentUser.Role != Roles.OPSS.Id ? LAStatus.DeclinedToRemoveByOGD : LAStatus.DeclinedToRemoveByOPSS;
+        }
+        else
+        {
+            docLa.Status = LAStatus.Declined;
+        }
+        
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
     }
 
