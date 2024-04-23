@@ -892,10 +892,10 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             {
                 if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc)
                 {
-                    return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, new 
-                    { 
-                        id, 
-                        legislativeAreaId, 
+                    return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, new
+                    {
+                        id,
+                        legislativeAreaId,
                         returnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery)
                     });
                 }
@@ -903,15 +903,17 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 {
                     await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, vm.Title);
                     laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaRemoved;
+                    return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview",
+                        new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
                 }
             }
             else
             {
-                await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
-                laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchived;
+                //TODO : When OPSS - Admin approves the Archive request - need to invoke the below method
+                // await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
+                return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
+                    new { Area = "admin", id, legislativeAreaId });
             }
-
-            return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
         }
 
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
@@ -977,7 +979,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             // legislative area selected to archive
             else
             {
-                await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
+                //TODO : When OPSS - Admin approves the Archive request - need to invoke the below method
+              //  await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
 
                 List<Guid> scheduleIds = latestDocument?.Schedules?.Where(n => n.LegislativeArea != null && n.LegislativeArea == legislativeArea.Name).Select(n => n.Id).ToList();
 
@@ -1003,7 +1006,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 }
             }
 
-            return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
+            return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
+                new { Area = "admin", id, legislativeAreaId });
         }
         else
         {
@@ -1030,7 +1034,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     [HttpPost("remove-request/{legislativeAreaId}", Name = Routes.RemoveLegislativeAreaRequest)]
     public async Task<IActionResult> RemoveLegislativeAreaRequest(Guid id, Guid legislativeAreaId, LegislativeAreaRemoveRequestViewModel vm)
     {
-        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
 
         if (ModelState.IsValid)
