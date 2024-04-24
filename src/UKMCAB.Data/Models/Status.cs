@@ -61,13 +61,13 @@ namespace UKMCAB.Data.Models
         [Description("Pending approval")]
         PendingApprovalToArchiveAndArchiveSchedule,  // After UKAS submitted the LA archive request and waiting for OGD approval
         [Description("Pending approval")]
-        PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin,
+        PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin,
         [Description("To archive")]
         PendingSubmissionToArchiveAndRemoveSchedule, // UKAS to OGD approval before submission
         [Description("Pending approval")]
         PendingApprovalToArchiveAndRemoveSchedule,  // After UKAS submitted the LA archive request and waiting for OGD approval              
         [Description("Pending approval")]
-        PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin,
+        PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin,
         [Description("To unarchive")]
         PendingSubmissionToUnarchive,
         [Description("Pending approval")]
@@ -75,6 +75,12 @@ namespace UKMCAB.Data.Models
         [Description("Declined")]
         DeclinedToRemoveByOGD,
         [Description("Declined by OPSS")]
-        DeclinedToRemoveByOPSS
+        DeclinedToRemoveByOPSS,
+        [Description("Pending approval")]
+        PendingApprovalToUnarchiveByOpssAdmin,
+        [Description("Declined")]
+        DeclinedToUnarchiveByOGD,
+        [Description("Declined by OPSS")]
+        DeclinedToUnarchiveByOPSS
     }
 }

@@ -40,6 +40,10 @@
                     {
                         @:Removing this legislative area will remove the details shown below.
                     }
+                    else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive)
+                    {
+                        @:Archiving this legislative area will archive the details shown below.
+                    }
                 </strong>
             </div>
             <partial name="~/Areas/Admin/views/CAB/LegislativeArea/Partials/_Summary.cshtml" model="Model.LegislativeArea" />
@@ -56,7 +60,11 @@
                         else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
                         {
                             @:The product schedules below are linked to this legislative area and will be removed.
-                        }                        
+                        }
+                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive)
+                        {
+                            @:The product schedules below are linked to this legislative area and will be archived.
+                        }
                     </strong>
                 </div>
                 <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
