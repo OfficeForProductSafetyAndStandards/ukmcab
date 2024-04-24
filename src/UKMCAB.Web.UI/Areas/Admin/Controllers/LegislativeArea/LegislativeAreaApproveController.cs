@@ -62,7 +62,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                        throw new InvalidOperationException("CAB not found");
         
         var lasToApprove =
-            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin).ToList() :            
+            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin or LAStatus.PendingApprovalToUnarchiveByOpssAdmin).ToList() :            
                 _legislativeAreaDetailService.GetPendingApprovalDocumentLegislativeAreaList(document, User);
 
         if (!lasToApprove.Any())
@@ -104,7 +104,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         {   
             LAStatus.PendingSubmissionToRemove or LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToRemoveByOpssAdmin => LegislativeAreaReviewActionEnum.Remove,
             LAStatus.PendingSubmissionToArchiveAndRemoveSchedule or LAStatus.PendingApprovalToArchiveAndRemoveSchedule or LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.Archive,
-            LAStatus.PendingApprovalToUnarchive => LegislativeAreaReviewActionEnum.Unarchive,
+            LAStatus.PendingApprovalToUnarchive or LAStatus.PendingApprovalToUnarchiveByOpssAdmin => LegislativeAreaReviewActionEnum.Unarchive,
             _ => LegislativeAreaReviewActionEnum.Add,
         };
 
@@ -277,6 +277,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 LegislativeAreaReviewActionEnum.Archive when docLa.Status ==
                                                              LAStatus.PendingSubmissionToArchiveAndRemoveSchedule =>
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin,
+                LegislativeAreaReviewActionEnum.Unarchive => LAStatus.ApprovedToUnarchiveByOPSS,
                 _ => newLAStatus
             };
         }

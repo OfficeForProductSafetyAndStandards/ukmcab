@@ -50,7 +50,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         {
             return Status switch
             {
-                LAStatus.Approved => $"{Status.GetEnumDescription()} by {RoleName}",
+                LAStatus.Approved or LAStatus.PendingApprovalToUnarchiveByOpssAdmin => 
+                    $"{Status.GetEnumDescription()} by {RoleName}",
                 LAStatus.Declined or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS =>
                     $"{Status.GetEnumDescription()} by {RoleName}",
                 LAStatus.PendingApproval
@@ -59,7 +60,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
                     or LAStatus.PendingApprovalToArchiveAndRemoveSchedule
                     or LAStatus.PendingApprovalToUnarchive
                     =>
-                    $"{Status.GetEnumDescription()} from {RoleName}",
+                    $"{Status.GetEnumDescription()} from {RoleName}", 
                 _ => Status.GetEnumDescription()
             };
         }
