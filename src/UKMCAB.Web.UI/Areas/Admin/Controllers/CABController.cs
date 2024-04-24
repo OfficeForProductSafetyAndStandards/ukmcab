@@ -601,8 +601,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                     Guid.Parse(latest.CABId),
                                     latest.Name, userAccount, receiverEmailId,
                                     latestDocumentLegislativeArea);
-                                latestDocumentLegislativeArea.Status =
-                                    LAStatus.PendingApprovalToArchiveAndArchiveSchedule;
+                                latestDocumentLegislativeArea.Status = latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToArchiveAndArchiveSchedule ?  
+                                    LAStatus.PendingApprovalToArchiveAndArchiveSchedule : LAStatus.PendingApprovalToArchiveAndRemoveSchedule;
                                 break;
                             } 
                             case LAStatus.PendingSubmissionToUnarchive:
