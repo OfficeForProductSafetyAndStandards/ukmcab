@@ -76,11 +76,13 @@ namespace UKMCAB.Data.Models
         DeclinedToRemoveByOGD,
         [Description("Declined by OPSS")]
         DeclinedToRemoveByOPSS,
-        [Description("Pending approval")]
+        [Description("Approved")]
         PendingApprovalToUnarchiveByOpssAdmin,
         [Description("Declined")]
         DeclinedToUnarchiveByOGD,
         [Description("Declined by OPSS")]
-        DeclinedToUnarchiveByOPSS
+        DeclinedToUnarchiveByOPSS,
+        [Description("Approved by OPSS")]
+        ApprovedToUnarchiveByOPSS
     }
 }

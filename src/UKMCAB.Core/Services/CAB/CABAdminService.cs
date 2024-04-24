@@ -327,7 +327,7 @@ namespace UKMCAB.Core.Services.CAB
             }
             else
             {
-                latestDocument.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS).ForEach(la => la.Status = LAStatus.Published);
+                latestDocument.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS or LAStatus.ApprovedToUnarchiveByOPSS).ForEach(la => la.Status = LAStatus.Published);
 
                 await RemoveLegislativeAreasNotApprovedByOPSS(latestDocument);
             }
@@ -599,6 +599,12 @@ namespace UKMCAB.Core.Services.CAB
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Status = approvedLAStatus;
+
+            if (documentLegislativeArea.Status == LAStatus.ApprovedToUnarchiveByOPSS)
+            {
+                documentLegislativeArea.Archived = false;
+            }
+
             await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
