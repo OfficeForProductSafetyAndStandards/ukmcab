@@ -52,6 +52,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
         [Description("remove")]
         Remove  = 1,
         [Description("archive")]
-        Archive = 2
+        Archive = 2,
+        [Description("unarchive")]
+        Unarchive = 3
     }
 }
