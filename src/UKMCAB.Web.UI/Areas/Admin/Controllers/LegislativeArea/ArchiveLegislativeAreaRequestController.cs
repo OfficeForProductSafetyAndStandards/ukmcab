@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
@@ -23,8 +24,8 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
         public const string ArchiveLegislativeArea = "archive.legislative.area";
     }
 
-    [HttpGet("archive-request/{legislativeAreaId}", Name = Routes.ArchiveLegislativeArea)]
-    public async Task<IActionResult> ArchiveAsync(Guid id, Guid legislativeAreaId)
+    [HttpGet("archive-request/{legislativeAreaId}/{removeActionEnum?}", Name = Routes.ArchiveLegislativeArea)]
+    public async Task<IActionResult> ArchiveAsync(Guid id, Guid legislativeAreaId, RemoveActionEnum removeActionEnum = RemoveActionEnum.Archive )
     {
         var vm = new LegislativeAreaArchiveRequestViewModel(id, string.Empty);
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
@@ -35,9 +36,9 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
         return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaReason.cshtml", vm);
     }
 
-    [HttpPost("archive-request/{legislativeAreaId}", Name = Routes.ArchiveLegislativeArea)]
+    [HttpPost("archive-request/{legislativeAreaId}/{removeActionEnum?}", Name = Routes.ArchiveLegislativeArea)]
     public async Task<IActionResult> ArchiveAsync(Guid id, Guid legislativeAreaId,
-        LegislativeAreaArchiveRequestViewModel vm)
+        LegislativeAreaArchiveRequestViewModel vm, RemoveActionEnum removeActionEnum = RemoveActionEnum.Archive)
     {
         if (!ModelState.IsValid)
         {
@@ -48,6 +49,10 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
         var documentLegislativeArea =
             latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
         documentLegislativeArea.Status = LAStatus.PendingSubmissionToArchiveAndArchiveSchedule;
+        if (removeActionEnum == RemoveActionEnum.Remove)
+        {
+            documentLegislativeArea.Status = LAStatus.PendingSubmissionToArchiveAndRemoveSchedule;
+        }
         documentLegislativeArea.RequestReason = vm.ArchiveReason;
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!,
