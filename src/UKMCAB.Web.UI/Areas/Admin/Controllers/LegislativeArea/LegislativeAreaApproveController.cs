@@ -237,7 +237,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var newLAStatus = GetNewLAStatusOnApprove(docLa, ReviewActionEnum);
         await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId, newLAStatus);
         TempData[Constants.ApprovedLA] = true;
-        //await MarkRequestTaskAsCompleteAsync(docLa.Id, approver);
+        await MarkRequestTaskAsCompleteAsync(docLa.Id, approver);
         if (currentUser.Role != Roles.OPSS.Id)
         {
             await SendNotificationOfLegislativeAreaApprovalAsync(cabId, document.Name, docLa, currentUser,
@@ -297,7 +297,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             UserRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
-        //await MarkRequestTaskAsCompleteAsync(docLa.Id, decliner);
+        await MarkRequestTaskAsCompleteAsync(docLa.Id, decliner);
 
         // send legislative area decline notification
         await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, ReviewActionEnum, declineReason, document.CreatedByUserGroup);
