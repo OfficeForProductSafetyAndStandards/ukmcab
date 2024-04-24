@@ -12,7 +12,6 @@ public static class DataConstants
         public const string Database = "main";
         public const string CabContainer = "cab-documents";
         public const string LegislativeAreasContainer = "legislative-areas";
-        public const string ProceduresContainer = "procedures";
     }
 
     public static class Search

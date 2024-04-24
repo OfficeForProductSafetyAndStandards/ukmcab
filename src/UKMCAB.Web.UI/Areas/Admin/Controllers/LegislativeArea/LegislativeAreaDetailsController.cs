@@ -831,13 +831,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var product = await _legislativeAreaService.GetProductByIdAsync(pp.ProductId.Value);
             if (product?.Name != null) 
                 returnHiddenScopeOfAppointments.Add(product.Name);
-
-            foreach (var procedureId in pp.ProcedureIds)
-            {
-                var procedureName = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                if (procedureName?.Name != null && !returnHiddenScopeOfAppointments.Contains(procedureName.Name))
-                    returnHiddenScopeOfAppointments.Add(procedureName.Name);
-            }
         }
 
         return returnHiddenScopeOfAppointments;
