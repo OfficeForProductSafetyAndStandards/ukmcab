@@ -588,11 +588,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             }
                             case LAStatus.PendingSubmissionToRemove or LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingSubmissionToArchiveAndRemoveSchedule:
                             {
-                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(
+                                    Guid.Parse(latest.CABId),
                                     latest.Name, userAccount, receiverEmailId,
                                     latestDocumentLegislativeArea);
+                                latestDocumentLegislativeArea.Status = latestDocumentLegislativeArea.Status == 
+                                                                       LAStatus.PendingSubmissionToArchiveAndArchiveSchedule
+                                    ? LAStatus.PendingApprovalToArchiveAndArchiveSchedule
+                                    : LAStatus.PendingApprovalToRemove;
 
-                                latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
                                 break;
                             }
                             case LAStatus.PendingSubmissionToUnarchive:
