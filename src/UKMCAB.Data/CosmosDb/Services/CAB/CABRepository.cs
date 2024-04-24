@@ -33,9 +33,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             {
                 var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
                 var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
-                
-                var proceduresContainer = database.GetContainer(DataConstants.CosmosDb.ProceduresContainer);
-                var procedures = await Query<Procedure>(proceduresContainer, x => true);
 
                 foreach (var document in items)
                 {
@@ -57,25 +54,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
                         //Set LA Role Id
                         la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
-                    }
-                    //Add procedures to the searchable field HiddenScopeOfAppointments
-                    foreach (var sop in document.ScopeOfAppointments)
-                    {
-                        if (sop.ProductIdAndProcedureIds.Any())
-                        {
-                            foreach (var piPi in sop.ProductIdAndProcedureIds)
-                            {
-                                foreach (var pId in piPi.ProcedureIds)
-                                {
-                                    var procedureName = procedures.FirstOrDefault(p => p.Id == pId);
-                                    if (!string.IsNullOrWhiteSpace(procedureName?.Name) && !document.HiddenScopeOfAppointments.Contains(procedureName.Name))
-                                    {
-                                        document.HiddenScopeOfAppointments.Add(procedureName.Name);
-                                    }
-                                }
-                            }
-                           
-                        }
                     }
                     
                     await UpdateAsync(document);
