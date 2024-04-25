@@ -85,7 +85,10 @@ public class WorkflowTaskServiceTests
             completed,
             cabId ?? _faker.Random.Guid(),
             documentLAId ?? _faker.Random.Guid()
-        );
+        )
+        {
+            SentOn = DateTime.Now.AddDays(-1)
+        };
         return task;
     }
 
