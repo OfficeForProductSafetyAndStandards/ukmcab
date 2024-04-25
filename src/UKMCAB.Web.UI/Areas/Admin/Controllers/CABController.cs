@@ -18,9 +18,6 @@ using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
-using UKMCAB.Common.Extensions;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -466,11 +463,25 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
                 LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.ApprovedByOpssAdmin or
-                LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin
+                    LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToUnarchiveByOPSS
                 ),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.DeclinedToRemoveByOPSS or LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedByOpssAdmin or LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin)
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is 
+                    LAStatus.Approved or 
+                    LAStatus.Declined or 
+                    LAStatus.DeclinedToRemoveByOPSS or 
+                    LAStatus.ApprovedByOpssAdmin or 
+                    LAStatus.DeclinedByOpssAdmin or 
+                    LAStatus.ApprovedToRemoveByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToUnarchiveByOPSS or
+                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
+                    LAStatus.DeclinedToUnarchiveByOPSS)
             };
-
+        
             //Lock Record for edit
             if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed
                                                           && latest.StatusValue is Status.Draft or Status.Published
@@ -586,21 +597,32 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                                 break;
                             }
-                            case LAStatus.PendingSubmissionToRemove or LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingSubmissionToArchiveAndRemoveSchedule:
+                            case LAStatus.PendingSubmissionToRemove :
                             {
-                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(
+                                    Guid.Parse(latest.CABId),
                                     latest.Name, userAccount, receiverEmailId,
                                     latestDocumentLegislativeArea);
-
                                 latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
                                 break;
                             }
+                            case  LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingSubmissionToArchiveAndRemoveSchedule:
+                            {
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(
+                                    Guid.Parse(latest.CABId),
+                                    latest.Name, userAccount, receiverEmailId,
+                                    latestDocumentLegislativeArea);
+                                latestDocumentLegislativeArea.Status = latestDocumentLegislativeArea.Status == LAStatus.PendingSubmissionToArchiveAndArchiveSchedule ?  
+                                    LAStatus.PendingApprovalToArchiveAndArchiveSchedule : LAStatus.PendingApprovalToArchiveAndRemoveSchedule;
+                                break;
+                            } 
                             case LAStatus.PendingSubmissionToUnarchive:
                             {
-                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
-                                latest.Name, userAccount, receiverEmailId,
-                                latestDocumentLegislativeArea);
-                                latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToUnarchive ;
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(
+                                    Guid.Parse(latest.CABId),
+                                    latest.Name, userAccount, receiverEmailId,
+                                    latestDocumentLegislativeArea);
+                                latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToUnarchive;
                                 break;
                             }
                         }
@@ -986,7 +1008,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return _legislativeAreaDetailService.GetPendingApprovalDocumentLegislativeAreaList(document, User).Count;
             }   
 
-            return document.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin);
+            return document.DocumentLegislativeAreas.Count(dla => dla.Status is
+                LAStatus.Approved or
+                LAStatus.PendingApprovalToRemoveByOpssAdmin or
+                LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                LAStatus.PendingApprovalToUnarchive or
+                LAStatus.PendingApprovalToUnarchiveByOpssAdmin);
         }
     }
 }

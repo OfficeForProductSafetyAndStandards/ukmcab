@@ -831,13 +831,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var product = await _legislativeAreaService.GetProductByIdAsync(pp.ProductId.Value);
             if (product?.Name != null) 
                 returnHiddenScopeOfAppointments.Add(product.Name);
-
-            foreach (var procedureId in pp.ProcedureIds)
-            {
-                var procedureName = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                if (procedureName?.Name != null && !returnHiddenScopeOfAppointments.Contains(procedureName.Name))
-                    returnHiddenScopeOfAppointments.Add(procedureName.Name);
-            }
         }
 
         return returnHiddenScopeOfAppointments;
@@ -912,7 +905,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 //TODO : When OPSS - Admin approves the Archive request - need to invoke the below method
                 // await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
                 return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
-                    new { Area = "admin", id, legislativeAreaId });
+                    new { Area = "admin", id, legislativeAreaId, removeActionEnum = vm.LegislativeAreaRemoveAction.Value });
             }
         }
 
@@ -1007,7 +1000,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
 
             return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
-                new { Area = "admin", id, legislativeAreaId });
+                new { Area = "admin", id, legislativeAreaId, removeActionEnum = vm.ProductScheduleAction.Value  });
         }
         else
         {

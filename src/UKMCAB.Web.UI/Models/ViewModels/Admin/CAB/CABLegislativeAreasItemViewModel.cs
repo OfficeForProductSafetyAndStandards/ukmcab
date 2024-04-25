@@ -28,9 +28,17 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CanChooseScopeOfAppointment { get; set; }
         public bool? IsArchived { get; init; }
         public Guid? SelectedScopeOfAppointmentId { get; set; }
-        public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PurposeOfAppointment));
-        public bool ShowCategoryColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
-        public bool ShowProductColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));
+
+        public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null &&
+                                                      ScopeOfAppointments.Any(x =>
+                                                          !string.IsNullOrEmpty(x.PurposeOfAppointment));
+
+        public bool ShowCategoryColumn => ScopeOfAppointments != null &&
+                                          ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
+
+        public bool ShowProductColumn => ScopeOfAppointments != null &&
+                                         ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));
+
         public LAStatus Status { get; set; }
         public string StatusName => GetStatusName();
         public string StatusCssStyle { get; set; } = string.Empty;
@@ -42,9 +50,17 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         {
             return Status switch
             {
-                LAStatus.Approved => $"{Status.GetEnumDescription()} by {RoleName}",
-                LAStatus.Declined  or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS => $"{Status.GetEnumDescription()} by {RoleName}",
-                LAStatus.PendingApproval or LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndRemoveSchedule => $"{Status.GetEnumDescription()} from {RoleName}",
+                LAStatus.Approved or LAStatus.PendingApprovalToUnarchiveByOpssAdmin => 
+                    $"{Status.GetEnumDescription()} by {RoleName}",
+                LAStatus.Declined or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS =>
+                    $"{Status.GetEnumDescription()} by {RoleName}",
+                LAStatus.PendingApproval
+                    or LAStatus.PendingApprovalToRemove
+                    or LAStatus.PendingApprovalToArchiveAndArchiveSchedule
+                    or LAStatus.PendingApprovalToArchiveAndRemoveSchedule
+                    or LAStatus.PendingApprovalToUnarchive
+                    =>
+                    $"{Status.GetEnumDescription()} from {RoleName}", 
                 _ => Status.GetEnumDescription()
             };
         }

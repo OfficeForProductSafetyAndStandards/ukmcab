@@ -56,18 +56,18 @@ namespace UKMCAB.Data.Models
         PendingApprovalToRemove,
         [Description("Pending approval")]
         PendingApprovalToRemoveByOpssAdmin,
-        [Description("To archive and archive product schedule")]
-        PendingSubmissionToArchiveAndArchiveSchedule,
+        [Description("To archive")]
+        PendingSubmissionToArchiveAndArchiveSchedule, // UKAS to OGD approval before submission
         [Description("Pending approval")]
-        PendingApprovalToArchiveAndArchiveSchedule,
+        PendingApprovalToArchiveAndArchiveSchedule,  // After UKAS submitted the LA archive request and waiting for OGD approval
         [Description("Pending approval")]
-        PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin,
-        [Description("To archive and remove product schedule")]
-        PendingSubmissionToArchiveAndRemoveSchedule,
+        PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin,
+        [Description("To archive")]
+        PendingSubmissionToArchiveAndRemoveSchedule, // UKAS to OGD approval before submission
         [Description("Pending approval")]
-        PendingApprovalToArchiveAndRemoveSchedule,               
+        PendingApprovalToArchiveAndRemoveSchedule,  // After UKAS submitted the LA archive request and waiting for OGD approval              
         [Description("Pending approval")]
-        PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin,
+        PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin,
         [Description("To unarchive")]
         PendingSubmissionToUnarchive,
         [Description("Pending approval")]
@@ -75,6 +75,14 @@ namespace UKMCAB.Data.Models
         [Description("Declined")]
         DeclinedToRemoveByOGD,
         [Description("Declined by OPSS")]
-        DeclinedToRemoveByOPSS
+        DeclinedToRemoveByOPSS,
+        [Description("Approved")]
+        PendingApprovalToUnarchiveByOpssAdmin,
+        [Description("Declined")]
+        DeclinedToUnarchiveByOGD,
+        [Description("Declined by OPSS")]
+        DeclinedToUnarchiveByOPSS,
+        [Description("Approved by OPSS")]
+        ApprovedToUnarchiveByOPSS
     }
 }

@@ -223,7 +223,7 @@ public class NotificationController : UI.Controllers.ControllerBase
                 Subject: notification.TaskType.GetEnumDescription(),
                 CABName: cabName,
                 Assignee: notification.Assignee?.FirstAndLastName,
-                LastUpdated: notification.SentOn,
+                LastUpdated: notification.LastUpdatedOn.ToLocalTime(),
                 DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails,
                     new { id = notification.Id.ToString() }));
             items.Add(item);
