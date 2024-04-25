@@ -61,9 +61,14 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
         
-        var lasToApprove =
-            UserRoleId == Roles.OPSS.Id ? document.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin).ToList() :            
-                _legislativeAreaDetailService.GetPendingApprovalDocumentLegislativeAreaList(document, User);
+        var lasToApprove = UserRoleId == Roles.OPSS.Id 
+            ? document.DocumentLegislativeAreas.Where(la => 
+                la.Status is LAStatus.Approved or 
+                LAStatus.PendingApprovalToRemoveByOpssAdmin or 
+                LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or 
+                LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                LAStatus.PendingApprovalToUnarchiveByOpssAdmin).ToList() 
+            : _legislativeAreaDetailService.GetPendingApprovalDocumentLegislativeAreaList(document, User);
 
         if (!lasToApprove.Any())
         {
