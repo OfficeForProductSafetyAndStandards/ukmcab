@@ -18,9 +18,6 @@ using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
-using UKMCAB.Common.Extensions;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion.Internal;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -469,9 +466,22 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.ApprovedToUnarchiveByOPSS
                 ),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.DeclinedToRemoveByOPSS or LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedByOpssAdmin or LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or LAStatus.PendingApprovalToUnarchiveByOpssAdmin or LAStatus.ApprovedToUnarchiveByOPSS or LAStatus.DeclinedToUnarchiveByOPSS)
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is 
+                    LAStatus.Approved or 
+                    LAStatus.Declined or 
+                    LAStatus.DeclinedToRemoveByOPSS or 
+                    LAStatus.ApprovedByOpssAdmin or 
+                    LAStatus.DeclinedByOpssAdmin or 
+                    LAStatus.ApprovedToRemoveByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToUnarchiveByOPSS or
+                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
+                    LAStatus.DeclinedToUnarchiveByOPSS)
             };
-
+        
             //Lock Record for edit
             if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed
                                                           && latest.StatusValue is Status.Draft or Status.Published
@@ -1001,8 +1011,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return document.DocumentLegislativeAreas.Count(dla => dla.Status is
                 LAStatus.Approved or
                 LAStatus.PendingApprovalToRemoveByOpssAdmin or
-                LAStatus.PendingApprovalToToArchiveAndArchiveScheduleByOpssAdmin or
-                LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin or
+                LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
                 LAStatus.PendingApprovalToUnarchive or
                 LAStatus.PendingApprovalToUnarchiveByOpssAdmin);
         }

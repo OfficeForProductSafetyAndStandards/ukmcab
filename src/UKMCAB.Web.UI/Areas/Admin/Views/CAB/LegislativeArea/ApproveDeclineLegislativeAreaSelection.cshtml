@@ -40,6 +40,10 @@
                     {
                         @:Removing this legislative area will remove the details shown below.
                     }
+                    else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule || Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule)
+                    {
+                        @:Archiving this legislative area will archive the details shown below.
+                    }
                     else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Unarchive)
                     {
                         @:Unarchiving this legislative area will unarchive the details shown below.
@@ -58,6 +62,14 @@
                             @:Approving this legislative area will approve the product schedules associated with it.
                         }
                         else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+                        {
+                            @:The product schedules below are linked to this legislative area and will be removed.
+                        }
+                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule)
+                        {
+                            @:The product schedules below are linked to this legislative area and will be archived.
+                        }
+                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule)
                         {
                             @:The product schedules below are linked to this legislative area and will be removed.
                         }

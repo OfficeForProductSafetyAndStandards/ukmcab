@@ -100,7 +100,7 @@ namespace UKMCAB.Web.UI.Services
                     (dla.Status == LAStatus.PendingApproval ||
                      dla.Status == LAStatus.PendingApprovalToRemove ||
                      dla.Status == LAStatus.PendingApprovalToArchiveAndArchiveSchedule ||
-                     dla.Status == LAStatus.PendingApprovalToToArchiveAndRemoveScheduleByOpssAdmin ||
+                     dla.Status == LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin ||
                      dla.Status == LAStatus.PendingApprovalToUnarchive)
                     && user.IsInRole(dla.RoleId)).ToList();
         }
