@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.ApplicationInsights;
+using Microsoft.Extensions.Options;
 using Notify.Interfaces;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
@@ -19,11 +20,14 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         private readonly CoreEmailTemplateOptions _templateOptions;
         private readonly IAppHost _appHost;
         private readonly LinkGenerator _linkGenerator;
+        private readonly TelemetryClient _telemetryClient;
+        private readonly Timer _timer;
+        private DateTime _nextRunTime;
 
-
-        public ReviewDateReminderBackgroundService(ILogger<ReviewDateReminderBackgroundService> logger, ICABRepository cabRepository, IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, LinkGenerator linkGenerator, IAppHost appHost)
+        public ReviewDateReminderBackgroundService(ILogger<ReviewDateReminderBackgroundService> logger, TelemetryClient telemetryClient, ICABRepository cabRepository, IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, LinkGenerator linkGenerator, IAppHost appHost)
         {
             _logger = logger;
+            _telemetryClient = telemetryClient;
             _cabRepository = cabRepository;
             _workflowTaskService = workflowTaskService;
             _notificationClient = notificationClient;
@@ -33,55 +37,82 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await Task.Delay(10_000);
-            await CheckAndSendReviewDateReminder(stoppingToken);            
-        }
+            await Task.Delay(10_000, CancellationToken.None);
 
-        private async Task CheckAndSendReviewDateReminder(CancellationToken stoppingToken)
-        {
             while (!stoppingToken.IsCancellationRequested)
             {
-                var publishedCABs = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published));
-                var noOfReminderSent = 0;
-                foreach (var cab in publishedCABs)
+                if (_nextRunTime == default || _nextRunTime.Date < DateTime.Today)
                 {
-                    var resourcePath = _linkGenerator.GetPathByRouteValues(CABProfileController.Routes.CabDetails, new { id = cab.CABId }) ?? string.Empty;
-                    var baseUrl = _appHost.GetBaseUri().ToString() ?? string.Empty;
-                    baseUrl = baseUrl.EndsWith("/") ? baseUrl.Substring(0, baseUrl.Length - 1) : baseUrl;
-                    var fullUrl = $"{baseUrl}{resourcePath}";
-                    var user = new User("", "System", "Notification",Roles.OPSS.Id, _templateOptions.ContactUsOPSSEmail);
-
-                    var cabReviewDate = cab.RenewalDate;
-
-                    if (IsReviewReminderNeeded(cabReviewDate))
-                    {
-                        await SendInternalNotificationForCABReviewDateReminderAsync(cab, user, (DateTime)cabReviewDate!, fullUrl);
-                        noOfReminderSent++;
-                    }
-
-                    var legislativeAreasWithReviewDate = cab.DocumentLegislativeAreas.Where(la => la.ReviewDate != null);
-                    if (legislativeAreasWithReviewDate != null)
-                    {
-                        foreach (var la in legislativeAreasWithReviewDate)
-                        {
-                            if (IsReviewReminderNeeded(la.ReviewDate))
-                            {
-                                await SendInternalNotificationForLAReviewDateReminderAsync(cab, la, user, (DateTime)cabReviewDate!, fullUrl);
-                                noOfReminderSent++;
-                            }
-                        }
-                    }
+                    _nextRunTime = DateTime.Today.AddHours(5);
                 }
-                _logger.LogInformation($"{nameof(ReviewDateReminderBackgroundService)} ran successfully at {DateTime.Now}");
-                if(noOfReminderSent > 0)
+
+                var delay = (int)(_nextRunTime - DateTime.Now).TotalMilliseconds;
+                delay = Math.Max(delay, 0);
+                await Task.Delay(delay, stoppingToken);
+
+                try
                 {
-                    var verb = noOfReminderSent > 1 ? "were" : "was";
-                    _logger.LogInformation($"{noOfReminderSent} CAB review date reminders {verb} sent at: {DateTime.Now}");
+                    await CheckAndSendReviewDateReminder();
+                    _nextRunTime = _nextRunTime.AddDays(1);
                 }
-                
-                await Task.Delay(600_000, stoppingToken);
+                catch (Exception ex)
+                {
+                    _telemetryClient.TrackException(ex);
+                    _logger.LogError(ex, ex.Message);
+                }
             }
         }
+        private async Task CheckAndSendReviewDateReminder()
+        {
+            var publishedCABs = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published));
+            var noOfReminderSent = 0;
+            foreach (var cab in publishedCABs)
+            {
+                noOfReminderSent = await SendReminderAndCountSent(noOfReminderSent, cab);
+            }
+
+            if (noOfReminderSent > 0)
+            {
+                _logger.LogInformation($"{nameof(ReviewDateReminderBackgroundService)} ran successfully at {DateTime.Now}. {noOfReminderSent} CAB review date reminders sent.");
+            }
+            else
+            {
+                _logger.LogInformation($"{nameof(ReviewDateReminderBackgroundService)} ran successfully at {DateTime.Now}");
+            }
+        }
+
+        private async Task<int> SendReminderAndCountSent(int noOfReminderSent, Document cab)
+        {
+            var resourcePath = _linkGenerator.GetPathByRouteValues(CABProfileController.Routes.CabDetails, new { id = cab.CABId }) ?? string.Empty;
+            var baseUrl = _appHost.GetBaseUri().ToString() ?? string.Empty;
+            baseUrl = baseUrl.EndsWith("/") ? baseUrl.Substring(0, baseUrl.Length - 1) : baseUrl;
+            var fullUrl = $"{baseUrl}{resourcePath}";
+            var user = new User("", "System", "Notification", Roles.OPSS.Id, _templateOptions.ContactUsOPSSEmail);
+
+            var cabReviewDate = cab.RenewalDate;
+
+            if (IsReviewReminderNeeded(cabReviewDate))
+            {
+                await SendInternalNotificationForCABReviewDateReminderAsync(cab, user, (DateTime)cabReviewDate!, fullUrl);
+                noOfReminderSent++;
+            }
+
+            var legislativeAreasWithReviewDate = cab.DocumentLegislativeAreas.Where(la => la.ReviewDate != null);
+            if (legislativeAreasWithReviewDate != null)
+            {
+                foreach (var la in legislativeAreasWithReviewDate)
+                {
+                    if (IsReviewReminderNeeded(la.ReviewDate))
+                    {
+                        await SendInternalNotificationForLAReviewDateReminderAsync(cab, la, user, (DateTime)cabReviewDate!, fullUrl);
+                        noOfReminderSent++;
+                    }
+                }
+            }
+
+            return noOfReminderSent;
+        }
+
         private bool IsReviewReminderNeeded(DateTime? renewalDate)
         {
             if (renewalDate == null) return false;
@@ -106,8 +137,8 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
             await _workflowTaskService.CreateAsync(
                 new WorkflowTask(
                     TaskType.CABReviewDue,
-                    user, 
-                    user.RoleId, 
+                    user,
+                    user.RoleId,
                     null,
                     DateTime.Now,
                     $"The review date for this CAB is {reviewDate.ToStringBeisDateFormat()}. This is a reminder to review the CAB and ensure that all information is relevant and up to date.",
@@ -119,10 +150,9 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                     Guid.Parse(cab.CABId),
                     null
                     ));
-        } 
+        }
         private async Task SendInternalNotificationForLAReviewDateReminderAsync(Document cab, DocumentLegislativeArea LA, User user, DateTime cabReviewDate, string url)
-        {        
-
+        {
             var personalisation = new Dictionary<string, dynamic?>
             {
                 { "CABName", cab.Name },
@@ -137,8 +167,8 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
             await _workflowTaskService.CreateAsync(
                 new WorkflowTask(
                     TaskType.LAReviewDue,
-                    user, 
-                    user.RoleId, 
+                    user,
+                    user.RoleId,
                     null,
                     DateTime.Now,
                     $"The review date for this CAB is {cabReviewDate.ToStringBeisDateFormat()}. This is a reminder to review the CAB and ensure that all information is relevant and up to date.\nThe review date for the {LA.LegislativeAreaName} legislative area associated with this CAB is {LA.ReviewDate.ToStringBeisDateFormat()}. This is a reminder to review the legislative area and ensure that all information is relevant and up to date.",
@@ -150,6 +180,18 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                     Guid.Parse(cab.CABId),
                     null
                     ));
+        }
+
+        public override async Task StopAsync(CancellationToken cancellationToken)
+        {
+            _timer?.Change(Timeout.Infinite, 0);
+            await base.StopAsync(cancellationToken);
+        }
+
+        public override void Dispose()
+        {
+            _timer?.Dispose();
+            base.Dispose();
         }
     }
 }
