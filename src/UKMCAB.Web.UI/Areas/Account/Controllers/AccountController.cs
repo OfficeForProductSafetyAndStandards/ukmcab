@@ -386,7 +386,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             public const string RequestAccount = "account.request";
             public const string RequestAccountSuccess = "account.request.success";
             public const string UserProfile = "account.user.profile";
-            public const string AccessDenied = "account.access.denined";
+            public const string AccessDenied = "account.access.denied";
         }
     }
 
