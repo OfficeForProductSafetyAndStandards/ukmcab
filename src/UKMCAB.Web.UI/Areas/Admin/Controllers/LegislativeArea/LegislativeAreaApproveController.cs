@@ -257,10 +257,10 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 LegislativeAreaReviewActionEnum.Add => LAStatus.Approved,
                 LegislativeAreaReviewActionEnum.Remove => LAStatus.PendingApprovalToRemoveByOpssAdmin,
                 LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule when docLa.Status ==
-                                                             LAStatus.PendingSubmissionToArchiveAndArchiveSchedule =>
+                                                             LAStatus.PendingApprovalToArchiveAndArchiveSchedule =>
                     LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin,
                 LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule when docLa.Status ==
-                                                             LAStatus.PendingSubmissionToArchiveAndRemoveSchedule =>
+                                                             LAStatus.PendingApprovalToArchiveAndRemoveSchedule =>
                     LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin,
                 LegislativeAreaReviewActionEnum.Unarchive => LAStatus.PendingApprovalToUnarchiveByOpssAdmin,
                 _ => newLAStatus
@@ -273,10 +273,10 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 LegislativeAreaReviewActionEnum.Add => LAStatus.ApprovedByOpssAdmin,
                 LegislativeAreaReviewActionEnum.Remove => LAStatus.ApprovedToRemoveByOpssAdmin,
                 LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule when docLa.Status ==
-                                                             LAStatus.PendingSubmissionToArchiveAndArchiveSchedule =>
+                                                             LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin =>
                     LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin,
                 LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule when docLa.Status ==
-                                                             LAStatus.PendingSubmissionToArchiveAndRemoveSchedule =>
+                                                             LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin =>
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin,
                 LegislativeAreaReviewActionEnum.Unarchive => LAStatus.ApprovedToUnarchiveByOPSS,
                 _ => newLAStatus
