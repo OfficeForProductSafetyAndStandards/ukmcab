@@ -278,6 +278,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule when docLa.Status ==
                                                              LAStatus.PendingSubmissionToArchiveAndRemoveSchedule =>
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin,
+                LegislativeAreaReviewActionEnum.Unarchive => LAStatus.ApprovedToUnarchiveByOPSS,
                 _ => newLAStatus
             };
         }
