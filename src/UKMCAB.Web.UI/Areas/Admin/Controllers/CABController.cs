@@ -471,7 +471,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.Declined or 
                     LAStatus.DeclinedToRemoveByOPSS or 
                     LAStatus.ApprovedByOpssAdmin or 
-                    LAStatus.DeclinedByOpssAdmin or 
+                    LAStatus.DeclinedByOpssAdmin or
+                    LAStatus.PendingApprovalToRemoveByOpssAdmin or
                     LAStatus.ApprovedToRemoveByOpssAdmin or 
                     LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
@@ -688,6 +689,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             model.CABName = latest.Name;
+            await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
+
             return View(model);
         }
 
