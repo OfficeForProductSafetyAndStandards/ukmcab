@@ -40,14 +40,18 @@
                     {
                         @:Removing this legislative area will remove the details shown below.
                     }
-                    else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive)
+                    else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule || Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule)
                     {
                         @:Archiving this legislative area will archive the details shown below.
+                    }
+                    else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Unarchive)
+                    {
+                        @:Unarchiving this legislative area will unarchive the details shown below.
                     }
                 </strong>
             </div>
             <partial name="~/Areas/Admin/views/CAB/LegislativeArea/Partials/_Summary.cshtml" model="Model.LegislativeArea" />
-            @if (Model.ActiveProductSchedules.Any())
+            @if (Model.ProductSchedules.Any())
             {
                 <div class="govuk-warning-text govuk-!-margin-top-4">
                     <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -61,9 +65,17 @@
                         {
                             @:The product schedules below are linked to this legislative area and will be removed.
                         }
-                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Archive)
+                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule)
                         {
                             @:The product schedules below are linked to this legislative area and will be archived.
+                        }
+                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule)
+                        {
+                            @:The product schedules below are linked to this legislative area and will be removed.
+                        }
+                        else if (Model.ReviewActionEnum == LegislativeAreaReviewActionEnum.Unarchive)
+                        {
+                            @:Unarchiving the legislative area will unarchive the product schedules associated with it.
                         }
                     </strong>
                 </div>
@@ -75,7 +87,7 @@
                         </tr>
                     </thead>
                     <tbody class="govuk-table__body">
-                        @foreach (var productSchedule in Model.ActiveProductSchedules)
+                        @foreach (var productSchedule in Model.ProductSchedules)
                         {
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell">

@@ -586,21 +586,32 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                                 break;
                             }
-                            case LAStatus.PendingSubmissionToRemove or LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingSubmissionToArchiveAndRemoveSchedule:
+                            case LAStatus.PendingSubmissionToRemove :
                             {
-                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(
+                                    Guid.Parse(latest.CABId),
                                     latest.Name, userAccount, receiverEmailId,
                                     latestDocumentLegislativeArea);
-
                                 latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToRemove;
                                 break;
                             }
+                            case  LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingSubmissionToArchiveAndRemoveSchedule:
+                            {
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(
+                                    Guid.Parse(latest.CABId),
+                                    latest.Name, userAccount, receiverEmailId,
+                                    latestDocumentLegislativeArea);
+                                latestDocumentLegislativeArea.Status =
+                                    LAStatus.PendingApprovalToArchiveAndArchiveSchedule;
+                                break;
+                            } 
                             case LAStatus.PendingSubmissionToUnarchive:
                             {
-                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(Guid.Parse(latest.CABId),
-                                latest.Name, userAccount, receiverEmailId,
-                                latestDocumentLegislativeArea);
-                                latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToUnarchive ;
+                                await SendNotificationOfLegislativeAreaRequestToRemoveArchiveUnArchiveAsync(
+                                    Guid.Parse(latest.CABId),
+                                    latest.Name, userAccount, receiverEmailId,
+                                    latestDocumentLegislativeArea);
+                                latestDocumentLegislativeArea.Status = LAStatus.PendingApprovalToUnarchive;
                                 break;
                             }
                         }
@@ -986,7 +997,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return _legislativeAreaDetailService.GetPendingApprovalDocumentLegislativeAreaList(document, User).Count;
             }   
 
-            return document.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin);
+            return document.DocumentLegislativeAreas.Count(dla => dla.Status is
+                LAStatus.Approved or
+                LAStatus.PendingApprovalToRemoveByOpssAdmin or
+                LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                LAStatus.PendingApprovalToUnarchive);
         }
     }
 }
