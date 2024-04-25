@@ -9,11 +9,7 @@ public enum TaskType
     [Description("Unarchive CAB request")]
     RequestToUnarchiveForDraft,
     [Description("Unarchive CAB request")]
-    RequestToUnarchiveForPublish,
-    [Description("CAB review due")]
-    CABReviewDue,
-    [Description("Legislative area review due")]
-    LAReviewDue,
+    RequestToUnarchiveForPublish, 
     [Description("Approve account request")]
     UserAccountRequest,
     [Description("CAB approved")]
@@ -55,5 +51,9 @@ public enum TaskType
     [Description("Legislative area request declined to archive")]
     LegislativeAreaDeclinedToArchive,
     [Description("Legislative area request to unarchive")]
-    LegislativeAreaRequestToUnarchive
+    LegislativeAreaRequestToUnarchive,
+    [Description("CAB review due")]
+    CABReviewDue,
+    [Description("Legislative area review due")]
+    LAReviewDue,
 }
