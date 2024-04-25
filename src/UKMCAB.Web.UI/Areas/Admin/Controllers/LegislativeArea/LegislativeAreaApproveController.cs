@@ -106,9 +106,9 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         var reviewAction = documentLa.Status switch
         {   
-            LAStatus.PendingSubmissionToRemove or LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToRemoveByOpssAdmin => LegislativeAreaReviewActionEnum.Remove,
-            LAStatus.PendingSubmissionToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule,
-            LAStatus.PendingSubmissionToArchiveAndRemoveSchedule or LAStatus.PendingApprovalToArchiveAndRemoveSchedule or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule,
+            LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToRemoveByOpssAdmin => LegislativeAreaReviewActionEnum.Remove,
+            LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule,
+            LAStatus.PendingApprovalToArchiveAndRemoveSchedule or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule,
             LAStatus.PendingApprovalToUnarchive => LegislativeAreaReviewActionEnum.Unarchive,
             _ => LegislativeAreaReviewActionEnum.Add,
         };
@@ -261,12 +261,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             {
                 LegislativeAreaReviewActionEnum.Add => LAStatus.Approved,
                 LegislativeAreaReviewActionEnum.Remove => LAStatus.PendingApprovalToRemoveByOpssAdmin,
-                LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule when docLa.Status ==
-                                                             LAStatus.PendingApprovalToArchiveAndArchiveSchedule =>
-                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin,
-                LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule when docLa.Status ==
-                                                             LAStatus.PendingApprovalToArchiveAndRemoveSchedule =>
-                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin,
+                LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule => LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin,
+                LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule => LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin,
                 LegislativeAreaReviewActionEnum.Unarchive => LAStatus.PendingApprovalToUnarchiveByOpssAdmin,
                 _ => newLAStatus
             };
@@ -277,12 +273,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             {
                 LegislativeAreaReviewActionEnum.Add => LAStatus.ApprovedByOpssAdmin,
                 LegislativeAreaReviewActionEnum.Remove => LAStatus.ApprovedToRemoveByOpssAdmin,
-                LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule when docLa.Status ==
-                                                             LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin =>
-                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin,
-                LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule when docLa.Status ==
-                                                             LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin =>
-                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin,
+                LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule => LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin,
+                LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule => LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin,
                 LegislativeAreaReviewActionEnum.Unarchive => LAStatus.ApprovedToUnarchiveByOPSS,
                 _ => newLAStatus
             };

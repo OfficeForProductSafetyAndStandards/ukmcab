@@ -466,9 +466,22 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.ApprovedToUnarchiveByOPSS
                 ),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is LAStatus.Approved or LAStatus.Declined or LAStatus.DeclinedToRemoveByOPSS or LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedByOpssAdmin or LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or LAStatus.PendingApprovalToUnarchiveByOpssAdmin or LAStatus.ApprovedToUnarchiveByOPSS or LAStatus.DeclinedToUnarchiveByOPSS)
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is 
+                    LAStatus.Approved or 
+                    LAStatus.Declined or 
+                    LAStatus.DeclinedToRemoveByOPSS or 
+                    LAStatus.ApprovedByOpssAdmin or 
+                    LAStatus.DeclinedByOpssAdmin or 
+                    LAStatus.ApprovedToRemoveByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToUnarchiveByOPSS or
+                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
+                    LAStatus.DeclinedToUnarchiveByOPSS)
             };
-
+        
             //Lock Record for edit
             if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed
                                                           && latest.StatusValue is Status.Draft or Status.Published
