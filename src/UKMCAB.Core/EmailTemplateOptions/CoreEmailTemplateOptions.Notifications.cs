@@ -6,6 +6,7 @@ public partial class CoreEmailTemplateOptions
     public string ApprovedBodiesEmail { get; set; } = null!;
     public string NotificationCabApproved { get; set; } = null!;
     public string NotificationCabReviewReminder { get; set; } = null!;
+    public string NotificationLegislativeAreaReviewReminder { get; set; } = null!;
     public string NotificationLegislativeAreaRequestToPublish { get; set; } = null!;
     public string NotificationLegislativeAreaPublishApproved { get; set; } = null!;
     public string NotificationLegislativeAreaPublishDeclined { get; set; } = null!;
