@@ -321,13 +321,48 @@ namespace UKMCAB.Core.Services.CAB
                 await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
+            var cabId = new Guid(latestDocument.CABId);
+
+            var docLaToArchive = latestDocument.DocumentLegislativeAreas
+                .Where(docLa => docLa.Status is
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin);
+
+            foreach (var docLa in docLaToArchive)
+            {
+                await ArchiveLegislativeAreaAsync(userAccount, cabId, docLa.LegislativeAreaId);
+
+                var scheduleIds = latestDocument.Schedules?.Where(f => 
+                    f.LegislativeArea != null && 
+                    f.LegislativeArea == docLa.LegislativeAreaName).Select(f => f.Id).ToList();
+
+                if (scheduleIds != null)
+                {
+                    if (docLa.Status == LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin)
+                    {
+                        await ArchiveSchedulesAsync(userAccount, cabId, scheduleIds);
+                    }
+                    else if (docLa.Status == LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin)
+                    {
+                        await RemoveSchedulesAsync(userAccount, cabId, scheduleIds);
+                    }
+                }
+            }
+
             if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
             {
                 latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
             }
             else
             {
-                latestDocument.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS or LAStatus.ApprovedToUnarchiveByOPSS).ForEach(la => la.Status = LAStatus.Published);
+                latestDocument.DocumentLegislativeAreas.Where(la => la.Status is 
+                    LAStatus.ApprovedByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.DeclinedToRemoveByOGD or 
+                    LAStatus.DeclinedToRemoveByOPSS or 
+                    LAStatus.ApprovedToUnarchiveByOPSS
+                ).ForEach(la => la.Status = LAStatus.Published);
 
                 await RemoveLegislativeAreasNotApprovedByOPSS(latestDocument);
             }
