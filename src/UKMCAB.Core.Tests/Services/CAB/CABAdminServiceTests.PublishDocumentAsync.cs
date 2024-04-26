@@ -36,10 +36,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object, document);
 
             // Assert
-            Assert.AreEqual(4, result.DocumentLegislativeAreas.Count);
+            Assert.AreEqual(6, result.DocumentLegislativeAreas.Count);
             Assert.AreEqual(LAStatus.Published, result.DocumentLegislativeAreas.First().Status);
-            Assert.AreEqual(4, result.ScopeOfAppointments.Count);
-            Assert.AreEqual(4, result.Schedules?.Count);
+            Assert.AreEqual(6, result.ScopeOfAppointments.Count);
+            Assert.AreEqual(6, result.Schedules?.Count);
         }
 
         [Test]
