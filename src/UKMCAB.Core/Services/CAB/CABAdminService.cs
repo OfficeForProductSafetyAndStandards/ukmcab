@@ -321,6 +321,34 @@ namespace UKMCAB.Core.Services.CAB
                 await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
+            var cabId = new Guid(latestDocument.CABId);
+
+            var docLaToArchive = latestDocument.DocumentLegislativeAreas
+                .Where(docLa => docLa.Status is
+                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin);
+
+            foreach (var docLa in docLaToArchive)
+            {
+                await ArchiveLegislativeAreaAsync(userAccount, cabId, docLa.LegislativeAreaId);
+
+                var scheduleIds = latestDocument.Schedules?.Where(f => 
+                    f.LegislativeArea != null && 
+                    f.LegislativeArea == docLa.LegislativeAreaName).Select(f => f.Id).ToList();
+
+                if (scheduleIds != null)
+                {
+                    if (docLa.Status == LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin)
+                    {
+                        await ArchiveSchedulesAsync(userAccount, cabId, scheduleIds);
+                    }
+                    else if (docLa.Status == LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin)
+                    {
+                        await RemoveSchedulesAsync(userAccount, cabId, scheduleIds);
+                    }
+                }
+            }
+
             if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
             {
                 latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
