@@ -325,8 +325,8 @@ namespace UKMCAB.Core.Services.CAB
 
             var docLaToArchive = latestDocument.DocumentLegislativeAreas
                 .Where(docLa => docLa.Status is
-                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
-                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin);
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin);
 
             foreach (var docLa in docLaToArchive)
             {
