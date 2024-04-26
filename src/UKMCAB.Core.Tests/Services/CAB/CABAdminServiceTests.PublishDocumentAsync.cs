@@ -39,7 +39,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             Assert.AreEqual(6, result.DocumentLegislativeAreas.Count);
             Assert.AreEqual(LAStatus.Published, result.DocumentLegislativeAreas.First().Status);
             Assert.AreEqual(6, result.ScopeOfAppointments.Count);
-            Assert.AreEqual(6, result.Schedules?.Count);
+            Assert.AreEqual(5, result.Schedules?.Count);
         }
 
         [Test]
@@ -96,6 +96,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
                 schedules.Add(new FileUpload
                 {
+                    Id = Guid.NewGuid(),
                     LegislativeArea = legislativeAreaId.ToString(),
                 });
             }
