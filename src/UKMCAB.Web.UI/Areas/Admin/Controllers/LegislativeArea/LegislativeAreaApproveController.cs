@@ -109,7 +109,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToRemoveByOpssAdmin => LegislativeAreaReviewActionEnum.Remove,
             LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule,
             LAStatus.PendingApprovalToArchiveAndRemoveSchedule or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule,
-            LAStatus.PendingApprovalToUnarchive => LegislativeAreaReviewActionEnum.Unarchive,
+            LAStatus.PendingApprovalToUnarchive or LAStatus.PendingApprovalToUnarchiveByOpssAdmin => LegislativeAreaReviewActionEnum.Unarchive,
             _ => LegislativeAreaReviewActionEnum.Add,
         };
 
