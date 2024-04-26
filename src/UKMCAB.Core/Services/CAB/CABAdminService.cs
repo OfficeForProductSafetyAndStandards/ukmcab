@@ -355,7 +355,14 @@ namespace UKMCAB.Core.Services.CAB
             }
             else
             {
-                latestDocument.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS or LAStatus.ApprovedToUnarchiveByOPSS).ForEach(la => la.Status = LAStatus.Published);
+                latestDocument.DocumentLegislativeAreas.Where(la => la.Status is 
+                    LAStatus.ApprovedByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.DeclinedToRemoveByOGD or 
+                    LAStatus.DeclinedToRemoveByOPSS or 
+                    LAStatus.ApprovedToUnarchiveByOPSS
+                ).ForEach(la => la.Status = LAStatus.Published);
 
                 await RemoveLegislativeAreasNotApprovedByOPSS(latestDocument);
             }
