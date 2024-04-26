@@ -8,6 +8,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using System.Linq;
 using UKMCAB.Core.Security;
+using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -18,39 +19,51 @@ namespace UKMCAB.Core.Tests.Services.CAB
         public async Task DocumentNotCreatedByOPSS_PublishDocumentAsync_LAsNotApprovedByOPSSAdminRemoved()
         {
             // Arrange
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
-
             (var legislativeAreas, var scopeOfAppointments, var schedules) = GenerateTestData();
+            
+            var document = new Document
+            {
+                CABId = Guid.NewGuid().ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = legislativeAreas,
+                ScopeOfAppointments = scopeOfAppointments,
+                Schedules = schedules
+            };
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { document });
 
             // Act
-            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
-                new Document
-                {
-                    StatusValue = Status.Draft,
-                    DocumentLegislativeAreas = legislativeAreas,
-                    ScopeOfAppointments = scopeOfAppointments,
-                    Schedules = schedules
-                });
+            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object, document);
 
             // Assert
-            Assert.AreEqual(4, result.DocumentLegislativeAreas.Count);
+            Assert.AreEqual(6, result.DocumentLegislativeAreas.Count);
             Assert.AreEqual(LAStatus.Published, result.DocumentLegislativeAreas.First().Status);
-            Assert.AreEqual(4, result.ScopeOfAppointments.Count);
-            Assert.AreEqual(4, result.Schedules?.Count);
+            Assert.AreEqual(6, result.ScopeOfAppointments.Count);
+            Assert.AreEqual(5, result.Schedules?.Count);
         }
 
         [Test]
         public async Task DocumentCreatedByOPSS_PublishDocumentAsync_AllLAsPublished()
         {
             // Arrange
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
-
             (var legislativeAreas, var scopeOfAppointments, var schedules) = GenerateTestData();
+
+            var document = new Document
+            {
+                CABId = Guid.NewGuid().ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = legislativeAreas,
+                ScopeOfAppointments = scopeOfAppointments,
+                Schedules = schedules
+            };
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { document });
 
             // Act
             var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
                 new Document
                 {
+                    CABId = Guid.NewGuid().ToString(),
                     CreatedByUserGroup = Roles.OPSS.Id,
                     StatusValue = Status.Draft,
                     DocumentLegislativeAreas = legislativeAreas,
@@ -83,6 +96,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
                 schedules.Add(new FileUpload
                 {
+                    Id = Guid.NewGuid(),
                     LegislativeArea = legislativeAreaId.ToString(),
                 });
             }

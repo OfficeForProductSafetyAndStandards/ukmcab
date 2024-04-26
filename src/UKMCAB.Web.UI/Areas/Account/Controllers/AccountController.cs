@@ -264,6 +264,12 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             }
         }
 
+        [HttpGet("accessDenied", Name = Routes.AccessDenied)]
+        public IActionResult AccessDenied()
+        {
+            return RedirectToRoute(ServiceManagementController.Routes.ServiceManagement);
+        }
+        
         [AllowAnonymous, Route("qalogin", Name = Routes.QaLogin)]
         public async Task<IActionResult> QaLogin([FromForm] string userId)
         {
@@ -380,6 +386,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             public const string RequestAccount = "account.request";
             public const string RequestAccountSuccess = "account.request.success";
             public const string UserProfile = "account.user.profile";
+            public const string AccessDenied = "account.access.denied";
         }
     }
 
