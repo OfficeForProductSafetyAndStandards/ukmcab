@@ -44,6 +44,7 @@ using UKMCAB.Data.CosmosDb;
 using UKMCAB.Data.CosmosDb.Utilities;
 using UKMCAB.Core.Mappers;
 using System.Reflection;
+using UKMCAB.Web.UI.Services.ReviewDateReminder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -171,6 +172,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped<IValidator<CABDetailsViewModel>, CABDetailsViewModelValidator>();
 builder.Services.AddScoped<IValidator<DeleteCABViewModel>, DeleteCABViewModelValidator>();
 builder.Services.AddScoped<IValidator<CABLegislativeAreasViewModel>, CABLegislativeAreasViewModelValidator>();
+builder.Services.AddHostedService<ReviewDateReminderBackgroundService>();
 
 // =================================================================================================
 

@@ -9,9 +9,7 @@ public enum TaskType
     [Description("Unarchive CAB request")]
     RequestToUnarchiveForDraft,
     [Description("Unarchive CAB request")]
-    RequestToUnarchiveForPublish,
-    [Description("CAB review due")]
-    ReviewCAB,
+    RequestToUnarchiveForPublish, 
     [Description("Approve account request")]
     UserAccountRequest,
     [Description("CAB approved")]
