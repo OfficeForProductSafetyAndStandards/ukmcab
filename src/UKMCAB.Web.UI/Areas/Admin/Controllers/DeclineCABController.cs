@@ -140,14 +140,14 @@ public class DeclineCABController : Controller
                 approver,
                 // Approver becomes the submitter for Declined CAB Notification
                 submitter.RoleId,
-                submitter,
+                null,
                 DateTime.Now,
                 $"The request to approve CAB {cabName} has been declined for the following reason: {declineReason}.",
                 approver,
                 DateTime.Now,
                 false,
                 declineReason,
-                true,
+                false,
                 cabId));
     }
 }
