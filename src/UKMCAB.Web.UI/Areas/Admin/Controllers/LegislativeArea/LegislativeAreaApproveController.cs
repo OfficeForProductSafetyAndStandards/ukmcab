@@ -467,7 +467,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
                 DateTime.Now,
                 false,
                 declineReason,
-                true,
+                false,
                 cabId,
                 docLa.Id
                 ));
