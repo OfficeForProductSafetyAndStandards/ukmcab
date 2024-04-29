@@ -1,9 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
 
@@ -77,9 +79,23 @@ public class UnarchiveLegislativeAreaRequestController : UI.Controllers.Controll
             var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
             var la = document!.DocumentLegislativeAreas.First(d => d.LegislativeAreaId == vm.LegislativeAreaId);
             la.RequestReason = vm.UserNotes;
-            la.Status = LAStatus.PendingSubmissionToUnarchive;
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
-            return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+
+            // if opss user
+            if (UserRoleId == Roles.OPSS.Id)
+            {
+                la.Status = LAStatus.Draft;
+                la.Archived = false;
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
+
+                return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = LegislativeAreaActionMessageEnum.LegislativeAreaUnArchived, vm.FromSummary });
+                
+            }
+            else
+            {
+                la.Status = LAStatus.PendingSubmissionToUnarchive;
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
+                return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });                
+            }               
         }
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/UnarchiveLegislativeAreaRequestReason.cshtml", vm);

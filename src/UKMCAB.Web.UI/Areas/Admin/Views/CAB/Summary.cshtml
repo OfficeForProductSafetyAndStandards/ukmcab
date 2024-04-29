@@ -60,7 +60,14 @@
 }
 else if (Model is { EditByGroupPermitted: false, Status: Status.Draft, IsPendingOgdApproval: false })
 {
-    <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner"/>
+    if(Model.IsOpssAdmin)
+    {
+       <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an UKAS user.")" name="Partials/_PageContentBanner" />        
+    }
+    else
+    {
+        <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner" />
+    }
 }
 else if (Model is { EditByGroupPermitted: false, IsPendingOgdApproval: false })
 {

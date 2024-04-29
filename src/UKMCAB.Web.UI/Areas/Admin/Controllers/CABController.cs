@@ -480,7 +480,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.ApprovedToUnarchiveByOPSS or
                     LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
-                    LAStatus.DeclinedToUnarchiveByOPSS)
+                    LAStatus.DeclinedToUnarchiveByOPSS),
+                LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup
             };
         
             //Lock Record for edit
@@ -501,7 +502,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                      (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
-                (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
+                 (model.Status == Status.Published || model.LoggedInUserGroupIsOwner);
 
             if (TempData.ContainsKey(Constants.ApprovedLA))
             {
