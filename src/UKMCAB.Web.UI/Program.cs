@@ -173,6 +173,7 @@ builder.Services.AddScoped<IValidator<CABDetailsViewModel>, CABDetailsViewModelV
 builder.Services.AddScoped<IValidator<DeleteCABViewModel>, DeleteCABViewModelValidator>();
 builder.Services.AddScoped<IValidator<CABLegislativeAreasViewModel>, CABLegislativeAreasViewModelValidator>();
 builder.Services.AddHostedService<ReviewDateReminderBackgroundService>();
+builder.Services.AddSingleton<IDelayer, Delayer>();
 
 // =================================================================================================
 

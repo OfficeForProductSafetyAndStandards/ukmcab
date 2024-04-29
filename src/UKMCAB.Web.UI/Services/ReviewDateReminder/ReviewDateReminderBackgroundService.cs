@@ -23,8 +23,9 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         private readonly TelemetryClient _telemetryClient;
         private readonly Timer _timer;
         private DateTime _nextRunTime;
+        private IDelayer _delayer;
 
-        public ReviewDateReminderBackgroundService(ILogger<ReviewDateReminderBackgroundService> logger, TelemetryClient telemetryClient, ICABRepository cabRepository, IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, LinkGenerator linkGenerator, IAppHost appHost)
+        public ReviewDateReminderBackgroundService(ILogger<ReviewDateReminderBackgroundService> logger, TelemetryClient telemetryClient, ICABRepository cabRepository, IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, LinkGenerator linkGenerator, IAppHost appHost, IDelayer delayer)
         {
             _logger = logger;
             _telemetryClient = telemetryClient;
@@ -34,10 +35,12 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
             _templateOptions = templateOptions.Value;
             _linkGenerator = linkGenerator;
             _appHost = appHost;
+            _delayer = delayer;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await Task.Delay(10_000, CancellationToken.None);
+            //await Task.Delay(10_000, CancellationToken.None);
+            await _delayer.Delay(10_000, CancellationToken.None);
 
             while (!stoppingToken.IsCancellationRequested)
             {
