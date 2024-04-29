@@ -108,7 +108,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         {   
             LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToRemoveByOpssAdmin => LegislativeAreaReviewActionEnum.Remove,
             LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule,
-            LAStatus.PendingApprovalToArchiveAndRemoveSchedule or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule,
+            LAStatus.PendingApprovalToArchiveAndRemoveSchedule or LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin => LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule,
             LAStatus.PendingApprovalToUnarchive or LAStatus.PendingApprovalToUnarchiveByOpssAdmin => LegislativeAreaReviewActionEnum.Unarchive,
             _ => LegislativeAreaReviewActionEnum.Add,
         };
@@ -239,7 +239,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         var cabId = new Guid(document.CABId);
         
-        var newLAStatus = GetNewLAStatusOnApprove(docLa, ReviewActionEnum);
+        var newLAStatus = GetNewLAStatusOnApprove(ReviewActionEnum);
         await _cabAdminService.ApproveLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId, newLAStatus);
         TempData[Constants.ApprovedLA] = true;
 
@@ -251,8 +251,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         }
     }
 
-    private LAStatus GetNewLAStatusOnApprove(DocumentLegislativeArea docLa,
-        LegislativeAreaReviewActionEnum reviewActionEnum)
+    private LAStatus GetNewLAStatusOnApprove(LegislativeAreaReviewActionEnum reviewActionEnum)
     {
         var newLAStatus = LAStatus.Approved;
         if (UserRoleId != Roles.OPSS.Id)
@@ -286,35 +285,50 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     private async Task DeclineLegislativeAreaAsync(DocumentLegislativeArea docLa, Document document, LegislativeAreaReviewActionEnum ReviewActionEnum, string? declineReason)
     {
         var currentUser = CurrentUser;
-
-        var cabId = new Guid(document.CABId);
-        declineReason ??= string.Empty;
-        await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId, declineReason);
-        TempData[Constants.DeclinedLA] = true;
-
         var decliner = new User(currentUser.Id, currentUser.FirstName, currentUser.Surname,
             UserRoleId ?? throw new InvalidOperationException(),
             currentUser.EmailAddress ?? throw new InvalidOperationException());
 
+        var cabId = new Guid(document.CABId);
+
+        var newLAStatus = GetNewLAStatusOnDecline(ReviewActionEnum);
+        declineReason ??= string.Empty;
+        await _cabAdminService.DeclineLegislativeAreaAsync((await _userService.GetAsync(User.GetUserId()!))!, cabId, docLa.LegislativeAreaId, declineReason, newLAStatus);
+        TempData[Constants.DeclinedLA] = true;
+
         await MarkRequestTaskAsCompleteAsync(docLa.Id, decliner);
-
-        // send legislative area decline notification
         await SendNotificationOfDeclineAsync(cabId, document.Name, docLa, ReviewActionEnum, declineReason, document.CreatedByUserGroup);
+    }
 
-        if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Remove)
+    private LAStatus GetNewLAStatusOnDecline(LegislativeAreaReviewActionEnum reviewActionEnum)
+    {
+        var newLAStatus = LAStatus.Declined;
+        if (UserRoleId != Roles.OPSS.Id)
         {
-            docLa.Status = currentUser.Role != Roles.OPSS.Id ? LAStatus.DeclinedToRemoveByOGD : LAStatus.DeclinedToRemoveByOPSS;
-        }
-        else if (ReviewActionEnum == LegislativeAreaReviewActionEnum.Unarchive)
-        {
-            docLa.Status = currentUser.Role != Roles.OPSS.Id ? LAStatus.DeclinedToUnarchiveByOGD : LAStatus.DeclinedToUnarchiveByOPSS;
+            newLAStatus = reviewActionEnum switch
+            {
+                LegislativeAreaReviewActionEnum.Add => LAStatus.Declined,
+                LegislativeAreaReviewActionEnum.Remove => LAStatus.DeclinedToRemoveByOGD,
+                LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule => LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD,
+                LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule => LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD,
+                LegislativeAreaReviewActionEnum.Unarchive => LAStatus.DeclinedToUnarchiveByOGD,
+                _ => newLAStatus
+            };
         }
         else
         {
-            docLa.Status = LAStatus.Declined;
+            newLAStatus = reviewActionEnum switch
+            {
+                LegislativeAreaReviewActionEnum.Add => LAStatus.DeclinedByOpssAdmin,
+                LegislativeAreaReviewActionEnum.Remove => LAStatus.DeclinedToRemoveByOPSS,
+                LegislativeAreaReviewActionEnum.ArchiveAndArchiveSchedule => LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS,
+                LegislativeAreaReviewActionEnum.ArchiveAndRemoveSchedule => LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS,
+                LegislativeAreaReviewActionEnum.Unarchive => LAStatus.DeclinedToUnarchiveByOPSS,
+                _ => newLAStatus
+            };
         }
-        
-        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
+
+        return newLAStatus;
     }
 
     private async Task<IList<LegislativeAreaModel>> GetLegislativeAreasForUserAsync()
@@ -450,7 +464,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             taskType = docLa.Status switch
             {
                 LAStatus.PendingApprovalToRemove or LAStatus.PendingApprovalToRemoveByOpssAdmin => TaskType.LegislativeAreaDeclinedToRemove,
-                LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndRemoveSchedule => TaskType.LegislativeAreaDeclinedToArchive,
+                LAStatus.PendingApprovalToArchiveAndArchiveSchedule or LAStatus.PendingApprovalToArchiveAndRemoveSchedule or 
+                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin => TaskType.LegislativeAreaDeclinedToArchive,
                 LAStatus.PendingApprovalToUnarchive or LAStatus.PendingApprovalToUnarchiveByOpssAdmin => TaskType.LegislativeAreaDeclinedToUnarchive
             };
         }     
