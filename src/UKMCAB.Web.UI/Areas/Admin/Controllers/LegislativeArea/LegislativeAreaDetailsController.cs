@@ -902,8 +902,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
             else
             {
-                //TODO : When OPSS - Admin approves the Archive request - need to invoke the below method
-                // await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
                 return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
                     new { Area = "admin", id, legislativeAreaId, removeActionEnum = vm.LegislativeAreaRemoveAction.Value });
             }
@@ -972,9 +970,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             // legislative area selected to archive
             else
             {
-                //TODO : When OPSS - Admin approves the Archive request - need to invoke the below method
-              //  await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
-
                 List<Guid> scheduleIds = latestDocument?.Schedules?.Where(n => n.LegislativeArea != null && n.LegislativeArea == legislativeArea.Name).Select(n => n.Id).ToList();
 
                 // product schedule selected to remove

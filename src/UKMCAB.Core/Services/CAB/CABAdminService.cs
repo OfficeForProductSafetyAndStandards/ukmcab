@@ -639,11 +639,12 @@ namespace UKMCAB.Core.Services.CAB
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Status = approvedLAStatus;
 
-            if (documentLegislativeArea.Status == LAStatus.ApprovedToUnarchiveByOPSS)
+            documentLegislativeArea.Archived = documentLegislativeArea.Status switch
             {
-                documentLegislativeArea.Archived = false;
-            }
-
+                LAStatus.ApprovedToUnarchiveByOPSS => false,
+                LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin => true,
+                _ => documentLegislativeArea.Archived
+            };
             await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
