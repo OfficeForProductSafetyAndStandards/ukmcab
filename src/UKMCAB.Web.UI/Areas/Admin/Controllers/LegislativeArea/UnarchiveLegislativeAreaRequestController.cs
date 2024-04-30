@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Asn1.Ocsp;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
@@ -76,23 +78,21 @@ public class UnarchiveLegislativeAreaRequestController : UI.Controllers.Controll
     {
         if (ModelState.IsValid)
         {
-            var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-            var la = document!.DocumentLegislativeAreas.First(d => d.LegislativeAreaId == vm.LegislativeAreaId);
-            la.RequestReason = vm.UserNotes;
+            var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString());           
 
             // if opss user
             if (UserRoleId == Roles.OPSS.Id)
-            {
-                la.Status = LAStatus.Draft;
-                la.Archived = false;
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
+            {               
+                await _cabAdminService.UnArchiveLegislativeAreaAsync(CurrentUser, id, vm.LegislativeAreaId, vm.UserNotes);
 
                 return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = LegislativeAreaActionMessageEnum.LegislativeAreaUnArchived, vm.FromSummary });
                 
             }
             else
-            {
+            {   
+                var la = document!.DocumentLegislativeAreas.First(d => d.LegislativeAreaId == vm.LegislativeAreaId);
                 la.Status = LAStatus.PendingSubmissionToUnarchive;
+                la.RequestReason = vm.UserNotes;
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
                 return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });                
             }               
