@@ -156,7 +156,10 @@ public class ApproveCABController : Controller
         }
         else
         {
-            clonedDocument.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS).ForEach(la => la.Status = LAStatus.Published);
+            clonedDocument.DocumentLegislativeAreas.Where(la => la.Status is 
+                LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS or
+                LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS).ForEach(la => la.Status = LAStatus.Published);
         }
 
         if (clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))

@@ -87,7 +87,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
             var baseUrl = _appHost.GetBaseUri().ToString() ?? string.Empty;
             baseUrl = baseUrl.EndsWith("/") ? baseUrl.Substring(0, baseUrl.Length - 1) : baseUrl;
             var fullUrl = $"{baseUrl}{resourcePath}";
-            var user = new User("", "System", "Notification", Roles.OPSS.Id, _templateOptions.ContactUsOPSSEmail);
+            var user = new User("", "UKMCAB", "Service", Roles.OPSS.Id, _templateOptions.ContactUsOPSSEmail);
 
             var cabReviewDate = cab.RenewalDate;
 
@@ -171,7 +171,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                     user.RoleId,
                     null,
                     DateTime.Now,
-                    $"The review date for this CAB is {cabReviewDate.ToStringBeisDateFormat()}. This is a reminder to review the CAB and ensure that all information is relevant and up to date.\nThe review date for the {LA.LegislativeAreaName} legislative area associated with this CAB is {LA.ReviewDate.ToStringBeisDateFormat()}. This is a reminder to review the legislative area and ensure that all information is relevant and up to date.",
+                    $"The review date for the {LA.LegislativeAreaName} legislative area associated with this CAB is {LA.ReviewDate.ToStringBeisDateFormat()}. This is a reminder to review the legislative area and ensure that all information is relevant and up to date.",
                     user,
                     DateTime.Now,
                     null,

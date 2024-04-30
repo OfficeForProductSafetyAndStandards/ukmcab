@@ -545,10 +545,7 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
 <div class="cab-summary-detail">
     <dl class="govuk-summary-list">
         <div class="govuk-summary-list__row govuk-!-padding-top-5">
-            <dt class="govuk-summary-list__key">
-                Product Schedule (optional)
-            </dt>
-            <dd class="govuk-summary-list__value">
+            <dd class="govuk-summary-list__value govuk-!-display-block">
                 @if (Model.CABProductScheduleDetailsViewModel.ActiveSchedules.Any())
                 {
                     <ol class="govuk-list govuk-list--number">
@@ -571,14 +568,10 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
                     <text>@Constants.NotProvided</text>
                 }
             </dd>
-        </div>
-        <div class="govuk-summary-list__row govuk-!-padding-top-5">
-            <dt class="govuk-summary-list__key">
-                Archived Product Schedule
-            </dt>
-            <dd class="govuk-summary-list__value">
+            <dd class="govuk-summary-list__value govuk-!-display-block">
                 @if (Model.CABProductScheduleDetailsViewModel.ArchivedSchedules.Any())
                 {
+                    <h4 class="govuk-heading-m govuk-!-display-block">Archived product schedules</h4>
                     <ol class="govuk-list govuk-list--number">
                         @foreach (var schedule in Model.CABProductScheduleDetailsViewModel.ArchivedSchedules)
                         {
@@ -593,10 +586,6 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
                             </li>
                         }
                     </ol>
-                }
-                else
-                {
-                    <text>@Constants.NotProvided</text>
                 }
             </dd>
         </div>
