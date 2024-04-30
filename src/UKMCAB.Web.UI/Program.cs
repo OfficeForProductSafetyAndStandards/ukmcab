@@ -45,6 +45,7 @@ using UKMCAB.Data.CosmosDb.Utilities;
 using UKMCAB.Core.Mappers;
 using System.Reflection;
 using UKMCAB.Web.UI.Services.ReviewDateReminder;
+using UKMCAB.Core.Security.Requirements;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -100,6 +101,11 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim(Claims.LegislativeAreaApprove);
+    });
+    options.AddPolicy(Policies.CabManagementPendingApproval, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.Requirements.Add(new CabManagementPendingApprovalRequirement());
     });
 });
 
