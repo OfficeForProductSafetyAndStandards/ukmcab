@@ -360,7 +360,11 @@ namespace UKMCAB.Core.Services.CAB
                     LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.DeclinedToRemoveByOGD or 
-                    LAStatus.DeclinedToRemoveByOPSS or 
+                    LAStatus.DeclinedToRemoveByOPSS or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
                     LAStatus.ApprovedToUnarchiveByOPSS
                 ).ForEach(la => la.Status = LAStatus.Published);
 
@@ -643,16 +647,15 @@ namespace UKMCAB.Core.Services.CAB
             await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
-        public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason)
+        public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason, LAStatus declinedLAStatus)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
 
             // decline document legislative area
-            var isOpssAdmin = userAccount.Role == Roles.OPSS.Id;
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-            documentLegislativeArea.Status = isOpssAdmin ? LAStatus.DeclinedByOpssAdmin : LAStatus.Declined;
+            documentLegislativeArea.Status = declinedLAStatus;
             reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " declined: </br>" + reason;
             latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,reason));
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);

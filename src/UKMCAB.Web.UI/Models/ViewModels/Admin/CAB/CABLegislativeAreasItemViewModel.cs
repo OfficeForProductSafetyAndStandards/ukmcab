@@ -52,7 +52,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             {
                 LAStatus.Approved or LAStatus.PendingApprovalToUnarchiveByOpssAdmin => 
                     $"{Status.GetEnumDescription()} by {RoleName}",
-                LAStatus.Declined or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS =>
+                LAStatus.Declined or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS or LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD =>
                     $"{Status.GetEnumDescription()} by {RoleName}",
                 LAStatus.PendingApproval
                     or LAStatus.PendingApprovalToRemove

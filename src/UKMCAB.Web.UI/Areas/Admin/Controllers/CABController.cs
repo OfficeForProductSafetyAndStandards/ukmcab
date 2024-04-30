@@ -478,6 +478,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
                     LAStatus.ApprovedToUnarchiveByOPSS or
                     LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
                     LAStatus.DeclinedToUnarchiveByOPSS)
