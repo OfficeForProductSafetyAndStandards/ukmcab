@@ -349,6 +349,14 @@ namespace UKMCAB.Core.Services.CAB
                 }
             }
 
+            var docLaToUnArchive = latestDocument.DocumentLegislativeAreas
+                .Where(docLa => docLa.Status == LAStatus.ApprovedToUnarchiveByOPSS);
+
+            foreach (var docLa in docLaToUnArchive)
+            {
+                await UnArchiveLegislativeAreaAsync(userAccount, cabId, docLa.LegislativeAreaId);
+            }               
+
             if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
             {
                 latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
@@ -629,6 +637,42 @@ namespace UKMCAB.Core.Services.CAB
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
+        public async Task UnArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string? reason = default)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
+                                 throw new InvalidOperationException("No document found");
+
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+
+            documentLegislativeArea.Status = LAStatus.Draft;
+            documentLegislativeArea.Archived = false;
+
+            if(!String.IsNullOrWhiteSpace(reason))
+            {
+                documentLegislativeArea.RequestReason = reason;
+            }
+
+            var scheduleIds = latestDocument.Schedules?.Where(f =>
+                  f.LegislativeArea != null &&
+                  f.LegislativeArea == documentLegislativeArea.LegislativeAreaName).Select(f => f.Id).ToList();
+
+            if (scheduleIds != null && scheduleIds.Any())
+            {
+                var selectedSchedules = latestDocument.Schedules?.Where(n => scheduleIds.Contains(n.Id)).ToList();
+
+                if (selectedSchedules != null && selectedSchedules.Any())
+                {
+                    foreach (var schedule in selectedSchedules)
+                    {
+                        schedule.Archived = false;
+                    }                    
+                }
+            }
+
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+        }
+
         public async Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId, LAStatus approvedLAStatus)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
@@ -681,7 +725,7 @@ namespace UKMCAB.Core.Services.CAB
                     await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 }
             }
-        }
+        }       
 
         public async Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds)
         {

@@ -902,8 +902,19 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
             else
             {
-                return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
+                // When OPSS - Admin approves the Archive request 
+                if (UserRoleId == Roles.OPSS.Id)
+                {
+                    await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
+
+                    return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview",
+                        new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
+                }
+                else
+                {
+                    return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
                     new { Area = "admin", id, legislativeAreaId, removeActionEnum = vm.LegislativeAreaRemoveAction.Value });
+                }
             }
         }
 
@@ -965,37 +976,53 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 {
                     await _cabAdminService.RemoveLegislativeAreaAsync(userAccount, id, legislativeAreaId, legislativeArea.Name);
                     laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaRemovedProductScheduleRemoved;
+
+                    return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
                 }
             }
             // legislative area selected to archive
             else
-            {
-                List<Guid> scheduleIds = latestDocument?.Schedules?.Where(n => n.LegislativeArea != null && n.LegislativeArea == legislativeArea.Name).Select(n => n.Id).ToList();
-
-                // product schedule selected to remove
-                if (vm.ProductScheduleAction == RemoveActionEnum.Remove)
+            {                
+                // When OPSS - Admin approves the Archive request 
+                if (UserRoleId == Roles.OPSS.Id)
                 {
-                    if (scheduleIds != null && scheduleIds.Any())
+                    await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);              
+
+                    List<Guid> scheduleIds = latestDocument?.Schedules?.Where(n => n.LegislativeArea != null && n.LegislativeArea == legislativeArea.Name).Select(n => n.Id).ToList();
+
+                    // product schedule selected to remove
+                    if (vm.ProductScheduleAction == RemoveActionEnum.Remove)
                     {
-                        await _cabAdminService.RemoveSchedulesAsync(userAccount, id, scheduleIds);
+                        if (scheduleIds != null && scheduleIds.Any())
+                        {
+                            await _cabAdminService.RemoveSchedulesAsync(userAccount, id, scheduleIds);
+                        }
+
+                        laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleRemoved;
+
+                    }
+                    // product schedule selected to archive
+                    else
+                    {
+                        if (scheduleIds != null && scheduleIds.Any())
+                        {
+                            await _cabAdminService.ArchiveSchedulesAsync(userAccount, id, scheduleIds);
+                        }
+                        laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleArchived;
                     }
 
-                    laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleRemoved;
-
+                    return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
                 }
-                // product schedule selected to archive
                 else
                 {
-                    if (scheduleIds != null && scheduleIds.Any())
-                    {
-                        await _cabAdminService.ArchiveSchedulesAsync(userAccount, id, scheduleIds);
-                    }
-                    laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleArchived;
+                    return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
+                    new { 
+                        Area = "admin", 
+                        id, legislativeAreaId, 
+                        removeActionEnum = vm.ProductScheduleAction.Value 
+                    });
                 }
-            }
-
-            return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
-                new { Area = "admin", id, legislativeAreaId, removeActionEnum = vm.ProductScheduleAction.Value  });
+            }           
         }
         else
         {
