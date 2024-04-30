@@ -689,12 +689,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 _ = await _cabAdminService.PublishDocumentAsync(
                     userAccount ?? throw new InvalidOperationException(), latest, model.PublishInternalReason,
                     model.PublishPublicReason);
-
+                
                 return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
             }
 
-            model.CABName = latest.Name;
-            await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
+            model.CABName = latest.Name;            
 
             return View(model);
         }
