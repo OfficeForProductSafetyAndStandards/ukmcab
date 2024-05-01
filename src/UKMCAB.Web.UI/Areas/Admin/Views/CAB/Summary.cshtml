@@ -778,7 +778,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
 
                 @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
                 {
-                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@Model.CABId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="@false" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
                 {
