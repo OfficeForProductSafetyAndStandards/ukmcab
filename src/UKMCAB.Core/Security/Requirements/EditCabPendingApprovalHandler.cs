@@ -2,20 +2,17 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using UKMCAB.Core.Services.CAB;
-using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Extensions;
-using UKMCAB.Core.Security.Extensions;
 
 namespace UKMCAB.Core.Security.Requirements
 {
-    public class CabManagementPendingApprovalHandler : AuthorizationHandler<CabManagementPendingApprovalRequirement>
+    public class EditCabPendingApprovalHandler : AuthorizationHandler<EditCabPendingApprovalRequirement>
     {
         private readonly ICABAdminService _cabAdminService;
-        private readonly IUserService _userService;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public CabManagementPendingApprovalHandler(
+        public EditCabPendingApprovalHandler(
             ICABAdminService cabAdminService, 
             IHttpContextAccessor httpContextAccessor)
         {
@@ -24,7 +21,7 @@ namespace UKMCAB.Core.Security.Requirements
         }
 
         protected override Task HandleRequirementAsync(
-            AuthorizationHandlerContext context, CabManagementPendingApprovalRequirement requirement)
+            AuthorizationHandlerContext context, EditCabPendingApprovalRequirement requirement)
         {
             var httpContext = _httpContextAccessor.HttpContext;
             if (httpContext != null)
@@ -32,13 +29,15 @@ namespace UKMCAB.Core.Security.Requirements
                 var cabId = (httpContext.GetRouteValue("id")?.ToString()) ?? throw new Exception("CAB Id not found in route");
                 var document = _cabAdminService.GetLatestDocumentAsync(cabId).Result ?? throw new Exception($"Document with {cabId} not found");
                 
-                var userId = httpContext.User.Claims.GetNameIdentifier();
-                var userAccount = _userService.GetAsync(userId).Result ?? throw new Exception($"User with {userId} not found");
-                
-                var isOpssAdmin = userAccount.Role == Roles.OPSS.Id;
+                var user = context.User;
+
+                var isOpssAdmin = user.IsInRole(Roles.OPSS.Id);
+                var isOPSSOrInCreatorUserGroup = isOpssAdmin || user.IsInRole(document.CreatedByUserGroup);
+
                 var legislativeAreaHasBeenActioned = document.DocumentLegislativeAreas.HasBeenActioned();
 
-                if (document.SubStatus == SubStatus.PendingApprovalToPublish && isOpssAdmin && legislativeAreaHasBeenActioned)
+                if ((document.SubStatus == SubStatus.PendingApprovalToPublish && isOpssAdmin && legislativeAreaHasBeenActioned) ||
+                    (document.SubStatus != SubStatus.PendingApprovalToPublish && isOPSSOrInCreatorUserGroup))
                 {
                     context.Succeed(requirement);
                 }

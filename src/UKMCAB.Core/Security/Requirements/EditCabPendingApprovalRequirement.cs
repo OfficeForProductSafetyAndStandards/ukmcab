@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Core.Security.Requirements
 {
-    public class CabManagementPendingApprovalRequirement : IAuthorizationRequirement
+    public class EditCabPendingApprovalRequirement : IAuthorizationRequirement
     {
     }
 }

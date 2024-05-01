@@ -46,6 +46,7 @@ using UKMCAB.Core.Mappers;
 using System.Reflection;
 using UKMCAB.Web.UI.Services.ReviewDateReminder;
 using UKMCAB.Core.Security.Requirements;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -102,10 +103,10 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireClaim(Claims.LegislativeAreaApprove);
     });
-    options.AddPolicy(Policies.CabManagementPendingApproval, policy =>
+    options.AddPolicy(Policies.EditCabPendingApproval, policy =>
     {
         policy.RequireAuthenticatedUser();
-        policy.Requirements.Add(new CabManagementPendingApprovalRequirement());
+        policy.Requirements.Add(new EditCabPendingApprovalRequirement());
     });
 });
 
@@ -141,6 +142,7 @@ builder.Services.AddSingleton<IWorkflowTaskService, WorkflowTaskService>();
 builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
 builder.Services.AddSingleton<IEditLockService, EditLockService>();
+builder.Services.AddSingleton<IAuthorizationHandler, EditCabPendingApprovalHandler>();
 
 var cosmosClient = CosmosClientFactory.Create(cosmosDbConnectionString);
 builder.Services.AddSingleton<IReadOnlyRepository<LegislativeArea>>(new ReadOnlyRepository<LegislativeArea>(cosmosClient, new CosmosFeedIterator(), "legislative-areas"));

@@ -81,6 +81,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> About(string id, CABDetailsViewModel model, string submitType)
         {
             var appointmentDate = DateUtils.CheckDate(ModelState, model.AppointmentDateDay, model.AppointmentDateMonth,
@@ -207,6 +208,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/body-details/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> BodyDetails(string id, CABBodyDetailsViewModel model, string submitType,
             bool fromSummary)
         {
@@ -317,6 +319,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/contact/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> Contact(string id, CABContactViewModel model, string submitType,
             bool fromSummary)
         {
@@ -521,6 +524,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/summary/{id}", Name = Routes.CabSummary)]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> Summary(CABSummaryViewModel model, string submitType)
         {
             var latest =
@@ -672,6 +676,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        // Anyone can publish a CAB?
         public async Task<IActionResult> Publish(PublishCABViewModel model)
         {
             var latest =
