@@ -39,7 +39,6 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            //await Task.Delay(10_000, CancellationToken.None);
             await _delayer.Delay(10_000, CancellationToken.None);
 
             while (!stoppingToken.IsCancellationRequested)
@@ -51,23 +50,27 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
 
                 var delay = (int)(_nextRunTime - DateTime.Now).TotalMilliseconds;
                 delay = Math.Max(delay, 0);
-                await Task.Delay(delay, stoppingToken);
+                await Task.Delay(delay, stoppingToken);               
 
                 try
                 {
                     await CheckAndSendReviewDateReminder();
-                    _nextRunTime = _nextRunTime.AddDays(1);
                 }
                 catch (Exception ex)
                 {
                     _telemetryClient.TrackException(ex);
                     _logger.LogError(ex, ex.Message);
                 }
+                finally
+                {
+                    _nextRunTime = _nextRunTime.AddDays(1);
+                }
             }
         }
         private async Task CheckAndSendReviewDateReminder()
         {
             var publishedCABs = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published));
+            Guard.IsTrue(publishedCABs != null, "Search result for published cabs returned null");
             var noOfReminderSent = 0;
             foreach (var cab in publishedCABs)
             {
@@ -115,7 +118,6 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
 
             return noOfReminderSent;
         }
-
         private bool IsReviewReminderNeeded(DateTime? renewalDate)
         {
             if (renewalDate == null) return false;
@@ -124,7 +126,6 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
 
             return renewalDate == currentDate || renewalDate == currentDate.AddMonths(1) || renewalDate == currentDate.AddMonths(2);
         }
-
         private async Task SendInternalNotificationForCABReviewDateReminderAsync(Document cab, User user, DateTime reviewDate, string url)
         {
             var personalisation = new Dictionary<string, dynamic?>
