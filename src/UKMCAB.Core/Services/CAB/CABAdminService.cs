@@ -349,6 +349,14 @@ namespace UKMCAB.Core.Services.CAB
                 }
             }
 
+            var docLaToUnArchive = latestDocument.DocumentLegislativeAreas
+                .Where(docLa => docLa.Status == LAStatus.ApprovedToUnarchiveByOPSS);
+
+            foreach (var docLa in docLaToUnArchive)
+            {
+                await UnArchiveLegislativeAreaAsync(userAccount, cabId, docLa.LegislativeAreaId);
+            }               
+
             if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
             {
                 latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
@@ -360,7 +368,11 @@ namespace UKMCAB.Core.Services.CAB
                     LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.DeclinedToRemoveByOGD or 
-                    LAStatus.DeclinedToRemoveByOPSS or 
+                    LAStatus.DeclinedToRemoveByOPSS or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
                     LAStatus.ApprovedToUnarchiveByOPSS
                 ).ForEach(la => la.Status = LAStatus.Published);
 
@@ -625,6 +637,42 @@ namespace UKMCAB.Core.Services.CAB
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
+        public async Task UnArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string? reason = default)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
+                                 throw new InvalidOperationException("No document found");
+
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+
+            documentLegislativeArea.Status = LAStatus.Draft;
+            documentLegislativeArea.Archived = false;
+
+            if(!String.IsNullOrWhiteSpace(reason))
+            {
+                documentLegislativeArea.RequestReason = reason;
+            }
+
+            var scheduleIds = latestDocument.Schedules?.Where(f =>
+                  f.LegislativeArea != null &&
+                  f.LegislativeArea == documentLegislativeArea.LegislativeAreaName).Select(f => f.Id).ToList();
+
+            if (scheduleIds != null && scheduleIds.Any())
+            {
+                var selectedSchedules = latestDocument.Schedules?.Where(n => scheduleIds.Contains(n.Id)).ToList();
+
+                if (selectedSchedules != null && selectedSchedules.Any())
+                {
+                    foreach (var schedule in selectedSchedules)
+                    {
+                        schedule.Archived = false;
+                    }                    
+                }
+            }
+
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+        }
+
         public async Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId, LAStatus approvedLAStatus)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
@@ -635,24 +683,24 @@ namespace UKMCAB.Core.Services.CAB
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Status = approvedLAStatus;
 
-            if (documentLegislativeArea.Status == LAStatus.ApprovedToUnarchiveByOPSS)
+            documentLegislativeArea.Archived = documentLegislativeArea.Status switch
             {
-                documentLegislativeArea.Archived = false;
-            }
-
+                LAStatus.ApprovedToUnarchiveByOPSS => false,
+                LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin => true,
+                _ => documentLegislativeArea.Archived
+            };
             await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
-        public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason)
+        public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason, LAStatus declinedLAStatus)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
 
             // decline document legislative area
-            var isOpssAdmin = userAccount.Role == Roles.OPSS.Id;
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
-            documentLegislativeArea.Status = isOpssAdmin ? LAStatus.DeclinedByOpssAdmin : LAStatus.Declined;
+            documentLegislativeArea.Status = declinedLAStatus;
             reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " declined: </br>" + reason;
             latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,reason));
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
@@ -677,7 +725,7 @@ namespace UKMCAB.Core.Services.CAB
                     await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 }
             }
-        }
+        }       
 
         public async Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds)
         {

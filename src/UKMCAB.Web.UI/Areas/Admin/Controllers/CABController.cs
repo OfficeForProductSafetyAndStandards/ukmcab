@@ -478,9 +478,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
                     LAStatus.ApprovedToUnarchiveByOPSS or
                     LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
-                    LAStatus.DeclinedToUnarchiveByOPSS)
+                    LAStatus.DeclinedToUnarchiveByOPSS),
+                LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup
             };
         
             //Lock Record for edit
@@ -501,7 +506,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                      (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
-                (model.Status == Status.Published || model.IsOPSSOrInCreatorUserGroup);
+                 (model.Status == Status.Published || model.LoggedInUserGroupIsOwner);
 
             if (TempData.ContainsKey(Constants.ApprovedLA))
             {
@@ -684,12 +689,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 _ = await _cabAdminService.PublishDocumentAsync(
                     userAccount ?? throw new InvalidOperationException(), latest, model.PublishInternalReason,
                     model.PublishPublicReason);
-
+                
                 return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
             }
 
-            model.CABName = latest.Name;
-            await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
+            model.CABName = latest.Name;            
 
             return View(model);
         }

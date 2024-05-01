@@ -24,18 +24,21 @@ public class ApproveCABController : Controller
     private readonly IAsyncNotificationClient _notificationClient;
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
+    private readonly IEditLockService _editLockService;
 
     public ApproveCABController(
         ICABAdminService cabAdminService,
         IUserService userService,
         IAsyncNotificationClient notificationClient,
         IOptions<CoreEmailTemplateOptions> templateOptions,
-        IWorkflowTaskService workflowTaskService)
+        IWorkflowTaskService workflowTaskService,
+        IEditLockService editLockService)
     {
         _cabAdminService = cabAdminService;
         _userService = userService;
         _notificationClient = notificationClient;
         _workflowTaskService = workflowTaskService;
+        _editLockService = editLockService;
         _templateOptions = templateOptions.Value;
     }
 
@@ -78,6 +81,7 @@ public class ApproveCABController : Controller
         var document = await GetDocumentAsync(cabId);
 
         await ApproveAsync(document, vm.UserNotes, vm.Reason);
+        await _editLockService.RemoveEditLockForCabAsync(document.CABId);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
@@ -131,6 +135,8 @@ public class ApproveCABController : Controller
         document.CabNumberVisibility = vm.CabNumberVisibility;
 
         await ApproveAsync(document, vm.UserNotes, vm.Reason);
+
+        await _editLockService.RemoveEditLockForCabAsync(document.CABId);
         return RedirectToRoute(CabManagementController.Routes.CABManagement);
     }
 
@@ -156,7 +162,10 @@ public class ApproveCABController : Controller
         }
         else
         {
-            clonedDocument.DocumentLegislativeAreas.Where(la => la.Status is LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS).ForEach(la => la.Status = LAStatus.Published);
+            clonedDocument.DocumentLegislativeAreas.Where(la => la.Status is 
+                LAStatus.ApprovedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS or
+                LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS).ForEach(la => la.Status = LAStatus.Published);
         }
 
         if (clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))

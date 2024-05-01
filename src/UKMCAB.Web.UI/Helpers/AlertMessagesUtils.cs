@@ -26,7 +26,8 @@ namespace UKMCAB.Web.UI.Helpers
             {LegislativeAreaActionMessageEnum.LegislativeAreaArchived, "The legislative area has been archived."},
             {LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleArchived, "The legislative area and associated product schedules have been archived."},
             {LegislativeAreaActionMessageEnum.LegislativeAreaArchivedProductScheduleRemoved, "The legislative area has been archived and the associated product schedules removed."},
-            {LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, "The applicable conformity assessment procedure has been removed."},            
+            {LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, "The applicable conformity assessment procedure has been removed."},
+            {LegislativeAreaActionMessageEnum.LegislativeAreaUnArchived, "The legislative area has been unarchived."},
         };       
     }
 }
