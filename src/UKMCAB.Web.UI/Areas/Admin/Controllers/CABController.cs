@@ -680,7 +680,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/publish/{id}", Name = Routes.CabPublish)]
-        // Anyone can publish a CAB?
         public async Task<IActionResult> Publish(PublishCABViewModel model)
         {
             var latest =
