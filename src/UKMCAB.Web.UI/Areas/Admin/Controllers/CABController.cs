@@ -68,6 +68,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> About(string id, bool fromSummary, string returnUrl)
         {
             var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
@@ -185,6 +186,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/body-details/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -301,6 +303,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/contact/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> Contact(string id, bool fromSummary, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -719,7 +722,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(model);
         }
 
-        [HttpGet("admin/cab/history/{cabId}", Name = Routes.CabHistory)]
+        [HttpGet("admin/cab/history/{id}", Name = Routes.CabHistory)]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> History(string cabId, string? returnUrl, int pageNumber = 1)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(cabId);
