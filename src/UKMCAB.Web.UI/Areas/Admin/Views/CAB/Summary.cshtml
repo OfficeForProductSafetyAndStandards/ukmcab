@@ -60,7 +60,14 @@
 }
 else if (Model is { EditByGroupPermitted: false, Status: Status.Draft, IsPendingOgdApproval: false })
 {
-    <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner"/>
+    if(Model.IsOpssAdmin)
+    {
+       <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an UKAS user.")" name="Partials/_PageContentBanner" />        
+    }
+    else
+    {
+        <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner" />
+    }
 }
 else if (Model is { EditByGroupPermitted: false, IsPendingOgdApproval: false })
 {
@@ -479,12 +486,13 @@ else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
                             <div class="govuk-details__summary-text">
                                 <span>@legislativeArea.Name</span>
                             </div>
-                            @if (legislativeArea.Status != LAStatus.None)
-                            {
-                                <div>
+                            <div>
+                                <strong class="cab-status-tag govuk-tag--grey">Archived</strong>
+                                @if (legislativeArea.Status != LAStatus.None && legislativeArea.Status != LAStatus.Published)
+                                {
                                     <strong class="cab-status-tag @legislativeArea.StatusCssStyle">@legislativeArea.StatusName</strong>
-                                </div>
-                            }
+                                }
+                            </div>
                         </summary>
                         <partial name="./LegislativeArea/Partials/_Summary" model="legislativeArea"/>
                     </details>

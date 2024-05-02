@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Authorization;
+using Org.BouncyCastle.Asn1.Ocsp;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.Users;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
 
@@ -74,12 +78,24 @@ public class UnarchiveLegislativeAreaRequestController : UI.Controllers.Controll
     {
         if (ModelState.IsValid)
         {
-            var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-            var la = document!.DocumentLegislativeAreas.First(d => d.LegislativeAreaId == vm.LegislativeAreaId);
-            la.RequestReason = vm.UserNotes;
-            la.Status = LAStatus.PendingSubmissionToUnarchive;
-            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
-            return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+            var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString());           
+
+            // if opss user
+            if (UserRoleId == Roles.OPSS.Id)
+            {               
+                await _cabAdminService.UnArchiveLegislativeAreaAsync(CurrentUser, id, vm.LegislativeAreaId, vm.UserNotes);
+
+                return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = LegislativeAreaActionMessageEnum.LegislativeAreaUnArchived, vm.FromSummary });
+                
+            }
+            else
+            {   
+                var la = document!.DocumentLegislativeAreas.First(d => d.LegislativeAreaId == vm.LegislativeAreaId);
+                la.Status = LAStatus.PendingSubmissionToUnarchive;
+                la.RequestReason = vm.UserNotes;
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(CurrentUser, document);
+                return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });                
+            }               
         }
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/UnarchiveLegislativeAreaRequestReason.cshtml", vm);

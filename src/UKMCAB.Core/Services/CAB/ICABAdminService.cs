@@ -100,11 +100,13 @@ namespace UKMCAB.Core.Services.CAB
 
         Task ArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId);
 
+        Task UnArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string? reason);
+
         Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId, LAStatus approvedLAStatus);
 
         Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason, LAStatus declinedLAStatus);     
 
-        Task ArchiveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds);
+        Task ArchiveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds);       
 
         Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds);
 
