@@ -722,7 +722,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/history/{id}", Name = Routes.CabHistory)]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> History(string cabId, string? returnUrl, int pageNumber = 1)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(cabId);

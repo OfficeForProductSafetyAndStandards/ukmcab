@@ -54,7 +54,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     #region AddLegislativeArea
 
     [HttpGet("add", Name = Routes.AddLegislativeArea)]
-    [Authorize(Policy = Policies.EditCabPendingApproval)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, string? returnUrl, bool fromSummary)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
@@ -73,7 +72,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     }
 
     [HttpPost("add", Name = Routes.AddLegislativeArea)]
-    [Authorize(Policy = Policies.EditCabPendingApproval)]
     public async Task<IActionResult> AddLegislativeArea(Guid id, LegislativeAreaViewModel vm, string submitType)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
@@ -262,7 +260,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     #region AddCategory
 
     [HttpGet("add-category/{scopeId}", Name = Routes.AddCategory)]
-    [Authorize(Policy = Policies.EditCabPendingApproval)]
     public async Task<IActionResult> AddCategory(Guid id, Guid scopeId, Guid? compareScopeId, bool fromSummary)
     {
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
@@ -302,7 +299,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     }
 
     [HttpPost("add-category/{scopeId}", Name = Routes.AddCategory)]
-    [Authorize(Policy = Policies.EditCabPendingApproval)]
     public async Task<IActionResult> AddCategory(Guid id, Guid scopeId, CategoryViewModel vm, Guid? compareScopeId)
     {
         var scopeOfAppointment =
@@ -576,7 +572,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     #region AddProcedure
 
     [HttpGet("add-procedure/{scopeId}", Name = Routes.AddProcedure)]
-    [Authorize(Policy = Policies.EditCabPendingApproval)]
     public async Task<IActionResult> AddProcedure(Guid id, Guid scopeId, Guid? compareScopeId, bool fromSummary, int indexOfProduct = 0)
     {
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
@@ -644,7 +639,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     }
 
     [HttpPost("add-procedure/{scopeId}", Name = Routes.AddProcedure)]
-    [Authorize(Policy = Policies.EditCabPendingApproval)]
     public async Task<IActionResult> AddProcedure(Guid id, Guid scopeId, int indexOfProduct, ProcedureViewModel vm,
         Guid? compareScopeId, string submitType)
     {

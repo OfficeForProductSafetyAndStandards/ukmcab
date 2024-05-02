@@ -12,7 +12,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
-[Area("admin"), Route("admin/cab/{id}/legislative-area/review-legislative-areas"), Authorize(Policy = Policies.EditCabPendingApproval)]
+[Area("admin"), Route("admin/cab/{id}/legislative-area/review-legislative-areas"), Authorize]
 public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;

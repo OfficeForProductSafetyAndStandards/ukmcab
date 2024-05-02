@@ -49,7 +49,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/schedules-upload/{id}")]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> SchedulesUpload(string id, bool fromSummary)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -76,7 +75,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("admin/cab/schedules-upload/{id}")]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> SchedulesUpload(string id, FileUploadViewModel model, bool fromSummary)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -163,7 +161,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? returnUrl, string? SelectedScheduleId,
             ProductScheduleActionMessageEnum? actionType)
         {   
@@ -217,7 +214,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> SchedulesList(string id, string submitType, ScheduleFileListViewModel model, 
             bool fromSummary)
         {
@@ -438,7 +434,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/documents-upload/{id}")]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> DocumentsUpload(string id, bool fromSummary)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -466,7 +461,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("admin/cab/documents-upload/{id}")]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> DocumentsUpload(string id, FileUploadViewModel model, bool fromSummary)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -527,7 +521,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/documents-list/{id}")]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> DocumentsList(string id, bool fromSummary, string? returnUrl, string? indexOfSelectedFile,
             string? fromAction)
         {
@@ -605,7 +598,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("admin/cab/documents-list/{id}")]
-        [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> DocumentsList(string id, string submitType, FileUploadViewModel model,
             bool fromSummary)
         {
