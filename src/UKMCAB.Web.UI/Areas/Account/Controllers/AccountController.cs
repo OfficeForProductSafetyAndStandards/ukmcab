@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Areas.Admin.Controllers;
+using UKMCAB.Web.UI.Pages;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
 {
@@ -267,7 +268,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         [HttpGet("accessDenied", Name = Routes.AccessDenied)]
         public IActionResult AccessDenied()
         {
-            return RedirectToRoute(ServiceManagementController.Routes.ServiceManagement);
+            return View("~/Pages/403.cshtml", new _403Model());
         }
         
         [AllowAnonymous, Route("qalogin", Name = Routes.QaLogin)]
