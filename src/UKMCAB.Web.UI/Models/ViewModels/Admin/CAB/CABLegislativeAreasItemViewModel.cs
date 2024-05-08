@@ -17,6 +17,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public DateTime? ReviewDate { get; set; }
 
         public string? Reason { get; set; }
+        public string? RequestReason { get; set; }
 
         public string? PointOfContactName { get; set; }
         public string? PointOfContactEmail { get; set; }
