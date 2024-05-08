@@ -762,7 +762,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
 
                 @if (Model.CanSubmitForApproval)
                 {
-                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.SubmitForApproval" @(!Model.ValidCAB ? "disabled" : string.Empty)>
+                    <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.SubmitForApproval" @(!Model.CanSubmitForApproval ? "disabled" : string.Empty)>
                         Submit for approval
                     </button>
                 }
