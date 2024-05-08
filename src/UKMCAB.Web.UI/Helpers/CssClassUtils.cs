@@ -19,7 +19,7 @@ public class CssClassUtils
         return status switch
         {
             LAStatus.ApprovedByOpssAdmin or LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToUnarchiveByOPSS or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or LAStatus.Published => "govuk-tag--green",
-            LAStatus.Approved or LAStatus.PendingApprovalToRemoveByOpssAdmin or LAStatus.PendingApprovalToUnarchiveByOpssAdmin or LAStatus.ApprovedToUnarchiveByOPSS => "govuk-tag--turquoise",
+            LAStatus.Approved or LAStatus.ApprovedToUnarchiveByOPSS => "govuk-tag--turquoise",
             LAStatus.Declined or LAStatus.DeclinedByOpssAdmin or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS or LAStatus.DeclinedToUnarchiveByOPSS or LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS => "govuk-tag--orange",
             LAStatus.Draft => "govuk-tag--blue",   
             _ => "govuk-tag--yellow"

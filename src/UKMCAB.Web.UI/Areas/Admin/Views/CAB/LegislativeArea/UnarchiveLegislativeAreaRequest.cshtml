@@ -70,7 +70,7 @@
             }
             <div class="govuk-button-group govuk-!-margin-top-4">
                 <govuk-button-link asp-route="@UnarchiveLegislativeAreaRequestController.Routes.UnarchiveLegislativeAreaRequestReason" asp-route-id="@Model.CabId" asp-route-legislativeAreaId="@Model.LegislativeArea.LegislativeAreaId">Continue</govuk-button-link>
-                <a asp-area="Admin" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>                       
+                <a asp-area="Admin" asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-fromSummary="@Model.FromSummary" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>

@@ -39,7 +39,7 @@
             </govuk-character-count>
             <div class="govuk-button-group">
                 <govuk-button type="submit">Confirm</govuk-button>
-                <a asp-area="Admin" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <a asp-area="Admin" asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-fromSummary="@Model.FromSummary" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>
