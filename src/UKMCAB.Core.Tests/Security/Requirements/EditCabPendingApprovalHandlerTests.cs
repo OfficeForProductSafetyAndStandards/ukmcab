@@ -41,7 +41,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
         }
 
         [Test]
-        public async Task ShouldThrowException_When_CabNotFound()
+        public async Task ShoulSucceed_When_CabNotFound_And_UserIsOPSSAdminOrUKAS()
         {
             // Arrange
             var mockContext = new DefaultHttpContext();
@@ -50,10 +50,32 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             _mockContextAccessor.SetupGet(m => m.HttpContext).Returns(mockContext);
             _mockCABAdminService.Setup(m => m.GetLatestDocumentAsync(It.IsAny<string>())).ReturnsAsync((Document?)null);
             
-            var authorizationContext = new AuthorizationHandlerContext(new[] { new EditCabPendingApprovalRequirement() }, GenerateMockPrincipal(Roles.OPSS.Id), null);
+            var authorizationContext = new AuthorizationHandlerContext(new[] { new EditCabPendingApprovalRequirement() }, GenerateMockPrincipal(Roles.UKAS.Id), null);
 
-            // Act & Assert
-            Assert.ThrowsAsync<Exception>(() => _handler.HandleAsync(authorizationContext));
+            // Act
+            await _handler.HandleAsync(authorizationContext);
+
+            // Assert
+            Assert.True(authorizationContext.HasSucceeded);
+        }
+
+        [Test]
+        public async Task ShoulFail_When_CabNotFound_And_UserIsNotOPSSAdminOrUKAS()
+        {
+            // Arrange
+            var mockContext = new DefaultHttpContext();
+            mockContext.Request.RouteValues = new RouteValueDictionary { { "id", "test-cab-id" } };
+
+            _mockContextAccessor.SetupGet(m => m.HttpContext).Returns(mockContext);
+            _mockCABAdminService.Setup(m => m.GetLatestDocumentAsync(It.IsAny<string>())).ReturnsAsync((Document?)null);
+
+            var authorizationContext = new AuthorizationHandlerContext(new[] { new EditCabPendingApprovalRequirement() }, GenerateMockPrincipal(Roles.OPSS_OGD.Id), null);
+
+            // Act
+            await _handler.HandleAsync(authorizationContext);
+
+            // Assert
+            Assert.False(authorizationContext.HasSucceeded);
         }
 
         [Test]
