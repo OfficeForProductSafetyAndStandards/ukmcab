@@ -41,7 +41,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
         }
 
         [Test]
-        public async Task ShoulSucceed_When_CabNotFound_And_UserIsOPSSAdminOrUKAS()
+        public async Task ShoulSucceed_When_CabNotFound_And_UserIsOPSSAdmin()
         {
             // Arrange
             var mockContext = new DefaultHttpContext();
@@ -50,6 +50,25 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             _mockContextAccessor.SetupGet(m => m.HttpContext).Returns(mockContext);
             _mockCABAdminService.Setup(m => m.GetLatestDocumentAsync(It.IsAny<string>())).ReturnsAsync((Document?)null);
             
+            var authorizationContext = new AuthorizationHandlerContext(new[] { new EditCabPendingApprovalRequirement() }, GenerateMockPrincipal(Roles.OPSS.Id), null);
+
+            // Act
+            await _handler.HandleAsync(authorizationContext);
+
+            // Assert
+            Assert.True(authorizationContext.HasSucceeded);
+        }
+
+        [Test]
+        public async Task ShoulSucceed_When_CabNotFound_And_UserIsUKAS()
+        {
+            // Arrange
+            var mockContext = new DefaultHttpContext();
+            mockContext.Request.RouteValues = new RouteValueDictionary { { "id", "test-cab-id" } };
+
+            _mockContextAccessor.SetupGet(m => m.HttpContext).Returns(mockContext);
+            _mockCABAdminService.Setup(m => m.GetLatestDocumentAsync(It.IsAny<string>())).ReturnsAsync((Document?)null);
+
             var authorizationContext = new AuthorizationHandlerContext(new[] { new EditCabPendingApprovalRequirement() }, GenerateMockPrincipal(Roles.UKAS.Id), null);
 
             // Act
@@ -152,7 +171,29 @@ namespace UKMCAB.Core.Tests.Security.Requirements
         }
 
         [Test]
-        public async Task ShoulSucceed_When_DocumentSubStatusIsNotPendingApprovalToPublish_And_UserIsOPSSAdmin_Or_InCreatorUserGroup()
+        public async Task ShoulSucceed_When_DocumentSubStatusIsNotPendingApprovalToPublish_And_UserIsOPSSAdmin()
+        {
+            // Arrange
+            var mockContext = new DefaultHttpContext();
+            mockContext.Request.RouteValues = new RouteValueDictionary { { "id", "test-cab-id" } };
+
+            _mockContextAccessor.SetupGet(m => m.HttpContext).Returns(mockContext);
+            _mockCABAdminService.Setup(m => m.GetLatestDocumentAsync(It.IsAny<string>())).ReturnsAsync(new Document
+            {
+                SubStatus = SubStatus.None,
+            });
+
+            var authorizationContext = new AuthorizationHandlerContext(new[] { new EditCabPendingApprovalRequirement() }, GenerateMockPrincipal(Roles.OPSS.Id), null);
+
+            // Act
+            await _handler.HandleAsync(authorizationContext);
+
+            // Assert
+            Assert.True(authorizationContext.HasSucceeded);
+        }
+
+        [Test]
+        public async Task ShoulSucceed_When_DocumentSubStatusIsNotPendingApprovalToPublish_And_UserIsInCreatorUserGroup()
         {
             // Arrange
             var mockContext = new DefaultHttpContext();
