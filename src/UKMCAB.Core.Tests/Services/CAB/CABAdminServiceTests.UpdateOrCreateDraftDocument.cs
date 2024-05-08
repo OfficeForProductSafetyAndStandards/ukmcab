@@ -84,6 +84,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     new DocumentLegislativeArea { Status = LAStatus.Published},
                     new DocumentLegislativeArea { Status = LAStatus.Declined},
                     new DocumentLegislativeArea { Status = LAStatus.DeclinedByOpssAdmin},
+                    new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS},
+                    new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS},
+                    new DocumentLegislativeArea { Status = LAStatus.DeclinedToRemoveByOPSS},
+                    new DocumentLegislativeArea { Status = LAStatus.DeclinedToUnarchiveByOPSS},
                 },
             };
 
@@ -96,7 +100,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
         }
 
         [Test]
-        public async Task UpdateOrCreateDraftDocumentAsync_ShouldReturnDraftDocumentWithoutChangingSubstatus()
+        public async Task UpdateOrCreateDraftDocumentAsync_ShouldReturnDraftDocumentWithoutChangingSubstatus_WhenAnLaExistWithPendingApprovalOrApproved()
         {
             // Arrange
             var userAccount = new UserAccount();
