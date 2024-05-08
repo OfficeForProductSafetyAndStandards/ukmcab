@@ -224,7 +224,7 @@ namespace UKMCAB.Core.Services.CAB
             }
             else if (draft.StatusValue == Status.Draft)
             {
-                if (draft.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
+                if (draft.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin || la.Status == LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS || la.Status == LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS || la.Status == LAStatus.DeclinedToRemoveByOPSS || la.Status == LAStatus.DeclinedToUnarchiveByOPSS))
                 {
                     draft.SubStatus = SubStatus.None;
                 }
