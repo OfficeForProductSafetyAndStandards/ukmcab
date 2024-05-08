@@ -50,9 +50,21 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         {
             return Status switch
             {
-                LAStatus.Approved or LAStatus.PendingApprovalToUnarchiveByOpssAdmin => 
+                LAStatus.Approved or 
+                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin 
+                    => 
                     $"{Status.GetEnumDescription()} by {RoleName}",
-                LAStatus.Declined or LAStatus.DeclinedToRemoveByOGD or LAStatus.DeclinedToRemoveByOPSS or LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD =>
+                LAStatus.Declined or 
+                    LAStatus.DeclinedByOpssAdmin  or 
+                    LAStatus.DeclinedToRemoveByOGD or 
+                    LAStatus.DeclinedToRemoveByOPSS or 
+                    LAStatus.DeclinedToUnarchiveByOGD or 
+                    LAStatus.DeclinedToUnarchiveByOPSS or 
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or 
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or 
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS 
+                    =>
                     $"{Status.GetEnumDescription()} by {RoleName}",
                 LAStatus.PendingApproval
                     or LAStatus.PendingApprovalToRemove
