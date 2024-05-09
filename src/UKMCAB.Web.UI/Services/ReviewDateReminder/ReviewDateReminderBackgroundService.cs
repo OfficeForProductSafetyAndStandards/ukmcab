@@ -66,7 +66,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         private async Task CheckAndSendReviewDateReminder()
         {
             var publishedCABs = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published));
-            var publishedCABsWithDueReviewDates = publishedCABs.Where(d => (d.StatusValue == Status.Published && (IsReviewReminderNeeded(d.RenewalDate) || d.DocumentLegislativeAreas.Any(la => IsReviewReminderNeeded(la.ReviewDate)))));
+            var publishedCABsWithDueReviewDates = publishedCABs.Where(d => (IsReviewReminderNeeded(d.RenewalDate) || d.DocumentLegislativeAreas.Any(la => IsReviewReminderNeeded(la.ReviewDate))));
             var noOfReminderSent = 0;
 
             foreach (var cab in publishedCABsWithDueReviewDates)
