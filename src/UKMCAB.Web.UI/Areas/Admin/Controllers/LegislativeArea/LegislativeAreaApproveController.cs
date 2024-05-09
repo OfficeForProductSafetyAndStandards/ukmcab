@@ -17,6 +17,8 @@ using UKMCAB.Web.UI.Services;
 using UKMCAB.Common.Extensions;
 using System.Globalization;
 using UKMCAB.Subscriptions.Core.Common;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+using UKMCAB.Data.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -141,11 +143,25 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var documentLa = latestDocument.DocumentLegislativeAreas
             .First(l => l.LegislativeAreaId == legislativeAreaId);
 
+        var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
+
+        var publishModel = new CABSummaryViewModel
+        {
+            CABId = latestDocument.CABId,
+            CabDetailsViewModel = new CABDetailsViewModel(latestDocument),
+            CabContactViewModel = new CABContactViewModel(latestDocument),
+            CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latestDocument),
+            CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latestDocument),
+            CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latestDocument)
+        };
+
         if (ModelState.IsValid)
-        {   
-            if(vm.LegislativeAreaApproveActionEnum == LegislativeAreaApproveActionEnum.Approve)
+        {
+            await SendNotificationForApproveCab(userAccount, latestDocument.Name ?? throw new InvalidOperationException(), publishModel);
+
+            if (vm.LegislativeAreaApproveActionEnum == LegislativeAreaApproveActionEnum.Approve)
             {
-                await ApproveLegislativeAreaAsync(documentLa, latestDocument, vm.ReviewActionEnum);                
+                await ApproveLegislativeAreaAsync(documentLa, latestDocument, vm.ReviewActionEnum);
             }
             else
             {
@@ -160,7 +176,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             vm.ProductSchedules = vm.ReviewActionEnum == LegislativeAreaReviewActionEnum.Unarchive ?
                 latestDocument.ArchivedSchedules.Where(n => n.LegislativeArea == documentLa.LegislativeAreaName).ToList() :
                 latestDocument.ActiveSchedules.Where(n => n.LegislativeArea == documentLa.LegislativeAreaName).ToList();
-        }      
+        }
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ApproveDeclineLegislativeAreaSelection.cshtml", vm);
     }    
@@ -213,6 +229,52 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         }
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/DeclineLegislativeAreaReason.cshtml", vm);
+    }
+
+    /// <summary>
+    /// Sends an email and notification for Request to publish a cab
+    /// </summary>
+    /// <param name="userAccount">User creating the cab</param>
+    /// <param name="cabName">Name of CAB</param>
+    /// <param name="publishModel">ViewModel to build notification</param>
+    private async Task SendNotificationForApproveCab(UserAccount userAccount, string cabName,
+        CABSummaryViewModel publishModel)
+    {
+        var tasks = await _workflowTaskService.GetByCabIdAsync(Guid.Parse(publishModel.CABId!));
+        var requestToPublish = tasks.SingleOrDefault(t => t.TaskType == TaskType.RequestToPublish && !t.Completed);
+        if (requestToPublish == null)
+        {
+            var personalisation = new Dictionary<string, dynamic?>
+            {
+                { "UserGroup", Roles.UKAS.Label },
+                { "CABName", cabName },
+                {
+                    "NotificationsUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(NotificationController.Routes.Notifications))
+                },
+                {
+                    "CABManagementUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(CabManagementController.Routes.CABManagement))
+                }
+            };
+            var userRoleId = Roles.List.First(r => r.Id == userAccount.Role).Id;
+            await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
+                _templateOptions.NotificationRequestToPublish, personalisation);
+            if (publishModel.CabDetailsViewModel != null)
+            {
+                await _workflowTaskService.CreateAsync(new WorkflowTask(TaskType.RequestToPublish,
+                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId,
+                        userAccount.EmailAddress ?? throw new InvalidOperationException()),
+                    Roles.OPSS.Id, null, null,
+                    $"{userAccount.FirstName} {userAccount.Surname} from {Roles.NameFor(userRoleId)} has submitted a request to approve and publish {publishModel.CabDetailsViewModel.Name}.",
+                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId,
+                        userAccount.EmailAddress ?? throw new InvalidOperationException()), DateTime.Now,
+                    null, null,
+                    false, Guid.Parse(publishModel.CABId ?? throw new InvalidOperationException())));
+            }
+        }
     }
 
     private void ShowSuccessMessage(ApprovalListViewModel vm)
