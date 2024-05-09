@@ -37,8 +37,6 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            await Task.Delay(10_000, CancellationToken.None);
-
             while (!stoppingToken.IsCancellationRequested)
             {
                 if (_nextRunTime == default || _nextRunTime.Date < DateTime.Today)
@@ -53,20 +51,25 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                 try
                 {
                     await CheckAndSendReviewDateReminder();
-                    _nextRunTime = _nextRunTime.AddDays(1);
                 }
                 catch (Exception ex)
                 {
                     _telemetryClient.TrackException(ex);
                     _logger.LogError(ex, ex.Message);
                 }
+                finally
+                {
+                    _nextRunTime = _nextRunTime.AddDays(1);
+                }
             }
         }
         private async Task CheckAndSendReviewDateReminder()
         {
             var publishedCABs = await _cabRepository.Query<Document>(d => (d.StatusValue == Status.Published));
+            var publishedCABsWithDueReviewDates = publishedCABs.Where(d => (d.StatusValue == Status.Published && (IsReviewReminderNeeded(d.RenewalDate) || d.DocumentLegislativeAreas.Any(la => IsReviewReminderNeeded(la.ReviewDate)))));
             var noOfReminderSent = 0;
-            foreach (var cab in publishedCABs)
+
+            foreach (var cab in publishedCABsWithDueReviewDates)
             {
                 noOfReminderSent = await SendReminderAndCountSent(noOfReminderSent, cab);
             }
@@ -104,7 +107,8 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                 {
                     if (IsReviewReminderNeeded(la.ReviewDate))
                     {
-                        await SendInternalNotificationForLAReviewDateReminderAsync(cab, la, user, (DateTime)cabReviewDate!, fullUrl);
+                        _logger.LogInformation($"Sending notification for {cab.Name} .....");
+                        await SendInternalNotificationForLAReviewDateReminderAsync(cab, la, user, fullUrl);
                         noOfReminderSent++;
                     }
                 }
@@ -151,7 +155,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                     null
                     ));
         }
-        private async Task SendInternalNotificationForLAReviewDateReminderAsync(Document cab, DocumentLegislativeArea LA, User user, DateTime cabReviewDate, string url)
+        private async Task SendInternalNotificationForLAReviewDateReminderAsync(Document cab, DocumentLegislativeArea LA, User user, string url)
         {
             var personalisation = new Dictionary<string, dynamic?>
             {
