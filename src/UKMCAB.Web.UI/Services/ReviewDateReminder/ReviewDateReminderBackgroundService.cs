@@ -107,7 +107,6 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                 {
                     if (IsReviewReminderNeeded(la.ReviewDate))
                     {
-                        _logger.LogInformation($"Sending notification for {cab.Name} .....");
                         await SendInternalNotificationForLAReviewDateReminderAsync(cab, la, user, fullUrl);
                         noOfReminderSent++;
                     }
