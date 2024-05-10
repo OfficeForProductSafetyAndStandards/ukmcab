@@ -157,11 +157,10 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         if (ModelState.IsValid)
         {
-            await SendNotificationForApproveCab(userAccount, latestDocument.Name ?? throw new InvalidOperationException(), publishModel);
-
             if (vm.LegislativeAreaApproveActionEnum == LegislativeAreaApproveActionEnum.Approve)
             {
                 await ApproveLegislativeAreaAsync(documentLa, latestDocument, vm.ReviewActionEnum);
+                await SendNotificationForApproveCab(userAccount, latestDocument.Name ?? throw new InvalidOperationException(), publishModel);
             }
             else
             {
