@@ -215,8 +215,8 @@ public class NotificationController : UI.Controllers.ControllerBase
             string? cabName = null;
             if (notification.CABId.HasValue)
             {
-                 var cabs = await _cachedPublishedCABService.FindAllDocumentsByCABIdAsync(notification.CABId.ToString()!);
-                 cabName = cabs.FirstOrDefault()?.Name;
+                var cabs = await _cachedPublishedCABService.FindAllDocumentsByCABIdAsync(notification.CABId.ToString()!);
+                cabName = cabs.FirstOrDefault()?.Name;
             }
 
             var item = (From: notification.Submitter.FirstAndLastName,

@@ -4,7 +4,7 @@ namespace UKMCAB.Data.Extensions
 {
     public static class DocumentLegislativeAreasExtensions
     {
-        public static bool HasBeenActioned(this List<DocumentLegislativeArea> documentLegislativeAreas)
+        public static bool HasAnyBeenActioned(this List<DocumentLegislativeArea> documentLegislativeAreas)
             => documentLegislativeAreas.Any(la => la.Status is
                 LAStatus.Approved or
                 LAStatus.Declined or
