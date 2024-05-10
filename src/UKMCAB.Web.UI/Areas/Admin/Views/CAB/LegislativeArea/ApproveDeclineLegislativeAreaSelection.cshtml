@@ -103,6 +103,14 @@
                     </tbody>
                 </table>
             }
+            @if (!string.IsNullOrEmpty(Model.LegislativeArea.RequestReason))
+            {
+                <div class="govuk-!-margin-top-4">
+                    <h2 class="govuk-heading-s">Request reason</h2>
+                    <p class="govuk-body">@Model.LegislativeArea.RequestReason</p>
+                    <hr class="govuk-section-break govuk-section-break--visible">
+                </div>
+            }
             <div class="govuk-!-margin-top-4">
                 <govuk-radios asp-for="LegislativeAreaApproveActionEnum">
                     <govuk-radios-fieldset>
