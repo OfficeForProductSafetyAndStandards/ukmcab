@@ -127,13 +127,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         documentLegislativeArea.PointOfContactPhone = vm.PointOfContactPhone;
         documentLegislativeArea.IsPointOfContactPublicDisplay = vm.IsPointOfContactPublicDisplay;
 
-        // Note: After editing a published/declined LA in a new draft cab, the LA status is changed to draft.
-        if (latestDocument.StatusValue == Status.Draft && latestDocument.SubStatus == SubStatus.None &&
-            (documentLegislativeArea.Status == LAStatus.Published || documentLegislativeArea.Status == LAStatus.Declined || documentLegislativeArea.Status == LAStatus.DeclinedByOpssAdmin))
-        {
-            documentLegislativeArea.Status = LAStatus.Draft;
-        }
-
+        documentLegislativeArea.MarkAsDraft(latestDocument);
         var userAccount =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
