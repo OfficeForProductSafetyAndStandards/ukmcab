@@ -39,7 +39,7 @@ namespace UKMCAB.Core.Security.Requirements
             else
             {
                 var isOpssAdminOrInCreatorUserGroup = isOpssAdmin || user.IsInRole(document.CreatedByUserGroup);
-                var legislativeAreaHasBeenActioned = document.DocumentLegislativeAreas.HasBeenActioned();
+                var legislativeAreaHasBeenActioned = document.DocumentLegislativeAreas.HasAnyBeenActioned();
 
                 if ((document.SubStatus == SubStatus.PendingApprovalToPublish && isOpssAdmin && legislativeAreaHasBeenActioned) ||
                     (document.SubStatus != SubStatus.PendingApprovalToPublish && isOpssAdminOrInCreatorUserGroup))
