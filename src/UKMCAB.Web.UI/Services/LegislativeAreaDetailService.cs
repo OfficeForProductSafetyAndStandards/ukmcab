@@ -33,6 +33,7 @@ namespace UKMCAB.Web.UI.Services
                 AppointmentDate = documentLegislativeArea.AppointmentDate,
                 ReviewDate = documentLegislativeArea.ReviewDate,
                 Reason = documentLegislativeArea.Reason,
+                RequestReason = documentLegislativeArea.RequestReason,
                 CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
                 LegislativeAreaId = legislativeArea.Id
             };
