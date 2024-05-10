@@ -25,7 +25,7 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
     }
 
     [HttpGet("archive-request/{legislativeAreaId}/{removeActionEnum?}", Name = Routes.ArchiveLegislativeArea)]
-    public async Task<IActionResult> ArchiveAsync(Guid id, Guid legislativeAreaId, RemoveActionEnum removeActionEnum = RemoveActionEnum.Archive )
+    public async Task<IActionResult> ArchiveAsync(Guid id, Guid legislativeAreaId, string? returnUrl, RemoveActionEnum removeActionEnum = RemoveActionEnum.Archive)
     {
         var vm = new LegislativeAreaArchiveRequestViewModel(id, string.Empty);
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
@@ -33,6 +33,7 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
 
         vm.LegislativeAreaName = document.DocumentLegislativeAreas.Single(a => a.LegislativeAreaId == legislativeAreaId)
             .LegislativeAreaName;
+        vm.ReturnUrl = returnUrl;
         return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaReason.cshtml", vm);
     }
 
