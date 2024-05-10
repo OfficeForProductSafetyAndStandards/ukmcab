@@ -913,7 +913,9 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 else
                 {
                     return RedirectToRoute(ArchiveLegislativeAreaRequestController.Routes.ArchiveLegislativeArea,
-                    new { Area = "admin", id, legislativeAreaId, removeActionEnum = vm.LegislativeAreaRemoveAction.Value });
+                    new { Area = "admin", id, legislativeAreaId, removeActionEnum = vm.LegislativeAreaRemoveAction.Value,
+                        returnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery)
+                    });
                 }
             }
         }
