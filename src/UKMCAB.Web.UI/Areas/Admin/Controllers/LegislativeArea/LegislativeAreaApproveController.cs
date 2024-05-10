@@ -18,7 +18,6 @@ using UKMCAB.Common.Extensions;
 using System.Globalization;
 using UKMCAB.Subscriptions.Core.Common;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
-using UKMCAB.Data.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -161,6 +160,13 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             {
                 await ApproveLegislativeAreaAsync(documentLa, latestDocument, vm.ReviewActionEnum);
                 await SendNotificationForApproveCab(userAccount, latestDocument.Name ?? throw new InvalidOperationException(), publishModel);
+
+                var legislativeAreaSenderEmailIds =
+                        _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
+                var receiverEmailId = legislativeAreaSenderEmailIds[documentLa.RoleId];
+
+                await SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latestDocument.CABId),
+                    latestDocument.Name, userAccount, receiverEmailId, documentLa.LegislativeAreaName, 1);
             }
             else
             {
@@ -228,6 +234,30 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         }
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/DeclineLegislativeAreaReason.cshtml", vm);
+    }
+
+    private async Task SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid cabId, string cabName,
+            UserAccount userAccount, string legislativeAreaReceiverEmailId, string legislativeAreaName,
+            int legislativeAreaCount)
+    {
+        var user = new User(userAccount.Id, userAccount.FirstName, userAccount.Surname,
+            userAccount.Role ?? throw new InvalidOperationException(),
+            userAccount.EmailAddress ?? throw new InvalidOperationException());
+
+        var emailBody =
+            $"{user.FirstAndLastName} from {user.UserGroup} has requested that the {legislativeAreaName} legislative area is approved for CAB [{cabName}]({UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request, Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))}).";
+        if (legislativeAreaCount > 1)
+            emailBody =
+                $"{user.FirstAndLastName} from {user.UserGroup} has requested that the following legislative areas are approved for CAB [{cabName}]({UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request, Url.RouteUrl(CABController.Routes.CabSummary, new { id = cabId }))}) : {legislativeAreaName}.";
+
+        var personalisation = new Dictionary<string, dynamic?>
+            {
+                { "CABName", cabName },
+                { "emailBody", emailBody },
+                { "userGroup", user.UserGroup }
+            };
+        await _notificationClient.SendEmailAsync(legislativeAreaReceiverEmailId,
+            _templateOptions.NotificationLegislativeAreaRequestToPublish, personalisation);
     }
 
     /// <summary>
