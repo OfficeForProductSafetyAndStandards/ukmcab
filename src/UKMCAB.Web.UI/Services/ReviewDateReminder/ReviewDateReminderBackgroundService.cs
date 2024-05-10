@@ -71,7 +71,15 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
 
             foreach (var cab in publishedCABsWithDueReviewDates)
             {
-                noOfReminderSent = await SendReminderAndCountSent(noOfReminderSent, cab);
+                try
+                {
+                    noOfReminderSent = await SendReminderAndCountSent(noOfReminderSent, cab);
+                }
+                catch(Exception ex) 
+                {
+                    _telemetryClient.TrackException(ex);
+                    _logger.LogError(ex, $"Error sending review date reminder for : {cab.Name}");
+                }                
             }
 
             if (noOfReminderSent > 0)
