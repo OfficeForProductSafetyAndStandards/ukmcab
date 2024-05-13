@@ -244,6 +244,15 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             documentScopeOfAppointment.PurposeOfAppointmentId = vm.SelectedPurposeOfAppointmentId;
             await _distCache.SetAsync(string.Format(CacheKey, scopeId.ToString()), documentScopeOfAppointment,
                 TimeSpan.FromHours(1));
+
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
+                                 throw new InvalidOperationException();
+            var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == documentScopeOfAppointment.LegislativeAreaId);
+            documentLegislativeArea?.MarkAsDraft(latestDocument);
+            
+            var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+
             return RedirectToRoute(Routes.AddCategory, new { id, scopeId, compareScopeId, fromSummary = vm.IsFromSummary });
         }
 
@@ -669,11 +678,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                                  throw new InvalidOperationException();
             var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == scopeOfAppointment.LegislativeAreaId);
-            if (latestDocument.StatusValue == Status.Draft && latestDocument.SubStatus == SubStatus.None &&
-                    (documentLegislativeArea.Status == LAStatus.Published || documentLegislativeArea.Status == LAStatus.Declined || documentLegislativeArea.Status == LAStatus.DeclinedByOpssAdmin))
-            {
-                documentLegislativeArea.Status = LAStatus.Draft;
-            }
+            documentLegislativeArea?.MarkAsDraft(latestDocument);
 
             latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
             latestDocument.HiddenScopeOfAppointments =

@@ -143,11 +143,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     latestDocument.ScopeOfAppointments.Remove(soaToRemove);
 
                     var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == legislativeAreaId);
-                    if (latestDocument.StatusValue == Status.Draft && latestDocument.SubStatus == SubStatus.None &&
-                        (documentLegislativeArea.Status == LAStatus.Published || documentLegislativeArea.Status == LAStatus.Declined || documentLegislativeArea.Status == LAStatus.DeclinedByOpssAdmin))
-                    {
-                        documentLegislativeArea.Status = LAStatus.Draft;
-                    }
+                    documentLegislativeArea?.MarkAsDraft(latestDocument);
 
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
                     return RedirectToRoute(Routes.ReviewLegislativeAreas, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.FromSummary });
