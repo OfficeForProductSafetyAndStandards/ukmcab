@@ -796,6 +796,20 @@ else
 {
     var showPublishButtons = Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish, LegislativeAreasApprovedByAdminCount: > 0 };
 
+    if (showPublishButtons && Model.ShowEditActions)
+    {
+        <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
+            Only legislative areas that have been reviewed and approved will be published.
+        </govuk-warning-text>
+        <div class="govuk-!-margin-top-5">
+            <div class="govuk-button-group">
+                <govuk-button-link id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Publish</govuk-button-link>
+                <govuk-button-link id="declineCab" class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
+                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </div>
+    }
+
     if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPendingApprovalCount: > 0, ShowEditActions: true })
     {
         <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
@@ -810,20 +824,6 @@ else
             {
                 <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             }
-        </div>
-    }
-
-    if (showPublishButtons && Model.ShowEditActions)
-    {
-        <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
-            Only legislative areas that have been reviewed and approved will be published.
-        </govuk-warning-text>
-        <div class="govuk-!-margin-top-5">
-            <div class="govuk-button-group">
-                <govuk-button-link id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Publish</govuk-button-link>
-                <govuk-button-link id="declineCab" class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
-                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-            </div>
         </div>
     }
 }

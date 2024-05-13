@@ -906,7 +906,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 if (UserRoleId == Roles.OPSS.Id)
                 {
                     await _cabAdminService.ArchiveLegislativeAreaAsync(userAccount, id, legislativeAreaId);
-
+                    laActionMessageActionType = LegislativeAreaActionMessageEnum.LegislativeAreaArchived;
                     return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview",
                         new { Area = "admin", id, actionType = laActionMessageActionType, vm.FromSummary });
                 }
