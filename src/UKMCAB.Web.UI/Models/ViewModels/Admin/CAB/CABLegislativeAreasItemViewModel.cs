@@ -56,15 +56,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
                     => 
                     $"{Status.GetEnumDescription()} by {RoleName}",
                 LAStatus.Declined or 
-                    LAStatus.DeclinedByOpssAdmin  or 
                     LAStatus.DeclinedToRemoveByOGD or 
-                    LAStatus.DeclinedToRemoveByOPSS or 
                     LAStatus.DeclinedToUnarchiveByOGD or 
-                    LAStatus.DeclinedToUnarchiveByOPSS or 
                     LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or 
-                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
-                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or 
-                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS 
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD
                     =>
                     $"{Status.GetEnumDescription()} by {RoleName}",
                 LAStatus.PendingApproval

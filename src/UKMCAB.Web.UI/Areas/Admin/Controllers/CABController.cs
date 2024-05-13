@@ -719,7 +719,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(model);
         }
 
-        [HttpGet("admin/cab/history/{id}", Name = Routes.CabHistory)]
+        [HttpGet("admin/cab/history/{cabId}", Name = Routes.CabHistory)]
         public async Task<IActionResult> History(string cabId, string? returnUrl, int pageNumber = 1)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(cabId);
