@@ -508,8 +508,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
-                                    ((model.SubStatus != SubStatus.PendingApprovalToPublish && model.IsOPSSOrInCreatorUserGroup) ||
+                                    ((model.SubStatus != SubStatus.PendingApprovalToPublish && userInCreatorUserGroup) ||
                                      (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
+            model.ShowOpssDeleteDraftActionOnly = model.SubSectionEditAllowed && model.SubStatus != SubStatus.PendingApprovalToPublish && User.IsInRole(Roles.OPSS.Id); 
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                  (model.Status == Status.Published || model.LoggedInUserGroupIsOwner);
