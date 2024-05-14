@@ -1,11 +1,13 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Shared.ConfirmationViewModel
 
-<govuk-panel heading-level="2">
-    <govuk-panel-title>@Model.Title</govuk-panel-title>
+<div class="govuk-panel govuk-panel--confirmation">
+    <h1 class="govuk-panel__title break-word">
+        @Model.Title
+    </h1>
     @if (!string.IsNullOrEmpty(Model.Body))
     {
-        <govuk-panel-body>
+        <div class="govuk-panel__body">
             @Model.Body
-        </govuk-panel-body>
+        </div>
     }
-</govuk-panel>
+</div>
