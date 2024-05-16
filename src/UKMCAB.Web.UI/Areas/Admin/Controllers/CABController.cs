@@ -384,7 +384,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid(), returnUrl = "/service-management" });
 
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
-        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed)
+        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed, bool? fromCabProfilePage)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -468,15 +468,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.ApprovedToUnarchiveByOPSS
                 ),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is 
-                    LAStatus.Approved or 
-                    LAStatus.Declined or 
-                    LAStatus.DeclinedToRemoveByOPSS or 
-                    LAStatus.ApprovedByOpssAdmin or 
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is
+                    LAStatus.Approved or
+                    LAStatus.Declined or
+                    LAStatus.DeclinedToRemoveByOPSS or
+                    LAStatus.ApprovedByOpssAdmin or
                     LAStatus.DeclinedByOpssAdmin or
                     LAStatus.PendingApprovalToRemoveByOpssAdmin or
-                    LAStatus.ApprovedToRemoveByOpssAdmin or 
-                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
+                    LAStatus.ApprovedToRemoveByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
@@ -487,7 +487,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToUnarchiveByOPSS or
                     LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
                     LAStatus.DeclinedToUnarchiveByOPSS),
-                LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup
+                LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup,
+                RequestedFromCabProfilePage = fromCabProfilePage ?? false
             };
         
             //Lock Record for edit
