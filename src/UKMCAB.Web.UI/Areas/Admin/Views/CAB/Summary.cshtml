@@ -62,7 +62,14 @@ else if (Model is { EditByGroupPermitted: false, Status: Status.Draft, IsPending
 {
     if(Model.IsOpssAdmin)
     {
-       <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an UKAS user.")" name="Partials/_PageContentBanner" />        
+        if (Model.RequestedFromCabProfilePage)
+        {
+            <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.")" name="Partials/_PageContentBanner" />
+        }
+        else
+        {
+            <partial model="@("This CAB profile cannot be edited as it was created by a UKAS user.")" name="Partials/_PageContentBanner" />
+        }           
     }
     else
     {
