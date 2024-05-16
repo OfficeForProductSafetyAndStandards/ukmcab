@@ -407,10 +407,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
             var showOgdActions = isOgdUser && subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
                 latest.IsPendingOgdApproval && laPendingApprovalCount > 0;
-            if (showOgdActions)
-            {
-                await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latest, UserRoleId);
-            }
 
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest)
