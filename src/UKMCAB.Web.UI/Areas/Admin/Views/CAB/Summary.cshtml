@@ -31,7 +31,14 @@
             <div class="govuk-grid-column-two-thirds">
                 @if (string.IsNullOrWhiteSpace(returnUrl))
                 {
-                    <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement"/>
+                    if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabManagement))
+                    {
+                        <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement" />                        
+                    }
+                    else
+                    {
+                        <govuk-back-link asp-route="@ServiceManagementController.Routes.ServiceManagement" />
+                    }                    
                 }
                 else
                 {
