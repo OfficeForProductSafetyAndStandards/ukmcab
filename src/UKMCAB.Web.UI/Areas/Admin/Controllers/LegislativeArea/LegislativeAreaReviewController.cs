@@ -42,11 +42,6 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
 
-        var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
-        if (isOgdUser)
-        {
-            await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
-        }
         var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
         var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
         vm.ShowArchiveLegislativeAreaAction = !singleDraftDoc;
