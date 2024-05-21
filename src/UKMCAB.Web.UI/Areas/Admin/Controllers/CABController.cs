@@ -384,7 +384,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid(), returnUrl = "/service-management" });
 
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
-        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed)
+        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed, bool? fromCabProfilePage)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
@@ -407,10 +407,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
             var showOgdActions = isOgdUser && subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
                 latest.IsPendingOgdApproval && laPendingApprovalCount > 0;
-            if (showOgdActions)
-            {
-                await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latest, UserRoleId);
-            }
 
             // Pre-populate model for edit
             var cabDetails = new CABDetailsViewModel(latest)
@@ -472,15 +468,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.ApprovedToUnarchiveByOPSS
                 ),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is 
-                    LAStatus.Approved or 
-                    LAStatus.Declined or 
-                    LAStatus.DeclinedToRemoveByOPSS or 
-                    LAStatus.ApprovedByOpssAdmin or 
+                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is
+                    LAStatus.Approved or
+                    LAStatus.Declined or
+                    LAStatus.DeclinedToRemoveByOPSS or
+                    LAStatus.ApprovedByOpssAdmin or
                     LAStatus.DeclinedByOpssAdmin or
                     LAStatus.PendingApprovalToRemoveByOpssAdmin or
-                    LAStatus.ApprovedToRemoveByOpssAdmin or 
-                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
+                    LAStatus.ApprovedToRemoveByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
@@ -491,7 +487,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToUnarchiveByOPSS or
                     LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
                     LAStatus.DeclinedToUnarchiveByOPSS),
-                LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup
+                LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup,
+                RequestedFromCabProfilePage = fromCabProfilePage ?? false
             };
         
             //Lock Record for edit
@@ -508,8 +505,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
-                                    ((model.SubStatus != SubStatus.PendingApprovalToPublish && model.IsOPSSOrInCreatorUserGroup) ||
+                                    ((model.SubStatus != SubStatus.PendingApprovalToPublish && userInCreatorUserGroup) ||
                                      (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
+            model.ShowOpssDeleteDraftActionOnly = model.SubSectionEditAllowed && model.SubStatus != SubStatus.PendingApprovalToPublish && User.IsInRole(Roles.OPSS.Id); 
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
                  (model.Status == Status.Published || model.LoggedInUserGroupIsOwner);

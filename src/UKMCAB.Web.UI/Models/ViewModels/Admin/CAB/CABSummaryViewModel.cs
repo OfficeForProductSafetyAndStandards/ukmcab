@@ -24,6 +24,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CanPublish { get; set; }
         public bool CanSubmitForApproval { get; set; }
         public bool ShowEditActions { get; set; }
+        public bool ShowOpssDeleteDraftActionOnly { get; set; }
         public bool IsPendingOgdApproval { get; set; }
         public bool IsMatchingOgdUser { get; set; }
         public bool ShowOgdActions { get; set; }
@@ -43,5 +44,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool LegislativeAreaHasBeenActioned { get; set; }
 
         public bool LoggedInUserGroupIsOwner { get; set; }
+        public bool RequestedFromCabProfilePage { get; set; }
     }
 }
