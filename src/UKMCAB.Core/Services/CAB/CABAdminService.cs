@@ -212,7 +212,14 @@ namespace UKMCAB.Core.Services.CAB
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
                 draft.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Draft)
                     .ForEach(la => la.Status = LAStatus.PendingApproval);
-            }            
+            } 
+            else
+            {
+                if (draft.DocumentLegislativeAreas.All(la => la.Status is LAStatus.Published or LAStatus.Declined or LAStatus.DeclinedByOpssAdmin or LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or LAStatus.DeclinedToRemoveByOPSS or LAStatus.DeclinedToUnarchiveByOPSS))
+                {
+                    draft.SubStatus = SubStatus.None;
+                }
+            }
 
             if (draft.StatusValue == Status.Published)
             {
@@ -224,10 +231,6 @@ namespace UKMCAB.Core.Services.CAB
             }
             else if (draft.StatusValue == Status.Draft)
             {
-                if (draft.DocumentLegislativeAreas.All(la => la.Status is LAStatus.Published or LAStatus.Declined or LAStatus.DeclinedByOpssAdmin or LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or LAStatus.DeclinedToRemoveByOPSS or LAStatus.DeclinedToUnarchiveByOPSS))
-                {
-                    draft.SubStatus = SubStatus.None;
-                }
                 await _cabRepository.UpdateAsync(draft);
             }
 
