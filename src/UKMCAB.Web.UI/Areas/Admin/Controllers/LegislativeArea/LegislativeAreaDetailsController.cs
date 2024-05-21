@@ -322,6 +322,10 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         if (vm.HasProducts)
         {
             ModelState.Remove("SelectedCategoryIds");
+        } 
+        else
+        {
+            ModelState.Remove("SelectedCategoryId");
         }
 
         if (ModelState.IsValid)
