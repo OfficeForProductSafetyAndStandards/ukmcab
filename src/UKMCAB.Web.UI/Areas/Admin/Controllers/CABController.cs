@@ -464,11 +464,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ShowOgdActions = showOgdActions,
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
-                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.ApprovedByOpssAdmin or
-                    LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is 
+                    LAStatus.Published or
+                    LAStatus.ApprovedByOpssAdmin or
+                    LAStatus.ApprovedToRemoveByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.ApprovedToUnarchiveByOPSS
                 ),
                 LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is
+                    LAStatus.Published or
                     LAStatus.Approved or
                     LAStatus.Declined or
                     LAStatus.DeclinedToRemoveByOPSS or
