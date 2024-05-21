@@ -20,6 +20,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? Product { get; set; }
         public Guid? CurrentProductId { get; set; }
+        public Guid? CurrentCategoryId { get; set; }
 
         public IEnumerable<SelectListItem> Procedures { get; set; } = new List<SelectListItem>();
 

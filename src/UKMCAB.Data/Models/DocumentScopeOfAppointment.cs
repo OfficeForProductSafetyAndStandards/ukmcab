@@ -10,12 +10,13 @@ namespace UKMCAB.Data.Models
         public Guid? PurposeOfAppointmentId { get; set; }
 
         public Guid? CategoryId { get; set; }
+        public List<Guid> CategoryIds { get; set; } = new();
 
         public Guid? SubCategoryId { get; set; }
 
         public List<Guid> ProductIds { get; set; } = new();
 
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
-
+        public List<CategoryAndProcedures> CategoryIdAndProcedureIds { get; set; } = new();
     }
 }
