@@ -139,7 +139,7 @@ public class DeclineCABController : Controller
                 TaskType.CABDeclined,
                 approver,
                 // Approver becomes the submitter for Declined CAB Notification
-                submitter.RoleId,
+                Roles.UKAS.Id,
                 null,
                 DateTime.Now,
                 $"The request to approve CAB {cabName} has been declined for the following reason: {declineReason}.",
