@@ -464,11 +464,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ShowOgdActions = showOgdActions,
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
-                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is LAStatus.ApprovedByOpssAdmin or
-                    LAStatus.ApprovedToRemoveByOpssAdmin or LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is 
+                    LAStatus.Published or
+                    LAStatus.ApprovedByOpssAdmin or
+                    LAStatus.ApprovedToRemoveByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.ApprovedToUnarchiveByOPSS
                 ),
                 LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is
+                    LAStatus.Published or
                     LAStatus.Approved or
                     LAStatus.Declined or
                     LAStatus.DeclinedToRemoveByOPSS or
@@ -644,13 +649,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     
-                    emailsToSends.ForEach(async emailsToSend =>
+                    if (emailsToSends.Count > 0)
                     {
-                        await SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
-                            latest.Name, userAccount, emailsToSend.Item1,
-                            emailsToSend.Item3, emailsToSend.Item2);
-                    });
-
+                        emailsToSends.ForEach(async emailsToSend =>
+                        {
+                            await SendEmailNotificationOfLegislativeAreaApprovalAsync(Guid.Parse(latest.CABId),
+                                latest.Name, userAccount, emailsToSend.Item1,
+                                emailsToSend.Item3, emailsToSend.Item2);
+                        });
+                    }
+                    else
+                    {
+                        await SendNotificationForApproveCab(userAccount,
+                            latest.Name ?? throw new InvalidOperationException(), publishModel);
+                    }
                     return RedirectToRoute(Routes.CabSubmittedForApprovalConfirmation, new { id = latest.CABId });
                 }
             }
@@ -844,6 +856,48 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     cabId,
                     documentLegislativeArea.Id
                     ));
+        }
+
+        /// <summary>
+        /// Sends an email and notification for Request to publish a cab
+        /// </summary>
+        /// <param name="userAccount">User creating the cab</param>
+        /// <param name="cabName">Name of CAB</param>
+        /// <param name="publishModel">ViewModel to build notification</param>
+        private async Task SendNotificationForApproveCab(UserAccount userAccount, string cabName,
+            CABSummaryViewModel publishModel)
+        {
+            var personalisation = new Dictionary<string, dynamic?>
+            {
+                { "UserGroup", Roles.UKAS.Label },
+                { "CABName", cabName },
+                {
+                    "NotificationsUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(NotificationController.Routes.Notifications))
+                },
+                {
+                    "CABManagementUrl",
+                    UriHelper.GetAbsoluteUriFromRequestAndPath(HttpContext.Request,
+                        Url.RouteUrl(CabManagementController.Routes.CABManagement))
+                }
+            };
+            var userRoleId = Roles.List.First(r =>
+                r.Label != null && r.Label.Equals(userAccount.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+            await _notificationClient.SendEmailAsync(_templateOptions.ApprovedBodiesEmail,
+                _templateOptions.NotificationRequestToPublish, personalisation);
+            if (publishModel.CabDetailsViewModel != null)
+            {
+                await _workflowTaskService.CreateAsync(new WorkflowTask(TaskType.RequestToPublish,
+                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId,
+                        userAccount.EmailAddress ?? throw new InvalidOperationException()),
+                    Roles.OPSS.Id, null, null,
+                    $"{userAccount.FirstName} {userAccount.Surname} from {Roles.NameFor(userRoleId)} has submitted a request to approve and publish {publishModel.CabDetailsViewModel.Name}.",
+                    new User(userAccount.Id, userAccount.FirstName, userAccount.Surname, userRoleId,
+                        userAccount.EmailAddress ?? throw new InvalidOperationException()), DateTime.Now,
+                    null, null,
+                    false, Guid.Parse(publishModel.CABId ?? throw new InvalidOperationException())));
+            }
         }
 
         private IActionResult SaveDraft(Document document)
