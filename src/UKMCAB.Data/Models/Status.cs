@@ -95,19 +95,19 @@ namespace UKMCAB.Data.Models
     }
     public class LAStatusCategory
     {
-        public static List<string> ApprovedByOGD => new()
+        public static readonly List<string> ApprovedByOGD = new()
         {
             ((int)LAStatus.Approved).ToString()
         };
-        public static List<string> Draft => new()
+        public static readonly List<string> Draft = new()
         {
             ((int)LAStatus.Draft).ToString()
         };
-        public static List<string> Published => new()
+        public static readonly List<string> Published = new()
         {
             ((int)LAStatus.Published).ToString()
         };
-        public static List<string> DeclinedByOGD => new()
+        public static readonly List<string> DeclinedByOGD = new()
         {
             ((int)LAStatus.Declined).ToString(),
             ((int)LAStatus.DeclinedToRemoveByOGD).ToString(),
@@ -115,7 +115,7 @@ namespace UKMCAB.Data.Models
             ((int)LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD).ToString(),
             ((int)LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD).ToString(),
         };
-        public static List<string> PendingOGDApproval => new()
+        public static readonly List<string> PendingOGDApproval = new()
         {
             ((int)LAStatus.PendingApproval).ToString(),
             ((int)LAStatus.PendingApprovalToRemove).ToString(),
@@ -123,7 +123,7 @@ namespace UKMCAB.Data.Models
             ((int)LAStatus.PendingApprovalToArchiveAndRemoveSchedule).ToString(),
             ((int)LAStatus.PendingApprovalToUnarchive).ToString(),
         };
-        public static List<string> ApprovedByOPSS => new()
+        public static readonly List<string> ApprovedByOPSS = new()
         {
             ((int)LAStatus.ApprovedByOpssAdmin).ToString(),
             ((int)LAStatus.ApprovedToRemoveByOpssAdmin).ToString(),
@@ -131,7 +131,7 @@ namespace UKMCAB.Data.Models
             ((int)LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin).ToString(),
             ((int)LAStatus.ApprovedToUnarchiveByOPSS).ToString(),
         };
-        public static List<string> DeclinedByOPSS => new()
+        public static readonly List<string> DeclinedByOPSS = new()
         {
             ((int)LAStatus.DeclinedByOpssAdmin).ToString(),
             ((int)LAStatus.DeclinedToRemoveByOPSS).ToString(),
@@ -139,14 +139,14 @@ namespace UKMCAB.Data.Models
             ((int)LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS).ToString(),
             ((int)LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS).ToString(),
         };
-        public static List<string> PendingOPSSApproval => new()
+        public static readonly List<string> PendingOPSSApproval = new()
         {
             ((int)LAStatus.PendingApprovalToRemoveByOpssAdmin).ToString(),
             ((int)LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin).ToString(),
             ((int)LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin).ToString(),
             ((int)LAStatus.PendingApprovalToUnarchiveByOpssAdmin).ToString(),
         };
-        public static List<string> PendingUKASSubmission => new()
+        public static readonly List<string> PendingUKASSubmission = new()
         {
             ((int)LAStatus.PendingSubmissionToRemove).ToString(),
             ((int)LAStatus.PendingSubmissionToArchiveAndArchiveSchedule).ToString(),
