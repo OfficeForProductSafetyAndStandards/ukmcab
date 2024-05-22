@@ -80,8 +80,43 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
             if (prefix.Equals("LAstatus", StringComparison.CurrentCultureIgnoreCase))
             {
-                var laStatus = Enum.Parse<LAStatus>(value);
-                return laStatus.GetEnumDescription();
+                if (LAStatusCategory.DeclinedByOGD.Contains(value))
+                {
+                    return "Declined by OGD";
+                }
+                else if (LAStatusCategory.PendingOGDApproval.Contains(value))
+                {
+                    return "Pending approval from OGD";
+                }
+                else if (LAStatusCategory.PendingOPSSApproval.Contains(value))
+                {
+                    return "Pending approval from OPSS";
+                }
+                else if (LAStatusCategory.ApprovedByOPSS.Contains(value))
+                {
+                    return "Approved by OPSS";
+                }
+                else if (LAStatusCategory.DeclinedByOPSS.Contains(value))
+                {
+                    return "Declined by OPSS";
+                }
+                else if (LAStatusCategory.ApprovedByOGD.Contains(value))
+                {
+                    return "Approved by OGD";
+                }
+                else if (LAStatusCategory.DeclinedByOGD.Contains(value))
+                {
+                    return "Declined by OGD";
+                }
+                else if (LAStatusCategory.PendingUKASSubmission.Contains(value))
+                {
+                    return "Pending submission from UKAS";
+                }
+                else
+                {
+                    var laStatus = Enum.Parse<LAStatus>(value);
+                    return laStatus.GetEnumDescription();
+                }
             }
             return value;
         }
