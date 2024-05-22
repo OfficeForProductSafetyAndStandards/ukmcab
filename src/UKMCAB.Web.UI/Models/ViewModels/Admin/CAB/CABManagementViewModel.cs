@@ -4,7 +4,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABManagementViewModel : ILayoutModel
     {
-        public string? Title => "CAB management";
+        public string? Title => "Draft management";
         public string TabName { get; set; }
         public string SortField { get; set; }
         public string SortDirection { get; set; }
