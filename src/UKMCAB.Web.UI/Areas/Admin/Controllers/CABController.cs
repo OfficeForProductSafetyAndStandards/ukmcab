@@ -69,7 +69,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
         [Authorize(Policy = Policies.EditCabPendingApproval)]
-        public async Task<IActionResult> About(string id, bool fromSummary, string returnUrl)
+        public async Task<IActionResult> About(string id, bool fromSummary, string? returnUrl = null)
         {
             var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
                         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
