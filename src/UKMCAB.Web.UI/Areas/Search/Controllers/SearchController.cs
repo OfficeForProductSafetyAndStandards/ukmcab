@@ -233,7 +233,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (model.InternalSearch)
             {
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
-                model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User group", facets.CreatedByUserGroup, model.UserGroups);
+                model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "Created by user group", facets.CreatedByUserGroup, model.UserGroups);
                 var pendingApprovalSubStatus = facets.SubStatus.Where(s => s != ((int)SubStatus.None).ToString()).ToList();
                 if (selectAllPendingApproval == true)
                 {
