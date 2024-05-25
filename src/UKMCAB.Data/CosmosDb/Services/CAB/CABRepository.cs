@@ -26,7 +26,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.CabContainer);
             var items = await Query<Document>(_container, document => true);
-
             // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             if (items.Any() && 
                 (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))))
@@ -54,8 +53,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
                         //Set LA Role Id
                         la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
-                    }
-                    
+                    }                   
                     await UpdateAsync(document);
                 }
             }
@@ -83,7 +81,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         }
 
         public IQueryable<Document> GetItemLinqQueryable() => _container.GetItemLinqQueryable<Document>();
-
         public async Task UpdateAsync(Document document)
         {
             document.LastUpdatedDate = DateTime.Now;
@@ -119,7 +116,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
             return await list.Where(x => x.SubStatus == subStatus).CountAsync();
         }
-        
         private async Task<List<T>> Query<T>(Container container, Expression<Func<T, bool>> predicate)
         {
             var query = container.GetItemLinqQueryable<T>().Where(predicate).ToFeedIterator();
