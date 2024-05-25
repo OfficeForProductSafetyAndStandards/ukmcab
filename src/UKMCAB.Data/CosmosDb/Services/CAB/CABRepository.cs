@@ -36,15 +36,18 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
-                    
-                    //Set LA status
-                    foreach (var la in document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.None))
+
+                    //Set LA status                    
+                    foreach (var la in document.DocumentLegislativeAreas)
                     {
-                        la.Status = document.StatusValue switch
+                        if (la != null && (la.Status == LAStatus.None || !Enum.IsDefined(typeof(LAStatus), la.Status)))
                         {
-                            Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
-                            _ => LAStatus.Draft
-                        };
+                            la.Status = document.StatusValue switch
+                            {
+                                Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
+                                _ => LAStatus.Draft
+                            };
+                        }                        
 
                         //Set LA Role Id
                         la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
