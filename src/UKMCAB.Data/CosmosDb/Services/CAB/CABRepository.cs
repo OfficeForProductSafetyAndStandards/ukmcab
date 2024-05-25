@@ -26,7 +26,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             var database = client.GetDatabase(DataConstants.CosmosDb.Database);
             _container = database.GetContainer(DataConstants.CosmosDb.CabContainer);
             var items = await Query<Document>(_container, document => true);
-
             // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             if (items.Any() && 
                 (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))))
@@ -37,25 +36,22 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
-                    //Change audit created
-                    const string created = "Created";
-                    if (document.AuditLog.Any(x => x.Action == created))
+
+                    //Set LA status                    
+                    foreach (var la in document.DocumentLegislativeAreas)
                     {
-                        document.AuditLog.First(x => x.Action == created).Action = AuditCABActions.Created;
-                    }
-                    //Set LA status
-                    foreach (var la in document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.None))
-                    {
-                        la.Status = document.StatusValue switch
+                        if (la != null && (la.Status == LAStatus.None || !Enum.IsDefined(typeof(LAStatus), la.Status)))
                         {
-                            Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
-                            _ => LAStatus.Draft
-                        };
+                            la.Status = document.StatusValue switch
+                            {
+                                Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
+                                _ => LAStatus.Draft
+                            };
+                        }                        
 
                         //Set LA Role Id
                         la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
-                    }
-                    
+                    }                   
                     await UpdateAsync(document);
                 }
             }
@@ -83,7 +79,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         }
 
         public IQueryable<Document> GetItemLinqQueryable() => _container.GetItemLinqQueryable<Document>();
-
         public async Task UpdateAsync(Document document)
         {
             document.LastUpdatedDate = DateTime.Now;
@@ -119,7 +114,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
             return await list.Where(x => x.SubStatus == subStatus).CountAsync();
         }
-        
         private async Task<List<T>> Query<T>(Container container, Expression<Func<T, bool>> predicate)
         {
             var query = container.GetItemLinqQueryable<T>().Where(predicate).ToFeedIterator();
