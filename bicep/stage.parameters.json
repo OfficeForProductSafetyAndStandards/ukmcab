@@ -52,6 +52,9 @@
     },
     "appServiceUseAutoScale": {
       "value": false
+    },
+    "firewallPolicyMode": {
+      "value": "Prevention"
     }
   }
 }
