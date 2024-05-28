@@ -731,6 +731,11 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
           ruleSetVersion: '3.2'
           ruleGroupOverrides: []
         }
+        {
+          ruleSetType: 'Microsoft_BotManagerRuleSet'
+          ruleSetVersion: '1.0'
+          ruleGroupOverrides: []
+        }
       ]
       exclusions: [
         {
