@@ -295,13 +295,17 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             if (itemFound != null) itemFound.Selected = true;
         }
 
+        var categoryIds = selectListItems.Select(i => Guid.Parse(i.Value)).ToList();
+        var hasProducts = await HasProductsAsync(legislativeArea.Id, purposeOfAppointment?.Id, categoryIds);
+
         var vm = new CategoryViewModel
         {
             CABId = id,
             Categories = selectListItems,
             LegislativeArea = legislativeArea.Name,
             PurposeOfAppointment = purposeOfAppointment?.Name,
-            IsFromSummary = fromSummary
+            IsFromSummary = fromSummary,
+            HasProducts = hasProducts
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddCategory.cshtml", vm);
@@ -314,9 +318,20 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
             return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
+
+        if (vm.HasProducts)
+        {
+            ModelState.Remove("SelectedCategoryIds");
+        } 
+        else
+        {
+            ModelState.Remove("SelectedCategoryId");
+        }
+
         if (ModelState.IsValid)
         {
             scopeOfAppointment.CategoryId = vm.SelectedCategoryId;
+            scopeOfAppointment.CategoryIds = vm.SelectedCategoryIds! ?? new List<Guid>();
             await _distCache.SetAsync(string.Format(CacheKey, scopeId.ToString()), scopeOfAppointment,
                 TimeSpan.FromHours(1));
             return RedirectToRoute(Routes.AddSubCategory, new { id, scopeId, compareScopeId, fromSummary = vm.IsFromSummary });
@@ -426,6 +441,34 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     }
 
     #region PrivateMethods
+
+    private async Task<bool> HasProductsAsync(Guid legislativeAreaId, Guid? purposeOfAppointmentId, List<Guid> categoryIds)
+    {
+        List<SelectListItem> products;
+        foreach (var categoryId in categoryIds)
+        {
+            var subCategories = await GetSubCategoriesSelectListItemsAsync(categoryId);
+            if (subCategories.Any())
+            {
+                foreach (var subCategory in subCategories)
+                {
+                    products = (await GetProductSelectListItemsAsync(Guid.Parse(subCategory.Value), categoryId, purposeOfAppointmentId, legislativeAreaId)).ToList();
+                    if (products.Any())
+                    {
+                        return true;
+                    }
+                }
+            } else
+            {
+                products = (await GetProductSelectListItemsAsync(null, categoryId, purposeOfAppointmentId, legislativeAreaId)).ToList();
+                if (products.Any())
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     private async Task<IEnumerable<SelectListItem>> GetSubCategoriesSelectListItemsAsync(Guid? categoryId)
     {
@@ -581,12 +624,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     #region AddProcedure
 
     [HttpGet("add-procedure/{scopeId}", Name = Routes.AddProcedure)]
-    public async Task<IActionResult> AddProcedure(Guid id, Guid scopeId, Guid? compareScopeId, bool fromSummary, int indexOfProduct = 0)
+    public async Task<IActionResult> AddProcedure(Guid id, Guid scopeId, Guid? compareScopeId, bool fromSummary, int indexOfProduct = 0, int indexOfCategory = 0)
     {
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         Guid? productId = null;
+        Guid? categoryId = null;
 
         if (scopeOfAppointment == null)
             return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
@@ -596,7 +640,12 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             productId = scopeOfAppointment.ProductIds[indexOfProduct];
         }
 
-        var procedures = await GetProcedureSelectListItemsAsync(productId, scopeOfAppointment.CategoryId,
+        if (scopeOfAppointment.CategoryIds.Any() && indexOfCategory < scopeOfAppointment.CategoryIds.Count)
+        {
+            categoryId = scopeOfAppointment.CategoryIds[indexOfCategory];
+        }
+
+        var procedures = await GetProcedureSelectListItemsAsync(productId, categoryId,
             scopeOfAppointment.PurposeOfAppointmentId);
         var selectListItems = procedures.ToList();
 
@@ -606,9 +655,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             ? await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync((Guid)scopeOfAppointment
                 .PurposeOfAppointmentId)
             : null;
-        var category = scopeOfAppointment.CategoryId != null
-            ? await _legislativeAreaService.GetCategoryByIdAsync((Guid)scopeOfAppointment.CategoryId)
-            : null;
         var subCategory = scopeOfAppointment.SubCategoryId != null
             ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)scopeOfAppointment.SubCategoryId)
             : null;
@@ -617,6 +663,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             var product = await _legislativeAreaService.GetProductByIdAsync((Guid)productId);
             productName = product!.Name;
+        }
+
+        string? categoryName = null;
+        if (categoryId != null)
+        {
+            var category = await _legislativeAreaService.GetCategoryByIdAsync((Guid)categoryId);
+            categoryName = category!.Name;
         }
 
         var existingProcedures = existingScopeOfAppointment?.ProductIdAndProcedureIds.SelectMany(p => p.ProcedureIds)
@@ -638,9 +691,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             LegislativeAreaId = legislativeArea?.Id,
             LegislativeArea = legislativeArea?.Name,
             PurposeOfAppointment = purposeOfAppointment?.Name,
-            Category = category?.Name,
+            Category = categoryName,
+            CurrentCategoryId = categoryId,
             SubCategory = subCategory?.Name,
-            IsLastAction = indexOfProduct >= scopeOfAppointment.ProductIds.Count - 1,
+            IsLastAction = indexOfProduct >= scopeOfAppointment.ProductIds.Count - 1
+                || indexOfCategory >= scopeOfAppointment.CategoryIds.Count - 1,
             IsFromSummary = fromSummary
         };
 
@@ -648,7 +703,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     }
 
     [HttpPost("add-procedure/{scopeId}", Name = Routes.AddProcedure)]
-    public async Task<IActionResult> AddProcedure(Guid id, Guid scopeId, int indexOfProduct, ProcedureViewModel vm,
+    public async Task<IActionResult> AddProcedure(Guid id, Guid scopeId, int indexOfProduct, int indexOfCategory, ProcedureViewModel vm,
         Guid? compareScopeId, string submitType)
     {
         var scopeOfAppointment =
@@ -660,19 +715,37 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         if (ModelState.IsValid)
         {
-            var productAndProcedures = new ProductAndProcedures
+            if (vm.CurrentProductId.HasValue)
             {
-                ProductId = vm.CurrentProductId,
-                ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
-            };
+                var productAndProcedures = new ProductAndProcedures
+                {
+                    ProductId = vm.CurrentProductId,
+                    ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
+                };
+                scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
+            }
 
-            scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
+            if (vm.CurrentCategoryId.HasValue)
+            {
+                var categoryAndProcedures = new CategoryAndProcedures
+                {
+                    CategoryId = vm.CurrentCategoryId,
+                    CategoryIds = (List<Guid>)vm.SelectedProcedureIds!
+                };
+                scopeOfAppointment.CategoryIdAndProcedureIds.Add(categoryAndProcedures);
+            }
+
             await _distCache.SetAsync(string.Format(CacheKey, scopeId.ToString()), scopeOfAppointment,
                 TimeSpan.FromHours(1));
             if (indexOfProduct + 1 < scopeOfAppointment.ProductIds.Count)
             {
                 return RedirectToRoute(Routes.AddProcedure,
-                    new { id, scopeId, indexOfProduct = indexOfProduct + 1, compareScopeId, fromSummary = vm.IsFromSummary });
+                    new { id, scopeId, indexOfProduct = indexOfProduct + 1, indexOfCategory = 0, compareScopeId, fromSummary = vm.IsFromSummary });
+            }
+            if (indexOfCategory + 1 < scopeOfAppointment.CategoryIds.Count)
+            {
+                return RedirectToRoute(Routes.AddProcedure,
+                    new { id, scopeId, indexOfProduct = 0, indexOfCategory = indexOfCategory + 1, compareScopeId, fromSummary = vm.IsFromSummary });
             }
 
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
@@ -709,6 +782,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         if (scopeOfAppointment.ProductIds.Any() && indexOfProduct < scopeOfAppointment.ProductIds.Count)
         {
             productId = scopeOfAppointment.ProductIds[indexOfProduct];
+        }
+
+        if (scopeOfAppointment.CategoryIds.Any() && indexOfProduct < scopeOfAppointment.CategoryIds.Count)
+        {
+            productId = scopeOfAppointment.CategoryIds[indexOfProduct];
         }
 
         vm.Procedures = await GetProcedureSelectListItemsAsync(productId, scopeOfAppointment.CategoryId,
