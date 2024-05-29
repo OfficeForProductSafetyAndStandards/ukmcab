@@ -50,17 +50,17 @@
                     {
                         <partial name="Partials/_SearchFilter" model="Model.CreatedByUserGroupOptions"/>
                     }
-                    @if (Model.LegislativeAreaProvisionalOptions != null && Model.LegislativeAreaProvisionalOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
-                    {
-                        <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaProvisionalOptions"/>
-                    }
-                    @if (Model.LegislativeAreaStatusOptions != null && Model.LegislativeAreaStatusOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
-                    {
-                        <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaStatusOptions"/>
-                    }
                     @if (Model.LAStatusOptions != null && Model.LAStatusOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
                     {
                         <partial name="Partials/_SearchFilter" model="Model.LAStatusOptions" />
+                    }
+                    @if (Model.LegislativeAreaStatusOptions != null && Model.LegislativeAreaStatusOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
+                    {
+                        <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaStatusOptions" />
+                    }
+                    @if (Model.LegislativeAreaProvisionalOptions != null && Model.LegislativeAreaProvisionalOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
+                    {
+                        <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaProvisionalOptions" />
                     }
                 }
                 <div id="search-filter-button-wrapper">
