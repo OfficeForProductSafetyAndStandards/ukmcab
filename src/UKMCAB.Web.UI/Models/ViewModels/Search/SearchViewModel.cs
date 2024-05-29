@@ -69,7 +69,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
                                       ? ProvisionalLegislativeAreas.Length
                                       : 0) +
                                   (ArchivedLegislativeArea != null && InternalSearch ? ArchivedLegislativeArea.Length : 0) +
-                                  (LAStatus != null && InternalSearch ? LAStatus.Length : 0);                                  
+                                  (LAStatus != null && InternalSearch ? LAStatus.Length : 0);
 
         public Dictionary<string, string[]> SelectedFilters => new()
         {
@@ -105,7 +105,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         }
         public string LegislativeAreaStatusLabel(string value)
         {
-            return  bool.Parse(value) ? "Archived legislative area: Yes" : "Archived legislative area: No";
+            return bool.Parse(value) ? "Archived legislative area: Yes" : "Archived legislative area: No";
         }
         public string LAStatusLabel(string status)
         {
@@ -143,7 +143,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         // Results
         public List<ResultViewModel>? SearchResults { get; set; }
         public PaginationViewModel? Pagination { get; set; }
-        public FeedLinksViewModel? FeedLinksViewModel { get; set; }
+        public FeedLinksViewModel? FeedLinksViewModel { get; set; }  
     }
 
     public class SortOption
