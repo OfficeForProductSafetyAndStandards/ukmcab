@@ -10,7 +10,7 @@ param appServiceHostName string
 param appServiceHostNameVNext string
 param appServiceUseAutoScale bool
 param searchReplicaCount int
-
+param firewallPolicyMode string
 
 @secure()
 param basicAuthPassword string
@@ -72,5 +72,6 @@ module resourceSet './resources.bicep' = {
     encryptionKey: encryptionKey
     oneLoginClientId: oneLoginClientId
     oneLoginKeyPairBase64: oneLoginKeyPairBase64
+    firewallPolicyMode: firewallPolicyMode
   }
 }
