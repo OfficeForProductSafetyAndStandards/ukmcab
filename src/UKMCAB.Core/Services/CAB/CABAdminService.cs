@@ -692,6 +692,7 @@ namespace UKMCAB.Core.Services.CAB
                 LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin => true,
                 _ => documentLegislativeArea.Archived
             };
+            latestDocument.AuditLog.Add(new Audit(approver, AuditCABActions.ApproveLegislativeArea));
             await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
@@ -705,7 +706,7 @@ namespace UKMCAB.Core.Services.CAB
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Status = declinedLAStatus;
             reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " declined: </br>" + reason;
-            latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,reason));
+            latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea, reason));
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 

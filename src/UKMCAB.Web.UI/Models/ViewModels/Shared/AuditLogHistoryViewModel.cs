@@ -44,7 +44,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                     UserGroup = Roles.NameFor(al.UserRole),
                     DateAndTime = al.DateTime,
                     Action = NormaliseAction(al.Action),
-                    InternalComment = al.Comment
+                    InternalComment = al.Comment,
+                    PublicComment = al.PublicComment,
                 });
 
             Pagination = new PaginationViewModel
