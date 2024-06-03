@@ -508,7 +508,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latest.AuditLog.Where(l => l.Action == AuditCABActions.Created),
                 u => u.DateTime)?.DateTime != latest.LastUpdatedDate;
             model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
-            model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
+            model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated
+                && model.CabDetailsViewModel.IsCompleted
+                && model.CabContactViewModel.IsCompleted
+                && model.CabBodyDetailsViewModel.IsCompleted
+                && model.CABProductScheduleDetailsViewModel.IsCompleted
+                && model.CABSupportingDocumentDetailsViewModel.IsCompleted;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
                                     ((model.SubStatus != SubStatus.PendingApprovalToPublish && userInCreatorUserGroup) ||
                                      (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
