@@ -492,6 +492,22 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToUnarchiveByOPSS or
                     LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
                     LAStatus.DeclinedToUnarchiveByOPSS),
+                LegislativeAreaHasBeenActionedByOpssAdmin = latest.DocumentLegislativeAreas.Any(la => la.Status is
+                    LAStatus.Published or
+                    LAStatus.DeclinedToRemoveByOPSS or
+                    LAStatus.ApprovedByOpssAdmin or
+                    LAStatus.DeclinedByOpssAdmin or
+                    LAStatus.PendingApprovalToRemoveByOpssAdmin or
+                    LAStatus.ApprovedToRemoveByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
+                    LAStatus.ApprovedToUnarchiveByOPSS or
+                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
+                    LAStatus.DeclinedToUnarchiveByOPSS),
                 LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup,
                 RequestedFromCabProfilePage = fromCabProfilePage ?? false
             };
