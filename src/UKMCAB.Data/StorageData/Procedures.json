@@ -178,11 +178,12 @@
             "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
-        "categoryIds": [
-            "f9ccdb3e-b62a-47b9-914d-8f2d115e49d4",
-            "b267439a-d41b-4d43-9220-64ace59b0ea3",
-            "9680645a-f994-4556-8d74-8309c3583b89"
-        ]
+      "categoryIds": [
+        "f9ccdb3e-b62a-47b9-914d-8f2d115e49d4",
+        "b267439a-d41b-4d43-9220-64ace59b0ea3",
+        "9680645a-f994-4556-8d74-8309c3583b89",
+        "529802f3-070e-4a09-a7d9-b2c05a549f53"
+      ]
     },
     {
         "id": "dc78de09-e38c-48e0-a05e-f30adc8bbac9",
@@ -218,9 +219,10 @@
             "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
-        "categoryIds": [
-            "9680645a-f994-4556-8d74-8309c3583b89"
-        ]
+      "categoryIds": [
+        "9680645a-f994-4556-8d74-8309c3583b89",
+        "529802f3-070e-4a09-a7d9-b2c05a549f53"
+      ]
     },
     {
         "id": "2587f80f-ff89-4419-9b80-8124aa8eaf77",
@@ -230,9 +232,10 @@
             "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
-        "categoryIds": [
-            "9680645a-f994-4556-8d74-8309c3583b89"
-        ]
+      "categoryIds": [
+        "9680645a-f994-4556-8d74-8309c3583b89",
+        "529802f3-070e-4a09-a7d9-b2c05a549f53"
+      ]
     },
     {
         "id": "b0669ae7-db2a-4aef-97ed-e1458c309ffd",
@@ -242,12 +245,13 @@
             "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
-        "categoryIds": [
-            "f9ccdb3e-b62a-47b9-914d-8f2d115e49d4",
-            "b267439a-d41b-4d43-9220-64ace59b0ea3",
-            "9680645a-f994-4556-8d74-8309c3583b89",
-            "396ccf2f-e857-4fde-aea5-8dd35f2bb842"
-        ]
+      "categoryIds": [
+        "f9ccdb3e-b62a-47b9-914d-8f2d115e49d4",
+        "b267439a-d41b-4d43-9220-64ace59b0ea3",
+        "9680645a-f994-4556-8d74-8309c3583b89",
+        "396ccf2f-e857-4fde-aea5-8dd35f2bb842",
+        "529802f3-070e-4a09-a7d9-b2c05a549f53"
+      ]
     },
     {
         "id": "9533c7b9-1cf1-44e5-87f9-d2334b7734cd",
@@ -257,9 +261,10 @@
             "9483654a-3554-4aea-a810-ed86e6b7d0bc"
         ],
         "productIds": "",
-        "categoryIds": [
-            "d07fa04a-2110-42e5-a7dc-130c96ecde94"
-        ]
+      "categoryIds": [
+        "d07fa04a-2110-42e5-a7dc-130c96ecde94",
+        "03d3417c-2709-42f5-bbac-5e5bc5397c6f"
+      ]
     },
     {
         "id": "0a7350be-19c8-463e-8255-21d6ea164240",
