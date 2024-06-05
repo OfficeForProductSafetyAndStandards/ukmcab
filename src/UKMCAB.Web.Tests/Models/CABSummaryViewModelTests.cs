@@ -10,13 +10,13 @@ namespace UKMCAB.Web.Tests.Models
     {
         [Category("CAB Summary page - Banner Content Happy Path")]
         [Test]
-        public void GetBannerContent_Should_Return_EmptyString_When_OPSSAdminIsReviewingACabWithAllLaRequests_Actioned() 
+        public void GetBannerContent_Should_Return_EmptyString_When_OPSSAdminIsReviewingACabWithAllLaRequests_ActionedByOPSS() 
         { 
             // Arrange
             var _sut = new CABSummaryViewModel{ 
-                LegislativeAreasPendingApprovalCount = 0,
                 IsOpssAdmin = true,
-                ShowEditActions = true,
+                SubStatus = SubStatus.PendingApprovalToPublish,
+                LegislativeAreaHasBeenActionedByOpssAdmin = true,
             };
 
             //Act
@@ -24,6 +24,28 @@ namespace UKMCAB.Web.Tests.Models
 
             //Assert
             Assert.That(result, Is.EqualTo(""));
+        }
+
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_ExpectedString_When_OPSSAdminIsReviewingACabWithAtLeastOneLaRequest_ActionedByOgd_AndAtLeastOnePendingOgdApproval()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                IsOpssAdmin = true,
+                SubStatus = SubStatus.PendingApprovalToPublish,
+                IsPendingOgdApproval = true,
+                LegislativeAreaHasBeenActioned = true,
+            };
+
+            var expectedString = "This CAB profile cannot be edited until it's been approved or declined.";
+
+            //Act
+            var result = _sut.GetBannerContent();
+
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
