@@ -54,7 +54,7 @@
       "value": false
     },
     "firewallPolicyMode": {
-      "value": "Prevention"
+      "value": "Detection"
     }
   }
 }
