@@ -42,7 +42,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
         LegislativeAreaArchived = 2,
         LegislativeAreaArchivedProductScheduleArchived = 3,
         LegislativeAreaArchivedProductScheduleRemoved = 4,
-        AssessmentProcedureRemoved = 5,
+        ScopeOfAppointmentRemoved = 5,
         LegislativeAreaUnArchived = 6,
     }
 

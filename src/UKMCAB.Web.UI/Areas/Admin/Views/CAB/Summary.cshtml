@@ -61,35 +61,10 @@
         </div>
     </div>
 }
-@if (Model.SubStatus == SubStatus.PendingApprovalToPublish && (!Model.IsPendingOgdApproval || !Model.IsMatchingOgdUser))
+
+@if (!string.IsNullOrWhiteSpace(Model.BannerContent))
 {
-    <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
-}
-else if (Model is { EditByGroupPermitted: false, Status: Status.Draft, IsPendingOgdApproval: false })
-{
-    if(Model.IsOpssAdmin)
-    {
-        if (Model.RequestedFromCabProfilePage)
-        {
-            <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.")" name="Partials/_PageContentBanner" />
-        }
-        else
-        {
-            <partial model="@("This CAB profile cannot be edited as it was created by a UKAS user.")" name="Partials/_PageContentBanner" />
-        }           
-    }
-    else
-    {
-        <partial model="@("This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.")" name="Partials/_PageContentBanner" />
-    }
-}
-else if (Model is { EditByGroupPermitted: false, IsPendingOgdApproval: false })
-{
-    <partial model="@("This CAB profile cannot be edited as it was created by an OPSS user.")" name="Partials/_PageContentBanner"/>
-}
-else if (Model is { IsEditLocked: true, IsPendingOgdApproval: false })
-{
-    <partial model="@("This CAB profile cannot be edited as it's being edited by another user.")" name="Partials/_PageContentBanner"/>
+    <partial model="@Model.BannerContent" name="Partials/_PageContentBanner"/>
 }
 
 <div class="govuk-grid-row">

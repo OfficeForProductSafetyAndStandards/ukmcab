@@ -45,5 +45,46 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public bool LoggedInUserGroupIsOwner { get; set; }
         public bool RequestedFromCabProfilePage { get; set; }
+        public string BannerContent => GetBannerContent();
+
+        public string GetBannerContent()
+        {
+            if (LegislativeAreasPendingApprovalCount == 0 && IsOpssAdmin && ShowEditActions)
+            {
+                return string.Empty;
+            }
+            if (SubStatus == SubStatus.PendingApprovalToPublish && (!IsPendingOgdApproval || !IsMatchingOgdUser))
+            {
+                return "This CAB profile cannot be edited until it's been approved or declined.";
+            }
+            else if (EditByGroupPermitted == false && Status == Status.Draft && IsPendingOgdApproval == false)
+            {
+                if (IsOpssAdmin)
+                {
+                    if (RequestedFromCabProfilePage)
+                    {
+                        return "This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.";
+                    }
+                    else
+                    {
+                        return "This CAB profile cannot be edited as it was created by a UKAS user.";
+                    }
+                }
+                else
+                {
+                    return "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
+                }
+            }
+            else if (EditByGroupPermitted == false && IsPendingOgdApproval == false)
+            {
+                return "This CAB profile cannot be edited as it was created by an OPSS user.";
+            }
+            else if (IsEditLocked == true && IsPendingOgdApproval == false)
+            {
+                return "This CAB profile cannot be edited as it's being edited by another user.";
+            }
+
+            return string.Empty;
+        }
     }
 }

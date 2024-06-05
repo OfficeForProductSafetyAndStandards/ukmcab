@@ -69,7 +69,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
         [Authorize(Policy = Policies.EditCabPendingApproval)]
-        public async Task<IActionResult> About(string id, bool fromSummary, string returnUrl)
+        public async Task<IActionResult> About(string id, bool fromSummary, string? returnUrl = null)
         {
             var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
                         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
@@ -508,7 +508,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latest.AuditLog.Where(l => l.Action == AuditCABActions.Created),
                 u => u.DateTime)?.DateTime != latest.LastUpdatedDate;
             model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
-            model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
+            model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated
+                && model.CabDetailsViewModel.IsCompleted
+                && model.CabContactViewModel.IsCompleted
+                && model.CabBodyDetailsViewModel.IsCompleted
+                && model.CABProductScheduleDetailsViewModel.IsCompleted
+                && model.CABSupportingDocumentDetailsViewModel.IsCompleted;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
                                     ((model.SubStatus != SubStatus.PendingApprovalToPublish && userInCreatorUserGroup) ||
                                      (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
@@ -951,7 +956,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                     var category = scopeOfAppointment.CategoryId.HasValue
                         ? (await _legislativeAreaService.GetCategoryByIdAsync(scopeOfAppointment.CategoryId.Value))
-                        ?.Name
                         : null;
 
                     var subCategory = scopeOfAppointment.SubCategoryId.HasValue
@@ -965,7 +969,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         {
                             LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
                             PurposeOfAppointment = purposeOfAppointment,
-                            Category = category,
+                            Category = category?.Name,
                             SubCategory = subCategory,
                             ScopeId = scopeOfAppointment.Id,
                         };
@@ -980,6 +984,32 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         foreach (var procedureId in productProcedure.ProcedureIds)
                         {
                             var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                            soaViewModel.Procedures?.Add(procedure!.Name);
+                        }
+
+                        legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                    }
+
+                    foreach (var categoryProcedure in scopeOfAppointment.CategoryIdAndProcedureIds)
+                    {
+                        var soaViewModel = new LegislativeAreaListItemViewModel()
+                        {
+                            LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                            PurposeOfAppointment = purposeOfAppointment,
+                            Category = category?.Name,
+                            SubCategory = subCategory,
+                            ScopeId = scopeOfAppointment.Id,
+                        };
+
+                        if (categoryProcedure.CategoryId.HasValue)
+                        {
+                            category = await _legislativeAreaService.GetCategoryByIdAsync(categoryProcedure.CategoryId.Value);
+                            soaViewModel.Category = category!.Name;
+                        }
+
+                        foreach (var categoryId in categoryProcedure.CategoryIds)
+                        {
+                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(categoryId);
                             soaViewModel.Procedures?.Add(procedure!.Name);
                         }
 
