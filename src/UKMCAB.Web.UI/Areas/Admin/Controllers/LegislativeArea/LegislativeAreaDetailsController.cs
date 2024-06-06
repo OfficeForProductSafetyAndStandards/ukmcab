@@ -644,6 +644,10 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             categoryId = scopeOfAppointment.CategoryIds[indexOfCategory];
         }
+        else if(scopeOfAppointment.CategoryId != null)
+        {
+            categoryId = scopeOfAppointment.CategoryId;
+        }
 
         var procedures = await GetProcedureSelectListItemsAsync(productId, categoryId,
             scopeOfAppointment.PurposeOfAppointmentId);
@@ -720,6 +724,14 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 var productAndProcedures = new ProductAndProcedures
                 {
                     ProductId = vm.CurrentProductId,
+                    ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
+                };
+                scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
+            }
+            else if (vm.CurrentProductId == null && vm.CurrentCategoryId == null && vm.SelectedProcedureIds != null)
+            {
+                var productAndProcedures = new ProductAndProcedures
+                {
                     ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
                 };
                 scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
