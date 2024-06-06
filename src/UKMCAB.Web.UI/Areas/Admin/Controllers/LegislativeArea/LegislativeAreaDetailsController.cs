@@ -728,8 +728,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 };
                 scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
             }
-
-            if (!vm.CurrentProductId.HasValue && vm.CurrentCategoryId.HasValue)
+            else
             {
                 var categoryAndProcedures = new CategoryAndProcedures
                 {
