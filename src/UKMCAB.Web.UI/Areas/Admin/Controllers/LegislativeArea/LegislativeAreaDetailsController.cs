@@ -644,7 +644,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             categoryId = scopeOfAppointment.CategoryIds[indexOfCategory];
         }
-        else if(scopeOfAppointment.CategoryId != null)
+        else if (!scopeOfAppointment.CategoryIds.Any())
         {
             categoryId = scopeOfAppointment.CategoryId;
         }
@@ -728,21 +728,12 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 };
                 scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
             }
-            else if (vm.CurrentProductId == null && vm.CurrentCategoryId == null && vm.SelectedProcedureIds != null)
-            {
-                var productAndProcedures = new ProductAndProcedures
-                {
-                    ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
-                };
-                scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
-            }
-
-            if (vm.CurrentCategoryId.HasValue)
+            else
             {
                 var categoryAndProcedures = new CategoryAndProcedures
                 {
                     CategoryId = vm.CurrentCategoryId,
-                    CategoryIds = (List<Guid>)vm.SelectedProcedureIds!
+                    ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
                 };
                 scopeOfAppointment.CategoryIdAndProcedureIds.Add(categoryAndProcedures);
             }
