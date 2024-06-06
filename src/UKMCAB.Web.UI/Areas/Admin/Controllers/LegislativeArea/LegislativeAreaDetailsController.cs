@@ -644,6 +644,10 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             categoryId = scopeOfAppointment.CategoryIds[indexOfCategory];
         }
+        else if (!scopeOfAppointment.CategoryIds.Any())
+        {
+            categoryId = scopeOfAppointment.CategoryId;
+        }
 
         var procedures = await GetProcedureSelectListItemsAsync(productId, categoryId,
             scopeOfAppointment.PurposeOfAppointmentId);
@@ -725,7 +729,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
             }
 
-            if (vm.CurrentCategoryId.HasValue)
+            if (!vm.CurrentProductId.HasValue && vm.CurrentCategoryId.HasValue)
             {
                 var categoryAndProcedures = new CategoryAndProcedures
                 {
