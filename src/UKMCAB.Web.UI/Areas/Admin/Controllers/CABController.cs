@@ -1023,9 +1023,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             soaViewModel.Category = category!.Name;
                         }
 
-                        foreach (var categoryId in categoryProcedure.ProcedureIds)
+                        foreach (var procedureId in categoryProcedure.ProcedureIds)
                         {
-                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(categoryId);
+                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
                             soaViewModel.Procedures?.Add(procedure!.Name);
                         }
 
