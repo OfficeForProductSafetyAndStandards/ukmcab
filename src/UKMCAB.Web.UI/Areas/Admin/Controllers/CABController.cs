@@ -665,9 +665,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         }
                     }                  
 
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
-                        userAccount ?? throw new InvalidOperationException(), latest, true);
-
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     
                     if (emailsToSends.Count > 0)
