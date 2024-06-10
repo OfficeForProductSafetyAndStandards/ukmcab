@@ -17,6 +17,7 @@ namespace UKMCAB.Web.Tests.Models
                 IsOpssAdmin = true,
                 SubStatus = SubStatus.PendingApprovalToPublish,
                 LegislativeAreaHasBeenActionedByOpssAdmin = true,
+                LegislativeAreaHasBeenActioned = true,
             };
 
             //Act
@@ -39,7 +40,7 @@ namespace UKMCAB.Web.Tests.Models
                 LegislativeAreaHasBeenActioned = true,
             };
 
-            var expectedString = "This CAB profile cannot be edited until it's been approved or declined.";
+            var expectedString = string.Empty;
 
             //Act
             var result = _sut.GetBannerContent();
