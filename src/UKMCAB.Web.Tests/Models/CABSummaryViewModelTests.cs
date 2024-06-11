@@ -16,7 +16,7 @@ namespace UKMCAB.Web.Tests.Models
             var _sut = new CABSummaryViewModel{ 
                 IsOpssAdmin = true,
                 SubStatus = SubStatus.PendingApprovalToPublish,
-                LegislativeAreaHasBeenActionedByOpssAdmin = true,
+                HasActionableLegislativeAreaForOpssAdmin = true,
                 LegislativeAreaHasBeenActioned = true,
             };
 
@@ -37,7 +37,7 @@ namespace UKMCAB.Web.Tests.Models
                 IsOpssAdmin = true,
                 SubStatus = SubStatus.PendingApprovalToPublish,
                 IsPendingOgdApproval = true,
-                LegislativeAreaHasBeenActioned = true,
+                HasActionableLegislativeAreaForOpssAdmin = true,
             };
 
             var expectedString = string.Empty;
