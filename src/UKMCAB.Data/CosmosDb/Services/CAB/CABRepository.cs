@@ -28,7 +28,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             var items = await Query<Document>(_container, document => true);
             // ReSharper disable once ConditionalAccessQualifierIsNonNullableAccordingToAPIContract
             if (items.Any() && 
-                (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))))
+                (force || items.Any(doc => ParseVersion(doc.Version) == ParseVersion(DataConstants.Version.Number))))
             {
                 var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
                 var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
@@ -40,17 +40,20 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     //Set LA status                    
                     foreach (var la in document.DocumentLegislativeAreas)
                     {
-                        if (la != null && (la.Status == LAStatus.None || !Enum.IsDefined(typeof(LAStatus), la.Status)))
+                        if (la != null)
                         {
-                            la.Status = document.StatusValue switch
+                            if (la.Status == LAStatus.None)
                             {
-                                Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
-                                _ => LAStatus.Draft
-                            };
-                        }                        
-
-                        //Set LA Role Id
-                        la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
+                                la.Status = document.StatusValue switch
+                                {
+                                    Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
+                                    _ => LAStatus.Draft
+                                };
+                            }
+                            
+                            //Set LA Role Id
+                            la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
+                        }
                     }                   
                     await UpdateAsync(document);
                 }
