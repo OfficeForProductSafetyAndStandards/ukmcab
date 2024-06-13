@@ -492,8 +492,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToUnarchiveByOPSS or
                     LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
                     LAStatus.DeclinedToUnarchiveByOPSS),
-                LegislativeAreaHasBeenActionedByOpssAdmin = latest.DocumentLegislativeAreas.Any(la => la.Status is
-                    LAStatus.Published or
+                HasActionableLegislativeAreaForOpssAdmin = latest.DocumentLegislativeAreas.Any(la => la.Status is
+                    LAStatus.Approved or
+                    LAStatus.Declined or
                     LAStatus.DeclinedToRemoveByOPSS or
                     LAStatus.ApprovedByOpssAdmin or
                     LAStatus.DeclinedByOpssAdmin or
@@ -503,7 +504,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
                     LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
                     LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
                     LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
                     LAStatus.ApprovedToUnarchiveByOPSS or
                     LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
@@ -532,7 +535,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 && model.CABSupportingDocumentDetailsViewModel.IsCompleted;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
                                     ((model.SubStatus != SubStatus.PendingApprovalToPublish && userInCreatorUserGroup) ||
-                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
+                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.HasActionableLegislativeAreaForOpssAdmin));
             model.ShowOpssDeleteDraftActionOnly = model.SubSectionEditAllowed && model.SubStatus != SubStatus.PendingApprovalToPublish && User.IsInRole(Roles.OPSS.Id); 
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
@@ -1020,9 +1023,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                             soaViewModel.Category = category!.Name;
                         }
 
-                        foreach (var categoryId in categoryProcedure.CategoryIds)
+                        foreach (var procedureId in categoryProcedure.ProcedureIds)
                         {
-                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(categoryId);
+                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
                             soaViewModel.Procedures?.Add(procedure!.Name);
                         }
 

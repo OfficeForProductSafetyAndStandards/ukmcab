@@ -242,9 +242,9 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                         soaViewModel.Category = category!.Name;
                     }
 
-                    foreach (var categoryId in categoryProcedure.CategoryIds)
+                    foreach (var procedureId in categoryProcedure.ProcedureIds)
                     {
-                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(categoryId);
+                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
                         soaViewModel.Procedures?.Add(procedure!.Name);
                     }
 

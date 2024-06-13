@@ -733,7 +733,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 var categoryAndProcedures = new CategoryAndProcedures
                 {
                     CategoryId = vm.CurrentCategoryId,
-                    CategoryIds = (List<Guid>)vm.SelectedProcedureIds!
+                    ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
                 };
                 scopeOfAppointment.CategoryIdAndProcedureIds.Add(categoryAndProcedures);
             }

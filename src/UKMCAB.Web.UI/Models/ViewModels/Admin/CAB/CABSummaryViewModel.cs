@@ -42,7 +42,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsOpssAdmin { get; set; }
         public int LegislativeAreasApprovedByAdminCount { get; set; }
         public bool LegislativeAreaHasBeenActioned { get; set; }
-        public bool LegislativeAreaHasBeenActionedByOpssAdmin { get; set; }
+        public bool HasActionableLegislativeAreaForOpssAdmin { get; set; }
 
         public bool LoggedInUserGroupIsOwner { get; set; }
         public bool RequestedFromCabProfilePage { get; set; }
@@ -50,7 +50,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public string GetBannerContent()
         {
-            if (SubStatus == SubStatus.PendingApprovalToPublish && LegislativeAreaHasBeenActioned && IsOpssAdmin)
+            if (SubStatus == SubStatus.PendingApprovalToPublish && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin)
             {
                 return string.Empty;
             }
