@@ -596,9 +596,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (submitType == Constants.SubmitType.SubmitForApproval)
                 {
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
-                        userAccount ?? throw new InvalidOperationException(), latest, true);
-
                     var legislativeAreaSenderEmailIds =
                         _templateOptions.NotificationLegislativeAreaEmails.ToDictionary();
                     var emailsToSends = new List<ValueTuple<string, int, string>>();
@@ -666,7 +663,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 break;
                             }
                         }
-                    }                  
+                    }
+
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
+                        userAccount ?? throw new InvalidOperationException(), latest, true);
 
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
                     

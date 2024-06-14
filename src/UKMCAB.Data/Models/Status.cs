@@ -119,7 +119,7 @@ namespace UKMCAB.Data.Models
         {
             ((int)LAStatus.PendingApproval).ToString(),
             ((int)LAStatus.PendingApprovalToRemove).ToString(),
-            ((int)LAStatus.PendingApprovalToRemove).ToString(),
+            ((int)LAStatus.PendingApprovalToArchiveAndArchiveSchedule).ToString(),
             ((int)LAStatus.PendingApprovalToArchiveAndRemoveSchedule).ToString(),
             ((int)LAStatus.PendingApprovalToUnarchive).ToString(),
         };
