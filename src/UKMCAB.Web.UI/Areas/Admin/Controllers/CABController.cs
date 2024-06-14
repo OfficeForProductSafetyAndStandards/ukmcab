@@ -531,6 +531,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 && model.CabDetailsViewModel.IsCompleted
                 && model.CabContactViewModel.IsCompleted
                 && model.CabBodyDetailsViewModel.IsCompleted
+                && model.CabLegislativeAreasViewModel.IsCompleted
                 && model.CABProductScheduleDetailsViewModel.IsCompleted
                 && model.CABSupportingDocumentDetailsViewModel.IsCompleted;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
