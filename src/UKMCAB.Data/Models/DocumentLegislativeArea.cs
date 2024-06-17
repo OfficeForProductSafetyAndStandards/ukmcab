@@ -1,7 +1,5 @@
 ﻿namespace UKMCAB.Data.Models
 {
-    using Azure.Search.Documents.Indexes;
-
     public class DocumentLegislativeArea
     {
         public Guid Id { get; set; }
@@ -15,13 +13,27 @@
 
         public DateTime? ReviewDate { get; set; }
 
+        public string? UserNotes { get; set; }
         public string? Reason { get; set; }
-        
+
+        public string? RequestReason { get; set; }
+
         public bool? Archived { get; set; }
 
         public string? PointOfContactName { get; set; }
         public string? PointOfContactEmail { get; set; }
         public string? PointOfContactPhone { get; set; }
         public bool? IsPointOfContactPublicDisplay { get; set; }
+        public LAStatus Status { get; set; }
+        public string RoleId { get; set; }
+
+        public void MarkAsDraft(Document document)
+        {
+            if (document.StatusValue == Models.Status.Draft && document.SubStatus == SubStatus.None &&
+                    (Status == LAStatus.Published || Status == LAStatus.Declined || Status == LAStatus.DeclinedByOpssAdmin))
+            {
+                Status = LAStatus.Draft;
+            }
+        }
     }
 }

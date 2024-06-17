@@ -18,6 +18,10 @@ public record LegislativeAreaAdditionalInformationViewModel(
     public DateTime? ReviewDate { get; set; }
     
     [MaxLength(1000, ErrorMessage = "Maximum reason length is 1000 characters")]
+    public string? UserNotes { get; init; }
+    public string? UserNotesLabel { get; set; }
+    
+    [MaxLength(1000, ErrorMessage = "Maximum reason length is 1000 characters")]
     public string? Reason { get; init; }
 
     public string? PointOfContactName { get; set; }

@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Security.Claims;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
@@ -13,28 +13,26 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
 [Area("admin"), Route("admin/cab/{id}/legislative-area/review-legislative-areas"), Authorize]
-public class LegislativeAreaReviewController : Controller
+public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
     private readonly ILegislativeAreaService _legislativeAreaService;
-    private readonly IUserService _userService;
 
     public LegislativeAreaReviewController(
         ICABAdminService cabAdminService,
         ILegislativeAreaService legislativeAreaService,
-        IUserService userService)
+        IUserService userService) : base(userService)
     {
         _cabAdminService = cabAdminService;
         _legislativeAreaService = legislativeAreaService;
-        _userService = userService;
     }
 
     public static class Routes
     {
-        public const string LegislativeAreaSelected = "legislative.area.selected";
+        public const string ReviewLegislativeAreas = "legislative.area.selected";
     }
 
-    [HttpGet(Name = Routes.LegislativeAreaSelected)]
+    [HttpGet(Name = Routes.ReviewLegislativeAreas)]
     public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string? returnUrl, LegislativeAreaActionMessageEnum? actionType, bool fromSummary)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
@@ -43,7 +41,7 @@ public class LegislativeAreaReviewController : Controller
         {
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
         }
-        
+
         var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
         var singleDraftDoc = await _cabAdminService.IsSingleDraftDocAsync(id);
         vm.ShowArchiveLegislativeAreaAction = !singleDraftDoc;
@@ -53,11 +51,12 @@ public class LegislativeAreaReviewController : Controller
             vm.SuccessBannerMessage = AlertMessagesUtils.LegislativeAreaActionMessages[actionType.Value];
         }
         vm.FromSummary = fromSummary;
+        vm.ReturnUrl = returnUrl;
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
 
-    [HttpPost(Name = Routes.LegislativeAreaSelected)]
+    [HttpPost(Name = Routes.ReviewLegislativeAreas)]
     public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string submitType, ReviewLegislativeAreasViewModel reviewLaVM)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
@@ -105,16 +104,21 @@ public class LegislativeAreaReviewController : Controller
             laIdOrLaName = submitType[7..];
         }
 
-        var cabLaOfSelectedScopeofAppointment = reviewLaVM.ActiveLAItems.FirstOrDefault(la => la.SelectedScopeofAppointmentId != null && la.Name == laIdOrLaName);
+        var cabLaOfSelectedScopeofAppointment = reviewLaVM.ActiveLAItems.FirstOrDefault(la => la.SelectedScopeOfAppointmentId != null && la.Name == laIdOrLaName);
         if (cabLaOfSelectedScopeofAppointment == null)
         {
             ModelState.AddModelError(laIdOrLaName, "Select a scope of appointment");
+            var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
+            if (isOgdUser)
+            {
+                await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
+            }
             var vm = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
             vm.ErrorLink = laIdOrLaName;
             return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
         }
 
-        var laOfSelectedSoa = cabLaOfSelectedScopeofAppointment.ScopeOfAppointments.First(soa => soa.ScopeId == cabLaOfSelectedScopeofAppointment.SelectedScopeofAppointmentId);
+        var laOfSelectedSoa = cabLaOfSelectedScopeofAppointment.ScopeOfAppointments.First(soa => soa.ScopeId == cabLaOfSelectedScopeofAppointment.SelectedScopeOfAppointmentId);
         var legislativeAreaId = laOfSelectedSoa.LegislativeArea.Id;
         var selectedScopeOfAppointmentId = laOfSelectedSoa.ScopeId;
         Guard.IsTrue(selectedScopeOfAppointmentId != Guid.Empty, "Scope Id Guid cannot be empty");
@@ -130,11 +134,14 @@ public class LegislativeAreaReviewController : Controller
                 var soaToRemove = latestDocument.ScopeOfAppointments.First(s => s.Id == selectedScopeOfAppointmentId);
                 if (soaToRemove != null)
                 {
-                    var userAccount =
-                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+                    var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
                     latestDocument.ScopeOfAppointments.Remove(soaToRemove);
+
+                    var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == legislativeAreaId);
+                    documentLegislativeArea?.MarkAsDraft(latestDocument);
+
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
-                    return RedirectToRoute(Routes.LegislativeAreaSelected, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.FromSummary });
+                    return RedirectToRoute(Routes.ReviewLegislativeAreas, new { id, actionType = LegislativeAreaActionMessageEnum.AssessmentProcedureRemoved, fromSummary = reviewLaVM.FromSummary });
                 }
             }
         }
@@ -146,7 +153,8 @@ public class LegislativeAreaReviewController : Controller
     {
         var viewModel = new ReviewLegislativeAreasViewModel
         {
-            CABId = Guid.Parse(cab.CABId)
+            CABId = Guid.Parse(cab.CABId),
+            ShowAddRemoveLegislativeAreaActions = !cab.IsPendingOgdApproval,
         };
 
         foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
@@ -159,12 +167,18 @@ public class LegislativeAreaReviewController : Controller
             {
                 LegislativeAreaId = legislativeArea.Id,
                 Name = legislativeArea.Name,
+                Status = documentLegislativeArea.Status,
+                RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
                 IsProvisional = documentLegislativeArea.IsProvisional,
                 AppointmentDate = documentLegislativeArea.AppointmentDate,
                 ReviewDate = documentLegislativeArea.ReviewDate,
                 Reason = documentLegislativeArea.Reason,
                 CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
-                IsArchived = documentLegislativeArea.Archived
+                IsArchived = documentLegislativeArea.Archived,
+                ShowEditActions = documentLegislativeArea.Status == LAStatus.Draft || 
+                                  documentLegislativeArea.Status == LAStatus.PendingApproval && UserRoleId == documentLegislativeArea.RoleId ||
+                                  documentLegislativeArea.Status == LAStatus.Approved && UserRoleId == Roles.OPSS.Id ||
+                                  cab.StatusValue == Status.Draft && cab.SubStatus == SubStatus.None,
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);

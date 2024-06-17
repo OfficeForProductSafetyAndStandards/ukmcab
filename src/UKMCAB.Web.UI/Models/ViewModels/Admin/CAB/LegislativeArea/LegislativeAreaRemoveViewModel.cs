@@ -16,5 +16,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? ReturnUrl { get; set; }
 
         public bool FromSummary { get; set; }
+
+        public string? UserRoleId { get; set; }
     }
 }

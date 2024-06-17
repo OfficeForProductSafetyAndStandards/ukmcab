@@ -22,6 +22,7 @@ public class AutoMapperProfile : Profile
         CreateMap<Product, ProductModel>();
         CreateMap<Procedure, ProcedureModel>();
         CreateMap<SubCategory, SubCategoryModel>();
-        CreateMap<DocumentLegislativeArea, DocumentLegislativeAreaIndexItem>();
+        CreateMap<DocumentLegislativeArea, DocumentLegislativeAreaIndexItem>()
+            .ForMember(s => s.Status, opt => opt.MapFrom(d => (int)d.Status));
     }
 }

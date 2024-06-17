@@ -8,6 +8,8 @@ public static class Constants
     public const string NotApplicable = "Not applicable";
     public const string None = "None";
     public const string NotAssigned = "Not assigned";
+    public const string DeclinedLA = nameof(DeclinedLA);
+    public const string ApprovedLA = nameof(ApprovedLA);
 
     public const string TempDraftKey = nameof(TempDraftKey);
     public const string TempCookieChangeKey = nameof(TempCookieChangeKey);
@@ -26,7 +28,7 @@ public static class Constants
         public const string PrivacyNotice = "Privacy Notice";
         public const string TermsAndConditions = "Terms And Conditions";
         public const string Updates = "Updates";
-        public const string Notifications = "Notifications";
+        public const string Notifications = "Notifications for";
         public const string Home = "Home";
     }
 

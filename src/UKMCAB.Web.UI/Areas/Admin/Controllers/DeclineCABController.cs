@@ -77,8 +77,7 @@ public class DeclineCABController : Controller
         var user =
             await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value) ??
             throw new InvalidOperationException();
-        var userRoleId = Roles.List.First(r =>
-            r.Label != null && r.Label.Equals(user.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        var userRoleId = Roles.List.First(r => r.Id == user.Role).Id;
         await _cabAdminService.SetSubStatusAsync(cabId, Status.Draft, SubStatus.None,
             new Audit(user, AuditCABActions.CABDeclined, vm.DeclineReason));
 
@@ -140,15 +139,15 @@ public class DeclineCABController : Controller
                 TaskType.CABDeclined,
                 approver,
                 // Approver becomes the submitter for Declined CAB Notification
-                submitter.RoleId,
-                submitter,
+                Roles.UKAS.Id,
+                null,
                 DateTime.Now,
                 $"The request to approve CAB {cabName} has been declined for the following reason: {declineReason}.",
                 approver,
                 DateTime.Now,
                 false,
                 declineReason,
-                true,
+                false,
                 cabId));
     }
 }

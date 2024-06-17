@@ -10,6 +10,6 @@
         public string? ErrorLink { get; set; }
         public bool FromSummary { get; set; }
         public bool ShowArchiveLegislativeAreaAction { get; set; }
-
+        public bool ShowAddRemoveLegislativeAreaActions { get; set; }
     }
 }

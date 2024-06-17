@@ -80,8 +80,7 @@ public class DeclineUnarchiveCABController : Controller
 
         var currentUser = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ??
                           throw new InvalidOperationException();
-        var userRoleId = Roles.List.First(r =>
-            r.Label != null && r.Label.Equals(currentUser.Role, StringComparison.CurrentCultureIgnoreCase)).Id;
+        var userRoleId = Roles.List.First(r => r.Id == currentUser.Role).Id; 
         if (userRoleId != Roles.OPSS.Id)
         {
             throw new PermissionDeniedException("User Permission denied to decline an unarchive request");

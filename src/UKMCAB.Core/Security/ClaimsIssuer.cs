@@ -16,14 +16,17 @@ public static class ClaimsIssuer
         {
             return new Claim[]
             {
+                new(Claims.CabCreateDraft, string.Empty), // can create drafts of CABs
                 new(Claims.CabEdit, "*"), // can edit any cab
                 new(Claims.CabCanApprove, "*"), // can approve any cab
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
                 new(Claims.CabGovernmentUserNotes, string.Empty), // can view/add Government user notes on cabs
                 new(Claims.UserManagement, string.Empty), // can manage users
+                new (Claims.LegislativeAreaApprove, string.Empty) // Opss admin approve LAs after OGDs
             };
         }
-        else if (role == Roles.UKAS.Id)
+
+        if (role == Roles.UKAS.Id)
         {
             return new Claim[]
             {
@@ -32,9 +35,15 @@ public static class ClaimsIssuer
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
             };
         }
-        else
+        
+        if (Roles.OgdRolesList.Contains(role))
         {
-            throw new NotSupportedException($"Role '{role}' not supported");
+            return new Claim[]
+            {
+                new(Claims.LegislativeAreaApprove, role), // Approve/Decline Legislative Area
+            };
         }
+
+        throw new NotSupportedException($"Role '{role}' not supported");
     }
 }

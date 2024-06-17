@@ -12,19 +12,41 @@
  
 <div class="govuk-grid-row">
     <div class="govuk-body govuk-grid-column-full">
-        <govuk-tabs class="notifications-tabs tabs-pagenumber-reset" title=" ">
-            <govuk-tabs-item id="Unassigned" label='@("Assigned to "+  Model.UserGroup + " (" + Model.UnassignedTable.TotalCount + ")")' asp-route="@NotificationController.Routes.Notifications">
-                <partial name="_NotificationsTable" model="@Model.UnassignedTable"/>
-            </govuk-tabs-item>
-            <govuk-tabs-item id="assigned-me" label='@("Assigned to me (" + Model.AssignedToMeTable.TotalCount + ")")' asp-route="@NotificationController.Routes.Notifications">
-                <partial name="_NotificationsTable" model="@Model.AssignedToMeTable"/>
-            </govuk-tabs-item>
-            <govuk-tabs-item id="assigned-group" label='@("Assigned to another " + Model.UserGroup +" user (" + Model.AssignedToGroupTable.TotalCount + ")")' asp-route="@NotificationController.Routes.Notifications">
-                <partial name="_NotificationsTable" model="@Model.AssignedToGroupTable"/>
-            </govuk-tabs-item>
-            <govuk-tabs-item id="completed" label='@("Completed (" + Model.CompletedTable.TotalCount + ")")' asp-route="@NotificationController.Routes.Notifications">
-                <partial name="_NotificationsTable" model="@Model.CompletedTable"/>
-            </govuk-tabs-item>
-        </govuk-tabs>
+        <div class="govuk-tabs notifications-tabs tabs-pagenumber-reset" data-module="govuk-tabs">
+            <ul class="govuk-tabs__list">
+                <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
+                    <a class="govuk-tabs__tab" href="#Unassigned">
+                        @("Unassigned" + " (" + Model.UnassignedTable.TotalCount + ")")
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#assigned-me">
+                        @("Assigned to me (" + Model.AssignedToMeTable.TotalCount + ")")
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#assigned-group">
+                        @("Assigned to another user (" + Model.AssignedToGroupTable.TotalCount + ")")
+                    </a>
+                </li>
+                <li class="govuk-tabs__list-item">
+                    <a class="govuk-tabs__tab" href="#completed">
+                        @("Completed (" + Model.CompletedTable.TotalCount + ")")
+                    </a>
+                </li>
+            </ul>
+            <div class="govuk-tabs__panel" id="Unassigned">
+                <partial name="_NotificationsTable" model="@Model.UnassignedTable" />
+            </div>
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="assigned-me">
+                <partial name="_NotificationsTable" model="@Model.AssignedToMeTable" />
+            </div>
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="assigned-group">
+                <partial name="_NotificationsTable" model="@Model.AssignedToGroupTable" />
+            </div>
+            <div class="govuk-tabs__panel govuk-tabs__panel--hidden" id="completed">
+                <partial name="_NotificationsTable" model="@Model.CompletedTable" />
+            </div>
+        </div>
     </div>
 </div>

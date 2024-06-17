@@ -1,5 +1,6 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums
 @using UKMCAB.Data
+@using UKMCAB.Core.Security
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaRemoveWithOptionViewModel
 
 @section BackButton
@@ -105,7 +106,14 @@
                 <input type="hidden" asp-for="ProductScheduleAction" value="@RemoveActionEnum.Remove" />
             }
             <div class="govuk-button-group govuk-!-margin-top-4">
-                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>
+                @if (Model.UserRoleId == Roles.UKAS.Id)
+                {
+                    <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue</govuk-button>
+                }
+                else
+                {
+                    <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Confirm">Confirm</govuk-button>                    
+                }
                 <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-returnUrl="@Model.ReturnUrl" asp-route-fromSummary="@Model.FromSummary" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>

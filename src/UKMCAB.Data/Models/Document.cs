@@ -58,10 +58,6 @@
         // Body details
         public List<string> TestingLocations { get; set; } = new();
         public List<string> BodyTypes { get; set; } = new();
-
-        /*This needs to be kept post data model (v3.0) for a few reasons:
-        Search Filter, Data models are used in Controllers and Views*/
-        public List<string> LegislativeAreas { get; set; } = new(); 
         
         public List<DocumentLegislativeArea> DocumentLegislativeAreas { get; set; } = new();
 
@@ -88,5 +84,16 @@
         public List<string> HiddenScopeOfAppointments { get; set; } = new(); 
         public string RandomSort { get; set; } = string.Empty;
         public string LegacyCabId { get; set; } = string.Empty;
+
+        public bool IsPendingOgdApproval =>
+            StatusValue == Models.Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            DocumentLegislativeAreas.Any(d => 
+                d.Status == LAStatus.PendingApproval ||
+                d.Status ==  LAStatus.PendingApprovalToRemove ||
+                d.Status ==  LAStatus.PendingApprovalToArchiveAndArchiveSchedule ||
+                d.Status == LAStatus.PendingApprovalToArchiveAndRemoveSchedule ||
+                d.Status == LAStatus.PendingApprovalToUnarchive);
+        
     }
 }

@@ -6,7 +6,7 @@
 }
 <div class="govuk-summary-list__row">
     <dt class="govuk-summary-list__key">
-        <div class="display-flex">
+        <div class="legislative-area-title-and-status">
             <div>
                 @if (Model.LegislativeArea.HasDataModel)
                 {
@@ -19,6 +19,12 @@
                     <span>@Model.LegislativeArea.Name</span>
                 }
             </div>
+            @if (Model.LegislativeArea.IsArchived)
+            {
+                <div class="tag-container">
+                    <strong class="cab-status-tag govuk-tag--grey">Archived</strong>
+                </div>
+            }
             @if (Model.LegislativeArea.IsProvisional)
             {
                 <div class="tag-container">
@@ -29,9 +35,9 @@
 
         @if (!string.IsNullOrWhiteSpace(Model.LegislativeArea.Regulation))
         {
-            <p class="govuk-!-margin-bottom-2">Regulation : @Model.LegislativeArea.Regulation</p>
+            <p class="govuk-!-margin-bottom-2 ukmcab-padding-top-15">Regulation : @Model.LegislativeArea.Regulation</p>
         }
-        @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity.IsAuthenticated)
+         @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity!.IsAuthenticated)
         {
             <govuk-details class="govuk-!-margin-bottom-0">
                 <govuk-details-summary>

@@ -15,6 +15,7 @@
         public string[] SubStatusesFilter { get; set; }
         public string[] ProvisionalLegislativeAreasFilter { get; set; }
         public string[] LegislativeAreaStatusFilter { get; set; }
+        public string[] LAStatusFilter { get; set; }
         public bool IgnorePaging { get; set; }
         public bool InternalSearch { get; set; }
 

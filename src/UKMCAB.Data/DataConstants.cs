@@ -1,10 +1,10 @@
 ﻿namespace UKMCAB.Data;
 
-public class DataConstants
+public static class DataConstants
 {
     public static class Version
     {
-        public const string Number = "v3-2-1";
+        public const string Number = "v4-0";
     }
 
     public static class CosmosDb
@@ -30,7 +30,7 @@ public class DataConstants
         public const string Schedules = "schedules";
     }
 
-    public class SortOptions
+    public static class SortOptions
     {
         public const string Default = "default";
         public const string LastUpdated = "lastupd";

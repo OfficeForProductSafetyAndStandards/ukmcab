@@ -1,11 +1,13 @@
-﻿using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+﻿using UKMCAB.Common.Extensions;
+using UKMCAB.Data.Models;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABLegislativeAreasItemViewModel
     {
         public Guid? LegislativeAreaId { get; set; }
-        
+
         public string? Name { get; set; }
 
         public bool? IsProvisional { get; set; }
@@ -15,6 +17,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public DateTime? ReviewDate { get; set; }
 
         public string? Reason { get; set; }
+        public string? RequestReason { get; set; }
 
         public string? PointOfContactName { get; set; }
         public string? PointOfContactEmail { get; set; }
@@ -25,9 +28,49 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public bool CanChooseScopeOfAppointment { get; set; }
         public bool? IsArchived { get; init; }
-        public Guid? SelectedScopeofAppointmentId { get; set; }
-        public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PurposeOfAppointment));
-        public bool ShowCategoryColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
-        public bool ShowProductColumn => ScopeOfAppointments != null && ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));
+        public Guid? SelectedScopeOfAppointmentId { get; set; }
+
+        public bool ShowPurposeOfAppointmentColumn => ScopeOfAppointments != null &&
+                                                      ScopeOfAppointments.Any(x =>
+                                                          !string.IsNullOrEmpty(x.PurposeOfAppointment));
+
+        public bool ShowCategoryColumn => ScopeOfAppointments != null &&
+                                          ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Category));
+
+        public bool ShowProductColumn => ScopeOfAppointments != null &&
+                                         ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));
+
+        public LAStatus Status { get; set; }
+        public string StatusName => GetStatusName();
+        public string StatusCssStyle { get; set; } = string.Empty;
+        public string RoleName { get; set; } = string.Empty;
+        public string RoleId { get; set; } = string.Empty;
+        public bool ShowEditActions { get; set; }
+
+        private string GetStatusName()
+        {
+            return Status switch
+            {
+                LAStatus.Approved or 
+                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin 
+                    => 
+                    $"{Status.GetEnumDescription()} by {RoleName}",
+                LAStatus.Declined or 
+                    LAStatus.DeclinedToRemoveByOGD or 
+                    LAStatus.DeclinedToUnarchiveByOGD or 
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or 
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD
+                    =>
+                    $"{Status.GetEnumDescription()} by {RoleName}",
+                LAStatus.PendingApproval
+                    or LAStatus.PendingApprovalToRemove
+                    or LAStatus.PendingApprovalToArchiveAndArchiveSchedule
+                    or LAStatus.PendingApprovalToArchiveAndRemoveSchedule
+                    or LAStatus.PendingApprovalToUnarchive
+                    =>
+                    $"{Status.GetEnumDescription()} from {RoleName}", 
+                _ => Status.GetEnumDescription()
+            };
+        }
     }
 }

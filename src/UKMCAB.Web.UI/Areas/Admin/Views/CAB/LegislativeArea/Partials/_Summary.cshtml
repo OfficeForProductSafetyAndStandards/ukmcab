@@ -32,17 +32,6 @@
                     @Html.ValueOrNotProvided(Model.ReviewDate.ToStringBeisDateFormat())
                 </dd>
             </div>
-            @if (!string.IsNullOrWhiteSpace(Model.Reason))
-            {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Reason for change of review date (optional)
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Html.Raw(htmlSanitizer.Sanitize(Model.Reason))
-                    </dd>
-                </div>
-            }
             @if (!string.IsNullOrEmpty(Model.PointOfContactName))
             {
                 <div class="govuk-summary-list__row">

@@ -1,0 +1,93 @@
+@using UKMCAB.Core.Security;
+@using UKMCAB.Data.Models
+@using UKMCAB.Web.UI.Extensions;
+@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABManagementViewModel
+@{
+    var returnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+}
+
+<table class="govuk-table govuk-!-font-size-16 ukmcab-table">
+    <caption class="govuk-visually-hidden">List of CABs in draft status</caption>
+    <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+            @if (Model.CABManagementItems.Any())
+            {
+                <th scope="col" class="govuk-table__header width-two-fifth">
+                    <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.Name)" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB name</sort>
+                </th>
+                <th scope="col" class="govuk-table__header width-one-fifth">
+                    @if (Model.RoleId == Roles.UKAS.Id)
+                    {
+                        <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.UKASReference)" sort="@Model.SortField" sort-direction="@Model.SortDirection">UKAS reference</sort>
+                    }
+                    else
+                    {
+                        <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.CABNumber)" sort="@Model.SortField" sort-direction="@Model.SortDirection">CAB number</sort>
+                    }
+                </th>
+                <th scope="col" class="govuk-table__header width-one-fifth">
+                    <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.LastUpdated)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Last updated</sort>
+                </th>
+                @if (Model.RoleId == Roles.OPSS.Id)
+                {
+                    <th scope="col" class="govuk-table__header width-one-fifth">
+                        <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.UserGroup)" sort="@Model.SortField" sort-direction="@Model.SortDirection">User group</sort>
+                    </th>
+                }
+                <th scope="col" class="govuk-table__header width-one-fifth">
+                    <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.Status)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Status</sort>
+                </th>
+            }
+        </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+        @if (Model.CABManagementItems.Any())
+        {
+            @foreach (var cab in Model.CABManagementItems)
+            {
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">
+                        <label aria-hidden="true">Cab name</label>
+                        @if (cab.Status == Status.Archived.ToString())
+                        {
+                            <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" asp-route-returnUrl="@returnUrl" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
+                        }
+                        else
+                        {
+                            <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cab.Id" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
+                        }
+                    </td>
+                    @if (Model.RoleId == Roles.UKAS.Id)
+                    {
+                        <td class="govuk-table__cell"><label aria-hidden="true">UKAS reference</label>@Html.ValueOrNotProvided(cab.UKASReference)</td>
+                    }
+                    else
+                    {
+                        <td class="govuk-table__cell"><label aria-hidden="true">Cab reference</label>@(UKMCAB.Core.Domain.CabNumberVisibility.Display(cab.CabNumberVisibility, User, cab.CABNumber) ?? Constants.NotProvided)</td>
+                    }
+                    <td class="govuk-table__cell"><label aria-hidden="true">Last updated</label>@cab.LastUpdated.ToStringBeisFormat()</td>
+                    @if (Model.RoleId == Roles.OPSS.Id)
+                    {
+                        <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@Roles.NameFor(cab.UserGroup)</td>
+                    }
+                    <td class="govuk-table__cell"><label aria-hidden="true">Status</label>@cab.Status</td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr class="govuk-table__row">
+                <td>
+                    <p class="govuk-body">There are currently no items in your work queue</p>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@if (Model.CABManagementItems.Any())
+{
+    <div id="cab-management-pagination-container">
+        <partial name="Partials/_Pagination" model="Model.Pagination" />
+    </div>
+}

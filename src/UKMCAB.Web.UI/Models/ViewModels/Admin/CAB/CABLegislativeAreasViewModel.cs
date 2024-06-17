@@ -21,10 +21,14 @@ public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegisl
         //   If any ScopeOfAppointment doesn't have a procedure, or the procedure is null or empty, validation will fail.
 
         RuleFor(x => x.ActiveLegislativeAreas)
-            .Must((model, legislativeAreas) =>
+            .Must((_, legislativeAreas) =>
             {
-                bool complete = legislativeAreas.Any() && legislativeAreas.All(x => x.IsProvisional.HasValue &&
-                    (!x.CanChooseScopeOfAppointment || (x.ScopeOfAppointments.Any() && x.ScopeOfAppointments.All(y => y.Procedures != null && y.Procedures.Any() && y.Procedures.All(z => !string.IsNullOrEmpty(z))))));
+                var complete = legislativeAreas.Any() && legislativeAreas.All(x => x.IsProvisional.HasValue &&
+                    (x.ReviewDate == null || (x.ReviewDate != null && x.ReviewDate >= DateTime.Today)) &&
+                        (!x.CanChooseScopeOfAppointment || (x.ScopeOfAppointments.Any() && x.ScopeOfAppointments.All(
+                            y =>
+                                y.Procedures != null && y.Procedures.Any() &&
+                                y.Procedures.All(z => !string.IsNullOrEmpty(z))))));
                 return complete;
             })
             .WithMessage("Legislative areas are incomplete");

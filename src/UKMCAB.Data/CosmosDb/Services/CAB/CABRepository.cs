@@ -33,11 +33,26 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
-                    const string created = "Created";
-                    if (document.AuditLog.Any(x => x.Action == created))
+
+                    //Set LA status                    
+                    foreach (var la in document.DocumentLegislativeAreas)
                     {
-                        document.AuditLog.First(x => x.Action == created).Action = AuditCABActions.Created;
-                    }
+                        if (la != null)
+                        {
+                            if (la.Status == LAStatus.None)
+                            {
+                                la.Status = document.StatusValue switch
+                                {
+                                    Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
+                                    _ => LAStatus.Draft
+                                };
+                            }
+                            
+                            //Set LA Role Id
+                            la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
+                        }
+                    }                   
+
                     await UpdateAsync(document);
                 }
             }
@@ -48,6 +63,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         public async Task<Document> CreateAsync(Document document, DateTime lastUpdatedDateTime)
         {
             document.id = Guid.NewGuid().ToString();
+            document.Version = DataConstants.Version.Number;
             document.LastUpdatedDate = lastUpdatedDateTime;
             var response = await _container.CreateItemAsync(document);
             if (response.StatusCode == HttpStatusCode.Created)
@@ -64,7 +80,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         }
 
         public IQueryable<Document> GetItemLinqQueryable() => _container.GetItemLinqQueryable<Document>();
-        
+
         public async Task UpdateAsync(Document document)
         {
             document.LastUpdatedDate = DateTime.Now;
@@ -112,10 +128,10 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
 
             return list;
         }
-
+        
         private Version ParseVersion(string version)
         {
-            return Version.Parse(version.Replace("-",".").Replace("v",string.Empty));
+            return Version.TryParse(version.Replace("-", ".").Replace("v", string.Empty), out var semanticVersion) ? semanticVersion : Version.Parse(DataConstants.Version.Number);
         }
 
     }

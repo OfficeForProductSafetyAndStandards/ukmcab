@@ -12,7 +12,8 @@ public record WorkflowTask(
     bool? Approved,
     string? DeclineReason,
     bool Completed,
-    Guid? CABId = null)
+    Guid? CABId = null,
+    Guid? DocumentLAId = null)
 {
     // set properties
     public Guid Id { get; set; } = Guid.NewGuid();

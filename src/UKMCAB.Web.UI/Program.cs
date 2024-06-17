@@ -44,6 +44,9 @@ using UKMCAB.Data.CosmosDb;
 using UKMCAB.Data.CosmosDb.Utilities;
 using UKMCAB.Core.Mappers;
 using System.Reflection;
+using UKMCAB.Web.UI.Services.ReviewDateReminder;
+using UKMCAB.Core.Security.Requirements;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -94,6 +97,16 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser();
         policy.RequireClaim(Claims.CabCanApprove);
+    });    
+    options.AddPolicy(Policies.LegislativeAreaApprove, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.LegislativeAreaApprove);
+    });
+    options.AddPolicy(Policies.EditCabPendingApproval, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.Requirements.Add(new EditCabPendingApprovalRequirement());
     });
 });
 
@@ -129,6 +142,7 @@ builder.Services.AddSingleton<IWorkflowTaskService, WorkflowTaskService>();
 builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
 builder.Services.AddSingleton<IEditLockService, EditLockService>();
+builder.Services.AddSingleton<IAuthorizationHandler, EditCabPendingApprovalHandler>();
 
 var cosmosClient = CosmosClientFactory.Create(cosmosDbConnectionString);
 builder.Services.AddSingleton<IReadOnlyRepository<LegislativeArea>>(new ReadOnlyRepository<LegislativeArea>(cosmosClient, new CosmosFeedIterator(), "legislative-areas"));
@@ -143,6 +157,7 @@ builder.Services.AddTransient<IUserNoteService, UserNoteService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddTransient<IFileUploadUtils, FileUploadUtils>();
 builder.Services.AddTransient<ILegislativeAreaService, LegislativeAreaService>();
+builder.Services.AddTransient<ILegislativeAreaDetailService, LegislativeAreaDetailService>();
 
 builder.Services.AddCustomHttpErrorHandling();
 builder.Services.AddGovUkFrontend();
@@ -165,6 +180,7 @@ builder.Services.AddFluentValidationAutoValidation();
 builder.Services.AddScoped<IValidator<CABDetailsViewModel>, CABDetailsViewModelValidator>();
 builder.Services.AddScoped<IValidator<DeleteCABViewModel>, DeleteCABViewModelValidator>();
 builder.Services.AddScoped<IValidator<CABLegislativeAreasViewModel>, CABLegislativeAreasViewModelValidator>();
+builder.Services.AddHostedService<ReviewDateReminderBackgroundService>();
 
 // =================================================================================================
 

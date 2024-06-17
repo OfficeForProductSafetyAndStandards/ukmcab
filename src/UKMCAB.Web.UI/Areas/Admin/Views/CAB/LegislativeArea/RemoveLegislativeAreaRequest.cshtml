@@ -1,0 +1,43 @@
+@using System.Net
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.LegislativeAreaRemoveRequestViewModel
+
+@section BackButton
+{
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
+                <govuk-back-link href="@WebUtility.UrlDecode(Model.ReturnUrl)" />
+            </div>
+        </div>
+    </div>
+}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">        
+        <h1 class="govuk-heading-l">Reason for removing legislative area</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">   
+    <div class="govuk-grid-column-two-thirds">
+        <form id="legislativeRemoveRequestForm" method="post">
+            <input type="hidden" asp-for="CabId" />
+            <input type="hidden" asp-for="Title"/>
+            <input type="hidden" asp-for="ReturnUrl" value="@Model.ReturnUrl" />
+            <h2 class="govuk-heading-s">You have selected:</h2>
+            <p class="govuk-body">@Model.Title</p>
+            <govuk-character-count asp-for="UserNotes" max-length="1000" rows="5">
+                <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                    Reason
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Enter the reason for removing the legislative area. This will only be shown
+                    to users that are signed in to the UKMCAB service.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+            <div class="govuk-button-group">
+                <govuk-button type="submit">Confirm</govuk-button>            
+                <a href="@WebUtility.UrlDecode(Model.ReturnUrl)" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

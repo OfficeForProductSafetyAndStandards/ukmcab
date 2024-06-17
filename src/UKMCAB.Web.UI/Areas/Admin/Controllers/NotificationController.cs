@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Security;
-using UKMCAB.Core.Services.CAB;
+using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Domain;
@@ -14,7 +14,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Shared;
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
 [Area("admin"), Route("admin/notifications"), Authorize]
-public class NotificationController : Controller
+public class NotificationController : UI.Controllers.ControllerBase
 {
     public const string AssignedToGroupTabName = "assigned-group";
     public const string LastUpdatedLabel = "Last updated";
@@ -40,10 +40,11 @@ public class NotificationController : Controller
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly IDistCache _distCache;
     private readonly ICachedPublishedCABService _cachedPublishedCABService;
-    
-    public NotificationController(IWorkflowTaskService workflowTaskService, 
-        IDistCache distCache, 
-        ICachedPublishedCABService cachedPublishedCABService)
+
+    public NotificationController(IWorkflowTaskService workflowTaskService,
+        IDistCache distCache,
+        ICachedPublishedCABService cachedPublishedCABService, IUserService userService) 
+        : base(userService)
     {
         _workflowTaskService = workflowTaskService;
         _distCache = distCache;
@@ -84,14 +85,13 @@ public class NotificationController : Controller
             sd = SortDirectionHelper.Descending;
         }
 
-        var role = User.IsInRole(Roles.OPSS.Id) ? Roles.OPSS : Roles.UKAS;
         var skipTake = SkipTake.FromPage(pageNumber - 1, Constants.RowsPerPage);
 
-        var unassignedTask = _workflowTaskService.GetUnassignedByForRoleIdAsync(role.Id);
+        var unassignedTask = _workflowTaskService.GetUnassignedByForRoleIdAsync(UserRoleId);
         var assignedToGroupTask =
-            _workflowTaskService.GetAssignedToGroupForRoleIdAsync(role.Id, userId);
+            _workflowTaskService.GetAssignedToGroupForRoleIdAsync(UserRoleId, userId);
         var completedTask =
-            _workflowTaskService.GetCompletedForRoleIdAsync(role.Id);
+            _workflowTaskService.GetCompletedForRoleIdAsync(UserRoleId);
 
         Task<List<(string From, string Subject, string? CABName, string? Assignee, DateTime LastUpdated, string? DetailLink)>>
             unAssignedItemsTask =
@@ -108,7 +108,7 @@ public class NotificationController : Controller
 
         var model = new NotificationsViewModel
         (
-            Constants.PageTitle.Notifications,
+            $"{Constants.PageTitle.Notifications} {Roles.NameFor(UserRoleId)}",
             new NotificationsViewModelTable((await unAssignedItemsTask).Any(), sf, sd,
                 (await unAssignedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take), new PaginationViewModel
                 {
@@ -120,7 +120,7 @@ public class NotificationController : Controller
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(UnassignedTabName, sf)),
                 UnassignedTabName,
-                $"There are no notifications assigned to {role.Label}", 
+                $"There are no notifications assigned to {Roles.NameFor(UserRoleId)}", 
                 (await unAssignedItemsTask).Count, SentOnLabel),
             new NotificationsViewModelTable((await assignedToMeItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
                 (await assignedToMeItemsTask).Skip(skipTake.Skip).Take(skipTake.Take),
@@ -145,7 +145,7 @@ public class NotificationController : Controller
                 },
                 new MobileSortTableViewModel(sf, SortDirectionHelper.Descending,
                     BuildMobileSortOptions(AssignedToGroupTabName, sf)),
-                AssignedToGroupTabName, $"There are no notifications assigned to another {role.Label} user",
+                AssignedToGroupTabName, $"There are no notifications assigned to another {Roles.NameFor(UserRoleId)} user",
                 (await assignedToGroupTask).Count),
             new NotificationsViewModelTable((await completedItemsTask).Any(), sf, SortDirectionHelper.Get(sd),
                 (await completedItemsTask).Skip(skipTake.Skip).Take(skipTake.Take),
@@ -160,7 +160,7 @@ public class NotificationController : Controller
                     BuildMobileSortOptions(CompletedTabName, sf)),
                 CompletedTabName,
                 "There are no completed notifications", (await completedItemsTask).Count, CompletedOn),
-            role.Label
+            Roles.NameFor(UserRoleId)
         );
         return model;
     }
@@ -215,15 +215,15 @@ public class NotificationController : Controller
             string? cabName = null;
             if (notification.CABId.HasValue)
             {
-                 var cabs = await _cachedPublishedCABService.FindAllDocumentsByCABIdAsync(notification.CABId.ToString()!);
-                 cabName = cabs.FirstOrDefault()?.Name;
+                var cabs = await _cachedPublishedCABService.FindAllDocumentsByCABIdAsync(notification.CABId.ToString()!);
+                cabName = cabs.FirstOrDefault()?.Name;
             }
 
             var item = (From: notification.Submitter.FirstAndLastName,
                 Subject: notification.TaskType.GetEnumDescription(),
                 CABName: cabName,
                 Assignee: notification.Assignee?.FirstAndLastName,
-                LastUpdated: notification.SentOn,
+                LastUpdated: notification.LastUpdatedOn.ToLocalTime(),
                 DetailLink: Url.RouteUrl(NotificationDetailsController.Routes.NotificationDetails,
                     new { id = notification.Id.ToString() }));
             items.Add(item);

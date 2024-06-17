@@ -1,15 +1,17 @@
 ﻿using AutoMapper;
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
-using System.ComponentModel;
-using System.Xml.Schema;
+using MoreLinq;
+using System.Collections.Generic;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Core.Domain;
 using UKMCAB.Core.Security;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
@@ -25,18 +27,20 @@ namespace UKMCAB.Core.Services.CAB
         private readonly ICABRepository _cabRepository;
         private readonly ICachedSearchService _cachedSearchService;
         private readonly ICachedPublishedCABService _cachedPublishedCabService;
+        private readonly ILegislativeAreaService _legislativeAreaService;
         private readonly TelemetryClient _telemetryClient;
         private readonly IMapper _mapper;
         private readonly IFileStorage _fileStorage;
 
         public CABAdminService(ICABRepository cabRepository, ICachedSearchService cachedSearchService,
-            ICachedPublishedCABService cachedPublishedCabService, IFileStorage fileStorage,
+            ICachedPublishedCABService cachedPublishedCabService, ILegislativeAreaService legislativeAreaService, IFileStorage fileStorage,
             TelemetryClient telemetryClient,
             IMapper mapper)
         {
             _cabRepository = cabRepository;
             _cachedSearchService = cachedSearchService;
             _cachedPublishedCabService = cachedPublishedCabService;
+            _legislativeAreaService = legislativeAreaService;
             _telemetryClient = telemetryClient;
             _mapper = mapper;
             _fileStorage = fileStorage;
@@ -81,17 +85,26 @@ namespace UKMCAB.Core.Services.CAB
 
 
         /// <inheritdoc />
-        public async Task<List<Document>> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
+        public async Task<CabManagementDetailsModel> FindAllCABManagementQueueDocumentsForUserRole(string? userRole)
         {
-            if (!string.IsNullOrWhiteSpace(userRole))
-            {
-                return await _cabRepository.Query<Document>(d => (d.CreatedByUserGroup == userRole &&
-                                                                  d.StatusValue == Status.Draft) ||
-                                                                 d.StatusValue == Status.Archived);
-            }
+            List<Document> allCabs = await _cabRepository.Query<Document>(d =>
+                     (userRole == Roles.OPSS.Id || d.CreatedByUserGroup == userRole) &&
+                     (d.StatusValue == Status.Draft ||
+                      d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToUnpublish ||
+                      d.StatusValue == Status.Published && d.SubStatus == SubStatus.PendingApprovalToArchive ||
+                      d.StatusValue == Status.Archived && d.SubStatus == SubStatus.PendingApprovalToUnarchive ||
+                      d.StatusValue == Status.Archived && d.SubStatus == SubStatus.PendingApprovalToUnarchivePublish));
 
-            return await _cabRepository.Query<Document>(d =>
-                d.StatusValue == Status.Draft || d.StatusValue == Status.Archived);
+            var model = new CabManagementDetailsModel
+            {
+                AllCabs = allCabs,
+                DraftCabs = allCabs.Where(cab => cab.SubStatus == SubStatus.None).ToList(),
+                PendingDraftCabs = allCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToUnarchive || cab.SubStatus == SubStatus.PendingApprovalToUnpublish).ToList(),
+                PendingPublishCabs = allCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToPublish || cab.SubStatus == SubStatus.PendingApprovalToUnarchivePublish).ToList(),
+                PendingArchiveCabs = allCabs.Where(cab => cab.SubStatus == SubStatus.PendingApprovalToArchive).ToList(),
+            };
+
+            return model;
         }
 
         public async Task<Document?> GetLatestDocumentAsync(string cabId)
@@ -112,6 +125,19 @@ namespace UKMCAB.Core.Services.CAB
             return null;
         }
 
+        public async Task FilterCabContentsByLaIfPendingOgdApproval(Document latestDocument, string userRoleId)
+        {
+            // Check if the CAB is pending OGD approval. If so, only display data for the LAs that the current user's role is linked to.
+            if (latestDocument.IsPendingOgdApproval)
+            {
+                latestDocument.DocumentLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
+
+                var ogdLegislativeAreas = await _legislativeAreaService.GetLegislativeAreasByRoleId(userRoleId);
+                var ogdLaNames = ogdLegislativeAreas.Select(la => la.Name).ToList();
+                latestDocument.Schedules.RemoveAll(s => s.LegislativeArea != null && !ogdLaNames.Contains(s.LegislativeArea));
+            }
+        }
+
         public IAsyncEnumerable<string> GetAllCabIds()
         {
             return _cabRepository.GetItemLinqQueryable().Select(x => x.CABId).AsAsyncEnumerable();
@@ -129,7 +155,11 @@ namespace UKMCAB.Core.Services.CAB
             document.CABId ??= Guid.NewGuid().ToString();
             document.AuditLog.Add(auditItem);
             document.StatusValue = Status.Draft;
-            document.CreatedByUserGroup = userAccount.Role!.ToLower();
+
+            if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
+            {
+                document.CreatedByUserGroup = userAccount.Role!.ToLower();
+            }   
 
             var rv = await _cabRepository.CreateAsync(document, auditItem.DateTime);
             await UpdateSearchIndexAsync(rv);
@@ -180,6 +210,15 @@ namespace UKMCAB.Core.Services.CAB
             {
                 draft.SubStatus = SubStatus.PendingApprovalToPublish;
                 draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+                draft.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Draft)
+                    .ForEach(la => la.Status = LAStatus.PendingApproval);
+            } 
+            else
+            {
+                if (draft.DocumentLegislativeAreas.All(la => la.Status is LAStatus.Published or LAStatus.Declined or LAStatus.DeclinedByOpssAdmin or LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or LAStatus.DeclinedToRemoveByOPSS or LAStatus.DeclinedToUnarchiveByOPSS))
+                {
+                    draft.SubStatus = SubStatus.None;
+                }
             }
 
             if (draft.StatusValue == Status.Published)
@@ -201,7 +240,6 @@ namespace UKMCAB.Core.Services.CAB
 
             return draft;
         }
-
         public async Task DeleteDraftDocumentAsync(UserAccount userAccount, Guid cabId, string? deleteReason)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId.ToString());
@@ -286,8 +324,67 @@ namespace UKMCAB.Core.Services.CAB
                 await _cachedSearchService.RemoveFromIndexAsync(publishedOrArchivedDocument.id);
             }
 
+            var cabId = new Guid(latestDocument.CABId);
+
+            var docLaToArchive = latestDocument.DocumentLegislativeAreas
+                .Where(docLa => docLa.Status is
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin);
+
+            foreach (var docLa in docLaToArchive)
+            {
+                await ArchiveLegislativeAreaAsync(userAccount, cabId, docLa.LegislativeAreaId);
+
+                var scheduleIds = latestDocument.Schedules?.Where(f => 
+                    f.LegislativeArea != null && 
+                    f.LegislativeArea == docLa.LegislativeAreaName).Select(f => f.Id).ToList();
+
+                if (scheduleIds != null)
+                {
+                    if (docLa.Status == LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin)
+                    {
+                        await ArchiveSchedulesAsync(userAccount, cabId, scheduleIds);
+                    }
+                    else if (docLa.Status == LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin)
+                    {
+                        await RemoveSchedulesAsync(userAccount, cabId, scheduleIds);
+                    }
+                }
+            }
+
+            var docLaToUnArchive = latestDocument.DocumentLegislativeAreas
+                .Where(docLa => docLa.Status == LAStatus.ApprovedToUnarchiveByOPSS);
+
+            foreach (var docLa in docLaToUnArchive)
+            {
+                await UnArchiveLegislativeAreaAsync(userAccount, cabId, docLa.LegislativeAreaId);
+            }               
+
+            if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
+            {
+                latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
+            }
+            else
+            {
+                latestDocument.DocumentLegislativeAreas.Where(la => la.Status is 
+                    LAStatus.ApprovedByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.DeclinedToRemoveByOGD or 
+                    LAStatus.DeclinedToRemoveByOPSS or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
+                    LAStatus.ApprovedToUnarchiveByOPSS
+                ).ForEach(la => la.Status = LAStatus.Published);
+
+                await RemoveLegislativeAreasNotApprovedByOPSS(latestDocument);
+            }
+
             latestDocument.StatusValue = Status.Published;
             latestDocument.SubStatus = SubStatus.None;
+            
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
                 publishedOrArchivedDocument, publishInternalReason, publishPublicReason));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
@@ -460,7 +557,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd,
-            string laName)
+            string laName, string roleId)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
@@ -472,7 +569,9 @@ namespace UKMCAB.Core.Services.CAB
             {
                 Id = guid,
                 LegislativeAreaName = laName,
-                LegislativeAreaId = laToAdd
+                LegislativeAreaId = laToAdd,
+                RoleId = roleId,
+                Status = LAStatus.Draft,
             });
 
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
@@ -535,10 +634,78 @@ namespace UKMCAB.Core.Services.CAB
 
             // archive document legislative area
             var documentLegislativeArea =
-                latestDocument?.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId) ??
-                throw new InvalidOperationException("No legislative area found");
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Archived = true;
 
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+        }
+
+        public async Task UnArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string? reason = default)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
+                                 throw new InvalidOperationException("No document found");
+
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+
+            documentLegislativeArea.Status = LAStatus.Draft;
+            documentLegislativeArea.Archived = false;
+
+            if(!String.IsNullOrWhiteSpace(reason))
+            {
+                documentLegislativeArea.RequestReason = reason;
+            }
+
+            var scheduleIds = latestDocument.Schedules?.Where(f =>
+                  f.LegislativeArea != null &&
+                  f.LegislativeArea == documentLegislativeArea.LegislativeAreaName).Select(f => f.Id).ToList();
+
+            if (scheduleIds != null && scheduleIds.Any())
+            {
+                var selectedSchedules = latestDocument.Schedules?.Where(n => scheduleIds.Contains(n.Id)).ToList();
+
+                if (selectedSchedules != null && selectedSchedules.Any())
+                {
+                    foreach (var schedule in selectedSchedules)
+                    {
+                        schedule.Archived = false;
+                    }                    
+                }
+            }
+
+            await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+        }
+
+        public async Task ApproveLegislativeAreaAsync(UserAccount approver, Guid cabId, Guid legislativeAreaId, LAStatus approvedLAStatus)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
+                                 throw new InvalidOperationException("No document found");
+
+            // Approve document legislative area
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+            documentLegislativeArea.Status = approvedLAStatus;
+
+            documentLegislativeArea.Archived = documentLegislativeArea.Status switch
+            {
+                LAStatus.ApprovedToUnarchiveByOPSS => false,
+                LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin => true,
+                _ => documentLegislativeArea.Archived
+            };
+            await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
+        }
+
+        public async Task DeclineLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string reason, LAStatus declinedLAStatus)
+        {
+            var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
+                                 throw new InvalidOperationException("No document found");
+
+            // decline document legislative area
+            var documentLegislativeArea =
+                latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
+            documentLegislativeArea.Status = declinedLAStatus;
+            reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " declined: </br>" + reason;
+            latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,reason));
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
@@ -561,7 +728,7 @@ namespace UKMCAB.Core.Services.CAB
                     await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 }
             }
-        }
+        }       
 
         public async Task RemoveSchedulesAsync(UserAccount userAccount, Guid cabId, List<Guid> ScheduleIds)
         {
@@ -643,6 +810,98 @@ namespace UKMCAB.Core.Services.CAB
             {
                 await _fileStorage.DeleteCABSchedule(blobName);
             }
+        }
+
+        public async Task RemoveLegislativeAreasToApprovedToRemoveByOPSS(Document document)
+        {
+            var documentLAList = document.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.ApprovedToRemoveByOpssAdmin).ToList();
+
+            foreach (DocumentLegislativeArea documentLegislativeArea in documentLAList)
+            {
+                // remove scope of appointment
+                var scopeOfAppointments = document.ScopeOfAppointments
+                    .Where(n => n.LegislativeAreaId == documentLegislativeArea.LegislativeAreaId).ToList();
+                List<string> blobsToBeDeleted = new();
+
+                foreach (var scopeOfAppointment in scopeOfAppointments)
+                {
+                    document.ScopeOfAppointments.Remove(scopeOfAppointment);
+                }
+
+                // remove product schedules     
+                if (document.Schedules != null && document.Schedules.Any())
+                {
+                    var schedules = document.Schedules
+                        .Where(n => n.LegislativeArea != null && n.LegislativeArea == documentLegislativeArea.LegislativeAreaName).ToList();
+
+                    foreach (var schedule in schedules)
+                    {
+                        // check if same blob not used by any other schedule, delete it if not
+                        // only remove blobs for LAs approved to remove by OPSS Admin
+                        if (documentLegislativeArea.Status == LAStatus.ApprovedToRemoveByOpssAdmin &&
+                            document?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
+                        {
+                            blobsToBeDeleted.Add(schedule.BlobName);
+                        }
+
+                        document.Schedules.Remove(schedule);
+                    }
+                }
+
+                if (blobsToBeDeleted.Any())
+                {
+                    await DeleteBlobs(blobsToBeDeleted);
+                }
+
+                document.DocumentLegislativeAreas.Remove(documentLegislativeArea);
+            }
+
+        }
+
+        private async Task RemoveLegislativeAreasNotApprovedByOPSS(Document document)
+        {
+            var documentLAList = document.DocumentLegislativeAreas.Where(la => la.Status != LAStatus.Published).ToList();
+
+            foreach (DocumentLegislativeArea documentLegislativeArea in documentLAList)
+            {
+                // remove scope of appointment
+                var scopeOfAppointments = document.ScopeOfAppointments
+                    .Where(n => n.LegislativeAreaId == documentLegislativeArea.LegislativeAreaId).ToList();
+                List<string> blobsToBeDeleted = new();
+
+                foreach (var scopeOfAppointment in scopeOfAppointments)
+                {
+                    document.ScopeOfAppointments.Remove(scopeOfAppointment);
+                }
+
+                // remove product schedules     
+                if (document.Schedules != null && document.Schedules.Any())
+                {
+                    var schedules = document.Schedules
+                        .Where(n => n.LegislativeArea != null && n.LegislativeArea == documentLegislativeArea.LegislativeAreaName).ToList();
+
+                    foreach (var schedule in schedules)
+                    {
+                        // check if same blob not used by any other schedule, delete it if not
+                        // only remove blobs for LAs approved to remove by OPSS Admin
+                        if (documentLegislativeArea.Status == LAStatus.ApprovedToRemoveByOpssAdmin && 
+                            document?.Schedules?.Where(n => n.Id != schedule.Id && n.BlobName == schedule.BlobName).Count() == 0)
+                        {
+                            blobsToBeDeleted.Add(schedule.BlobName);
+                        }
+
+                        document.Schedules.Remove(schedule);
+                    }
+                }
+
+                if (blobsToBeDeleted.Any())
+                {
+                    await DeleteBlobs(blobsToBeDeleted);
+                }
+
+                document.DocumentLegislativeAreas.Remove(documentLegislativeArea);
+            }  
+            
         }
     }
 }

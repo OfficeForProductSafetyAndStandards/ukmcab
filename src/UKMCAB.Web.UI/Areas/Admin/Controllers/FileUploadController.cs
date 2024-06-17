@@ -13,15 +13,15 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 using UKMCAB.Web.UI.Helpers;
+using UKMCAB.Core.Security;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
     [Area("admin"), Authorize]
-    public class FileUploadController : Controller
+    public class FileUploadController : UI.Controllers.ControllerBase
     {
         private readonly ICABAdminService _cabAdminService;
         private readonly IFileStorage _fileStorage;
-        private readonly IUserService _userService;
         private readonly IFileUploadUtils _fileUploadUtils;
         private readonly ILegislativeAreaService _legislativeAreaService;
         private readonly IDistCache _distCache;
@@ -39,11 +39,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             IUserService userService,
             IFileUploadUtils fileUploadUtils,
             ILegislativeAreaService legislativeAreaService,
-            IDistCache distCache)
+            IDistCache distCache) : base(userService)
         {
             _cabAdminService = cabAdminService;
             _fileStorage = fileStorage;
-            _userService = userService;
             _fileUploadUtils = fileUploadUtils;
             _legislativeAreaService = legislativeAreaService;
             _distCache = distCache;
@@ -162,7 +161,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/schedules-list/{id}", Name = Routes.SchedulesList)]
-        public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? SelectedScheduleId,
+        public async Task<IActionResult> SchedulesList(string id, bool fromSummary, string? returnUrl, string? SelectedScheduleId,
             ProductScheduleActionMessageEnum? actionType)
         {   
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -171,7 +170,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (latestDocument == null) // Implies no document or document archived
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
-            }                                  
+            }
+
+            await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
 
             var uploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel
             {
@@ -203,6 +204,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ActiveFiles = uploadedFileViewModels.Where(n => n.Archived is null or false).ToList(),
                 CABId = id,
                 IsFromSummary = fromSummary,
+                ReturnUrl = returnUrl,
                 SuccessBannerTitle = successBannerTitle,                
                 DocumentStatus = latestDocument.StatusValue,
                 LegislativeAreas = GetDocumentAreaDistinctLegislativeAreas(latestDocument),
@@ -519,7 +521,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet]
         [Route("admin/cab/documents-list/{id}")]
-        public async Task<IActionResult> DocumentsList(string id, bool fromSummary, string? indexOfSelectedFile,
+        public async Task<IActionResult> DocumentsList(string id, bool fromSummary, string? returnUrl, string? indexOfSelectedFile,
             string? fromAction)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -566,6 +568,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     UploadedFiles = uploadedFileViewModels,
                     CABId = id,
                     IsFromSummary = fromSummary,
+                    ReturnUrl = returnUrl,
                     DocumentStatus = latestDocument.StatusValue,
                     SuccessBannerTitle = successBannerContent,
                     ShowBanner = showBanner
@@ -588,6 +591,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 UploadedFiles = uploadedFileViewModels,
                 CABId = id,
                 IsFromSummary = fromSummary,
+                ReturnUrl = returnUrl,
                 DocumentStatus = latestDocument.StatusValue
             });
         }

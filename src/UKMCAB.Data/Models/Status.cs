@@ -26,4 +26,71 @@ namespace UKMCAB.Data.Models
         [Description("Pending approval to unpublish CAB")]
         PendingApprovalToUnpublish,
     }
+    public enum LAStatus
+    {
+        [Description("None")]
+        None,
+        [Description("Approved")]
+        Approved,
+        [Description("Declined")]
+        Declined,
+        [Description("Draft")]
+        Draft,
+        [Description("Published")]
+        Published,
+        [Description("Pending approval")]
+        PendingApproval,       
+        [Description("Approved by OPSS")]
+        ApprovedByOpssAdmin,
+        [Description("Declined by OPSS")]
+        DeclinedByOpssAdmin,
+        [Description("Approved by OPSS")]
+        ApprovedToRemoveByOpssAdmin,
+        [Description("Approved by OPSS")]
+        ApprovedToArchiveAndRemoveScheduleByOpssAdmin,
+        [Description("Approved by OPSS")]
+        ApprovedToArchiveAndArchiveScheduleByOpssAdmin,
+        [Description("To remove")]
+        PendingSubmissionToRemove,
+        [Description("Pending approval")]
+        PendingApprovalToRemove,
+        [Description("Pending approval")]
+        PendingApprovalToRemoveByOpssAdmin,
+        [Description("To archive")]
+        PendingSubmissionToArchiveAndArchiveSchedule, // UKAS to OGD approval before submission
+        [Description("Pending approval")]
+        PendingApprovalToArchiveAndArchiveSchedule,  // After UKAS submitted the LA archive request and waiting for OGD approval
+        [Description("Pending approval")]
+        PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin,
+        [Description("To archive")]
+        PendingSubmissionToArchiveAndRemoveSchedule, // UKAS to OGD approval before submission
+        [Description("Pending approval")]
+        PendingApprovalToArchiveAndRemoveSchedule,  // After UKAS submitted the LA archive request and waiting for OGD approval              
+        [Description("Pending approval")]
+        PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin,
+        [Description("To unarchive")]
+        PendingSubmissionToUnarchive,
+        [Description("Pending approval")]
+        PendingApprovalToUnarchive,
+        [Description("Declined")]
+        DeclinedToRemoveByOGD,
+        [Description("Declined by OPSS")]
+        DeclinedToRemoveByOPSS,
+        [Description("Approved")]
+        PendingApprovalToUnarchiveByOpssAdmin,
+        [Description("Declined")]
+        DeclinedToUnarchiveByOGD,
+        [Description("Declined by OPSS")]
+        DeclinedToUnarchiveByOPSS,
+        [Description("Approved by OPSS")]
+        ApprovedToUnarchiveByOPSS,
+        [Description("Declined")]
+        DeclinedToArchiveAndArchiveScheduleByOGD,
+        [Description("Declined by OPSS")]
+        DeclinedToArchiveAndArchiveScheduleByOPSS,
+        [Description("Declined")]
+        DeclinedToArchiveAndRemoveScheduleByOGD,
+        [Description("Declined by OPSS")]
+        DeclinedToArchiveAndRemoveScheduleByOPSS
+    }
 }

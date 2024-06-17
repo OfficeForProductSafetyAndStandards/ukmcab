@@ -137,6 +137,51 @@
         }
 
         #endregion
+        
+        #region GetLegislativeAreasByRoleId
+        [Test]
+        public void EmptyRoleId_GetLegislativeAreaByRoleId_ShouldThrowArgumentNullException()
+        {
+            // Arrange & Act & Assert
+            Assert.ThrowsAsync<ArgumentNullException>(() => _legislativeAreaService.GetLegislativeAreasByRoleId(string.Empty));
+        }
+        
+        [Test]
+        public async Task LegislativeAreasFound_GetLegislativeAreaByRoleId_ShouldReturnLegislativeAreaFromRepository()
+        {
+            // Arrange
+            var testRoleId = "ogdRole";
+            _mockLegislativeAreaRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<LegislativeArea, bool>>>()))
+                .ReturnsAsync(new List<LegislativeArea>
+                {
+                    new() { Id = new Guid(), Name = "Name1", RoleId = testRoleId},
+                    new() { Id = new Guid(), Name = "Name2", RoleId = "ogd"},
+                    new() { Id = new Guid(), Name = "Name3", RoleId = "opss"},
+                });
+
+            // Act
+            var legislativeAreas = (await _legislativeAreaService.GetLegislativeAreasByRoleId(testRoleId)).ToList();
+
+            // Assert
+            Assert.IsNotEmpty(legislativeAreas);
+            Assert.AreEqual(testRoleId, legislativeAreas.First().RoleId);
+        }
+        
+        [Test]
+        public async Task NoLegislativeAreasFound_GetLegislativeAreaByRoleId_ShouldReturnEmptyList()
+        {
+            // Arrange
+            var testRoleId = "ogdRole";
+            _mockLegislativeAreaRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<LegislativeArea, bool>>>()))
+                .ReturnsAsync(new List<LegislativeArea>());
+
+            // Act
+            var legislativeAreas = (await _legislativeAreaService.GetLegislativeAreasByRoleId(testRoleId)).ToList();
+
+            // Assert
+            Assert.IsEmpty(legislativeAreas);
+        }
+        #endregion
 
         #region GetNextScopeOfAppointmentOptionsForLegislativeArea
 

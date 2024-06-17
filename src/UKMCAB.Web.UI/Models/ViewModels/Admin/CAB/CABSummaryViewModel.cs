@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
-    public class CABSummaryViewModel: ILayoutModel
+    public class CABSummaryViewModel : ILayoutModel
     {
         public string? Id { get; set; }
         public Status Status { get; set; }
@@ -24,6 +24,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CanPublish { get; set; }
         public bool CanSubmitForApproval { get; set; }
         public bool ShowEditActions { get; set; }
+        public bool ShowOpssDeleteDraftActionOnly { get; set; }
+        public bool IsPendingOgdApproval { get; set; }
+        public bool IsMatchingOgdUser { get; set; }
+        public bool ShowOgdActions { get; set; }
         public bool IsOPSSOrInCreatorUserGroup { get; set; }
         public bool IsEditLocked { get; set; }
         public bool EditByGroupPermitted { get; set; }
@@ -31,7 +35,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public DateTime? PublishedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
         public int GovernmentUserNoteCount { get; set; }
-        public DateTime? LastGovermentUserNoteDate { get; set; }
+        public DateTime? LastGovernmentUserNoteDate { get; set; }
         public DateTime? LastAuditLogHistoryDate { get; set; }
+        public string? SuccessBannerMessage { get; set; }
+        public int LegislativeAreasPendingApprovalCount { get; set; }
+        public bool IsOpssAdmin { get; set; }
+        public int LegislativeAreasApprovedByAdminCount { get; set; }
+        public bool LegislativeAreaHasBeenActioned { get; set; }
+
+        public bool LoggedInUserGroupIsOwner { get; set; }
+        public bool RequestedFromCabProfilePage { get; set; }
     }
 }

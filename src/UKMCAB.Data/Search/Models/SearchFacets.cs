@@ -10,5 +10,6 @@
         public List<string> SubStatus { get; set; }
         public List<string> ProvisionalLegislativeAreas { get; set; }
         public List<string> LegislativeAreaStatus { get; set; }
+        public List<string> LAStatus { get; set; }
     }
 }

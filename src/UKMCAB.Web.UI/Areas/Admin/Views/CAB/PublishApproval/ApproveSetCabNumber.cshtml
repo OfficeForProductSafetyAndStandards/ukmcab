@@ -45,7 +45,7 @@
             </govuk-character-count>            
             <govuk-warning-text icon-fallback-text="Warning">Approved CABs will be published and the user group will be notified.</govuk-warning-text>
             <div class="govuk-button-group">
-                <govuk-button id="approve" type="submit">Approve</govuk-button>
+                <govuk-button id="approve" type="submit">Confirm</govuk-button>
                 <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CabId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnURL)" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>

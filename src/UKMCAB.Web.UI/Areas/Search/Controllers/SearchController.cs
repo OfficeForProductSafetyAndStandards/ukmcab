@@ -97,7 +97,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
 
-            model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
+                   model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
 
             model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
             model.Pagination = new PaginationViewModel
@@ -165,7 +165,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 StatusesFilter = model.Statuses,
                 SubStatusesFilter = model.SubStatuses,
                 ProvisionalLegislativeAreasFilter = model.ProvisionalLegislativeAreas,
-                LegislativeAreaStatusFilter = model.LegislativeAreaStatus,
+                LegislativeAreaStatusFilter = model.ArchivedLegislativeArea,
+                LAStatusFilter = model.LAStatus,
                 UserGroupsFilter = model.UserGroups,
                 IsOPSSUser = model.IsOPSSUser,
                 Select = _select,
@@ -240,7 +241,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 } 
                 model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
                 model.LegislativeAreaProvisionalOptions = GetFilterOptions(nameof(model.ProvisionalLegislativeAreas), "Provisional legislative area", facets.ProvisionalLegislativeAreas.OrderByDescending(x => x), model.ProvisionalLegislativeAreas);
-                model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.LegislativeAreaStatus), "Legislative area status", facets.LegislativeAreaStatus.OrderByDescending(x => x), model.LegislativeAreaStatus);
+                model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.ArchivedLegislativeArea), "Archived Legislative area", facets.LegislativeAreaStatus.OrderByDescending(x => x), model.ArchivedLegislativeArea);
+
+                model.LAStatusOptions = GetFilterOptions(nameof(model.LAStatus), "Legislative area status", facets.LAStatus.OrderByDescending(x => x), model.LAStatus);
             }
             else
             {
