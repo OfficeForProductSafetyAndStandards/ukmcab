@@ -30,9 +30,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             if (items.Any() && 
                 (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))))
             {
-                var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
-                var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
-
                 foreach (var document in items)
                 {
                     document.Version = DataConstants.Version.Number;
@@ -55,6 +52,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                             la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
                         }
                     }                   
+
                     await UpdateAsync(document);
                 }
             }
@@ -82,6 +80,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         }
 
         public IQueryable<Document> GetItemLinqQueryable() => _container.GetItemLinqQueryable<Document>();
+
         public async Task UpdateAsync(Document document)
         {
             document.LastUpdatedDate = DateTime.Now;
