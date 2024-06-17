@@ -207,9 +207,13 @@ namespace UKMCAB.Core.Services.CAB
             bool submitForApproval = false)
         {
             if (submitForApproval)
-            {
-                draft.SubStatus = SubStatus.PendingApprovalToPublish;
-                draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+            {                
+                if(draft.SubStatus != SubStatus.PendingApprovalToPublish)
+                {
+                    draft.SubStatus = SubStatus.PendingApprovalToPublish;
+                    draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+                }
+                
                 draft.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Draft)
                     .ForEach(la => la.Status = LAStatus.PendingApproval);
             } 
