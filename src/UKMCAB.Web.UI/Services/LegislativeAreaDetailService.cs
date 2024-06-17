@@ -5,6 +5,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
 using UKMCAB.Web.UI.Helpers;
+using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Web.UI.Services
 {
@@ -36,6 +37,7 @@ namespace UKMCAB.Web.UI.Services
                 AppointmentDate = documentLegislativeArea.AppointmentDate,
                 ReviewDate = documentLegislativeArea.ReviewDate,
                 Reason = documentLegislativeArea.Reason,
+                RequestReason = documentLegislativeArea.RequestReason,
                 PointOfContactName = documentLegislativeArea.PointOfContactName,
                 PointOfContactEmail = documentLegislativeArea.PointOfContactEmail,
                 PointOfContactPhone = documentLegislativeArea.PointOfContactPhone,
@@ -45,6 +47,7 @@ namespace UKMCAB.Web.UI.Services
                 StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
                 RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
                 RoleId = documentLegislativeArea.RoleId,
+                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
