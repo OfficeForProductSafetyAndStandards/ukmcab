@@ -16,8 +16,8 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
+using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -940,106 +940,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
             {
-                var legislativeArea =
-                    await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea
-                        .LegislativeAreaId);
-
-                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
-                {
-                    Name = legislativeArea.Name,
-                    IsProvisional = documentLegislativeArea.IsProvisional,
-                    IsArchived = documentLegislativeArea.Archived,
-                    AppointmentDate = documentLegislativeArea.AppointmentDate,
-                    ReviewDate = documentLegislativeArea.ReviewDate,
-                    Reason = documentLegislativeArea.Reason,
-                    PointOfContactName = documentLegislativeArea.PointOfContactName,
-                    PointOfContactEmail = documentLegislativeArea.PointOfContactEmail,
-                    PointOfContactPhone = documentLegislativeArea.PointOfContactPhone,
-                    IsPointOfContactPublicDisplay = documentLegislativeArea.IsPointOfContactPublicDisplay,
-                    CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
-                    Status = documentLegislativeArea.Status,
-                    StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
-                    RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
-                    RoleId = documentLegislativeArea.RoleId,
-                };
-
-                var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
-                foreach (var scopeOfAppointment in scopeOfAppointments)
-                {
-                    var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId.HasValue
-                        ? (await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(scopeOfAppointment
-                            .PurposeOfAppointmentId.Value))?.Name
-                        : null;
-
-                    var category = scopeOfAppointment.CategoryId.HasValue
-                        ? (await _legislativeAreaService.GetCategoryByIdAsync(scopeOfAppointment.CategoryId.Value))
-                        : null;
-
-                    var subCategory = scopeOfAppointment.SubCategoryId.HasValue
-                        ? (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId
-                            .Value))?.Name
-                        : null;
-
-                    foreach (var productProcedure in scopeOfAppointment.ProductIdAndProcedureIds)
-                    {
-                        var soaViewModel = new LegislativeAreaListItemViewModel()
-                        {
-                            LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
-                            PurposeOfAppointment = purposeOfAppointment,
-                            Category = category?.Name,
-                            SubCategory = subCategory,
-                            ScopeId = scopeOfAppointment.Id,
-                        };
-
-                        if (productProcedure.ProductId.HasValue)
-                        {
-                            var product =
-                                await _legislativeAreaService.GetProductByIdAsync(productProcedure.ProductId.Value);
-                            soaViewModel.Product = product!.Name;
-                        }
-
-                        foreach (var procedureId in productProcedure.ProcedureIds)
-                        {
-                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                            soaViewModel.Procedures?.Add(procedure!.Name);
-                        }
-
-                        legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
-                    }
-
-                    foreach (var categoryProcedure in scopeOfAppointment.CategoryIdAndProcedureIds)
-                    {
-                        var soaViewModel = new LegislativeAreaListItemViewModel()
-                        {
-                            LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
-                            PurposeOfAppointment = purposeOfAppointment,
-                            Category = category?.Name,
-                            SubCategory = subCategory,
-                            ScopeId = scopeOfAppointment.Id,
-                        };
-
-                        if (categoryProcedure.CategoryId.HasValue)
-                        {
-                            category = await _legislativeAreaService.GetCategoryByIdAsync(categoryProcedure.CategoryId.Value);
-                            soaViewModel.Category = category!.Name;
-                        }
-
-                        foreach (var procedureId in categoryProcedure.ProcedureIds)
-                        {
-                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                            soaViewModel.Procedures?.Add(procedure!.Name);
-                        }
-
-                        legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
-                    }
-                }
-
-                var distinctSoa = legislativeAreaViewModel.ScopeOfAppointments.GroupBy(s => s.ScopeId).ToList();
-                foreach (var item in distinctSoa)
-                {
-                    var scopeOfApps = legislativeAreaViewModel.ScopeOfAppointments;
-                    scopeOfApps.First(soa => soa.ScopeId == item.Key).NoOfProductsInScopeOfAppointment = scopeOfApps.Count(soa => soa.ScopeId == item.Key);
-                }
+                var legislativeAreaViewModel = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(cab, documentLegislativeArea.LegislativeAreaId);
 
                 if (legislativeAreaViewModel.IsArchived == true)
                 {
