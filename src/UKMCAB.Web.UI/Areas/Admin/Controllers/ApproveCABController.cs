@@ -168,7 +168,7 @@ public class ApproveCABController : Controller
                 LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS).ForEach(la => la.Status = LAStatus.Published);
         }
 
-        if (clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval))
+        if (clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Approved))
         {
             await _cabAdminService.CreateDocumentAsync(user, clonedDocument);
             await _cabAdminService.SetSubStatusAsync(Guid.Parse(clonedDocument.CABId), Status.Draft, SubStatus.PendingApprovalToPublish, new Audit(user, AuditCABActions.Created));
