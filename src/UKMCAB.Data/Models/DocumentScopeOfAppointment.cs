@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Data.Models
 {
-    public class DocumentScopeOfAppointment
+    public class DocumentScopeOfAppointment : IEquatable<DocumentScopeOfAppointment>
     {
         public Guid Id { get; set; }
         public Guid LegislativeAreaId { get; set; }
@@ -18,5 +18,119 @@ namespace UKMCAB.Data.Models
 
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
         public List<CategoryAndProcedures> CategoryIdAndProcedureIds { get; set; } = new();
+
+        public override bool Equals(object? scopeOfAppointment) 
+        { 
+            return Equals(scopeOfAppointment as DocumentScopeOfAppointment);
+        }
+
+        public bool Equals(DocumentScopeOfAppointment? otherSoa)
+        {
+            
+            if (otherSoa == null) 
+                return false;
+
+            if (!LegislativeAreaId.Equals(otherSoa.LegislativeAreaId) ||
+                PurposeOfAppointmentId != otherSoa.PurposeOfAppointmentId ||
+                CategoryId != otherSoa.CategoryId ||
+                SubCategoryId != otherSoa.SubCategoryId)
+            {
+                return false;
+            }
+
+            if (!AreListsEqual(CategoryIds, otherSoa.CategoryIds) || !AreListsEqual(ProductIds, otherSoa.ProductIds))
+                return false;
+
+            if (!AreObjectListsEqual(CategoryIdAndProcedureIds, otherSoa.CategoryIdAndProcedureIds) ||
+                !AreObjectListsEqual(ProductIdAndProcedureIds, otherSoa.ProductIdAndProcedureIds))
+                return false;
+
+            return true;
+        }
+
+        public override int GetHashCode()
+        {
+            var hash = 17;
+            hash = hash * 31 + LegislativeAreaId.GetHashCode();
+            hash = hash * 31 + PurposeOfAppointmentId.GetHashCode();
+            hash = hash * 31 + CategoryId.GetHashCode();
+            hash = hash * 31 + SubCategoryId.GetHashCode();
+
+            if (CategoryIds.Any())
+            {
+                foreach (var catId in CategoryIds)
+                {
+                    hash = hash * 31 + catId.GetHashCode();
+                }
+            }
+
+            if (ProductIds.Any())
+            {
+                foreach (var prodId in ProductIds)
+                {
+                    hash = hash * 31 + prodId.GetHashCode();
+                }
+            }
+
+            if (ProductIdAndProcedureIds.Any())
+            {
+                foreach (var prodAndProcedureId in ProductIdAndProcedureIds)
+                {
+                    hash = hash * 31 + prodAndProcedureId.GetHashCode();
+                }
+            }
+
+            if (CategoryIdAndProcedureIds.Any())
+            {
+                foreach (var catAndProcedureId in CategoryIdAndProcedureIds)
+                {
+                    hash = hash * 31 + catAndProcedureId.GetHashCode();
+                }
+            }
+
+            return hash;
+        }
+        private bool AreListsEqual(List<Guid> list1, List<Guid> list2)
+        {
+            if (list1 == null && list2 == null)
+                return true;
+            if (list1 == null || list2 == null)
+                return false;
+            if (list1.Count != list2.Count)
+                return false;
+
+            var grouped1 = list1.GroupBy(x => x).OrderBy(g => g.Key);
+            var grouped2 = list2.GroupBy(x => x).OrderBy(g => g.Key);
+
+            return grouped1.SequenceEqual(grouped2, new GroupComparer());
+        }
+
+        private bool AreObjectListsEqual<T>(List<T> list1, List<T> list2) where T : IEquatable<T> 
+        { 
+            if(list1 == null && list2 == null)
+                return true;
+            if(list1 == null || list2 == null)
+                return false;
+            if(list1.Count != list2.Count)
+                return false;
+
+            var sortedList1 = list1.OrderBy(x => x).ToList();
+            var sortedList2 = list2.OrderBy(x => x).ToList();
+
+            return sortedList1.SequenceEqual(sortedList2);
+        }        
+    }
+
+    public class GroupComparer : IEqualityComparer<IGrouping<Guid, Guid>>
+    {
+        public bool Equals(IGrouping<Guid, Guid> x, IGrouping<Guid, Guid> y)
+        {
+            return x.Key == y.Key && x.Count() == y.Count();    
+        }
+
+        public int GetHashCode(IGrouping<Guid, Guid> obj)
+        {
+            return obj.Key.GetHashCode() ^ obj.Count().GetHashCode();
+        }
     }
 }
