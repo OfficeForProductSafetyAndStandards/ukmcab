@@ -25,8 +25,7 @@ namespace UKMCAB.Data.Models
         }
 
         public bool Equals(DocumentScopeOfAppointment? otherSoa)
-        {
-            
+        {            
             if (otherSoa == null) 
                 return false;
 
@@ -99,10 +98,10 @@ namespace UKMCAB.Data.Models
             if (list1.Count != list2.Count)
                 return false;
 
-            var grouped1 = list1.GroupBy(x => x).OrderBy(g => g.Key);
-            var grouped2 = list2.GroupBy(x => x).OrderBy(g => g.Key);
+            var groupedList1 = list1.GroupBy(x => x).OrderBy(g => g.Key);
+            var groupedList2 = list2.GroupBy(x => x).OrderBy(g => g.Key);
 
-            return grouped1.SequenceEqual(grouped2, new GroupComparer());
+            return groupedList1.SequenceEqual(groupedList2, new GroupComparer());
         }
 
         private bool AreObjectListsEqual<T>(List<T> list1, List<T> list2) where T : IEquatable<T> 

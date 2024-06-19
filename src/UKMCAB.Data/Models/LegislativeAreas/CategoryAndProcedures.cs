@@ -1,24 +1,41 @@
 ﻿namespace UKMCAB.Data.Models.LegislativeAreas
 {
-    public class CategoryAndProcedures : IEquatable<CategoryAndProcedures>
+    public class CategoryAndProcedures : IEquatable<CategoryAndProcedures>, IComparable<CategoryAndProcedures>
     {
         public Guid? CategoryId { get; set; }
         public List<Guid> ProcedureIds { get; set; } = new();
 
-        public override bool Equals(object otherCatProc)
+        public int CompareTo(CategoryAndProcedures? other)
         {
-            return Equals(otherCatProc as CategoryAndProcedures);
+            if (other == null)
+                return 1;
+
+            if (CategoryId == null && other.CategoryId != null) 
+                return 0;
+
+            if(CategoryId == null) 
+                return -1;
+
+            if(other.CategoryId == null) 
+                return 1;
+
+            return CategoryId.Value.CompareTo(other.CategoryId);
         }
 
-        public bool Equals(CategoryAndProcedures otherCatProc)
+        public override bool Equals(object other)
         {
-            if (otherCatProc == null) 
+            return Equals(other as CategoryAndProcedures);
+        }
+
+        public bool Equals(CategoryAndProcedures other)
+        {
+            if (other == null) 
                 return false;
 
-            if (CategoryId != otherCatProc.CategoryId)
+            if (CategoryId != other.CategoryId)
                 return false;
 
-            return AreListsEqual(ProcedureIds, otherCatProc.ProcedureIds);
+            return AreListsEqual(ProcedureIds, other.ProcedureIds);
  
         }
 

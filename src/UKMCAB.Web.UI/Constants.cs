@@ -66,6 +66,7 @@ public static class Constants
     public class ErrorMessages
     {
         public const string InvalidLoginAttempt = "Enter a valid email address and password";
+        public const string DuplicateEntry = "Duplicate entry - record could not be saved.";
     }
 }
 

@@ -1,24 +1,41 @@
 ﻿namespace UKMCAB.Data.Models.LegislativeAreas
 {
-    public class ProductAndProcedures : IEquatable<ProductAndProcedures>
+    public class ProductAndProcedures : IEquatable<ProductAndProcedures>, IComparable<ProductAndProcedures>
     {
         public Guid? ProductId { get; set; }
         public List<Guid> ProcedureIds { get; set; } = new();
 
-        public override bool Equals(object otherCatProc)
+        public int CompareTo(ProductAndProcedures? other)
         {
-            return Equals(otherCatProc as ProductAndProcedures);
+            if (other == null)
+                return 1;
+
+            if (ProductId == null && other.ProductId != null) 
+                return 0;
+
+            if (ProductId == null) 
+                return -1;
+
+            if (other.ProductId == null) 
+                return 1;
+
+            return ProductId.Value.CompareTo(other.ProductId);
         }
 
-        public bool Equals(ProductAndProcedures otherProdAndProc)
+        public override bool Equals(object other)
         {
-            if (otherProdAndProc == null)
+            return Equals(other as ProductAndProcedures);
+        }
+
+        public bool Equals(ProductAndProcedures other)
+        {
+            if (other == null)
                 return false;
 
-            if (!ProductId.Equals(otherProdAndProc.ProductId))
+            if (!ProductId.Equals(other.ProductId))
                 return false;
 
-            return AreListsEqual(ProcedureIds, otherProdAndProc.ProcedureIds);
+            return AreListsEqual(ProcedureIds, other.ProcedureIds);
 
         }
         public override int GetHashCode()

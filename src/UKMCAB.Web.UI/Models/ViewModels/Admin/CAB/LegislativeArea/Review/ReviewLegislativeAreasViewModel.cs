@@ -7,6 +7,7 @@
         public List<CABLegislativeAreasItemViewModel> ArchivedLAItems { get; set; } = new();
         public string? Title => "Legislative areas";
         public string? SuccessBannerMessage { get; set; } 
+        public string? BannerContent { get; set; } 
         public string? ErrorLink { get; set; }
         public bool FromSummary { get; set; }
         public bool ShowArchiveLegislativeAreaAction { get; set; }

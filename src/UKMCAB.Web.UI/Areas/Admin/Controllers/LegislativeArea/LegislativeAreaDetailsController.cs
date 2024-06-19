@@ -756,20 +756,9 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == scopeOfAppointment.LegislativeAreaId);
             documentLegislativeArea?.MarkAsDraft(latestDocument);
 
-            var same = latestDocument.ScopeOfAppointments.Any(s => s.Equals(scopeOfAppointment));
-            if (same)
-            {
-                var laIdOrLaName = vm.LegislativeArea;
-                ModelState.AddModelError(laIdOrLaName, "Select a scope of appointment");
-                //var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
-                //if (isOgdUser)
-                //{
-                //    await _cabAdminService.FilterCabContentsByLaIfPendingOgdApproval(latestDocument, UserRoleId);
-                //}
-                //var vmx = await PopulateCABLegislativeAreasViewModelAsync(latestDocument);
-                //vm.ErrorLink = laIdOrLaName;
-                //return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
-                return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
+            if (latestDocument.ScopeOfAppointments.Any(s => s.Equals(scopeOfAppointment)))
+            {                
+                return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry});
             }
                 
             latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
