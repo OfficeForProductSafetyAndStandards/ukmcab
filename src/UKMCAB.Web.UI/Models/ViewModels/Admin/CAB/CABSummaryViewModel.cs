@@ -50,7 +50,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public string GetBannerContent()
         {
-            if (SubStatus == SubStatus.PendingApprovalToPublish && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin)
+            if (CanPublish || (SubStatus == SubStatus.PendingApprovalToPublish && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin))
             {
                 return string.Empty;
             }
