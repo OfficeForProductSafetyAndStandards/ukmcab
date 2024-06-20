@@ -33,7 +33,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
     }
 
     [HttpGet(Name = Routes.ReviewLegislativeAreas)]
-    public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string? returnUrl, LegislativeAreaActionMessageEnum? actionType, bool fromSummary)
+    public async Task<IActionResult> ReviewLegislativeAreas(Guid id, string? returnUrl, LegislativeAreaActionMessageEnum? actionType, bool fromSummary, string? bannerContent)
     {
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
         // Implies no document or archived
@@ -49,6 +49,10 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         if (actionType.HasValue)
         {
             vm.SuccessBannerMessage = AlertMessagesUtils.LegislativeAreaActionMessages[actionType.Value];
+        }
+        if (!string.IsNullOrWhiteSpace(bannerContent))
+        {
+            vm.BannerContent = bannerContent;
         }
         vm.FromSummary = fromSummary;
         vm.ReturnUrl = returnUrl;

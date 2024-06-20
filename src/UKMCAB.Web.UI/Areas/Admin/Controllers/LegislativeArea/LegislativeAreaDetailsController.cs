@@ -756,6 +756,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == scopeOfAppointment.LegislativeAreaId);
             documentLegislativeArea?.MarkAsDraft(latestDocument);
 
+            if (latestDocument.ScopeOfAppointments.Any(s => s.Equals(scopeOfAppointment)))
+            {                
+                return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry});
+            }
+                
             latestDocument.ScopeOfAppointments.Add(scopeOfAppointment);
             latestDocument.HiddenScopeOfAppointments =
                 await SetHiddenScopeOfAppointmentsAsync(latestDocument.ScopeOfAppointments);

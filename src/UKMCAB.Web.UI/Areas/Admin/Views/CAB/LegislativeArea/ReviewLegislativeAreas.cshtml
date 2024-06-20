@@ -39,6 +39,11 @@
     </div>
 }
 
+@if (!string.IsNullOrWhiteSpace(Model.BannerContent))
+{
+    <partial model="@Model.BannerContent" name="Partials/_PageContentBanner"/>
+}
+
 <div class="govuk-grid-row">
     <form method="post" enctype="multipart/form-data" novalidate>
         <input type="hidden" asp-for="FromSummary"/>
