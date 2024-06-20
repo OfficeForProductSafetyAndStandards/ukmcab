@@ -102,9 +102,9 @@
 
     <div class="govuk-grid-column-one-quarter">
         <div class="govuk-!-margin-right-3">
-            @if (Model is { SubSectionEditAllowed: false, SubStatus: SubStatus.None, IsEditLocked: false } ||
-                 Model is { SubSectionEditAllowed: false, SubStatus: SubStatus.PendingApprovalToPublish, IsEditLocked: false, IsPendingOgdApproval: true, IsMatchingOgdUser: true } ||
-                 Model is { SubSectionEditAllowed: false, SubStatus: SubStatus.PendingApprovalToPublish, IsEditLocked: false, HasActionableLegislativeAreaForOpssAdmin: true, IsOpssAdmin: true })
+            @if (Model is { SubSectionEditAllowed: false } && (Model is { SubStatus: SubStatus.None, IsEditLocked: false } ||
+                 Model is {SubStatus: SubStatus.PendingApprovalToPublish, IsEditLocked: false, IsPendingOgdApproval: true, IsMatchingOgdUser: true } ||
+            Model is {SubStatus: SubStatus.PendingApprovalToPublish, IsEditLocked: false, HasActionableLegislativeAreaForOpssAdmin: true, IsOpssAdmin: true } || Model is { IsOpssAdmin : true, CanPublish : true }))
             {
                 <div class="ukmcab-full-width--mobile ukmcab-float__right ukmcab-text-align-right ukmcab-padding-top-30">
                     <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="@true" asp-route-returnUrl="@returnUrl">Edit</a>
