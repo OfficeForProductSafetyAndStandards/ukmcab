@@ -134,7 +134,7 @@ namespace UKMCAB.Data.Models
             var previousActiveLAs = previousLAs.Where(n => n.Archived is null or false);
             var previousArchivedLAs = previousLAs.Where(n => n.Archived == true);
 
-            var newlyAddedLAs = currentActiveLAs.Where(la => previousActiveLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
+            var newlyAddedLAs = currentActiveLAs.Where(la => previousLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
             var removedLAs =  previousLAs.Where(la => currentLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
             var newlyAddedAndArchivedLAs = currentArchivedLAs.Where(la => previousLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
             var archivedLAs = currentArchivedLAs.Where(la => previousArchivedLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId)).Except(newlyAddedAndArchivedLAs);            
