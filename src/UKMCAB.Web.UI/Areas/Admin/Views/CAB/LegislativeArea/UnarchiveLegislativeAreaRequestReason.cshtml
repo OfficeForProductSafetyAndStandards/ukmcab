@@ -37,6 +37,15 @@
                     to users that are signed in to the UKMCAB service.
                 </govuk-character-count-hint>
             </govuk-character-count>
+            <govuk-character-count asp-for="PublicUserNotes" max-length="1000" rows="5">
+                <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                    Public reason (optional)
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Enter the reason for unarchiving the legislative area. This will be shown
+                    to all users using the UKMCAB service.
+                </govuk-character-count-hint>
+            </govuk-character-count>
             <div class="govuk-button-group">
                 <govuk-button type="submit">Confirm</govuk-button>
                 <a asp-area="Admin" asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-fromSummary="@Model.FromSummary" class="govuk-link govuk-link--no-visited-state">Cancel</a>

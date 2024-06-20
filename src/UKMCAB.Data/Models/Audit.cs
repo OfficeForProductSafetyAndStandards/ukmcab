@@ -181,6 +181,13 @@ namespace UKMCAB.Data.Models
                             "<p class=\"govuk-body\">{0} contact details changed.</p>",
                             currentLa.LegislativeAreaName);
                     }
+
+                    if (previousLa.Archived == true && currentLa.Archived == false)
+                    {
+                        sb.AppendFormat(
+                            "<p class=\"govuk-body\">{0} was unarchived from legislative area.</p>",
+                            currentLa.LegislativeAreaName);
+                    }
                 }
             }
         }
@@ -228,6 +235,14 @@ namespace UKMCAB.Data.Models
                         {
                             sb.AppendFormat(
                                 "<p class=\"govuk-body\">The file for <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been replaced.</p>",
+                                ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label);
+                        }
+
+                        if (previousFileUpload.Archived == true && fileupload.Archived == false)
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The file for <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been unarchived.</p>",
                                 ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
                                 fileupload.Label);
                         }
