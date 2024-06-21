@@ -7,6 +7,7 @@ public record ApproveCABViewModel(Guid CabId, string CabName,string? ReturnUrl, 
     [Required(ErrorMessage = "Enter a CAB number", AllowEmptyStrings = false)]
     [RegularExpression(@"^[\w\d\s(),-]*$", ErrorMessage = "Enter a CAB number using only numbers and letters")]
     public string CABNumber { get; set; } = null!;
+    public string PreviousCABNumbers { get; set; } = null!;
 
     [Required(ErrorMessage = "Select who should see the CAB number", AllowEmptyStrings = false)]
     public string CabNumberVisibility { get; set; } = null!;

@@ -181,6 +181,7 @@ namespace UKMCAB.Core.Services.CAB
                 Name = document.Name,
                 CABId = document.CABId,
                 CABNumber = document.CABNumber,
+                PreviousCABNumbers = document.PreviousCABNumbers,
                 AddressLine1 = document.AddressLine1,
                 AddressLine2 = document.AddressLine2,
                 TownCity = document.TownCity,
