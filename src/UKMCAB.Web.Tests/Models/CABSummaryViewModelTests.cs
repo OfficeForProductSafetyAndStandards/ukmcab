@@ -97,7 +97,7 @@ namespace UKMCAB.Web.Tests.Models
 
         [Category("CAB Summary page - Banner Content Happy Path")]
         [Test]
-        public void GetBannerContent_Should_Return_CorrectString_When_ANonOPSSAdminUserTriesToCreateADraftCABFromCABProfilePageOfACABWithAnExistingDraftCreatedByOPSSAdmin()
+        public void GetBannerContent_Should_Return_CorrectString_When_AUkasUserTriesToCreateADraftCABFromCABProfilePageOfACABWithAnExistingDraftCreatedByOPSSAdmin()
         {
             // Arrange
             var _sut = new CABSummaryViewModel
@@ -106,6 +106,7 @@ namespace UKMCAB.Web.Tests.Models
                 Status = Status.Draft,
                 IsPendingOgdApproval = false,
                 IsOpssAdmin = false,
+                IsUkas = true,
                 RequestedFromCabProfilePage = true,
             };
 
