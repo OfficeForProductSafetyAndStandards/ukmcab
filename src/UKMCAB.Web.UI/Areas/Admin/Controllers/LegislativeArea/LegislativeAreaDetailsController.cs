@@ -721,21 +721,37 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             if (vm.CurrentProductId.HasValue)
             {
-                var productAndProcedures = new ProductAndProcedures
+                var thisProduct = scopeOfAppointment.ProductIdAndProcedureIds.Where(p => p.ProductId == vm.CurrentProductId).FirstOrDefault();
+                if (thisProduct == null)
                 {
-                    ProductId = vm.CurrentProductId,
-                    ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
-                };
-                scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
+                    var productAndProcedures = new ProductAndProcedures
+                    {
+                        ProductId = vm.CurrentProductId,
+                        ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
+                    };
+                    scopeOfAppointment.ProductIdAndProcedureIds.Add(productAndProcedures);
+                }
+                else
+                {
+                    thisProduct.ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!;
+                }
             }
             else
             {
-                var categoryAndProcedures = new CategoryAndProcedures
+                var thisCategory = scopeOfAppointment.CategoryIdAndProcedureIds.Where(c => c.CategoryId == vm.CurrentCategoryId).FirstOrDefault();
+                if (thisCategory == null)
                 {
-                    CategoryId = vm.CurrentCategoryId,
-                    ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
-                };
-                scopeOfAppointment.CategoryIdAndProcedureIds.Add(categoryAndProcedures);
+                    var categoryAndProcedures = new CategoryAndProcedures
+                    {
+                        CategoryId = vm.CurrentCategoryId,
+                        ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
+                    };
+                    scopeOfAppointment.CategoryIdAndProcedureIds.Add(categoryAndProcedures);
+                }
+                else
+                {
+                    thisCategory.ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!;
+                }
             }
 
             await _distCache.SetAsync(string.Format(CacheKey, scopeId.ToString()), scopeOfAppointment,
