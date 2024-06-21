@@ -83,10 +83,10 @@ public class UnarchiveLegislativeAreaRequestController : UI.Controllers.Controll
             // if opss user
             if (UserRoleId == Roles.OPSS.Id)
             {               
-                await _cabAdminService.UnArchiveLegislativeAreaAsync(CurrentUser, id, vm.LegislativeAreaId, vm.UserNotes);
+                await _cabAdminService.UnArchiveLegislativeAreaAsync(CurrentUser, id, vm.LegislativeAreaId, vm.UserNotes, vm.PublicUserNotes);
 
-                return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, actionType = LegislativeAreaActionMessageEnum.LegislativeAreaUnArchived, vm.FromSummary });
-                
+                return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id, vm.FromSummary });
+
             }
             else
             {   

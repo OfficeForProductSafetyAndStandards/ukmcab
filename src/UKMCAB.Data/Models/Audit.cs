@@ -134,7 +134,7 @@ namespace UKMCAB.Data.Models
             var previousActiveLAs = previousLAs.Where(n => n.Archived is null or false);
             var previousArchivedLAs = previousLAs.Where(n => n.Archived == true);
 
-            var newlyAddedLAs = currentActiveLAs.Where(la => previousActiveLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
+            var newlyAddedLAs = currentActiveLAs.Where(la => previousLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
             var removedLAs =  previousLAs.Where(la => currentLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
             var newlyAddedAndArchivedLAs = currentArchivedLAs.Where(la => previousLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
             var archivedLAs = currentArchivedLAs.Where(la => previousArchivedLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId)).Except(newlyAddedAndArchivedLAs);            
@@ -179,6 +179,13 @@ namespace UKMCAB.Data.Models
                     {
                         sb.AppendFormat(
                             "<p class=\"govuk-body\">{0} contact details changed.</p>",
+                            currentLa.LegislativeAreaName);
+                    }
+
+                    if (previousLa.Archived == true && currentLa.Archived == false)
+                    {
+                        sb.AppendFormat(
+                            "<p class=\"govuk-body\">{0} was unarchived from legislative area.</p>",
                             currentLa.LegislativeAreaName);
                     }
                 }
@@ -228,6 +235,14 @@ namespace UKMCAB.Data.Models
                         {
                             sb.AppendFormat(
                                 "<p class=\"govuk-body\">The file for <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been replaced.</p>",
+                                ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label);
+                        }
+
+                        if (previousFileUpload.Archived == true && fileupload.Archived == false)
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The file for <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been unarchived.</p>",
                                 ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
                                 fileupload.Label);
                         }
