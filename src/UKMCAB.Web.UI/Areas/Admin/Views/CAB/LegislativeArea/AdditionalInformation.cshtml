@@ -88,7 +88,7 @@
                 </div>
             </div>
 
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.UserNotes))">
+            @* <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.UserNotes))">
                 <govuk-character-count asp-for="UserNotes" max-length="1000" rows="5">
                     <govuk-character-count-label class="govuk-label--s" is-page-heading="false">
                         @Model.UserNotesLabel
@@ -108,7 +108,7 @@
                         Enter the reason for publishing this CAB. This will be shown to all users in the CAB history page.
                     </govuk-character-count-hint>
                 </govuk-character-count>
-            </div>
+            </div> *@
 
             <div class="cab-detail-group">
                 <govuk-fieldset>
