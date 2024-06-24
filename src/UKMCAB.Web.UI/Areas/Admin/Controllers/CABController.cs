@@ -464,6 +464,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ShowOgdActions = showOgdActions,
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
+                IsUkas = UserRoleId == Roles.UKAS.Id,
                 LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is 
                     LAStatus.Published or
                     LAStatus.ApprovedByOpssAdmin or
@@ -526,7 +527,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var draftUpdated = Enumerable.MaxBy(
                 latest.AuditLog.Where(l => l.Action == AuditCABActions.Created),
                 u => u.DateTime)?.DateTime != latest.LastUpdatedDate;
-            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated && !model.IsPendingOgdApproval;
+            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated && !model.IsPendingOgdApproval && !model.CanOnlyBeActionedByUkas;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated
                 && model.CabDetailsViewModel.IsCompleted
                 && model.CabContactViewModel.IsCompleted

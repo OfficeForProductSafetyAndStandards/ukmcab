@@ -156,7 +156,7 @@ namespace UKMCAB.Core.Services.CAB
             document.AuditLog.Add(auditItem);
             document.StatusValue = Status.Draft;
 
-            if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
+            if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin || la.Status == LAStatus.Approved))
             {
                 document.CreatedByUserGroup = userAccount.Role!.ToLower();
             }   
