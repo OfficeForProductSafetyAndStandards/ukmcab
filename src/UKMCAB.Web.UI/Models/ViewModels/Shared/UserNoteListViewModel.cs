@@ -7,7 +7,7 @@
     {
         public const int resultsPerPage = 10;
 
-        public UserNoteListViewModel(Guid cabDocumentId, List<UserNote> userNotes, int pageNumber, bool cabHasDraft)
+        public UserNoteListViewModel(Guid cabDocumentId, List<UserNote> userNotes, int pageNumber)
         {
             CabDocumentId = cabDocumentId;
 
@@ -33,13 +33,6 @@
                 PageNumber = pageNumber,
                 TabId = "usernotes",
             };
-
-            CabHasDraft = cabHasDraft;
-        }
-
-        public UserNoteListViewModel(Guid cabDocumentId, List<UserNote> userNotes, int pageNumber)
-            : this( cabDocumentId , userNotes, pageNumber, false)
-        {
         }
 
         public Guid CabDocumentId { get; set; }
