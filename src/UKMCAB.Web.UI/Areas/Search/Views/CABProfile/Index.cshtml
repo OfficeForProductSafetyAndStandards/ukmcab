@@ -62,6 +62,11 @@
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 
+@if (Model.HasDraft)
+{
+        <partial model="@("A Draft CAB exists for this record.")" name="Partials/_PageContentBanner" />
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
         <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>

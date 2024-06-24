@@ -570,7 +570,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     DocumentType = DataConstants.Storage.Documents
                 },
                 GovernmentUserNotes = new UserNoteListViewModel(new Guid(cabDocument.id),
-                    cabDocument.GovernmentUserNotes, pagenumber),
+                    cabDocument.GovernmentUserNotes, pagenumber, hasDraft),
                 FeedLinksViewModel = new FeedLinksViewModel
                 {
                     FeedUrl = Url.RouteUrl(Routes.CabFeed, new { id = cabDocument.CABId }),
