@@ -40,9 +40,20 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? SuccessBannerMessage { get; set; }
         public int LegislativeAreasPendingApprovalCount { get; set; }
         public bool IsOpssAdmin { get; set; }
+        public bool IsUkas { get; set; }
         public int LegislativeAreasApprovedByAdminCount { get; set; }
         public bool LegislativeAreaHasBeenActioned { get; set; }
         public bool HasActionableLegislativeAreaForOpssAdmin { get; set; }
+        public bool CanOnlyBeActionedByUkas => CabLegislativeAreasViewModel != null &&
+                                                            CabLegislativeAreasViewModel.ActiveLegislativeAreas != null &&
+                                                            CabLegislativeAreasViewModel.ActiveLegislativeAreas.Any(la => la.Status != LAStatus.Published) &&
+                                                            CabLegislativeAreasViewModel.ActiveLegislativeAreas.Where(la => la.Status != LAStatus.Published).All( la => 
+                                                                la.Status == LAStatus.DeclinedByOpssAdmin ||
+                                                                la.Status == LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS ||
+                                                                la.Status == LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS ||
+                                                                la.Status == LAStatus.DeclinedToRemoveByOPSS ||
+                                                                la.Status == LAStatus.DeclinedToUnarchiveByOPSS 
+                                                                );
 
         public bool LoggedInUserGroupIsOwner { get; set; }
         public bool RequestedFromCabProfilePage { get; set; }
@@ -60,7 +71,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             }
             else if (EditByGroupPermitted == false && Status == Status.Draft && IsPendingOgdApproval == false)
             {
-                if (IsOpssAdmin)
+                if (IsOpssAdmin || !IsUkas)
                 {
                     if (RequestedFromCabProfilePage)
                     {
