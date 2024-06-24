@@ -46,6 +46,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool HasActionableLegislativeAreaForOpssAdmin { get; set; }
         public bool CanOnlyBeActionedByUkas => CabLegislativeAreasViewModel != null &&
                                                             CabLegislativeAreasViewModel.ActiveLegislativeAreas != null &&
+                                                            CabLegislativeAreasViewModel.ActiveLegislativeAreas.Any(la => la.Status != LAStatus.Published) &&
                                                             CabLegislativeAreasViewModel.ActiveLegislativeAreas.Where(la => la.Status != LAStatus.Published).All( la => 
                                                                 la.Status == LAStatus.DeclinedByOpssAdmin ||
                                                                 la.Status == LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS ||
