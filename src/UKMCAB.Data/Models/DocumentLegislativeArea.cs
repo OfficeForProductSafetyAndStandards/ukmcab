@@ -17,6 +17,7 @@
         public string? Reason { get; set; }
 
         public string? RequestReason { get; set; }
+        public string? PublicRequestReason { get; set; }
 
         public bool? Archived { get; set; }
 
