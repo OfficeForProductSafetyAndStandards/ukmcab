@@ -40,7 +40,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     //Set LA status                    
                     foreach (var la in document.DocumentLegislativeAreas)
                     {
-                        if (la != null && (la.Status == LAStatus.None || !Enum.IsDefined(typeof(LAStatus), la.Status)))
+                        if (la != null && (la.Status == LAStatus.None))
                         {
                             la.Status = document.StatusValue switch
                             {
