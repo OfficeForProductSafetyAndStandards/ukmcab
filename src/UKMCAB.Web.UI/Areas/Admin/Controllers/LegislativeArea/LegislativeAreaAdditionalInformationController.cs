@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Security.Claims;
-using System.Threading.Channels;
+using System.Web;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
@@ -148,7 +147,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
 
     [HttpPost("additional-information/{laId}/review-date-notes", Name = Routes.LegislativeAreaAdditionalInformationReviewDateNotes)]
     public async Task<IActionResult> ReviewDateNotes(ReviewDateNotesViewModel vm,
-        Guid id, Guid laId, string submitType, string? returnUrl)
+        Guid id, Guid laId, string? returnUrl)
     {
         if (string.IsNullOrWhiteSpace(vm.UserNotes))
         {
@@ -169,14 +168,16 @@ public class LegislativeAreaAdditionalInformationController : Controller
         documentLegislativeArea.MarkAsDraft(latestDocument);
 
         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-        
+
         latestDocument.AuditLog.Add(new Audit(
-            userAccount, 
-            AuditCABActions.LegislativeAreaReviewDateUpdated, 
-            $"Changed review date on legislative area {vm.LegislativeAreaName}\r\n{vm.UserNotes}", 
+            userAccount,
+            AuditCABActions.LegislativeAreaReviewDateUpdated,
+            HttpUtility.HtmlEncode(
+                $"<p class=\"govuk-body\">Changed review date on legislative area {vm.LegislativeAreaName}</p>" +
+                $"<p class=\"govuk-body\">{vm.UserNotes}</p>"),
             vm.Reason
         ));
-
+        
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
         return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
