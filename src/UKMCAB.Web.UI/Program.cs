@@ -47,6 +47,7 @@ using System.Reflection;
 using UKMCAB.Web.UI.Services.ReviewDateReminder;
 using UKMCAB.Core.Security.Requirements;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -181,6 +182,13 @@ builder.Services.AddScoped<IValidator<CABDetailsViewModel>, CABDetailsViewModelV
 builder.Services.AddScoped<IValidator<DeleteCABViewModel>, DeleteCABViewModelValidator>();
 builder.Services.AddScoped<IValidator<CABLegislativeAreasViewModel>, CABLegislativeAreasViewModelValidator>();
 builder.Services.AddHostedService<ReviewDateReminderBackgroundService>();
+
+// UKAS Reference Import
+builder.Services.AddSingleton(
+    new TempDataImport(Path.Combine(
+            builder.Environment.ContentRootPath, 
+            "ukas-reference-numbers-import.csv")));
+
 
 // =================================================================================================
 

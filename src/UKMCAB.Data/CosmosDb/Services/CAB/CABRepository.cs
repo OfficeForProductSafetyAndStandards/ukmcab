@@ -14,9 +14,12 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         private Container _container;
         private readonly CosmosDbConnectionString _cosmosDbConnectionString;
 
-        public CABRepository(CosmosDbConnectionString cosmosDbConnectionString)
+        private readonly TempDataImport _dataImport; // UKAS Reference Import
+
+        public CABRepository(CosmosDbConnectionString cosmosDbConnectionString, TempDataImport dataImport)
         {
             _cosmosDbConnectionString = cosmosDbConnectionString;
+            _dataImport = dataImport;  // UKAS Reference Import
         }
 
 
@@ -33,8 +36,14 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
                 var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
 
+                var ukasReferences = _dataImport.GetUKASReferences(); // UKAS Reference Import
+
                 foreach (var document in items)
                 {
+                    // UKAS Reference Import
+                    var re = ukasReferences.FirstOrDefault(e => e.CabId.Equals(document.CABId));
+                    if (re != null) document.UKASReference = re.UKASRef;
+
                     document.Version = DataConstants.Version.Number;
 
                     //Set LA status                    
