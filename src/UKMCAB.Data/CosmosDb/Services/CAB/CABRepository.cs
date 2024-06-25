@@ -47,10 +47,13 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                                 Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
                                 _ => LAStatus.Draft
                             };
-                        }                        
+                        }
 
                         //Set LA Role Id
-                        la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
+                        if (la != null && string.IsNullOrWhiteSpace(la.RoleId))
+                        {
+                            la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
+                        }                        
                     }                   
                     await UpdateAsync(document);
                 }
