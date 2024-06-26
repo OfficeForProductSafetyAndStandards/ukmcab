@@ -30,11 +30,18 @@
             <p class="govuk-body">@Model.Title</p>
             <govuk-character-count asp-for="UserNotes" max-length="1000" rows="5">
                 <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
-                    Reason
+                    User notes
                 </govuk-character-count-label>
                 <govuk-character-count-hint>
-                    Enter the reason for unarchiving the legislative area. This will only be shown
-                    to users that are signed in to the UKMCAB service.
+                    These notes will only be seen by users that are signed in to the UKMCAB service.
+                </govuk-character-count-hint>
+            </govuk-character-count>
+            <govuk-character-count asp-for="PublicUserNotes" max-length="1000" rows="5">
+                <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                    Reason (optional)
+                </govuk-character-count-label>
+                <govuk-character-count-hint>
+                    Enter the reason for unarchiving the legislative area. This will be shown to all users of the UKMCAB service.
                 </govuk-character-count-hint>
             </govuk-character-count>
             <div class="govuk-button-group">

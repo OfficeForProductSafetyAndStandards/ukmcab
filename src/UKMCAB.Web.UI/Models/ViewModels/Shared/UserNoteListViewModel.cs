@@ -40,5 +40,7 @@
         public IEnumerable<UserNoteListItemViewModel> UserNoteItems { get; }
 
         public PaginationViewModel Pagination { get; set; }
+
+        public bool CabHasDraft { get; set; }
     }
 }
