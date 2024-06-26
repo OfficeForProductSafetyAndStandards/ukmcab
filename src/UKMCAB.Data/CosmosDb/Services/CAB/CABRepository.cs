@@ -19,7 +19,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             _cosmosDbConnectionString = cosmosDbConnectionString;
         }
 
-
         public async Task<bool> InitialiseAsync(bool force = false)
         {
             var client = new CosmosClient(_cosmosDbConnectionString);
@@ -33,8 +32,28 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
                 var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
 
+                // UKAS Reference Import
+                var csvFilePath = "ukas-reference-numbers-import.csv";
+                var ukasReferences =
+                    (File.Exists(csvFilePath)
+                        ? File.ReadAllLines(csvFilePath)
+                            .Skip(1) 
+                            .Select(r => r.Split(","))
+                        : Array.Empty<string[]>())
+                            .Select(r => new { CabId = r[0], UKASRef = r[1] });
+
                 foreach (var document in items)
                 {
+                    // UKAS Reference Import
+                    if (document.StatusValue == Status.Published || document.StatusValue == Status.Draft)
+                    {
+                        var re = ukasReferences.FirstOrDefault(e => e.CabId.Equals(document.CABId));
+                        if (re != null)
+                        {
+                            document.UKASReference = re.UKASRef;
+                        }
+                    }                    
+
                     document.Version = DataConstants.Version.Number;
 
                     //Set LA status                    
