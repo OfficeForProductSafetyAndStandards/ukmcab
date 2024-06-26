@@ -1,0 +1,63 @@
+﻿@using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.ReviewDateNotesViewModel
+
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <a asp-route="@LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation"
+                   asp-route-id="@Model.CabId" asp-route-laId="@Model.LegislativeAreaId"
+                   asp-route-fromSummary="@Model.FromSummary"
+                   class="govuk-back-link">Back</a>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <fieldset class="govuk-fieldset">
+            <form method="post">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
+                    <h1 class="govuk-fieldset__heading ukmcab-padding-bottom-20">
+                        @Model.Title
+                    </h1>
+                </legend>
+
+                <input type="hidden" asp-for="CabId" value="@Model.CabId" />
+                <input type="hidden" asp-for="LegislativeAreaId" value="@Model.LegislativeAreaId" />
+                <input type="hidden" asp-for="LegislativeAreaName" value="@Model.LegislativeAreaName" />
+                <govuk-date-input class="govuk-!-display-none" asp-for="ReviewDate" value="@Model.ReviewDate" />
+
+                <govuk-character-count asp-for="UserNotes" max-length="1000" rows="5">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        User notes (mandatory)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        Enter the reason for changing the legislative area review date. These notes will only be seen by users that are signed in to the UKMCAB service.
+                    </govuk-character-count-hint>
+                </govuk-character-count>
+ 
+                <govuk-character-count asp-for="Reason" max-length="1000">
+                    <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
+                        Reason (optional)
+                    </govuk-character-count-label>
+                    <govuk-character-count-hint>
+                        Enter the reason for changing the legislative area review date. This will be shown to all users in the CAB history page.
+                    </govuk-character-count-hint>
+                </govuk-character-count>               
+
+                <div class="govuk-button-group">                    
+                    <govuk-button type="submit" 
+                        asp-route="@LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformationReviewDateNotes"
+                        asp-route-id="@Model.CabId" 
+                        asp-route-laId="@Model.LegislativeAreaId">
+                        Confirm
+                    </govuk-button>
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CabId" asp-route-fromSummary="@Model.FromSummary">Cancel</a>
+                </div>
+            </form>
+        </fieldset>
+    </div>
+</div>
