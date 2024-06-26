@@ -45,11 +45,14 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 foreach (var document in items)
                 {
                     // UKAS Reference Import
-                    var re = ukasReferences.FirstOrDefault(e => e.CabId.Equals(document.CABId));
-                    if (re != null)
-                    { 
-                        document.UKASReference = re.UKASRef; 
-                    }
+                    if (document.StatusValue == Status.Published || document.StatusValue == Status.Draft)
+                    {
+                        var re = ukasReferences.FirstOrDefault(e => e.CabId.Equals(document.CABId));
+                        if (re != null)
+                        {
+                            document.UKASReference = re.UKASRef;
+                        }
+                    }                    
 
                     document.Version = DataConstants.Version.Number;
 
