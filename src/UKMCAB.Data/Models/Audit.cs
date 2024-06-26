@@ -59,6 +59,7 @@ namespace UKMCAB.Data.Models
                         : "Not provided");
                 sbInternalComment.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>",
                     DateTime.UtcNow.ToString("dd/MM/yyyy"));
+                sbInternalComment.Append($"<p class=\"govuk-body\">Added CAB review date {publishedDocument.RenewalDate.ToStringBeisDateFormat()}</p>");
             }
             else
             {
@@ -80,6 +81,11 @@ namespace UKMCAB.Data.Models
                     publishedDocument.DocumentLegislativeAreas, sbInternalComment);
 
                 CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbInternalComment);
+
+                if (publishedDocument.RenewalDate != null)
+                {
+                    CalculateChangesToReviewDate(publishedDocument, previousDocument, sbInternalComment);
+                }
             }
 
             if (sbInternalComment.Length > 0)
@@ -94,6 +100,19 @@ namespace UKMCAB.Data.Models
 
             Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbInternalComment.ToString()));
             PublicComment = HttpUtility.HtmlEncode(publicComment);
+        }
+
+        private static void CalculateChangesToReviewDate(Document previousDocument, Document publishedDocument,
+            StringBuilder sb)
+        {
+            if (previousDocument.RenewalDate == null)
+            {
+                sb.Append($"<p class=\"govuk-body\">Added CAB review date {publishedDocument.RenewalDate.ToStringBeisDateFormat()}</p>");
+            }
+            else if (previousDocument.RenewalDate != publishedDocument.RenewalDate)
+            {
+                sb.Append($"<p class=\"govuk-body\">Changed CAB review date {previousDocument.RenewalDate.ToStringBeisDateFormat()} to {publishedDocument.RenewalDate.ToStringBeisDateFormat()}</p>");
+            }
         }
 
         private static void CalculateChangesToScopeOfAppointments(Document previousDocument, Document publishedDocument,
@@ -423,8 +442,8 @@ namespace UKMCAB.Data.Models
 
         public const string ApproveLegislativeArea = "Legislative area approved";
         public const string DeclineLegislativeArea = "Legislative area declined";
-        public const string LegislativeAreaAdditionalInformationUserNotes = "Review date updated";
-        public const string LegislativeAreaAdditionalInformationReason = "Legislative area reason updated";
+        public const string LegislativeAreaReviewDateAdded = "Legislative area review date added";
+        public const string LegislativeAreaReviewDateUpdated = "Legislative area review date updated";
     }
 
     public class AuditUserActions

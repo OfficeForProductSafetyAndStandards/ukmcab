@@ -8,8 +8,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
     {
         public readonly string[] PublicAuditActionsToShow =
         {
-            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchivedToDraft,
-            AuditCABActions.LegislativeAreaAdditionalInformationReason
+            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchivedToDraft, AuditCABActions.LegislativeAreaReviewDateAdded, AuditCABActions.LegislativeAreaReviewDateUpdated
         };
 
         public readonly string[] LoggedInUserAuditActionsToShow =
@@ -20,7 +19,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             AuditCABActions.DraftDeleted, AuditCABActions.UnArchiveApprovalRequestDeclined,
             AuditCABActions.ArchiveApprovalRequest, AuditCABActions.UnpublishApprovalRequest,
             AuditCABActions.UnpublishApprovalRequestDeclined, AuditCABActions.ApproveLegislativeArea, AuditCABActions.DeclineLegislativeArea,
-            AuditCABActions.LegislativeAreaAdditionalInformationUserNotes
+            AuditCABActions.LegislativeAreaReviewDateAdded, AuditCABActions.LegislativeAreaReviewDateUpdated
         };
 
 

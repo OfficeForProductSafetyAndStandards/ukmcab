@@ -16,13 +16,6 @@ public record LegislativeAreaAdditionalInformationViewModel(
     public DateTime? AppointmentDate { get; init; }
     [DisplayName("Review date")]
     public DateTime? ReviewDate { get; set; }
-    
-    [MaxLength(1000, ErrorMessage = "Maximum reason length is 1000 characters")]
-    public string? UserNotes { get; init; }
-    public string? UserNotesLabel { get; set; }
-    
-    [MaxLength(1000, ErrorMessage = "Maximum reason length is 1000 characters")]
-    public string? Reason { get; init; }
 
     public string? PointOfContactName { get; set; }
 
@@ -36,4 +29,5 @@ public record LegislativeAreaAdditionalInformationViewModel(
     public bool? IsPointOfContactPublicDisplay { get; set; }
 
     public bool IsFromSummary { get; set; }
+    public string SubmitType { get; set; }
 }
