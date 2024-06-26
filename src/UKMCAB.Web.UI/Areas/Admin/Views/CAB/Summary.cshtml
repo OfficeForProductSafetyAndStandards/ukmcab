@@ -737,6 +737,13 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
     </div>
 }
 
+@if (!Model.HasActiveLAs)
+{
+    <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
+        This CAB profile will only become publishable when an active legislative area is added.
+    </govuk-warning-text>
+}
+            
 @if (Model is { SubStatus: SubStatus.None })
 {
     <div class="govuk-!-margin-top-5">
@@ -814,7 +821,7 @@ else
         </govuk-warning-text>
         <div class="govuk-!-margin-top-5">
             <div class="govuk-button-group">
-                <govuk-button-link id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Publish</govuk-button-link>
+                <govuk-button id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)" disabled="@(!Model.ValidCAB)">Publish</govuk-button>
                 <govuk-button-link id="declineCab" class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
                 <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
