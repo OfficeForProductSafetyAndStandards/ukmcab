@@ -62,7 +62,7 @@
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 
-@if (Model.HasDraft)
+    @if (User.Identity.IsAuthenticated && Model.HasDraft)
 {
         <partial model="@("A Draft CAB exists for this record.")" name="Partials/_PageContentBanner" />
 }
