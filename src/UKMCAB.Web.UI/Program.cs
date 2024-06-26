@@ -183,13 +183,6 @@ builder.Services.AddScoped<IValidator<DeleteCABViewModel>, DeleteCABViewModelVal
 builder.Services.AddScoped<IValidator<CABLegislativeAreasViewModel>, CABLegislativeAreasViewModelValidator>();
 builder.Services.AddHostedService<ReviewDateReminderBackgroundService>();
 
-// UKAS Reference Import
-builder.Services.AddSingleton(
-    new TempDataImport(Path.Combine(
-            builder.Environment.ContentRootPath, 
-            "ukas-reference-numbers-import.csv")));
-
-
 // =================================================================================================
 
 var app = builder.Build();
