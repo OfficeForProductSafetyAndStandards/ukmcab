@@ -47,7 +47,6 @@ using System.Reflection;
 using UKMCAB.Web.UI.Services.ReviewDateReminder;
 using UKMCAB.Core.Security.Requirements;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
