@@ -94,6 +94,7 @@
                 d.Status ==  LAStatus.PendingApprovalToArchiveAndArchiveSchedule ||
                 d.Status == LAStatus.PendingApprovalToArchiveAndRemoveSchedule ||
                 d.Status == LAStatus.PendingApprovalToUnarchive);
-        
+
+        public bool HasActiveLAs => DocumentLegislativeAreas.Any(la => la.Status != LAStatus.DeclinedByOpssAdmin && la.Status != LAStatus.ApprovedToRemoveByOpssAdmin);
     }
 }
