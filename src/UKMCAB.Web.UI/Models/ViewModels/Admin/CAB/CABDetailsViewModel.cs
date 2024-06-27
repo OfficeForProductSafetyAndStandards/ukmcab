@@ -62,22 +62,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.Name).NotEmpty().WithMessage("Enter a CAB name");
-
-            RuleFor(x => x.CABNumber)
-                .Must((model, cabNumber) =>
-                {
-                    var isOpssUser = httpContextAccessor?.HttpContext?.User?.IsInRole(Core.Security.Roles.OPSS.Id) ?? false;
-                    return model.SubmitType == Constants.SubmitType.Save || !isOpssUser || cabNumber.IsNotNullOrEmpty();
-                })
-                .WithMessage("Enter a CAB number");
-
-            RuleFor(x => x.CabNumberVisibility)
-              .Must((model, CabNumberVisibility) =>
-              {
-                  var isOpssUser = httpContextAccessor?.HttpContext?.User?.IsInRole(Core.Security.Roles.OPSS.Id) ?? false;
-                  return model.SubmitType == Constants.SubmitType.Save || !isOpssUser || CabNumberVisibility.IsNotNullOrEmpty();
-              })
-              .WithMessage("Select who should see the CAB number");
         }
     }
 }
