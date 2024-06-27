@@ -1,11 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using UKMCAB.Core.Security;
+using System.Web;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -21,6 +22,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
     public static class Routes
     {
         public const string LegislativeAreaAdditionalInformation = "legislative.area.additional.information";
+        public const string LegislativeAreaAdditionalInformationReviewDateNotes = "legislative.area.additional.information.review.date.notes";
     }
 
     public LegislativeAreaAdditionalInformationController(ICABAdminService cabAdminService,
@@ -31,9 +33,6 @@ public class LegislativeAreaAdditionalInformationController : Controller
         _legislativeAreaService = legislativeAreaService;
         _userService = userService;
     }
-
-    private const string UserNotesLabel = "User notes (optional)";
-    private const string UserNotesLabelMandatory = "User notes (mandatory)";
 
     [HttpGet("additional-information/{laId}", Name = Routes.LegislativeAreaAdditionalInformation)]
     public async Task<IActionResult> AdditionalInformationAsync(Guid id, Guid laId, string? returnUrl, bool fromSummary)
@@ -49,9 +48,6 @@ public class LegislativeAreaAdditionalInformationController : Controller
             IsProvisionalLegislativeArea = legislativeArea.IsProvisional,
             AppointmentDate = legislativeArea.AppointmentDate,
             ReviewDate = legislativeArea.ReviewDate,
-            UserNotesLabel = legislativeArea.ReviewDate.HasValue ? UserNotesLabelMandatory : UserNotesLabel,
-            UserNotes = legislativeArea.UserNotes,
-            Reason = legislativeArea.Reason,
             PointOfContactName = legislativeArea.PointOfContactName,
             PointOfContactEmail = legislativeArea.PointOfContactEmail,
             PointOfContactPhone = legislativeArea.PointOfContactPhone,
@@ -69,12 +65,10 @@ public class LegislativeAreaAdditionalInformationController : Controller
         vm.Title = TempData.Peek(StoragePageTitle)?.ToString();
         vm.CabId = id;
         vm.LegislativeAreaId = laId;
-        vm.UserNotesLabel = UserNotesLabel;
 
-        if (submitType == Constants.SubmitType.Add18)
+        if (submitType == SubmitType.Add18)
         {
             vm.ReviewDate = DateTime.UtcNow.AddMonths(18);
-            vm.UserNotesLabel = UserNotesLabelMandatory;
             ModelState.Clear();
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);
         }
@@ -102,65 +96,90 @@ public class LegislativeAreaAdditionalInformationController : Controller
                 "Select who should see the legislative area contact details");
         }
 
-        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
-        var documentLegislativeArea = latestDocument!.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId);
-        if (vm.ReviewDate != null && vm.ReviewDate != documentLegislativeArea.ReviewDate && string.IsNullOrWhiteSpace(vm.UserNotes))
-        {
-            vm.UserNotesLabel = UserNotesLabelMandatory;
-            ModelState.AddModelError("UserNotes",
-                "Enter user notes");
-        }
-        
         if (!ModelState.IsValid)
         {
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);
         }
 
-       
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+        var documentLegislativeArea = latestDocument!.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId);
+
         documentLegislativeArea.IsProvisional = vm.IsProvisionalLegislativeArea;
         documentLegislativeArea.AppointmentDate = vm.AppointmentDate;
-        documentLegislativeArea.ReviewDate = vm.ReviewDate;
-        documentLegislativeArea.UserNotes = vm.UserNotes;
-        documentLegislativeArea.Reason = vm.Reason;
         documentLegislativeArea.PointOfContactName = vm.PointOfContactName;
         documentLegislativeArea.PointOfContactEmail = vm.PointOfContactEmail;
         documentLegislativeArea.PointOfContactPhone = vm.PointOfContactPhone;
         documentLegislativeArea.IsPointOfContactPublicDisplay = vm.IsPointOfContactPublicDisplay;
-
         documentLegislativeArea.MarkAsDraft(latestDocument);
-        var userAccount =
-            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
-        const string reviewDateReason =
-            "The review date for the {0} legislative area was changed for the following reason: {1}";
+        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
-        if (!string.IsNullOrWhiteSpace(vm.UserNotes))
+        if (documentLegislativeArea.ReviewDate == null)
         {
-            latestDocument.AuditLog.Add(new Audit(userAccount: userAccount,
-                action: AuditCABActions.LegislativeAreaAdditionalInformationUserNotes,
-                comment: vm.UserNotes,
-                publicComment: string.IsNullOrWhiteSpace(vm.Reason)
-                    ? null
-                    : string.Format(reviewDateReason, documentLegislativeArea.LegislativeAreaName, vm.Reason)
-            ));
-        }
-
-        if (!string.IsNullOrWhiteSpace(vm.Reason))
-        {
-            latestDocument.AuditLog.Add(new Audit(userAccount: userAccount,
-                action: AuditCABActions.LegislativeAreaAdditionalInformationReason,
-                publicComment: string.Format(reviewDateReason, documentLegislativeArea.LegislativeAreaName, vm.Reason)
-            ));
+            documentLegislativeArea.ReviewDate = vm.ReviewDate;
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.LegislativeAreaReviewDateAdded));
         }
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
         
         TempData.Remove(StoragePageTitle);
+
+        if (vm.ReviewDate != null && vm.ReviewDate != documentLegislativeArea.ReviewDate)
+        {
+            vm.SubmitType = submitType;
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewDateNotes.cshtml", new ReviewDateNotesViewModel
+            {
+                CabId = vm.CabId,
+                LegislativeAreaId = vm.LegislativeAreaId,
+                LegislativeAreaName = documentLegislativeArea.LegislativeAreaName,
+                ReviewDate = vm.ReviewDate,
+                FromSummary = vm.IsFromSummary
+            });
+        }
+
         return submitType switch
         {
-            Constants.SubmitType.Continue => RedirectToRoute(
+            SubmitType.Continue => RedirectToRoute(
                 LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary }),
             _ => RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true })
         };
+    }
+
+    [HttpPost("additional-information/{laId}/review-date-notes", Name = Routes.LegislativeAreaAdditionalInformationReviewDateNotes)]
+    public async Task<IActionResult> ReviewDateNotes(ReviewDateNotesViewModel vm,
+        Guid id, Guid laId, string? returnUrl)
+    {
+        if (string.IsNullOrWhiteSpace(vm.UserNotes))
+        {
+            ModelState.AddModelError("UserNotes", "Enter user notes");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewDateNotes.cshtml", vm);
+        }
+
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
+        var documentLegislativeArea = latestDocument!.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId);
+
+        documentLegislativeArea.ReviewDate = vm.ReviewDate;
+        documentLegislativeArea.UserNotes = vm.UserNotes;
+        documentLegislativeArea.Reason = vm.Reason;
+        documentLegislativeArea.MarkAsDraft(latestDocument);
+
+        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+
+        latestDocument.AuditLog.Add(new Audit(
+            userAccount,
+            AuditCABActions.LegislativeAreaReviewDateUpdated,
+            HttpUtility.HtmlEncode(
+                $"<p class=\"govuk-body\">Changed review date on legislative area {vm.LegislativeAreaName}</p>" +
+                $"<p class=\"govuk-body\">{vm.UserNotes}</p>"),
+            vm.Reason
+        ));
+        
+        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+
+        return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
     }
 }

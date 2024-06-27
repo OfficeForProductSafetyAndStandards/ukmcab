@@ -446,7 +446,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ValidCAB = latest.StatusValue != Status.Published
                            && cabDetails.IsCompleted && cabContact.IsCompleted && cabBody.IsCompleted &&
                            cabLegislativeAreas.IsCompleted
-                           && cabProductSchedules.IsCompleted && cabSupportingDocuments.IsCompleted,
+                           && cabProductSchedules.IsCompleted && cabSupportingDocuments.IsCompleted && latest.HasActiveLAs,
+                HasActiveLAs = latest.HasActiveLAs,
                 TitleHint = "CAB profile",
                 Title = User.IsInRole(Roles.OPSS.Id) ? latest.SubStatus == SubStatus.PendingApprovalToPublish
                         ? "Check details before approving or declining"
@@ -586,7 +587,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             publishModel.ValidCAB = TryValidateModel(publishModel) &&
                                     publishModel.CABProductScheduleDetailsViewModel.IsCompleted &&
-                                    publishModel.CABSupportingDocumentDetailsViewModel.IsCompleted;
+                                    publishModel.CABSupportingDocumentDetailsViewModel.IsCompleted &&
+                                    latest.HasActiveLAs;
 
             if (publishModel.ValidCAB)
             {

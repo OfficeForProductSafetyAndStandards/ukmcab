@@ -7,15 +7,30 @@
     var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}#usernotes";
 }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-three-quarters">
-        <h2 class="govuk-heading-l">Government user notes</h2>
+@if (Model.CabHasDraft)
+{
+    <h2 class="govuk-heading-l">Government user notes</h2>
+
+    <div class="govuk-warning-text">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            Government user notes need to be added to the Draft record.
+        </strong>
     </div>
-    <div class="govuk-grid-column-one-quarter">
-        <govuk-button-link class="govuk-button--secondary ukmcab-float__right" asp-area="Search" asp-controller="UserNote" asp-action="Create"
-            asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-returnUrl="@returnUrl">Add note</govuk-button-link>
+}
+else
+{
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-three-quarters">
+            <h2 class="govuk-heading-l">Government user notes</h2>
+        </div>
+        <div class="govuk-grid-column-one-quarter">
+            <govuk-button-link class="govuk-button--secondary ukmcab-float__right" asp-area="Search" asp-controller="UserNote" asp-action="Create"
+                               asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-returnUrl="@returnUrl">Add note</govuk-button-link>
+        </div>
     </div>
-</div>
+}
 
 @if (!Model.UserNoteItems.Any())
 {
