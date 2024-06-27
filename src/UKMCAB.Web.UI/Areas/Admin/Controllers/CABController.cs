@@ -528,7 +528,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var draftUpdated = Enumerable.MaxBy(
                 latest.AuditLog.Where(l => l.Action == AuditCABActions.Created),
                 u => u.DateTime)?.DateTime != latest.LastUpdatedDate;
-            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated && model.HasActionableLegislativeAreaForOpssAdmin && !model.CanOnlyBeActionedByUkas;
+            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated && !model.IsPendingOgdApproval && !model.CanOnlyBeActionedByUkas;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated
                 && model.CabDetailsViewModel.IsCompleted
                 && model.CabContactViewModel.IsCompleted
