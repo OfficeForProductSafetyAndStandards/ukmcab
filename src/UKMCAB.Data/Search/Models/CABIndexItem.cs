@@ -53,6 +53,7 @@ namespace UKMCAB.Data.Search.Models
         public string[] HiddenScopeOfAppointments { get; set; } = Array.Empty<string>();
 
         [SearchableField] public string CABNumber { get; set; } = string.Empty;
+        [SearchableField] public string PreviousCABNumbers { get; set; } = string.Empty;
 
         [SearchableField(IsFacetable = true, IsFilterable = true)]
         public string[] BodyTypes { get; set; }= Array.Empty<string>();

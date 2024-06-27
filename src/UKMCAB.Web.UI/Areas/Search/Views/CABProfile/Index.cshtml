@@ -236,6 +236,15 @@
                                     @Model.BodyNumber
                                 </dd>
                             </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @Html.Conditional(User.Identity.IsAuthenticated, "Previous CAB number(s)", "Previous Body number(s)")
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreviousBodyNumbers
+                                </dd>
+                            </div>
+
                         }
 
                         @if (User.Identity.IsAuthenticated)

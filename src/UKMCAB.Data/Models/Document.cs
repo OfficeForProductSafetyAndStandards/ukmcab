@@ -35,6 +35,7 @@
         public string URLSlug { get; set; } = string.Empty;
         public string? CABNumber { get; set; }
         public string? CabNumberVisibility { get; set; }
+        public string? PreviousCABNumbers { get; set; }
         public DateTime? AppointmentDate { get; set; }
         public DateTime? RenewalDate { get; set; }
         public string? UKASReference { get; set; } = string.Empty;

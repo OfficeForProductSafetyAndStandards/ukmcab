@@ -198,6 +198,14 @@
                     @Model.CabDetailsViewModel.CABNumber
                 </dd>
             </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Previous CAB numbers
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.CabDetailsViewModel.PreviousCABNumbers
+                </dd>
+            </div>
         }
         else if (Model.CanSubmitForApproval)
         {
@@ -207,6 +215,14 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     CAB number assigned on approval
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Previous CAB numbers
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Previous CAB numbers can be added on approval
                 </dd>
             </div>
         }

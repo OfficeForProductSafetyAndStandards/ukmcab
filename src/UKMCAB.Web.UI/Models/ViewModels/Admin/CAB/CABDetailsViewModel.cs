@@ -18,6 +18,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             CABId = document.CABId;
             Name = document.Name;
             CABNumber = document.CABNumber;
+            PreviousCABNumbers = document.PreviousCABNumbers;
             CabNumberVisibility = document.CabNumberVisibility;
             AppointmentDateDay = document.AppointmentDate?.Day.ToString("00") ?? string.Empty;
             AppointmentDateMonth = document.AppointmentDate?.Month.ToString("00") ?? string.Empty;
@@ -34,6 +35,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         [RegularExpression(@"^[\w\d\s(),-]*$", ErrorMessage = "Enter a CAB number using only numbers and letters")]
         public string? CABNumber { get; set; }
+        public string? PreviousCABNumbers { get; set; }
         public string? AppointmentDateDay { get; set; }
         public string? AppointmentDateMonth { get; set; }
         public string? AppointmentDateYear { get; set; }

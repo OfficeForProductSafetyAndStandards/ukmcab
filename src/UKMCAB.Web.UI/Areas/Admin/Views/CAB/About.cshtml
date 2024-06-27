@@ -70,6 +70,24 @@
 
                 </div>
 
+                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.PreviousCABNumbers))">
+                    <h3 class="govuk-label-wrapper">
+                        <label class=" govuk-label govuk-label--s" asp-for="PreviousCABNumbers">
+                            Previous CAB numbers
+                        </label>
+                    </h3>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="PreviousCABNumbers" class="govuk-error-message"></span>
+                    </p>
+                    <input asp-for="PreviousCABNumbers" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, nameof(Model.PreviousCABNumbers))" disabled="@Model.IsCabNumberDisabled" />
+
+                    @if (Model.IsCabNumberDisabled && Model.DocumentStatus != Status.Published)
+                    {
+                        <p class="govuk-body-s govuk-!-margin-top-1">Previous CAB numbers can be added on approval</p>
+                    }
+
+                </div>
+
                 @if (Model.IsOPSSUser)
                 {
                     <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.CabNumberVisibility))">
