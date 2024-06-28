@@ -89,12 +89,20 @@
         public bool IsPendingOgdApproval =>
             StatusValue == Models.Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            DocumentLegislativeAreas.Any(d => 
+            DocumentLegislativeAreas.Any(d =>
                 d.Status == LAStatus.PendingApproval ||
-                d.Status ==  LAStatus.PendingApprovalToRemove ||
-                d.Status ==  LAStatus.PendingApprovalToArchiveAndArchiveSchedule ||
+                d.Status == LAStatus.PendingApprovalToRemove ||
+                d.Status == LAStatus.PendingApprovalToArchiveAndArchiveSchedule ||
                 d.Status == LAStatus.PendingApprovalToArchiveAndRemoveSchedule ||
                 d.Status == LAStatus.PendingApprovalToUnarchive);
+
+        public bool IsPublishable =>
+            StatusValue == Models.Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            !DocumentLegislativeAreas.Any(d =>
+                d.Status == LAStatus.ApprovedByOpssAdmin ||
+                d.Status == LAStatus.Published ||
+                d.Status == LAStatus.ApprovedToUnarchiveByOPSS);
 
         public bool HasActiveLAs => DocumentLegislativeAreas.Any(la => la.Status != LAStatus.DeclinedByOpssAdmin && la.Status != LAStatus.ApprovedToRemoveByOpssAdmin);
     }
