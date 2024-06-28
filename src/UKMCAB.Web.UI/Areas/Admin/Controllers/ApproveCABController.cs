@@ -177,13 +177,13 @@ public class ApproveCABController : Controller
         else if (clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
         {
             await _cabAdminService.CreateDocumentAsync(user, clonedDocument);
-        }        
+        }
 
         var submitTask = await MarkTaskAsCompleteAsync(cabId,
            new User(user.Id, user.FirstName, user.Surname, userRoleId,
                user.EmailAddress ?? throw new InvalidOperationException()));
         await SendNotificationOfApprovalAsync(cabId, document.Name ?? throw new InvalidOperationException(),
-            submitTask.Submitter);      
+            submitTask.Submitter);
 
     }
 

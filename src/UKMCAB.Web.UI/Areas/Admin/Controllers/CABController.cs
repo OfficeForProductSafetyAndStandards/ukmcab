@@ -517,7 +517,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup,
                 RequestedFromCabProfilePage = fromCabProfilePage ?? false
             };
-        
+
             //Lock Record for edit
             if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed
                                                           && latest.StatusValue is Status.Draft or Status.Published
@@ -529,7 +529,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var draftUpdated = Enumerable.MaxBy(
                 latest.AuditLog.Where(l => l.Action == AuditCABActions.Created),
                 u => u.DateTime)?.DateTime != latest.LastUpdatedDate;
-            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated && !model.IsPendingOgdApproval && !model.CanOnlyBeActionedByUkas;
+            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated && !latest.IsPublishable && !model.CanOnlyBeActionedByUkas;
             model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated
                 && model.CabDetailsViewModel.IsCompleted
                 && model.CabContactViewModel.IsCompleted

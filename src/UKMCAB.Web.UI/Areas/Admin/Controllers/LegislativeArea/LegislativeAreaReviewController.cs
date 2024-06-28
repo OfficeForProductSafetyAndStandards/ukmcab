@@ -181,7 +181,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                 IsArchived = documentLegislativeArea.Archived,
                 ShowEditActions = documentLegislativeArea.Status == LAStatus.Draft || 
                                   documentLegislativeArea.Status == LAStatus.PendingApproval && UserRoleId == documentLegislativeArea.RoleId ||
-                                  documentLegislativeArea.Status == LAStatus.Approved && UserRoleId == Roles.OPSS.Id ||
+                                  (documentLegislativeArea.Status == LAStatus.Approved || documentLegislativeArea.Status == LAStatus.Published) && UserRoleId == Roles.OPSS.Id ||
                                   cab.StatusValue == Status.Draft && cab.SubStatus == SubStatus.None,
             };
 
