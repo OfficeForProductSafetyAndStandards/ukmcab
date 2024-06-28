@@ -70,7 +70,8 @@ public class ApproveUnarchiveCABController : Controller
             Guid.Parse(document.CABId),
             task.Submitter.UserGroup,
             task.Submitter.FirstAndLastName,
-            task.TaskType == TaskType.RequestToUnarchiveForPublish);
+            task.TaskType == TaskType.RequestToUnarchiveForPublish, 
+            task.Body);
 
         return View("~/Areas/Admin/Views/CAB/Unarchive/Approve.cshtml", vm);
     }
