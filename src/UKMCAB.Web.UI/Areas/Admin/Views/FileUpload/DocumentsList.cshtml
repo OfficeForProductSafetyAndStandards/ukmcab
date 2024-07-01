@@ -54,7 +54,7 @@
                 <input type="hidden" asp-for="IsFromSummary"/>
                 <span class="govuk-caption-m">@Model.Title</span>
                 <h1 class="govuk-heading-l">@Model.Title</h1>
-                <p class="govuk-body govuk-!-padding-bottom-2">You can upload Word, Excel or PDF files.</p>
+                <p class="govuk-body govuk-!-padding-bottom-2">You can upload Word, Excel or PDF files. Supporting Documents Upload</p>
                 <h2 class="govuk-heading-s">
                     Files you have uploaded
                 </h2>
@@ -90,11 +90,13 @@
 
                         @* Header*@
                         <div style="margin-bottom:0">
-                            <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display">
+                            <div class="width-half ukmcab-float__left mobile-no-display">
                                 <h3 class="govuk-heading-s">File</h3>
                             </div>
+                            <div class="width-one-tenth">
+                            </div>
                             <div class="ukmcab-float__left">
-                                <h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Category</h3>
+                                <h3 class="govuk-heading-s ukmcab-padding-left-20 mobile-no-display">Category</h3>
                             </div>
                             <div class="ukmcab-float__clear width-full">
                                 <hr class="ukmcab-border"/>
@@ -144,7 +146,7 @@
 
                                 @*Row 2: Inputbox Row*@
                                 <div class="document-list">
-                                    <div class="document-item width-three-fifth ukmcab-padding-right-10 ukmcab-padding-left-35 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
+                                    <div class="document-item width-three-fifth ukmcab-padding-right-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles![i].Label" class="govuk-error-message"></span>
@@ -154,8 +156,7 @@
                                         <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
                                         <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">                                            
                                     </div>
-
-                                    <div class="document-item width-three-tenth ukmcab-padding-left-40 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
+                                    <div class="document-item width-three-tenth ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Category">Category</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles![i].Category" class="govuk-error-message"></span>
@@ -190,9 +191,9 @@
             @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
             {
                 <div class="govuk-button-group">
-                    <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove"/>
-                    <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
-                    <button class="button-link govuk-link ukmcab-padding-left-40" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
+                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove">@Constants.SubmitType.Remove</button>
                 </div>
             }
         </div>
