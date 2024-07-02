@@ -22,31 +22,27 @@
             display: none;
         }
 
-        .user-list-5-col {
+        .user-list-4-col {
             th:nth-child(3) {
-                width: 35%;
+                width: auto;
             }
 
             th:nth-child(4) {
-                width: 15%;
+                width: 19%;
             }
         }
 
-        .user-list-6-col {
+        .user-list-5-col {
             th:nth-child(3) {
-                width: 35%;
+                width: auto;
             }
 
             th:nth-child(4) {
-                width: 10%;
+                width: 9%;
             }
 
             th:nth-child(5) {
-                width: 15%;
-            }
-
-            th:nth-child(6) {
-                width: 5%;
+                width: 19%;
             }
         }
 
@@ -187,7 +183,7 @@
                 display: inline;
             }
 
-            @include govuk-media-query($until: mobile) {               
+            @include govuk-media-query($until: mobile) {
                 width: 100%;
             }
 
