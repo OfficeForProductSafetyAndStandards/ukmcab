@@ -98,7 +98,7 @@
                         <div>
                             <div class="width-half ukmcab-float__left mobile-no-display">
                                 <h3 class="govuk-heading-s">File</h3>
-                            </div>
+                            </div>                            
                             <div class="ukmcab-margin-left-10 ukmcab-float__left">
                                 <h3 class="govuk-heading-s mobile-no-display">Legislative area</h3>
                             </div>
@@ -138,7 +138,7 @@
 
                                 @*Row 2: Inputbox Row*@
                                 <div class="document-list">
-                                    <div class="document-item width-half ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
+                                    <div class="document-item width-half ukmcab-padding-right-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].Label" class="govuk-error-message"></span>

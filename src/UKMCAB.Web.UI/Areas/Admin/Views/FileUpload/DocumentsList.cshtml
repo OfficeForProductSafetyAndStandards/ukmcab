@@ -93,11 +93,11 @@
                             <div class="width-half ukmcab-float__left mobile-no-display">
                                 <h3 class="govuk-heading-s">File</h3>
                             </div>
-                            <div class="width-one-tenth">
+                            <div class=" ukmcab-margin-left-10 ukmcab-float__left">
+                                <h3 class="govuk-heading-s mobile-no-display">Category</h3>
                             </div>
-                            <div class="ukmcab-float__left">
-                                <h3 class="govuk-heading-s ukmcab-padding-left-20 mobile-no-display">Category</h3>
-                            </div>
+                        </div>
+                        <div>
                             <div class="ukmcab-float__clear width-full">
                                 <hr class="ukmcab-border"/>
                             </div>
@@ -146,7 +146,7 @@
 
                                 @*Row 2: Inputbox Row*@
                                 <div class="document-list">
-                                    <div class="document-item width-three-fifth ukmcab-padding-right-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
+                                    <div class="document-item width-half ukmcab-padding-right-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles![i].Label" class="govuk-error-message"></span>
@@ -156,7 +156,7 @@
                                         <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
                                         <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">                                            
                                     </div>
-                                    <div class="document-item width-three-tenth ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
+                                    <div class="document-item ukmcab-margin-left-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Category">Category</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="UploadedFiles![i].Category" class="govuk-error-message"></span>
