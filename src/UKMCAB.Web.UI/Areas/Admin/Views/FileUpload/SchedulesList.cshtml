@@ -98,10 +98,12 @@
                         <div>
                             <div class="width-half ukmcab-float__left mobile-no-display">
                                 <h3 class="govuk-heading-s">File</h3>
+                            </div>                            
+                            <div class="ukmcab-margin-left-10 ukmcab-float__left">
+                                <h3 class="govuk-heading-s mobile-no-display">Legislative area</h3>
                             </div>
-                            <div class="ukmcab-float__left">
-                                <h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Legislative area</h3>
-                            </div>
+                        </div>
+                        <div>
                             <div class="ukmcab-float__clear width-full govuk-!-margin-top-2 govuk-!-margin-bottom-2">
                                 <hr class="ukmcab-border" />
                             </div>
@@ -136,7 +138,7 @@
 
                                 @*Row 2: Inputbox Row*@
                                 <div class="document-list">
-                                    <div class="document-item ukmcab-padding-right-10 ukmcab-padding-left-35 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
+                                    <div class="document-item width-half ukmcab-padding-right-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].Label" class="govuk-error-message"></span>
@@ -145,8 +147,7 @@
                                         <input asp-for="ActiveFiles![i].FileName" type="hidden" value="@uploadedFile.FileName" />
                                         <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                     </div>
-
-                                    <div class="document-item ukmcab-padding-left-40 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
+                                    <div class="document-item ukmcab-margin-left-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].LegislativeArea">Legislative area</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].LegislativeArea" class="govuk-error-message"></span>
@@ -166,8 +167,8 @@
                                             }
                                         </select>
                                     </div>
-
                                 </div>
+
                                 <div class="ukmcab-float__left width-full govuk-!-margin-top-2 govuk-!-margin-bottom-2">
                                     <hr class="ukmcab-border" />
                                 </div>
