@@ -249,13 +249,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ModelState.AddModelError("SelectedArchivedScheduleId", "Select an archived schedule");
             }
 
-            if (submitType == Constants.SubmitType.Continue || submitType == Constants.SubmitType.Save)
+            if (submitType == Constants.SubmitType.Continue)
             {
                 AddLegislativeLabelAndFileModelStateErrors(model);
-            }
-
-            if (submitType is Constants.SubmitType.Continue)
-            {
                 AddLegislativeSelectionModelStateErrors(model);
             }
 
