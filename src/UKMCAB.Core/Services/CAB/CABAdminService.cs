@@ -163,6 +163,7 @@ namespace UKMCAB.Core.Services.CAB
 
             var rv = await _cabRepository.CreateAsync(document, auditItem.DateTime);
             await UpdateSearchIndexAsync(rv);
+            await RefreshCachesAsync(rv.CABId, rv.URLSlug);
             await RecordStatsAsync();
 
             return rv;
