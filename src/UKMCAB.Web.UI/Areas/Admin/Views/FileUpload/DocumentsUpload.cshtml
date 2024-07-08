@@ -111,10 +111,10 @@
                 {
                     <div class="govuk-button-group ukmcab-padding-bottom-30">
                         <input id="remove-or-use-it-again-btn-group" type="submit" class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove" />
-                        <a asp-area="Admin" asp-controller="FileUploadManagement" asp-action="DocumentsUseFileAgain" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state ukmcab-padding-left-40">
+                        <a asp-area="Admin" asp-controller="FileUploadManagement" asp-action="DocumentsUseFileAgain" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state">
                             Use file again
                         </a>
-                        <a asp-area="Admin" asp-controller="FileUploadManagement" asp-action="DocumentsReplaceFile" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state ukmcab-padding-left-40">
+                        <a asp-area="Admin" asp-controller="FileUploadManagement" asp-action="DocumentsReplaceFile" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state">
                             Replace file
                         </a>
                     </div>
@@ -145,13 +145,10 @@
             </div>
 
             <div id="schedule-upload-button-group" class="govuk-button-group">
-                <button class="govuk-button js-submit-button" id="upload-button" data-module="govuk-button" name="submitType" value="upload" data-submitting-text="Uploading...">
-                    Upload
-                </button>
-                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">
-                    Save as draft
-                </a>
-                    <a asp-area="admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                <button class="govuk-button js-submit-button" id="upload-button" data-module="govuk-button" name="submitType" value="upload" data-submitting-text="Uploading...">Upload</button>
+                <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="FileUpload" asp-action="SaveAsDraft" asp-route-id="@Model.CABId">Save as draft</a>
+                
+                <a asp-area="admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
     </div>
