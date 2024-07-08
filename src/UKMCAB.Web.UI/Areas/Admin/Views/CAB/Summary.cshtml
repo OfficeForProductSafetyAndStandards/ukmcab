@@ -102,6 +102,52 @@
 
     <div class="govuk-grid-column-one-quarter">
         <div class="govuk-!-margin-right-3">
+            @if (Model.ShowEditAction)
+            {
+                <div class="ukmcab-full-width--mobile ukmcab-float__right ukmcab-text-align-right ukmcab-padding-top-30">
+                    <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="@true" asp-route-returnUrl="@returnUrl">Edit</a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@*
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-three-quarters">
+        <span class="govuk-caption-m ukmcab-padding-bottom-10">@Model.TitleHint</span>
+
+        @if (Model.ShowOgdActions)
+        {
+            <h1 class="govuk-heading-l">Check details before approving or declining</h1>
+        }
+        else
+        {
+            <h1 class="govuk-heading-l">@Model.CabDetailsViewModel.Name</h1>
+        }
+    </div>
+
+    <div class="govuk-grid-column-full desktop-no-display">
+        <div class="cab-detail-date-meta">
+            @if (Model.PublishedDate.HasValue)
+            {
+                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToStringBeisDateFormat()</span>
+            }
+            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @Model.LastModifiedDate.ToStringBeisDateFormat()</span>
+            <div>
+                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
+                @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
+                {
+                    <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-7">
+                        <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
+                    </span>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="govuk-grid-column-one-quarter">
+        <div class="govuk-!-margin-right-3">
             @if (Model is { SubSectionEditAllowed: false } && 
                 (Model.SubStatus == SubStatus.None && Model.IsEditLocked == false && (Model.IsOpssAdmin || Model.IsUkas) ||
                  Model is {SubStatus: SubStatus.PendingApprovalToPublish, IsEditLocked: false, IsPendingOgdApproval: true, IsMatchingOgdUser: true } ||
@@ -115,7 +161,7 @@
         </div>
     </div>
 </div>
-
+*@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full ukmcab-padding-bottom-10 mobile-no-display">
         <div class="cab-detail-date-meta">
@@ -125,7 +171,7 @@
             }
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
-            @if (!string.IsNullOrWhiteSpace(Model.SubStatusName) && Model.SubStatus != SubStatus.None)
+            @if (Model.ShowSubstatusName)
             {
                 <span class="govuk-caption-m govuk-!-display-inline-block">
                     <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
@@ -860,3 +906,6 @@ else
 </fieldset>
 </div>
 </div>
+
+
+*@
