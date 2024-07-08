@@ -251,12 +251,7 @@ namespace UKMCAB.Data.Search.Services
             return list;
         }
         private IEnumerable<string> GetLegislativeAreaStatusFacetList(IEnumerable<FacetResult> facets)
-        {
-            var list = facets.Select(f => f.Value.ToString()).OrderBy(f => f).ToList();
-            //NOTE: Add default value for Published - LA
-            list.Add("False");
-            return list;
-        }
+            => facets.Select(f => f.Value.ToString()).OrderBy(f => f).ToList();
         
         private static readonly Regex SpecialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
 

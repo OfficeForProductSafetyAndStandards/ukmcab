@@ -16,7 +16,6 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
-using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Services;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
@@ -69,7 +68,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
         [Authorize(Policy = Policies.EditCabPendingApproval)]
-        public async Task<IActionResult> About(string id, bool fromSummary, string returnUrl)
+        public async Task<IActionResult> About(string id, bool fromSummary, string? returnUrl = null)
         {
             var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
                         // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
@@ -464,6 +463,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ShowOgdActions = showOgdActions,
                 LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
                 IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
+                IsUkas = UserRoleId == Roles.UKAS.Id,
                 LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is 
                     LAStatus.Published or
                     LAStatus.ApprovedByOpssAdmin or
@@ -474,6 +474,25 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ),
                 LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is
                     LAStatus.Published or
+                    LAStatus.Approved or
+                    LAStatus.Declined or
+                    LAStatus.DeclinedToRemoveByOPSS or
+                    LAStatus.ApprovedByOpssAdmin or
+                    LAStatus.DeclinedByOpssAdmin or
+                    LAStatus.PendingApprovalToRemoveByOpssAdmin or
+                    LAStatus.ApprovedToRemoveByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
+                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
+                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
+                    LAStatus.ApprovedToUnarchiveByOPSS or
+                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
+                    LAStatus.DeclinedToUnarchiveByOPSS),
+                HasActionableLegislativeAreaForOpssAdmin = latest.DocumentLegislativeAreas.Any(la => la.Status is
                     LAStatus.Approved or
                     LAStatus.Declined or
                     LAStatus.DeclinedToRemoveByOPSS or
@@ -507,11 +526,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var draftUpdated = Enumerable.MaxBy(
                 latest.AuditLog.Where(l => l.Action == AuditCABActions.Created),
                 u => u.DateTime)?.DateTime != latest.LastUpdatedDate;
-            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated;
-            model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated;
+            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated && !model.IsPendingOgdApproval && !model.CanOnlyBeActionedByUkas;
+            model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated
+                && model.CabDetailsViewModel.IsCompleted
+                && model.CabContactViewModel.IsCompleted
+                && model.CabBodyDetailsViewModel.IsCompleted
+                && model.CabLegislativeAreasViewModel.IsCompleted
+                && model.CABProductScheduleDetailsViewModel.IsCompleted
+                && model.CABSupportingDocumentDetailsViewModel.IsCompleted;
             model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
                                     ((model.SubStatus != SubStatus.PendingApprovalToPublish && userInCreatorUserGroup) ||
-                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && model.LegislativeAreaHasBeenActioned));
+                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && (model.HasActionableLegislativeAreaForOpssAdmin || model.CanPublish)));
             model.ShowOpssDeleteDraftActionOnly = model.SubSectionEditAllowed && model.SubStatus != SubStatus.PendingApprovalToPublish && User.IsInRole(Roles.OPSS.Id); 
             model.EditByGroupPermitted =
                 model.SubStatus != SubStatus.PendingApprovalToPublish &&
@@ -642,7 +667,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 break;
                             }
                         }
-                    }                  
+                    }
 
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
                         userAccount ?? throw new InvalidOperationException(), latest, true);
@@ -918,81 +943,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
             {
-                var legislativeArea =
-                    await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentLegislativeArea
-                        .LegislativeAreaId);
-
-                var legislativeAreaViewModel = new CABLegislativeAreasItemViewModel
-                {
-                    Name = legislativeArea.Name,
-                    IsProvisional = documentLegislativeArea.IsProvisional,
-                    IsArchived = documentLegislativeArea.Archived,
-                    AppointmentDate = documentLegislativeArea.AppointmentDate,
-                    ReviewDate = documentLegislativeArea.ReviewDate,
-                    Reason = documentLegislativeArea.Reason,
-                    PointOfContactName = documentLegislativeArea.PointOfContactName,
-                    PointOfContactEmail = documentLegislativeArea.PointOfContactEmail,
-                    PointOfContactPhone = documentLegislativeArea.PointOfContactPhone,
-                    IsPointOfContactPublicDisplay = documentLegislativeArea.IsPointOfContactPublicDisplay,
-                    CanChooseScopeOfAppointment = legislativeArea.HasDataModel,
-                    Status = documentLegislativeArea.Status,
-                    StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
-                    RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
-                    RoleId = documentLegislativeArea.RoleId,
-                };
-
-                var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
-                foreach (var scopeOfAppointment in scopeOfAppointments)
-                {
-                    var purposeOfAppointment = scopeOfAppointment.PurposeOfAppointmentId.HasValue
-                        ? (await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(scopeOfAppointment
-                            .PurposeOfAppointmentId.Value))?.Name
-                        : null;
-
-                    var category = scopeOfAppointment.CategoryId.HasValue
-                        ? (await _legislativeAreaService.GetCategoryByIdAsync(scopeOfAppointment.CategoryId.Value))
-                        ?.Name
-                        : null;
-
-                    var subCategory = scopeOfAppointment.SubCategoryId.HasValue
-                        ? (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId
-                            .Value))?.Name
-                        : null;
-
-                    foreach (var productProcedure in scopeOfAppointment.ProductIdAndProcedureIds)
-                    {
-                        var soaViewModel = new LegislativeAreaListItemViewModel()
-                        {
-                            LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
-                            PurposeOfAppointment = purposeOfAppointment,
-                            Category = category,
-                            SubCategory = subCategory,
-                            ScopeId = scopeOfAppointment.Id,
-                        };
-
-                        if (productProcedure.ProductId.HasValue)
-                        {
-                            var product =
-                                await _legislativeAreaService.GetProductByIdAsync(productProcedure.ProductId.Value);
-                            soaViewModel.Product = product!.Name;
-                        }
-
-                        foreach (var procedureId in productProcedure.ProcedureIds)
-                        {
-                            var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
-                            soaViewModel.Procedures?.Add(procedure!.Name);
-                        }
-
-                        legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
-                    }
-                }
-
-                var distinctSoa = legislativeAreaViewModel.ScopeOfAppointments.GroupBy(s => s.ScopeId).ToList();
-                foreach (var item in distinctSoa)
-                {
-                    var scopeOfApps = legislativeAreaViewModel.ScopeOfAppointments;
-                    scopeOfApps.First(soa => soa.ScopeId == item.Key).NoOfProductsInScopeOfAppointment = scopeOfApps.Count(soa => soa.ScopeId == item.Key);
-                }
+                var legislativeAreaViewModel = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(cab, documentLegislativeArea.LegislativeAreaId);
 
                 if (legislativeAreaViewModel.IsArchived == true)
                 {

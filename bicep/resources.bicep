@@ -10,6 +10,7 @@ param appServiceHostName string
 param appServiceHostNameVNext string
 param appServiceUseAutoScale bool
 param searchReplicaCount int
+param firewallPolicyMode string
 
 @secure()
 param basicAuthPassword string
@@ -722,13 +723,18 @@ resource firewallPolicy 'Microsoft.Network/ApplicationGatewayWebApplicationFirew
       maxRequestBodySizeInKb: 128
       fileUploadLimitInMb: 100
       state: 'Enabled'
-      mode: 'Detection'
+      mode: firewallPolicyMode
     }
     managedRules: {
       managedRuleSets: [
         {
           ruleSetType: 'OWASP'
           ruleSetVersion: '3.2'
+          ruleGroupOverrides: []
+        }
+        {
+          ruleSetType: 'Microsoft_BotManagerRuleSet'
+          ruleSetVersion: '1.0'
           ruleGroupOverrides: []
         }
       ]

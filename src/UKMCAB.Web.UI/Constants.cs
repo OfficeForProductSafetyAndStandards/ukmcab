@@ -66,6 +66,7 @@ public static class Constants
     public class ErrorMessages
     {
         public const string InvalidLoginAttempt = "Enter a valid email address and password";
+        public const string DuplicateEntry = "Duplicate scope of appointment - the previous entry could not be saved.";
     }
 }
 

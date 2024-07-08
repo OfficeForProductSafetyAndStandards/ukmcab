@@ -27,7 +27,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         private readonly ICachedSearchService _cachedSearchService;
         private readonly IFeedService _feedService;
         private readonly BasicAuthenticationOptions _basicAuthOptions;
-        private readonly TelemetryClient _telemetry;        
+        private readonly TelemetryClient _telemetry;
         private readonly IEditLockService _editLockService;
         private static readonly List<string> _select = new()
         {
@@ -57,7 +57,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             public const string SearchFeed = "search.feed";
         }
         public SearchController(ICachedSearchService cachedSearchService, IFeedService feedService, BasicAuthenticationOptions basicAuthOptions, TelemetryClient telemetry, IOptionsMonitor<OpenIdConnectOptions> options, IEditLockService editLockService)
-        {   
+        {
             _editLockService = editLockService;
             _cachedSearchService = cachedSearchService;
             _feedService = feedService;
@@ -86,8 +86,60 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 else
                 {
                     model.Statuses = new[] { ((int)Status.Published).ToString() };
-                }                
-            } 
+                }
+            }
+            var userSelectedLAStatus = model.LAStatus?.ToList() ?? new List<string>();
+            if (model.LAStatus != null)
+            {
+                var laStatusesToAddToSelected = new List<string>();
+
+                if (model.LAStatus.Any(la => LAStatusCategory.ApprovedByOPSS.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.ApprovedByOPSS);
+                }
+
+                if (model.LAStatus.Any(la => LAStatusCategory.DeclinedByOPSS.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.DeclinedByOPSS);
+                }
+
+                if (model.LAStatus.Any(la => LAStatusCategory.PendingOPSSApproval.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.PendingOPSSApproval);
+                }
+
+                if (model.LAStatus.Any(la => LAStatusCategory.DeclinedByOGD.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.DeclinedByOGD);
+                }
+
+                if (model.LAStatus.Any(la => LAStatusCategory.PendingOGDApproval.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.PendingOGDApproval);
+                }
+
+                if (model.LAStatus.Any(la => LAStatusCategory.PendingUKASSubmission.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.PendingUKASSubmission);
+                }
+
+                if (model.LAStatus.Any(la => LAStatusCategory.ApprovedByOGD.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.ApprovedByOGD);
+                }
+
+                if (model.LAStatus.Any(la => LAStatusCategory.Draft.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.Draft);
+                }
+
+                if (model.LAStatus.Any(la => LAStatusCategory.Published.Contains(la)))
+                {
+                    laStatusesToAddToSelected.AddRange(LAStatusCategory.Published);
+                }
+
+                model.LAStatus = laStatusesToAddToSelected.ToArray();
+            }
             model.Sort ??= internalSearch && string.IsNullOrWhiteSpace(model.Keywords) ? DataConstants.SortOptions.A2ZSort : DataConstants.SortOptions.Default;
             if (internalSearch && !string.IsNullOrWhiteSpace(unlockCab))
             {
@@ -97,7 +149,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, internalSearch: internalSearch);
 
-                   model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
+            model.LAStatus = userSelectedLAStatus.ToArray();
+            model.ReturnUrl = WebUtility.UrlEncode(HttpContext.Request.GetRequestUri().PathAndQuery);
 
             model.SearchResults = searchResults.CABs.Select(c => new ResultViewModel(c)).ToList();
             model.Pagination = new PaginationViewModel
@@ -149,7 +202,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var searchResults = await SearchInternalAsync(_cachedSearchService, model, configure: x => x.IgnorePaging = true);
             searchResults.CABs.OrderBy(x => x.Name).ForEach(x => x.HiddenText = "[omitted]");
             Response.Headers.Add("X-Count", searchResults.Total.ToString());
-            return Json(searchResults.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = x.CABId.ToGuid()??throw new Exception($"Cannot convert to guid '{x.CABId}'"), Name = x.Name }));
+            return Json(searchResults.CABs.Select(x => new SubscriptionsCoreCabSearchResultModel { CabId = x.CABId.ToGuid() ?? throw new Exception($"Cannot convert to guid '{x.CABId}'"), Name = x.Name }));
         }
 
         internal static async Task<CABResults> SearchInternalAsync(ICachedSearchService cachedSearchService, SearchViewModel model, bool internalSearch = false, Action<CABSearchOptions>? configure = null)
@@ -170,7 +223,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 UserGroupsFilter = model.UserGroups,
                 IsOPSSUser = model.IsOPSSUser,
                 Select = _select,
-                InternalSearch = internalSearch,                
+                InternalSearch = internalSearch,
             };
             configure?.Invoke(opt);
             return await cachedSearchService.QueryAsync(opt);
@@ -224,30 +277,32 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task SetFacetOptions(SearchViewModel model, bool? selectAllPendingApproval)
         {
-            var facets = await  _cachedSearchService.GetFacetsAsync(model.InternalSearch);
-            
+            var facets = await _cachedSearchService.GetFacetsAsync(model.InternalSearch);
+
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
-            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);  
-            
+            model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
+
             if (model.InternalSearch)
             {
                 model.StatusOptions = GetFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
-                model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "User group", facets.CreatedByUserGroup, model.UserGroups);
+                model.CreatedByUserGroupOptions = GetFilterOptions(nameof(model.UserGroups), "Created by user group", facets.CreatedByUserGroup, model.UserGroups);
                 var pendingApprovalSubStatus = facets.SubStatus.Where(s => s != ((int)SubStatus.None).ToString()).ToList();
                 if (selectAllPendingApproval == true)
                 {
                     model.SubStatuses = pendingApprovalSubStatus.ToArray();
-                } 
+                }
                 model.SubStatusOptions = GetFilterOptions(nameof(model.SubStatuses), "Pending approval", pendingApprovalSubStatus, model.SubStatuses);
                 model.LegislativeAreaProvisionalOptions = GetFilterOptions(nameof(model.ProvisionalLegislativeAreas), "Provisional legislative area", facets.ProvisionalLegislativeAreas.OrderByDescending(x => x), model.ProvisionalLegislativeAreas);
                 model.LegislativeAreaStatusOptions = GetFilterOptions(nameof(model.ArchivedLegislativeArea), "Archived Legislative area", facets.LegislativeAreaStatus.OrderByDescending(x => x), model.ArchivedLegislativeArea);
 
                 model.LAStatusOptions = GetFilterOptions(nameof(model.LAStatus), "Legislative area status", facets.LAStatus.OrderByDescending(x => x), model.LAStatus);
+                var distinctLAFilterOptions = model.LAStatusOptions.FilterOptions.GroupBy(x => x.Label).Select(g => g.First()).ToList();
+                model.LAStatusOptions.FilterOptions = distinctLAFilterOptions;
             }
             else
             {
-                model.StatusOptions = GetArchivedOnlyFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses); 
+                model.StatusOptions = GetArchivedOnlyFilterOptions(nameof(model.Statuses), "CAB status", facets.StatusValue, model.Statuses);
             }
         }
 

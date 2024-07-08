@@ -14,7 +14,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? Product { get; set; }
 
-        public List<string>? Procedures { get; set; } = new();     
+        public List<string>? Procedures { get; set; } = new();
+
+        public List<string>? Categories { get; set; } = new();
+
         public int NoOfProductsInScopeOfAppointment { get; set; }
     }
 }

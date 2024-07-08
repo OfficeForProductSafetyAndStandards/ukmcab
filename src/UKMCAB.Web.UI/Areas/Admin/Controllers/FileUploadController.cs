@@ -1093,7 +1093,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                             {
                                 ModelState.AddModelError($"UploadedFiles[{index}].Label",
-                                    "A file already exists with this title. Change the title or upload a different file.");
+                                    "A file already exists with this title. Change the title.");
                             }
                         }
 

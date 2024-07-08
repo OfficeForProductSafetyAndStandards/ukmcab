@@ -39,6 +39,11 @@
     </div>
 }
 
+@if (!string.IsNullOrWhiteSpace(Model.BannerContent))
+{
+    <partial model="@Model.BannerContent" name="Partials/_PageContentBanner"/>
+}
+
 <div class="govuk-grid-row">
     <form method="post" enctype="multipart/form-data" novalidate>
         <input type="hidden" asp-for="FromSummary"/>
@@ -167,19 +172,6 @@
                                                                         @scopeOfAppointment.PurposeOfAppointment
                                                                     </td>
                                                                 }
-
-                                                                @if (legislativeArea.ShowCategoryColumn)
-                                                                {
-                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                                        <label aria-hidden="true">Product category</label>
-                                                                        @scopeOfAppointment.Category
-                                                                        @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
-                                                                        {
-                                                                            <div class="govuk-!-margin-top-3">Product sub-category</div>
-                                                                            <div>@scopeOfAppointment.SubCategory</div>
-                                                                        }
-                                                                    </td>
-                                                                }
                                                             }
                                                             else
                                                             {
@@ -190,12 +182,44 @@
                                                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                     </td>
                                                                 }
+                                                            }
 
-                                                                @if (legislativeArea.ShowCategoryColumn)
+                                                            @if (legislativeArea.ShowCategoryColumn)
+                                                            {
+                                                                @if (string.IsNullOrEmpty(scopeOfAppointment.Product))
                                                                 {
                                                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                        <label aria-hidden="true">Product category</label>
+                                                                        @scopeOfAppointment.Category
+                                                                        @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
+                                                                        {
+                                                                            <div class="govuk-!-margin-top-3">Product sub-category</div>
+                                                                            <div>@scopeOfAppointment.SubCategory</div>
+                                                                        }
                                                                     </td>
-                                                                }
+                                                                } else
+                                                                {
+                                                                    @if (k == 0)
+                                                                    {
+                                                                        <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                        <label aria-hidden="true">Product category</label>
+                                                                        @scopeOfAppointment.Category
+                                                                        @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
+                                                                        {
+                                                                            <div class="govuk-!-margin-top-3">Product sub-category</div>
+                                                                            <div>@scopeOfAppointment.SubCategory</div>
+                                                                        }
+                                                                        </td>
+                                                                    } 
+                                                                    else
+                                                                    {
+                                                                        @if (legislativeArea.ShowCategoryColumn)
+                                                                        {
+                                                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                            </td>
+                                                                        }
+                                                                    }
+                                                                }                                                                
                                                             }
 
                                                             @if (legislativeArea.ShowProductColumn)
@@ -350,8 +374,19 @@
                                                                 @scopeOfAppointment.PurposeOfAppointment
                                                             </td>
                                                         }
+                                                    }
+                                                    else
+                                                    {
+                                                        @if (archivedLegislativeArea.ShowPurposeOfAppointmentColumn)
+                                                        {
+                                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                            </td>
+                                                        }
+                                                    }
 
-                                                        @if (archivedLegislativeArea.ShowCategoryColumn)
+                                                    @if (archivedLegislativeArea.ShowCategoryColumn)
+                                                    {
+                                                        @if (string.IsNullOrEmpty(scopeOfAppointment.Product))
                                                         {
                                                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                 <label aria-hidden="true">Product category</label>
@@ -363,19 +398,28 @@
                                                                 }
                                                             </td>
                                                         }
-                                                    }
-                                                    else
-                                                    {
-                                                        @if (archivedLegislativeArea.ShowPurposeOfAppointmentColumn)
+                                                        else
                                                         {
-                                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                            </td>
-                                                        }
-
-                                                        @if (archivedLegislativeArea.ShowCategoryColumn)
-                                                        {
-                                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                            </td>
+                                                            @if (k == 0)
+                                                            {
+                                                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                    <label aria-hidden="true">Product category</label>
+                                                                    @scopeOfAppointment.Category
+                                                                    @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
+                                                                    {
+                                                                        <div class="govuk-!-margin-top-3">Product sub-category</div>
+                                                                        <div>@scopeOfAppointment.SubCategory</div>
+                                                                    }
+                                                                </td>
+                                                            }
+                                                            else
+                                                            {
+                                                                    @if (archivedLegislativeArea.ShowCategoryColumn)
+                                                                {
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                    </td>
+                                                                }
+                                                            }
                                                         }
                                                     }
 

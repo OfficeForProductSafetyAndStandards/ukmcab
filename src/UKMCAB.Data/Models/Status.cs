@@ -76,7 +76,7 @@ namespace UKMCAB.Data.Models
         DeclinedToRemoveByOGD,
         [Description("Declined by OPSS")]
         DeclinedToRemoveByOPSS,
-        [Description("Approved")]
+        [Description("Pending approval")]
         PendingApprovalToUnarchiveByOpssAdmin,
         [Description("Declined")]
         DeclinedToUnarchiveByOGD,
@@ -92,5 +92,66 @@ namespace UKMCAB.Data.Models
         DeclinedToArchiveAndRemoveScheduleByOGD,
         [Description("Declined by OPSS")]
         DeclinedToArchiveAndRemoveScheduleByOPSS
+    }
+    public class LAStatusCategory
+    {
+        public static readonly List<string> ApprovedByOGD = new()
+        {
+            ((int)LAStatus.Approved).ToString()
+        };
+        public static readonly List<string> Draft = new()
+        {
+            ((int)LAStatus.Draft).ToString()
+        };
+        public static readonly List<string> Published = new()
+        {
+            ((int)LAStatus.Published).ToString()
+        };
+        public static readonly List<string> DeclinedByOGD = new()
+        {
+            ((int)LAStatus.Declined).ToString(),
+            ((int)LAStatus.DeclinedToRemoveByOGD).ToString(),
+            ((int)LAStatus.DeclinedToUnarchiveByOGD).ToString(),
+            ((int)LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD).ToString(),
+            ((int)LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD).ToString(),
+        };
+        public static readonly List<string> PendingOGDApproval = new()
+        {
+            ((int)LAStatus.PendingApproval).ToString(),
+            ((int)LAStatus.PendingApprovalToRemove).ToString(),
+            ((int)LAStatus.PendingApprovalToArchiveAndArchiveSchedule).ToString(),
+            ((int)LAStatus.PendingApprovalToArchiveAndRemoveSchedule).ToString(),
+            ((int)LAStatus.PendingApprovalToUnarchive).ToString(),
+        };
+        public static readonly List<string> ApprovedByOPSS = new()
+        {
+            ((int)LAStatus.ApprovedByOpssAdmin).ToString(),
+            ((int)LAStatus.ApprovedToRemoveByOpssAdmin).ToString(),
+            ((int)LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin).ToString(),
+            ((int)LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin).ToString(),
+            ((int)LAStatus.ApprovedToUnarchiveByOPSS).ToString(),
+        };
+        public static readonly List<string> DeclinedByOPSS = new()
+        {
+            ((int)LAStatus.DeclinedByOpssAdmin).ToString(),
+            ((int)LAStatus.DeclinedToRemoveByOPSS).ToString(),
+            ((int)LAStatus.DeclinedToUnarchiveByOPSS).ToString(),
+            ((int)LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS).ToString(),
+            ((int)LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS).ToString(),
+        };
+        public static readonly List<string> PendingOPSSApproval = new()
+        {
+            ((int)LAStatus.PendingApprovalToRemoveByOpssAdmin).ToString(),
+            ((int)LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin).ToString(),
+            ((int)LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin).ToString(),
+            ((int)LAStatus.PendingApprovalToUnarchiveByOpssAdmin).ToString(),
+        };
+        public static readonly List<string> PendingUKASSubmission = new()
+        {
+            ((int)LAStatus.PendingSubmissionToRemove).ToString(),
+            ((int)LAStatus.PendingSubmissionToArchiveAndArchiveSchedule).ToString(),
+            ((int)LAStatus.PendingSubmissionToArchiveAndRemoveSchedule).ToString(),
+            ((int)LAStatus.PendingSubmissionToUnarchive).ToString(),
+        };
     }
 }

@@ -156,7 +156,7 @@ namespace UKMCAB.Core.Services.CAB
             document.AuditLog.Add(auditItem);
             document.StatusValue = Status.Draft;
 
-            if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin))
+            if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin || la.Status == LAStatus.Approved))
             {
                 document.CreatedByUserGroup = userAccount.Role!.ToLower();
             }   
@@ -207,9 +207,13 @@ namespace UKMCAB.Core.Services.CAB
             bool submitForApproval = false)
         {
             if (submitForApproval)
-            {
-                draft.SubStatus = SubStatus.PendingApprovalToPublish;
-                draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+            {                
+                if(draft.SubStatus != SubStatus.PendingApprovalToPublish)
+                {
+                    draft.SubStatus = SubStatus.PendingApprovalToPublish;
+                    draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
+                }
+                
                 draft.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Draft)
                     .ForEach(la => la.Status = LAStatus.PendingApproval);
             } 
@@ -692,6 +696,7 @@ namespace UKMCAB.Core.Services.CAB
                 LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin => true,
                 _ => documentLegislativeArea.Archived
             };
+            latestDocument.AuditLog.Add(new Audit(approver, AuditCABActions.ApproveLegislativeArea));
             await UpdateOrCreateDraftDocumentAsync(approver, latestDocument);
         }
 
@@ -705,7 +710,7 @@ namespace UKMCAB.Core.Services.CAB
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
             documentLegislativeArea.Status = declinedLAStatus;
             reason = "Legislative area " + documentLegislativeArea.LegislativeAreaName + " declined: </br>" + reason;
-            latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea,reason));
+            latestDocument.AuditLog.Add(new Audit(userAccount,AuditCABActions.DeclineLegislativeArea, reason));
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 

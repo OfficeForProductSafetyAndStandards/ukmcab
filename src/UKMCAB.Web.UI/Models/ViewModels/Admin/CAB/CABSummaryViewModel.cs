@@ -40,10 +40,63 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? SuccessBannerMessage { get; set; }
         public int LegislativeAreasPendingApprovalCount { get; set; }
         public bool IsOpssAdmin { get; set; }
+        public bool IsUkas { get; set; }
         public int LegislativeAreasApprovedByAdminCount { get; set; }
         public bool LegislativeAreaHasBeenActioned { get; set; }
+        public bool HasActionableLegislativeAreaForOpssAdmin { get; set; }
+        public bool CanOnlyBeActionedByUkas => CabLegislativeAreasViewModel != null &&
+                                                            CabLegislativeAreasViewModel.ActiveLegislativeAreas != null &&
+                                                            CabLegislativeAreasViewModel.ActiveLegislativeAreas.Any(la => la.Status != LAStatus.Published) &&
+                                                            CabLegislativeAreasViewModel.ActiveLegislativeAreas.Where(la => la.Status != LAStatus.Published).All( la => 
+                                                                la.Status == LAStatus.DeclinedByOpssAdmin ||
+                                                                la.Status == LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS ||
+                                                                la.Status == LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS ||
+                                                                la.Status == LAStatus.DeclinedToRemoveByOPSS ||
+                                                                la.Status == LAStatus.DeclinedToUnarchiveByOPSS 
+                                                                );
 
         public bool LoggedInUserGroupIsOwner { get; set; }
         public bool RequestedFromCabProfilePage { get; set; }
+        public string BannerContent => GetBannerContent();
+
+        public string GetBannerContent()
+        {
+            if (CanPublish || (SubStatus == SubStatus.PendingApprovalToPublish && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin))
+            {
+                return string.Empty;
+            }
+            if (SubStatus == SubStatus.PendingApprovalToPublish && (!IsPendingOgdApproval || !IsMatchingOgdUser))
+            {
+                return "This CAB profile cannot be edited until it's been approved or declined.";
+            }
+            else if (EditByGroupPermitted == false && Status == Status.Draft && IsPendingOgdApproval == false)
+            {
+                if (IsOpssAdmin || !IsUkas)
+                {
+                    if (RequestedFromCabProfilePage)
+                    {
+                        return "This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.";
+                    }
+                    else
+                    {
+                        return "This CAB profile cannot be edited as it was created by a UKAS user.";
+                    }
+                }
+                else
+                {
+                    return "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
+                }
+            }
+            else if (EditByGroupPermitted == false && IsPendingOgdApproval == false)
+            {
+                return "This CAB profile cannot be edited as it was created by an OPSS user.";
+            }
+            else if (IsEditLocked == true && IsPendingOgdApproval == false)
+            {
+                return "This CAB profile cannot be edited as it's being edited by another user.";
+            }
+
+            return string.Empty;
+        }
     }
 }

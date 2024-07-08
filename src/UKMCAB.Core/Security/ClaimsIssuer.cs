@@ -41,6 +41,7 @@ public static class ClaimsIssuer
             return new Claim[]
             {
                 new(Claims.LegislativeAreaApprove, role), // Approve/Decline Legislative Area
+                new(Claims.CabGovernmentUserNotes, string.Empty), // can view/add Government user notes on cabs
             };
         }
 
