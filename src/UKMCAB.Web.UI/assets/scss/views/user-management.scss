@@ -1,3 +1,11 @@
+@mixin datetime-col-desktop {
+    width: 9.5em;
+}
+
+@mixin email-col-desktop {
+    width: 33%;
+}
+
 .user-tabs {
 
     .tab-item-title {
@@ -24,25 +32,25 @@
 
         .user-list-4-col {
             th:nth-child(3) {
-                width: auto;
+                @include email-col-desktop;
             }
 
             th:nth-child(4) {
-                width: 19%;
+                @include datetime-col-desktop;
             }
         }
 
         .user-list-5-col {
             th:nth-child(3) {
-                width: auto;
+                @include email-col-desktop;
             }
 
             th:nth-child(4) {
-                width: 9%;
+                width: 5.75em;
             }
 
             th:nth-child(5) {
-                width: 19%;
+                @include datetime-col-desktop;
             }
         }
 
