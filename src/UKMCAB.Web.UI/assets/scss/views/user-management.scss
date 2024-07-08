@@ -6,6 +6,11 @@
     width: 33%;
 }
 
+@mixin name-col-desktop {
+    min-width: 8.25em;
+    width: 30%;
+}
+
 .user-tabs {
 
     .tab-item-title {
@@ -31,6 +36,14 @@
         }
 
         .user-list-4-col {
+            th:nth-child(1) {
+                @include name-col-desktop;
+            }
+
+            th:nth-child(2) {
+                @include name-col-desktop;
+            }
+
             th:nth-child(3) {
                 @include email-col-desktop;
             }
@@ -41,6 +54,14 @@
         }
 
         .user-list-5-col {
+            th:nth-child(1) {
+                @include name-col-desktop;
+            }
+
+            th:nth-child(2) {
+                @include name-col-desktop;
+            }
+
             th:nth-child(3) {
                 @include email-col-desktop;
             }
