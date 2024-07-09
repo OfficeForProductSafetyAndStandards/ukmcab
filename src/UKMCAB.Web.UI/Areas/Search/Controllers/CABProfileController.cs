@@ -88,6 +88,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         [HttpGet("search/cab-profile/{id}", Name = Routes.CabDetails)]
         public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, int pagenumber = 1)
         {
+            
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
             {
@@ -532,6 +533,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 PointOfContactPhone = cabDocument.PointOfContactPhone ?? string.Empty,
                 IsPointOfContactPublicDisplay = cabDocument.IsPointOfContactPublicDisplay,
                 BodyNumber = cabDocument.CABNumber,
+                PreviousBodyNumbers = cabDocument.PreviousCABNumbers,
                 CabNumberVisibility = cabDocument.CabNumberVisibility,
                 BodyTypes = cabDocument.BodyTypes,
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
@@ -570,7 +572,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     DocumentType = DataConstants.Storage.Documents
                 },
                 GovernmentUserNotes = new UserNoteListViewModel(new Guid(cabDocument.id),
-                    cabDocument.GovernmentUserNotes, pagenumber),
+                    cabDocument.GovernmentUserNotes, pagenumber)
+                {
+                    CabHasDraft = hasDraft
+                },
                 FeedLinksViewModel = new FeedLinksViewModel
                 {
                     FeedUrl = Url.RouteUrl(Routes.CabFeed, new { id = cabDocument.CABId }),

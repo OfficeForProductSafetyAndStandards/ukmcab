@@ -58,6 +58,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool LoggedInUserGroupIsOwner { get; set; }
         public bool RequestedFromCabProfilePage { get; set; }
         public string BannerContent => GetBannerContent();
+        public bool HasActiveLAs { get; set; }
 
         public string GetBannerContent()
         {

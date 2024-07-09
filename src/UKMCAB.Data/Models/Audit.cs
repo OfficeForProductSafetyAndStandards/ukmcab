@@ -59,6 +59,7 @@ namespace UKMCAB.Data.Models
                         : "Not provided");
                 sbInternalComment.AppendFormat("<p class=\"govuk-body\">Publication date: {0} 12:00</p>",
                     DateTime.UtcNow.ToString("dd/MM/yyyy"));
+                sbInternalComment.Append($"<p class=\"govuk-body\">Added CAB review date {publishedDocument.RenewalDate.ToStringBeisDateFormat()}</p>");
             }
             else
             {
@@ -80,6 +81,11 @@ namespace UKMCAB.Data.Models
                     publishedDocument.DocumentLegislativeAreas, sbInternalComment);
 
                 CalculateChangesToScopeOfAppointments(previousDocument, publishedDocument, sbInternalComment);
+
+                if (publishedDocument.RenewalDate != null)
+                {
+                    CalculateChangesToReviewDate(publishedDocument, previousDocument, sbInternalComment);
+                }
             }
 
             if (sbInternalComment.Length > 0)
@@ -94,6 +100,19 @@ namespace UKMCAB.Data.Models
 
             Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbInternalComment.ToString()));
             PublicComment = HttpUtility.HtmlEncode(publicComment);
+        }
+
+        private static void CalculateChangesToReviewDate(Document previousDocument, Document publishedDocument,
+            StringBuilder sb)
+        {
+            if (previousDocument.RenewalDate == null)
+            {
+                sb.Append($"<p class=\"govuk-body\">Added CAB review date {publishedDocument.RenewalDate.ToStringBeisDateFormat()}</p>");
+            }
+            else if (previousDocument.RenewalDate != publishedDocument.RenewalDate)
+            {
+                sb.Append($"<p class=\"govuk-body\">Changed CAB review date {previousDocument.RenewalDate.ToStringBeisDateFormat()} to {publishedDocument.RenewalDate.ToStringBeisDateFormat()}</p>");
+            }
         }
 
         private static void CalculateChangesToScopeOfAppointments(Document previousDocument, Document publishedDocument,
@@ -134,7 +153,7 @@ namespace UKMCAB.Data.Models
             var previousActiveLAs = previousLAs.Where(n => n.Archived is null or false);
             var previousArchivedLAs = previousLAs.Where(n => n.Archived == true);
 
-            var newlyAddedLAs = currentActiveLAs.Where(la => previousActiveLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
+            var newlyAddedLAs = currentActiveLAs.Where(la => previousLAs.All(pla => pla.LegislativeAreaId != la.LegislativeAreaId));
             var removedLAs =  previousLAs.Where(la => currentLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
             var newlyAddedAndArchivedLAs = currentArchivedLAs.Where(la => previousLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId));
             var archivedLAs = currentArchivedLAs.Where(la => previousArchivedLAs.All(cla => cla.LegislativeAreaId != la.LegislativeAreaId)).Except(newlyAddedAndArchivedLAs);            
@@ -179,6 +198,13 @@ namespace UKMCAB.Data.Models
                     {
                         sb.AppendFormat(
                             "<p class=\"govuk-body\">{0} contact details changed.</p>",
+                            currentLa.LegislativeAreaName);
+                    }
+
+                    if (previousLa.Archived == true && currentLa.Archived == false)
+                    {
+                        sb.AppendFormat(
+                            "<p class=\"govuk-body\">{0} was unarchived from legislative area.</p>",
                             currentLa.LegislativeAreaName);
                     }
                 }
@@ -228,6 +254,14 @@ namespace UKMCAB.Data.Models
                         {
                             sb.AppendFormat(
                                 "<p class=\"govuk-body\">The file for <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been replaced.</p>",
+                                ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
+                                fileupload.Label);
+                        }
+
+                        if (previousFileUpload.Archived == true && fileupload.Archived == false)
+                        {
+                            sb.AppendFormat(
+                                "<p class=\"govuk-body\">The file for <a href=\"{0}\" target=\"_blank\" class=\"govuk-link\">{1}</a> has been unarchived.</p>",
                                 ScheduleOrDocumentLink(publishedDocument.CABId, fileupload.FileName, docType),
                                 fileupload.Label);
                         }
@@ -408,8 +442,8 @@ namespace UKMCAB.Data.Models
 
         public const string ApproveLegislativeArea = "Legislative area approved";
         public const string DeclineLegislativeArea = "Legislative area declined";
-        public const string LegislativeAreaAdditionalInformationUserNotes = "Review date updated";
-        public const string LegislativeAreaAdditionalInformationReason = "Legislative area reason updated";
+        public const string LegislativeAreaReviewDateAdded = "Legislative area review date added";
+        public const string LegislativeAreaReviewDateUpdated = "Legislative area review date updated";
     }
 
     public class AuditUserActions

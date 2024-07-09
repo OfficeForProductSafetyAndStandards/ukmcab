@@ -46,19 +46,25 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string RoleName { get; set; } = string.Empty;
         public string RoleId { get; set; } = string.Empty;
         public bool ShowEditActions { get; set; }
-
+        public bool IsComplete => IsProvisional.HasValue &&
+                                    (ReviewDate == null || (ReviewDate != null && ReviewDate >= DateTime.Today)) &&
+                                    (!CanChooseScopeOfAppointment || (ScopeOfAppointments.Any() && ScopeOfAppointments.All(
+                                        y =>
+                                            y.Procedures != null && y.Procedures.Any() &&
+                                            y.Procedures.All(z => !string.IsNullOrEmpty(z))
+                                        )));
         private string GetStatusName()
         {
             return Status switch
             {
-                LAStatus.Approved or 
-                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin 
-                    => 
+                LAStatus.Approved or
+                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin
+                    =>
                     $"{Status.GetEnumDescription()} by {RoleName}",
-                LAStatus.Declined or 
-                    LAStatus.DeclinedToRemoveByOGD or 
-                    LAStatus.DeclinedToUnarchiveByOGD or 
-                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or 
+                LAStatus.Declined or
+                    LAStatus.DeclinedToRemoveByOGD or
+                    LAStatus.DeclinedToUnarchiveByOGD or
+                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
                     LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD
                     =>
                     $"{Status.GetEnumDescription()} by {RoleName}",
@@ -68,7 +74,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
                     or LAStatus.PendingApprovalToArchiveAndRemoveSchedule
                     or LAStatus.PendingApprovalToUnarchive
                     =>
-                    $"{Status.GetEnumDescription()} from {RoleName}", 
+                    $"{Status.GetEnumDescription()} from {RoleName}",
                 _ => Status.GetEnumDescription()
             };
         }

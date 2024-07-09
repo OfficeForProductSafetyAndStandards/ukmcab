@@ -62,6 +62,11 @@
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 
+    @if (User.Identity.IsAuthenticated && Model.HasDraft)
+{
+        <partial model="@("A Draft CAB exists for this record.")" name="Partials/_PageContentBanner" />
+}
+
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
         <span class="govuk-caption-m govuk-!-margin-bottom-3">CAB profile</span>
@@ -231,6 +236,15 @@
                                     @Model.BodyNumber
                                 </dd>
                             </div>
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    @Html.Conditional(User.Identity.IsAuthenticated, "Previous CAB number(s)", "Previous Body number(s)")
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @Model.PreviousBodyNumbers
+                                </dd>
+                            </div>
+
                         }
 
                         @if (User.Identity.IsAuthenticated)

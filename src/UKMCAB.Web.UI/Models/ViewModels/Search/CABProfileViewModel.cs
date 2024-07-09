@@ -53,6 +53,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         // Body details
         public List<string> RegisteredTestLocations { get; set; } = new();
         public string BodyNumber { get; set; }
+        public string PreviousBodyNumbers { get; set; }
         public string? CabNumberVisibility { get;  set; }
         public List<string> BodyTypes { get; set; } = new();
         public List<string> LegislativeAreas { get; set; } = new();

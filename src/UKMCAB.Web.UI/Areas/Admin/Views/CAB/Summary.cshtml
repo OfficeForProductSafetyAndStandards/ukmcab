@@ -198,6 +198,14 @@
                     @Model.CabDetailsViewModel.CABNumber
                 </dd>
             </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Previous CAB numbers
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.CabDetailsViewModel.PreviousCABNumbers
+                </dd>
+            </div>
         }
         else if (Model.CanSubmitForApproval)
         {
@@ -207,6 +215,14 @@
                 </dt>
                 <dd class="govuk-summary-list__value">
                     CAB number assigned on approval
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Previous CAB numbers
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    Previous CAB numbers can be added on approval
                 </dd>
             </div>
         }
@@ -449,18 +465,27 @@
                             <div class="govuk-details__summary-text">
                                 <span>@legislativeArea.Name</span>
                             </div>
-                            @if (legislativeArea.Status != LAStatus.None)
+                            @if (legislativeArea.IsComplete == false)
                             {
-                                <div>
-                                    <strong class="cab-status-tag @legislativeArea.StatusCssStyle">@legislativeArea.StatusName</strong>
+                                <div class="cab-result-status-label cab-result-not-completed cab-details-result-status-label">
+                                    Not Completed
                                 </div>
                             }
-                            @if (legislativeArea.IsProvisional == true)
+                            else
                             {
-                                <div>
-                                    <strong class="cab-status-tag govuk-tag--purple">Provisional</strong>
-                                </div>
-                            }
+                                @if (legislativeArea.Status != LAStatus.None)
+                                {
+                                    <div>
+                                        <strong class="cab-status-tag @legislativeArea.StatusCssStyle">@legislativeArea.StatusName</strong>
+                                    </div>
+                                }
+                                @if (legislativeArea.IsProvisional == true)
+                                {
+                                    <div>
+                                        <strong class="cab-status-tag govuk-tag--purple">Provisional</strong>
+                                    </div>
+                                }  
+                            }                                                      
                         </summary>
                         <partial name="./LegislativeArea/Partials/_Summary" model="legislativeArea"/>
                     </details>
@@ -737,6 +762,13 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
     </div>
 }
 
+@if (!Model.HasActiveLAs)
+{
+    <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
+        This CAB profile will only become publishable when an active legislative area is added.
+    </govuk-warning-text>
+}
+            
 @if (Model is { SubStatus: SubStatus.None })
 {
     <div class="govuk-!-margin-top-5">
@@ -813,11 +845,15 @@ else
             Only legislative areas that have been reviewed and approved will be published.
         </govuk-warning-text>
         <div class="govuk-!-margin-top-5">
-            <div class="govuk-button-group">
-                <govuk-button-link id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)">Publish</govuk-button-link>
-                <govuk-button-link id="declineCab" class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
-                <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-            </div>
+            <form method="get">
+                <input type="hidden" asp-for="Id"/>
+                <input type="hidden" asp-for="CABId"/>
+                <div class="govuk-button-group">
+                    <govuk-button type="submit" id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(returnUrl)" disabled="@(!Model.ValidCAB)">Publish</govuk-button>
+                    <govuk-button-link id="declineCab" class="govuk-button--secondary" asp-area="admin" asp-controller="cab" asp-action="decline" asp-route-id="@Model.CABId">Decline</govuk-button-link>
+                    <a asp-area="admin" asp-controller="CabManagement" asp-action="CABManagement" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                </div>
+            </form>
         </div>
     }
 }

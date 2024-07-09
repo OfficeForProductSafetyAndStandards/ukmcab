@@ -163,6 +163,7 @@ namespace UKMCAB.Core.Services.CAB
 
             var rv = await _cabRepository.CreateAsync(document, auditItem.DateTime);
             await UpdateSearchIndexAsync(rv);
+            await RefreshCachesAsync(rv.CABId, rv.URLSlug);
             await RecordStatsAsync();
 
             return rv;
@@ -181,6 +182,7 @@ namespace UKMCAB.Core.Services.CAB
                 Name = document.Name,
                 CABId = document.CABId,
                 CABNumber = document.CABNumber,
+                PreviousCABNumbers = document.PreviousCABNumbers,
                 AddressLine1 = document.AddressLine1,
                 AddressLine2 = document.AddressLine2,
                 TownCity = document.TownCity,
@@ -644,7 +646,7 @@ namespace UKMCAB.Core.Services.CAB
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
         }
 
-        public async Task UnArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string? reason = default)
+        public async Task UnArchiveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string? reason = default, string? publicReason = default)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
@@ -652,12 +654,19 @@ namespace UKMCAB.Core.Services.CAB
             var documentLegislativeArea =
                 latestDocument.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == legislativeAreaId);
 
-            documentLegislativeArea.Status = LAStatus.Draft;
+            documentLegislativeArea.Status = documentLegislativeArea.Status == LAStatus.Published
+                ? LAStatus.PendingSubmissionToUnarchive : LAStatus.Approved;
+
             documentLegislativeArea.Archived = false;
 
             if(!String.IsNullOrWhiteSpace(reason))
             {
                 documentLegislativeArea.RequestReason = reason;
+            }
+
+            if (!string.IsNullOrWhiteSpace(publicReason))
+            {
+                documentLegislativeArea.PublicRequestReason = publicReason;
             }
 
             var scheduleIds = latestDocument.Schedules?.Where(f =>

@@ -13,6 +13,9 @@
             <govuk-input asp-for="CABNumber">
                 <govuk-input-label class="govuk-label--s">CAB number</govuk-input-label>                   
             </govuk-input>
+            <govuk-input asp-for="PreviousCABNumbers">
+                <govuk-input-label class="govuk-label--s">Previous CAB numbers</govuk-input-label>
+            </govuk-input>
             <govuk-select name="CabNumberVisibility" select-class="govuk-!-width-full" label-class="govuk-label--s" asp-for="CabNumberVisibility">
                 <govuk-select-label>Who should see the CAB number?</govuk-select-label>                   
                 @foreach (var item in new SelectList(CabNumberVisibility.Options, nameof(CabNumberVisibilityOption.Id), nameof(CabNumberVisibilityOption.Label)))

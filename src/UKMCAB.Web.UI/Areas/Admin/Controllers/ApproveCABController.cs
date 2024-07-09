@@ -132,6 +132,7 @@ public class ApproveCABController : Controller
         }
 
         document.CABNumber = vm.CABNumber;
+        document.PreviousCABNumbers = vm.PreviousCABNumbers;
         document.CabNumberVisibility = vm.CabNumberVisibility;
 
         await ApproveAsync(document, vm.UserNotes, vm.Reason);
