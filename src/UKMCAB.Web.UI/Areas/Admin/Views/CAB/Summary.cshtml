@@ -741,7 +741,23 @@
     </dl>
 </div>
 
-@if (Model is { ValidCAB: true, CanPublish: true, ShowEditActions: true })
+@if (Model.CanPublish == true && (Model.ShowEditActions == true || Model.SubStatus == SubStatus.None))
+{
+    <div class="govuk-warning-text govuk-!-margin-top-5">
+        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+        <strong class="govuk-warning-text__text">
+            <span class="govuk-warning-text__assistive">Warning</span>
+            @if (Model.SubStatus == SubStatus.None)
+            {
+            <text>Everyone can see a CAB profile when it is published.</text>
+            } else
+            {
+            <text>Provide all mandatory information before you are able to publish this record.</text>
+            }
+        </strong>
+    </div>
+}
+@* @if (Model is { ValidCAB: true, CanPublish: true, ShowEditActions: true })
 {
     <div class="govuk-warning-text govuk-!-margin-top-5">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -760,7 +776,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
             <text>Provide all mandatory information before you are able to publish this record.</text>
         </strong>
     </div>
-}
+} *@
 
 @if (!Model.HasActiveLAs)
 {

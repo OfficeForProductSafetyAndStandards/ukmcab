@@ -78,5 +78,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
                 _ => Status.GetEnumDescription()
             };
         }
+
+        public bool CanOnlyBeActionedByUkas => 
+            Status == LAStatus.DeclinedByOpssAdmin ||
+            Status == LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS ||
+            Status == LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS ||
+            Status == LAStatus.DeclinedToRemoveByOPSS ||
+            Status == LAStatus.DeclinedToUnarchiveByOPSS;
     }
 }

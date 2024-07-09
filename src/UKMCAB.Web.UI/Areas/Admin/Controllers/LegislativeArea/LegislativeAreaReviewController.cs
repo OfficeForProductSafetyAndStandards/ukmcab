@@ -9,6 +9,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Enums;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.Review;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -142,7 +143,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     latestDocument.ScopeOfAppointments.Remove(soaToRemove);
 
                     var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == legislativeAreaId);
-                    documentLegislativeArea?.MarkAsDraft(latestDocument);
+                    documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
 
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
                     return RedirectToRoute(Routes.ReviewLegislativeAreas, new { id, actionType = LegislativeAreaActionMessageEnum.ScopeOfAppointmentRemoved, fromSummary = reviewLaVM.FromSummary });
@@ -158,7 +159,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         var viewModel = new ReviewLegislativeAreasViewModel
         {
             CABId = Guid.Parse(cab.CABId),
-            ShowAddRemoveLegislativeAreaActions = !cab.IsPendingOgdApproval,
+            ShowAddRemoveLegislativeAreaActions = !cab.IsPendingOgdApproval(),
         };
 
         foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)

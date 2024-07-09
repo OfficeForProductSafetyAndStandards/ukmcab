@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Net;
 using System.Security.Claims;
 using AngleSharp.Common;
 using Microsoft.Extensions.Options;
@@ -14,10 +13,10 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
-using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
-using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Core.Extensions;
+using UKMCAB.Web.UI.Models.Builders;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -31,7 +30,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IEditLockService _editLockService;
         private readonly IUserNoteService _userNoteService;
         private readonly ILegislativeAreaService _legislativeAreaService;
-        private readonly ILegislativeAreaDetailService _legislativeAreaDetailService;
+        private readonly ICabSummaryViewModelBuilder _cabSummaryViewModelBuilder;
+        private readonly ICabLegislativeAreasViewModelBuilder _cabLegislativeAreasViewModelBuilder;
+        private readonly ICabSummaryUiService _cabSummaryUiService;
 
         public static class Routes
         {
@@ -55,7 +56,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             IEditLockService editLockService,
             IUserNoteService userNoteService,
             ILegislativeAreaService legislativeAreaService,
-            ILegislativeAreaDetailService legislativeAreaDetailService) : base(userService)
+            ICabSummaryViewModelBuilder cabSummaryViewModelBuilder,
+            ICabLegislativeAreasViewModelBuilder cabLegislativeAreasViewModelBuilder,
+            ICabSummaryUiService cabSummaryUiService) : base(userService)
         {
             _cabAdminService = cabAdminService;
             _workflowTaskService = workflowTaskService;
@@ -64,20 +67,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             _templateOptions = templateOptions.Value;
             _userNoteService = userNoteService;
             _legislativeAreaService = legislativeAreaService;
-            _legislativeAreaDetailService = legislativeAreaDetailService;
+            _cabSummaryViewModelBuilder = cabSummaryViewModelBuilder;
+            _cabLegislativeAreasViewModelBuilder = cabLegislativeAreasViewModelBuilder;
+            _cabSummaryUiService = cabSummaryUiService;
         }
 
         [HttpGet("admin/cab/about/{id}", Name = Routes.EditCabAbout)]
         [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> About(string id, bool fromSummary, string? returnUrl = null)
         {
-            var model = (await _cabAdminService.GetLatestDocumentAsync(id)).Map(x => new CABDetailsViewModel(x)) ??
-                        // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-                        new CABDetailsViewModel { IsNew = true };
-            model.IsFromSummary = fromSummary;
-            model.ReturnUrl = returnUrl;
-            model.IsOPSSUser = User.IsInRole(Roles.OPSS.Id);
-            model.IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id);
+            var model = (await _cabAdminService.GetLatestDocumentAsync(id))
+                .Map(x => new CABDetailsViewModel(x, User, fromSummary, returnUrl)) ??
+                    // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
+                    new CABDetailsViewModel { IsNew = true };
             return View(model);
         }
 
@@ -387,175 +389,98 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
         public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed, bool? fromCabProfilePage)
         {
+            var userId = User.GetUserId();
+
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
-            if (latest == null) // Implies no document or archived
+            if (latest == null)
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            if (latest.StatusValue == Status.Published && subSectionEditAllowed == true)
-            {
-                var userAccount =
-                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-                await _cabAdminService.CreateDocumentAsync(userAccount!, latest);
-            }
+            await _cabSummaryUiService.CreateDocumentAsync(latest, subSectionEditAllowed);
 
-            //Check Edit lock
-            var userIdWithLock = await _editLockService.LockExistsForCabAsync(latest.CABId);
-            var isEditLocked = !string.IsNullOrWhiteSpace(userIdWithLock) && User.GetUserId() != userIdWithLock;
-            var userInCreatorUserGroup = User.IsInRole(latest.CreatedByUserGroup);
-            var laPendingApprovalCount = LAPendingApprovalCountForUser(latest, UserRoleId == Roles.OPSS.Id);
-            var isOgdUser = Roles.OgdRolesList.Contains(UserRoleId);
-            var showOgdActions = isOgdUser && subSectionEditAllowed.HasValue && subSectionEditAllowed.Value && !isEditLocked && 
-                latest.IsPendingOgdApproval && laPendingApprovalCount > 0;
+            var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasForDocumentAsync(latest);
+            var purposeOfAppointments = await _legislativeAreaService.GetPurposeOfAppointmentsForDocumentAsync(latest);
+            var categories = await _legislativeAreaService.GetCategoriesForDocumentAsync(latest);
+            var subCategories = await _legislativeAreaService.GetSubCategoriesForDocumentAsync(latest);
+            var products = await _legislativeAreaService.GetProductsForDocumentAsync(latest);
+            var procedures = await _legislativeAreaService.GetProceduresForDocumentAsync(latest);
 
-            // Pre-populate model for edit
-            var cabDetails = new CABDetailsViewModel(latest)
-            {
-                IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id)
-            };
+            var cabNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest);
+            var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, userId);
+            var successBannerMessage = _cabSummaryUiService.GetSuccessBannerMessage();
+
+            var cabDetails = new CABDetailsViewModel(latest, User);
             var cabContact = new CABContactViewModel(latest);
             var cabBody = new CABBodyDetailsViewModel(latest);
-            var cabLegislativeAreas = await PopulateCABLegislativeAreasViewModelAsync(latest);
-            ValidateCabSummaryModels(cabDetails, cabContact, cabBody, cabLegislativeAreas);
-
             var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
             var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
+            var cabLegislativeAreas = _cabLegislativeAreasViewModelBuilder
+                .WithDocumentLegislativeAreas(
+                    latest.DocumentLegislativeAreas,
+                    legislativeAreas,
+                    latest.ScopeOfAppointments,
+                    purposeOfAppointments,
+                    categories,
+                    subCategories,
+                    products,
+                    procedures)
+                .Build();
 
-            var auditLogOrdered = latest.AuditLog.OrderBy(a => a.DateTime).ToList();
-            var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
-            var model = new CABSummaryViewModel
+            ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);
+
+            // TODO: Consider consolidating methods that only do simple assignments into one that takes in the Document as a parameter
+            var cabSummary = _cabSummaryViewModelBuilder
+                .WithRoleInfo(latest.CreatedByUserGroup)
+                .WithIds(latest.id, latest.CABId)
+                .WithReturnUrl(returnUrl)
+                .WithCabDetails(cabDetails)
+                .WithCabContactViewModel(cabContact)
+                .WithCabBodyDetailsViewModel(cabBody)
+                .WithCabLegislativeAreasViewModel(cabLegislativeAreas)
+                .WithProductScheduleDetailsViewModel(cabProductSchedules)
+                .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)
+                .WithCabNameAlreadyExists(cabNameAlreadyExists, latest.StatusValue)
+                .WithStatus(latest.StatusValue, latest.SubStatus)
+                .WithStatusCssStyle(latest.StatusValue)
+                .WithHasActiveLAs(latest.HasActiveLAs())
+                .WithIsEditLocked(isCabLockedForUser)
+                .WithSubSectionEditAllowed(subSectionEditAllowed)
+                .WithLastModifiedDate(latest.LastUpdatedDate)
+                .WithPublishedDate(latest.AuditLog)
+                .WithGovernmentUserNotes(latest.GovernmentUserNotes)
+                .WithLastAuditLogHistoryDate(latest.AuditLog)
+                .WithIsPendingOgdApproval(latest.IsPendingOgdApproval())
+                .WithLegislativeAreasPendingApprovalCount(latest)
+                .WithLegislativeAreasApprovedByAdminCount(latest.LegislativeAreasApprovedByAdminCount())
+                .WithLegislativeAreaHasBeenActioned(latest.LegislativeAreaHasBeenActioned())
+                .WithHasActionableLegislativeAreaForOpssAdmin(latest.HasActionableLegislativeAreaForOpssAdmin())
+                .WithRequestedFromCabProfilePage(fromCabProfilePage)
+                .WithSuccessBannerMessage(successBannerMessage)
+                .Build();
+
+            if (isCabLockedForUser)
             {
-                Id = latest.id,
-                CABId = latest.CABId,
-                CabDetailsViewModel = cabDetails,
-                CabContactViewModel = cabContact,
-                CabBodyDetailsViewModel = cabBody,
-                CabLegislativeAreasViewModel = cabLegislativeAreas,
-                CABProductScheduleDetailsViewModel = cabProductSchedules,
-                CABSupportingDocumentDetailsViewModel = cabSupportingDocuments,
-                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl)
-                    ? WebUtility.UrlDecode(string.Empty)
-                    : WebUtility.UrlDecode(returnUrl),
-                CABNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest) &&
-                                       latest.StatusValue != Status.Published,
-                Status = latest.StatusValue,
-                StatusCssStyle = CssClassUtils.CabStatusStyle(latest.StatusValue),
-                SubStatus = latest.SubStatus,
-                SubStatusName = latest.SubStatus.GetEnumDescription(),
-                ValidCAB = latest.StatusValue != Status.Published
-                           && cabDetails.IsCompleted && cabContact.IsCompleted && cabBody.IsCompleted &&
-                           cabLegislativeAreas.IsCompleted
-                           && cabProductSchedules.IsCompleted && cabSupportingDocuments.IsCompleted && latest.HasActiveLAs,
-                HasActiveLAs = latest.HasActiveLAs,
-                TitleHint = "CAB profile",
-                Title = User.IsInRole(Roles.OPSS.Id) ? latest.SubStatus == SubStatus.PendingApprovalToPublish
-                        ? "Check details before approving or declining"
-                        : "Check details before publishing"
-                    : userInCreatorUserGroup ? "Check details before submitting for approval" : "Summary",
-                IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || userInCreatorUserGroup,
-                IsEditLocked = isEditLocked,
-                SubSectionEditAllowed = subSectionEditAllowed ?? false,
-                LastModifiedDate = latest.LastUpdatedDate,
-                PublishedDate = publishedAudit?.DateTime ?? null,
-                GovernmentUserNoteCount = latest.GovernmentUserNotes?.Count ?? 0,
-                LastGovernmentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes!, u => u.DateTime)?.DateTime,
-                LastAuditLogHistoryDate = Enumerable.MaxBy(latest.AuditLog!, u => u.DateTime)?.DateTime,
-                IsPendingOgdApproval = latest.IsPendingOgdApproval,
-                IsMatchingOgdUser = laPendingApprovalCount > 0,
-                ShowOgdActions = showOgdActions,
-                LegislativeAreasPendingApprovalCount = laPendingApprovalCount,
-                IsOpssAdmin = UserRoleId == Roles.OPSS.Id,
-                IsUkas = UserRoleId == Roles.UKAS.Id,
-                LegislativeAreasApprovedByAdminCount = latest.DocumentLegislativeAreas.Count(dla => dla.Status is 
-                    LAStatus.Published or
-                    LAStatus.ApprovedByOpssAdmin or
-                    LAStatus.ApprovedToRemoveByOpssAdmin or 
-                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or 
-                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
-                    LAStatus.ApprovedToUnarchiveByOPSS
-                ),
-                LegislativeAreaHasBeenActioned = latest.DocumentLegislativeAreas.Any(la => la.Status is
-                    LAStatus.Published or
-                    LAStatus.Approved or
-                    LAStatus.Declined or
-                    LAStatus.DeclinedToRemoveByOPSS or
-                    LAStatus.ApprovedByOpssAdmin or
-                    LAStatus.DeclinedByOpssAdmin or
-                    LAStatus.PendingApprovalToRemoveByOpssAdmin or
-                    LAStatus.ApprovedToRemoveByOpssAdmin or
-                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
-                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
-                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
-                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
-                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
-                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
-                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
-                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
-                    LAStatus.ApprovedToUnarchiveByOPSS or
-                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
-                    LAStatus.DeclinedToUnarchiveByOPSS),
-                HasActionableLegislativeAreaForOpssAdmin = latest.DocumentLegislativeAreas.Any(la => la.Status is
-                    LAStatus.Approved or
-                    LAStatus.Declined or
-                    LAStatus.DeclinedToRemoveByOPSS or
-                    LAStatus.ApprovedByOpssAdmin or
-                    LAStatus.DeclinedByOpssAdmin or
-                    LAStatus.PendingApprovalToRemoveByOpssAdmin or
-                    LAStatus.ApprovedToRemoveByOpssAdmin or
-                    LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin or
-                    LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
-                    LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
-                    LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
-                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD or
-                    LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or
-                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD or
-                    LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or
-                    LAStatus.ApprovedToUnarchiveByOPSS or
-                    LAStatus.PendingApprovalToUnarchiveByOpssAdmin or
-                    LAStatus.DeclinedToUnarchiveByOPSS),
-                LoggedInUserGroupIsOwner = UserRoleId == latest.CreatedByUserGroup,
-                RequestedFromCabProfilePage = fromCabProfilePage ?? false
-            };
-        
-            //Lock Record for edit
-            if (string.IsNullOrWhiteSpace(userIdWithLock) && model.SubSectionEditAllowed
-                                                          && latest.StatusValue is Status.Draft or Status.Published
-                                                          && model.IsOPSSOrInCreatorUserGroup)
-            {
-                await _editLockService.SetAsync(latest.CABId, User.GetUserId()!);
+                await _cabSummaryUiService.LockCabForUser(cabSummary);
             }
 
-            var draftUpdated = Enumerable.MaxBy(
-                latest.AuditLog.Where(l => l.Action == AuditCABActions.Created),
-                u => u.DateTime)?.DateTime != latest.LastUpdatedDate;
-            model.CanPublish = User.IsInRole(Roles.OPSS.Id) && draftUpdated && !model.IsPendingOgdApproval && !model.CanOnlyBeActionedByUkas;
-            model.CanSubmitForApproval = User.IsInRole(Roles.UKAS.Id) && draftUpdated
-                && model.CabDetailsViewModel.IsCompleted
-                && model.CabContactViewModel.IsCompleted
-                && model.CabBodyDetailsViewModel.IsCompleted
-                && model.CabLegislativeAreasViewModel.IsCompleted
-                && model.CABProductScheduleDetailsViewModel.IsCompleted
-                && model.CABSupportingDocumentDetailsViewModel.IsCompleted;
-            model.ShowEditActions = model is { SubSectionEditAllowed: true, IsEditLocked: false } &&
-                                    ((model.SubStatus != SubStatus.PendingApprovalToPublish && userInCreatorUserGroup) ||
-                                     (model.SubStatus == SubStatus.PendingApprovalToPublish && model.IsOpssAdmin && (model.HasActionableLegislativeAreaForOpssAdmin || model.CanPublish)));
-            model.ShowOpssDeleteDraftActionOnly = model.SubSectionEditAllowed && model.SubStatus != SubStatus.PendingApprovalToPublish && User.IsInRole(Roles.OPSS.Id); 
-            model.EditByGroupPermitted =
-                model.SubStatus != SubStatus.PendingApprovalToPublish &&
-                 (model.Status == Status.Published || model.LoggedInUserGroupIsOwner);
+            return View(cabSummary);
+        }
 
-            if (TempData.ContainsKey(Constants.ApprovedLA))
-            {
-                TempData.Remove(Constants.ApprovedLA);
-                model.SuccessBannerMessage = "Legislative area has been approved.";
-            }
-            if (TempData.ContainsKey(Constants.DeclinedLA))
-            {
-                TempData.Remove(Constants.DeclinedLA);
-                model.SuccessBannerMessage = "Legislative area has been declined.";
-            }
-            return View(model);
+        private void ValidateCabSummary(CABDetailsViewModel cabDetails, CABContactViewModel cabContact,
+            CABBodyDetailsViewModel cabBody, CABLegislativeAreasViewModel cabLegislativeAreas)
+        {
+            // Perform validation here (in MVC context) to check data annotation rules AND fluent validation rules.
+            // Have to clear the ModelState inbetween calls to TryValidateModel with different objects, otherwise incorrect results can be returned.
+            // i.e. an earlier false result can cause all later calls to return false even if the objects are valid.
+            cabDetails.IsCompleted = TryValidateModel(cabDetails);
+            ModelState.Clear();
+            cabContact.IsCompleted = TryValidateModel(cabContact);
+            ModelState.Clear();
+            cabBody.IsCompleted = TryValidateModel(cabBody);
+            ModelState.Clear();
+            cabLegislativeAreas.IsCompleted = TryValidateModel(cabLegislativeAreas);
+            ModelState.Clear();
         }
 
         [HttpPost("admin/cab/summary/{id}", Name = Routes.CabSummary)]
@@ -577,7 +502,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var publishModel = new CABSummaryViewModel
             {
                 CABId = latest.CABId,
-                CabDetailsViewModel = new CABDetailsViewModel(latest),
+                CabDetailsViewModel = new CABDetailsViewModel(latest, User),
                 CabContactViewModel = new CABContactViewModel(latest),
                 CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
                 CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latest),
@@ -585,10 +510,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             };
             ModelState.Clear();
 
-            publishModel.ValidCAB = TryValidateModel(publishModel) &&
-                                    publishModel.CABProductScheduleDetailsViewModel.IsCompleted &&
-                                    publishModel.CABSupportingDocumentDetailsViewModel.IsCompleted &&
-                                    latest.HasActiveLAs;
+            TryValidateModel(publishModel);
 
             if (publishModel.ValidCAB)
             {
@@ -939,60 +861,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private RedirectToActionResult RedirectToCabManagementWithUnlockCab(string cabId)
         {
             return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin", unlockCab = cabId });
-        }
-
-        private async Task<CABLegislativeAreasViewModel> PopulateCABLegislativeAreasViewModelAsync(Document cab)
-        {
-            var viewModel = new CABLegislativeAreasViewModel();
-
-            foreach (var documentLegislativeArea in cab.DocumentLegislativeAreas)
-            {
-                var legislativeAreaViewModel = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(cab, documentLegislativeArea.LegislativeAreaId);
-
-                if (legislativeAreaViewModel.IsArchived == true)
-                {
-                    viewModel.ArchivedLegislativeAreas.Add(legislativeAreaViewModel);
-                }
-                else
-                {
-                    viewModel.ActiveLegislativeAreas.Add(legislativeAreaViewModel);
-                }
-
-            }
-
-            return viewModel;
-        }
-
-        private void ValidateCabSummaryModels(CABDetailsViewModel cabDetails, CABContactViewModel cabContact,
-            CABBodyDetailsViewModel cabBody, CABLegislativeAreasViewModel cabLegislativeAreas)
-        {
-            // Perform validation here (in MVC context) to check data annotation rules AND fluent validation rules.
-            // Have to clear the ModelState inbetween calls to TryValidateModel with different objects, otherwise incorrect results can be returned.
-            // i.e. an earlier false result can cause all later calls to return false even if the objects are valid.
-            cabDetails.IsCompleted = TryValidateModel(cabDetails);
-            ModelState.Clear();
-            cabContact.IsCompleted = TryValidateModel(cabContact);
-            ModelState.Clear();
-            cabBody.IsCompleted = TryValidateModel(cabBody);
-            ModelState.Clear();
-            cabLegislativeAreas.IsCompleted = TryValidateModel(cabLegislativeAreas);
-            ModelState.Clear();
-        }
-
-        private int LAPendingApprovalCountForUser(Document document, bool isOpssAdmin = false)
-        {
-            if (!isOpssAdmin)
-            {
-                return _legislativeAreaDetailService.GetPendingApprovalDocumentLegislativeAreaList(document, User).Count;
-            }   
-
-            return document.DocumentLegislativeAreas.Count(dla => dla.Status is
-                LAStatus.Approved or
-                LAStatus.PendingApprovalToRemoveByOpssAdmin or
-                LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin or
-                LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin or
-                LAStatus.PendingApprovalToUnarchive or
-                LAStatus.PendingApprovalToUnarchiveByOpssAdmin);
         }
     }
 }
