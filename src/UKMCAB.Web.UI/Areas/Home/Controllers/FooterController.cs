@@ -57,12 +57,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             return View(model);
         }
 
-        /*
-        // TEMPORARILY HIDE Contact Us functionality - UKMCAB-1983 / hotfix 4.2.1
-        [HttpGet("/contact-us", Name = Routes.ContactUs)]
+        [HttpGet("/contact-us", Name = Routes.ContactUs) ]
         public IActionResult ContactUs(string? returnUrl)
         {
-            return View(new ContactUsViewModel { ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl) });
+            return View(new ContactUsViewModel{ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl) });
         }
 
         [HttpPost("/contact-us", Name = Routes.ContactUs)]
@@ -82,7 +80,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
                 {
                     await _asyncNotificationClient.SendEmailAsync(_templateOptions.ContactUsOPSSEmail, _templateOptions.ContactUsOPSS, personalisation);
                     await _asyncNotificationClient.SendEmailAsync(model.Email, _templateOptions.ContactUsUser, personalisation);
-                    return RedirectToAction("ContactUsConfirmation", new { returnUrl = WebUtility.UrlEncode(model.ReturnUrl) });
+                    return RedirectToAction("ContactUsConfirmation", new {returnUrl = WebUtility.UrlEncode(model.ReturnUrl)});
                 }
                 catch
                 {
@@ -101,8 +99,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             {
                 returnUrl = WebUtility.UrlEncode("/");
             }
-            return View(new ContactUsConfirmationViewModel { ReturnUrl = returnUrl });
+            return View(new ContactUsConfirmationViewModel{ReturnUrl = returnUrl});
         }
-        */
     }
 }
