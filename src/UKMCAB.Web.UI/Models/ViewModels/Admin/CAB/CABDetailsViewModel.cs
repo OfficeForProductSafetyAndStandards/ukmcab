@@ -55,6 +55,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsCabNumberDisabled { get; set; }
         public bool IsCabNumberVisible { get; set; }
         public bool IsOPSSUser { get; set; }
+        public bool CABNameAlreadyExists { get; set; } //New
+        public bool CABNumberEntryIsDisabled { get; set; } //New
     }
 
     public class CABDetailsViewModelValidator : AbstractValidator<CABDetailsViewModel>

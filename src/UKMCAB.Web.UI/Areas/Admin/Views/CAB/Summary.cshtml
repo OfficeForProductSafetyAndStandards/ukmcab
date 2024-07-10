@@ -181,6 +181,7 @@
     </div>
 </div>
 
+@*
 <div class="govuk-grid-row">
 <div class="govuk-grid-column-full">
 <fieldset class="govuk-fieldset cab-summary-header-list">
@@ -299,6 +300,8 @@
     </dl>
 </div>
 
+*@
+
 <dl class="govuk-summary-list cab-summary-list">
     <div class="govuk-summary-list__row">
 
@@ -308,7 +311,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.ShowEditActions)
+            @if (Model.ShowEditAction)
             {
                 <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -413,7 +416,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.ShowEditActions)
+            @if (Model.ShowEditAction)
             {
                 <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -476,7 +479,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.ShowEditActions || Model.ShowOgdActions)
+            @if (Model.ShowEditAction || Model.ShowOgdActions)
             {
                 <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@Model.ReturnUrl"
                    asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">
@@ -584,7 +587,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.ShowEditActions || Model.ShowOgdActions)
+            @if (Model.ShowEditAction || Model.ShowOgdActions)
             {
                 <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -663,7 +666,7 @@
             </div>
         </dt>
         <dd class="govuk-summary-list__value">
-            @if (Model.ShowEditActions || Model.ShowOgdActions)
+            @if (Model.ShowEditAction || Model.ShowOgdActions)
             {
                 <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
             }
@@ -787,7 +790,7 @@
     </dl>
 </div>
 
-@if (Model is { ValidCAB: true, CanPublish: true, ShowEditActions: true })
+@if (Model is { ValidCAB: true, CanPublish: true, ShowEditAction: true })
 {
     <div class="govuk-warning-text govuk-!-margin-top-5">
         <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
@@ -822,7 +825,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
             <input type="hidden" asp-for="Id"/>
             <input type="hidden" asp-for="CABId"/>
             <div class="govuk-button-group">
-                @if (Model.ShowEditActions)
+                @if (Model.ShowEditAction)
                 {
                     @if (Model.CanPublish)
                     {
@@ -843,7 +846,7 @@ else if (Model is { ValidCAB: false, CanPublish: true, SubStatus: SubStatus.None
                     </button>           
                 }                
 
-                @if ((Model.ShowEditActions || Model.ShowOpssDeleteDraftActionOnly) && Model.CabDetailsViewModel.DocumentStatus == Status.Draft)
+                @if ((Model.ShowEditAction || Model.ShowOpssDeleteDraftActionOnly) && Model.CabDetailsViewModel.DocumentStatus == Status.Draft)
                 {
                     <govuk-button-link class="govuk-button--warning" asp-area="admin" asp-controller="cab" asp-action="delete" asp-route-id="@Model.CABId">Delete draft</govuk-button-link>
                     
@@ -868,7 +871,7 @@ else
 {
     var showPublishButtons = Model is { CanPublish: true, SubStatus: SubStatus.PendingApprovalToPublish, LegislativeAreasApprovedByAdminCount: > 0 };
 
-    if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPendingApprovalCount: > 0, ShowEditActions: true })
+    if (Model.ShowOgdActions || Model is { CanPublish: true, LegislativeAreasPendingApprovalCount: > 0, ShowEditAction: true })
     {
         <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
             @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
@@ -885,7 +888,7 @@ else
         </div>
     }
 
-    if (showPublishButtons && Model.ShowEditActions)
+    if (showPublishButtons && Model.ShowEditAction)
     {
         <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
             Only legislative areas that have been reviewed and approved will be published.
@@ -908,4 +911,4 @@ else
 </div>
 
 
-*@
+@**@

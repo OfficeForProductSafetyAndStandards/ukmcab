@@ -26,7 +26,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowEditAction { get; set; }
         public bool ShowSubstatusName { get; set; }
 
-        //public bool ShowEditActions { get; set; }
+        public bool ShowEditActions { get; set; } //To delete
         public bool ShowOpssDeleteDraftActionOnly { get; set; }
         public bool IsPendingOgdApproval { get; set; }
         public bool IsMatchingOgdUser { get; set; }
