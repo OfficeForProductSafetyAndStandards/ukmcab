@@ -55,25 +55,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     }                    
 
                     document.Version = DataConstants.Version.Number;
-
-                    //Set LA status                    
-                    foreach (var la in document.DocumentLegislativeAreas)
-                    {
-                        if (la != null && (la.Status == LAStatus.None))
-                        {
-                            la.Status = document.StatusValue switch
-                            {
-                                Status.Archived or Status.Historical or Status.Published => LAStatus.Published,
-                                _ => LAStatus.Draft
-                            };
-                        }
-
-                        //Set LA Role Id
-                        if (la != null && string.IsNullOrWhiteSpace(la.RoleId))
-                        {
-                            la.RoleId = legislativeAreas.First(l => l.Id == la.LegislativeAreaId).RoleId;
-                        }                        
-                    }                   
+                 
                     await UpdateAsync(document);
                 }
             }
