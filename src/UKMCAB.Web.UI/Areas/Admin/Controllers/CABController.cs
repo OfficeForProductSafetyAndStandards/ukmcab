@@ -456,6 +456,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 .WithLegislativeAreaHasBeenActioned(latest.LegislativeAreaHasBeenActioned())
                 .WithHasActionableLegislativeAreaForOpssAdmin(latest.HasActionableLegislativeAreaForOpssAdmin())
                 .WithRequestedFromCabProfilePage(fromCabProfilePage)
+                .WithDraftUpdated(latest.AuditLog, latest.LastUpdatedDate)
                 .WithSuccessBannerMessage(successBannerMessage)
                 .Build();
 
