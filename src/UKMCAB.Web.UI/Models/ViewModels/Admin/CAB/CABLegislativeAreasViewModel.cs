@@ -8,6 +8,11 @@ public class CABLegislativeAreasViewModel
 
     public bool IsCompleted { get; set; }
     public List<CABLegislativeAreasItemViewModel> ArchivedLegislativeAreas { get; } = new();
+    public string CABId { get; set; }
+    public string? ReturnUrl { get; set; }
+    public bool ShowSubsectionEditAction { get; set; } //new
+    public string SubsectionActionName { get; set; } = string.Empty; //new
+    public bool ShowOgdActions { get; set; } // To delete
 }
 
 public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegislativeAreasViewModel>
