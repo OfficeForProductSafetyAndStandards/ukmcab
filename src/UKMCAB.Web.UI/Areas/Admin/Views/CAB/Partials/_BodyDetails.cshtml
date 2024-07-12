@@ -2,67 +2,66 @@
 @using UKMCAB.Core.Domain
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABBodyDetailsViewModel
 
-<div class="govuk-!-padding-top-1">
-    <dl class="govuk-summary-list cab-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                <div class="cab-summary-header govuk-!-padding-top-5">
-                    <h3 class="govuk-heading-l">Body details</h3>
+
+<dl class="govuk-summary-list cab-summary-list">
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+            <div class="cab-summary-header govuk-!-padding-top-5">
+                <h3 class="govuk-heading-l">Body details</h3>
+            </div>
+        </dt>
+        <dd class="govuk-summary-list__value">
+            @if (Model.ShowSubsectionEditAction)
+            {
+                <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+            }
+            @if (Model.IsCompleted)
+            {
+                <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
+                    COMPLETED
                 </div>
+            }
+            else
+            {
+                <div class="cab-result-status-label cab-result-not-completed">
+                    NOT COMPLETED
+                </div>
+            }
+        </dd>
+    </div>
+</dl>
+
+<div class="cab-summary-detail">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                Registered test location
             </dt>
             <dd class="govuk-summary-list__value">
-                @if (Model.ShowSubsectionEditAction)
+                @if (Model.TestingLocations.Any(tl => !string.IsNullOrWhiteSpace(tl)))
                 {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                }
-                @if (Model.IsCompleted)
-                {
-                    <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
-                        COMPLETED
-                    </div>
+                    @Html.Raw(string.Join("<br />", Model.TestingLocations))
                 }
                 else
                 {
-                    <div class="cab-result-status-label cab-result-not-completed">
-                        NOT COMPLETED
-                    </div>
+                    <text>@Constants.NotProvided</text>
+                }
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Body type
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model.BodyTypes.Any())
+                {
+                    @Html.Raw(string.Join("<br />", Model.BodyTypes))
+                }
+                else
+                {
+                    <text>@Constants.NotProvided</text>
                 }
             </dd>
         </div>
     </dl>
-
-    <div class="cab-summary-detail">
-        <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row  govuk-!-padding-top-5">
-                <dt class="govuk-summary-list__key">
-                    Registered test location
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    @if (Model.TestingLocations.Any(tl => !string.IsNullOrWhiteSpace(tl)))
-                    {
-                        @Html.Raw(string.Join("<br />", Model.TestingLocations))
-                    }
-                    else
-                    {
-                        <text>@Constants.NotProvided</text>
-                    }
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Body type
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    @if (Model.BodyTypes.Any())
-                    {
-                        @Html.Raw(string.Join("<br />", Model.BodyTypes))
-                    }
-                    else
-                    {
-                        <text>@Constants.NotProvided</text>
-                    }
-                </dd>
-            </div>
-        </dl>
-    </div>
 </div>

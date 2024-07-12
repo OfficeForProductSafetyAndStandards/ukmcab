@@ -1,19 +1,19 @@
 ﻿@using System.Net
 @using UKMCAB.Core.Domain
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABDetailsViewModel
+@using UKMCAB.Data
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSupportingDocumentDetailsViewModel
 
-<div class="govuk-!-padding-top-1">
-    <dl class="govuk-summary-list cab-summary-list">
+    <dl class="govuk-summary-list cab-summary-list ukmcab-padding-top-40">
         <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
                 <div class="cab-summary-header govuk-!-padding-top-5">
-                    <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
+                    <h3 class="govuk-heading-l">Supporting documents</h3>
                 </div>
             </dt>
             <dd class="govuk-summary-list__value">
                 @if (Model.ShowSubsectionEditAction)
                 {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="@Model.SubsectionActionName" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
+                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
                 }
                 @if (Model.IsCompleted)
                 {
@@ -23,7 +23,7 @@
                 }
                 else
                 {
-                    <div class="cab-result-status-label cab-result-not-completed">
+                    <div class="cab-result-status-label cab-result-not-completed cab-details-result-status-label">
                         NOT COMPLETED
                     </div>
                 }
@@ -33,96 +33,33 @@
 
     <div class="cab-summary-detail">
         <dl class="govuk-summary-list">
-            <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+            <div class="govuk-summary-list__row govuk-!-padding-top-5">
                 <dt class="govuk-summary-list__key">
-                    CAB name
+                    Document (optional)
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @Model.Name
-
-                    @if (Model.CABNameAlreadyExists)
+                    @if (Model.Documents.Any())
                     {
-                        <br>
-                        <div class="govuk-warning-text">
-                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                            <strong class="govuk-warning-text__text">
-                                <span class="govuk-warning-text__assistive">Warning</span>
-                                This CAB name already exists. Only create this CAB if you have contacted OPSS for approval.
-                            </strong>
-                        </div>
+                        <ol class="govuk-list govuk-list--number">
+                            @foreach (var document in Model.Documents)
+                            {
+                                <li class="cab-summary-schedule-item">
+                                    <div>
+                                        <div>
+                                            <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@document.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@document.Label</a>
+                                        </div>
+                                        <div>@document.Category</div>
+                                    </div>
+
+                                </li>
+                            }
+                        </ol>
                     }
-                </dd>
-            </div>
-            @if (CabNumberVisibility.CanDisplay(Model.CabNumberVisibility, User))
-            {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        CAB number
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.CABNumber
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Previous CAB numbers
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        @Model.PreviousCABNumbers
-                    </dd>
-                </div>
-            }
-            else if (Model.CABNumberEntryIsDisabled)
-            {
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        CAB number
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        CAB number assigned on approval
-                    </dd>
-                </div>
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                        Previous CAB numbers
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        Previous CAB numbers can be added on approval
-                    </dd>
-                </div>
-            }
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Appointment date (optional)
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    @*Model.AppointmentDate *@
-                    @{
-                        var appointmentDate = Model.AppointmentDate.ToStringBeisDateFormat();                        
+                    else
+                    {
+                        <text>@Constants.NotProvided</text>
                     }
-                    @Html.ValueOrNotProvided(appointmentDate)
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Review date (optional)
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    @*Model.ReviewDate *@
-                    @{
-                        var reviewDate = Model.ReviewDate.ToStringBeisDateFormat();
-                    }
-                    @Html.ValueOrNotProvided(reviewDate)                    
-                </dd>
-            </div>
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    UKAS reference number (optional)
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    @Html.ValueOrNotProvided(Model.UKASReference)
                 </dd>
             </div>
         </dl>
     </div>
-</div>

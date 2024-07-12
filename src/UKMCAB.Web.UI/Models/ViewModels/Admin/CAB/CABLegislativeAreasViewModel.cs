@@ -2,16 +2,11 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
-public class CABLegislativeAreasViewModel
+public class CABLegislativeAreasViewModel : CreateEditCABViewModel
 {
     public List<CABLegislativeAreasItemViewModel> ActiveLegislativeAreas { get; } = new();
-
-    public bool IsCompleted { get; set; }
     public List<CABLegislativeAreasItemViewModel> ArchivedLegislativeAreas { get; } = new();
-    public string CABId { get; set; }
-    public string? ReturnUrl { get; set; }
-    public bool ShowSubsectionEditAction { get; set; } //new
-    public string SubsectionActionName { get; set; } = string.Empty; //new
+    public string? CABId { get; set; }
     public bool ShowOgdActions { get; set; } // To delete
 }
 

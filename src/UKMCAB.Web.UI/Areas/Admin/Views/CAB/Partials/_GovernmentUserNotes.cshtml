@@ -1,0 +1,47 @@
+﻿@using System.Net
+@using UKMCAB.Core.Domain
+@using UKMCAB.Core.Security
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABGovernmentUserNotesViewModel
+
+    @if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabGovernmentUserNotes))
+    {
+        <dl class="govuk-summary-list cab-summary-list">
+            <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                <dt class="govuk-summary-list__key">
+                    <div class="cab-summary-header  govuk-!-padding-top-5 ukmcab-float__unset">
+                        <h3 class="govuk-heading-l">Government user notes</h3>
+                    </div>
+                </dt>
+            </div>
+        </dl>
+
+        <div class="cab-summary-detail">
+            <dl class="govuk-summary-list">
+                <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                    <dt class="govuk-summary-list__key">
+                        Notes
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @if (Model.GovernmentUserNoteCount > 0)
+                        {
+                            <p>Last note added: @Model.LastGovernmentUserNoteDate?.ToStringBeisFormat()</p>
+
+                            <a asp-area="admin" asp-controller="Cab" asp-action="GovernmentUserNotes" asp-route-cabId="@Model.CABId"
+                               asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">
+                                View government user notes (@Model.GovernmentUserNoteCount)
+                            </a>
+                        }
+                        else
+                        {
+                            <p>There are no notes</p>
+
+                            <a asp-area="Search" asp-controller="UserNote" asp-action="Create" asp-route-cabDocumentId="@Model.Id" asp-route-returnUrl="@Model.ReturnUrl"
+                               class="govuk-link govuk-link--no-visited-state">
+                                Add note
+                            </a>
+                        }
+                    </dd>
+                </div>
+            </dl>
+        </div>
+    }
