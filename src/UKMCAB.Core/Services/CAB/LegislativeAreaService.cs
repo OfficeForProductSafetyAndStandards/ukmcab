@@ -234,7 +234,7 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<List<LegislativeAreaModel>> GetLegislativeAreasForDocumentAsync(Document document)
     {
-        var legislativeAreaIds = document.DocumentLegislativeAreas.Select(docLa => docLa.LegislativeAreaId).ToList();
+        var legislativeAreaIds = document.DocumentLegislativeAreas.Select(docLa => docLa.LegislativeAreaId);
         foreach (var id in legislativeAreaIds)
         {
             Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
@@ -245,7 +245,7 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<List<PurposeOfAppointmentModel>> GetPurposeOfAppointmentsForDocumentAsync(Document document)
     {
-        var purposeOfAppointmentIds = document.ScopeOfAppointments.Where(soa => soa.PurposeOfAppointmentId.HasValue).Select(soa => soa.PurposeOfAppointmentId!.Value).ToList();
+        var purposeOfAppointmentIds = document.ScopeOfAppointments.Where(soa => soa.PurposeOfAppointmentId.HasValue).Select(soa => soa.PurposeOfAppointmentId!.Value);
         foreach (var id in purposeOfAppointmentIds)
         {
             Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
@@ -256,9 +256,14 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<List<CategoryModel>> GetCategoriesForDocumentAsync(Document document)
     {
-        // TODO: Why are some of these null?
-        //var categoryIds = document.ScopeOfAppointments.Where(soa => soa.CategoryId.HasValue).Select(soa => soa.CategoryId!.Value).ToList();
-        var categoryIds = document.ScopeOfAppointments.SelectMany(soa => soa.CategoryIdAndProcedureIds.Select(c => c.CategoryId)).ToList();
+        // TODO: Why is CategoryId null DocumentScopeOfAppointment but still has CategoryIdAndProcedureIds?
+        // Can there be same the category for different procedure ids or are they unique within ScopeOfAppointments?
+        var categoryIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.CategoryIdAndProcedureIds
+                .Where(categoryAndProcedures => categoryAndProcedures.CategoryId.HasValue)
+                .Select(c => c.CategoryId))
+            .Distinct();
+
         foreach (var id in categoryIds)
         {
             Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
@@ -269,7 +274,7 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<List<SubCategoryModel>> GetSubCategoriesForDocumentAsync(Document document)
     {
-        var subCategoryIds = document.ScopeOfAppointments.Where(soa => soa.SubCategoryId.HasValue).Select(soa => soa.SubCategoryId!.Value).ToList();
+        var subCategoryIds = document.ScopeOfAppointments.Where(soa => soa.SubCategoryId.HasValue).Select(soa => soa.SubCategoryId!.Value);
         foreach (var id in subCategoryIds)
         {
             Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
@@ -282,10 +287,10 @@ public class LegislativeAreaService : ILegislativeAreaService
     {
         var productIds = document.ScopeOfAppointments
             .SelectMany(soa => soa.ProductIdAndProcedureIds
-                .Where(productIdAndProcedureIds => productIdAndProcedureIds.ProductId.HasValue)
+                .Where(productAndProcedures => productAndProcedures.ProductId.HasValue)
                 .Select(productIdAndProcedureIds => productIdAndProcedureIds.ProductId!.Value))
-            .Distinct()
-            .ToList();
+            .Distinct();
+
         foreach (var id in productIds)
         {
             Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
@@ -298,15 +303,13 @@ public class LegislativeAreaService : ILegislativeAreaService
     {
         var productProcedureIds = document.ScopeOfAppointments
             .SelectMany(soa => soa.ProductIdAndProcedureIds
-                .SelectMany(productIdAndProcedureIds => productIdAndProcedureIds.ProcedureIds))
-            .ToList();
+                .SelectMany(productIdAndProcedureIds => productIdAndProcedureIds.ProcedureIds));
 
         var categoryProcedureIds = document.ScopeOfAppointments
             .SelectMany(soa => soa.CategoryIdAndProcedureIds
-                .SelectMany(categoryIdAndProcedureIds => categoryIdAndProcedureIds.ProcedureIds))
-            .ToList();
+                .SelectMany(categoryIdAndProcedureIds => categoryIdAndProcedureIds.ProcedureIds));
 
-        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds).Distinct().ToList();
+        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds).Distinct();
 
         foreach (var id in distictProcedureIds)
         {
