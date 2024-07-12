@@ -46,11 +46,16 @@
 
             th:nth-child(3) {
                 @include email-col-desktop;
+                padding-left: 15px;
             }
 
             th:nth-child(4) {
                 @include datetime-col-desktop;
                 padding-left: 15px;
+            }
+
+            td:nth-child(5) {
+                padding-left: 20px;
             }
 
             td:nth-child(7) {
@@ -69,6 +74,7 @@
 
             th:nth-child(3) {
                 @include email-col-desktop;
+                padding-left: 15px;
             }
 
             th:nth-child(4) {
@@ -78,6 +84,10 @@
 
             th:nth-child(5) {
                 @include datetime-col-desktop;
+            }
+
+            td:nth-child(5) {
+                padding-left: 20px;
             }
 
             td:nth-child(7) {
