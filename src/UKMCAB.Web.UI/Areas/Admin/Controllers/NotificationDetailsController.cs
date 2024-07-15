@@ -60,15 +60,21 @@ public class NotificationDetailsController : UI.Controllers.ControllerBase
         model.CompletedBy = notificationDetail.CompletedBy;
         model.AssignedOn = notificationDetail.AssignedOn;
         model.SelectAssignee = notificationDetail.SelectAssignee;
-        model.SelectedAssignee = model.SelectedAssignee;
 
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
-        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
+        if (model.SelectedAssignee != "unassign-cab")
+        {
+            var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
+            workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
+        }
+        else
+        { 
+            workFlowTask.Assignee = null;
+        }
         workFlowTask.Assigned = DateTime.Now;
         await _workflowTaskService.UpdateAsync(workFlowTask);
 
