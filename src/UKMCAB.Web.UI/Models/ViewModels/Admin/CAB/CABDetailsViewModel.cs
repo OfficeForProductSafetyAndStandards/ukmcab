@@ -1,7 +1,8 @@
 ﻿using FluentValidation;
 using System.ComponentModel.DataAnnotations;
+using System.Security.Claims;
+using UKMCAB.Core.Security;
 using UKMCAB.Data.Models;
-using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -13,7 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             DocumentStatus = Status.Draft;
         }
 
-        public CABDetailsViewModel(Document document)
+        public CABDetailsViewModel(Document document, ClaimsPrincipal user, bool fromSummary = false, string? returnUrl = null)
         {
             CABId = document.CABId;
             Name = document.Name;
@@ -28,6 +29,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             ReviewDateYear = document.RenewalDate?.Year.ToString("0000") ?? string.Empty;
             UKASReference = document.UKASReference;
             DocumentStatus = document.StatusValue;
+
+            IsFromSummary = fromSummary;
+            ReturnUrl = returnUrl;
+            IsOPSSUser = user.IsInRole(Roles.OPSS.Id);
+            IsCabNumberDisabled = !IsOPSSUser;
         }
 
         public string? CABId { get; set; }

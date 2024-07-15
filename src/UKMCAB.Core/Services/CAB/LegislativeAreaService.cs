@@ -3,7 +3,7 @@ using UKMCAB.Common;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models.LegislativeAreas;
-using System.Linq;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Core.Services.CAB;
 
@@ -102,7 +102,6 @@ public class LegislativeAreaService : ILegislativeAreaService
 
         return new ScopeOfAppointmentOptionsModel();
     }
-
     public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid purposeOfAppointmentId)
     {
         var categories = await _categoryRepository.QueryAsync(x => x.PurposeOfAppointmentId == purposeOfAppointmentId);
@@ -225,6 +224,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         var procedure = await _procedureRepository.QueryAsync(p => p.Id == procedureId);
         return _mapper.Map<ProcedureModel>(procedure.FirstOrDefault());
     }
+
     public async Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid subCategoryId)
     {
         Guard.IsTrue(subCategoryId != Guid.Empty, "Guid cannot be empty");
@@ -232,4 +232,90 @@ public class LegislativeAreaService : ILegislativeAreaService
         return _mapper.Map<SubCategoryModel>(subCat.FirstOrDefault());
     }
 
+    public async Task<List<LegislativeAreaModel>> GetLegislativeAreasForDocumentAsync(Document document)
+    {
+        var legislativeAreaIds = document.DocumentLegislativeAreas.Select(docLa => docLa.LegislativeAreaId);
+        foreach (var id in legislativeAreaIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var la = (await _legislativeAreaRepository.QueryAsync(l => legislativeAreaIds.Contains(l.Id))).ToList();
+        return _mapper.Map<List<LegislativeAreaModel>>(la);
+    }
+
+    public async Task<List<PurposeOfAppointmentModel>> GetPurposeOfAppointmentsForDocumentAsync(Document document)
+    {
+        var purposeOfAppointmentIds = document.ScopeOfAppointments.Where(soa => soa.PurposeOfAppointmentId.HasValue).Select(soa => soa.PurposeOfAppointmentId!.Value);
+        foreach (var id in purposeOfAppointmentIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var purposeOfAppointments = (await _purposeOfAppointmentRepository.QueryAsync(l => purposeOfAppointmentIds.Contains(l.Id))).ToList();
+        return _mapper.Map<List<PurposeOfAppointmentModel>>(purposeOfAppointments);
+    }
+
+    public async Task<List<CategoryModel>> GetCategoriesForDocumentAsync(Document document)
+    {
+        // TODO: Why is CategoryId null DocumentScopeOfAppointment but still has CategoryIdAndProcedureIds?
+        // Can there be same the category for different procedure ids or are they unique within ScopeOfAppointments?
+        var categoryIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.CategoryIdAndProcedureIds
+                .Where(categoryAndProcedures => categoryAndProcedures.CategoryId.HasValue)
+                .Select(c => c.CategoryId))
+            .Distinct();
+
+        foreach (var id in categoryIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var cat = (await _categoryRepository.QueryAsync(l => categoryIds.Contains(l.Id))).ToList();
+        return _mapper.Map<List<CategoryModel>>(cat);
+    }
+
+    public async Task<List<SubCategoryModel>> GetSubCategoriesForDocumentAsync(Document document)
+    {
+        var subCategoryIds = document.ScopeOfAppointments.Where(soa => soa.SubCategoryId.HasValue).Select(soa => soa.SubCategoryId!.Value);
+        foreach (var id in subCategoryIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var subCategories = (await _subCategoryRepository.QueryAsync(p => subCategoryIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<SubCategoryModel>>(subCategories);
+    }
+
+    public async Task<List<ProductModel>> GetProductsForDocumentAsync(Document document)
+    {
+        var productIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.ProductIdAndProcedureIds
+                .Where(productAndProcedures => productAndProcedures.ProductId.HasValue)
+                .Select(productIdAndProcedureIds => productIdAndProcedureIds.ProductId!.Value))
+            .Distinct();
+
+        foreach (var id in productIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var products = (await _productRepository.QueryAsync(p => productIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<ProductModel>>(products);
+    }
+
+    public async Task<List<ProcedureModel>> GetProceduresForDocumentAsync(Document document)
+    {
+        var productProcedureIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.ProductIdAndProcedureIds
+                .SelectMany(productIdAndProcedureIds => productIdAndProcedureIds.ProcedureIds));
+
+        var categoryProcedureIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.CategoryIdAndProcedureIds
+                .SelectMany(categoryIdAndProcedureIds => categoryIdAndProcedureIds.ProcedureIds));
+
+        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds).Distinct();
+
+        foreach (var id in distictProcedureIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var procedures = (await _procedureRepository.QueryAsync(p => distictProcedureIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<ProcedureModel>>(procedures);
+    }
 }

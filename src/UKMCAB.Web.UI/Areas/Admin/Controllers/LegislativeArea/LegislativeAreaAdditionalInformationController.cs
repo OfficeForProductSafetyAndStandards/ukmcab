@@ -7,6 +7,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using static UKMCAB.Web.UI.Constants;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -110,7 +111,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         documentLegislativeArea.PointOfContactEmail = vm.PointOfContactEmail;
         documentLegislativeArea.PointOfContactPhone = vm.PointOfContactPhone;
         documentLegislativeArea.IsPointOfContactPublicDisplay = vm.IsPointOfContactPublicDisplay;
-        documentLegislativeArea.MarkAsDraft(latestDocument);
+        documentLegislativeArea.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
 
         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
@@ -165,7 +166,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         documentLegislativeArea.ReviewDate = vm.ReviewDate;
         documentLegislativeArea.UserNotes = vm.UserNotes;
         documentLegislativeArea.Reason = vm.Reason;
-        documentLegislativeArea.MarkAsDraft(latestDocument);
+        documentLegislativeArea.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
 
         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 

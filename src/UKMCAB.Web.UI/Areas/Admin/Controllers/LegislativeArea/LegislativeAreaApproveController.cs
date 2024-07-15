@@ -148,7 +148,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var publishModel = new CABSummaryViewModel
         {
             CABId = latestDocument.CABId,
-            CabDetailsViewModel = new CABDetailsViewModel(latestDocument),
+            CabDetailsViewModel = new CABDetailsViewModel(latestDocument, User),
             CabContactViewModel = new CABContactViewModel(latestDocument),
             CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latestDocument),
             CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latestDocument),

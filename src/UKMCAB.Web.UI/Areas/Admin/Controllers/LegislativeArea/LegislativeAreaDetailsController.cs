@@ -13,6 +13,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Core.Security;
 using System.Net;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -248,7 +249,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                                  throw new InvalidOperationException();
             var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == documentScopeOfAppointment.LegislativeAreaId);
-            documentLegislativeArea?.MarkAsDraft(latestDocument);
+            documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
             
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
@@ -770,7 +771,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                                  throw new InvalidOperationException();
             var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == scopeOfAppointment.LegislativeAreaId);
-            documentLegislativeArea?.MarkAsDraft(latestDocument);
+            documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
 
             if (latestDocument.ScopeOfAppointments.Any(s => s.Equals(scopeOfAppointment)))
             {                
