@@ -1,5 +1,5 @@
 @mixin datetime-col-desktop {
-    width: 9.5em;
+    width: 9.25em;
 }
 
 @mixin email-col-desktop {
@@ -46,10 +46,20 @@
 
             th:nth-child(3) {
                 @include email-col-desktop;
+                padding-left: 15px;
             }
 
             th:nth-child(4) {
                 @include datetime-col-desktop;
+                padding-left: 15px;
+            }
+
+            td:nth-child(5) {
+                padding-left: 20px;
+            }
+
+            td:nth-child(7) {
+                padding-left: 20px;
             }
         }
 
@@ -64,14 +74,24 @@
 
             th:nth-child(3) {
                 @include email-col-desktop;
+                padding-left: 15px;
             }
 
             th:nth-child(4) {
                 width: 5.75em;
+                padding-left: 15px;
             }
 
             th:nth-child(5) {
                 @include datetime-col-desktop;
+            }
+
+            td:nth-child(5) {
+                padding-left: 20px;
+            }
+
+            td:nth-child(7) {
+                padding-left: 20px;
             }
         }
 
