@@ -16,27 +16,28 @@
     </div>
 }
 
-<div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
-        <fieldset class="govuk-fieldset">
-            <form method="post">
+<fieldset class="govuk-fieldset">
+    <form method="post">
+        <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL" />
+        <input type="hidden" asp-for="CABId" value="@Model.CABId" />
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
                     <h1 class="govuk-fieldset__heading ukmcab-padding-bottom-20">
                         Archive @Model.Name
                     </h1>
                 </legend>
+            </div>
+        </div>
 
-                <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL" />
-                <input type="hidden" asp-for="CABId" value="@Model.CABId" />
-                 @if (Model.HasDraft)
-                {
-                    <div class="ukmcab-inset-text--red">
-                        <div class="govuk-inset-text govuk-tag--red govuk-inset-text-alert">
-                            <strong>This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted.</strong>
-                        </div>
-                    </div>
-                }
+        @if (Model.HasDraft)
+        {
+            <partial model="@("This CAB  has a draft profile connected to it. If you archive this CAB, the draft will be deleted.")" name="Partials/_PageContentBanner" />
+        }
 
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
                 <govuk-character-count asp-for="ArchiveInternalReason" max-length="1000" rows="5">
                     <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
                         User notes
@@ -55,13 +56,9 @@
                     </govuk-character-count-hint>
                 </govuk-character-count>
                
-                <div class="govuk-warning-text">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        Archived CAB profiles cannot be edited and users cannot view them in the search results.
-                    </strong>
-                </div>
+                <govuk-warning-text>
+                    Archived CAB profiles cannot be edited and users cannot view them in the search results.
+                </govuk-warning-text>
 
                 <div class="govuk-button-group">
                     <button class="govuk-button" data-module="govuk-button">
@@ -69,7 +66,7 @@
                     </button>
                     <a class="govuk-link govuk-link--no-visited-state" asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CABId" asp-route-returnUrl="@returnUrl">Cancel</a>
                 </div>
-            </form>
-        </fieldset>
-    </div>
-</div>
+            </div>
+        </div>
+    </form>
+</fieldset>
