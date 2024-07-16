@@ -1,3 +1,4 @@
+@using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationDetailViewModel
 
 @{
@@ -151,6 +152,7 @@
                             </govuk-summary-list-row-key>
                             <govuk-summary-list-row-value>
                                 <govuk-select name="SelectedAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-visually-hidden" asp-for="SelectedAssignee">
+                                    <govuk-select-item value=@DataConstants.UserAccount.UnassignedUserId>Deselect assignee</govuk-select-item>
                                     @foreach (var assignee in Model.SelectAssignee!)
                                     {
                                         if (assignee.Value == Model.SelectedAssigneeId)
@@ -163,7 +165,6 @@
                                         }
                                     }
 
-                                    <govuk-select-item value="unassign-cab">Original user group</govuk-select-item>
                                 </govuk-select>
                             </govuk-summary-list-row-value>
                         </govuk-summary-list-row>

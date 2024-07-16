@@ -296,4 +296,9 @@ public static class DataConstants
             "User inspectorate"
         };
     }
+
+    public static class UserAccount
+    {
+        public const string UnassignedUserId = "unassigned-user-id";
+    }
 }
