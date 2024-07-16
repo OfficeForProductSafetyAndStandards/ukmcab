@@ -429,10 +429,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);
 
-            // TODO: Consider consolidating methods that only do simple assignments into one that takes in the Document as a parameter
             var cabSummary = _cabSummaryViewModelBuilder
-                .WithRoleInfo(latest.CreatedByUserGroup)
-                .WithIds(latest.id, latest.CABId)
+                .WithRoleInfo()
+                .WithDocumentDetails(latest)
                 .WithReturnUrl(returnUrl)
                 .WithCabDetails(cabDetails)
                 .WithCabContactViewModel(cabContact)
@@ -440,23 +439,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 .WithCabLegislativeAreasViewModel(cabLegislativeAreas)
                 .WithProductScheduleDetailsViewModel(cabProductSchedules)
                 .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)
-                .WithCabNameAlreadyExists(cabNameAlreadyExists, latest.StatusValue)
-                .WithStatus(latest.StatusValue, latest.SubStatus)
-                .WithStatusCssStyle(latest.StatusValue)
-                .WithHasActiveLAs(latest.HasActiveLAs())
+                .WithCabNameAlreadyExists(cabNameAlreadyExists)
                 .WithIsEditLocked(isCabLockedForUser)
                 .WithSubSectionEditAllowed(subSectionEditAllowed)
-                .WithLastModifiedDate(latest.LastUpdatedDate)
-                .WithPublishedDate(latest.AuditLog)
-                .WithGovernmentUserNotes(latest.GovernmentUserNotes)
-                .WithLastAuditLogHistoryDate(latest.AuditLog)
-                .WithIsPendingOgdApproval(latest.IsPendingOgdApproval())
-                .WithLegislativeAreasPendingApprovalCount(latest)
-                .WithLegislativeAreasApprovedByAdminCount(latest.LegislativeAreasApprovedByAdminCount())
-                .WithLegislativeAreaHasBeenActioned(latest.LegislativeAreaHasBeenActioned())
-                .WithHasActionableLegislativeAreaForOpssAdmin(latest.HasActionableLegislativeAreaForOpssAdmin())
                 .WithRequestedFromCabProfilePage(fromCabProfilePage)
-                .WithDraftUpdated(latest.AuditLog, latest.LastUpdatedDate)
                 .WithSuccessBannerMessage(successBannerMessage)
                 .Build();
 

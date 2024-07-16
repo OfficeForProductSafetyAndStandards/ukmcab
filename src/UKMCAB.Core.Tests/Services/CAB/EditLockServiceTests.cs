@@ -22,29 +22,91 @@ public class EditLockServiceTests
         _sut = new EditLockService(_distCache.Object);
     }
 
-    //[Test]
-    //public async Task CabNotFound_LockExistsForCabAsync_ReturnsNull()
-    //{
-    //    _distCache.Setup(c => c.GetAsync<Dictionary<string, string>>(It.IsAny<string>(), It.IsAny<int>()))
-    //        .ReturnsAsync(new Dictionary<string, string>());
+    [Test]
+    public async Task IsCabLockedForUser_LockExistsAndDoesNotMatchUser_ReturnsTrue()
+    {
+        var cabId = _faker.Random.Word();
+        var userIdWithLock = _faker.Random.Word();
+        var userId = _faker.Random.Word();
 
-    //    Assert.IsNull(await _sut.IsCabLockedForUser(_faker.Random.Word()));
-    //}
+        _distCache.Setup(c => c.GetAsync<Dictionary<string, Tuple<string, DateTime>>>(It.IsAny<string>(), -1))
+            .ReturnsAsync(new Dictionary<string, Tuple<string, DateTime>>
+            {
+                { cabId, new Tuple<string, DateTime>(userIdWithLock, DateTime.Now.AddMinutes(10)) }
+            });
 
-    //[Test]
-    //public async Task CabFound_LockExistsForCabAsync_ReturnsUserId()
-    //{
-    //    var testCabId = _faker.Random.Word();
-    //    var testUserId = _faker.Random.Word();
+        Assert.True(await _sut.IsCabLockedForUser(cabId, userId));
+    }
 
-    //    _distCache.Setup(c => c.GetAsync<Dictionary<string, Tuple<string, DateTime>>>(It.IsAny<string>(), -1))
-    //        .ReturnsAsync(new Dictionary<string, Tuple<string, DateTime>>
-    //        {
-    //            { testCabId, new Tuple<string, DateTime>(testUserId, DateTime.Now.AddMinutes(10)) }
-    //        });
+    [Test]
+    public async Task IsCabLockedForUser_LockNotFound_ReturnsFalse()
+    {
+        var cabId = _faker.Random.Word();
+        var userId = _faker.Random.Word();
 
-    //    Assert.AreEqual(testUserId, await _sut.IsCabLockedForUser(testCabId));
-    //}
+        Assert.False(await _sut.IsCabLockedForUser(cabId, userId));
+    }
+
+    [Test]
+    public async Task IsCabLockedForUser_LockExistsAndMatchesUser_ReturnsFalse()
+    {
+        var cabId = _faker.Random.Word();
+        var userId = _faker.Random.Word();
+
+        _distCache.Setup(c => c.GetAsync<Dictionary<string, Tuple<string, DateTime>>>(It.IsAny<string>(), -1))
+            .ReturnsAsync(new Dictionary<string, Tuple<string, DateTime>>
+            {
+                { cabId, new Tuple<string, DateTime>(userId, DateTime.Now.AddMinutes(10)) }
+            });
+
+        Assert.False(await _sut.IsCabLockedForUser(cabId, userId));
+    }
+
+    [Test]
+    public async Task IsCabLockedForUser_MultipleCabsLockExistsAndDoesNotMatchesUser_ReturnsTrue()
+    {
+        // Arrange
+        var cabId = _faker.Random.Word();
+        var cabId2 = _faker.Random.Word();
+        var userIdWithLock = _faker.Random.Word();
+        var userIdWithLock2 = _faker.Random.Word();
+
+        _distCache.Setup(c => c.GetAsync<Dictionary<string, Tuple<string, DateTime>>>(It.IsAny<string>(), -1))
+            .ReturnsAsync(new Dictionary<string, Tuple<string, DateTime>>
+            {
+                { cabId, new Tuple<string, DateTime>(userIdWithLock, DateTime.Now.AddMinutes(10)) },
+                { cabId2, new Tuple<string, DateTime>(userIdWithLock2, DateTime.Now.AddMinutes(30)) }
+            });
+
+        // Act
+        var userFound = await _sut.IsCabLockedForUser(cabId2, userIdWithLock);
+
+        // Assert
+        Assert.True(userFound);
+    }
+
+    [Test]
+    public async Task IsCabLockedForUser_MultipleCabsLockExistsAndMatchesUser_ReturnsFalse()
+    {
+        // Arrange
+        var cabId = _faker.Random.Word();
+        var cabId2 = _faker.Random.Word();
+        var userIdWithLock = _faker.Random.Word();
+        var userIdWithLock2 = _faker.Random.Word();
+
+        _distCache.Setup(c => c.GetAsync<Dictionary<string, Tuple<string, DateTime>>>(It.IsAny<string>(), -1))
+            .ReturnsAsync(new Dictionary<string, Tuple<string, DateTime>>
+            {
+                { cabId, new Tuple<string, DateTime>(userIdWithLock, DateTime.Now.AddMinutes(10)) },
+                { cabId2, new Tuple<string, DateTime>(userIdWithLock2, DateTime.Now.AddMinutes(30)) }
+            });
+
+        // Act
+        var userFound = await _sut.IsCabLockedForUser(cabId2, userIdWithLock2);
+
+        // Assert
+        Assert.False(userFound);
+    }
 
     [Test]
     public async Task UserNotFound_RemoveEditLockForUserAsync_CacheNotSet()
@@ -106,46 +168,4 @@ public class EditLockServiceTests
                 TimeSpan.FromHours(1), -1),
             Times.Once);
     }
-
-    //[Test]
-    //public async Task MultipleCabs_LockExistsForCabAsync_ReturnsUser()
-    //{
-    //    // Arrange
-    //    var testCabId = _faker.Random.Word();
-    //    var testCabId2 = _faker.Random.Word();
-    //    var testUserId = _faker.Random.Word();
-    //    var testUserId2 = _faker.Random.Word();
-    //    _distCache.Setup(c => c.GetAsync<Dictionary<string, Tuple<string, DateTime>>>(It.IsAny<string>(), -1))
-    //        .ReturnsAsync(new Dictionary<string, Tuple<string, DateTime>>
-    //        {
-    //            { testCabId, new Tuple<string, DateTime>(testUserId, DateTime.Now.AddMinutes(10)) },
-    //            { testCabId2, new Tuple<string, DateTime>(testUserId2, DateTime.Now.AddMinutes(30)) }
-    //        });
-
-    //    // Act
-    //    var userFound = await _sut.IsCabLockedForUser(testCabId2);
-
-    //    // Assert
-    //    Assert.AreEqual(testUserId2, userFound!);
-    //}
-
-    //[Test]
-    //public async Task CabLockExpired_LockExistsForCabAsync_ReturnsNull()
-    //{
-    //    // Arrange
-    //    var testCabId = _faker.Random.Word();
-    //    var testUserId = _faker.Random.Word();
-    //    _distCache.Setup(c => c.GetAsync<Dictionary<string, Tuple<string, DateTime>>>(It.IsAny<string>(), -1))
-    //        .ReturnsAsync(new Dictionary<string, Tuple<string, DateTime>>
-    //        {
-    //            { testCabId, new Tuple<string, DateTime>(testUserId, DateTime.Now.AddMinutes(-10)) },
-    //        });
-        
-    //    // Act
-    //    var userFound = await _sut.IsCabLockedForUser(testCabId);
-        
-    //    // Assert
-    //    Assert.AreEqual(null, userFound!);
-    //}
-    
 }

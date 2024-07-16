@@ -256,8 +256,6 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<List<CategoryModel>> GetCategoriesForDocumentAsync(Document document)
     {
-        // TODO: Why is CategoryId null DocumentScopeOfAppointment but still has CategoryIdAndProcedureIds?
-        // Can there be same the category for different procedure ids or are they unique within ScopeOfAppointments?
         var categoryIds = document.ScopeOfAppointments
             .SelectMany(soa => soa.CategoryIdAndProcedureIds
                 .Where(categoryAndProcedures => categoryAndProcedures.CategoryId.HasValue)
