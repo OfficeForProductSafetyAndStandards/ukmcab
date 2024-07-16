@@ -1,9 +1,13 @@
+@using UKMCAB.Core.Domain.Workflow
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Unarchive.ApproveUnarchiveCABViewModel
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Approve request to unarchive CAB @Model.CABName</h1>
         <p class="govuk-body">
-            @Model.SubmitterFirstAndLastName from @Model.SubmitterGroup has requested that this CAB is unarchived and @(Model.PublishRequested ? "published" : "saved as draft")
+            @Model.SubmitterFirstAndLastName from @Model.SubmitterGroup has requested that this CAB is unarchived and @(Model.PublishRequested ? "published" : "saved as draft") for the following reason:
+        </p>
+        <p class='govuk-body'>
+            @Model.RequestReason
         </p>
     </div>
     <div class="govuk-grid-column-two-thirds">

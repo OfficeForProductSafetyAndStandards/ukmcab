@@ -42,7 +42,7 @@ public class WorkflowTaskService : IWorkflowTaskService
 
     public async Task<List<WorkflowTask>> GetCompletedForRoleIdAsync(string roleId)
     {
-        var items = await _workflowTaskRepository.QueryAsync(w => w.Completed && w.ForRoleId == roleId);
+        var items = await _workflowTaskRepository.QueryAsync(w => w.Completed && w.ForRoleId == roleId && w.LastUpdatedOn > DateTime.Now.AddMonths(-6));
         return items.Select(w => w.MapToWorkflowTaskModel()).ToList();
     }
     
