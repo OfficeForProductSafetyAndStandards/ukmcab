@@ -6,7 +6,7 @@
 <h2 class="govuk-heading-l">History</h2>
 @if (!Model.AuditLogHistory.AuditHistoryItems.Any())
 {
-    <p class="govuk-body">@Constants.NotProvided</p>
+    <p class="govuk-body">@Constants.None</p>
 }
 else
 {
@@ -75,7 +75,7 @@ else
                                 }
                                 else
                                 {
-                                    @Constants.NotProvided
+                                    @Constants.None
                                 }
                             </td>
                         </tr>
@@ -103,7 +103,7 @@ else
                                 }
                                 else
                                 {
-                                    @Constants.NotProvided
+                                    @Constants.None
                                 }
                             </td>
                         </tr>

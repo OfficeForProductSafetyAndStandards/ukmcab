@@ -1,3 +1,16 @@
+@mixin datetime-col-desktop {
+    width: 9.25em;
+}
+
+@mixin email-col-desktop {
+    width: 33%;
+}
+
+@mixin name-col-desktop {
+    min-width: 8.25em;
+    width: 30%;
+}
+
 .user-tabs {
 
     .tab-item-title {
@@ -22,31 +35,63 @@
             display: none;
         }
 
-        .user-list-5-col {
+        .user-list-4-col {
+            th:nth-child(1) {
+                @include name-col-desktop;
+            }
+
+            th:nth-child(2) {
+                @include name-col-desktop;
+            }
+
             th:nth-child(3) {
-                width: 35%;
+                @include email-col-desktop;
+                padding-left: 15px;
             }
 
             th:nth-child(4) {
-                width: 15%;
+                @include datetime-col-desktop;
+                padding-left: 15px;
+            }
+
+            td:nth-child(5) {
+                padding-left: 20px;
+            }
+
+            td:nth-child(7) {
+                padding-left: 20px;
             }
         }
 
-        .user-list-6-col {
+        .user-list-5-col {
+            th:nth-child(1) {
+                @include name-col-desktop;
+            }
+
+            th:nth-child(2) {
+                @include name-col-desktop;
+            }
+
             th:nth-child(3) {
-                width: 35%;
+                @include email-col-desktop;
+                padding-left: 15px;
             }
 
             th:nth-child(4) {
-                width: 10%;
+                width: 5.75em;
+                padding-left: 15px;
             }
 
             th:nth-child(5) {
-                width: 15%;
+                @include datetime-col-desktop;
             }
 
-            th:nth-child(6) {
-                width: 5%;
+            td:nth-child(5) {
+                padding-left: 20px;
+            }
+
+            td:nth-child(7) {
+                padding-left: 20px;
             }
         }
 
@@ -187,7 +232,7 @@
                 display: inline;
             }
 
-            @include govuk-media-query($until: mobile) {               
+            @include govuk-media-query($until: mobile) {
                 width: 100%;
             }
 
