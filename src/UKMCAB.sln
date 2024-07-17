@@ -28,11 +28,12 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{1D2146B5-DC6D-423C-B2C2-8C34CE2F3C6B}"
 	ProjectSection(SolutionItems) = preProject
 		Architecture.md = Architecture.md
+		Branching-Strategy.md = Branching-Strategy.md
 		CodeReviewChecklist.md = CodeReviewChecklist.md
 		ExceptionHandling.md = ExceptionHandling.md
 		notes.md = notes.md
-		nuget.config = nuget.config
 		NuGetPackageSourceSetup.md = NuGetPackageSourceSetup.md
+		releases.md = releases.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Web.UI.Tests", "UKMCAB.Web.UI.Tests\UKMCAB.Web.UI.Tests.csproj", "{47CC3489-92AB-4B26-AD63-1332F507A342}"
