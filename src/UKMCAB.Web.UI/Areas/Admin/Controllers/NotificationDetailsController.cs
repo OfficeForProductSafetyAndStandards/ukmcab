@@ -7,6 +7,7 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
+using UKMCAB.Data;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
 
@@ -60,16 +61,23 @@ public class NotificationDetailsController : UI.Controllers.ControllerBase
         model.CompletedBy = notificationDetail.CompletedBy;
         model.AssignedOn = notificationDetail.AssignedOn;
         model.SelectAssignee = notificationDetail.SelectAssignee;
-        model.SelectedAssignee = model.SelectedAssignee;
 
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
-        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
-        workFlowTask.Assigned = DateTime.Now;
+        if (model.SelectedAssignee != DataConstants.UserAccount.UnassignedUserId)
+        {
+            var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
+            workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
+            workFlowTask.Assigned = DateTime.Now;
+        }
+        else
+        {
+            workFlowTask.Assignee = null;
+            workFlowTask.Assigned = null;
+        }
         await _workflowTaskService.UpdateAsync(workFlowTask);
 
         return RedirectToAction("Index", "Notification", new { Area = "admin" });
