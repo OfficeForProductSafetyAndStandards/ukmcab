@@ -3,7 +3,7 @@
 @{
     ViewData["nav"] = "search";
     var initialTitle = "Find a UK Market Conformity Assessment Body";
-    var title = string.IsNullOrWhiteSpace(Model.Keywords) ? initialTitle : $"{initialTitle} matching &quot;{Model.Keywords}&quot;";
+    var title = string.IsNullOrWhiteSpace(Model.Keywords) ? initialTitle : $"{initialTitle} matching \"{Model.Keywords}\"";
     ViewData["pageTitle"] = title;
     var basePath = Context.Request.RemoveQueryParameters("sort", "pagenumber");
     if (basePath.Contains("?", StringComparison.InvariantCultureIgnoreCase))
@@ -20,7 +20,7 @@
     <a href="#@resultsAnchor" class="govuk-skip-link" data-module="govuk-skip-link">Skip to results</a>
     <div id="search-header" class="govuk-grid-row">
         <div class="search-grid-column-three-fifth">
-            <h1 class="govuk-heading-l">@Html.Raw(title)</h1>
+            <h1 class="govuk-heading-l">@title</h1>
         </div>
         <div class="atom-feed atom-feed-top search-grid-column-two-fifth">
             <partial name="Partials/_FeedLinks" model="Model.FeedLinksViewModel"/>
