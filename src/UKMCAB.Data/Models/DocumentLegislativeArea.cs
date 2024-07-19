@@ -28,13 +28,6 @@
         public LAStatus Status { get; set; }
         public string RoleId { get; set; }
 
-        public void MarkAsDraft(Document document)
-        {
-            if (document.StatusValue == Models.Status.Draft && document.SubStatus == SubStatus.None &&
-                    (Status == LAStatus.Published || Status == LAStatus.Declined || Status == LAStatus.DeclinedByOpssAdmin))
-            {
-                Status = LAStatus.Draft;
-            }
-        }
+        
     }
 }

@@ -2,34 +2,6 @@
 @using UKMCAB.Core.Domain
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABDetailsViewModel
 
-    <dl class="govuk-summary-list cab-summary-list">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                <div class="cab-summary-header govuk-!-padding-top-5">
-                    <h3 class="govuk-heading-l">@Constants.Heading.CabDetails</h3>
-                </div>
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @if (Model.ShowSubsectionEditAction)
-                {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="@Model.SubsectionActionName" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                }
-                @if (Model.IsCompleted)
-                {
-                    <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
-                        COMPLETED
-                    </div>
-                }
-                else
-                {
-                    <div class="cab-result-status-label cab-result-not-completed">
-                        NOT COMPLETED
-                    </div>
-                }
-            </dd>
-        </div>
-    </dl>
-
     <div class="cab-summary-detail">
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row  govuk-!-padding-top-5">
@@ -71,7 +43,7 @@
                     </dd>
                 </div>
             }
-            else if (Model.CABNumberEntryIsDisabled)
+            else if (Model.IsCabNumberDisabled)
             {
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -95,11 +67,7 @@
                     Appointment date (optional)
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @*Model.AppointmentDate *@
-                    @{
-                        var appointmentDate = Model.AppointmentDate.ToStringBeisDateFormat();                        
-                    }
-                    @Html.ValueOrNotProvided(appointmentDate)
+                @Html.ValueOrNotProvided(Model.AppointmentDate.ToStringBeisDateFormat())
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -107,12 +75,8 @@
                     Review date (optional)
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @*Model.ReviewDate *@
-                    @{
-                        var reviewDate = Model.ReviewDate.ToStringBeisDateFormat();
-                    }
-                    @Html.ValueOrNotProvided(reviewDate)                    
-                </dd>
+                @Html.ValueOrNotProvided(Model.ReviewDate.ToStringBeisDateFormat())
+            </dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">

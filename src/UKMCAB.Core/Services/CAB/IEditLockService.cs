@@ -7,7 +7,7 @@ public interface IEditLockService
     /// </summary>
     /// <param name="cabId">cab to check</param>
     /// <returns>UserId with lock</returns>
-    Task<string?> LockExistsForCabAsync(string cabId);
+    Task<bool> IsCabLockedForUser(string cabId, string userId);
     
     /// <summary>
     /// Adds Cab to cache for edit lock with associated user

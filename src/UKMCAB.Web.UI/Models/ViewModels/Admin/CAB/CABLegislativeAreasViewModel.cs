@@ -6,8 +6,6 @@ public class CABLegislativeAreasViewModel : CreateEditCABViewModel
 {
     public List<CABLegislativeAreasItemViewModel> ActiveLegislativeAreas { get; } = new();
     public List<CABLegislativeAreasItemViewModel> ArchivedLegislativeAreas { get; } = new();
-    public string? CABId { get; set; }
-    public bool ShowOgdActions { get; set; } // To delete
 }
 
 public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegislativeAreasViewModel>
@@ -16,8 +14,8 @@ public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegisl
     {
         // 1. There must be at least one legislative area.
         // - Every LA must have IsComplete field equal true, which means
-        //  - The IsProvisional property set.
-        //  - If the LA requires scope of appointment to be chosen (HasDataModel="1" in the LA container data), then there
+        // - The IsProvisional property set.
+        // - If the LA requires scope of appointment to be chosen (HasDataModel="1" in the LA container data), then there
         //      must be at least one ScopeOfAppointment object with at least one procedure.
         //      If any ScopeOfAppointment doesn't have a procedure, or the procedure is null or empty, validation will fail.
 

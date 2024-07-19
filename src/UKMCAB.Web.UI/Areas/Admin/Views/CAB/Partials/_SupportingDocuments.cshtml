@@ -3,34 +3,6 @@
 @using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSupportingDocumentDetailsViewModel
 
-    <dl class="govuk-summary-list cab-summary-list ukmcab-padding-top-40">
-        <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-                <div class="cab-summary-header govuk-!-padding-top-5">
-                    <h3 class="govuk-heading-l">Supporting documents</h3>
-                </div>
-            </dt>
-            <dd class="govuk-summary-list__value">
-                @if (Model.ShowSubsectionEditAction)
-                {
-                    <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
-                }
-                @if (Model.IsCompleted)
-                {
-                    <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
-                        COMPLETED
-                    </div>
-                }
-                else
-                {
-                    <div class="cab-result-status-label cab-result-not-completed cab-details-result-status-label">
-                        NOT COMPLETED
-                    </div>
-                }
-            </dd>
-        </div>
-    </dl>
-
     <div class="cab-summary-detail">
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row govuk-!-padding-top-5">

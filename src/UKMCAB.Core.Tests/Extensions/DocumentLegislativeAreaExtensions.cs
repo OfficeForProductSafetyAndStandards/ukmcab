@@ -3,30 +3,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UKMCAB.Core.Extensions;
 using UKMCAB.Data.Models;
 
-namespace UKMCAB.Data.Tests.Models
+namespace UKMCAB.Core.Tests.Extensions
 {
     [TestFixture]
-    public class DocumentLegislativeAreaTests
+    public class DocumentLegislativeAreaExtensionsTests
     {
         [TestCaseSource(typeof(DocumentLegislativeAreaMarkAsDraftData), nameof(DocumentLegislativeAreaMarkAsDraftData.TestCases))]
         public LAStatus ShouldUpdateStatusToDraft_When_DocumentStatusValueIsDraft_And_DocumentSubStatusIsNone_And_DocumentLegislativeAreaIsPublishedOrDeclined(LAStatus laStatus, Status documentStatus, SubStatus documentSubStatus)
         {
             // Arrange
-            var document = new Document
-            {
-                StatusValue = documentStatus,
-                SubStatus = documentSubStatus,
-            };
-
             var documentLegislativeArea = new DocumentLegislativeArea
             {
                 Status = laStatus
             };
 
             // Act
-            documentLegislativeArea.MarkAsDraft(document);
+            documentLegislativeArea.MarkAsDraft(documentStatus, documentSubStatus);
 
             // Assert
             return documentLegislativeArea.Status;
