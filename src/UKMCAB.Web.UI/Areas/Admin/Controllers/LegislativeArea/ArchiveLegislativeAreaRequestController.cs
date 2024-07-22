@@ -59,6 +59,6 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
 
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!,
             latestDocument);
-        return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+        return RedirectToRoute(CABController.Routes.CabSummary, new { id, revealEditActions = true });
     }
 }

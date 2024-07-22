@@ -2,11 +2,10 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
-public class CABLegislativeAreasViewModel
+public class CABLegislativeAreasViewModel : CreateEditCABViewModel
 {
     public List<CABLegislativeAreasItemViewModel> ActiveLegislativeAreas { get; } = new();
     public List<CABLegislativeAreasItemViewModel> ArchivedLegislativeAreas { get; } = new();
-    public bool IsCompleted { get; set; }
 }
 
 public class CABLegislativeAreasViewModelValidator : AbstractValidator<CABLegislativeAreasViewModel>

@@ -42,9 +42,6 @@ namespace UKMCAB.Web.UI.Models.Builders
             _model.HasActiveLAs = document.HasActiveLAs();
             _model.LastModifiedDate = document.LastUpdatedDate;
             _model.PublishedDate = document.AuditLog.OrderBy(a => a.DateTime).LastOrDefault(al => al.Action == AuditCABActions.Published)?.DateTime;
-            _model.GovernmentUserNoteCount = document.GovernmentUserNotes.Count;
-            _model.LastGovernmentUserNoteDate = document.LastGovernmentUserNoteDate();
-            _model.LastAuditLogHistoryDate = document.LastAuditLogHistoryDate();
             _model.IsPendingOgdApproval = document.IsPendingOgdApproval();
             _model.LegislativeAreasPendingApprovalCount = !_user.IsInRole(Roles.OPSS.Id)
                 ? document.LegislativeAreasPendingApprovalByOgd(_user.GetRoleId()).Count
@@ -58,9 +55,11 @@ namespace UKMCAB.Web.UI.Models.Builders
 
         public ICabSummaryViewModelBuilder WithReturnUrl(string? returnUrl)
         {
-            _model.ReturnUrl = string.IsNullOrWhiteSpace(returnUrl)
+            var decodedUrl = string.IsNullOrWhiteSpace(returnUrl)
                 ? WebUtility.UrlDecode(string.Empty)
                 : WebUtility.UrlDecode(returnUrl);
+
+            _model.ReturnUrl = decodedUrl == "/" ? "/?" : decodedUrl;
             return this;
         }
 
@@ -100,10 +99,15 @@ namespace UKMCAB.Web.UI.Models.Builders
             _model.CABSupportingDocumentDetailsViewModel = cabSupportingDocumentDetailsViewModel;
             return this;
         }
-
-        public ICabSummaryViewModelBuilder WithCabNameAlreadyExists(bool cabNameAlreadyExists)
+        public ICabSummaryViewModelBuilder WithCabHistoryViewModel(CABHistoryViewModel cabHistoryViewModel)
         {
-            _model.CABNameAlreadyExists = cabNameAlreadyExists && _model.Status != Status.Published;
+            _model.CABHistoryViewModel = cabHistoryViewModel;
+            return this;
+        }
+
+        public ICabSummaryViewModelBuilder WithCabGovernmentUserNotesViewModel(CABGovernmentUserNotesViewModel cabGovernmentUserNotesViewModel)
+        {
+            _model.CABGovernmentUserNotesViewModel = cabGovernmentUserNotesViewModel;
             return this;
         }
 
@@ -113,9 +117,9 @@ namespace UKMCAB.Web.UI.Models.Builders
             return this;
         }
 
-        public ICabSummaryViewModelBuilder WithSubSectionEditAllowed(bool? subSectionEditAllowed)
+        public ICabSummaryViewModelBuilder WithRevealEditActions(bool? revealEditActions)
         {
-            _model.SubSectionEditAllowed = subSectionEditAllowed ?? false;
+            _model.RevealEditActions = revealEditActions ?? false;
             return this;
         }
 

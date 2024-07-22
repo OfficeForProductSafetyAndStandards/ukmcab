@@ -1170,7 +1170,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             documentLegislativeArea.RequestReason = vm.UserNotes;
 
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!, latestDocument);
-            return RedirectToAction("summary", "cab", new { Area = "admin", id, subSectionEditAllowed = true });
+            return RedirectToAction("summary", "cab", new { Area = "admin", id, revealEditActions = true });
         }
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaRequest.cshtml", vm);

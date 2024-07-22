@@ -14,7 +14,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             DocumentStatus = Status.Draft;
         }
 
-        public CABDetailsViewModel(Document document, ClaimsPrincipal user, bool fromSummary = false, string? returnUrl = null)
+        public CABDetailsViewModel(ClaimsPrincipal user, bool fromSummary, string? returnUrl = null)
+        {
+            IsNew = true;
+            IsFromSummary = fromSummary;
+            ReturnUrl = returnUrl;
+            IsOPSSUser = user.IsInRole(Roles.OPSS.Id);
+            IsCabNumberDisabled = !IsOPSSUser;
+        }
+
+        public CABDetailsViewModel(Document document, ClaimsPrincipal user, bool cabNameAlreadyExists = false, bool fromSummary = false, string? returnUrl = null)
         {
             CABId = document.CABId;
             Name = document.Name;
@@ -34,6 +43,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             ReturnUrl = returnUrl;
             IsOPSSUser = user.IsInRole(Roles.OPSS.Id);
             IsCabNumberDisabled = !IsOPSSUser;
+            CABNameAlreadyExists = cabNameAlreadyExists && document.StatusValue != Status.Published;
         }
 
         public string? CABId { get; set; }
@@ -61,6 +71,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsCabNumberDisabled { get; set; }
         public bool IsCabNumberVisible { get; set; }
         public bool IsOPSSUser { get; set; }
+        public bool CABNameAlreadyExists { get; set; }
     }
 
     public class CABDetailsViewModelValidator : AbstractValidator<CABDetailsViewModel>

@@ -171,14 +171,14 @@ namespace UKMCAB.Web.UI.Tests.Services
                 yield return new TestCaseData(new CABSummaryViewModel
                 {
                     CABId = Guid.NewGuid().ToString(),
-                    SubSectionEditAllowed = true,
+                    RevealEditActions = true,
                     Status = Status.Draft,
                     IsOPSSOrInCreatorUserGroup = true
                 });
                 yield return new TestCaseData(new CABSummaryViewModel
                 {
                     CABId = Guid.NewGuid().ToString(),
-                    SubSectionEditAllowed = true,
+                    RevealEditActions = true,
                     Status = Status.Published,
                     IsOPSSOrInCreatorUserGroup = true
                 });
@@ -194,7 +194,7 @@ namespace UKMCAB.Web.UI.Tests.Services
                     yield return new TestCaseData(new CABSummaryViewModel
                     {
                         CABId = Guid.NewGuid().ToString(),
-                        SubSectionEditAllowed = true,
+                        RevealEditActions = true,
                         Status = status,
                         IsOPSSOrInCreatorUserGroup = true
                     });
@@ -202,14 +202,14 @@ namespace UKMCAB.Web.UI.Tests.Services
                 yield return new TestCaseData(new CABSummaryViewModel
                 {
                     CABId = Guid.NewGuid().ToString(),
-                    SubSectionEditAllowed = false,
+                    RevealEditActions = false,
                     Status = Status.Draft,
                     IsOPSSOrInCreatorUserGroup = true
                 });
                 yield return new TestCaseData(new CABSummaryViewModel
                 {
                     CABId = Guid.NewGuid().ToString(),
-                    SubSectionEditAllowed = true,
+                    RevealEditActions = true,
                     Status = Status.Draft,
                     IsOPSSOrInCreatorUserGroup = false
                 });

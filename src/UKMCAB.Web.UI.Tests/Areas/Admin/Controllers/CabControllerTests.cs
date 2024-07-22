@@ -43,7 +43,6 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
         private CoreEmailTemplateOptions _templateOptions;
 
         private CABController _sut;
-        private string userId;
 
         [SetUp]
         public void Setup()
@@ -72,21 +71,20 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
                 _mockCabLegislativeAreasViewModelBuilder.Object,
             _mockCabSummaryUiService.Object);
 
-            userId = "Test user id";
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, userId),
+                new(ClaimTypes.NameIdentifier, "Test user id"),
             };
-            var mockUser = new ClaimsPrincipal(new ClaimsIdentity(claims));
-
-            _mockHttpContext = new Mock<HttpContext>();
-            _mockHttpContext.SetupGet(m => m.User).Returns(mockUser);
-
-            _sut.ControllerContext.HttpContext = _mockHttpContext.Object;
+            var user = new ClaimsPrincipal(new ClaimsIdentity(claims));
+            var httpContext = new DefaultHttpContext
+            {
+                User = user,
+            };
+            httpContext.Request.Host = new HostString("test", 1);
+            _sut.ControllerContext.HttpContext = httpContext;
 
             var mockValidator = new Mock<IObjectModelValidator>();
-            mockValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(), It.IsAny<ValidationStateDictionary>(),
-                It.IsAny<string>(),It.IsAny<object>()));
+            mockValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(), It.IsAny<ValidationStateDictionary>(), It.IsAny<string>(),It.IsAny<object>()));
             _sut.ObjectValidator = mockValidator.Object;
         }
 
@@ -129,6 +127,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
         private string HttpGetSummary_ReturnsCabSummaryViewModel(bool isEditLocked)
         {
             // Arrange
+            var userId = "Test user id";
             var cabNameAlreadyExists = true;
             var bannerMessage = "Test banner message";
             var documentId = "Test document id";
@@ -198,9 +197,10 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabLegislativeAreasViewModel(It.IsAny<CABLegislativeAreasViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithProductScheduleDetailsViewModel(It.IsAny<CABProductScheduleDetailsViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabSupportingDocumentDetailsViewModel(It.IsAny<CABSupportingDocumentDetailsViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
-            _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabNameAlreadyExists(cabNameAlreadyExists)).Returns(_mockCabSummaryViewModelBuilder.Object);
+            _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabGovernmentUserNotesViewModel(It.IsAny<CABGovernmentUserNotesViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
+            _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabHistoryViewModel(It.IsAny<CABHistoryViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithIsEditLocked(isEditLocked)).Returns(_mockCabSummaryViewModelBuilder.Object);
-            _mockCabSummaryViewModelBuilder.Setup(m => m.WithSubSectionEditAllowed(null)).Returns(_mockCabSummaryViewModelBuilder.Object);
+            _mockCabSummaryViewModelBuilder.Setup(m => m.WithRevealEditActions(null)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithRequestedFromCabProfilePage(null)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithSuccessBannerMessage(bannerMessage)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.Build()).Returns(new CABSummaryViewModel { Id = "Test id"});
@@ -209,7 +209,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
         }
 
         [Test]
-        public void HttpGetSummary_DocumentNotFound_RedirectsToCABManagement()
+        public async Task HttpGetSummary_DocumentNotFound_RedirectsToCABManagement()
         {
             // Arrange
             var documentId = "Test document id";
@@ -218,10 +218,10 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(documentId)).ReturnsAsync((Document?)null);
 
             // Act
-            var result = _sut.Summary(documentId, null, null, null);
+            var result = await _sut.Summary(documentId, null, null, null) as RedirectToActionResult;
 
             // Assert
-            result.Result.Should().BeEquivalentTo(expectedResult);
+            result.Should().BeEquivalentTo(expectedResult);
         }
     }
 }

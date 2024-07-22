@@ -75,7 +75,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         if (!lasToApprove.Any())
         {
-            return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+            return RedirectToRoute(CABController.Routes.CabSummary, new { id, revealEditActions = true });
         }
 
         var las = await GetLegislativeAreasForUserAsync();
