@@ -511,6 +511,8 @@ namespace UKMCAB.Core.Services.CAB
 
             publishedVersion.StatusValue = Status.Archived;
             publishedVersion.SubStatus = SubStatus.None;
+            publishedVersion.DocumentLegislativeAreas.ForEach(la=>la.Archived = true);
+            // archive the schedules as well??? await ArchiveSchedulesAsync(userAccount, cabId, scheduleIds);
             publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.Archived, archiveInternalReason,
                 archivePublicReason));
             await _cabRepository.UpdateAsync(publishedVersion);

@@ -97,5 +97,7 @@
                 d.Status == LAStatus.PendingApprovalToUnarchive);
 
         public bool HasActiveLAs => DocumentLegislativeAreas.Any(la => la.Status != LAStatus.DeclinedByOpssAdmin && la.Status != LAStatus.ApprovedToRemoveByOpssAdmin);
+
+        public bool AllArchived => DocumentLegislativeAreas.All(la => la.Status == LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin && la.Archived == true);
     }
 }
