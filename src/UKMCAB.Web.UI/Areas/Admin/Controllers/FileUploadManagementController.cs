@@ -128,7 +128,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
                 {
                     return model.IsFromSummary ?
-                            RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestVersion.CABId, subSectionEditAllowed = true }) :
+                            RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestVersion.CABId, revealEditActions = true }) :
                             RedirectToAction("DocumentsUpload", "FileUpload", new { Area = "admin", id = latestVersion.CABId });
                 }
 

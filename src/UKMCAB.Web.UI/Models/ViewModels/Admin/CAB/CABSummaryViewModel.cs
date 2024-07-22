@@ -1,5 +1,4 @@
-﻿using UKMCAB.Core.Security;
-using UKMCAB.Data.Models;
+﻿using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -25,7 +24,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsPendingOgdApproval { get; set; }
         public bool IsOPSSOrInCreatorUserGroup { get; set; }
         public bool IsEditLocked { get; set; }
-        public bool SubSectionEditAllowed { get; set; }
+        public bool RevealEditActions { get; set; }
         public DateTime? PublishedDate { get; set; }
         public DateTime LastModifiedDate { get; set; }
         public string? SuccessBannerMessage { get; set; }
@@ -40,27 +39,27 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool RequestedFromCabProfilePage { get; set; }
         public bool HasActiveLAs { get; set; }
         public bool DraftUpdated { get; set; }
-        public bool ShowProfileVisibilityWarning => ValidCAB && CanPublish && ShowEditActions;
+        public bool ShowProfileVisibilityWarning => ValidCAB && CanPublish && ShowSubSectionEditAction;
         public bool ShowMandatoryInfoWarning => !ValidCAB && CanPublish && SubStatus == SubStatus.None;
         public bool ShowReviewButton => SubStatus != SubStatus.None && (
-        ShowOgdActions || (CanPublish && LegislativeAreasPendingApprovalCount > 0 && ShowEditActions));
-        public bool ShowPublishButton => SubStatus == SubStatus.None && ShowEditActions && CanPublish;
-        public bool ShowApproveToPublishButton => (CanPublish && SubStatus == SubStatus.PendingApprovalToPublish && LegislativeAreasApprovedByAdminCount > 0) && ShowEditActions;
-        public bool ShowDeclineButton =>  SubStatus != SubStatus.None && ShowEditActions &&
+        ShowOgdActions || (CanPublish && LegislativeAreasPendingApprovalCount > 0 && ShowSubSectionEditAction));
+        public bool ShowPublishButton => SubStatus == SubStatus.None && ShowSubSectionEditAction && CanPublish;
+        public bool ShowApproveToPublishButton => (CanPublish && SubStatus == SubStatus.PendingApprovalToPublish && LegislativeAreasApprovedByAdminCount > 0) && ShowSubSectionEditAction;
+        public bool ShowDeclineButton =>  SubStatus != SubStatus.None && ShowSubSectionEditAction &&
             (CanPublish && SubStatus == SubStatus.PendingApprovalToPublish && LegislativeAreasApprovedByAdminCount > 0);
-        public bool ShowSubmitForApprovalButton => SubStatus == SubStatus.None && ShowEditActions && CanSubmitForApproval;
-        public bool ShowSaveAsDraftButton => SubStatus == SubStatus.None && ShowEditActions;
+        public bool ShowSubmitForApprovalButton => SubStatus == SubStatus.None && ShowSubSectionEditAction && CanSubmitForApproval;
+        public bool ShowSaveAsDraftButton => SubStatus == SubStatus.None && ShowSubSectionEditAction;
         public bool ShowDeleteDraftButton => SubStatus == SubStatus.None && (
-            (ShowEditActions || ShowOpssDeleteDraftActionOnly) &&
+            (ShowSubSectionEditAction || ShowOpssDeleteDraftActionOnly) &&
             CabDetailsViewModel.DocumentStatus == Status.Draft
         );
-        public bool ShowCancelPublishButton => SubStatus == SubStatus.None && (ShowEditActions || ShowOpssDeleteDraftActionOnly) && CabDetailsViewModel.DocumentStatus == Status.Draft;
+        public bool ShowCancelPublishButton => SubStatus == SubStatus.None && (ShowSubSectionEditAction || ShowOpssDeleteDraftActionOnly) && CabDetailsViewModel.DocumentStatus == Status.Draft;
 
-        public bool ShowEditButton => !SubSectionEditAllowed  &&
+        public bool ShowEditButton => !RevealEditActions  &&
         (SubStatus == SubStatus.None && IsEditLocked == false && (IsOpssAdmin || IsUkas) ||
         (SubStatus == SubStatus.PendingApprovalToPublish && !IsEditLocked && IsPendingOgdApproval && IsMatchingOgdUser) ||
         (SubStatus == SubStatus.PendingApprovalToPublish && !IsEditLocked && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin) ||
-        (IsOpssAdmin &&  CanPublish));
+        (IsOpssAdmin && UserInCreatorUserGroup)); // Replaced CanPublish with UserInCreatorUserGroup
 
         public bool CanOnlyBeActionedByUkas =>
             CabLegislativeAreasViewModel != null &&
@@ -81,7 +80,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowOgdActions =>
             HasOgdRole &&
             IsPendingOgdApproval &&
-            SubSectionEditAllowed &&
+            RevealEditActions &&
             !IsEditLocked &&
             LegislativeAreasPendingApprovalCount > 0;
 
@@ -91,15 +90,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             !IsPendingOgdApproval && 
             !CanOnlyBeActionedByUkas;
 
-        public bool ShowEditActions =>
-            SubSectionEditAllowed &&
+        public bool ShowSubSectionEditAction =>
+            RevealEditActions &&
             !IsEditLocked && (
                 (SubStatus != SubStatus.PendingApprovalToPublish && UserInCreatorUserGroup) ||
                 (SubStatus == SubStatus.PendingApprovalToPublish && IsOpssAdmin && 
                 (HasActionableLegislativeAreaForOpssAdmin || CanPublish)));
 
         public bool ShowOpssDeleteDraftActionOnly =>
-            SubSectionEditAllowed && SubStatus != SubStatus.PendingApprovalToPublish && IsOpssAdmin;
+            RevealEditActions && SubStatus != SubStatus.PendingApprovalToPublish && IsOpssAdmin;
 
         public bool EditByGroupPermitted =>
             SubStatus != SubStatus.PendingApprovalToPublish &&

@@ -68,7 +68,8 @@
         <div class="cab-detail-date-meta">
             @if (Model.PublishedDate.HasValue)
             {
-                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToStringBeisDateFormat()</span>
+                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToStringBeisDateFormat()
+                </span>
             }
             <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @Model.LastModifiedDate.ToStringBeisDateFormat()
             </span>
@@ -91,7 +92,9 @@
             @if (Model.ShowEditButton)
             {
                 <div class="ukmcab-full-width--mobile ukmcab-float__right ukmcab-text-align-right ukmcab-padding-top-30">
-                    <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="@true" asp-route-returnUrl="@Model.ReturnUrl">Edit</a>
+                    <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-revealEditActions="@true" asp-route-returnUrl="@Model.ReturnUrl">
+                        Edit
+                    </a>
                 </div>
             }
         </div>
@@ -129,7 +132,7 @@
                             </div>
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.ShowEditActions)
+                            @if (Model.ShowSubSectionEditAction)
                             {
                                 <a asp-area="Admin" asp-controller="CAB" asp-action="About" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
                             }
@@ -160,7 +163,7 @@
                             </div>
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.ShowEditActions)
+                            @if (Model.ShowSubSectionEditAction)
                             {
                                 <a asp-area="Admin" asp-controller="CAB" asp-action="Contact" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
                             }
@@ -191,7 +194,7 @@
                             </div>
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.ShowEditActions)
+                            @if (Model.ShowSubSectionEditAction)
                             {
                                 <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
                             }
@@ -222,7 +225,7 @@
                             </div>
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.ShowEditActions || Model.ShowOgdActions)
+                            @if (Model.ShowSubSectionEditAction || Model.ShowOgdActions)
                             {
                                 <a asp-area="Admin" asp-controller="LegislativeAreaReview" asp-action="ReviewLegislativeAreas" asp-route-id="@Model.CABId" asp-route-returnUrl="@Model.ReturnUrl"
                                    asp-route-fromSummary="true" class="govuk-link govuk-link--no-visited-state">
@@ -256,7 +259,7 @@
                             </div>
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.ShowEditActions || Model.ShowOgdActions)
+                            @if (Model.ShowSubSectionEditAction || Model.ShowOgdActions)
                             {
                                 <a asp-area="Admin" asp-controller="FileUpload" asp-action="SchedulesList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
                             }
@@ -287,7 +290,7 @@
                             </div>
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            @if (Model.ShowEditActions || Model.ShowOgdActions)
+                            @if (Model.ShowSubSectionEditAction || Model.ShowOgdActions)
                             {
                                 <a asp-area="Admin" asp-controller="FileUpload" asp-action="DocumentsList" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
                             }
@@ -365,8 +368,7 @@
                     @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
                 </govuk-warning-text>
                 <div class="govuk-button-group govuk-!-margin-top-5">
-                    <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId"
-                                       asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnUrl)" class="@(Model.ShowPublishButton ? "govuk-button--secondary" : "")">
+                    <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnUrl)" class="@(Model.ShowPublishButton ? "govuk-button--secondary" : "")">
                         Review
                     </govuk-button-link>
                     @if (!Model.ShowApproveToPublishButton)
@@ -438,7 +440,7 @@
                         {
                             @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
                             {
-                                <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="@false" class="govuk-link govuk-link--no-visited-state">
+                                <a asp-area="admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-revealEditActions="@false" class="govuk-link govuk-link--no-visited-state">
                                     Cancel
                                 </a>
                             }

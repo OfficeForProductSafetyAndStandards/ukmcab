@@ -28,10 +28,10 @@ namespace UKMCAB.Web.UI.Services
             _user = _httpContextAccessor.HttpContext?.User ?? throw new InvalidOperationException("No active HttpContext");
         }
 
-        public async Task<Document> CreateDocumentAsync(Document document, bool? subSectionEditAllowed)
+        public async Task<Document> CreateDocumentAsync(Document document, bool? revealEditActions)
         {
             var userId = _user.GetUserId();
-            if (document.StatusValue == Status.Published && subSectionEditAllowed == true)
+            if (document.StatusValue == Status.Published && revealEditActions == true)
             {
                 var userAccount = await _userService.GetAsync(userId) ?? throw new NotFoundException($"User account not found for Id: {userId}");
                 document = await _cabAdminService.CreateDocumentAsync(userAccount, document);
@@ -61,7 +61,7 @@ namespace UKMCAB.Web.UI.Services
 
         public async Task LockCabForUser(CABSummaryViewModel model)
         {
-            if (model.SubSectionEditAllowed &&
+            if (model.RevealEditActions &&
                 model.Status is Status.Draft or Status.Published &&
                 model.IsOPSSOrInCreatorUserGroup)
             {

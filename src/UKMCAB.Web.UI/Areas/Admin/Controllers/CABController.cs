@@ -175,7 +175,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     if (submitType == Constants.SubmitType.Continue)
                     {
                         return !model.IsNew
-                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl })
+                            ? RedirectToAction("Summary", "CAB", new { Area = "admin", id = createdDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl })
                             : RedirectToAction("Contact", "CAB", new { Area = "admin", id = createdDocument.CABId, returnUrl = model.ReturnUrl });
                     }
 
@@ -252,7 +252,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     if (model.IsFromSummary)
                     {
-                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl });
+                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl });
                     }
                     else if (!latestDocument.DocumentLegislativeAreas.Any())
                     {
@@ -371,7 +371,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     return model.IsFromSummary
                         ? RedirectToAction("Summary", "CAB",
-                            new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true, returnUrl = model.ReturnUrl })
+                            new { Area = "admin", id = latestDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl })
                         : RedirectToAction("BodyDetails", "CAB", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
                 }
 
@@ -387,7 +387,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         public IActionResult Create() => RedirectToRoute(Routes.EditCabAbout, new { id = Guid.NewGuid(), returnUrl = "/service-management" });
 
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
-        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? subSectionEditAllowed, bool? fromCabProfilePage)
+        public async Task<IActionResult> Summary(string id, string? returnUrl, bool? revealEditActions, bool? fromCabProfilePage)
         {
             var userId = User.GetUserId();
 
@@ -397,7 +397,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            await _cabSummaryUiService.CreateDocumentAsync(latest, subSectionEditAllowed);
+            await _cabSummaryUiService.CreateDocumentAsync(latest, revealEditActions);
 
             var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasForDocumentAsync(latest);
             var purposeOfAppointments = await _legislativeAreaService.GetPurposeOfAppointmentsForDocumentAsync(latest);
@@ -449,7 +449,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 .WithStatusCssStyle(latest.StatusValue)
                 .WithHasActiveLAs(latest.HasActiveLAs())
                 .WithIsEditLocked(isCabLockedForUser)
-                .WithSubSectionEditAllowed(subSectionEditAllowed)
+                .WithRevealEditActions(revealEditActions)
                 .WithLastModifiedDate(latest.LastUpdatedDate)
                 .WithPublishedDate(latest.AuditLog)
                 .WithIsPendingOgdApproval(latest.IsPendingOgdApproval())

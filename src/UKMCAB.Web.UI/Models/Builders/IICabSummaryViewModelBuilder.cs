@@ -20,7 +20,7 @@ namespace UKMCAB.Web.UI.Models.Builders
         ICabSummaryViewModelBuilder WithStatusCssStyle(Status documentStatusValue);
         ICabSummaryViewModelBuilder WithHasActiveLAs(bool documentHasActiveLAs);
         ICabSummaryViewModelBuilder WithIsEditLocked(bool isCabLockedForUser);
-        ICabSummaryViewModelBuilder WithSubSectionEditAllowed(bool? subSectionEditAllowed);
+        ICabSummaryViewModelBuilder WithRevealEditActions(bool? revealEditActions);
         ICabSummaryViewModelBuilder WithLastModifiedDate(DateTime documentLastUpdatedDate);
         ICabSummaryViewModelBuilder WithPublishedDate(List<Audit> auditLog);
         ICabSummaryViewModelBuilder WithIsPendingOgdApproval(bool documentIsPendingOgdApproval);

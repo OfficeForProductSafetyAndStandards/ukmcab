@@ -122,9 +122,9 @@ namespace UKMCAB.Web.UI.Models.Builders
             return this;
         }
 
-        public ICabSummaryViewModelBuilder WithSubSectionEditAllowed(bool? subSectionEditAllowed)
+        public ICabSummaryViewModelBuilder WithRevealEditActions(bool? revealEditActions)
         {
-            _model.SubSectionEditAllowed = subSectionEditAllowed ?? false;
+            _model.RevealEditActions = revealEditActions ?? false;
             return this;
         }
 

@@ -11,7 +11,10 @@
             <dd class="govuk-summary-list__value">
                 @if (Model.TestingLocations.Any(tl => !string.IsNullOrWhiteSpace(tl)))
                 {
-                    @Html.Raw(string.Join("<br />", Model.TestingLocations))
+                    @foreach (var tl in Model.TestingLocations)
+                    {
+                        <p class="govuk-body">@tl</p>
+                    }
                 }
                 else
                 {
