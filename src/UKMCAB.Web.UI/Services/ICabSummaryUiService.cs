@@ -5,7 +5,7 @@ namespace UKMCAB.Web.UI.Services
 {
     public interface ICabSummaryUiService
     {
-        Task<Document> CreateDocumentAsync(Document document, bool? subSectionEditAllowed);
+        Task<Document> CreateDocumentAsync(Document document, bool? revealEditActions);
         string? GetSuccessBannerMessage();
         Task LockCabForUser(CABSummaryViewModel model);
     }

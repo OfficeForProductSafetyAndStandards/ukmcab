@@ -19,7 +19,7 @@ namespace UKMCAB.Core.Extensions
 
         public static List<DocumentLegislativeArea> GetLegislativeAreasPendingApprovalByOgd(this Document document, string roleId)
         {
-            return document.DocumentLegislativeAreas.Where(dla => dla.IsPendingOgdApproval()).ToList();
+            return document.DocumentLegislativeAreas.Where(dla => dla.IsPendingOgdApproval() && roleId.Equals(dla.RoleId)).ToList();
         }
 
         public static List<DocumentLegislativeArea> GetLegislativeAreasPendingApprovalByOpss(this Document document)

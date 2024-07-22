@@ -1,0 +1,80 @@
+﻿@using System.Net
+@using UKMCAB.Core.Domain
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABContactViewModel
+
+    <div class="cab-summary-detail">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                <dt class="govuk-summary-list__key">
+                    Address
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.FormattedAddress)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Website (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.Website)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Email (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.Email)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Telephone
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.Phone)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Point of contact name (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.PointOfContactName)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Point of contact email (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.PointOfContactEmail)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Point of contact telephone (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.PointOfContactPhone)
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Display point of contact details
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted")
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Registered office location
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.RegisteredOfficeLocation)
+                </dd>
+            </div>
+        </dl>
+    </div>

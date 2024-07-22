@@ -142,7 +142,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         {
             SubmitType.Continue => RedirectToRoute(
                 LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary }),
-            _ => RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true })
+            _ => RedirectToRoute(CABController.Routes.CabSummary, new { id, revealEditActions = true })
         };
     }
 
@@ -181,6 +181,6 @@ public class LegislativeAreaAdditionalInformationController : Controller
         
         await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
-        return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+        return RedirectToRoute(CABController.Routes.CabSummary, new { id, revealEditActions = true });
     }
 }

@@ -40,9 +40,11 @@ namespace UKMCAB.Web.UI.Models.Builders
 
         public ICabSummaryViewModelBuilder WithReturnUrl(string? returnUrl)
         {
-            _model.ReturnUrl = string.IsNullOrWhiteSpace(returnUrl)
+            var decodedUrl = string.IsNullOrWhiteSpace(returnUrl)
                 ? WebUtility.UrlDecode(string.Empty)
                 : WebUtility.UrlDecode(returnUrl);
+
+            _model.ReturnUrl = decodedUrl == "/" ? "/?" : decodedUrl;
             return this;
         }
 
@@ -82,10 +84,15 @@ namespace UKMCAB.Web.UI.Models.Builders
             _model.CABSupportingDocumentDetailsViewModel = cabSupportingDocumentDetailsViewModel;
             return this;
         }
-
-        public ICabSummaryViewModelBuilder WithCabNameAlreadyExists(bool cabNameAlreadyExists, Status documentStatusValue)
+        public ICabSummaryViewModelBuilder WithCabHistoryViewModel(CABHistoryViewModel cabHistoryViewModel)
         {
-            _model.CABNameAlreadyExists = cabNameAlreadyExists && documentStatusValue != Status.Published;
+            _model.CABHistoryViewModel = cabHistoryViewModel;
+            return this;
+        }
+
+        public ICabSummaryViewModelBuilder WithCabGovernmentUserNotesViewModel(CABGovernmentUserNotesViewModel cabGovernmentUserNotesViewModel)
+        {
+            _model.CABGovernmentUserNotesViewModel = cabGovernmentUserNotesViewModel;
             return this;
         }
 
@@ -115,9 +122,9 @@ namespace UKMCAB.Web.UI.Models.Builders
             return this;
         }
 
-        public ICabSummaryViewModelBuilder WithSubSectionEditAllowed(bool? subSectionEditAllowed)
+        public ICabSummaryViewModelBuilder WithRevealEditActions(bool? revealEditActions)
         {
-            _model.SubSectionEditAllowed = subSectionEditAllowed ?? false;
+            _model.RevealEditActions = revealEditActions ?? false;
             return this;
         }
 
@@ -130,19 +137,6 @@ namespace UKMCAB.Web.UI.Models.Builders
         public ICabSummaryViewModelBuilder WithPublishedDate(List<Audit> auditLog)
         {
             _model.PublishedDate = auditLog.OrderBy(a => a.DateTime).LastOrDefault(al => al.Action == AuditCABActions.Published)?.DateTime;
-            return this;
-        }
-
-        public ICabSummaryViewModelBuilder WithGovernmentUserNotes(List<UserNote> documentUserNotes)
-        {
-            _model.GovernmentUserNoteCount = documentUserNotes.Count;
-            _model.LastGovernmentUserNoteDate = Enumerable.MaxBy(documentUserNotes, u => u.DateTime)?.DateTime;
-            return this;
-        }
-
-        public ICabSummaryViewModelBuilder WithLastAuditLogHistoryDate(List<Audit> documentAuditLog)
-        {
-            _model.LastAuditLogHistoryDate = Enumerable.MaxBy(documentAuditLog, u => u.DateTime)?.DateTime;
             return this;
         }
 
