@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Data.Models;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -7,12 +8,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public CABGovernmentUserNotesViewModel()
         {
         }
+
         public CABGovernmentUserNotesViewModel(Document latest, string? returnUrl)
         {
             Id = latest.id;
             CABId = latest.CABId;
             GovernmentUserNoteCount = latest.GovernmentUserNotes.Count;
-            LastGovernmentUserNoteDate = Enumerable.MaxBy(latest.GovernmentUserNotes, u => u.DateTime)?.DateTime;
+            LastGovernmentUserNoteDate = latest.LastGovernmentUserNoteDate();
             ReturnUrl = returnUrl;
         }
         public DateTime? LastGovernmentUserNoteDate { get; private set; }

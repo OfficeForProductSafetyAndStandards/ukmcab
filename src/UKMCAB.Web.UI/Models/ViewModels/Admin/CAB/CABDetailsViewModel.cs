@@ -14,6 +14,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             DocumentStatus = Status.Draft;
         }
 
+        public CABDetailsViewModel(ClaimsPrincipal user, bool fromSummary, string? returnUrl = null)
+        {
+            IsNew = true;
+            IsFromSummary = fromSummary;
+            ReturnUrl = returnUrl;
+            IsOPSSUser = user.IsInRole(Roles.OPSS.Id);
+            IsCabNumberDisabled = !IsOPSSUser;
+        }
+
         public CABDetailsViewModel(Document document, ClaimsPrincipal user, bool cabNameAlreadyExists = false, bool fromSummary = false, string? returnUrl = null)
         {
             CABId = document.CABId;

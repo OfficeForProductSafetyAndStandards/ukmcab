@@ -1,14 +1,16 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Core.Extensions;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABHistoryViewModel : CreateEditCABViewModel
     {
         public CABHistoryViewModel() { }
-        public CABHistoryViewModel(string? cABId, List<Audit> documentAuditLog, string? returnUrl)
+
+        public CABHistoryViewModel(Document document, string? returnUrl)
         {
-            LastAuditLogHistoryDate = Enumerable.MaxBy(documentAuditLog, u => u.DateTime)?.DateTime;
-            CABId = cABId;
+            LastAuditLogHistoryDate = document.LastAuditLogHistoryDate();
+            CABId = document.CABId;
             ReturnUrl = returnUrl;
         }
         public DateTime? LastAuditLogHistoryDate { get; private set; }
