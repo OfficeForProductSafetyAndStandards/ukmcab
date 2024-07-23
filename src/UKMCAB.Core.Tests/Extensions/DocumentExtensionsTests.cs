@@ -379,6 +379,38 @@ namespace UKMCAB.Core.Tests.Extensions
             result.Should().BeFalse();
         }
 
+        [Test]
+        public void PublishedDate_ReturnsLastAuditLogPublishedActionDate()
+        {
+            // Arrange
+            var sut = new Document()
+            {
+                AuditLog = new List<Audit>
+                {
+                    new()
+                    {
+                        Action = AuditCABActions.Published,
+                        DateTime = new DateTime(2024, 1, 1)
+                    },
+                    new()
+                    {
+                        Action = AuditCABActions.Published,
+                        DateTime = new DateTime(2024, 1, 2)
+                    },
+                    new()
+                    {
+                        Action = AuditCABActions.Created,
+                        DateTime = new DateTime(2024, 1, 3)
+                    }
+                }
+            };
+
+            // Act
+            var result = sut.PublishedDate();
+
+            // Assert
+            result.Should().Be(new DateTime(2024, 1, 2));
+        }
         private static IEnumerable<TestCaseData> IsPendingOgdApprovalInvalidStatuses
         {
             get

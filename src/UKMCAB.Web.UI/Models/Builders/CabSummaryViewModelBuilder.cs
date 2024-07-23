@@ -41,15 +41,19 @@ namespace UKMCAB.Web.UI.Models.Builders
             _model.StatusCssStyle = CssClassUtils.CabStatusStyle(document.StatusValue);
             _model.HasActiveLAs = document.HasActiveLAs();
             _model.LastModifiedDate = document.LastUpdatedDate;
-            _model.PublishedDate = document.AuditLog.OrderBy(a => a.DateTime).LastOrDefault(al => al.Action == AuditCABActions.Published)?.DateTime;
+            _model.PublishedDate = document.PublishedDate();
             _model.IsPendingOgdApproval = document.IsPendingOgdApproval();
-            _model.LegislativeAreasPendingApprovalCount = !_user.IsInRole(Roles.OPSS.Id)
-                ? document.LegislativeAreasPendingApprovalByOgd(_user.GetRoleId()).Count
-                : document.LegislativeAreasPendingApprovalByOpss().Count;
             _model.LegislativeAreasApprovedByAdminCount = document.LegislativeAreasApprovedByAdminCount();
             _model.LegislativeAreaHasBeenActioned = document.LegislativeAreaHasBeenActioned();
             _model.DraftUpdated = document.DraftUpdated();
-            _model.UserInCreatorUserGroup = _user.GetRoleId() == document.CreatedByUserGroup;
+            return this;
+        }
+
+        public ICabSummaryViewModelBuilder WithLegislativeAreasPendingApprovalCount(Document document)
+        {
+            _model.LegislativeAreasPendingApprovalCount = !_user.IsInRole(Roles.OPSS.Id)
+                ? document.LegislativeAreasPendingApprovalByOgd(_user.GetRoleId()).Count
+                : document.LegislativeAreasPendingApprovalByOpss().Count;
             return this;
         }
 
@@ -123,8 +127,9 @@ namespace UKMCAB.Web.UI.Models.Builders
             return this;
         }
 
-        public ICabSummaryViewModelBuilder WithRoleInfo()
+        public ICabSummaryViewModelBuilder WithRoleInfo(Document document)
         {
+            _model.UserInCreatorUserGroup = _user.GetRoleId() == document.CreatedByUserGroup;
             _model.IsOpssAdmin = _user.IsInRole(Roles.OPSS.Id);
             _model.IsUkas = _user.IsInRole(Roles.UKAS.Id);
             _model.IsOPSSOrInCreatorUserGroup = _model.IsOpssAdmin || _model.UserInCreatorUserGroup;

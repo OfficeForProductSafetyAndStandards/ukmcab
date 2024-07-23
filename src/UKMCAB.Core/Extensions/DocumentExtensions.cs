@@ -43,5 +43,10 @@ namespace UKMCAB.Core.Extensions
                 document.AuditLog.Where(l => l.Action == AuditCABActions.Created),
                 u => u.DateTime)?.DateTime != document.LastUpdatedDate;
         }
+
+        public static DateTime? PublishedDate(this Document document)
+        {
+            return document.AuditLog.OrderBy(a => a.DateTime).LastOrDefault(al => al.Action == AuditCABActions.Published)?.DateTime;
+        }
     }
 }

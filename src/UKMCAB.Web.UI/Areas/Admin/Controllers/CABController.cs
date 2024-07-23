@@ -433,9 +433,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);
 
             var cabSummary = _cabSummaryViewModelBuilder
-                .WithRoleInfo()
+                .WithRoleInfo(latest)
                 .WithDocumentDetails(latest)
-                .WithReturnUrl(returnUrl)
+                .WithLegislativeAreasPendingApprovalCount(latest)
                 .WithCabDetails(cabDetails)
                 .WithCabContactViewModel(cabContact)
                 .WithCabBodyDetailsViewModel(cabBody)
@@ -444,9 +444,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)
                 .WithCabGovernmentUserNotesViewModel(cabGovernmentUserNoteViewModel)
                 .WithCabHistoryViewModel(cabHistory)
-                .WithIsEditLocked(isCabLockedForUser)
+                .WithReturnUrl(returnUrl)
                 .WithRevealEditActions(revealEditActions)
                 .WithRequestedFromCabProfilePage(fromCabProfilePage)
+                .WithIsEditLocked(isCabLockedForUser)
                 .WithSuccessBannerMessage(successBannerMessage)
                 .Build();
 

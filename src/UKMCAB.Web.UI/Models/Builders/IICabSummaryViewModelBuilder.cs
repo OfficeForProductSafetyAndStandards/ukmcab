@@ -6,6 +6,7 @@ namespace UKMCAB.Web.UI.Models.Builders
     public interface ICabSummaryViewModelBuilder
     {
         ICabSummaryViewModelBuilder WithDocumentDetails(Document document);
+        ICabSummaryViewModelBuilder WithLegislativeAreasPendingApprovalCount(Document document);
         ICabSummaryViewModelBuilder WithReturnUrl(string? returnUrl);
         ICabSummaryViewModelBuilder WithCabDetails(CABDetailsViewModel cabDetailsViewModel);
         ICabSummaryViewModelBuilder WithCabContactViewModel(CABContactViewModel cabContactViewModel);
@@ -16,7 +17,7 @@ namespace UKMCAB.Web.UI.Models.Builders
         ICabSummaryViewModelBuilder WithCabHistoryViewModel(CABHistoryViewModel cabHistoryViewModel);
         ICabSummaryViewModelBuilder WithCabGovernmentUserNotesViewModel(CABGovernmentUserNotesViewModel cabGovernmentUserNotesViewModel);
         ICabSummaryViewModelBuilder WithIsEditLocked(bool isEditLocked);
-        ICabSummaryViewModelBuilder WithRoleInfo();
+        ICabSummaryViewModelBuilder WithRoleInfo(Document document);
         ICabSummaryViewModelBuilder WithSuccessBannerMessage(string? message);
         ICabSummaryViewModelBuilder WithRevealEditActions(bool? revealEditActions);
         ICabSummaryViewModelBuilder WithRequestedFromCabProfilePage(bool? fromCabProfilePage);

@@ -191,8 +191,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
                 It.Is<List<ProcedureModel>>(procedures => procedures.Any() && procedures.All(p => expectedProcedureIds.Contains(p.Id)))
             )).Returns(_mockCabLegislativeAreasViewModelBuilder.Object);
             _mockCabLegislativeAreasViewModelBuilder.Setup(m => m.Build()).Returns(new CABLegislativeAreasViewModel());
-            _mockCabSummaryViewModelBuilder.Setup(m => m.WithRoleInfo()).Returns(_mockCabSummaryViewModelBuilder.Object);
+            _mockCabSummaryViewModelBuilder.Setup(m => m.WithRoleInfo(It.Is<Document>(d => d.id == document.id))).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithDocumentDetails(It.Is<Document>(d => d.id == document.id))).Returns(_mockCabSummaryViewModelBuilder.Object);
+            _mockCabSummaryViewModelBuilder.Setup(m => m.WithLegislativeAreasPendingApprovalCount(It.Is<Document>(d => d.id == document.id))).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithReturnUrl(null)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabDetails(It.IsAny<CABDetailsViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabContactViewModel(It.IsAny<CABContactViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
