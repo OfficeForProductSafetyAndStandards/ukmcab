@@ -43,6 +43,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
         private CoreEmailTemplateOptions _templateOptions;
 
         private CABController _sut;
+        private string _userId = "Test user id";
 
         [SetUp]
         public void Setup()
@@ -73,7 +74,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
 
             var claims = new List<Claim>
             {
-                new(ClaimTypes.NameIdentifier, "Test user id"),
+                new(ClaimTypes.NameIdentifier, _userId),
             };
             var user = new ClaimsPrincipal(new ClaimsIdentity(claims));
             var httpContext = new DefaultHttpContext
@@ -92,29 +93,30 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
         public async Task HttpGetSummary_LocksCabForUserAndReturnsCABSummaryViewModel()
         {
             // Arrange
-            var documentId = HttpGetSummary_ReturnsCabSummaryViewModel(true);
+            (var documentId, var cabSummaryViewModelId) = HttpGetSummary_ReturnsCabSummaryViewModel(true);
             var expectedResult = new CABSummaryViewModel
             {
-                Id = "Test id"
+                Id = cabSummaryViewModelId
             };
 
-            _mockCabSummaryUiService.Setup(m => m.LockCabForUser(It.IsAny<CABSummaryViewModel>())).Returns(Task.CompletedTask);
+            _mockCabSummaryUiService.Setup(m => m.LockCabForUser(It.Is<CABSummaryViewModel>(m => m.Id == cabSummaryViewModelId))).Returns(Task.CompletedTask);
 
             // Act
             var result = await _sut.Summary(documentId, null, null, null) as ViewResult;
 
             // Assert
             result.Model.Should().BeEquivalentTo(expectedResult);
+            _mockCabSummaryUiService.Verify(m => m.LockCabForUser(It.Is<CABSummaryViewModel>(m => m.Id == cabSummaryViewModelId)), Times.Once);
         }
 
         [Test]
         public async Task HttpGetSummary_DoesNotLockCabForUserAndReturnsCABSummaryViewModel()
         {
             // Arrange
-            var documentId = HttpGetSummary_ReturnsCabSummaryViewModel(false);
+            (var documentId, var cabSummaryViewModelId) = HttpGetSummary_ReturnsCabSummaryViewModel(false);
             var expectedResult = new CABSummaryViewModel
             {
-                Id = "Test id"
+                Id = cabSummaryViewModelId
             };
 
             // Act
@@ -122,16 +124,17 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
 
             // Assert
             result.Model.Should().BeEquivalentTo(expectedResult);
+            _mockCabSummaryUiService.Verify(m => m.LockCabForUser(It.IsAny<CABSummaryViewModel>()), Times.Never);
         }
 
-        private string HttpGetSummary_ReturnsCabSummaryViewModel(bool isEditLocked)
+        private (string documentId, string cabSummaryViewModelId) HttpGetSummary_ReturnsCabSummaryViewModel(bool isEditLocked)
         {
             // Arrange
-            var userId = "Test user id";
             var cabNameAlreadyExists = true;
             var bannerMessage = "Test banner message";
             var documentId = "Test document id";
             var cabId = "Test cab id";
+            var cabSummaryViewModelId = "Test cab summary view model id";
 
             var documentLegislativeAreas = new List<DocumentLegislativeArea> { new() { Id = Guid.NewGuid() } };
             var scopeOfAppointment = new List<DocumentScopeOfAppointment> { new() { Id = Guid.NewGuid() } };
@@ -175,7 +178,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
                 .ReturnsAsync(procedureModels);
             _mockCabAdminService.Setup(m => m.DocumentWithSameNameExistsAsync(It.Is<Document>(d => d.id == document.id)))
                 .ReturnsAsync(cabNameAlreadyExists);
-            _mockEditLockService.Setup(m => m.IsCabLockedForUser(cabId, userId)).ReturnsAsync(isEditLocked);
+            _mockEditLockService.Setup(m => m.IsCabLockedForUser(cabId, _userId)).ReturnsAsync(isEditLocked);
             _mockCabSummaryUiService.Setup(m => m.GetSuccessBannerMessage()).Returns(bannerMessage);
             _mockCabLegislativeAreasViewModelBuilder.Setup(m => m.WithDocumentLegislativeAreas(
                 It.Is<List<DocumentLegislativeArea>>(las => las.Any() && las.All(l => expectedDocLaIds.Contains(l.Id))),
@@ -203,9 +206,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithRevealEditActions(null)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithRequestedFromCabProfilePage(null)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithSuccessBannerMessage(bannerMessage)).Returns(_mockCabSummaryViewModelBuilder.Object);
-            _mockCabSummaryViewModelBuilder.Setup(m => m.Build()).Returns(new CABSummaryViewModel { Id = "Test id"});
+            _mockCabSummaryViewModelBuilder.Setup(m => m.Build()).Returns(new CABSummaryViewModel { Id = cabSummaryViewModelId });
 
-            return documentId;
+            return (documentId, cabSummaryViewModelId);
         }
 
         [Test]

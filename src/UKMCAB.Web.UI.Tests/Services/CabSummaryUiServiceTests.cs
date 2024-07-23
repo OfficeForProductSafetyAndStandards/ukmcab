@@ -65,7 +65,7 @@ namespace UKMCAB.Web.UI.Tests.Services
         [Test]
         public async Task CreateDocumentAsync_DocumentStatusIsPublishedAndSubSectionEditIsAllowed_CreatesNewDocument()
         {
-            //Arrange
+            // Arrange
             var document = new Document
             {
                 id = "Test id",
@@ -81,28 +81,36 @@ namespace UKMCAB.Web.UI.Tests.Services
                 It.Is<UserAccount>(u => u.Id == userAccount.Id), 
                 It.Is<Document>(d => d.id == document.id))).ReturnsAsync(new Document());
 
-            //Act
+            // Act
             await _sut.CreateDocumentAsync(document, true);
+
+            // Assert
+            _mockCabAdminService.Verify(m => m.CreateDocumentAsync(
+                It.Is<UserAccount>(u => u.Id == userAccount.Id),
+                It.Is<Document>(d => d.id == document.id)), Times.Once);
         }
 
         [TestCaseSource(nameof(CreateDocumentAsyncShouldNotCreateNewDocumentData))]
         public async Task CreateDocumentAsync_DocumentStatusNotPublishedOrSubSectionEditNotAllowed_DoesNotCreateNewDocument(Status status, bool subSectionEditAllowed)
         {
-            //Arrange
+            // Arrange
             var document = new Document
             {
                 StatusValue = status
             };
 
-            //Act
+            // Act
             await _sut.CreateDocumentAsync(document, subSectionEditAllowed);
+
+            // Assert
+            _mockCabAdminService.Verify(m => m.CreateDocumentAsync(It.IsAny<UserAccount>(), It.IsAny<Document>()), Times.Never);
         } 
 
         [TestCase(Constants.ApprovedLA, "Legislative area has been approved.")]
         [TestCase(Constants.DeclinedLA, "Legislative area has been declined.")]
         public void GetSuccessBannerMessage_TempDataContainsKey_ReturnsMessageAndRemoveKeyFromTempData(string key, string expectedResult)
         {
-            //Arrange
+            // Arrange
             var tempData = new TempDataDictionary(_mockHttpContext.Object, _mockTempDataProvider.Object)
             {
                 [key] = true
@@ -110,10 +118,10 @@ namespace UKMCAB.Web.UI.Tests.Services
 
             _mockTempDataDictionaryFactory.Setup(m => m.GetTempData(It.IsAny<HttpContext>())).Returns(tempData);
 
-            //Act
+            // Act
             var result = _sut.GetSuccessBannerMessage();
 
-            //Assert
+            // Assert
             result.Should().Be(expectedResult);
             tempData.ContainsKey(key).Should().BeFalse();
         }
@@ -121,15 +129,15 @@ namespace UKMCAB.Web.UI.Tests.Services
         [Test]
         public void GetSuccessBannerMessage_TempDataDoesNotContainsKey_ReturnsNull()
         {
-            //Arrange
+            // Arrange
             var tempData = new TempDataDictionary(_mockHttpContext.Object, _mockTempDataProvider.Object);
 
             _mockTempDataDictionaryFactory.Setup(m => m.GetTempData(It.IsAny<HttpContext>())).Returns(tempData);
 
-            //Act
+            // Act
             var result = _sut.GetSuccessBannerMessage();
 
-            //Assert
+            // Assert
             result.Should().BeNull();
         }
 
@@ -137,11 +145,14 @@ namespace UKMCAB.Web.UI.Tests.Services
         public void LockCabForUser_SubSectionEditAllowedAndDocumentStatusIsDraftOrPublishedAndUserIsOPSSOrInCreatorUserGroup_LocksCabForUser(
             CABSummaryViewModel model)
         {
-            //Arrange
+            // Arrange
             _mockEditLockService.Setup(m => m.SetAsync(model.CABId, userId));
 
-            //Act
+            // Act
             var result = _sut.LockCabForUser(model);
+
+            // Assert
+            _mockEditLockService.Verify(m => m.SetAsync(model.CABId, userId), Times.Once);
         }
 
         [TestCaseSource(nameof(LockCabForUserShouldNotLockCabForUserData))]
@@ -149,7 +160,10 @@ namespace UKMCAB.Web.UI.Tests.Services
             CABSummaryViewModel model)
         {
             // Act
-             await _sut.LockCabForUser(model);
+            await _sut.LockCabForUser(model);
+
+            // Assert
+            _mockEditLockService.Verify(m => m.SetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 
         private static IEnumerable<TestCaseData> CreateDocumentAsyncShouldNotCreateNewDocumentData
