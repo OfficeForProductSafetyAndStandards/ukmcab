@@ -72,7 +72,6 @@ namespace UKMCAB.Web.UI.Models.Builders
             return this;
         }
 
-
         public ICabSummaryViewModelBuilder WithProductScheduleDetailsViewModel(CABProductScheduleDetailsViewModel cabProductScheduleDetailsViewModel)
         {
             _model.CABProductScheduleDetailsViewModel = cabProductScheduleDetailsViewModel;
@@ -148,7 +147,7 @@ namespace UKMCAB.Web.UI.Models.Builders
 
         public ICabSummaryViewModelBuilder WithLegislativeAreasPendingApprovalCount(Document document)
         {
-            _model.LegislativeAreasPendingApprovalCount = !_user.IsInRole(Roles.OPSS.Id)
+            _model.LegislativeAreasPendingApprovalForCurrentUserCount = !_user.IsInRole(Roles.OPSS.Id)
                 ? document.GetLegislativeAreasPendingApprovalByOgd(_user.GetRoleId()).Count
                 : document.GetLegislativeAreasPendingApprovalByOpss().Count;
             return this;
