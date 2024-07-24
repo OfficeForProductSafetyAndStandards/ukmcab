@@ -17,6 +17,7 @@
         basePath += basePath.Contains("?") ? "&pagenumber=" : "?pagenumber=";
         var tab = !string.IsNullOrWhiteSpace(Model.TabId) ? "#" + Model.TabId : string.Empty;
         var pageRange = Model.PageRange();
+
         <nav class="pagination-links-container">
             <ul class="pagination-links">
                 @if (Model.ShowPrevious)
