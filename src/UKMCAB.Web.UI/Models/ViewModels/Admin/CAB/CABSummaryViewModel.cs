@@ -188,15 +188,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             IsOpssAdmin &&
             Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            //HasActionableLegislativeAreaForOpssAdmin;
             !IsPendingOgdApproval;
-
-        //private bool ShowBannerEmptyStringForNonOwnerOpssWhenAllLaArePublished =>
-        //    !UserInCreatorUserGroup &&
-        //    IsOpssAdmin &&
-        //    Status == Status.Draft &&
-        //    SubStatus == SubStatus.PendingApprovalToPublish &&
-        //    !IsPendingOgdApproval;
 
         public string BannerContent => GetBannerContent();
 
@@ -257,7 +249,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
             !IsPendingOgdApproval));
-            //HasActionableLegislativeAreaForOpssAdmin));
 
         private bool ShowEditButtonForOgdNonOwner =>
             HasOgdRole &&
