@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
+﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using System.Security.Claims;
 using UKMCAB.Common.Exceptions;
+using UKMCAB.Core.Extensions;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
@@ -28,7 +28,8 @@ namespace UKMCAB.Web.UI.Services
             _user = _httpContextAccessor.HttpContext?.User ?? throw new InvalidOperationException("No active HttpContext");
         }
 
-        public async Task<Document> CreateDocumentAsync(Document document, bool? revealEditActions)
+
+        public async Task CreateDocumentAsync(Document document, bool? revealEditActions)
         {
             var userId = _user.GetUserId();
             if (document.StatusValue == Status.Published && revealEditActions == true)
@@ -36,7 +37,6 @@ namespace UKMCAB.Web.UI.Services
                 var userAccount = await _userService.GetAsync(userId) ?? throw new NotFoundException($"User account not found for Id: {userId}");
                 document = await _cabAdminService.CreateDocumentAsync(userAccount, document);
             }
-            return document;
         }
 
         public string? GetSuccessBannerMessage()

@@ -79,7 +79,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = (await _cabAdminService.GetLatestDocumentAsync(id))
                 .Map(x => new CABDetailsViewModel(x, User, false, fromSummary, returnUrl)) ??
                     // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
-                    new CABDetailsViewModel { IsNew = true, IsFromSummary = fromSummary, ReturnUrl = returnUrl, IsOPSSUser = User.IsInRole(Roles.OPSS.Id), IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id) };
+                    new CABDetailsViewModel(User, fromSummary, returnUrl);
             return View(model);
         }
 
@@ -389,6 +389,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
         public async Task<IActionResult> Summary(string id, string? returnUrl, bool? revealEditActions, bool? fromCabProfilePage)
         {
+            var currentUrl = HttpContext.Request.GetRequestUri().PathAndQuery;
             var userId = User.GetUserId();
 
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -415,6 +416,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var cabBody = new CABBodyDetailsViewModel(latest);
             var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
             var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
+            var cabHistory = new CABHistoryViewModel(latest, currentUrl);
+            var cabGovernmentUserNoteViewModel = new CABGovernmentUserNotesViewModel(latest, currentUrl);
             var cabLegislativeAreas = _cabLegislativeAreasViewModelBuilder
                 .WithDocumentLegislativeAreas(
                     latest.DocumentLegislativeAreas,
@@ -426,17 +429,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     products,
                     procedures)
                 .Build();
-            var currentUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
-            var cabHistory = new CABHistoryViewModel(latest.CABId, latest.AuditLog, currentUrl);
-            var cabGovernmentUserNoteViewModel = new CABGovernmentUserNotesViewModel(latest, currentUrl);
 
             ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);
 
-            // TODO: Consider consolidating methods that only do simple assignments into one that takes in the Document as a parameter
             var cabSummary = _cabSummaryViewModelBuilder
-                .WithRoleInfo(latest.CreatedByUserGroup)
-                .WithIds(latest.id, latest.CABId)
-                .WithReturnUrl(returnUrl)
+                .WithRoleInfo(latest)
+                .WithDocumentDetails(latest)
+                .WithLegislativeAreasPendingApprovalCount(latest)
                 .WithCabDetails(cabDetails)
                 .WithCabContactViewModel(cabContact)
                 .WithCabBodyDetailsViewModel(cabBody)
@@ -445,20 +444,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)
                 .WithCabGovernmentUserNotesViewModel(cabGovernmentUserNoteViewModel)
                 .WithCabHistoryViewModel(cabHistory)
-                .WithStatus(latest.StatusValue, latest.SubStatus)
-                .WithStatusCssStyle(latest.StatusValue)
-                .WithHasActiveLAs(latest.HasActiveLAs())
-                .WithIsEditLocked(isCabLockedForUser)
+                .WithReturnUrl(returnUrl)
                 .WithRevealEditActions(revealEditActions)
-                .WithLastModifiedDate(latest.LastUpdatedDate)
-                .WithPublishedDate(latest.AuditLog)
-                .WithIsPendingOgdApproval(latest.IsPendingOgdApproval())
-                .WithLegislativeAreasPendingApprovalCount(latest)
-                .WithLegislativeAreasApprovedByAdminCount(latest.LegislativeAreasApprovedByAdminCount())
-                .WithLegislativeAreaHasBeenActioned(latest.LegislativeAreaHasBeenActioned())
-                .WithHasActionableLegislativeAreaForOpssAdmin(latest.HasActionableLegislativeAreaForOpssAdmin())
                 .WithRequestedFromCabProfilePage(fromCabProfilePage)
-                .WithDraftUpdated(latest.AuditLog, latest.LastUpdatedDate)
+                .WithIsEditLocked(isCabLockedForUser)
                 .WithSuccessBannerMessage(successBannerMessage)
                 .Build();
 

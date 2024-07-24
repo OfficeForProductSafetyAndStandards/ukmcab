@@ -1,6 +1,6 @@
 ﻿using UKMCAB.Core.Domain.LegislativeAreas;
 
-namespace UKMCAB.Web.UI.Extensions
+namespace UKMCAB.Core.Extensions
 {
     public static class ProcedureModelExtensions
     {

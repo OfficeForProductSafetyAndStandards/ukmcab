@@ -13,7 +13,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 using UKMCAB.Web.UI.Helpers;
-using UKMCAB.Core.Security;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -249,13 +248,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 ModelState.AddModelError("SelectedArchivedScheduleId", "Select an archived schedule");
             }
 
-            if (submitType == Constants.SubmitType.Continue || submitType == Constants.SubmitType.Save)
+            if (submitType == Constants.SubmitType.Continue)
             {
                 AddLegislativeLabelAndFileModelStateErrors(model);
-            }
-
-            if (submitType is Constants.SubmitType.Continue)
-            {
                 AddLegislativeSelectionModelStateErrors(model);
             }
 
@@ -675,10 +670,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }
             }
 
-            AddCategoryLabelAndFileModelStateErrors(model);
-
             if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
             {
+                AddCategoryLabelAndFileModelStateErrors(model);
                 AddCategorySelectionModelStateErrors(model);
             }
 
@@ -991,22 +985,26 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (duplicatedFileAndLabels != null && duplicatedFileAndLabels.Count > 0)
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.ActiveFiles)
+                    foreach (var uploadedFileLabel in duplicatedFileAndLabels)
                     {
-                        foreach (var uploadedFileLabel in duplicatedFileAndLabels)
-                        {
-                            var fileName = uploadedFileLabel.FileName;
-                            var labelName = uploadedFileLabel.Label;
+                        var fileName = uploadedFileLabel.FileName;
+                        var labelName = uploadedFileLabel.Label;
+                        bool first = true;
 
+                        foreach (var uploadedFile in model.ActiveFiles)
+                        {
                             if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) &&
                                 uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"ActiveFiles[{index}].Label",
-                                    "A file already exists with this title. Change the title or upload a different file.");
+                                if (!first)
+                                {
+                                    ModelState.AddModelError($"ActiveFiles[{index}].Label",
+                                        "A file already exists with this title. Change the title or upload a different file.");
+                                }
+                                first = false;
                             }
+                            index++;
                         }
-
-                        index++;
                     }
                 }
 
@@ -1018,23 +1016,28 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (duplicatedLabelsAndLegislativeAreas is { Count: > 0 })
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.ActiveFiles)
+                    foreach (var uploadedFileLabel in duplicatedLabelsAndLegislativeAreas)
                     {
-                        foreach (var uploadedFileLabel in duplicatedLabelsAndLegislativeAreas)
+                        var labelName = uploadedFileLabel.Label;
+                        var legislativeArea = uploadedFileLabel.LegislativeArea;
+                        bool first = true;
+
+                        foreach (var uploadedFile in model.ActiveFiles)
                         {
-                            var labelName = uploadedFileLabel.Label;
-                            var legislativeArea = uploadedFileLabel.LegislativeArea;
 
                             if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) &&
                                 (uploadedFile.LegislativeArea ?? string.Empty).Equals(legislativeArea,
                                     StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"ActiveFiles[{index}].Label",
-                                    "A file associated with this legislative area is already using this title. Change the title of the file.");
+                                if (!first)
+                                {
+                                    ModelState.AddModelError($"ActiveFiles[{index}].Label",
+                                        "A file associated with this legislative area is already using this title. Change the title of the file.");
+                                }
+                                first = false;
                             }
+                            index++;
                         }
-
-                        index++;
                     }
                 }
 
@@ -1047,23 +1050,27 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (filesWithRepeatedNamesAndLegislativeAreas is { Count: > 0 })
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.ActiveFiles)
+                    foreach (var repeatedFiles in filesWithRepeatedNamesAndLegislativeAreas)
                     {
-                        foreach (var repeatedFiles in filesWithRepeatedNamesAndLegislativeAreas)
-                        {
-                            var fileName = repeatedFiles.FileName;
-                            var legislativeArea = repeatedFiles.LegislativeArea;
+                        var fileName = repeatedFiles.FileName;
+                        var legislativeArea = repeatedFiles.LegislativeArea;
+                        bool first = true;
 
+                        foreach (var uploadedFile in model.ActiveFiles)
+                        {
                             if (uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase) &&
                                 (uploadedFile.LegislativeArea ?? string.Empty).Equals(legislativeArea,
                                     StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
-                                    "The file is already associated with this legislative area.");
+                                if (!first)
+                                {
+                                    ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
+                                        "The file is already associated with this legislative area.");
+                                }
+                                first = false;
                             }
+                            index++;
                         }
-
-                        index++;
                     }
                 }
             }
@@ -1082,22 +1089,26 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (duplicatedFileAndLabels.Any())
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UploadedFiles)
+                    foreach (var uploadedFileLabel in duplicatedFileAndLabels)
                     {
-                        foreach (var uploadedFileLabel in duplicatedFileAndLabels)
-                        {
-                            var fileName = uploadedFileLabel.FileName;
-                            var labelName = uploadedFileLabel.Label;
+                        var fileName = uploadedFileLabel.FileName;
+                        var labelName = uploadedFileLabel.Label;
+                        bool first = true;
 
+                        foreach (var uploadedFile in model.UploadedFiles)
+                        {
                             if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) &&
                                 uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"UploadedFiles[{index}].Label",
+                                if (!first)
+                                {
+                                    ModelState.AddModelError($"UploadedFiles[{index}].Label",
                                     "A file already exists with this title. Change the title.");
+                                }
+                                first = false;
                             }
+                            index++;
                         }
-
-                        index++;
                     }
                 }
 
@@ -1109,23 +1120,27 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (duplicatedLabelsAndCategories.Any())
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UploadedFiles)
+                    foreach (var uploadedFileLabel in duplicatedLabelsAndCategories)
                     {
-                        foreach (var uploadedFileLabel in duplicatedLabelsAndCategories)
-                        {
-                            var labelName = uploadedFileLabel.Label;
-                            var category = uploadedFileLabel.Category;
+                        var labelName = uploadedFileLabel.Label;
+                        var category = uploadedFileLabel.Category;
+                        bool first = true;
 
+                        foreach (var uploadedFile in model.UploadedFiles)
+                        {
                             if (uploadedFile.Label!.Equals(labelName, StringComparison.OrdinalIgnoreCase) &&
                                 (uploadedFile.Category ?? string.Empty).Equals(category,
                                     StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"UploadedFiles[{index}].Label",
+                                if (!first)
+                                {
+                                    ModelState.AddModelError($"UploadedFiles[{index}].Label",
                                     "A file associated with this category is already using this title. Change the title of the file.");
+                                }
+                                first = false;
                             }
-                        }
-
                         index++;
+                        }
                     }
                 }
 
@@ -1138,23 +1153,27 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (filesWithRepeatedNamesAndCategories.Any())
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UploadedFiles)
+                    foreach (var repeatedFiles in filesWithRepeatedNamesAndCategories)
                     {
-                        foreach (var repeatedFiles in filesWithRepeatedNamesAndCategories)
-                        {
-                            var fileName = repeatedFiles.FileName;
-                            var category = repeatedFiles.Category;
+                        var fileName = repeatedFiles.FileName;
+                        var category = repeatedFiles.Category;
+                        bool first = true;
 
+                        foreach (var uploadedFile in model.UploadedFiles)
+                        {
                             if (uploadedFile.FileName.Equals(fileName, StringComparison.OrdinalIgnoreCase) &&
                                 (uploadedFile.Category ?? string.Empty).Equals(category,
                                     StringComparison.OrdinalIgnoreCase))
                             {
-                                ModelState.AddModelError($"UploadedFiles[{index}].Category",
+                                if (!first)
+                                {
+                                    ModelState.AddModelError($"UploadedFiles[{index}].Category",
                                     "The file is already associated with this category.");
+                                }
+                                first = false;
                             }
+                            index++;
                         }
-
-                        index++;
                     }
                 }
             }

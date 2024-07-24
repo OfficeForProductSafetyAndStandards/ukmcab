@@ -2,7 +2,6 @@
 using Microsoft.ApplicationInsights;
 using Microsoft.Azure.Cosmos.Linq;
 using MoreLinq;
-using System.Collections.Generic;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain;
@@ -12,7 +11,6 @@ using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Search.Models;
 using UKMCAB.Data.Search.Services;
@@ -164,6 +162,7 @@ namespace UKMCAB.Core.Services.CAB
 
             var rv = await _cabRepository.CreateAsync(document, auditItem.DateTime);
             await UpdateSearchIndexAsync(rv);
+            await RefreshCachesAsync(rv.CABId, rv.URLSlug);
             await RecordStatsAsync();
 
             return rv;

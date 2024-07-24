@@ -265,6 +265,4 @@ public static class ExtensionMethods
     /// <param name="action"></param>
     /// <returns></returns>
     public static TOut Transform<T, TOut>(this T incoming, Func<T, TOut> action) => action(incoming);
-
-    public static string GetUserId(this ClaimsPrincipal principal) => principal.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value;
 }

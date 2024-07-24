@@ -5,7 +5,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.Models.LegislativeAreas;
-using UKMCAB.Web.UI.Extensions;
+using UKMCAB.Core.Extensions;
 using UKMCAB.Common.Exceptions;
 
 namespace UKMCAB.Web.UI.Models.Builders

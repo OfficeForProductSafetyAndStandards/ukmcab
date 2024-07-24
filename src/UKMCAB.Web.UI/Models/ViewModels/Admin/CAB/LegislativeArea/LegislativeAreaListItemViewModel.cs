@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using UKMCAB.Data.Models.LegislativeAreas;
-
+﻿
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class LegislativeAreaListItemViewModel : LegislativeAreaBaseViewModel

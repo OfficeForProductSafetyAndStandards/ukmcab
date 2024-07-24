@@ -57,49 +57,17 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
             return View(model);
         }
 
-        [HttpGet("/contact-us", Name = Routes.ContactUs) ]
+        /*
+        // TEMPORARILY HIDE Contact Us functionality - UKMCAB-1983 / hotfix 4.2.1
+        */
+        [Route("/contact-us", Name = Routes.ContactUs)]
         public IActionResult ContactUs(string? returnUrl)
         {
-            return View(new ContactUsViewModel{ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? WebUtility.UrlDecode("/") : WebUtility.UrlDecode(returnUrl) });
+            return View(new ContactUsViewModel { 
+                ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? null : WebUtility.UrlDecode(returnUrl), 
+                Email = _templateOptions.ContactUsOPSSEmail
+            });
         }
 
-        [HttpPost("/contact-us", Name = Routes.ContactUs)]
-        public async Task<IActionResult> ContactUs(ContactUsViewModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                var personalisation = new Dictionary<string, dynamic>
-                {
-                    {"name", model.Name},
-                    {"email", model.Email},
-                    {"subject", model.Subject},
-                    {"message", model.Message}
-                };
-
-                try
-                {
-                    await _asyncNotificationClient.SendEmailAsync(_templateOptions.ContactUsOPSSEmail, _templateOptions.ContactUsOPSS, personalisation);
-                    await _asyncNotificationClient.SendEmailAsync(model.Email, _templateOptions.ContactUsUser, personalisation);
-                    return RedirectToAction("ContactUsConfirmation", new {returnUrl = WebUtility.UrlEncode(model.ReturnUrl)});
-                }
-                catch
-                {
-                    ModelState.AddModelError("Email", "Sorry, we were unable to send you message. Please check your email address or try again later.");
-                }
-
-            }
-
-            return View(model);
-        }
-
-        [Route("/contact-us-confirmation")]
-        public IActionResult ContactUsConfirmation(string returnUrl)
-        {
-            if (string.IsNullOrWhiteSpace(returnUrl))
-            {
-                returnUrl = WebUtility.UrlEncode("/");
-            }
-            return View(new ContactUsConfirmationViewModel{ReturnUrl = returnUrl});
-        }
     }
 }

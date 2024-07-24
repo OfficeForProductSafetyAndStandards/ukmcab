@@ -1,5 +1,6 @@
 ﻿using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
+using UKMCAB.Core.Extensions;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Helpers;

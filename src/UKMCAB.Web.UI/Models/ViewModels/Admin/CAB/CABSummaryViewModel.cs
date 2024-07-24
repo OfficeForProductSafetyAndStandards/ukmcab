@@ -3,7 +3,8 @@
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABSummaryViewModel : ILayoutModel
-    {        public string? Id { get; set; }
+    {        
+        public string? Id { get; set; }
         public Status Status { get; set; }
         public string? StatusCssStyle { get; set; }
         public SubStatus SubStatus { get; set; }
@@ -38,6 +39,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool RequestedFromCabProfilePage { get; set; }
         public bool HasActiveLAs { get; set; }
         public bool DraftUpdated { get; set; }
+
         public bool ShowEditButton =>
             !RevealEditActions &&
             !IsEditLocked &&
@@ -94,7 +96,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public bool ShowDeleteDraftButton => 
             ShowSaveAsDraftButton ||
-            (IsOpssAdmin &&
+            (RevealEditActions &&
+            IsOpssAdmin &&
             SubStatus == SubStatus.None);
 
         public bool ShowCancelPublishButton =>
@@ -148,9 +151,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (Status == Status.Published || UserInCreatorUserGroup);
 
         public bool ShowBannerContentEmptyString =>
-            ShowBannerEmptyStringForOwner ||
+            !IsEditLocked &&
+            (ShowBannerEmptyStringForOwner ||
             ShowBannerEmptyStringForNonOwnerOpss ||
-            ShowBannerEmptyStringForNonOwnerOgd;
+            ShowBannerEmptyStringForNonOwnerOgd ||
+            Status != Status.Draft);
 
         public bool ShowBannerContentCannotBeEdited =>
             ShowBannerCannotBeEditedForUkas ||
@@ -183,21 +188,29 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             IsOpssAdmin &&
             Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            LegislativeAreaHasBeenActioned;
+            //HasActionableLegislativeAreaForOpssAdmin;
+            !IsPendingOgdApproval;
+
+        //private bool ShowBannerEmptyStringForNonOwnerOpssWhenAllLaArePublished =>
+        //    !UserInCreatorUserGroup &&
+        //    IsOpssAdmin &&
+        //    Status == Status.Draft &&
+        //    SubStatus == SubStatus.PendingApprovalToPublish &&
+        //    !IsPendingOgdApproval;
 
         public string BannerContent => GetBannerContent();
 
         public string GetBannerContent()
         {
-            if (IsEditLocked && !IsPendingOgdApproval)
-            {
-                return "This CAB profile cannot be edited as it's being edited by another user.";
-            }
-
             if (ShowBannerContentEmptyString)
             {
                 return string.Empty;
             }
+
+            if (IsEditLocked && !IsPendingOgdApproval)
+            {
+                return "This CAB profile cannot be edited as it's being edited by another user.";
+            }            
 
             if (ShowBannerContentCannotBeEdited)
             {
@@ -243,7 +256,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (SubStatus == SubStatus.None ||
             (Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            HasActionableLegislativeAreaForOpssAdmin));
+            !IsPendingOgdApproval));
+            //HasActionableLegislativeAreaForOpssAdmin));
 
         private bool ShowEditButtonForOgdNonOwner =>
             HasOgdRole &&
