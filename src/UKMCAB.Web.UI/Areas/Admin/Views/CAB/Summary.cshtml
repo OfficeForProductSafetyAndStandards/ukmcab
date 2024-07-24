@@ -10,45 +10,45 @@
 
 @section BackButton
 {
-        <div class="govuk-width-container">
-            <div class="govuk-grid-row">
-                <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-width-container">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
                 @if (string.IsNullOrWhiteSpace(Model.ReturnUrl))
                 {
                     if (User.Identity.IsAuthenticated && User.HasClaim(Claims.CabManagement))
                     {
-                                    <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement" />
+                        <govuk-back-link asp-route-unlockCab="@Model.CABId" asp-route="@CabManagementController.Routes.CABManagement" />
                     }
                     else
                     {
-                                    <govuk-back-link asp-route="@ServiceManagementController.Routes.ServiceManagement" />
+                        <govuk-back-link asp-route="@ServiceManagementController.Routes.ServiceManagement" />
                     }
                 }
                 else
                 {
-                            <govuk-back-link href="@Model.ReturnUrl&unlockCab=@Model.CABId">Back to search results</govuk-back-link>
+                    <govuk-back-link href="@Model.ReturnUrl&unlockCab=@Model.CABId">Back to search results</govuk-back-link>
                 }
-                </div>
             </div>
         </div>
+    </div>
 }
 
 @if (!string.IsNullOrWhiteSpace(Model.SuccessBannerMessage))
 {
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <govuk-notification-banner type="Success" class="govuk-!-margin-bottom-5">
-                    <p class="govuk-notification-banner__heading govuk-!-font-size-19">
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <govuk-notification-banner type="Success" class="govuk-!-margin-bottom-5">
+                <p class="govuk-notification-banner__heading govuk-!-font-size-19">
                     @Model.SuccessBannerMessage
-                    </p>
-                </govuk-notification-banner>
-            </div>
+                </p>
+            </govuk-notification-banner>
         </div>
+    </div>
 }
 
 @if (!string.IsNullOrWhiteSpace(Model.BannerContent))
 {
-        <partial model="@Model.BannerContent" name="Partials/_PageContentBanner" />
+    <partial model="@Model.BannerContent" name="Partials/_PageContentBanner" />
 }
 
 <div class="govuk-grid-row">
@@ -56,11 +56,11 @@
         <span class="govuk-caption-m ukmcab-padding-bottom-10">@Model.TitleHint</span>
         @if (Model.ShowOgdActions)
         {
-                <h1 class="govuk-heading-l">Check details before approving or declining</h1>
+            <h1 class="govuk-heading-l">Check details before approving or declining</h1>
         }
         else
         {
-                <h1 class="govuk-heading-l">@Model.CabDetailsViewModel.Name</h1>
+            <h1 class="govuk-heading-l">@Model.CabDetailsViewModel.Name</h1>
         }
     </div>
 
@@ -68,10 +68,12 @@
         <div class="cab-detail-date-meta">
             @if (Model.PublishedDate.HasValue)
             {
-                    <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToStringBeisDateFormat()
-                    </span>
+                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">
+                    Published: @Model.PublishedDate.ToStringBeisDateFormat()
+                </span>
             }
-            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @Model.LastModifiedDate.ToStringBeisDateFormat()
+            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">
+                Last updated: @Model.LastModifiedDate.ToStringBeisDateFormat()
             </span>
             <div>
                 <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">
@@ -79,9 +81,9 @@
                 </span>
                 @if (Model.ShowSubstatusName)
                 {
-                        <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-7">
-                            <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
-                        </span>
+                    <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-7">
+                        <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatusName</strong>
+                    </span>
                 }
             </div>
         </div>
@@ -91,11 +93,11 @@
         <div class="govuk-!-margin-right-3">
             @if (Model.ShowEditButton)
             {
-                    <div class="ukmcab-full-width--mobile ukmcab-float__right ukmcab-text-align-right ukmcab-padding-top-30">
-                        <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-revealEditActions="@true" asp-route-returnUrl="@Model.ReturnUrl">
-                            Edit
-                        </a>
-                    </div>
+                <div class="ukmcab-full-width--mobile ukmcab-float__right ukmcab-text-align-right ukmcab-padding-top-30">
+                    <a class="govuk-button govuk-button--secondary" asp-route="@CABController.Routes.CabSummary" asp-route-id="@Model.CABId" asp-route-revealEditActions="@true" asp-route-returnUrl="@Model.ReturnUrl">
+                        Edit
+                    </a>
+                </div>
             }
         </div>
     </div>
@@ -106,10 +108,16 @@
         <div class="cab-detail-date-meta">
             @if (Model.PublishedDate.HasValue)
             {
-                    <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")</span>
+                <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">
+                    Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")
+                </span>
             }
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">
+                Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")
+            </span>
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">
+                Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong>
+            </span>
             @if (Model.ShowSubstatusName)
             {
                 <span class="govuk-caption-m govuk-!-display-inline-block">

@@ -170,4 +170,18 @@ public static class CABSummaryViewModelTestsHelpers
         cabSummary.IsEditLocked = false;
         cabSummary.LegislativeAreasPendingApprovalForCurrentUserCount = 1;
     }
+
+    public static void SetEditByGroupPermittedToTrue(CABSummaryViewModel cabSummary)
+    {
+        cabSummary.SubStatus = SubStatus.None;
+        cabSummary.Status = Status.Published;
+        cabSummary.UserInCreatorUserGroup = true;
+    }
+
+    public static void SetEditByGroupPermittedToFalse(CABSummaryViewModel cabSummary)
+    {
+        cabSummary.SubStatus = SubStatus.None;
+        cabSummary.Status = Status.Draft;
+        cabSummary.UserInCreatorUserGroup = false;
+    }
 }

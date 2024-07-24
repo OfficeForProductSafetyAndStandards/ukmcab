@@ -3,8 +3,7 @@
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABSummaryViewModel : ILayoutModel
-    {
-        public string? Id { get; set; }
+    {        public string? Id { get; set; }
         public Status Status { get; set; }
         public string? StatusCssStyle { get; set; }
         public SubStatus SubStatus { get; set; }
@@ -39,14 +38,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool RequestedFromCabProfilePage { get; set; }
         public bool HasActiveLAs { get; set; }
         public bool DraftUpdated { get; set; }
-
-        //public bool ShowEditButton =>
-        //    !RevealEditActions &&
-        //    (SubStatus == SubStatus.None && IsEditLocked == false && (IsOpssAdmin || IsUkas) ||
-        //    (SubStatus == SubStatus.PendingApprovalToPublish && !IsEditLocked && IsPendingOgdApproval && IsMatchingOgdUser) ||
-        //    (SubStatus == SubStatus.PendingApprovalToPublish && !IsEditLocked && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin) ||
-        //    (IsOpssAdmin && UserInCreatorUserGroup)); // Replaced CanPublish with UserInCreatorUserGroup
-
         public bool ShowEditButton =>
             !RevealEditActions &&
             !IsEditLocked &&
@@ -60,7 +51,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
            ShowSubSectionEditActionForOwner
            );
 
-        //public bool ShowProfileVisibilityWarning => ValidCAB && CanPublish && ShowSubSectionEditAction;
         public bool ShowProfileVisibilityWarning =>
             RevealEditActions &&
             !IsEditLocked &&
@@ -68,32 +58,17 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (ShowProfileVisibilityWarningForOpssOwner ||
             ShowProfileVisibilityWarningForOpssNonOwner);
 
-        //public bool ShowMandatoryInfoWarning => !ValidCAB && CanPublish && SubStatus == SubStatus.None;
-
         public bool ShowMandatoryInfoWarning =>
             RevealEditActions &&
             !IsEditLocked &&
             IsOpssAdmin &&
             !ValidCAB;
 
-        //public bool ShowReviewButton => 
-        //    SubStatus != SubStatus.None && 
-        //    (ShowOgdActions || 
-        //    (LegislativeAreasPendingApprovalForCurrentUserCount > 0 && ShowSubSectionEditAction));
-
         public bool ShowReviewButton =>
             RevealEditActions &&
             !IsEditLocked &&
             SubStatus != SubStatus.None &&
             LegislativeAreasPendingApprovalForCurrentUserCount > 0;
-
-        //public bool ShowApproveToPublishButton =>
-        //    ShowSubSectionEditAction &&
-        //    Status == Status.Draft &&
-        //    SubStatus != SubStatus.None &&
-        //    IsOpssAdmin &&
-        //    !UserInCreatorUserGroup &&
-        //    LegislativeAreasApprovedByAdminCount > 0;
 
         public bool ShowApproveToPublishButton =>
             RevealEditActions &&
@@ -107,6 +82,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             UserInCreatorUserGroup;
 
         public bool ShowDeclineButton => ShowApproveToPublishButton;
+
         public bool ShowSubmitForApprovalButton =>
             ShowSubSectionEditAction &&
             SubStatus == SubStatus.None &&  
@@ -116,11 +92,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             ShowSubSectionEditAction &&
             SubStatus == SubStatus.None;
 
-        //public bool ShowDeleteDraftButton => 
-        //    SubStatus == SubStatus.None && (
-        //    (ShowSubSectionEditAction || ShowOpssDeleteDraftActionOnly) &&
-        //    CabDetailsViewModel.DocumentStatus == Status.Draft
-        //);
         public bool ShowDeleteDraftButton => 
             ShowSaveAsDraftButton ||
             (IsOpssAdmin &&
@@ -130,21 +101,26 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             ShowPublishButton || 
             ShowSubmitForApprovalButton || 
             ShowDeleteDraftButton;
+
         public bool ValidCAB =>
             Status != Status.Published &&
             IsComplete &&
             HasActiveLAs;
+
         public bool CanPublish =>
             IsOpssAdmin &&
             DraftUpdated &&
             LegislativeAreasApprovedByAdminCount > 0;
+
         public bool ShowOgdActions =>
             RevealEditActions &&
             !IsEditLocked &&
             HasOgdRole &&
             IsPendingOgdApproval &&
             LegislativeAreasPendingApprovalForCurrentUserCount > 0;
+
         public bool CanSubmitForApproval => IsUkas && DraftUpdated && IsComplete;
+
         public bool IsComplete =>
             CabDetailsViewModel != null &&
             CabDetailsViewModel.IsCompleted &&
@@ -159,18 +135,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             CABSupportingDocumentDetailsViewModel != null &&
             CABSupportingDocumentDetailsViewModel.IsCompleted;
 
-
-        //public bool ShowPublishButton => SubStatus == SubStatus.None && ShowSubSectionEditAction && CanPublish;
-
-        //public bool ShowApproveToPublishButton => (CanPublish && SubStatus == SubStatus.PendingApprovalToPublish && LegislativeAreasApprovedByAdminCount > 0) && ShowSubSectionEditAction;
-        //public bool ShowApproveToPublishButton => CanPublish && SubStatus == SubStatus.PendingApprovalToPublish && ShowSubSectionEditAction;
-
-        //public bool CanOnlyBeActionedByUkas =>
-        //    CabLegislativeAreasViewModel != null &&
-        //    CabLegislativeAreasViewModel.ActiveLegislativeAreas.Any(la => la.Status != LAStatus.Published) &&
-        //    CabLegislativeAreasViewModel.ActiveLegislativeAreas.Where(la => la.Status != LAStatus.Published).All(
-        //        la => la.CanOnlyBeActionedByUkas);
-
         public string Title => GetTitle();
 
         public string GetTitle() => IsOpssAdmin
@@ -179,91 +143,68 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
                 : "Check details before publishing"
             : UserInCreatorUserGroup ? "Check details before submitting for approval" : "Summary";
 
-        //public bool IsMatchingOgdUser => LegislativeAreasPendingApprovalForCurrentUserCount > 0;        
-
-        //public bool CanPublish => 
-        //    IsOpssAdmin &&
-        //    DraftUpdated && 
-        //    !IsPendingOgdApproval && 
-        //    !CanOnlyBeActionedByUkas;        
-
-        //public bool ShowSubSectionEditAction =>
-        //    RevealEditActions &&
-        //    !IsEditLocked && (
-        //        (SubStatus != SubStatus.PendingApprovalToPublish && UserInCreatorUserGroup) ||
-        //        (SubStatus == SubStatus.PendingApprovalToPublish && IsOpssAdmin && 
-        //        (HasActionableLegislativeAreaForOpssAdmin || CanPublish)));
-
-        //public bool ShowSubSectionEditAction =>
-        //    RevealEditActions &&
-        //    !IsEditLocked && (
-        //        (SubStatus != SubStatus.PendingApprovalToPublish && UserInCreatorUserGroup) ||
-        //        (SubStatus == SubStatus.PendingApprovalToPublish && IsOpssAdmin &&
-        //        HasActionableLegislativeAreaForOpssAdmin));       
-
-
-        //public bool ShowOpssDeleteDraftActionOnly =>
-        //    RevealEditActions && SubStatus != SubStatus.PendingApprovalToPublish && IsOpssAdmin;
-
         public bool EditByGroupPermitted =>
             SubStatus != SubStatus.PendingApprovalToPublish &&
             (Status == Status.Published || UserInCreatorUserGroup);
+
+        public bool ShowBannerContentEmptyString =>
+            ShowBannerEmptyStringForOwner ||
+            ShowBannerEmptyStringForNonOwnerOpss ||
+            ShowBannerEmptyStringForNonOwnerOgd;
+
+        public bool ShowBannerContentCannotBeEdited =>
+            ShowBannerCannotBeEditedForUkas ||
+            ShowBannerCannotBeEditedForOpssAndOgd;
+
+        private bool ShowBannerCannotBeEditedForUkas =>
+            IsUkas &&
+            UserInCreatorUserGroup &&
+            Status == Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish;
+        private bool ShowBannerCannotBeEditedForOpssAndOgd =>
+            (IsOpssAdmin || HasOgdRole) &&
+            Status == Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            LegislativeAreasPendingApprovalForCurrentUserCount == 0;
+
+        private bool ShowBannerEmptyStringForOwner =>
+            UserInCreatorUserGroup &&
+            (IsOpssAdmin || IsUkas) &&
+            Status == Status.Draft &&
+            SubStatus == SubStatus.None;
+        private bool ShowBannerEmptyStringForNonOwnerOgd =>
+            !UserInCreatorUserGroup &&
+            HasOgdRole &&
+            Status == Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            LegislativeAreasPendingApprovalForCurrentUserCount > 0;
+        private bool ShowBannerEmptyStringForNonOwnerOpss =>
+            !UserInCreatorUserGroup &&
+            IsOpssAdmin &&
+            Status == Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            LegislativeAreaHasBeenActioned;
 
         public string BannerContent => GetBannerContent();
 
         public string GetBannerContent()
         {
-            ////if (CanPublish || (SubStatus == SubStatus.PendingApprovalToPublish && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin))
-            //    if ((ShowEditButtonForOgdOrOpssNonOwner || ShowEditButtonForUkasOrOpssOwner) || (SubStatus == SubStatus.PendingApprovalToPublish && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin))
-            //    {
-            //        return string.Empty;
-            //    }
-            //    if (SubStatus == SubStatus.PendingApprovalToPublish && (!IsPendingOgdApproval || LegislativeAreasPendingApprovalForCurrentUserCount == 0))
-            //    {
-            //        return "This CAB profile cannot be edited until it's been approved or declined.";
-            //    }
-            //    else if (EditByGroupPermitted == false && Status == Status.Draft && IsPendingOgdApproval == false)
-            //    {
-            //        if (IsOpssAdmin || !IsUkas)
-            //        {
-            //            if (RequestedFromCabProfilePage)
-            //            {
-            //                return "This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.";
-            //            }
-            //            else
-            //            {
-            //                return "This CAB profile cannot be edited as it was created by a UKAS user.";
-            //            }
-            //        }
-            //        else
-            //        {
-            //            return "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
-            //        }
-            //    }
-            //    else if (EditByGroupPermitted == false && IsPendingOgdApproval == false)
-            //    {
-            //        return "This CAB profile cannot be edited as it was created by an OPSS user.";
-            //    }
-            //    else if (IsEditLocked == true && IsPendingOgdApproval == false)
-            //    {
-            //        return "This CAB profile cannot be edited as it's being edited by another user.";
-            //    }
-
-            //    return string.Empty;
-
             if (IsEditLocked && !IsPendingOgdApproval)
             {
                 return "This CAB profile cannot be edited as it's being edited by another user.";
             }
-            else if ((ShowEditButtonForOgdOrOpssNonOwner || ShowEditButtonForUkasOrOpssOwner) || (SubStatus == SubStatus.PendingApprovalToPublish && HasActionableLegislativeAreaForOpssAdmin && IsOpssAdmin) || (SubStatus == SubStatus.None && IsOpssAdmin))
+
+            if (ShowBannerContentEmptyString)
             {
                 return string.Empty;
             }
-            if (SubStatus == SubStatus.PendingApprovalToPublish && (!IsPendingOgdApproval || LegislativeAreasPendingApprovalForCurrentUserCount == 0))
+
+            if (ShowBannerContentCannotBeEdited)
             {
                 return "This CAB profile cannot be edited until it's been approved or declined.";
             }
-            else if (EditByGroupPermitted == false && Status == Status.Draft && IsPendingOgdApproval == false)
+
+            if (!EditByGroupPermitted && Status == Status.Draft && !IsPendingOgdApproval)
             {
                 if (IsOpssAdmin || !IsUkas)
                 {
@@ -276,27 +217,26 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
                         return "This CAB profile cannot be edited as it was created by a UKAS user.";
                     }
                 }
-                else
+                else 
                 {
-                    return "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
+                    if (RequestedFromCabProfilePage)
+                    {
+                        return "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
+                    }
+                    else
+                    {
+                        return "This CAB profile cannot be edited as it was created by an OPSS user.";
+                    }                        
                 }
             }
-            else if (EditByGroupPermitted == false && IsPendingOgdApproval == false)
-            {
-                return "This CAB profile cannot be edited as it was created by an OPSS user.";
-            }
-            //else if (IsEditLocked == true && IsPendingOgdApproval == false)
-            //{
-            //    return "This CAB profile cannot be edited as it's being edited by another user.";
-            //}
 
             return string.Empty;
         }
-    
 
         private bool ShowEditButtonForOgdOrOpssNonOwner =>
-            ShowEditButtonForOpssNonOwner ||
-            ShowEditButtonForOgdNonOwner;
+            !UserInCreatorUserGroup && 
+            (ShowEditButtonForOpssNonOwner ||
+            ShowEditButtonForOgdNonOwner);
 
         private bool ShowEditButtonForOpssNonOwner =>
             IsOpssAdmin &&
@@ -331,7 +271,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             UserInCreatorUserGroup &&
             Status == Status.Draft &&
             SubStatus == SubStatus.None;
-
 
         private bool ShowProfileVisibilityWarningForOpssOwner =>
                     IsOpssAdmin &&

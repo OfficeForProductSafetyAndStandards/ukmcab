@@ -14,28 +14,16 @@ namespace UKMCAB.Web.Tests.Models
         [SetUp]
         public void SetUp()
         {
-            //var doc = new Document();
-            //doc.DocumentLegislativeAreas.Add(new DocumentLegislativeArea {Status = LAStatus.PendingApproval });
-
             cabSummary = new()
             {
                 Status = Status.Draft,
                 SubStatus = SubStatus.PendingApprovalToPublish,
-                //CabDetailsViewModel = new CABDetailsViewModel { IsCompleted = true },
-                //CabContactViewModel = new CABContactViewModel { IsCompleted = true},
-                //CabBodyDetailsViewModel = new CABBodyDetailsViewModel {  IsCompleted = true},
-                //CabLegislativeAreasViewModel = new CABLegislativeAreasViewModel { IsCompleted= true},
-                //CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel {  IsCompleted= true},
-                //CABSupportingDocumentDetailsViewModel   = new CABSupportingDocumentDetailsViewModel {  IsCompleted= true},
-                //CABHistoryViewModel = new CABHistoryViewModel { IsCompleted = true},
-                //CABGovernmentUserNotesViewModel = new CABGovernmentUserNotesViewModel {  IsCompleted= true},
                 IsPendingOgdApproval = true,
                 RevealEditActions = true,
                 IsEditLocked = false,
                 PublishedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now,
-            };         
-                
+            };            
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -45,6 +33,7 @@ namespace UKMCAB.Web.Tests.Models
             // Arrange
             var _sut = new CABSummaryViewModel{ 
                 IsOpssAdmin = true,
+                Status = Status.Draft,
                 SubStatus = SubStatus.PendingApprovalToPublish,
                 HasActionableLegislativeAreaForOpssAdmin = true,
                 LegislativeAreaHasBeenActioned = true,
@@ -79,116 +68,123 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.EqualTo(expectedString));
         }
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_OPSSAdminUserAccessesAUKASDraftCABFromCABProfilePage()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        EditByGroupPermitted = false,
-        //        Status = Status.Draft,
-        //        IsPendingOgdApproval = false,
-        //        IsOpssAdmin = true,
-        //        RequestedFromCabProfilePage = true,
-        //    };
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_OPSSAdminUserAccessesAUKASDraftCABFromCABProfilePage()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {                
+                Status = Status.Draft,
+                IsPendingOgdApproval = false,
+                IsOpssAdmin = true,
+                RequestedFromCabProfilePage = true,
+            };
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
 
-        //    var expectedString = "This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.";
+            var expectedString = "This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.";
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+            //Act
+            var result = _sut.GetBannerContent();
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_OPSSAdminUserAccessesAUKASDraftCABNotFromCABProfilePage()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        EditByGroupPermitted = false,
-        //        Status = Status.Draft,
-        //        IsPendingOgdApproval = false,
-        //        IsOpssAdmin = true,
-        //        RequestedFromCabProfilePage = false,
-        //    };
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_OPSSAdminUserAccessesAUKASDraftCABNotFromCABProfilePage()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                Status = Status.Draft,
+                SubStatus = SubStatus.PendingApprovalToPublish,
+                IsPendingOgdApproval = false,
+                IsOpssAdmin = true,
+                RequestedFromCabProfilePage = false,
+            };
 
-        //    var expectedString = "This CAB profile cannot be edited as it was created by a UKAS user.";
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+            var expectedString = "This CAB profile cannot be edited as it was created by a UKAS user.";
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+            //Act
+            var result = _sut.GetBannerContent();
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_AUkasUserTriesToCreateADraftCABFromCABProfilePageOfACABWithAnExistingDraftCreatedByOPSSAdmin()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        EditByGroupPermitted = false,
-        //        Status = Status.Draft,
-        //        IsPendingOgdApproval = false,
-        //        IsOpssAdmin = false,
-        //        IsUkas = true,
-        //        RequestedFromCabProfilePage = true,
-        //    };
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
-        //    var expectedString = "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_AUkasUserTriesToCreateADraftCABFromCABProfilePageOfACABWithAnExistingDraftCreatedByOPSSAdmin()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                Status = Status.Draft,
+                IsPendingOgdApproval = false,
+                IsOpssAdmin = false,
+                IsUkas = true,
+                RequestedFromCabProfilePage = true,
+            };
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+            var expectedString = "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_OtherUsersAccessesADraftCABCreatedByOPSSAdmin()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        EditByGroupPermitted = false,
-        //        IsPendingOgdApproval = false,
-        //    };
+            //Act
+            var result = _sut.GetBannerContent();
 
-        //    var expectedString = "This CAB profile cannot be edited as it was created by an OPSS user.";
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_OtherUsersAccessesADraftCABCreatedByOPSSAdmin()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                UserInCreatorUserGroup = false,
+                IsPendingOgdApproval = false,
+                IsUkas = true
+            };
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_AUserAccessesADraftCAB_ThatIsCurrentlyOpenedByAnotherUser()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        IsEditLocked = true,
-        //        IsPendingOgdApproval = false,
-        //        EditByGroupPermitted = true
-        //    };
+            var expectedString = "This CAB profile cannot be edited as it was created by an OPSS user.";
 
-        //    var expectedString = "This CAB profile cannot be edited as it's being edited by another user.";
+            //Act
+            var result = _sut.GetBannerContent();
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_AUserAccessesADraftCAB_ThatIsCurrentlyOpenedByAnotherUser()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                IsEditLocked = true,
+                IsPendingOgdApproval = false
+            };
+
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
+
+            var expectedString = "This CAB profile cannot be edited as it's being edited by another user.";
+
+            //Act
+            var result = _sut.GetBannerContent();
+
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
         [Category("CAB Summary page - Show Substatus Name")]
         [TestCase(SubStatus.PendingApprovalToPublish, "Pending approval to publish CAB", true)]
@@ -397,5 +393,4 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.True);
         }
     }
-
 }
