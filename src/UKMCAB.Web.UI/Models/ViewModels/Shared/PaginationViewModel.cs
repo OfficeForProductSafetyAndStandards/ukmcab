@@ -1,4 +1,5 @@
-﻿using System.Web;
+﻿using StackExchange.Redis;
+using System.Web;
 using UKMCAB.Data;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Shared
@@ -10,6 +11,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public int ResultsPerPage { get; set; } 
         public string ResultType { get; set; } 
         public string TabId { get; set; }
+        public int MaxPageRange { get; set; } = 5;
 
 
         public int TotalPages => Total % ResultsPerPage == 0
@@ -25,19 +27,21 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 
         public List<int> PageRange()
         {
+            MaxPageRange = MaxPageRange < 3 ? 3 : MaxPageRange;
+
             var pageList = new List<int>();
             if (Total == 0) return pageList;
-            if (TotalPages < 6) return Enumerable.Range(1, TotalPages).ToList();
-            if (PageNumber < 4) return Enumerable.Range(1, 5).ToList();
+            if (TotalPages < (MaxPageRange+1)) return Enumerable.Range(1, TotalPages).ToList();
+            if (PageNumber < (MaxPageRange-1)) return Enumerable.Range(1, MaxPageRange).ToList();
 
 
             if (PageNumber > TotalPages - 2)
             {
-                pageList = Enumerable.Range(TotalPages - 4, 5).ToList();
+                pageList = Enumerable.Range(TotalPages - (MaxPageRange - 1), MaxPageRange).ToList();
             }
             else
             {
-                pageList = Enumerable.Range(PageNumber - 2, 5).ToList();
+                pageList = Enumerable.Range((PageNumber - 2) > 0 ? (PageNumber-2): 1, MaxPageRange).ToList();
             }
 
             if (!pageList.Contains(1))
