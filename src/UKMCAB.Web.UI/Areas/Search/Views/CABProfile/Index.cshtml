@@ -76,7 +76,7 @@
     <div class="govuk-grid-column-full desktop-no-display">
         <div class="cab-detail-date-meta">
             <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5 ">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
+            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
         </div>
         <div class="govuk-!-margin-bottom-7">
             <span class="govuk-caption-m govuk-!-display-inline-block">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
