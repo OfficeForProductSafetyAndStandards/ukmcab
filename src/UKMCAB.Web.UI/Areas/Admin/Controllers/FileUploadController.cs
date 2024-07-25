@@ -13,7 +13,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 using UKMCAB.Web.UI.Helpers;
-using UKMCAB.Core.Security;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {

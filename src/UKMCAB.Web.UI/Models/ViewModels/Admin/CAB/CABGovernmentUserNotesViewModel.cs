@@ -8,7 +8,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public CABGovernmentUserNotesViewModel()
         {
         }
-
         public CABGovernmentUserNotesViewModel(Document latest, string? returnUrl)
         {
             Id = latest.id;

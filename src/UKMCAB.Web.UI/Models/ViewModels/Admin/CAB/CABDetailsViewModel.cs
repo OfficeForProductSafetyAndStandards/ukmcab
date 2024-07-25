@@ -13,7 +13,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         {
             DocumentStatus = Status.Draft;
         }
-
         public CABDetailsViewModel(ClaimsPrincipal user, bool fromSummary, string? returnUrl = null)
         {
             IsNew = true;

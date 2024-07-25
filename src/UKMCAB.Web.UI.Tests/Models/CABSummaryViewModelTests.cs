@@ -1,48 +1,29 @@
 ﻿using NUnit.Framework;
 using System;
-using System.Collections.Generic;
-using UKMCAB.Core.Extensions;
 using UKMCAB.Data.Models;
-using UKMCAB.Web.UI.Models.Builders;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
-
 
 namespace UKMCAB.Web.Tests.Models
 {
-    
-
 
     [TestFixture]
     public class CABSummaryViewModelTests
     {
         private CABSummaryViewModel cabSummary;
 
-
         [SetUp]
         public void SetUp()
         {
-            //var doc = new Document();
-            //doc.DocumentLegislativeAreas.Add(new DocumentLegislativeArea {Status = LAStatus.PendingApproval });
-
             cabSummary = new()
             {
                 Status = Status.Draft,
                 SubStatus = SubStatus.PendingApprovalToPublish,
-                CabDetailsViewModel = new CABDetailsViewModel { IsCompleted = true },
-                CabContactViewModel = new CABContactViewModel { IsCompleted = true},
-                CabBodyDetailsViewModel = new CABBodyDetailsViewModel {  IsCompleted = true},
-                CabLegislativeAreasViewModel = new CABLegislativeAreasViewModel { IsCompleted= true},
-                CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel {  IsCompleted= true},
-                CABSupportingDocumentDetailsViewModel   = new CABSupportingDocumentDetailsViewModel {  IsCompleted= true},
-                CABHistoryViewModel = new CABHistoryViewModel { IsCompleted = true},
-                CABGovernmentUserNotesViewModel = new CABGovernmentUserNotesViewModel {  IsCompleted= true},
                 IsPendingOgdApproval = true,
                 RevealEditActions = true,
                 IsEditLocked = false,
                 PublishedDate = DateTime.Now,
                 LastModifiedDate = DateTime.Now,
-            };         
-                
+            };            
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -52,6 +33,7 @@ namespace UKMCAB.Web.Tests.Models
             // Arrange
             var _sut = new CABSummaryViewModel{ 
                 IsOpssAdmin = true,
+                Status = Status.Draft,
                 SubStatus = SubStatus.PendingApprovalToPublish,
                 HasActionableLegislativeAreaForOpssAdmin = true,
                 LegislativeAreaHasBeenActioned = true,
@@ -86,116 +68,123 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.EqualTo(expectedString));
         }
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_OPSSAdminUserAccessesAUKASDraftCABFromCABProfilePage()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        EditByGroupPermitted = false,
-        //        Status = Status.Draft,
-        //        IsPendingOgdApproval = false,
-        //        IsOpssAdmin = true,
-        //        RequestedFromCabProfilePage = true,
-        //    };
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_OPSSAdminUserAccessesAUKASDraftCABFromCABProfilePage()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {                
+                Status = Status.Draft,
+                IsPendingOgdApproval = false,
+                IsOpssAdmin = true,
+                RequestedFromCabProfilePage = true,
+            };
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
 
-        //    var expectedString = "This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.";
+            var expectedString = "This CAB profile cannot be edited as a draft CAB profile has already been created by a UKAS user.";
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+            //Act
+            var result = _sut.GetBannerContent();
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_OPSSAdminUserAccessesAUKASDraftCABNotFromCABProfilePage()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        EditByGroupPermitted = false,
-        //        Status = Status.Draft,
-        //        IsPendingOgdApproval = false,
-        //        IsOpssAdmin = true,
-        //        RequestedFromCabProfilePage = false,
-        //    };
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_OPSSAdminUserAccessesAUKASDraftCABNotFromCABProfilePage()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                Status = Status.Draft,
+                SubStatus = SubStatus.PendingApprovalToPublish,
+                IsPendingOgdApproval = false,
+                IsOpssAdmin = true,
+                RequestedFromCabProfilePage = false,
+            };
 
-        //    var expectedString = "This CAB profile cannot be edited as it was created by a UKAS user.";
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+            var expectedString = "This CAB profile cannot be edited as it was created by a UKAS user.";
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+            //Act
+            var result = _sut.GetBannerContent();
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_AUkasUserTriesToCreateADraftCABFromCABProfilePageOfACABWithAnExistingDraftCreatedByOPSSAdmin()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        EditByGroupPermitted = false,
-        //        Status = Status.Draft,
-        //        IsPendingOgdApproval = false,
-        //        IsOpssAdmin = false,
-        //        IsUkas = true,
-        //        RequestedFromCabProfilePage = true,
-        //    };
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
-        //    var expectedString = "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_AUkasUserTriesToCreateADraftCABFromCABProfilePageOfACABWithAnExistingDraftCreatedByOPSSAdmin()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                Status = Status.Draft,
+                IsPendingOgdApproval = false,
+                IsOpssAdmin = false,
+                IsUkas = true,
+                RequestedFromCabProfilePage = true,
+            };
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+            var expectedString = "This CAB profile cannot be edited as a draft CAB profile has already been created by an OPSS user.";
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_OtherUsersAccessesADraftCABCreatedByOPSSAdmin()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        EditByGroupPermitted = false,
-        //        IsPendingOgdApproval = false,
-        //    };
+            //Act
+            var result = _sut.GetBannerContent();
 
-        //    var expectedString = "This CAB profile cannot be edited as it was created by an OPSS user.";
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_OtherUsersAccessesADraftCABCreatedByOPSSAdmin()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                UserInCreatorUserGroup = false,
+                IsPendingOgdApproval = false,
+                IsUkas = true
+            };
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
 
-        //[Category("CAB Summary page - Banner Content Happy Path")]
-        //[Test]
-        //public void GetBannerContent_Should_Return_CorrectString_When_AUserAccessesADraftCAB_ThatIsCurrentlyOpenedByAnotherUser()
-        //{
-        //    // Arrange
-        //    var _sut = new CABSummaryViewModel
-        //    {
-        //        IsEditLocked = true,
-        //        IsPendingOgdApproval = false,
-        //        EditByGroupPermitted = true
-        //    };
+            var expectedString = "This CAB profile cannot be edited as it was created by an OPSS user.";
 
-        //    var expectedString = "This CAB profile cannot be edited as it's being edited by another user.";
+            //Act
+            var result = _sut.GetBannerContent();
 
-        //    //Act
-        //    var result = _sut.GetBannerContent();
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
-        //    //Assert
-        //    Assert.That(result, Is.EqualTo(expectedString));
-        //}
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_CorrectString_When_AUserAccessesADraftCAB_ThatIsCurrentlyOpenedByAnotherUser()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                IsEditLocked = true,
+                IsPendingOgdApproval = false
+            };
+
+            CABSummaryViewModelTestsHelpers.SetEditByGroupPermittedToFalse(_sut);
+
+            var expectedString = "This CAB profile cannot be edited as it's being edited by another user.";
+
+            //Act
+            var result = _sut.GetBannerContent();
+
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedString));
+        }
 
         [Category("CAB Summary page - Show Substatus Name")]
         [TestCase(SubStatus.PendingApprovalToPublish, "Pending approval to publish CAB", true)]
@@ -221,11 +210,9 @@ namespace UKMCAB.Web.Tests.Models
         public void ShowProfileVisibilityWarning_Should_Return_True()
         {
             // Arrange
-            cabSummary.IsOpssAdmin = true;
-            cabSummary.DraftUpdated = true;
-            cabSummary.IsPendingOgdApproval = false;
-            cabSummary.HasActiveLAs = true; 
-            cabSummary.DraftUpdated = true; 
+            CABSummaryViewModelTestsHelpers.SetValidCABToTrueOpssAdmin(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetCanPublishToTrueOpssAdmin(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
 
             //Act
             var result = cabSummary.ShowProfileVisibilityWarning;
@@ -253,21 +240,24 @@ namespace UKMCAB.Web.Tests.Models
 
             //Assert
             Assert.That(result, Is.EqualTo(expectedResult));
-        }
-
-      
+        }      
 
         [Category("CAB Summary page - Show Edit Button")]
-        [TestCase(true, true, false,false, true)]
-        [TestCase(true, false, false, false, false)]
-        public void ShowEditButton_Should_Return_CorrectValue_ForOpssAdmin(bool isOpssAdmin, bool inUserGroup, bool revealEditActions, bool isEditLoced, bool expectedResult)
+        [TestCase(true, false, false, true, false,false, SubStatus.None, false, true)]
+        [TestCase(false, true, false, true, false,false, SubStatus.None, false, true)]
+        [TestCase(true, false, false, false, false,false, SubStatus.PendingApprovalToPublish, true, true)]
+        [TestCase(false, false, true, false, false, false, SubStatus.None, false, false)]
+        public void ShowEditButton_Should_Return_CorrectValue_ForOpssAdmin(bool isOpssAdmin, bool isUkas, bool isOgd, bool inUserGroup, bool revealEditActions, bool isEditLoced, SubStatus subStatus, bool hasActionableLAForOpss, bool expectedResult)
         {
             // Arrange            
             cabSummary.IsOpssAdmin = isOpssAdmin;
+            cabSummary.IsUkas = isUkas;
+            cabSummary.HasOgdRole = isOgd;
             cabSummary.UserInCreatorUserGroup = inUserGroup;
             cabSummary.RevealEditActions = revealEditActions;
             cabSummary.IsEditLocked = isEditLoced;
-
+            cabSummary.SubStatus = subStatus;
+            cabSummary.HasActionableLegislativeAreaForOpssAdmin = hasActionableLAForOpss;
 
             //Act
             var result = cabSummary.ShowEditButton;
@@ -277,7 +267,6 @@ namespace UKMCAB.Web.Tests.Models
         }
 
         [Category("CAB Summary page - Show Edit Button")]
-
         [TestCase(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, false, false, true, 1, true)]
         [TestCase(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, false, false, true, 0, false)]
         public void ShowEditButton_Should_Return_CorrectValue_ForOgd(bool hasOgdRole, bool inUserGroup, Status status, SubStatus substatus, bool revealEditActions, bool isEditLoced, bool isPendingOgdApproval, int laPendingApproval, bool expectedResult)
@@ -290,7 +279,7 @@ namespace UKMCAB.Web.Tests.Models
             cabSummary.RevealEditActions = revealEditActions;
             cabSummary.IsEditLocked = isEditLoced;
             cabSummary.IsPendingOgdApproval = isPendingOgdApproval;
-            cabSummary.LegislativeAreasPendingApprovalCount = laPendingApproval;
+            cabSummary.LegislativeAreasPendingApprovalForCurrentUserCount = laPendingApproval;
 
             //Act
             var result = cabSummary.ShowEditButton;
@@ -300,7 +289,7 @@ namespace UKMCAB.Web.Tests.Models
         }
 
         [Category("CAB Summary page - Show Edit Button")]
-        [Test, TestCaseSource(nameof(GetTestCases))]
+        [Test, TestCaseSource(typeof(CABSummaryViewModelTestsHelpers), nameof(CABSummaryViewModelTestsHelpers.GetTestCases))]
         public void ShowEditButton_Should_Return_CorrectValue_For_OpssAdmin(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool isActionable, bool revealEditActions, bool isEditLoced, bool expectedResult)
         {
             // Arrange
@@ -318,123 +307,90 @@ namespace UKMCAB.Web.Tests.Models
             //Assert
             Assert.That(result, Is.EqualTo(expectedResult));
         }
-        public static IEnumerable<TestCaseData> GetTestCases()
+
+        [Category("CAB Summary page - Show Review Button")]
+        [Test]
+        public void ShowReviewButton_Should_Return_True_ForOpss()
         {
-            var doc = new Document();
-            var docLA = doc.DocumentLegislativeAreas;
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.Approved });
+            // Arrange
+            cabSummary.SubStatus = SubStatus.PendingApprovalToPublish;
+            cabSummary.LegislativeAreasPendingApprovalForCurrentUserCount = 1;
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
 
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true);
-            
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.Declined });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclined_ShouldBeActionable");
+            // Act
+            var result = cabSummary.ShowReviewButton;
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToRemoveByOPSS });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToRemoveByOPSS_ShouldBeActionable");
+            // Assert
+            Assert.That(result, Is.True);
+        }
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedByOpssAdmin_ShouldBeActionable");
+        [Category("CAB Summary page - Show Review Button")]
+        [Test]
+        public void ShowReviewButton_Should_Return_True_ForOgd()
+        {
+            // Arrange
+            cabSummary.SubStatus = SubStatus.PendingApprovalToPublish;
+            CABSummaryViewModelTestsHelpers.SetShowOgdActionsToTrue(cabSummary);
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedByOpssAdmin_ShouldBeActionable");
+            // Act
+            var result = cabSummary.ShowReviewButton;
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToRemoveByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToRemoveByOpssAdmin_ShouldBeActionable");
+            // Assert
+            Assert.That(result, Is.True);
+        }
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedToRemoveByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToRemoveByOpssAdmin_ShouldBeActionable");
+        [Category("CAB Summary page - Show Review Button")]
+        [Test]
+        public void ShowReviewButton_Should_Return_False_ForOgd_WhenSubstatusIsNone()
+        {
+            // Arrange
+            cabSummary.SubStatus = SubStatus.None;
+            CABSummaryViewModelTestsHelpers.SetShowOgdActionsToTrue(cabSummary);
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToArchiveAndArchiveScheduleByOpssAdmin_ShouldBeActionable");
+            // Act
+            var result = cabSummary.ShowReviewButton;
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToArchiveAndRemoveScheduleByOpssAdmin_ShouldBeActionable");
+            // Assert
+            Assert.That(result, Is.False);
+        }
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndArchiveScheduleByOpssAdmin_ShouldBeActionable");
+        [Category("CAB Summary page - Show Publish Button")]
+        [Test]
+        public void ShowPublishButton_Should_Return_True_When_Opss_Is_The_Creator()
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+            cabSummary.IsOpssAdmin = true;
+            cabSummary.UserInCreatorUserGroup = true;
+            cabSummary.Status = Status.Draft;
+            cabSummary.SubStatus = SubStatus.None;
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndRemoveScheduleByOpssAdmin");
+            cabSummary.IsEditLocked = false;
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndArchiveScheduleByOGD");
+            // Act
+            var result = cabSummary.ShowPublishButton;
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndArchiveScheduleByOPSS");
+            // Assert
+            Assert.That(result, Is.True);
+        }
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndRemoveScheduleByOGD");
+        [Category("CAB Summary page - Show Publish Button")]
+        [Test]
+        public void ShowApproveToPublishButton_Should_Return_True_When_OgdHasApproved()
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetCanPublishToTrueOpssAdmin(cabSummary);
+            cabSummary.UserInCreatorUserGroup = false;
+            cabSummary.Status = Status.Draft;
+            cabSummary.SubStatus = SubStatus.PendingApprovalToPublish;
+            cabSummary.IsEditLocked = false;
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndRemoveScheduleByOPSS");
+            // Act
+            var result = cabSummary.ShowApproveToPublishButton;
 
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedToUnarchiveByOPSS });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToUnarchiveByOPSS");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToUnarchiveByOpssAdmin });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToUnarchiveByOpssAdmin");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToUnarchiveByOPSS });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToUnarchiveByOPSS");
-
-
-            // Sad Path
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApproval });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingApproval_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.Draft });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsDraft_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToUnarchive });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToUnarchive_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToArchiveAndArchiveSchedule });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndArchiveSchedule_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.None });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsNone_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToRemove });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToRemove_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingSubmissionToArchiveAndArchiveSchedule });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingSubmissionToArchiveAndArchiveSchedule_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingSubmissionToArchiveAndRemoveSchedule });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingSubmissionToArchiveAndRemoveSchedule_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingSubmissionToRemove });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingSubmissionToRemove_ShouldNotBeActionable");
-
-            docLA.Clear();
-            docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingSubmissionToUnarchive });
-            yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.HasActionableLegislativeAreaForOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingSubmissionToUnarchive_ShouldNotBeActionable");
+            // Assert
+            Assert.That(result, Is.True);
         }
     }
 }

@@ -68,10 +68,12 @@
         <div class="cab-detail-date-meta">
             @if (Model.PublishedDate.HasValue)
             {
-                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @Model.PublishedDate.ToStringBeisDateFormat()
+                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">
+                    Published: @Model.PublishedDate.ToStringBeisDateFormat()
                 </span>
             }
-            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Last updated: @Model.LastModifiedDate.ToStringBeisDateFormat()
+            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">
+                Last updated: @Model.LastModifiedDate.ToStringBeisDateFormat()
             </span>
             <div>
                 <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">
@@ -106,10 +108,16 @@
         <div class="cab-detail-date-meta">
             @if (Model.PublishedDate.HasValue)
             {
-                <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")</span>
+                <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">
+                    Published: @Model.PublishedDate.Value.ToString("d MMM yyyy")
+                </span>
             }
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">
+                Last updated: @Model.LastModifiedDate.ToString("d MMM yyyy")
+            </span>
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">
+                Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong>
+            </span>
             @if (Model.ShowSubstatusName)
             {
                 <span class="govuk-caption-m govuk-!-display-inline-block">
@@ -184,7 +192,7 @@
                 </dl>
                 <partial name="Partials/_ContactDetails" model="@Model.CabContactViewModel" />
             </div>
-           
+
             <div class="govuk-!-padding-top-1">
                 <dl class="govuk-summary-list cab-summary-list">
                     <div class="govuk-summary-list__row">
@@ -215,7 +223,7 @@
                 </dl>
                 <partial name="Partials/_BodyDetails" model="@Model.CabBodyDetailsViewModel" />
             </div>
-           
+
             <div class="govuk-!-padding-top-1">
                 <dl class="govuk-summary-list cab-summary-list">
                     <div class="govuk-summary-list__row">
@@ -280,7 +288,7 @@
                 </dl>
                 <partial name="Partials/_ProductSchedules" model="@Model.CABProductScheduleDetailsViewModel" />
             </div>
-           
+
             <div class="govuk-!-padding-top-1">
                 <dl class="govuk-summary-list cab-summary-list ukmcab-padding-top-40">
                     <div class="govuk-summary-list__row">
@@ -325,7 +333,7 @@
                         </div>
                     </dl>
                     <partial name="Partials/_GovernmentUserNotes" model="@Model.CABGovernmentUserNotesViewModel" />
-                }                
+                }
             </div>
 
             <div class="govuk-!-padding-top-1">
@@ -365,7 +373,7 @@
             @if (Model.ShowReviewButton)
             {
                 <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
-                    @($"You have {Model.LegislativeAreasPendingApprovalCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalCount > 1 ? "s" : null)} to approve or decline.")
+                    @($"You have {Model.LegislativeAreasPendingApprovalForCurrentUserCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalForCurrentUserCount > 1 ? "s" : null)} to approve or decline.")
                 </govuk-warning-text>
                 <div class="govuk-button-group govuk-!-margin-top-5">
                     <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnUrl)" class="@(Model.ShowPublishButton ? "govuk-button--secondary" : "")">
@@ -436,7 +444,7 @@
                                 Cancel
                             </a>
                         }
-                        @if (Model.ShowCancelPublishButton)
+                        else if (Model.ShowCancelPublishButton)
                         {
                             @if (string.IsNullOrWhiteSpace(Model.ReturnUrl) && Model.CabDetailsViewModel.DocumentStatus != Status.Published)
                             {

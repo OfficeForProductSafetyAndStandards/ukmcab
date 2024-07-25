@@ -28,6 +28,7 @@ namespace UKMCAB.Web.UI.Services
             _user = _httpContextAccessor.HttpContext?.User ?? throw new InvalidOperationException("No active HttpContext");
         }
 
+
         public async Task CreateDocumentAsync(Document document, bool? revealEditActions)
         {
             var userId = _user.GetUserId();

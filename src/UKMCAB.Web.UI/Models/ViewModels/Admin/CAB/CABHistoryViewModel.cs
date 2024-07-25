@@ -1,4 +1,4 @@
-﻿using UKMCAB.Core.Extensions;
+using UKMCAB.Core.Extensions;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB

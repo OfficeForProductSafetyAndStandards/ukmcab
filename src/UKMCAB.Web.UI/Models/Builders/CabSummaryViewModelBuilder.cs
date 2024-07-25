@@ -45,13 +45,14 @@ namespace UKMCAB.Web.UI.Models.Builders
             _model.IsPendingOgdApproval = document.IsPendingOgdApproval();
             _model.LegislativeAreasApprovedByAdminCount = document.LegislativeAreasApprovedByAdminCount();
             _model.LegislativeAreaHasBeenActioned = document.LegislativeAreaHasBeenActioned();
+            _model.HasActionableLegislativeAreaForOpssAdmin = document.HasActionableLegislativeAreaForOpssAdmin();
             _model.DraftUpdated = document.DraftUpdated();
             return this;
         }
 
         public ICabSummaryViewModelBuilder WithLegislativeAreasPendingApprovalCount(Document document)
         {
-            _model.LegislativeAreasPendingApprovalCount = !_user.IsInRole(Roles.OPSS.Id)
+            _model.LegislativeAreasPendingApprovalForCurrentUserCount = !_user.IsInRole(Roles.OPSS.Id)
                 ? document.LegislativeAreasPendingApprovalByOgd(_user.GetRoleId()).Count
                 : document.LegislativeAreasPendingApprovalByOpss().Count;
             return this;
@@ -91,7 +92,6 @@ namespace UKMCAB.Web.UI.Models.Builders
             return this;
         }
 
-
         public ICabSummaryViewModelBuilder WithProductScheduleDetailsViewModel(CABProductScheduleDetailsViewModel cabProductScheduleDetailsViewModel)
         {
             _model.CABProductScheduleDetailsViewModel = cabProductScheduleDetailsViewModel;
@@ -126,7 +126,6 @@ namespace UKMCAB.Web.UI.Models.Builders
             _model.RevealEditActions = revealEditActions ?? false;
             return this;
         }
-
         public ICabSummaryViewModelBuilder WithRoleInfo(Document document)
         {
             _model.UserInCreatorUserGroup = _user.GetRoleId() == document.CreatedByUserGroup;

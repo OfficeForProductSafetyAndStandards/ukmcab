@@ -102,7 +102,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             var result = _sut.WithLegislativeAreasPendingApprovalCount(document).Build();
 
             // Assert
-            result.LegislativeAreasPendingApprovalCount.Should().Be(1);
+            result.LegislativeAreasPendingApprovalForCurrentUserCount.Should().Be(1);
         }
 
         [Test]
@@ -129,7 +129,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             var result = _sut.WithLegislativeAreasPendingApprovalCount(document).Build();
 
             // Assert
-            result.LegislativeAreasPendingApprovalCount.Should().Be(1);
+            result.LegislativeAreasPendingApprovalForCurrentUserCount.Should().Be(1);
         }
 
         [TestCase("/test", ExpectedResult = "/test")]
