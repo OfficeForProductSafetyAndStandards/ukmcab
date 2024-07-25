@@ -1,11 +1,16 @@
-﻿using Moq;
+﻿using Bogus.DataSets;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using UKMCAB.Core.Security;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
+using static System.Net.WebRequestMethods;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -33,6 +38,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 
             };
 
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
+
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument, submitForApproval);
             
@@ -53,11 +60,12 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 CABId = "2efe970d-cb83-4f1e-9ced-5489de4af8ca",
                 StatusValue = Status.Published,
             };
-
             var createdDocument = new Document();
             Document intermediateDocument = null;
-            _mockCABRepository.Setup(r => r.CreateAsync(It.IsAny<Document>(), It.IsAny<DateTime>())).Callback<Document, DateTime>((doc, _) => intermediateDocument = doc).ReturnsAsync(createdDocument);            
-
+            
+            _mockCABRepository.Setup(r => r.CreateAsync(It.IsAny<Document>(), It.IsAny<DateTime>())).Callback<Document, DateTime>((doc, _) => intermediateDocument = doc).ReturnsAsync(createdDocument);
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
+            
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);
 
@@ -91,6 +99,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 },
             };
 
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
+
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);
 
@@ -119,11 +129,125 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 },
             };
 
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>());
+            
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);
 
             // Assert
             Assert.AreEqual(result.SubStatus, SubStatus.PendingApprovalToPublish);
-        }    
+        }
+
+        [Test]
+        public async Task UpdateOrCreateDraftDocumentAsync_DocumentIsPublishedAndExistingDocumentIsDifferentFromCurrent_CreatesNewDraft()
+        {
+            // Arrange
+            var userAccount = new UserAccount
+            {
+                Role = Roles.DFTP.Id
+            };
+            var document = new Document
+            {
+                id = "Test id",
+                StatusValue = Status.Published,
+                Name = "New test name",
+            };
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>
+            {
+                new()
+                {
+                    id = "Test id",
+                    StatusValue = Status.Published,
+                    Name = "Test name"
+                }
+            });
+            _mockCABRepository.Setup(x => x.CreateAsync(It.IsAny<Document>(), It.IsAny<DateTime>())).ReturnsAsync(new Document());
+
+            // Act 
+            var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, document);
+
+            // Assert
+            _mockCABRepository.Verify(x => x.CreateAsync(
+                It.Is<Document>(d =>
+                    d.id == document.id &&
+                    d.StatusValue == Status.Draft &&
+                    d.Name == "New test name" &&
+                    d.CreatedByUserGroup == Roles.DFTP.Id &&
+                    d.AuditLog.Count == 1 &&
+                    d.AuditLog.First().Action == AuditCABActions.Created),
+                It.IsAny<DateTime>()), Times.Once);
+        }
+
+        [TestCaseSource(nameof(UpdateOrCreateDraftDocumentAsync_DocumentNotPublishedTestCases))]
+        public async Task UpdateOrCreateDraftDocumentAsync_DocumentNotPublished_DoesNotCreateNewDraft(Document document)
+        {
+            // Arrange
+            var userAccount = new UserAccount
+            {
+                Role = Roles.DFTP.Id
+            };
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>
+            {
+                new()
+                {
+                    id = "Test id",
+                    StatusValue = Status.Draft,
+                    Name = "Test name"
+                }
+            });
+
+            // Act 
+            var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, document);
+
+            // Assert
+            _mockCABRepository.Verify(x => x.CreateAsync(It.IsAny<Document>(),It.IsAny<DateTime>()), Times.Never);
+        }
+
+        [Test]
+        public async Task UpdateOrCreateDraftDocumentAsync_CurrentDocumentSameAsExisting_DoesNotCreateNewDraft()
+        {
+            // Arrange
+            var userAccount = new UserAccount
+            {
+                Role = Roles.DFTP.Id
+            };
+            var document = new Document
+            {
+                id = "Test id",
+                StatusValue = Status.Published,
+                Name = "Test name",
+            };
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document>
+            {
+                new()
+                {
+                    id = "Test id",
+                    StatusValue = Status.Published,
+                    Name = "Test name"
+                }
+            });
+
+            // Act 
+            var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, document);
+
+            // Assert
+            _mockCABRepository.Verify(x => x.CreateAsync(It.IsAny<Document>(), It.IsAny<DateTime>()), Times.Never);
+        }
+
+        private static IEnumerable<Document> UpdateOrCreateDraftDocumentAsync_DocumentNotPublishedTestCases()
+        {
+            foreach (var status in Enum.GetValues(typeof(Status)).Cast<Status>().Where(s => s != Status.Published))
+            {
+                yield return new Document
+                {
+                    id = "Test id",
+                    StatusValue = status,
+                    Name = "New test name",
+                };
+            }
+        }
     }
 }

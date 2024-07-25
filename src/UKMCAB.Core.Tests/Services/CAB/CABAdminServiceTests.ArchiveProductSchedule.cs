@@ -82,7 +82,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             await _sut.ArchiveSchedulesAsync(new Mock<UserAccount>().Object, cabId, scheduleIds);
             
             // Assert
-            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
+            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Exactly(2));
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
                     d.CABId == cabId.ToString() && d.Schedules.Contains(productSchedule) && d.Schedules.First().Archived == true)), Times.Once);

@@ -73,7 +73,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             await _sut.RemoveLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, legislativeAreaId, laToRemove);
 
             // Assert
-            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
+            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Exactly(2));
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
                     d.CABId == cabId.ToString() && !d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && !d.ScopeOfAppointments.Contains(documentScopeOfAppointment) && !d.Schedules.Contains(productSchedule))), Times.Once);      
@@ -134,7 +134,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             await _sut.ArchiveLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, legislativeAreaId);
 
             // Assert
-            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
+            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Exactly(2));
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
                     d.CABId == cabId.ToString() && d.DocumentLegislativeAreas.Contains(documentLegislativeArea) && d.DocumentLegislativeAreas.First().Archived == true)), Times.Once);

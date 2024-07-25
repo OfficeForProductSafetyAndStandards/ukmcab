@@ -1,4 +1,5 @@
 ﻿using UKMCAB.Data.Models.LegislativeAreas;
+using static UKMCAB.Common.Helpers.EnumerableHelper;
 
 namespace UKMCAB.Data.Models
 {
@@ -6,14 +7,10 @@ namespace UKMCAB.Data.Models
     {
         public Guid Id { get; set; }
         public Guid LegislativeAreaId { get; set; }
-
         public Guid? PurposeOfAppointmentId { get; set; }
-
         public Guid? CategoryId { get; set; }
         public List<Guid> CategoryIds { get; set; } = new();
-
         public Guid? SubCategoryId { get; set; }
-
         public List<Guid> ProductIds { get; set; } = new();
 
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
@@ -89,6 +86,7 @@ namespace UKMCAB.Data.Models
 
             return hash;
         }
+
         private bool AreListsEqual(List<Guid> list1, List<Guid> list2)
         {
             if (list1 == null && list2 == null)
@@ -102,22 +100,7 @@ namespace UKMCAB.Data.Models
             var groupedList2 = list2.GroupBy(x => x).OrderBy(g => g.Key);
 
             return groupedList1.SequenceEqual(groupedList2, new GroupComparer());
-        }
-
-        private bool AreObjectListsEqual<T>(List<T> list1, List<T> list2) where T : IEquatable<T> 
-        { 
-            if(list1 == null && list2 == null)
-                return true;
-            if(list1 == null || list2 == null)
-                return false;
-            if(list1.Count != list2.Count)
-                return false;
-
-            var sortedList1 = list1.OrderBy(x => x).ToList();
-            var sortedList2 = list2.OrderBy(x => x).ToList();
-
-            return sortedList1.SequenceEqual(sortedList2);
-        }        
+        }       
     }
 
     public class GroupComparer : IEqualityComparer<IGrouping<Guid, Guid>>

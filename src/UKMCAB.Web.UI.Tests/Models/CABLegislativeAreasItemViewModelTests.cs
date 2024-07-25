@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
@@ -13,6 +14,8 @@ namespace UKMCAB.Web.UI.Tests.Models
         [Test, TestCaseSource(nameof(GetTestCases))]
         public void CABLegislativeAreasItemViewModel_IsComplete_Should_Return_True(string procedure, bool canChooseSoa, bool? isProvisional, DateTime? reviewDate, bool expectedResult)
         {
+            var test = null as Document;
+
             // Arrange
             var _sut = new CABLegislativeAreasItemViewModel();
             _sut.ScopeOfAppointments = new();

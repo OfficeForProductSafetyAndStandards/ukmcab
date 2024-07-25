@@ -206,6 +206,8 @@ namespace UKMCAB.Core.Services.CAB
         public async Task<Document> UpdateOrCreateDraftDocumentAsync(UserAccount userAccount, Document draft,
             bool submitForApproval = false)
         {
+            var existingDocument = await GetLatestDocumentAsync(draft.CABId);
+
             if (submitForApproval)
             {                
                 if(draft.SubStatus != SubStatus.PendingApprovalToPublish)
@@ -224,8 +226,8 @@ namespace UKMCAB.Core.Services.CAB
                     draft.SubStatus = SubStatus.None;
                 }
             }
-
-            if (draft.StatusValue == Status.Published)
+            var test = draft != existingDocument;
+            if (draft.StatusValue == Status.Published && draft != existingDocument)
             {
                 draft.StatusValue = Status.Draft;
                 Audit auditCreated = new(userAccount, AuditCABActions.Created);
