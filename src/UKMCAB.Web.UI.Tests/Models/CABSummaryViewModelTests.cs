@@ -243,30 +243,6 @@ namespace UKMCAB.Web.Tests.Models
         }      
 
         [Category("CAB Summary page - Show Edit Button")]
-        [TestCase(true, false, false, true, false,false, SubStatus.None, false, true)]
-        [TestCase(false, true, false, true, false,false, SubStatus.None, false, true)]
-        [TestCase(true, false, false, false, false,false, SubStatus.PendingApprovalToPublish, true, true)]
-        [TestCase(false, false, true, false, false, false, SubStatus.None, false, false)]
-        public void ShowEditButton_Should_Return_CorrectValue_ForOpssAdmin(bool isOpssAdmin, bool isUkas, bool isOgd, bool inUserGroup, bool revealEditActions, bool isEditLoced, SubStatus subStatus, bool hasActionableLAForOpss, bool expectedResult)
-        {
-            // Arrange            
-            cabSummary.IsOpssAdmin = isOpssAdmin;
-            cabSummary.IsUkas = isUkas;
-            cabSummary.HasOgdRole = isOgd;
-            cabSummary.UserInCreatorUserGroup = inUserGroup;
-            cabSummary.RevealEditActions = revealEditActions;
-            cabSummary.IsEditLocked = isEditLoced;
-            cabSummary.SubStatus = subStatus;
-            cabSummary.HasActionableLegislativeAreaForOpssAdmin = hasActionableLAForOpss;
-
-            //Act
-            var result = cabSummary.ShowEditButton;
-
-            //Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
-        }
-
-        [Category("CAB Summary page - Show Edit Button")]
         [TestCase(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, false, false, true, 1, true)]
         [TestCase(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, false, false, true, 0, false)]
         public void ShowEditButton_Should_Return_CorrectValue_ForOgd(bool hasOgdRole, bool inUserGroup, Status status, SubStatus substatus, bool revealEditActions, bool isEditLoced, bool isPendingOgdApproval, int laPendingApproval, bool expectedResult)
@@ -288,16 +264,16 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
-        [Category("CAB Summary page - Show Edit Button")]
+        [Category("CAB Summary page - Show Edit Button for OPSS admin")]
         [Test, TestCaseSource(typeof(CABSummaryViewModelTestsHelpers), nameof(CABSummaryViewModelTestsHelpers.GetTestCases))]
-        public void ShowEditButton_Should_Return_CorrectValue_For_OpssAdmin(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool isActionable, bool revealEditActions, bool isEditLoced, bool expectedResult)
+        public void ShowEditButton_Should_Return_CorrectValue_For_OpssAdmin(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool isPendingOgdApproval, bool revealEditActions, bool isEditLoced, bool expectedResult)
         {
             // Arrange
             cabSummary.IsOpssAdmin = isOpss;
             cabSummary.UserInCreatorUserGroup = inUserGroup;
             cabSummary.Status = status;
             cabSummary.SubStatus = substatus;
-            cabSummary.HasActionableLegislativeAreaForOpssAdmin = isActionable;
+            cabSummary.IsPendingOgdApproval = isPendingOgdApproval;
             cabSummary.RevealEditActions = revealEditActions;
             cabSummary.IsEditLocked = isEditLoced;
 
@@ -308,7 +284,7 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
-        [Category("CAB Summary page - Show Review Button")]
+        [Category("CAB Summary page - Show Review Button for OPSS")]
         [Test]
         public void ShowReviewButton_Should_Return_True_ForOpss()
         {
@@ -324,7 +300,7 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.True);
         }
 
-        [Category("CAB Summary page - Show Review Button")]
+        [Category("CAB Summary page - Show Review Button for OGD")]
         [Test]
         public void ShowReviewButton_Should_Return_True_ForOgd()
         {
