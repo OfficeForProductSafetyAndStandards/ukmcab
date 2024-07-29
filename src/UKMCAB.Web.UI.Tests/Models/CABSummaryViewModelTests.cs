@@ -26,12 +26,15 @@ namespace UKMCAB.Web.Tests.Models
             };            
         }
 
+        #region Test - Banner Content 
+
         [Category("CAB Summary page - Banner Content Happy Path")]
         [Test]
-        public void GetBannerContent_Should_Return_EmptyString_When_OPSSAdminIsReviewingACabWithAllLaRequests_ActionedByOPSS() 
-        { 
+        public void GetBannerContent_Should_Return_EmptyString_When_OPSSAdminIsReviewingACabWithAllLaRequests_ActionedByOPSS()
+        {
             // Arrange
-            var _sut = new CABSummaryViewModel{ 
+            var _sut = new CABSummaryViewModel
+            {
                 IsOpssAdmin = true,
                 Status = Status.Draft,
                 SubStatus = SubStatus.PendingApprovalToPublish,
@@ -74,7 +77,7 @@ namespace UKMCAB.Web.Tests.Models
         {
             // Arrange
             var _sut = new CABSummaryViewModel
-            {                
+            {
                 Status = Status.Draft,
                 IsPendingOgdApproval = false,
                 IsOpssAdmin = true,
@@ -186,6 +189,32 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.EqualTo(expectedString));
         }
 
+        #endregion
+
+
+        #region Test - Show Profile Visibility Warning
+
+        [Category("CAB Summary page - Show Profile Visibility Warning")]
+        [Test]
+        public void ShowProfileVisibilityWarning_Should_Return_True()
+        {
+            // Arrange
+            CABSummaryViewModelTestsHelpers.SetValidCABToTrueOpssAdmin(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetCanPublishToTrueOpssAdmin(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+
+            //Act
+            var result = cabSummary.ShowProfileVisibilityWarning;
+
+            //Assert
+            Assert.That(result, Is.True);
+        }
+
+        #endregion
+
+
+        #region Test - Show Substatus Name
+
         [Category("CAB Summary page - Show Substatus Name")]
         [TestCase(SubStatus.PendingApprovalToPublish, "Pending approval to publish CAB", true)]
         [TestCase(SubStatus.None, "None", false)]
@@ -205,21 +234,10 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
-        [Category("CAB Summary page - Show Profile Visibility Warning")]
-        [Test]
-        public void ShowProfileVisibilityWarning_Should_Return_True()
-        {
-            // Arrange
-            CABSummaryViewModelTestsHelpers.SetValidCABToTrueOpssAdmin(cabSummary);
-            CABSummaryViewModelTestsHelpers.SetCanPublishToTrueOpssAdmin(cabSummary);
-            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+        #endregion
 
-            //Act
-            var result = cabSummary.ShowProfileVisibilityWarning;
 
-            //Assert
-            Assert.That(result, Is.True);
-        }
+        #region Test - Show Edit Button
 
         [Category("CAB Summary page - Show Edit Button")]
         [TestCase(true, false, true, Status.Draft, SubStatus.None, false, false, true)]
@@ -229,18 +247,18 @@ namespace UKMCAB.Web.Tests.Models
             // Arrange
             cabSummary.IsUkas = isUkas;
             cabSummary.IsOpssAdmin = isOpss;
-            cabSummary.UserInCreatorUserGroup = inUserGroup;            
+            cabSummary.UserInCreatorUserGroup = inUserGroup;
             cabSummary.Status = status;
             cabSummary.SubStatus = substatus;
             cabSummary.RevealEditActions = revealEditActions;
-            cabSummary.IsEditLocked = isEditLoced; 
+            cabSummary.IsEditLocked = isEditLoced;
 
             //Act
             var result = cabSummary.ShowEditButton;
 
             //Assert
             Assert.That(result, Is.EqualTo(expectedResult));
-        }      
+        }
 
         [Category("CAB Summary page - Show Edit Button")]
         [TestCase(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, false, false, true, 1, true)]
@@ -284,6 +302,10 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
+        #endregion
+
+
+        #region Test - Show Review Button
         [Category("CAB Summary page - Show Review Button for OPSS")]
         [Test]
         public void ShowReviewButton_Should_Return_True_ForOpss()
@@ -330,6 +352,11 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.False);
         }
 
+        #endregion
+
+
+        #region Test - Show Publish Button
+
         [Category("CAB Summary page - Show Publish Button")]
         [Test]
         public void ShowPublishButton_Should_Return_True_When_Opss_Is_The_Creator()
@@ -349,8 +376,12 @@ namespace UKMCAB.Web.Tests.Models
             // Assert
             Assert.That(result, Is.True);
         }
+        #endregion
 
-        [Category("CAB Summary page - Show Publish Button")]
+
+        #region Test - Show Approve To Publish Button
+
+        [Category("CAB Summary page - Show Approve To Publish Button")]
         [Test]
         public void ShowApproveToPublishButton_Should_Return_True_When_OgdHasApproved()
         {
@@ -368,5 +399,176 @@ namespace UKMCAB.Web.Tests.Models
             // Assert
             Assert.That(result, Is.True);
         }
+
+        #endregion
+
+
+        #region Test - Show Mandatory Info Warning
+
+        [Category("CAB Summary page - Show Mandatory Info Warning")]
+        [Test]
+        public void ShowMandatoryInfoWarning_Should_Return_False()
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetRevealEditTrueAndIsEditLockedFalse(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetValidCABToTrueOpssAdmin(cabSummary);
+            cabSummary.IsOpssAdmin = true;
+
+            // Act
+            var result = cabSummary.ShowMandatoryInfoWarning;
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        [Category("CAB Summary page - Show Mandatory Info Warning")]
+        [Test]
+        public void ShowMandatoryInfoWarning_Should_Return_True()
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetRevealEditTrueAndIsEditLockedFalse(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetValidCABToFalseOpssAdmin(cabSummary);
+            cabSummary.IsOpssAdmin = true;
+
+            // Act
+            var result = cabSummary.ShowMandatoryInfoWarning;
+
+            // Assert
+            Assert.That(result, Is.True);
+        }
+
+        #endregion
+
+
+        #region Test - Show Decline Button
+
+        [Category("CAB Summary page - Show Decline Button")]
+        [Test]
+        public void ShowDeclineButton_Should_Return_True()
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetCanPublishToTrueOpssAdmin(cabSummary);
+            cabSummary.UserInCreatorUserGroup = false;
+            cabSummary.Status = Status.Draft;
+            cabSummary.SubStatus = SubStatus.PendingApprovalToPublish;
+            cabSummary.IsEditLocked = false;
+
+            // Act
+            var result = cabSummary.ShowDeclineButton;
+
+            // Assert
+            Assert.That(result, Is.True);
+        }
+
+        #endregion
+
+
+        #region Test - Show Save as draft
+
+        [Category("CAB Summary page - Show Save as draft Button")]
+        [Test]
+        public void ShowSaveAsDraftButton_Should_Return_True()
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+            cabSummary.Status = Status.Draft;
+            cabSummary.SubStatus = SubStatus.None;
+
+            // Act
+            var result = cabSummary.ShowSaveAsDraftButton;
+
+            // Assert
+            Assert.That(result, Is.False);
+        }
+
+        #endregion
+
+
+        #region Test - Show Delete Draft Button
+
+        [Category("CAB Summary page - Show Delete Draft Button")]
+        [TestCase(true, true, false, SubStatus.None, true)]
+        [TestCase(true, false, true, SubStatus.None, false)]
+        public void ShowDeleteDraftButton_Should_Return_True_ForOpssAdmin(bool revealEditActions, bool isOpss, bool isUkas, SubStatus subStatus, bool expectedResult)
+        {
+            // Arrange            
+            cabSummary.RevealEditActions = revealEditActions;
+            cabSummary.IsOpssAdmin = isOpss;
+            cabSummary.UserInCreatorUserGroup = false;
+            cabSummary.Status = Status.Draft;
+            cabSummary.SubStatus = subStatus;
+
+            // Act
+            var result = cabSummary.ShowDeleteDraftButton;
+
+            // Assert
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        [Category("CAB Summary page - Show Delete Draft Button")]
+        [TestCase(SubStatus.None, true)]
+        [TestCase(SubStatus.PendingApprovalToPublish, false)]
+        public void ShowDeleteDraftButton_Should_Return_True_WhenSaveAsDraftIsTrue(SubStatus subStatus, bool expectedResult)
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+            cabSummary.Status = Status.Draft;
+            cabSummary.SubStatus = subStatus;
+
+            // Act
+            var result = cabSummary.ShowDeleteDraftButton;
+
+            // Assert
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        #endregion
+
+
+        #region Test - Show Cancel Publish Button
+
+        [Category("CAB Summary page - Show Cancel Publish Button")]
+        [TestCase(true, false, SubStatus.None, true)]
+        [TestCase(false, true, SubStatus.None, true)]
+        [TestCase(true, false, SubStatus.PendingApprovalToPublish, false)]
+        [TestCase(false, true, SubStatus.PendingApprovalToPublish, false)]
+        public void ShowCancelPublishButton_Should_Return_CorrectValueWhenShowPublishButtonIsTrue(bool isOpss, bool isUkas, SubStatus subStatus, bool expectedResult)
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+            cabSummary.IsOpssAdmin = isOpss;
+            cabSummary.IsUkas = isUkas;
+            cabSummary.UserInCreatorUserGroup = true;
+            cabSummary.Status = Status.Draft;
+            cabSummary.SubStatus = subStatus;
+
+            cabSummary.IsEditLocked = false;
+
+            // Act
+            var result = cabSummary.ShowCancelPublishButton;
+
+            // Assert
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        [Category("CAB Summary page - Show Cancel Publish Button")]
+        [TestCase(SubStatus.None, true)]
+        [TestCase(SubStatus.PendingApprovalToPublish, false)]
+        public void ShowCancelPublishButton_Should_Return_CorrectValueWhenShowSubmitForApprovalButtonIsTrue(SubStatus subStatus, bool expectedResult)
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueForUkas(cabSummary);
+            cabSummary.SubStatus = subStatus;
+
+
+            // Act
+            var result = cabSummary.ShowCancelPublishButton;
+
+            // Assert
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        #endregion
     }
 }
