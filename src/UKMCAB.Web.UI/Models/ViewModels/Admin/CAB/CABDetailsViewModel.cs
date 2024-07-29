@@ -64,6 +64,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.Name).NotEmpty().WithMessage("Enter a CAB name");
+            RuleFor(x => x.CABNumber).NotEmpty().WithMessage("Enter a CAB number");
+            RuleFor(x => x.CabNumberVisibility).NotEmpty().WithMessage("Select who should see the CAB number");
         }
     }
 }
