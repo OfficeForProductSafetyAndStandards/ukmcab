@@ -130,16 +130,18 @@ public class NotificationDetailsController : UI.Controllers.ControllerBase
 
         var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
         var cabDetails = cabs.First();
+        var currentUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().AbsolutePath + "?";
+
         notificationDetail.ViewLink = workFlowTask.TaskType switch
         {
             TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish
                 or TaskType.RequestToUnarchiveDeclined or TaskType.CABPublished or TaskType.RequestToUnpublish
                 or TaskType.RequestToUnpublishDeclined or TaskType.RequestToArchive =>
                 (cabDetails.Name,
-                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId })),
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId, returnUrl = currentUrl })),
             _ =>
                 (cabDetails.Name,
-                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId })),
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId, returnUrl = currentUrl })),
         };
 
         return (notificationDetail, workFlowTask);
