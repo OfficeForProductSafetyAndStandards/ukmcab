@@ -262,7 +262,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         private bool ShowEditButtonForOwnerBase =>
            UserInCreatorUserGroup &&
-           Status == Status.Draft &&
+           (Status == Status.Draft || Status == Status.Published) &&
            SubStatus == SubStatus.None;
 
         private bool ShowSubSectionEditActionForOpss =>

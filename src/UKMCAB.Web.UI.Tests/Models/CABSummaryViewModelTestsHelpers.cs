@@ -112,11 +112,25 @@ public static class CABSummaryViewModelTestsHelpers
 
     public static void SetShowSubSectionEditActionToTrueOpssAdmin(CABSummaryViewModel cabSummary)
     {
-        cabSummary.RevealEditActions = true;
-        cabSummary.IsEditLocked = false;
+        SetRevealEditTrueAndIsEditLockedFalse(cabSummary);
         cabSummary.SubStatus = SubStatus.PendingApprovalToPublish;
         cabSummary.IsOpssAdmin = true;
         cabSummary.HasActionableLegislativeAreaForOpssAdmin = true;
+    }
+
+    public static void SetShowSubSectionEditActionToTrueForUkas(CABSummaryViewModel cabSummary)
+    {
+        SetRevealEditTrueAndIsEditLockedFalse(cabSummary);
+        cabSummary.UserInCreatorUserGroup = true;
+        cabSummary.Status = Status.Draft;
+        cabSummary.SubStatus = SubStatus.None;
+        cabSummary.IsUkas = true;
+    }
+
+    public static void SetRevealEditTrueAndIsEditLockedFalse(CABSummaryViewModel cabSummary)
+    {
+        cabSummary.RevealEditActions = true;
+        cabSummary.IsEditLocked = false;
     }
 
     public static void SetCanPublishToTrueOpssAdmin(CABSummaryViewModel cabSummary)
@@ -134,6 +148,14 @@ public static class CABSummaryViewModelTestsHelpers
         cabSummary.HasActiveLAs = true;
     }
 
+    public static void SetValidCABToFalseOpssAdmin(CABSummaryViewModel cabSummary)
+    {
+        cabSummary.Status = Status.Draft;
+        cabSummary.LegislativeAreasApprovedByAdminCount = 0;
+        SetIsCompleteToTrue(cabSummary);
+        cabSummary.HasActiveLAs = false;
+    }
+
     public static void SetIsCompleteToTrue(CABSummaryViewModel cabSummary)
     { 
         cabSummary.CabDetailsViewModel = new CABDetailsViewModel { IsCompleted = true };
@@ -148,10 +170,9 @@ public static class CABSummaryViewModelTestsHelpers
 
     public static void SetShowOgdActionsToTrue(CABSummaryViewModel cabSummary)
     {
+        SetRevealEditTrueAndIsEditLockedFalse(cabSummary);
         cabSummary.HasOgdRole = true;
         cabSummary.IsPendingOgdApproval = true;
-        cabSummary.RevealEditActions = true;
-        cabSummary.IsEditLocked = false;
         cabSummary.LegislativeAreasPendingApprovalForCurrentUserCount = 1;
     }
 
