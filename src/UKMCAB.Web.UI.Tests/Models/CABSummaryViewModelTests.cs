@@ -284,14 +284,14 @@ namespace UKMCAB.Web.Tests.Models
 
         [Category("CAB Summary page - Show Edit Button for OPSS admin")]
         [Test, TestCaseSource(typeof(CABSummaryViewModelTestsHelpers), nameof(CABSummaryViewModelTestsHelpers.GetTestCases))]
-        public void ShowEditButton_Should_Return_CorrectValue_For_OpssAdmin(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool isPendingOgdApproval, bool revealEditActions, bool isEditLoced, bool expectedResult)
+        public void ShowEditButton_Should_Return_CorrectValue_For_OpssAdmin(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool legislativeAreaHasBeenActioned, bool revealEditActions, bool isEditLoced, bool expectedResult)
         {
             // Arrange
             cabSummary.IsOpssAdmin = isOpss;
             cabSummary.UserInCreatorUserGroup = inUserGroup;
             cabSummary.Status = status;
             cabSummary.SubStatus = substatus;
-            cabSummary.IsPendingOgdApproval = isPendingOgdApproval;
+            cabSummary.LegislativeAreaHasBeenActioned = legislativeAreaHasBeenActioned;
             cabSummary.RevealEditActions = revealEditActions;
             cabSummary.IsEditLocked = isEditLoced;
 

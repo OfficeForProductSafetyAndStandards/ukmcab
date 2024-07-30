@@ -370,6 +370,13 @@
                 </div>
             }
 
+            @if (!Model.HasActiveLAs)
+            {
+                <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
+                    This CAB profile will only become publishable when an active legislative area is added.
+                </govuk-warning-text>
+            }
+
             @if (Model.ShowReviewButton)
             {
                 <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
