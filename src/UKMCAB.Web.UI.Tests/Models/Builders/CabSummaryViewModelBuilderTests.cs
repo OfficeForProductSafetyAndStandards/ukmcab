@@ -66,6 +66,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 IsPendingOgdApproval = false,
                 LegislativeAreasApprovedByAdminCount = 0,
                 LegislativeAreaHasBeenActioned = false,
+                IsActionableByOpssAdmin = true,
                 DraftUpdated = true
             };
 

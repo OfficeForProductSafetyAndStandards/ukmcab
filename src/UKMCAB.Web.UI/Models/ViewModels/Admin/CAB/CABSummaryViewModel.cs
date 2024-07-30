@@ -36,6 +36,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public int LegislativeAreasApprovedByAdminCount { get; set; }
         public bool LegislativeAreaHasBeenActioned { get; set; }
         public bool HasActionableLegislativeAreaForOpssAdmin { get; set; }
+        public bool IsActionableByOpssAdmin { get; set; }
         public bool RequestedFromCabProfilePage { get; set; }
         public bool HasActiveLAs { get; set; }
         public bool DraftUpdated { get; set; }
@@ -81,6 +82,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowPublishButton =>
             ShowSubSectionEditAction &&
             SubStatus == SubStatus.None &&
+            DraftUpdated &&
             IsOpssAdmin &&
             UserInCreatorUserGroup;
 
@@ -189,7 +191,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             IsOpssAdmin &&
             Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            LegislativeAreaHasBeenActioned;
+            IsActionableByOpssAdmin;
 
         public string BannerContent => GetBannerContent();
 
@@ -249,7 +251,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (SubStatus == SubStatus.None ||
             (Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            LegislativeAreaHasBeenActioned));
+            IsActionableByOpssAdmin));
 
         private bool ShowEditButtonForOgdNonOwner =>
             HasOgdRole &&

@@ -12,102 +12,102 @@ public static class CABSummaryViewModelTestsHelpers
         var docLA = doc.DocumentLegislativeAreas;
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.Approved });
 
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.LegislativeAreaHasBeenActioned(), false, false, true);
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.IsActionableByOpssAdmin(), false, false, true);
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.Declined });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDeclined_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclined_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToRemoveByOPSS });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToRemoveByOPSS_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToRemoveByOPSS_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsApprovedByOpssAdmin_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedByOpssAdmin_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedByOpssAdmin_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedByOpssAdmin_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToRemoveByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToRemoveByOpssAdmin_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToRemoveByOpssAdmin_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedToRemoveByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToRemoveByOpssAdmin_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToRemoveByOpssAdmin_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToArchiveAndArchiveScheduleByOpssAdmin_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToArchiveAndArchiveScheduleByOpssAdmin_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToArchiveAndRemoveScheduleByOpssAdmin_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToArchiveAndRemoveScheduleByOpssAdmin_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToArchiveAndArchiveScheduleByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndArchiveScheduleByOpssAdmin_ShouldBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndArchiveScheduleByOpssAdmin_ShouldBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToArchiveAndRemoveScheduleByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndRemoveScheduleByOpssAdmin");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndRemoveScheduleByOpssAdmin");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndArchiveScheduleByOGD });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndArchiveScheduleByOGD");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndArchiveScheduleByOGD");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndArchiveScheduleByOPSS");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndArchiveScheduleByOPSS");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndRemoveScheduleByOGD });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndRemoveScheduleByOGD");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndRemoveScheduleByOGD");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndRemoveScheduleByOPSS");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToArchiveAndRemoveScheduleByOPSS");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.ApprovedToUnarchiveByOPSS });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToUnarchiveByOPSS");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsApprovedToUnarchiveByOPSS");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToUnarchiveByOpssAdmin });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToUnarchiveByOpssAdmin");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsPendingApprovalToUnarchiveByOpssAdmin");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.DeclinedToUnarchiveByOPSS });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToUnarchiveByOPSS");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenLAStatusIsDeclinedToUnarchiveByOPSS");
 
         docLA.Clear();
-        docLA.Add(new DocumentLegislativeArea { Status = LAStatus.Draft });
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.Published });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.LegislativeAreaHasBeenActioned(), false, false, true).SetName("Test_WhenLAStatusIsDraftAndPublished_ShouldNotBeActionable");
+        docLA.Add(new DocumentLegislativeArea { Status = LAStatus.Published });
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish, doc.IsActionableByOpssAdmin(), false, false, true).SetName("Test_WhenAllLAStatusIsPublished_ShouldBeActionable");
 
 
         // Sad Path
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApproval });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, false).SetName("Test_WhenLAStatusIsPendingApproval_ShouldNotBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingApproval_ShouldNotBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToUnarchive });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToUnarchive_ShouldNotBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToUnarchive_ShouldNotBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToArchiveAndArchiveSchedule });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndArchiveSchedule_ShouldNotBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToArchiveAndArchiveSchedule_ShouldNotBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.None });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, false).SetName("Test_WhenLAStatusIsNone_ShouldNotBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsNone_ShouldNotBeActionable");
 
         docLA.Clear();
         docLA.Add(new DocumentLegislativeArea { Status = LAStatus.PendingApprovalToRemove });
-        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.LegislativeAreaHasBeenActioned(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToRemove_ShouldNotBeActionable");
+        yield return new TestCaseData(true, false, Status.Draft, SubStatus.PendingApprovalToPublish,  doc.IsActionableByOpssAdmin(), false, false, false).SetName("Test_WhenLAStatusIsPendingApprovalToRemove_ShouldNotBeActionable");
     }
 
     public static void SetShowSubSectionEditActionToTrueOpssAdmin(CABSummaryViewModel cabSummary)

@@ -24,6 +24,9 @@ namespace UKMCAB.Core.Extensions
             LAStatus.ApprovedToArchiveAndRemoveScheduleByOpssAdmin or
             LAStatus.ApprovedToUnarchiveByOPSS;
 
+        public static bool IsPublished(this DocumentLegislativeArea documentLegislativeArea) => documentLegislativeArea.Status is
+            LAStatus.Published;
+
         public static bool IsPendingOgdApproval(this DocumentLegislativeArea documentLegislativeArea) => documentLegislativeArea.Status is
             LAStatus.PendingApproval or
             LAStatus.PendingApprovalToRemove or

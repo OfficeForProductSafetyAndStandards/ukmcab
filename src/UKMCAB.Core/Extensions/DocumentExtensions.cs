@@ -16,7 +16,9 @@ namespace UKMCAB.Core.Extensions
         public static bool LegislativeAreaHasBeenActioned(this Document document) => document.DocumentLegislativeAreas.Any(dla => dla.HasBeenActioned());
 
         public static bool HasActionableLegislativeAreaForOpssAdmin(this Document document) => document.DocumentLegislativeAreas.Any(dla => dla.ActionableByOpssAdmin());
-        
+
+        public static bool IsActionableByOpssAdmin(this Document document) => HasActionableLegislativeAreaForOpssAdmin(document) || document.DocumentLegislativeAreas.All(dla => dla.IsPublished());
+
         public static List<DocumentLegislativeArea> LegislativeAreasPendingApprovalByOgd(this Document document, string roleId)
         {
             return document.DocumentLegislativeAreas.Where(dla => dla.IsPendingOgdApproval() && roleId.Equals(dla.RoleId)).ToList();
