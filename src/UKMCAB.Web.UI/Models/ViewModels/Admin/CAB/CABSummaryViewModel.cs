@@ -75,6 +75,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowApproveToPublishButton =>
             RevealEditActions &&
             !IsEditLocked &&
+            !UserInCreatorUserGroup &&
             CanPublish;
 
         public bool ShowPublishButton =>
@@ -188,7 +189,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             IsOpssAdmin &&
             Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            !IsPendingOgdApproval;
+            LegislativeAreaHasBeenActioned;
 
         public string BannerContent => GetBannerContent();
 
@@ -248,7 +249,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (SubStatus == SubStatus.None ||
             (Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
-            !IsPendingOgdApproval));
+            LegislativeAreaHasBeenActioned));
 
         private bool ShowEditButtonForOgdNonOwner =>
             HasOgdRole &&
@@ -262,7 +263,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         private bool ShowEditButtonForOwnerBase =>
            UserInCreatorUserGroup &&
-           Status == Status.Draft &&
+           (Status == Status.Draft || Status == Status.Published) &&
            SubStatus == SubStatus.None;
 
         private bool ShowSubSectionEditActionForOpss =>
