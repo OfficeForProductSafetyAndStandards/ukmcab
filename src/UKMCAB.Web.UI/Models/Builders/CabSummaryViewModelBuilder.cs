@@ -46,6 +46,7 @@ namespace UKMCAB.Web.UI.Models.Builders
             _model.LegislativeAreasApprovedByAdminCount = document.LegislativeAreasApprovedByAdminCount();
             _model.LegislativeAreaHasBeenActioned = document.LegislativeAreaHasBeenActioned();
             _model.HasActionableLegislativeAreaForOpssAdmin = document.HasActionableLegislativeAreaForOpssAdmin();
+            _model.IsActionableByOpssAdmin = document.IsActionableByOpssAdmin();
             _model.DraftUpdated = document.DraftUpdated();
             return this;
         }

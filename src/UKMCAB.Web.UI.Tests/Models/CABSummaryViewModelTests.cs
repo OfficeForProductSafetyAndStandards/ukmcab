@@ -39,7 +39,7 @@ namespace UKMCAB.Web.Tests.Models
                 Status = Status.Draft,
                 SubStatus = SubStatus.PendingApprovalToPublish,
                 HasActionableLegislativeAreaForOpssAdmin = true,
-                LegislativeAreaHasBeenActioned = true,
+                IsActionableByOpssAdmin = true,
             };
 
             //Act
@@ -284,14 +284,14 @@ namespace UKMCAB.Web.Tests.Models
 
         [Category("CAB Summary page - Show Edit Button for OPSS admin")]
         [Test, TestCaseSource(typeof(CABSummaryViewModelTestsHelpers), nameof(CABSummaryViewModelTestsHelpers.GetTestCases))]
-        public void ShowEditButton_Should_Return_CorrectValue_For_OpssAdmin(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool legislativeAreaHasBeenActioned, bool revealEditActions, bool isEditLoced, bool expectedResult)
+        public void ShowEditButton_Should_Return_CorrectValue_For_OpssAdmin(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool isActionableByOpssAdmin, bool revealEditActions, bool isEditLoced, bool expectedResult)
         {
             // Arrange
             cabSummary.IsOpssAdmin = isOpss;
             cabSummary.UserInCreatorUserGroup = inUserGroup;
             cabSummary.Status = status;
             cabSummary.SubStatus = substatus;
-            cabSummary.LegislativeAreaHasBeenActioned = legislativeAreaHasBeenActioned;
+            cabSummary.IsActionableByOpssAdmin = isActionableByOpssAdmin;
             cabSummary.RevealEditActions = revealEditActions;
             cabSummary.IsEditLocked = isEditLoced;
 
@@ -367,6 +367,7 @@ namespace UKMCAB.Web.Tests.Models
             cabSummary.UserInCreatorUserGroup = true;
             cabSummary.Status = Status.Draft;
             cabSummary.SubStatus = SubStatus.None;
+            cabSummary.DraftUpdated = true;
 
             cabSummary.IsEditLocked = false;
 
