@@ -16,6 +16,7 @@
     var feedbackForm = document.getElementById("feedback-form");
     var feedbackSuccess = document.getElementById("feedback-success");
     var feedbackError = document.getElementById("feedback-form-error");
+    var feedbackErrorHeading = document.getElementById("feedback-form-error-heading");
     var feedbackErrorMessage = document.getElementById("feedback-form-error-message");
 
     function init() {
@@ -83,6 +84,9 @@
         feedbackForm.classList.add("govuk-visually-hidden");
         feedbackError.classList.add("govuk-visually-hidden");
         feedbackSuccess.classList.remove("govuk-visually-hidden");
+
+        feedbackErrorMessage.innerText = "";
+        feedbackErrorHeading.innerText = "";
     }
 
     function displayErrors(errorMessage) {
@@ -112,6 +116,7 @@
 
         feedbackError.classList.remove("govuk-visually-hidden");
         feedbackErrorMessage.innerText = errorMessage;
+        feedbackErrorHeading.innerText = "There is a problem";
     }
 
     function reset(e) {
