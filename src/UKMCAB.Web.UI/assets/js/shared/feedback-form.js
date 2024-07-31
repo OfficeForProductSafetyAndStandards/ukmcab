@@ -81,9 +81,9 @@
 
 
     function displaySuccess() {
-        feedbackForm.classList.add("govuk-visually-hidden");
-        feedbackError.classList.add("govuk-visually-hidden");
-        feedbackSuccess.classList.remove("govuk-visually-hidden");
+        feedbackForm.classList.add("app-no-display");
+        feedbackError.classList.add("app-no-display");
+        feedbackSuccess.classList.remove("app-no-display");
 
         feedbackErrorMessage.innerText = "";
         feedbackErrorHeading.innerText = "";
@@ -114,7 +114,7 @@
             }
         }
 
-        feedbackError.classList.remove("govuk-visually-hidden");
+        feedbackError.classList.remove("app-no-display");
         feedbackErrorMessage.innerText = errorMessage;
         feedbackErrorHeading.innerText = "There is a problem";
     }
@@ -122,9 +122,9 @@
     function reset(e) {
         e.preventDefault();
         // Show form
-        feedbackForm.classList.remove("govuk-visually-hidden");
+        feedbackForm.classList.remove("app-no-display");
         // Remove errors
-        feedbackError.classList.add("govuk-visually-hidden");
+        feedbackError.classList.add("app-no-display");
         feedbackErrorMessage.innerText = "";
         whatWereYouDoing.classList.remove("feedback-form-error");
         whatWentWrong.classList.remove("feedback-form-error");
@@ -134,7 +134,7 @@
         whatWentWrong.value = "";
         email.value = "";
         // Remove success
-        feedbackSuccess.classList.add("govuk-visually-hidden");
+        feedbackSuccess.classList.add("app-no-display");
     }
 
     return {
