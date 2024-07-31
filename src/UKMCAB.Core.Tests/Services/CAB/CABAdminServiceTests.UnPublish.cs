@@ -98,7 +98,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(r => r.GetItemLinqQueryable(), Times.Exactly(5));
             _mockCABRepository.VerifyNoOtherCalls();
         }
-        
+
         [Test]
         public async Task DocumentFound_UnpublishDocumentAsync_CabUpdatesStatuses()
         {
@@ -114,7 +114,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     }
                 });
             _mockCABRepository.Setup(x => x.DeleteAsync(It.IsAny<Document>())).ReturnsAsync(false);
-            
+
             // Act
             await _sut.UnPublishDocumentAsync(new Mock<UserAccount>().Object, cabId, null);
 
@@ -123,6 +123,39 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(r => r.UpdateAsync(It.Is<Document>(d => d.StatusValue == Status.Historical && d.SubStatus == SubStatus.None)), Times.Once);
             _mockCABRepository.Verify(r => r.GetItemLinqQueryable(), Times.Exactly(5));
             _mockCABRepository.VerifyNoOtherCalls();
+        }
+
+        [Test]
+        public async Task UnpublishDocumentAsync_AllLegislativeAreasArchived()
+        {
+            // Arrange
+            const string cabId = "cabId";
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
+                .ReturnsAsync(new List<Document>
+                {
+                    new()
+                    {
+                        CABId = cabId,
+                        StatusValue = Status.Published, 
+                        DocumentLegislativeAreas = new List<DocumentLegislativeArea> {
+                            new DocumentLegislativeArea() { Status = LAStatus.Published },
+                            new DocumentLegislativeArea() { Status = LAStatus.Published },
+                            new DocumentLegislativeArea() { Status = LAStatus.Published },
+                            new DocumentLegislativeArea() { Status = LAStatus.Published },
+                            new DocumentLegislativeArea() { Status = LAStatus.Published }
+                        }
+                    }
+                });
+
+            // Act
+            var result = await _sut.UnPublishDocumentAsync(new Mock<UserAccount>().Object, cabId, null);
+
+            // Assert
+            _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
+            _mockCABRepository.Verify(r => r.UpdateAsync(It.Is<Document>(d => d.DocumentLegislativeAreas.All(la => la.Archived.HasValue && la.Archived.Value))), Times.Once);
+            _mockCABRepository.Verify(r => r.GetItemLinqQueryable(), Times.Exactly(5));
+            _mockCABRepository.VerifyNoOtherCalls();
+            Assert.AreEqual(Status.Historical, result.StatusValue);
         }
     }
 }

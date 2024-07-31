@@ -8,7 +8,6 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using System.Linq;
 using UKMCAB.Core.Security;
-using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -74,45 +73,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
             Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
             Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
         }
-
-        /*
-         * TODO: TESTS TO CHECK ALL ARCHIVED LAs
-        [Test]
-        public async Task Document_PublishDocumentAsync_AllLAsArchived()
-        {
-            // Arrange
-            (var legislativeAreas, var scopeOfAppointments, var schedules) = GenerateTestData();
-            legislativeAreas.ForEach(la=>la.Archived = true); ;
-
-            var document = new Document
-            {
-                CABId = Guid.NewGuid().ToString(),
-                StatusValue = Status.Draft,
-                DocumentLegislativeAreas = legislativeAreas,
-                ScopeOfAppointments = scopeOfAppointments,
-                Schedules = schedules
-            };
-
-
-            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { document });
-
-            // Act
-            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
-                new Document
-                {
-                    CABId = Guid.NewGuid().ToString(),
-                    CreatedByUserGroup = Roles.OPSS.Id,
-                    StatusValue = Status.Draft,
-                    DocumentLegislativeAreas = legislativeAreas,
-                    ScopeOfAppointments = scopeOfAppointments,
-                });
-
-            // Assert
-            Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
-            Assert.True(result.DocumentLegislativeAreas.All(la => la.Archived==true));
-            Assert.True(result.StatusValue==Status.Archived);
-        }
-        */
 
         private (List<DocumentLegislativeArea>, List<DocumentScopeOfAppointment>, List<FileUpload>) GenerateTestData()
         {
