@@ -78,8 +78,9 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                              throw new InvalidOperationException();
         if (submitType == Constants.SubmitType.Save)
         {
-            TempData[Constants.TempDraftKey] =
-                $"Draft record saved for {latestDocument.Name} <br>CAB number {latestDocument.CABNumber}";
+            TempData[Constants.TempDraftKeyLine1] =
+                $"Draft record saved for {latestDocument.Name}";
+            TempData[Constants.TempDraftKeyLine2] = $"CAB number {latestDocument.CABNumber}";
         }
 
         var legislativeArea = new LegislativeAreaModel();

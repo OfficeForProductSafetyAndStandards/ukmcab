@@ -525,7 +525,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 AppointmentDate = cabDocument.AppointmentDate,
                 ReviewDate = cabDocument.RenewalDate,
                 UKASReferenceNumber = cabDocument.UKASReference,
-                Address = cabDocument.GetFormattedAddress(),
+                Address = cabDocument.GetAddressArray().ToList(),
                 Website = cabDocument.Website,
                 Email = cabDocument.Email,
                 Phone = cabDocument.Phone,

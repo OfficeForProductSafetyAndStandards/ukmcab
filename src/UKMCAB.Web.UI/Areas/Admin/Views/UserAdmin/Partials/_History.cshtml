@@ -47,7 +47,7 @@
                                                 </span>
                                             </summary>
                                             <div class="govuk-details__text">
-                                                @Html.Raw(HttpUtility.HtmlDecode(auditHistoryItem.InternalComment))
+                                                @HttpUtility.HtmlDecode(auditHistoryItem.InternalComment)
                                             </div>
                                         </details>
                                     }

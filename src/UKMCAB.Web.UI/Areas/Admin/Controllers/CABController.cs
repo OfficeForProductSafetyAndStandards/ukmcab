@@ -937,8 +937,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private IActionResult SaveDraft(Document document)
         {
-            TempData[Constants.TempDraftKey] =
-                $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
+            TempData[Constants.TempDraftKeyLine1] =
+                $"Draft record saved for {document.Name}";
+            TempData[Constants.TempDraftKeyLine2] = $"CAB number {document.CABNumber}";
             return RedirectToCabManagementWithUnlockCab(document.CABId);
         }
 

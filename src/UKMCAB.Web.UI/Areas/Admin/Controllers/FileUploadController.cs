@@ -153,8 +153,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userAccount =
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion, false);
-            TempData[Constants.TempDraftKey] =
-                $"Draft record saved for {latestVersion.Name} <br>CAB number {latestVersion.CABNumber}";
+            TempData[Constants.TempDraftKeyLine1] =
+                $"Draft record saved for {latestVersion.Name}";
+            TempData[Constants.TempDraftKeyLine1] = $"CAB number {latestVersion.CABNumber}";
             return RedirectToAction("CABManagement", "CabManagement",
                 new { Area = "admin", unlockCab = latestVersion.CABId });
         }
@@ -1376,8 +1377,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private IActionResult SaveDraft(Document document)
         {
-            TempData[Constants.TempDraftKey] =
-                $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
+            TempData[Constants.TempDraftKeyLine1] =
+                $"Draft record saved for {document.Name}";
+            TempData[Constants.TempDraftKeyLine2] = $"CAB number {document.CABNumber}";
             return RedirectToAction("CABManagement", "CabManagement",
                 new { Area = "admin", unlockCab = document.CABId });
         }

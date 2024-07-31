@@ -396,7 +396,14 @@
             <dd class="govuk-summary-list__value">
                 @if (Model.CabBodyDetailsViewModel.TestingLocations.Any(tl => !string.IsNullOrWhiteSpace(tl)))
                 {
-                    @Html.Raw(string.Join("<br />", Model.CabBodyDetailsViewModel.TestingLocations))
+                    @for (int i = 0; i < Model.CabBodyDetailsViewModel.TestingLocations.Count; i++)
+                    {
+                        @Model.CabBodyDetailsViewModel.TestingLocations[i]
+                        @if (i < Model.CabBodyDetailsViewModel.TestingLocations.Count - 1)
+                        {
+                            <br />
+                        }
+                    }
                 }
                 else
                 {
@@ -411,7 +418,14 @@
             <dd class="govuk-summary-list__value">
                 @if (Model.CabBodyDetailsViewModel.BodyTypes.Any())
                 {
-                    @Html.Raw(string.Join("<br />", Model.CabBodyDetailsViewModel.BodyTypes))
+                    @for (int i = 0; i < Model.CabBodyDetailsViewModel.BodyTypes.Count; i++)
+                    {
+                        @Model.CabBodyDetailsViewModel.BodyTypes[i]
+                        @if (i < Model.CabBodyDetailsViewModel.BodyTypes.Count - 1)
+                        {
+                            <br />
+                        }
+                    }
                 }
                 else
                 {
