@@ -343,6 +343,13 @@
                 <partial name="Partials/_History" model="@Model.CABHistoryViewModel" />
             </div>
 
+            <div class="govuk-!-padding-top-1">
+                <dl class="govuk-summary-list cab-summary-list">
+
+                </dl>
+                <partial name="Partials/_PublishMajorOrMinor" model="@Model.CABPublishMajorOrMinorViewModel" />
+            </div>
+
             @if (Model.ShowProfileVisibilityWarning)
             {
                 <div class="govuk-warning-text govuk-!-margin-top-5">
