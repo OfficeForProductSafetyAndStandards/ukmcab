@@ -15,6 +15,8 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
+using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Core.Domain;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Web.UI.Models.Builders;
 

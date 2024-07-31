@@ -25,5 +25,7 @@ public record NotificationDetailViewModel : ILayoutModel
     public string? SelectedAssigneeId { get; set; }
     public string? UserGroup { get; set; }
     public bool IsSameUserGroup { get; init; }
+    public bool IsSameUser { get; init; }
+    public string BackLinkFragment => IsCompleted ? "completed" : (IsSameUser ? "assigned-me" : (IsAssigned ? "assigned-group" : "Unassigned"));
     public string? Title { get; }
 }

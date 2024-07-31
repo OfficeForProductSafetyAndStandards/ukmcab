@@ -17,6 +17,7 @@ public static class DataConstants
     public static class Search
     {
         public const int SearchResultsPerPage = 20;
+        public const int SearchMaxPageRange = 3;
         public const int CABManagementQueueResultsPerPage = 10;
         public const string SEARCH_INDEX = "ukmcab-search-index-" + Version.Number ;
         public const string SEARCH_INDEXER = "ukmcab-search-indexer-" + Version.Number;

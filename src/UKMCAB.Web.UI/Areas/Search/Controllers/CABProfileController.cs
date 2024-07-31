@@ -25,6 +25,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Infrastructure.Cache;
+using UKMCAB.Web.UI.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -644,7 +645,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             profileViewModel.RequestFirstAndLastName = task?.Submitter.FirstAndLastName;
             profileViewModel.RequestUserGroup = task?.Submitter.UserGroup;
             profileViewModel.RequestReasonSummary =
-                summaryBreak.HasValue ? task?.Body.Substring(0, summaryBreak.Value) : null;
+                summaryBreak.HasValue ? task?.Body.TruncateWithEllipsis(summaryBreak.Value) : null;
             profileViewModel.RequestReason = task?.Body;
             profileViewModel.RequestTaskType = task?.TaskType;
             return profileViewModel;
