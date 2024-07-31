@@ -1,0 +1,90 @@
+﻿@using System.Net
+@using UKMCAB.Core.Domain
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABDetailsViewModel
+
+    <div class="cab-summary-detail">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+                <dt class="govuk-summary-list__key">
+                    CAB name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.Name
+
+                    @if (Model.CABNameAlreadyExists)
+                    {
+                        <br>
+                        <div class="govuk-warning-text">
+                            <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                            <strong class="govuk-warning-text__text">
+                                <span class="govuk-warning-text__assistive">Warning</span>
+                                This CAB name already exists. Only create this CAB if you have contacted OPSS for approval.
+                            </strong>
+                        </div>
+                    }
+                </dd>
+            </div>
+            @if (CabNumberVisibility.CanDisplay(Model.CabNumberVisibility, User))
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        CAB number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.CABNumber
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Previous CAB numbers
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        @Model.PreviousCABNumbers
+                    </dd>
+                </div>
+            }
+            else if (Model.IsCabNumberDisabled)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        CAB number
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        CAB number assigned on approval
+                    </dd>
+                </div>
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Previous CAB numbers
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        Previous CAB numbers can be added on approval
+                    </dd>
+                </div>
+            }
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Appointment date (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.AppointmentDate.ToStringBeisDateFormat())
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Review date (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                @Html.ValueOrNotProvided(Model.ReviewDate.ToStringBeisDateFormat())
+            </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    UKAS reference number (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Html.ValueOrNotProvided(Model.UKASReference)
+                </dd>
+            </div>
+        </dl>
+    </div>

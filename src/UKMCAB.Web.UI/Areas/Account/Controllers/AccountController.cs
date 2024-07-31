@@ -19,6 +19,7 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Areas.Admin.Controllers;
 using UKMCAB.Web.UI.Pages;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
 {

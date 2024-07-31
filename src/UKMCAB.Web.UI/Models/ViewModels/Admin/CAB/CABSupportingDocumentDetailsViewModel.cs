@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
-    public class CABSupportingDocumentDetailsViewModel
+    public class CABSupportingDocumentDetailsViewModel : CreateEditCABViewModel
     {
         public CABSupportingDocumentDetailsViewModel() { }
 
@@ -15,7 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public List<FileUpload>? Documents { get; set; }
 
-        public bool IsCompleted { get; set; }
+        //public bool IsCompleted { get; set; }
 
         public string? CABId { get; set; }
 

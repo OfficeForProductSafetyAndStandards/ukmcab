@@ -5,6 +5,7 @@ using MoreLinq;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain;
+using UKMCAB.Core.Extensions;
 using UKMCAB.Core.Security;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
@@ -126,7 +127,7 @@ namespace UKMCAB.Core.Services.CAB
         public async Task FilterCabContentsByLaIfPendingOgdApproval(Document latestDocument, string userRoleId)
         {
             // Check if the CAB is pending OGD approval. If so, only display data for the LAs that the current user's role is linked to.
-            if (latestDocument.IsPendingOgdApproval)
+            if (latestDocument.IsPendingOgdApproval())
             {
                 latestDocument.DocumentLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
 

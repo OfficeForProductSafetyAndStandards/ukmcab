@@ -13,7 +13,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 using UKMCAB.Web.UI.Helpers;
-using UKMCAB.Core.Security;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -231,7 +230,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 if (fromSummary)
                 {
-                    return RedirectToAction("Summary", "CAB", new { id, subSectionEditAllowed = true });
+                    return RedirectToAction("Summary", "CAB", new { id, revealEditActions = true });
                 }
                 else
                 {
@@ -400,7 +399,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {
                         return model.IsFromSummary
                             ? RedirectToAction("Summary", "CAB",
-                                new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
+                                new { Area = "admin", id = latestDocument.CABId, revealEditActions = true })
                             : RedirectToAction("DocumentsUpload", "FileUpload",
                                 new { Area = "admin", id = latestDocument.CABId });
                     }
@@ -612,7 +611,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (fromSummary)
                 {
-                    return RedirectToAction("Summary", "CAB", new { id, subSectionEditAllowed = true });
+                    return RedirectToAction("Summary", "CAB", new { id, revealEditActions = true });
                 }
                 else
                 {
@@ -698,7 +697,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return RedirectToAction("Summary", "CAB",
-                        new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true });
+                        new { Area = "admin", id = latestDocument.CABId, revealEditActions = true });
                 }
 
                 if (submitType == Constants.SubmitType.Save)

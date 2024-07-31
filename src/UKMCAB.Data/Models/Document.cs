@@ -85,19 +85,5 @@
         public List<string> HiddenScopeOfAppointments { get; set; } = new(); 
         public string RandomSort { get; set; } = string.Empty;
         public string LegacyCabId { get; set; } = string.Empty;
-
-        public bool IsPendingOgdApproval =>
-            StatusValue == Models.Status.Draft &&
-            SubStatus == SubStatus.PendingApprovalToPublish &&
-            DocumentLegislativeAreas.Any(d => 
-                d.Status == LAStatus.PendingApproval ||
-                d.Status ==  LAStatus.PendingApprovalToRemove ||
-                d.Status ==  LAStatus.PendingApprovalToArchiveAndArchiveSchedule ||
-                d.Status == LAStatus.PendingApprovalToArchiveAndRemoveSchedule ||
-                d.Status == LAStatus.PendingApprovalToUnarchive);
-
-        public bool HasActiveLAs => DocumentLegislativeAreas.Any(la => la.Status != LAStatus.DeclinedByOpssAdmin && la.Status != LAStatus.ApprovedToRemoveByOpssAdmin);
-
-        public bool AllArchived => DocumentLegislativeAreas.All(la => la.Status == LAStatus.ApprovedToArchiveAndArchiveScheduleByOpssAdmin && la.Archived == true);
     }
 }
