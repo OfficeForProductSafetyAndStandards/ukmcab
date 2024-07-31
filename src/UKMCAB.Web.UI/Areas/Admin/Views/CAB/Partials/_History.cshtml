@@ -1,0 +1,21 @@
+﻿@using System.Net
+@using UKMCAB.Core.Domain
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABHistoryViewModel
+
+    <div class="cab-summary-detail">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                <dt class="govuk-summary-list__key">
+                    Actions
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    <p>Last action: @Model.LastAuditLogHistoryDate?.ToStringBeisFormat()</p>
+
+                    <a asp-area="admin" asp-controller="Cab" asp-action="History" asp-route-cabId="@Model.CABId"
+                       asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">
+                        View history
+                    </a>
+                </dd>
+            </div>
+        </dl>
+    </div>

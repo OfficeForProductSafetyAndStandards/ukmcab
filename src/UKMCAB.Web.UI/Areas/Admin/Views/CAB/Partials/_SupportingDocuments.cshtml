@@ -1,0 +1,37 @@
+﻿@using System.Net
+@using UKMCAB.Core.Domain
+@using UKMCAB.Data
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSupportingDocumentDetailsViewModel
+
+    <div class="cab-summary-detail">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row govuk-!-padding-top-5">
+                <dt class="govuk-summary-list__key">
+                    Document (optional)
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @if (Model.Documents.Any())
+                    {
+                        <ol class="govuk-list govuk-list--number">
+                            @foreach (var document in Model.Documents)
+                            {
+                                <li class="cab-summary-schedule-item">
+                                    <div>
+                                        <div>
+                                            <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@document.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@document.Label</a>
+                                        </div>
+                                        <div>@document.Category</div>
+                                    </div>
+
+                                </li>
+                            }
+                        </ol>
+                    }
+                    else
+                    {
+                        <text>@Constants.NotProvided</text>
+                    }
+                </dd>
+            </div>
+        </dl>
+    </div>
