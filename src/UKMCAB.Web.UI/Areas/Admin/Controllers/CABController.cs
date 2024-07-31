@@ -18,6 +18,7 @@ using UKMCAB.Common.Extensions;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Core.Domain;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -78,6 +79,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.ReturnUrl = returnUrl;
             model.IsOPSSUser = User.IsInRole(Roles.OPSS.Id);
             model.IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id);
+            
             return View(model);
         }
 
