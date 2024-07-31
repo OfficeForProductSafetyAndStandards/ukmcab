@@ -79,11 +79,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.ReturnUrl = returnUrl;
             model.IsOPSSUser = User.IsInRole(Roles.OPSS.Id);
             model.IsCabNumberDisabled = !User.IsInRole(Roles.OPSS.Id);
-            // Override default "null" CAB Number Visibility if the user isn't OPSS User for new CABs.
-            if (!model.IsOPSSUser && model.IsNew)
-            {
-                model.CabNumberVisibility = CabNumberVisibility.Private.Id;
-            }
+            
             return View(model);
         }
 
