@@ -26,7 +26,7 @@
                 }
                 else
                 {
-                    <govuk-back-link href="@returnUrl&unlockCab=@Model.CABId">Back to @(returnUrl.Contains("notifications") ? "request" : "search results")</govuk-back-link>
+                    <govuk-back-link href="@Model.ReturnUrl&unlockCab=@Model.CABId">Back to @(Model.ReturnUrl.Contains("notifications") ? "request" : "search results")</govuk-back-link>
                 }
             </div>
         </div>
