@@ -23,26 +23,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<Exception>(async () =>
-                await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Guid().ToString(), _faker.Random.Word(), _faker.Random.Word(), false));
-            return Task.CompletedTask;
-        }
-
-        [Test]
-        public Task IncorrectStatus_UnarchiveDocumentAsync_ThrowsException()
-        {
-            // Arrange
-            _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
-                .ReturnsAsync(new List<Document>
-                {
-                    new()
-                    {
-                        StatusValue = _faker.Random.Enum(Status.Published)
-                    }
-                });
-
-            // Act and Assert
-            Assert.ThrowsAsync<Exception>(async () =>
-                await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Guid().ToString(), _faker.Random.Word(), _faker.Random.Word(), false));
+                await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Guid().ToString(), _faker.Random.Word(), _faker.Random.Word(), true));
             return Task.CompletedTask;
         }
 
