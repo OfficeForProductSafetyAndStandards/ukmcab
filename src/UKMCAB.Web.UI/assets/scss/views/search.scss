@@ -337,6 +337,8 @@
                         .search-result-list-item-link {
                             margin: 0 25px 5px 0;
                             overflow-wrap: break-word;
+                            display: inline-block;
+                            width: calc(100% - 44px);
                         }
 
                         .search-result-list-item-details {
