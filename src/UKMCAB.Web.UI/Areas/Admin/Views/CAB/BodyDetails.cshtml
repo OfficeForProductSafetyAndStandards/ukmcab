@@ -60,7 +60,6 @@
                                     asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(testingLocation)))">
                                 <option value="">Choose location</option>
                             </select>
-                            <a href="#" class="test-location-remove-link govuk-link govuk-link--no-visited-state govuk-visually-hidden">Remove</a>
                             @if (!string.IsNullOrEmpty(testingLocation))
                             {
                                 <button class="govuk-button govuk-button--secondary remove-test-location-button" data-module="govuk-button" name="submitType" value="Remove-@testingLocation">
