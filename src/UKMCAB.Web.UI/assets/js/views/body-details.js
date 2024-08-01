@@ -39,9 +39,9 @@
 
     function showHideRemoveLink(tl, show) {
         if (show) {
-            tl.getElementsByClassName("test-location-remove-link")[0].classList.remove("govuk-visually-hidden");
+            tl.getElementsByClassName("test-location-remove-link")[0].classList.remove("app-no-display");
         } else {
-            tl.getElementsByClassName("test-location-remove-link")[0].classList.add("govuk-visually-hidden");
+            tl.getElementsByClassName("test-location-remove-link")[0].classList.add("app-no-display");
         }
     }
 
@@ -53,6 +53,9 @@
         var newNode = clonedTestLocation.cloneNode(true);
         newNode.getElementsByClassName("test-location-remove-link")[0].addEventListener("click", removeTestLocation);
         testLocationsContainer.appendChild(newNode);
+
+        newNode.querySelector("select").focus();
+
         updateTestLocations();
     }
 
