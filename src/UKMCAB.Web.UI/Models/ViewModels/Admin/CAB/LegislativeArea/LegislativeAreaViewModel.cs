@@ -7,7 +7,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
     {
         public LegislativeAreaViewModel()
         {
-            Title = "Legislative Area";
+            Title = "Legislative area";
         }
 
         [Required(ErrorMessage = "Select a legislative area")]
