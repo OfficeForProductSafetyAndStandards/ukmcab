@@ -18,13 +18,20 @@
     </div>
 }
 
-@if (TempData[Constants.TempDraftKey] != null)
+@if (TempData[Constants.TempDraftKeyLine1] != null)
 {
     <div class="govuk-notification-banner govuk-grid-row" role="region"
          aria-labelledby="govuk-notification-banner-title"
          data-module="govuk-notification-banner">
         <div class="govuk-notification-banner__content justify-content--center">
-            <p class="govuk-notification-banner__heading">@Html.Raw(@TempData[Constants.TempDraftKey].ToString())</p>
+            <p class="govuk-notification-banner__heading">
+                @TempData[Constants.TempDraftKeyLine1].ToString()
+                @if (TempData[Constants.TempDraftKeyLine2] != null)
+                {
+                    <br />
+                    @TempData[Constants.TempDraftKeyLine2].ToString()
+                }
+            </p>
         </div>
     </div>
 }

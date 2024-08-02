@@ -29,7 +29,14 @@
             <dd class="govuk-summary-list__value">
                 @if (Model.BodyTypes.Any())
                 {
-                    @Html.Raw(string.Join("<br />", Model.BodyTypes))
+                    @for (int i = 0; i < Model.BodyTypes.Count; i++)
+                    {
+                        @Model.BodyTypes[i]
+                        @if (i < Model.BodyTypes.Count - 1)
+                        {
+                            <br />
+                        }
+                    }
                 }
                 else
                 {

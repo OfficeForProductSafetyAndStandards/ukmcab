@@ -286,9 +286,16 @@
                                 Address
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @if (!string.IsNullOrWhiteSpace(Model.Address))
+                                @if (Model.Address.Any())
                                 {
-                                    <text>@Html.Raw(Model.Address)</text>
+                                    @for (int i = 0; i < Model.Address.Count(); i++)
+                                    {
+                                        @Model.Address[i]
+                                        @if (i < Model.Address.Count() - 1)
+                                        {
+                                            <br />
+                                        }
+                                    }
                                 }
                                 else
                                 {

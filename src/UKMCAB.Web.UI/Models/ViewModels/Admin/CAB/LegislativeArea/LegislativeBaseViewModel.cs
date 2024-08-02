@@ -2,6 +2,10 @@
 {
     public class LegislativeAreaBaseViewModel : ILayoutModel
     {
+        public LegislativeAreaBaseViewModel(string title)
+        {
+            Title = title;
+        }
         public Guid CABId { get; set; }
 
         public string? Title { get; set; }
