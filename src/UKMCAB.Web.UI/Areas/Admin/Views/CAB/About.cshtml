@@ -37,6 +37,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="cabdetailsform" method="post" novalidate>
+            <input type="hidden" asp-for="IsOPSSUser" value="@Model.IsOPSSUser" />
             <input type="hidden" asp-for="IsFromSummary" />
             <input type="hidden" asp-for="ReturnUrl" />
             <fieldset class="govuk-fieldset">
