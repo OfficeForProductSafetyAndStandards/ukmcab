@@ -3,11 +3,13 @@ namespace UKMCAB.Core.Services.CAB;
 public interface IEditLockService
 {
     /// <summary>
-    /// Returns the user id if any of the cab edit lock.
+    /// Returns true if the CAB does not have a edit lock matching the user
+    /// Returns false if the CAB not found or if CAB has a edit locked matching the user
     /// </summary>
     /// <param name="cabId">cab to check</param>
+    /// <param name="userId">id of user</param>
     /// <returns>UserId with lock</returns>
-    Task<string?> LockExistsForCabAsync(string cabId);
+    Task<bool> IsCabLockedForUser(string cabId, string userId);
     
     /// <summary>
     /// Adds Cab to cache for edit lock with associated user

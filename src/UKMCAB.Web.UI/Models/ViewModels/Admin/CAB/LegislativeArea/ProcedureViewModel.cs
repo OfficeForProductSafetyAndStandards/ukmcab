@@ -5,6 +5,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class ProcedureViewModel : LegislativeAreaBaseViewModel
     {
+        public ProcedureViewModel()
+        {
+            Title = "Legislative area procedure";
+        }
+
         [Required(ErrorMessage = "Select an applicable conformity assessment procedure")]
         public IEnumerable<Guid>? SelectedProcedureIds { get; set; }
 

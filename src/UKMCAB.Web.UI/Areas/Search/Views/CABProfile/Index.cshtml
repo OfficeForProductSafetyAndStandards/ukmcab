@@ -126,7 +126,7 @@
                         if (Model.RequestTaskType == null)
                         {
                             <span>
-                                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-subSectionEditAllowed="True" asp-route-returnUrl="@returnUrl" asp-route-id="@Model.CABId" asp-route-fromCabProfilePage="@true">Edit</a>
+                                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-revealEditActions="True" asp-route-returnUrl="@returnUrl" asp-route-id="@Model.CABId" asp-route-fromCabProfilePage="@true">Edit</a>
                             </span>
 
                             if (Model.IsOPSSUser)

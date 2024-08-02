@@ -47,6 +47,7 @@ using System.Reflection;
 using UKMCAB.Web.UI.Services.ReviewDateReminder;
 using UKMCAB.Core.Security.Requirements;
 using Microsoft.AspNetCore.Authorization;
+using UKMCAB.Web.UI.Models.Builders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -158,6 +159,11 @@ builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddTransient<IFileUploadUtils, FileUploadUtils>();
 builder.Services.AddTransient<ILegislativeAreaService, LegislativeAreaService>();
 builder.Services.AddTransient<ILegislativeAreaDetailService, LegislativeAreaDetailService>();
+builder.Services.AddTransient<ICabSummaryUiService, CabSummaryUiService>();
+
+builder.Services.AddTransient<ICabSummaryViewModelBuilder, CabSummaryViewModelBuilder>();
+builder.Services.AddTransient<ICabLegislativeAreasViewModelBuilder, CabLegislativeAreasViewModelBuilder>();
+builder.Services.AddTransient<ICabLegislativeAreasItemViewModelBuilder, CabLegislativeAreasItemViewModelBuilder>();
 
 builder.Services.AddCustomHttpErrorHandling();
 builder.Services.AddGovUkFrontend();

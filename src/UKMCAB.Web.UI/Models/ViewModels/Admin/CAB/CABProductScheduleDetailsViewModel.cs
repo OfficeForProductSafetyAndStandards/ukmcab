@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
-    public class CABProductScheduleDetailsViewModel
+    public class CABProductScheduleDetailsViewModel : CreateEditCABViewModel
     {
         public CABProductScheduleDetailsViewModel() { }
 

@@ -5,6 +5,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class ProductViewModel : LegislativeAreaBaseViewModel
     {
+        public ProductViewModel()
+        {
+            Title = "Legislative area product";
+        }
+
         [Required(ErrorMessage = "Select a product")]
         public List<Guid>? SelectedProductIds { get; set; }
 

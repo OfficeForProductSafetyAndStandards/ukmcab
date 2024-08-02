@@ -12,7 +12,7 @@
         <div class="govuk-grid-column-two-thirds">
             @if (Model.IsFromSummary && cabId != null)
             {
-                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" />
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl" />
             }
             else
             {
@@ -37,6 +37,7 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <form id="cabdetailsform" method="post" novalidate>
+            <input type="hidden" asp-for="IsOPSSUser" value="@Model.IsOPSSUser" />
             <input type="hidden" asp-for="IsFromSummary" />
             <input type="hidden" asp-for="ReturnUrl" />
             <fieldset class="govuk-fieldset">
@@ -107,7 +108,7 @@
                 }
 
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.AppointmentDate))">
-                    <fieldset class="govuk-fieldset" role="group" aria-describedby="appointment-date-hint">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="AppointmentDate appointment-date-hint">
                         <h3 class="govuk-label-wrapper">
                             <label class="govuk-label govuk-label--s" asp-for="AppointmentDate" id="AppointmentDate">
                                 Appointment date (optional)
@@ -149,9 +150,9 @@
                 </div>
 
                 <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ReviewDate))">
-                    <fieldset class="govuk-fieldset" role="group" aria-describedby="review-date-hint">
+                    <fieldset class="govuk-fieldset" role="group" aria-describedby="ReviewDate review-date-hint">
                         <h3 class="govuk-label-wrapper">
-                            <label class="govuk-label govuk-label--s" asp-for="ReviewDate">
+                            <label class="govuk-label govuk-label--s" asp-for="ReviewDate" id="ReviewDate">
                                 Review date (optional)
                             </label>
                         </h3>
@@ -216,7 +217,7 @@
                     </button>
                     @if (Model.IsFromSummary)
                     {
-                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                     }                   
                     else
                     {

@@ -9,7 +9,7 @@
             <div class="govuk-grid-column-two-thirds">
                 @if (Model.IsFromSummary)
                 {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-back-link">Back</a>
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CABId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-back-link">Back</a>
                 }
                 else
                 {

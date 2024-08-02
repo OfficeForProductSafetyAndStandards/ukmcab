@@ -83,10 +83,9 @@ public class DateUtilsShould
     {
         // Arrange
         var modelState = new ModelStateDictionary();
-        var testDate = DateTime.Today.AddDays(1);
-        var day = testDate.Day.ToString();
-        var month = testDate.Month.ToString();
-        var year = testDate.Year.ToString();
+        var day = "13";
+        var month = "07";
+        var year = "2044";
         var modelKey = "AppointmentDate";
         var errorMessagePart = "appointment";
         var errorMessage = "The appointment date must be in the past";

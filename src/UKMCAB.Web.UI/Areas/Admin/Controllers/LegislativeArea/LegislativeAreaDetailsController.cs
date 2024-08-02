@@ -13,6 +13,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Core.Security;
 using System.Net;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -249,7 +250,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                                  throw new InvalidOperationException();
             var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == documentScopeOfAppointment.LegislativeAreaId);
-            documentLegislativeArea?.MarkAsDraft(latestDocument);
+            documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
             
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
@@ -771,7 +772,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                                  throw new InvalidOperationException();
             var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == scopeOfAppointment.LegislativeAreaId);
-            documentLegislativeArea?.MarkAsDraft(latestDocument);
+            documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
 
             if (latestDocument.ScopeOfAppointments.Any(s => s.Equals(scopeOfAppointment)))
             {                
@@ -1170,7 +1171,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             documentLegislativeArea.RequestReason = vm.UserNotes;
 
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync((await _userService.GetAsync(User.GetUserId()!))!, latestDocument);
-            return RedirectToAction("summary", "cab", new { Area = "admin", id, subSectionEditAllowed = true });
+            return RedirectToAction("summary", "cab", new { Area = "admin", id, revealEditActions = true });
         }
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaRequest.cshtml", vm);

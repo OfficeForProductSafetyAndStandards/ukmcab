@@ -19,6 +19,7 @@ using System.Globalization;
 using UKMCAB.Subscriptions.Core.Common;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using AngleSharp.Common;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -74,7 +75,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
 
         if (!lasToApprove.Any())
         {
-            return RedirectToRoute(CABController.Routes.CabSummary, new { id, subSectionEditAllowed = true });
+            return RedirectToRoute(CABController.Routes.CabSummary, new { id, revealEditActions = true });
         }
 
         var las = await GetLegislativeAreasForUserAsync();
@@ -148,7 +149,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var publishModel = new CABSummaryViewModel
         {
             CABId = latestDocument.CABId,
-            CabDetailsViewModel = new CABDetailsViewModel(latestDocument),
+            CabDetailsViewModel = new CABDetailsViewModel(latestDocument, User),
             CabContactViewModel = new CABContactViewModel(latestDocument),
             CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latestDocument),
             CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latestDocument),
