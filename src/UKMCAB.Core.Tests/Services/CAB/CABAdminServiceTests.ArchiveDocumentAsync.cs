@@ -37,7 +37,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
-            Assert.True(result.DocumentLegislativeAreas.All(la => la.Archived.HasValue && la.Archived.Value));
+            Assert.True(result.DocumentLegislativeAreas.All(la => la.Archived!.Value));
             Assert.AreEqual(Status.Archived, result.StatusValue);
         }
     }

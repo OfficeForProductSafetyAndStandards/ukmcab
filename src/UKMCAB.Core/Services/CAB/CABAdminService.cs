@@ -428,7 +428,6 @@ namespace UKMCAB.Core.Services.CAB
 
             publishedVersion!.StatusValue = Status.Historical;
             publishedVersion.SubStatus = SubStatus.None;
-            publishedVersion.DocumentLegislativeAreas.ForEach(la => la.Archived = true);
             publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.UnpublishApprovalRequest,
                 internalReason));
             await _cabRepository.UpdateAsync(publishedVersion);
@@ -465,10 +464,7 @@ namespace UKMCAB.Core.Services.CAB
             archivedDoc.StatusValue = Status.Draft;
             archivedDoc.SubStatus = SubStatus.None;
             archivedDoc.id = string.Empty;
-            archivedDoc.DocumentLegislativeAreas.ForEach(la => {
-                la.Archived = false; 
-                la.Status = LAStatus.Draft;
-            });
+            archivedDoc.DocumentLegislativeAreas.ForEach(la => la.Archived = false );
             archivedDoc.AuditLog = new List<Audit>
             {
                 new(userAccount, AuditCABActions.Unarchived)
@@ -517,7 +513,7 @@ namespace UKMCAB.Core.Services.CAB
 
             publishedVersion!.StatusValue = Status.Archived;
             publishedVersion.SubStatus = SubStatus.None;
-            publishedVersion.DocumentLegislativeAreas.ForEach(la => la.Archived = true);
+            publishedVersion.DocumentLegislativeAreas.ForEach(la => la.Archived = true );
             publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.Archived, archiveInternalReason,
                 archivePublicReason));
             await _cabRepository.UpdateAsync(publishedVersion);
