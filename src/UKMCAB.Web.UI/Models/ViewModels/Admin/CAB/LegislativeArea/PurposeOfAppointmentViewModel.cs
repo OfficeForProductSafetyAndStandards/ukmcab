@@ -5,11 +5,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class PurposeOfAppointmentViewModel : LegislativeAreaBaseViewModel
     {
-        public PurposeOfAppointmentViewModel()
-        {
-            Title = "Legislative area purpose of appointment";
-        } 
-
         [Required(ErrorMessage = "Select a purpose of appointment")]
         public Guid? SelectedPurposeOfAppointmentId { get; set; }
         
@@ -18,5 +13,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? LegislativeArea { get; set; } = string.Empty;
 
         public IEnumerable<SelectListItem>? PurposeOfAppointments { get; set; }
+
+        public PurposeOfAppointmentViewModel() : base("Legislative area purpose of appointment") { }
     }
 }

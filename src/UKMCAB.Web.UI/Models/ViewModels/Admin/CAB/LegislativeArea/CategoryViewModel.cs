@@ -4,12 +4,7 @@ using System.ComponentModel.DataAnnotations;
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class CategoryViewModel : LegislativeAreaBaseViewModel
-    {
-        public CategoryViewModel()
-        {
-            Title = "Legislative area category";
-        }
-
+    {        
         [Required(ErrorMessage = "Select a product category")]
         public Guid? SelectedCategoryId { get; set; }
 
@@ -21,6 +16,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? PurposeOfAppointment { get; set; }
 
         public IEnumerable<SelectListItem> Categories { get; set; } = new List<SelectListItem>();
+
         public bool HasProducts { get; set; }
+
+        public CategoryViewModel() : base("Legislative area category") { }
     }
 }

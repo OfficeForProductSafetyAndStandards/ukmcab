@@ -5,11 +5,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class SubCategoryViewModel : LegislativeAreaBaseViewModel
     {
-        public SubCategoryViewModel()
-        {
-            Title = "Legislative crea sub-category";
-        }
-
         [Required(ErrorMessage = "Select a product sub-category")]
         public Guid? SelectedSubCategoryId { get; set; }
 
@@ -20,5 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? Category { get; set; }
 
         public IEnumerable<SelectListItem> SubCategories { get; set; } = new List<SelectListItem>();
+
+        public SubCategoryViewModel() : base("Legislative crea sub-category") { }
     }
 }
