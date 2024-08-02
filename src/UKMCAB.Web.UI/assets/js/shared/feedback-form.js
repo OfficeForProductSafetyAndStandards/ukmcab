@@ -95,20 +95,30 @@
             if (!validValue(whatWereYouDoing.value)) {
                 whatWereYouDoing.classList.add("feedback-form-error");
                 errorMessage = "Enter information about what you were doing";
+                whatWereYouDoing.focus();
             } else {
                 whatWereYouDoing.classList.remove("feedback-form-error");
             }
             if (!validValue(whatWentWrong.value)) {
                 whatWentWrong.classList.add("feedback-form-error");
-                errorMessage += errorMessage.length ? " and what went wrong" : "Enter details of what went wrong";
+                if (errorMessage.length === 0) {
+                    errorMessage += "Enter details of what went wrong";
+                    whatWentWrong.focus();
+                } else {
+                    errorMessage += " and what went wrong";
+                }
             } else {
                 whatWentWrong.classList.remove("feedback-form-error");
             }
 
             if (!isAValidEmail(email.value)) {
                 email.classList.add("feedback-form-error");
-                errorMessage += errorMessage.length ? ".\n\nEnter an email address in the correct format, like name@example.com" :
-                    "Enter an email address in the correct format, like name@example.com";
+                if (errorMessage.length === 0) {
+                    errorMessage += "Enter an email address in the correct format, like name@example.com";
+                    email.focus();
+                } else {
+                    errorMessage += ".\n\nEnter an email address in the correct format, like name@example.com";
+                }
             } else {
                 email.classList.remove("feedback-form-error");
             }
