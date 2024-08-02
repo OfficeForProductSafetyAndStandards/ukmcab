@@ -155,7 +155,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion, false);
             TempData[Constants.TempDraftKeyLine1] =
                 $"Draft record saved for {latestVersion.Name}";
-            TempData[Constants.TempDraftKeyLine1] = $"CAB number {latestVersion.CABNumber}";
+            TempData[Constants.TempDraftKeyLine2] = $"CAB number {latestVersion.CABNumber}";
             return RedirectToAction("CABManagement", "CabManagement",
                 new { Area = "admin", unlockCab = latestVersion.CABId });
         }
