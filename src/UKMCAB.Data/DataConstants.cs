@@ -301,5 +301,10 @@ public static class DataConstants
     public static class UserAccount
     {
         public const string UnassignedUserId = "unassigned-user-id";
+    }    
+    public static class PublishType
+    {
+        public const string MajorPublish = "Major publish";
+        public const string MinorPublish = "Minor publish";
     }
 }

@@ -18,9 +18,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public CABSupportingDocumentDetailsViewModel? CABSupportingDocumentDetailsViewModel { get; set; }
         public CABHistoryViewModel? CABHistoryViewModel { get; set; }
         public CABGovernmentUserNotesViewModel? CABGovernmentUserNotesViewModel { get; set; }
-        public CABPublishMajorOrMinorViewModel? CABPublishMajorOrMinorViewModel { get; set; }
+        public CABPublishTypeViewModel? CABPublishTypeViewModel { get; set; }
+        public string? SelectedPublishType { get; set; }
         public string TitleHint { get; set; } = "CAB profile";
         public string? ReturnUrl { get; set; }
+        public bool? FromCabProfilePage { get; set; }
         public bool ShowSubstatusName => !string.IsNullOrWhiteSpace(SubStatusName) && SubStatus != SubStatus.None;
         public bool IsPendingOgdApproval { get; set; }
         public bool IsOPSSOrInCreatorUserGroup { get; set; }
