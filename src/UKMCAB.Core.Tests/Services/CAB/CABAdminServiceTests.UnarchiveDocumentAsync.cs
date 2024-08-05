@@ -23,7 +23,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<Exception>(async () =>
-                await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Guid().ToString(), _faker.Random.Word(), _faker.Random.Word(), true));
+                await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Guid().ToString(), _faker.Random.Words(10), _faker.Random.Words(10), true));
             return Task.CompletedTask;
         }
 
@@ -46,15 +46,17 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<Exception>(async () =>
-                await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Guid().ToString(), _faker.Random.Word(), _faker.Random.Word(), true));
+                await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Guid().ToString(), _faker.Random.Words(10), _faker.Random.Words(10), true));
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.VerifyNoOtherCalls();
             return Task.CompletedTask;
         }
 
 
-        [Test]
-        public async Task UnarchiveDocumentAsync_AllLegislativeAreasArchived()
+       
+        [TestCase(true, LAStatus.Draft)]
+        [TestCase(false, LAStatus.Published)]
+        public async Task UnarchiveDocumentAsync_All_LegislativeAreas_Archived_And_Correct_Status(bool legislativeAreasAsDraft, LAStatus expectedLAStatus)
         {
             // Arrange
             (var legislativeAreas, var scopeOfAppointments, var schedules) = GenerateTestData();
@@ -64,19 +66,35 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 CABId = Guid.NewGuid().ToString(),
                 CreatedByUserGroup = Roles.OPSS.Id,
                 StatusValue = Status.Archived,
-                DocumentLegislativeAreas = legislativeAreas,
-                ScopeOfAppointments = scopeOfAppointments,
-                Schedules = schedules
+                DocumentLegislativeAreas = new List<DocumentLegislativeArea>() {
+                    new DocumentLegislativeArea {
+                        Status = LAStatus.Published
+                    },
+                    new DocumentLegislativeArea {
+                        Status = LAStatus.Published
+                    },
+                    new DocumentLegislativeArea {
+                        Status = LAStatus.Published
+                    },
+                    new DocumentLegislativeArea {
+                        Status = LAStatus.Published
+                    },
+                    new DocumentLegislativeArea {
+                        Status = LAStatus.Published
+                    },
+                }
             };
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { document });
             _mockCABRepository.Setup(x => x.CreateAsync(It.IsAny<Document>(), It.IsAny<DateTime>())).ReturnsAsync(document);
 
             // Act
-            var result = await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, document.CABId, "test internal reason", "test publicreason", true);
+            var result = await _sut.UnarchiveDocumentAsync(new Mock<UserAccount>().Object, document.CABId, 
+                _faker.Random.Words(10), _faker.Random.Words(10), true, legislativeAreasAsDraft);
 
             // Assert
-            Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
+            Assert.AreEqual(document.DocumentLegislativeAreas.Count, result.DocumentLegislativeAreas.Count);
             Assert.True(result.DocumentLegislativeAreas.All(la => !la.Archived!.Value));
+            Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == expectedLAStatus));
             Assert.AreEqual(Status.Draft, result.StatusValue);
         }
     }

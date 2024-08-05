@@ -441,7 +441,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId,
-            string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas)
+            string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas, bool legislativeAreasAsDraft = false)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             var draft = documents.SingleOrDefault(d => d is { StatusValue: Status.Draft });
@@ -464,7 +464,14 @@ namespace UKMCAB.Core.Services.CAB
             archivedDoc.StatusValue = Status.Draft;
             archivedDoc.SubStatus = SubStatus.None;
             archivedDoc.id = string.Empty;
-            archivedDoc.DocumentLegislativeAreas.ForEach(la => la.Archived = false );
+            archivedDoc.DocumentLegislativeAreas.ForEach(la =>
+            {
+                la.Archived = false;
+                if (legislativeAreasAsDraft)
+                {
+                    la.Status = LAStatus.Draft;
+                }
+            });
             archivedDoc.AuditLog = new List<Audit>
             {
                 new(userAccount, AuditCABActions.Unarchived)
