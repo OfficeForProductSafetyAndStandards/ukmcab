@@ -19,9 +19,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public int NoOfProductsInScopeOfAppointment { get; set; }
 
-        [Obsolete("This constructor is obsolete. Use LegislativeAreaListItemViewModel(Guid legislativeAreaId, string legislativeArea, string? purposeOfAppointment, string? category,  string? subCategory, Guid scopeId, string? product, List<string> procedures.")]
-        public LegislativeAreaListItemViewModel() { }
-
+        public LegislativeAreaListItemViewModel() : base("Legislative area list item") { }
         public LegislativeAreaListItemViewModel(
             Guid legislativeAreaId, 
             string legislativeArea, 
@@ -30,7 +28,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             string? subCategory, 
             Guid scopeId,
             string? product,
-            List<string> procedures) 
+            List<string> procedures) : base("Legislative area list item")
         {
             LegislativeArea = new ListItem { Id = legislativeAreaId, Title = legislativeArea };
             PurposeOfAppointment = purposeOfAppointment;

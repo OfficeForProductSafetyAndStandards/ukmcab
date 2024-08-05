@@ -40,7 +40,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? UKASReferenceNumber { get; set; }
 
         // Contact details
-        public string? Address { get; set; }
+        public List<string> Address { get; set; }
         public string? Website { get; set; }
         public string? Email { get; set; }
         public string? Phone { get; set; }

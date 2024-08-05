@@ -11,7 +11,8 @@ public static class Constants
     public const string DeclinedLA = nameof(DeclinedLA);
     public const string ApprovedLA = nameof(ApprovedLA);
 
-    public const string TempDraftKey = nameof(TempDraftKey);
+    public const string TempDraftKeyLine1 = nameof(TempDraftKeyLine1);
+    public const string TempDraftKeyLine2 = nameof(TempDraftKeyLine2);
     public const string TempCookieChangeKey = nameof(TempCookieChangeKey);
 
     public const string AnalyticsOptInCookieName = "accept_analytics_cookies";
