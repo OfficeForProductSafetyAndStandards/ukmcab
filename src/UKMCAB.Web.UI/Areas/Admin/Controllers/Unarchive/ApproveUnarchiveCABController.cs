@@ -120,7 +120,7 @@ public class ApproveUnarchiveCABController : Controller
     {
         var document = await GetArchivedDocumentAsync(cabUrl);
         var latestDocument =
-            await _cabAdminService.UnarchiveDocumentAsync(currentUser, document.CABId, null, null, requestedByUkas);
+            await _cabAdminService.UnarchiveDocumentAsync(currentUser, document.CABId, null, null, requestedByUkas, !publish);
         _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
         {
             [AiTracking.Metadata.CabId] = document.CABId,
