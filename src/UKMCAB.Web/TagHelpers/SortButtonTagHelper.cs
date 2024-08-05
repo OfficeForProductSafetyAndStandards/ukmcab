@@ -51,12 +51,15 @@ public class SortButtonTagHelper : TagHelper
             output.Attributes.EnsureAttribute("aria-sort", SortDirectionHelper.Get(SortDirection));
             
             output.PostContent.AppendHtml($"<span class='govuk-visually-hidden'>{text}, sorted {SortDirectionHelper.GetFriendly(SortDirection)} press enter or space to change the sorting order.</span>");
+            output.PostContent.AppendHtml($"<span class='after-sort' aria-hidden='true'> ▲</span>");
         }
         else
         {
             output.Attributes.EnsureAttribute("href", $"?sf={TargetField}&sd={SortDirectionHelper.Ascending}{(UseServerSideTabs ? "&TabName=" + TabToShow : "#" + TabToShow)}");
             output.Attributes.EnsureAttribute("aria-sort", "none");
             output.PostContent.AppendHtml($"<span class='govuk-visually-hidden'>{text}, Not sorted, Press enter or space to sort</span>");
+            output.PreContent.AppendHtml($"<span class='before-sort' aria-hidden='true'> ▼</span>");
+            output.PostContent.AppendHtml($"<span class='after-sort' aria-hidden='true'> ▲</span>");
         }
 
     }
