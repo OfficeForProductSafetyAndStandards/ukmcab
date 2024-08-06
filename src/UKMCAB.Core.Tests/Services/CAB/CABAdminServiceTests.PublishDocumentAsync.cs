@@ -8,7 +8,6 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using System.Linq;
 using UKMCAB.Core.Security;
-using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {

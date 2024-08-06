@@ -37,6 +37,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             ReviewDateYear = document.RenewalDate?.Year.ToString("0000") ?? string.Empty;
             UKASReference = document.UKASReference;
             DocumentStatus = document.StatusValue;
+            IsCreatedByOpssAdmin = document.CreatedByUserGroup.Equals(Roles.OPSS.Id);
 
             IsFromSummary = fromSummary;
             ReturnUrl = returnUrl;
@@ -71,6 +72,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsCabNumberVisible { get; set; }
         public bool IsOPSSUser { get; set; }
         public bool CABNameAlreadyExists { get; set; }
+        public bool? IsCreatedByOpssAdmin { get; set; }
     }
 
     public class CABDetailsViewModelValidator : AbstractValidator<CABDetailsViewModel>
@@ -80,11 +82,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             RuleLevelCascadeMode = CascadeMode.Stop;
 
             RuleFor(x => x.Name).NotEmpty().WithMessage("Enter a CAB name");
-            RuleFor(x => x.CABNumber).NotEmpty().When(IsOpssAdmin).WithMessage("Enter a CAB number");
+            RuleFor(x => x.CABNumber).NotEmpty().When(IsOpssAdminAndIsCreatedByOpssAdmin).WithMessage("Enter a CAB number");
         }
-        private bool IsOpssAdmin(CABDetailsViewModel model)
+        private bool IsOpssAdminAndIsCreatedByOpssAdmin(CABDetailsViewModel model)
         {
-            return model.IsOPSSUser;
+            return model.IsOPSSUser && model.IsCreatedByOpssAdmin != false && model.SubmitType != Constants.SubmitType.Save;
         }
     }
 }

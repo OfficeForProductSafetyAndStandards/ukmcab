@@ -52,7 +52,13 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         {
                             document.UKASReference = re.UKASRef;
                         }
-                    }                    
+                    }
+
+                    // Archive LAs in Archived CABs 
+                    if (document.StatusValue == Status.Archived)
+                    {
+                        document.DocumentLegislativeAreas.ForEach(la => la.Archived = true);
+                    }
 
                     document.Version = DataConstants.Version.Number;
                  
