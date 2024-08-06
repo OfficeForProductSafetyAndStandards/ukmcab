@@ -15,8 +15,6 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
-using UKMCAB.Data.Models.LegislativeAreas;
-using UKMCAB.Core.Domain;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Web.UI.Models.Builders;
 using UKMCAB.Data;
@@ -400,7 +398,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var cabSummary = await PopulateCABSummaryViewModel(latest, revealEditActions, returnUrl, fromCabProfilePage);
 
-            if (cabSummary.IsEditLocked)
+            var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, User.GetUserId());
+
+            if (isCabLockedForUser)
             {
                 await _cabSummaryUiService.LockCabForUser(cabSummary);
             }
@@ -616,7 +616,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
             var cabHistory = new CABHistoryViewModel(latest, currentUrl);
             var cabGovernmentUserNoteViewModel = new CABGovernmentUserNotesViewModel(latest, currentUrl);
-            var cabPublishTypeViewModel = new CABPublishTypeViewModel(UserRoleId.Equals(Roles.OPSS.Id));
+            var cabPublishTypeViewModel = new CABPublishTypeViewModel(User != null && User.IsInRole(Roles.OPSS.Id));
             var cabLegislativeAreas = _cabLegislativeAreasViewModelBuilder
                 .WithDocumentLegislativeAreas(
                     latest.DocumentLegislativeAreas,

@@ -401,7 +401,7 @@ namespace UKMCAB.Core.Services.CAB
             latestDocument.SubStatus = SubStatus.None;
             
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
-                publishedOrArchivedDocument, publishInternalReason, publishPublicReason));
+                publishedOrArchivedDocument, publishInternalReason, publishPublicReason, publishType));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
             await _cabRepository.UpdateAsync(latestDocument, lastUpdatedDate);
 

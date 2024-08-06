@@ -1,12 +1,13 @@
-using FluentValidation;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System.ComponentModel.DataAnnotations;
 using UKMCAB.Data;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABPublishTypeViewModel
     {
+        public CABPublishTypeViewModel()
+        {            
+        }
         public CABPublishTypeViewModel(bool isOPSSUser)
         {
             IsOPSSUser = isOPSSUser;

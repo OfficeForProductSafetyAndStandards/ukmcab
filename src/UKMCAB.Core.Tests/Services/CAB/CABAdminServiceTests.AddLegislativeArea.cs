@@ -80,7 +80,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
-                    d.CABId == cabId.ToString() && d.DocumentLegislativeAreas.Contains(legislativeArea.Object))),
+                    d.CABId == cabId.ToString() && d.DocumentLegislativeAreas.Contains(legislativeArea.Object)), null),
                 Times.Once);            
         }
     }

@@ -40,7 +40,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             Assert.AreEqual(result.SubStatus, SubStatus.PendingApprovalToPublish);
             Assert.AreEqual(result.AuditLog.First().Action, AuditCABActions.SubmittedForApproval);
             Assert.IsTrue(result.DocumentLegislativeAreas.All(x => x.Status == LAStatus.PendingApproval));
-            _mockCABRepository.Verify(r => r.UpdateAsync(draftDocument), Times.Once);
+            _mockCABRepository.Verify(r => r.UpdateAsync(draftDocument, null), Times.Once);
         }
 
         [Test]
@@ -96,7 +96,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             Assert.AreEqual(result.SubStatus, SubStatus.None);
-            _mockCABRepository.Verify(r => r.UpdateAsync(draftDocument), Times.Once);
+            _mockCABRepository.Verify(r => r.UpdateAsync(draftDocument, null), Times.Once);
         }
 
         [Test]
