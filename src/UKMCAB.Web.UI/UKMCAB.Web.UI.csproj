@@ -82,13 +82,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Areas\Search\Views\UserNote\ConfirmDelete.cshtml">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="legislative-file-lookup.csv">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
