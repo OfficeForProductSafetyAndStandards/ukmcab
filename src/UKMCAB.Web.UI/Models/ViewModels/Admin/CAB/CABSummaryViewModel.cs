@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Core.Security;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -40,6 +41,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool RequestedFromCabProfilePage { get; set; }
         public bool HasActiveLAs { get; set; }
         public bool DraftUpdated { get; set; }
+
+        public bool ShowProductSchedulesWarning => 
+            CABProductScheduleDetailsViewModel?.ActiveSchedules?.Any(p => p.CreatedBy?.Equals(Roles.UKAS.Id) ?? false) ?? false;
 
         public bool ShowEditButton =>
             !RevealEditActions &&
