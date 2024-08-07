@@ -44,7 +44,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool DraftUpdated { get; set; }
 
         public bool ShowSupportingDocumentsWarning =>
-            IsOpssAdmin && (CABSupportingDocumentDetailsViewModel?.HasPublicDocuments ?? false);
+            RevealEditActions &&
+            !IsEditLocked &&
+            IsOpssAdmin && 
+            (CABSupportingDocumentDetailsViewModel?.HasPublicDocuments ?? false);
 
         public bool ShowEditButton =>
             !RevealEditActions &&
