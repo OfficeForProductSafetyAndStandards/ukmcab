@@ -29,8 +29,9 @@ namespace UKMCAB.Data.Models
                            || (x.LegislativeArea?.Equals(y.LegislativeArea) ?? false))
                        && ((x.Category == null && y.Category == null)
                            || (x.Category?.Equals(y.Category) ?? false))
-                       && x.UploadDateTime.Date.Equals(y.UploadDateTime.Date))
-                       && (x.CreatedBy?.Equals(y.CreatedBy) ?? false);
+                       && x.UploadDateTime.Date.Equals(y.UploadDateTime.Date)
+                       && ((x.CreatedBy == null && y.CreatedBy == null)
+                            || (x.CreatedBy?.Equals(y.CreatedBy) ?? false)));
         }
 
         public int GetHashCode([DisallowNull] FileUpload obj)
