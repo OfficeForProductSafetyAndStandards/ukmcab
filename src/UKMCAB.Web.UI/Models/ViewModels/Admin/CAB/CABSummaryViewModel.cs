@@ -1,9 +1,11 @@
-﻿using UKMCAB.Data.Models;
+﻿using Humanizer;
+using UKMCAB.Data;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABSummaryViewModel : ILayoutModel
-    {        
+    {
         public string? Id { get; set; }
         public Status Status { get; set; }
         public string? StatusCssStyle { get; set; }
@@ -40,6 +42,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool RequestedFromCabProfilePage { get; set; }
         public bool HasActiveLAs { get; set; }
         public bool DraftUpdated { get; set; }
+
+        public bool ShowSupportingDocumentsWarning =>
+            IsOpssAdmin && (CABSupportingDocumentDetailsViewModel?.HasPublicDocuments ?? false);
 
         public bool ShowEditButton =>
             !RevealEditActions &&

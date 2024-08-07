@@ -25,8 +25,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsSelected { get; set; } = false;
         public bool IsDuplicated { get; set; } = false;
         public bool IsReplaced { get; set; } = false;
-
         public bool? Archived { get; set; }
+        public string? Publication { get; set; }
     }
 
     public static class SchedulesOptions

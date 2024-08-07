@@ -34,7 +34,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string? Name { get; set; }
         public DateTime? AppointmentDate { get; set; }
         public DateTime? ReviewDate { get; set; }
-        
+
         public bool IsOPSSUser { get; init; }
 
         public string? UKASReferenceNumber { get; set; }
@@ -54,21 +54,24 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public List<string> RegisteredTestLocations { get; set; } = new();
         public string BodyNumber { get; set; }
         public string PreviousBodyNumbers { get; set; }
-        public string? CabNumberVisibility { get;  set; }
+        public string? CabNumberVisibility { get; set; }
         public List<string> BodyTypes { get; set; } = new();
         public List<string> LegislativeAreas { get; set; } = new();
         public CABDocumentsViewModel ProductSchedules { get; set; } = new();
         public CABLegislativeAreasModel CabLegislativeAreas { get; set; } = new();
         public CABDocumentsViewModel SupportingDocuments { get; set; } = new();
         public FeedLinksViewModel FeedLinksViewModel { get; set; } = new();
-        public UserNoteListViewModel? GovernmentUserNotes { get; set; } 
-    
+        public UserNoteListViewModel? GovernmentUserNotes { get; set; }
+
         public string? RequestFirstAndLastName { get; set; }
         public string? RequestUserGroup { get; set; }
         public string? RequestReasonSummary { get; set; }
         public string? RequestReason { get; set; }
-        
+
         public TaskType? RequestTaskType { get; set; }
-        
+        public bool HasUserAccount { get; set; }
+
+        public bool ShowSupportingDocuments => 
+            (!HasUserAccount && SupportingDocuments.HasPublicDocuments) || HasUserAccount;
     }
 }

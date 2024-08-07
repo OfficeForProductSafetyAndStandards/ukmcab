@@ -61,7 +61,12 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     }
 
                     document.Version = DataConstants.Version.Number;
-                 
+
+                    document.Documents?.ForEach(s =>
+                    {
+                        s.Publication ??= DataConstants.Publications.Private;
+                    });
+
                     await UpdateAsync(document);
                 }
             }

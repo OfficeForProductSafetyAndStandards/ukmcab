@@ -547,8 +547,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                     {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                        Category = s.Category, Archived = s.Archived, Id = s.Id
+                        FileName = s.FileName, 
+                        UploadDateTime = s.UploadDateTime, 
+                        Label = s.Label,
+                        Category = s.Category, 
+                        Archived = s.Archived, 
+                        Id = s.Id,
+                        Publication = s.Publication
                     }).ToList() ?? new List<FileViewModel>();
 
                     var selectedViewModel = latestDocument.Documents[fileToUseAgainIndex];
@@ -575,8 +580,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                 {
-                    FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category,
-                    Archived = s.Archived, Id = s.Id
+                    FileName = s.FileName, 
+                    UploadDateTime = s.UploadDateTime, 
+                    Label = s.Label, 
+                    Category = s.Category,
+                    Archived = s.Archived, 
+                    Id = s.Id,
+                    Publication = s.Publication
                 })
                 .ToList() ?? new List<FileViewModel>();
 
@@ -674,7 +684,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
             {
                 AddCategoryLabelAndFileModelStateErrors(model);
-                AddCategorySelectionModelStateErrors(model);
+                AddFileUploadViewModelStateErrors(model);
             }
 
             if (ModelState.IsValid)
@@ -1183,7 +1193,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private void AddLegislativeSelectionModelStateErrors(ScheduleFileListViewModel model)
         {
             if (model.ActiveFiles != null && model.ActiveFiles.Any())
-            {   
+            {
                 if (model.ActiveFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
                 {
                     var index = 0;
@@ -1201,22 +1211,24 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
-        private void AddCategorySelectionModelStateErrors(FileUploadViewModel model)
+        private void AddFileUploadViewModelStateErrors(FileUploadViewModel model)
         {
             if (model.UploadedFiles != null && model.UploadedFiles.Any())
             {
-                if (model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.Category)))
+                var index = 0;
+                foreach (var uploadedFile in model.UploadedFiles)
                 {
-                    var index = 0;
-                    foreach (var uploadedFile in model.UploadedFiles)
+                    if (string.IsNullOrWhiteSpace(uploadedFile.Category))
                     {
-                        if (string.IsNullOrWhiteSpace(uploadedFile.Category))
-                        {
-                            ModelState.AddModelError($"UploadedFiles[{index}].Category", "Select a category");
-                        }
-
-                        index++;
+                        ModelState.AddModelError($"UploadedFiles[{index}].Category", "Select a category");
                     }
+
+                    if (string.IsNullOrWhiteSpace(uploadedFile.Publication))
+                    {
+                        ModelState.AddModelError($"UploadedFiles[{index}].Publication", "Select a publication");
+                    }
+
+                    index++;
                 }
             }
         }
@@ -1356,7 +1368,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         Label = fileViewModel.Label,
                         Category = fileViewModel.Category,
                         UploadDateTime = uploadDateTime??DateTime.UtcNow,
-                        Id = fileViewModel.Id
+                        Id = fileViewModel.Id,
+                        Publication = fileViewModel.Publication
                     });
                 }
             }

@@ -96,6 +96,9 @@
                             <div class=" ukmcab-margin-left-10 ukmcab-float__left">
                                 <h3 class="govuk-heading-s mobile-no-display">Category</h3>
                             </div>
+                            <div class=" ukmcab-margin-left-10 ukmcab-float__left">
+                                <h3 class="govuk-heading-s mobile-no-display">Publications</h3>
+                            </div>
                         </div>
                         <div>
                             <div class="ukmcab-float__clear width-full">
@@ -111,6 +114,7 @@
                                 var uploadedFile = Model.UploadedFiles[i];
                                 var uploadedDate = Constants.NotProvided;
                                 var items = DataConstants.Lists.DocumentCategories.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Category?.Trim() ?? string.Empty))).ToList();
+                                var publications = DataConstants.Lists.Publications.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Publication?.Trim() ?? string.Empty))).ToList();
 
                                 if (uploadedFile.UploadDateTime.HasValue)
                                 {
@@ -173,6 +177,19 @@
                                                 {
                                                     <option value="@cat.Value">@cat.Text</option>
                                                 }
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="document-item ukmcab-margin-left-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Publication")">
+                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Category">Category</label>
+                                        <p class="govuk-error-message">
+                                            <span asp-validation-for="UploadedFiles![i].Publication" class="govuk-error-message"></span>
+                                        </p>
+                                        <select id="UploadedFiles[@i].Publication" name="UploadedFiles[@i].Publication" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Publication")">
+                                            <option value="">@Constants.Select</option>
+                                            @foreach (var publication in publications)
+                                            {
+                                                <option value="@publication.Value" selected="@publication.Selected">@publication.Text</option>
                                             }
                                         </select>
                                     </div>

@@ -14,6 +14,12 @@
                 <dt class="govuk-summary-list__key">
                     @file.Label
                 </dt>
+                @if (!string.IsNullOrEmpty(file.Publication)) 
+                {
+                    <dt class="govuk-summary-list__key">
+                        @file.Publication
+                    </dt>
+                }
                 <dd class="govuk-summary-list__actions">
                     @if (file.FileName.EndsWith("pdf", StringComparison.CurrentCultureIgnoreCase))
                     {

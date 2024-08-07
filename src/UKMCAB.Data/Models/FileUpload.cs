@@ -12,6 +12,9 @@ namespace UKMCAB.Data.Models
         public string BlobName { get; set; }
         public DateTime UploadDateTime { get; set; }
         public bool? Archived { get; set; }
+        public string? Publication { get; set; }
+
+        public bool IsPublic => !(Archived ?? false) && (Publication?.Equals(DataConstants.Publications.Public) ?? false);
     }
 
     public class FileUploadComparer : IEqualityComparer<FileUpload>
@@ -28,7 +31,9 @@ namespace UKMCAB.Data.Models
                            || (x.LegislativeArea?.Equals(y.LegislativeArea) ?? false))
                        && ((x.Category == null && y.Category == null)
                            || (x.Category?.Equals(y.Category) ?? false))
-                       && x.UploadDateTime.Date.Equals(y.UploadDateTime.Date));
+                       && x.UploadDateTime.Date.Equals(y.UploadDateTime.Date)
+                       && ((x.Publication == null && y.Publication == null)
+                           || (x.Publication?.Equals(y.Publication) ?? false)));
         }
 
         public int GetHashCode([DisallowNull] FileUpload obj)
