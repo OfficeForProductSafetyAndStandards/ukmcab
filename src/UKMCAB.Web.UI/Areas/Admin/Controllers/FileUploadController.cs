@@ -13,6 +13,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 using UKMCAB.Web.UI.Helpers;
+using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -427,7 +428,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return View(model);
         }
-
+        
+        #region "supporting documents upload"
         [HttpGet]
         [Route("admin/cab/documents-upload/{id}")]
         public async Task<IActionResult> DocumentsUpload(string id, bool fromSummary)
@@ -573,6 +575,36 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View(viewModel);
             }
 
+            if (fromAction == nameof(DocumentListRemove))
+            {
+                /*
+                 * ??? do we need this
+                 * var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
+                {
+                    FileName = s.FileName,
+                    UploadDateTime = s.UploadDateTime,
+                    Label = s.Label,
+                    Category = s.Category,
+                    Archived = s.Archived,
+                    Id = s.Id
+                }).ToList() ?? new List<FileViewModel>();
+
+                var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected)
+                    .Select(s => new FileViewModel
+                    {
+                        FileName = s.FileName,
+                        UploadDateTime = s.UploadDateTime,
+                        Label = s.Label,
+                        Category = s.Category,
+                        IsSelected = false,
+                        Archived = s.Archived
+                    }).ToList() ?? new List<FileViewModel>();
+                ;
+
+                currentlyUploadedFileViewModels.AddRange(unsavedFileViewModels);*/
+            }
+
+
             uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                 {
                     FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category,
@@ -623,52 +655,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType != null && submitType.Equals(Constants.SubmitType.Remove))
             {
-                var FilesSelectedInViewModel = GetFilesSelectedInViewModel(model.UploadedFiles);
-
-                if (!FilesSelectedInViewModel.Any())
-                {
-                    AddSelectAFileModelStateError(submitType, nameof(model.UploadedFiles), FilesSelectedInViewModel);
-                }
-                else
-                {
-                    var fileUploadsMatchingSelectedFiles =
-                        _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(FilesSelectedInViewModel,
-                            latestDocument.Documents);
-                    if (fileUploadsMatchingSelectedFiles.Any())
-                    {
-                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsMatchingSelectedFiles,
-                            latestDocument, nameof(latestDocument.Documents));
-                        var userAccount =
-                            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-                                .Value);
-                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-                    }
-
-                    var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
-                    {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                        Category = s.Category, Archived = s.Archived, Id = s.Id
-                    }).ToList() ?? new List<FileViewModel>();
-
-                    var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected)
-                        .Select(s => new FileViewModel
-                        {
-                            FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                            Category = s.Category, IsSelected = false, Archived = s.Archived
-                        }).ToList() ?? new List<FileViewModel>();
-                    ;
-
-                    currentlyUploadedFileViewModels.AddRange(unsavedFileViewModels);
-
-                    return View(new FileListViewModel
-                    {
-                        Title = DocumentsOptions.ListTitle,
-                        UploadedFiles = currentlyUploadedFileViewModels,
-                        CABId = id,
-                        IsFromSummary = fromSummary,
-                        DocumentStatus = latestDocument.StatusValue
-                    });
-                }
+                //MOVED: Removed
             }
 
             if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
@@ -706,15 +693,17 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     return SaveDraft(latestDocument);
                 }
 
+                /*DONE: UseFileAgain: get selected uploaded file Id
                 if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain))
                 {
                     return RedirectToAction("DocumentsUseFileAgain", "FileUploadManagement", new { id, fromSummary });
-                }
+                }*/
 
+                /*DONE: Replace: get selected uploaded file Id
                 if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
                 {
                     return RedirectToAction("DocumentsReplaceFile", "FileUploadManagement", new { id, fromSummary });
-                }
+                }*/
             }
 
             return View(new FileListViewModel
@@ -727,10 +716,48 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             });
         }
 
+        [HttpPost]
+        [Route("admin/cab/documents-list/remove/{id}")]
+        public async Task<IActionResult> DocumentListRemove(string id, string documentFileId, bool fromSummary)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var documents = latestDocument?.Documents ?? new();
+            var fileUploads = documents.Where(n => n.Id == Guid.Parse(documentFileId))
+                .Select(s => new FileViewModel
+                {
+                    FileName = s.FileName,
+                    UploadDateTime = s.UploadDateTime,
+                    Label = s.Label,
+                    Category = s.Category,
+                    Archived = s.Archived,
+                    Id = s.Id
+                })
+                ?? throw new InvalidOperationException("No document found");
+
+            var fileUploadsMatchingSelectedFiles = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(fileUploads, documents);
+            if (fileUploadsMatchingSelectedFiles.Any())
+            {
+                _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsMatchingSelectedFiles,
+                    latestDocument, nameof(latestDocument.Documents));
+                var userAccount =
+                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                        .Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            }
+
+            return RedirectToAction("DocumentsList", new { id, fromSummary, fromAction = nameof(DocumentListRemove) });
+        }
+        
+        #endregion //supporting documents upload
+
         [HttpGet]
         [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemove)]
         public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, RemoveActionEnum actionType, bool fromSummary)
-
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -1229,6 +1256,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private void AddSelectAFileModelStateError(string submitType, string modelKey,
             IEnumerable<FileViewModel> selectedViewModels)
         {
+            //TODO: Remove: get file selected for removal
             if (submitType == Constants.SubmitType.Remove && !selectedViewModels.Any())
             {
                 ModelState.AddModelError(modelKey, "Select a schedule to remove");

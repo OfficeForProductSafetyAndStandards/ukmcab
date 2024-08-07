@@ -76,7 +76,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/documents-replace-file/{id}")]
-        public async Task<IActionResult> DocumentsReplaceFile(string id, bool fromSummary)
+        public async Task<IActionResult> DocumentsReplaceFile(string id, bool fromSummary, int indexOfSelectedFile = -1)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
@@ -87,7 +87,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileUploadViewModel
             {
                 Title = DocumentsOptions.ReplaceFile,
-                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category}).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel
+                {
+                    FileName = s.FileName,
+                    UploadDateTime = s.UploadDateTime,
+                    Label = s.Label,
+                    Category = s.Category,
+                    IsSelected = latestVersion.Documents?.IndexOf(s) == indexOfSelectedFile
+                }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
@@ -183,7 +190,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/documents-use-file-again/{id}")]
-        public async Task<IActionResult> DocumentsUseFileAgain(string id, bool fromSummary)
+        public async Task<IActionResult> DocumentsUseFileAgain(string id, bool fromSummary, int indexOfSelectedFile = -1)
         {
             var latestVersion = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestVersion == null) // Implies no document or archived
@@ -194,7 +201,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileUploadViewModel
             {
                 Title = DocumentsOptions.ListTitle,
-                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category?.Trim() }).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel
+                {
+                    FileName = s.FileName,
+                    UploadDateTime = s.UploadDateTime,
+                    Label = s.Label,
+                    Category = s.Category?.Trim(),
+                    IsSelected = latestVersion.Documents?.IndexOf(s) == indexOfSelectedFile
+                }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue

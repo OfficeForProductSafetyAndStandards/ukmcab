@@ -18,9 +18,10 @@
         padding-top: 8px;
     }
 
-    .document-item-button-group
-    {
-        display: inline-block;
+    .document-item-button-group {
+        button {
+            padding: 0px 5px 0px 5px !important;
+        }
     }
 }
 
