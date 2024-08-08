@@ -12,6 +12,7 @@
         public DateTime DateAndTime { get; set; }
         public string Note { get; set; }
         public string ReturnUrl { get; set; }
+        public string BackUrl { get; set; }
         public bool IsOPSSOrInCreatorUserGroup { get; set; }
     }
 }
