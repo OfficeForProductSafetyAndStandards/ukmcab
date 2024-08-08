@@ -12,7 +12,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? PublishInternalReason { get; set; }
         [MaxLength(1000, ErrorMessage = "Maximum reason length is 1000 characters")]
         public string? PublishPublicReason { get; set; }
-
+        public string? PublishType { get; set; }
         public string? Title => "Publish CAB profile";
     }
 }

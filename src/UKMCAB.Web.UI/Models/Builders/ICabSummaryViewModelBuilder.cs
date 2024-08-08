@@ -15,6 +15,7 @@ namespace UKMCAB.Web.UI.Models.Builders
         ICabSummaryViewModelBuilder WithProductScheduleDetailsViewModel(CABProductScheduleDetailsViewModel cabProductScheduleDetailsViewModel);
         ICabSummaryViewModelBuilder WithCabSupportingDocumentDetailsViewModel(CABSupportingDocumentDetailsViewModel cabSupportingDocumentDetailsViewModel);
         ICabSummaryViewModelBuilder WithCabHistoryViewModel(CABHistoryViewModel cabHistoryViewModel);
+        ICabSummaryViewModelBuilder WithCabPublishTypeViewModel(CABPublishTypeViewModel CabPublishTypeViewModel);
         ICabSummaryViewModelBuilder WithCabGovernmentUserNotesViewModel(CABGovernmentUserNotesViewModel cabGovernmentUserNotesViewModel);
         ICabSummaryViewModelBuilder WithIsEditLocked(bool isEditLocked);
         ICabSummaryViewModelBuilder WithRoleInfo(Document document);

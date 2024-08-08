@@ -59,7 +59,7 @@ namespace UKMCAB.Core.Services.CAB
         Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, Audit audit);
 
         Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument,
-            string? publishInternalReason = default, string? publishPublicReason = default);
+            string? publishInternalReason = default, string? publishPublicReason = default, string? publishType = default);
 
         Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string? archiveInternalReason,
             string archivePublicReason);

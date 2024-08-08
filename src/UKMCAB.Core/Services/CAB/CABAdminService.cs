@@ -158,7 +158,7 @@ namespace UKMCAB.Core.Services.CAB
             if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin || la.Status == LAStatus.Approved))
             {
                 document.CreatedByUserGroup = userAccount.Role!.ToLower();
-            }   
+            }
 
             var rv = await _cabRepository.CreateAsync(document, auditItem.DateTime);
             await UpdateSearchIndexAsync(rv);
@@ -307,7 +307,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument,
-            string? publishInternalReason = default, string? publishPublicReason = default)
+            string? publishInternalReason = default, string? publishPublicReason = default, string? publishType = default)
         {
             if (latestDocument.StatusValue == Status.Published)
             {
@@ -321,6 +321,16 @@ namespace UKMCAB.Core.Services.CAB
             var allDocument = await FindAllDocumentsByCABIdAsync(latestDocument.CABId);
             var publishedOrArchivedDocument = allDocument.SingleOrDefault(doc =>
                 doc is { StatusValue: Status.Published or Status.Archived });
+
+            
+
+            var lastUpdatedDate = DateTime.Now;
+
+            if (publishType == DataConstants.PublishType.MinorPublish && publishedOrArchivedDocument != null)
+            {
+                lastUpdatedDate = publishedOrArchivedDocument.LastUpdatedDate;
+            }
+
             if (publishedOrArchivedDocument != null)
             {
                 publishedOrArchivedDocument.StatusValue = Status.Historical;
@@ -391,9 +401,9 @@ namespace UKMCAB.Core.Services.CAB
             latestDocument.SubStatus = SubStatus.None;
             
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
-                publishedOrArchivedDocument, publishInternalReason, publishPublicReason));
+                publishedOrArchivedDocument, publishInternalReason, publishPublicReason, publishType));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
-            await _cabRepository.UpdateAsync(latestDocument);
+            await _cabRepository.UpdateAsync(latestDocument, lastUpdatedDate);
 
             var urlSlug = publishedOrArchivedDocument != null &&
                           !publishedOrArchivedDocument.URLSlug.Equals(latestDocument.URLSlug)

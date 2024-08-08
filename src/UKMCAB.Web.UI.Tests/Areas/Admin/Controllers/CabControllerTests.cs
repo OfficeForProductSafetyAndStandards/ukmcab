@@ -203,6 +203,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabSupportingDocumentDetailsViewModel(It.IsAny<CABSupportingDocumentDetailsViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabGovernmentUserNotesViewModel(It.IsAny<CABGovernmentUserNotesViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabHistoryViewModel(It.IsAny<CABHistoryViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
+            _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabPublishTypeViewModel(It.IsAny<CABPublishTypeViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithIsEditLocked(isEditLocked)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithRevealEditActions(null)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithRequestedFromCabProfilePage(null)).Returns(_mockCabSummaryViewModelBuilder.Object);

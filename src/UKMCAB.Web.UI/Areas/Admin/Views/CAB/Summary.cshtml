@@ -9,7 +9,7 @@
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABSummaryViewModel
 
 @section BackButton
-{
+    {
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
@@ -50,6 +50,12 @@
 {
     <partial model="@Model.BannerContent" name="Partials/_PageContentBanner" />
 }
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="null" />
+    </div>
+</div>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-three-quarters">
@@ -347,54 +353,66 @@
                 <partial name="Partials/_History" model="@Model.CABHistoryViewModel" />
             </div>
 
-            @if (Model.ShowProfileVisibilityWarning)
-            {
-                <div class="govuk-warning-text govuk-!-margin-top-5">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        <text>Everyone can see a CAB profile when it is published.</text>
-                    </strong>
-                </div>
-            }
-            else if (Model.ShowMandatoryInfoWarning)
-            {
-                <div class="govuk-warning-text govuk-!-margin-top-5">
-                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
-                    <strong class="govuk-warning-text__text">
-                        <span class="govuk-warning-text__assistive">Warning</span>
-                        <text>Provide all mandatory information before you are able to publish this record.</text>
-                    </strong>
-                </div>
-            }
+            <form method="post">
+                @if (Model.ShowApproveToPublishButton || Model.ShowPublishButton)
+                {
+                    <div class="govuk-!-padding-top-1 govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedPublishType))">
+                        <dl class="govuk-summary-list cab-summary-list">
+                        </dl>
+                        <partial name="Partials/_PublishType" model="@Model.CABPublishTypeViewModel" />
+                    </div>
+                }
 
-            @if (!Model.HasActiveLAs)
-            {
-                <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
-                    This CAB profile will only become publishable when an active legislative area is added.
-                </govuk-warning-text>
-            }
+                @if (Model.ShowProfileVisibilityWarning)
+                {
+                    <div class="govuk-warning-text govuk-!-margin-top-5">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            <text>Everyone can see a CAB profile when it is published.</text>
+                        </strong>
+                    </div>
+                }
+                else if (Model.ShowMandatoryInfoWarning)
+                {
+                    <div class="govuk-warning-text govuk-!-margin-top-5">
+                        <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                        <strong class="govuk-warning-text__text">
+                            <span class="govuk-warning-text__assistive">Warning</span>
+                            <text>Provide all mandatory information before you are able to publish this record.</text>
+                        </strong>
+                    </div>
+                }
 
-            @if (Model.ShowReviewButton)
-            {
-                <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
-                    @($"You have {Model.LegislativeAreasPendingApprovalForCurrentUserCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalForCurrentUserCount > 1 ? "s" : null)} to approve or decline.")
-                </govuk-warning-text>
-                <div class="govuk-button-group govuk-!-margin-top-5">
-                    <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnUrl)" class="@(Model.ShowPublishButton ? "govuk-button--secondary" : "")">
-                        Review
-                    </govuk-button-link>
-                    @if (!Model.ShowApproveToPublishButton)
-                    {
-                        <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                    }
-                </div>
-            }
+                @if (!Model.HasActiveLAs)
+                {
+                    <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
+                        This CAB profile will only become publishable when an active legislative area is added.
+                    </govuk-warning-text>
+                }
 
-            <div class="govuk-!-margin-top-5">
-                <form method="post">
+                @if (Model.ShowReviewButton)
+                {
+                    <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
+                        @($"You have {Model.LegislativeAreasPendingApprovalForCurrentUserCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalForCurrentUserCount > 1 ? "s" : null)} to approve or decline.")
+                    </govuk-warning-text>
+                    <div class="govuk-button-group govuk-!-margin-top-5">
+                        <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnUrl)" class="@(Model.ShowPublishButton ? "govuk-button--secondary" : "")">
+                            Review
+                        </govuk-button-link>
+                        @if (!Model.ShowApproveToPublishButton)
+                        {
+                            <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                        }
+                    </div>
+                }
+
+                <div class="govuk-!-margin-top-5">
                     <input type="hidden" asp-for="Id" />
                     <input type="hidden" asp-for="CABId" />
+                    <input type="hidden" asp-for="FromCabProfilePage" />
+                    <input type="hidden" asp-for="ReturnUrl" />
+                    <input type="hidden" asp-for="IsOpssAdmin" />
                     @if (Model.ShowApproveToPublishButton)
                     {
                         <div>
@@ -412,9 +430,9 @@
                         }
                         else if (Model.ShowApproveToPublishButton)
                         {
-                            <govuk-button-link id="approveCab" asp-area="admin" asp-controller="cab" asp-action="approve" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnUrl)" disabled="@(!Model.ValidCAB)">
+                            <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Approve">
                                 Publish
-                            </govuk-button-link>
+                            </button>
                         }
 
                         @if (Model.ShowDeclineButton)
@@ -471,8 +489,8 @@
                             }
                         }
                     </div>
-                </form>
-            </div>
+                </div>
+            </form>
         </fieldset>
     </div>
 </div>

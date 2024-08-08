@@ -10,6 +10,7 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
+using UKMCAB.Data;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.PublishApproval;
@@ -155,7 +156,9 @@ public class ApproveCABController : Controller
         var clonedDocument = document.DeepCopy();
         clonedDocument.SubStatus = SubStatus.None;
 
-        await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason);
+        var publishType = TempData["PublishType"] != null ? (string)TempData["PublishType"] : DataConstants.PublishType.MajorPublish;
+
+        await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason, publishType);
 
         if (clonedDocument.CreatedByUserGroup == Roles.OPSS.Id)
         {
