@@ -174,12 +174,32 @@
     margin-left: 0 !important;
 }
 
+.ukmcab-margin-left-20 {
+    margin-left: 0 !important;
+}
+.ukmcab-margin-left-30 {
+    margin-left: 0 !important;
+}
+
+.ukmcab-margin-top-10-mobile {
+    @include govuk-media-query($until: tablet) {
+        margin-top: 10px !important;
+    }
+    margin-top: 0 !important;
+}
+
 @media (min-width: 40.0625em) {
     .ukmcab-margin-left-10 {
         margin-left: 10px !important;
     }
     .ukmcab-margin-left-15 {
         margin-left: 15px !important;
+    }
+    .ukmcab-margin-left-20 {
+        margin-left: 20px !important;
+    }
+    .ukmcab-margin-left-30 {
+        margin-left: 30px !important;
     }
 }
 
@@ -208,6 +228,36 @@
 @media (min-width: 40.0625em) {
     .width-one-tenth {
         width: 10% !important;
+    }
+}
+
+.width-two-tenth {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-two-tenth {
+        width: 20% !important;
+    }
+}
+
+.width-one-quarter {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-one-quarter {
+        width: 25% !important;
+    }
+}
+
+.width-one-quarter-tablet {
+    width: 100% !important;
+}
+
+@include govuk-media-query($from: tablet) {
+    .width-one-quarter-tablet {
+        width: 25% !important;
     }
 }
 

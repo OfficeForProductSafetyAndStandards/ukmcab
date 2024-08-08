@@ -1,8 +1,11 @@
-.document-item {
+.document-item
+.document-item-left,
+.document-item-centre,
+.document-item-right {
     padding-top: 40px;
 }
 
-@include govuk-media-query($from: mobile) {
+@include govuk-media-query($from: tablet) {
     .document-list {
         clear: both;
         display: flex;
@@ -14,8 +17,25 @@
         padding-top: 0px;
     }
 
-    .legislative-area-label  {
-        padding-top:8px;
+    .document-item-left {
+        flex: 0 1 50%;
+        padding-top: 0px;
+        min-width: 350px;
+    }
+
+    .document-item-centre {
+        flex: 0 1 30%;
+        padding-top: 0px;
+    }
+
+    .document-item-right {
+        flex: 1 1 auto;
+        padding-top: 0px;
+        max-width: 218px;
+    }
+
+    .legislative-area-label {
+        padding-top: 8px;
     }
 }
 
