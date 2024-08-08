@@ -555,6 +555,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                         BlobName = s.BlobName,
                         LegislativeArea = s.LegislativeArea,
                         Archived = s.Archived,
+                        CreatedBy = s.CreatedBy,
                     }).ToList() ?? new List<FileUpload>(),
                     DocumentType = DataConstants.Storage.Schedules
                 },

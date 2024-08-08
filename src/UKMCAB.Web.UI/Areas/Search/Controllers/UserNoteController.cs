@@ -18,6 +18,7 @@ public class UserNoteController : Controller
     {
         public const string GovernmentUserNoteView = "cab.government-user-note.view";
         public const string GovernmentUserNoteCreate = "cab.government-user-note.create";
+        public const string GovernmentUserNoteConfirmDelete = "cab.government-user-note.confirm";
         public const string GovernmentUserNoteDelete = "cab.government-user-note.delete";
     }
 
@@ -76,6 +77,29 @@ public class UserNoteController : Controller
         await _userNoteService.CreateUserNote(currentUser, vm.CabDocumentId, vm.Note);
 
         return Redirect(vm.ReturnUrl);
+    }
+
+    [HttpGet("ConfirmDelete", Name = Routes.GovernmentUserNoteConfirmDelete)]
+    public async Task<IActionResult> ConfirmDelete(Guid cabDocumentId, Guid userNoteId, string returnUrl, string backUrl)
+    {
+        UserNote userNote = await _userNoteService.GetUserNote(cabDocumentId, userNoteId);
+
+        var vm = new UserNoteViewModel()
+        {
+            Title = "Delete government user note",
+            Id = userNoteId,
+            CabDocumentId = cabDocumentId,
+            DateAndTime = userNote.DateTime,
+            UserId = userNote.UserId,
+            UserName = userNote.UserName,
+            UserGroup = userNote.UserRole,
+            Note = userNote.Note,
+            ReturnUrl = returnUrl,
+            BackUrl = backUrl,
+            IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || User.IsInRole(userNote.UserRole),
+        };
+
+        return View(vm);
     }
 
     [HttpPost("Delete", Name = Routes.GovernmentUserNoteDelete)]

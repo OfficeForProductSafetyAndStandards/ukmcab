@@ -178,7 +178,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var uploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel
             {
                 FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
+                LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id,
+                CreatedBy = s.CreatedBy
             }).ToList() ?? new List<FileViewModel>();
 
 
@@ -253,7 +254,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType == Constants.SubmitType.Continue)
             {
                 AddLegislativeLabelAndFileModelStateErrors(model);
-                AddLegislativeSelectionModelStateErrors(model);
+                AddScheduleFileListViewModelErrors(model);
             }
 
             if (ModelState.IsValid)
@@ -1197,23 +1198,26 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
-        private void AddLegislativeSelectionModelStateErrors(ScheduleFileListViewModel model)
+        private void AddScheduleFileListViewModelErrors(ScheduleFileListViewModel model)
         {
             if (model.ActiveFiles != null && model.ActiveFiles.Any())
             {   
-                if (model.ActiveFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
+                var index = 0;
+                foreach (var uploadedFile in model.ActiveFiles)
                 {
-                    var index = 0;
-                    foreach (var uploadedFile in model.ActiveFiles)
+                    if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
                     {
-                        if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
-                        {
-                            ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
-                                "Select a legislative area");
-                        }
-
-                        index++;
+                        ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
+                            "Select a legislative area");
                     }
+
+                    if (string.IsNullOrWhiteSpace(uploadedFile.CreatedBy))
+                    {
+                        ModelState.AddModelError($"ActiveFiles[{index}].CreatedBy",
+                            "Select a created by value");
+                    }
+
+                    index++;
                 }
             }
         }
@@ -1321,7 +1325,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         BlobName = current.BlobName,
                         Label = fileViewModel.Label!,
                         LegislativeArea = fileViewModel.LegislativeArea,
-                        UploadDateTime = current.UploadDateTime
+                        UploadDateTime = current.UploadDateTime,
+                        CreatedBy = fileViewModel.CreatedBy
                     });
                 }
             }
@@ -1339,6 +1344,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {   
                         schedule.Label = update.Label;
                         schedule.LegislativeArea = update.LegislativeArea;
+                        schedule.CreatedBy = update.CreatedBy;
                     }
                 }
                 return true;

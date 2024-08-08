@@ -26,6 +26,7 @@
 
                 <input type="hidden" asp-for="ReturnURL" value="@Model.ReturnURL" />
                 <input type="hidden" asp-for="CABId" value="@Model.CABId" />                
+                <input type="hidden" asp-for="PublishType" value="@Model.PublishType" />                
                 <govuk-character-count asp-for="PublishInternalReason" max-length="1000" rows="5">
                     <govuk-character-count-label class="govuk-label--m" is-page-heading="false">
                         User notes (optional)

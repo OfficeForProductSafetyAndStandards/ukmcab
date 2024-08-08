@@ -1,6 +1,7 @@
 ﻿@using System.Net
 @using UKMCAB.Core.Domain
 @using UKMCAB.Data
+@using UKMCAB.Core.Security
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABProductScheduleDetailsViewModel
 
     <div class="cab-summary-detail">
@@ -18,6 +19,7 @@
                                             <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@schedule.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@schedule.Label</a>
                                         </div>
                                         <div>@schedule.LegislativeArea</div>
+                                        <div>@Roles.NameFor(schedule.CreatedBy)</div>
                                     </div>
 
                                 </li>
@@ -42,6 +44,7 @@
                                             <a class="govuk-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@schedule.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@schedule.Label</a>
                                         </div>
                                         <div>@schedule.LegislativeArea</div>
+                                        <div>@Roles.NameFor(schedule.CreatedBy)</div>
                                     </div>
                                 </li>
                             }

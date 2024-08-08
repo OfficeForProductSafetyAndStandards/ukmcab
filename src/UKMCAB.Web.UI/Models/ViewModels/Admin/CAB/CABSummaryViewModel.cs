@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Core.Security;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
@@ -18,8 +19,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public CABSupportingDocumentDetailsViewModel? CABSupportingDocumentDetailsViewModel { get; set; }
         public CABHistoryViewModel? CABHistoryViewModel { get; set; }
         public CABGovernmentUserNotesViewModel? CABGovernmentUserNotesViewModel { get; set; }
+        public CABPublishTypeViewModel? CABPublishTypeViewModel { get; set; }
+        public string? SelectedPublishType { get; set; }
         public string TitleHint { get; set; } = "CAB profile";
         public string? ReturnUrl { get; set; }
+        public bool? FromCabProfilePage { get; set; }
         public bool ShowSubstatusName => !string.IsNullOrWhiteSpace(SubStatusName) && SubStatus != SubStatus.None;
         public bool IsPendingOgdApproval { get; set; }
         public bool IsOPSSOrInCreatorUserGroup { get; set; }
@@ -40,6 +44,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool RequestedFromCabProfilePage { get; set; }
         public bool HasActiveLAs { get; set; }
         public bool DraftUpdated { get; set; }
+
+        public bool ShowProductSchedulesWarning => 
+            CABProductScheduleDetailsViewModel?.ActiveSchedules?.Any(p => p.CreatedBy?.Equals(Roles.UKAS.Id) ?? false) ?? false;
 
         public bool ShowEditButton =>
             !RevealEditActions &&

@@ -15,10 +15,9 @@ using UKMCAB.Web.UI.Helpers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
-using UKMCAB.Data.Models.LegislativeAreas;
-using UKMCAB.Core.Domain;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Web.UI.Models.Builders;
+using UKMCAB.Data;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -391,67 +390,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [HttpGet("admin/cab/summary/{id}", Name = Routes.CabSummary)]
         public async Task<IActionResult> Summary(string id, string? returnUrl, bool? revealEditActions, bool? fromCabProfilePage)
         {
-            var currentUrl = HttpContext.Request.GetRequestUri().PathAndQuery;
-            var userId = User.GetUserId();
-
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null)
             {
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
-            await _cabSummaryUiService.CreateDocumentAsync(latest, revealEditActions);
+            var cabSummary = await PopulateCABSummaryViewModel(latest, revealEditActions, returnUrl, fromCabProfilePage);
 
-            var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasForDocumentAsync(latest);
-            var purposeOfAppointments = await _legislativeAreaService.GetPurposeOfAppointmentsForDocumentAsync(latest);
-            var categories = await _legislativeAreaService.GetCategoriesForDocumentAsync(latest);
-            var subCategories = await _legislativeAreaService.GetSubCategoriesForDocumentAsync(latest);
-            var products = await _legislativeAreaService.GetProductsForDocumentAsync(latest);
-            var procedures = await _legislativeAreaService.GetProceduresForDocumentAsync(latest);
-
-            var cabNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest);
-            var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, userId);
-            var successBannerMessage = _cabSummaryUiService.GetSuccessBannerMessage();
-
-            var cabDetails = new CABDetailsViewModel(latest, User, cabNameAlreadyExists);
-            var cabContact = new CABContactViewModel(latest);
-            var cabBody = new CABBodyDetailsViewModel(latest);
-            var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
-            var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
-            var cabHistory = new CABHistoryViewModel(latest, currentUrl);
-            var cabGovernmentUserNoteViewModel = new CABGovernmentUserNotesViewModel(latest, currentUrl);
-            var cabLegislativeAreas = _cabLegislativeAreasViewModelBuilder
-                .WithDocumentLegislativeAreas(
-                    latest.DocumentLegislativeAreas,
-                    legislativeAreas,
-                    latest.ScopeOfAppointments,
-                    purposeOfAppointments,
-                    categories,
-                    subCategories,
-                    products,
-                    procedures)
-                .Build();
-
-            ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);
-
-            var cabSummary = _cabSummaryViewModelBuilder
-                .WithRoleInfo(latest)
-                .WithDocumentDetails(latest)
-                .WithLegislativeAreasPendingApprovalCount(latest)
-                .WithCabDetails(cabDetails)
-                .WithCabContactViewModel(cabContact)
-                .WithCabBodyDetailsViewModel(cabBody)
-                .WithCabLegislativeAreasViewModel(cabLegislativeAreas)
-                .WithProductScheduleDetailsViewModel(cabProductSchedules)
-                .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)
-                .WithCabGovernmentUserNotesViewModel(cabGovernmentUserNoteViewModel)
-                .WithCabHistoryViewModel(cabHistory)
-                .WithReturnUrl(returnUrl)
-                .WithRevealEditActions(revealEditActions)
-                .WithRequestedFromCabProfilePage(fromCabProfilePage)
-                .WithIsEditLocked(isCabLockedForUser)
-                .WithSuccessBannerMessage(successBannerMessage)
-                .Build();
+            var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, User.GetUserId());
 
             if (isCabLockedForUser)
             {
@@ -488,6 +435,25 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
+            if (model.SelectedPublishType == null && model.IsOpssAdmin)
+            {
+                ModelState.Clear();
+                model = await PopulateCABSummaryViewModel(latest, model.RevealEditActions, model.ReturnUrl, model.FromCabProfilePage);
+                ModelState.AddModelError(nameof(model.SelectedPublishType), "Select an option");
+
+                return View("~/Areas/Admin/views/CAB/Summary.cshtml", model);
+            }
+
+            if (model.IsOpssAdmin)
+            {
+                TempData["PublishType"] = model.SelectedPublishType;
+            }
+
+            if (submitType == Constants.SubmitType.Approve)
+            {
+                return RedirectToRoute(ApproveCABController.Routes.Approve, new { id = latest.CABId, returnUrl = model.ReturnUrl });
+            }
+
             if (submitType == Constants.SubmitType.Save)
             {
                 return RedirectToCabManagementWithUnlockCab(latest.CABId);
@@ -496,6 +462,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var publishModel = new CABSummaryViewModel
             {
                 CABId = latest.CABId,
+                SelectedPublishType = model.SelectedPublishType,
                 CabDetailsViewModel = new CABDetailsViewModel(latest, User),
                 CabContactViewModel = new CABContactViewModel(latest),
                 CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
@@ -512,10 +479,16 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (validCAB)
             {
                 var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
-                if (submitType == Constants.SubmitType.Continue) // publish
+                if (submitType == Constants.SubmitType.Continue || submitType == Constants.SubmitType.Approve) // publish
                 {
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(
+                        userAccount ?? throw new InvalidOperationException(), latest, false);
+
                     await _editLockService.RemoveEditLockForCabAsync(latest.CABId);
+                    
+
                     return RedirectToRoute(Routes.CabPublish, new { id = latest.CABId });
+
                 }
 
                 if (submitType == Constants.SubmitType.SubmitForApproval)
@@ -618,6 +591,69 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             throw new InvalidOperationException("CAB invalid");
         }
 
+        private async Task<CABSummaryViewModel> PopulateCABSummaryViewModel(Document latest, bool? revealEditActions, string? returnUrl, bool? fromCabProfilePage)
+        {
+            var currentUrl = HttpContext.Request.GetRequestUri().PathAndQuery;
+            var userId = User.GetUserId();
+
+            await _cabSummaryUiService.CreateDocumentAsync(latest, revealEditActions);
+
+            var legislativeAreas = await _legislativeAreaService.GetLegislativeAreasForDocumentAsync(latest);
+            var purposeOfAppointments = await _legislativeAreaService.GetPurposeOfAppointmentsForDocumentAsync(latest);
+            var categories = await _legislativeAreaService.GetCategoriesForDocumentAsync(latest);
+            var subCategories = await _legislativeAreaService.GetSubCategoriesForDocumentAsync(latest);
+            var products = await _legislativeAreaService.GetProductsForDocumentAsync(latest);
+            var procedures = await _legislativeAreaService.GetProceduresForDocumentAsync(latest);
+
+            var cabNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest);
+            var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, userId);
+            var successBannerMessage = _cabSummaryUiService.GetSuccessBannerMessage();
+
+            var cabDetails = new CABDetailsViewModel(latest, User, cabNameAlreadyExists);
+            var cabContact = new CABContactViewModel(latest);
+            var cabBody = new CABBodyDetailsViewModel(latest);
+            var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
+            var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
+            var cabHistory = new CABHistoryViewModel(latest, currentUrl);
+            var cabGovernmentUserNoteViewModel = new CABGovernmentUserNotesViewModel(latest, currentUrl);
+            var cabPublishTypeViewModel = new CABPublishTypeViewModel(User != null && User.IsInRole(Roles.OPSS.Id));
+            var cabLegislativeAreas = _cabLegislativeAreasViewModelBuilder
+                .WithDocumentLegislativeAreas(
+                    latest.DocumentLegislativeAreas,
+                    legislativeAreas,
+                    latest.ScopeOfAppointments,
+                    purposeOfAppointments,
+                    categories,
+                    subCategories,
+                    products,
+                    procedures)
+                .Build();
+
+            ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);
+
+            var cabSummary = _cabSummaryViewModelBuilder
+                .WithRoleInfo(latest)
+                .WithDocumentDetails(latest)
+                .WithLegislativeAreasPendingApprovalCount(latest)
+                .WithCabDetails(cabDetails)
+                .WithCabContactViewModel(cabContact)
+                .WithCabBodyDetailsViewModel(cabBody)
+                .WithCabLegislativeAreasViewModel(cabLegislativeAreas)
+                .WithProductScheduleDetailsViewModel(cabProductSchedules)
+                .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)
+                .WithCabGovernmentUserNotesViewModel(cabGovernmentUserNoteViewModel)
+                .WithCabHistoryViewModel(cabHistory)
+                .WithCabPublishTypeViewModel(cabPublishTypeViewModel)
+                .WithReturnUrl(returnUrl)
+                .WithRevealEditActions(revealEditActions)
+                .WithRequestedFromCabProfilePage(fromCabProfilePage)
+                .WithIsEditLocked(isCabLockedForUser)
+                .WithSuccessBannerMessage(successBannerMessage)
+                .Build();
+
+            return cabSummary;
+        }
+
         [HttpGet("admin/cab/publish/{id}", Name = Routes.CabPublish)]
         public async Task<IActionResult> Publish(string id, string? returnUrl)
         {
@@ -649,9 +685,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 var userAccount = await User.GetUserId().MapAsync(x => _userService.GetAsync(x!));
 
+                var publishType = TempData["PublishType"] != null ? (string)TempData["PublishType"] : DataConstants.PublishType.MajorPublish;
+
                 _ = await _cabAdminService.PublishDocumentAsync(
                     userAccount ?? throw new InvalidOperationException(), latest, model.PublishInternalReason,
-                    model.PublishPublicReason);
+                    model.PublishPublicReason, publishType);
                 
                 return RedirectToRoute(Routes.CabPublishedConfirmation, new { id = latest.CABId });
             }

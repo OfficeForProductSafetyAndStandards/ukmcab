@@ -61,7 +61,12 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     }
 
                     document.Version = DataConstants.Version.Number;
-                 
+
+                    document.Schedules?.ForEach(s =>
+                    {
+                        s.CreatedBy ??= "ukas";
+                    });
+
                     await UpdateAsync(document);
                 }
             }
@@ -89,9 +94,9 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         }
 
         public IQueryable<Document> GetItemLinqQueryable() => _container.GetItemLinqQueryable<Document>();
-        public async Task UpdateAsync(Document document)
+        public async Task UpdateAsync(Document document, DateTime? lastUpdatedDate = default)
         {
-            document.LastUpdatedDate = DateTime.Now;
+            document.LastUpdatedDate = lastUpdatedDate ?? DateTime.Now;
             var response = await _container.UpsertItemAsync(document);
             Guard.IsTrue(response.StatusCode == HttpStatusCode.OK,
                 $"The CAB document was not updated; http status={response.StatusCode}");

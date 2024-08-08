@@ -26,7 +26,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             _mockCABRepository.Verify(x => x.DeleteAsync(It.IsAny<Document>()), Times.Never);
-            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
+            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
         }
 
         [Test]
@@ -46,7 +46,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             Assert.AreEqual("The delete reason must be specified when an earlier document version exists.", exception.Message);
 
             _mockCABRepository.Verify(x => x.DeleteAsync(It.IsAny<Document>()), Times.Never);
-            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
+            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
             return Task.CompletedTask;
         }
 
@@ -70,7 +70,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Assert
             Assert.AreEqual($"Failed to delete draft version, CAB Id: {cabId}", exception.Message);
 
-            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
+            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
             _mockCachedSearchService.Verify(x => x.RemoveFromIndexAsync(It.IsAny<string>()), Times.Never);
             _mockCachedSearchService.Verify(x => x.ClearAsync(), Times.Never);
             _mockCachedSearchService.Verify(x => x.ClearAsync(It.IsAny<string>()), Times.Never);
@@ -119,7 +119,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Published && 
-                x.AuditLog.Count == 1 && x.AuditLog.First().Action == AuditCABActions.DraftDeleted)), Times.Once);
+                x.AuditLog.Count == 1 && x.AuditLog.First().Action == AuditCABActions.DraftDeleted), null), Times.Once);
         }
 
         [Test]
@@ -138,7 +138,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             await _sut.DeleteDraftDocumentAsync(new UserAccount(), Guid.NewGuid(), _faker.Random.Word());
 
             // Assert
-            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
+            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
         }
 
         [Test]
@@ -160,7 +160,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Archived &&
-                x.SubStatus == SubStatus.None && x.SubStatusName == "None")), Times.Once);
+                x.SubStatus == SubStatus.None && x.SubStatusName == "None"), null), Times.Once);
 
             _mockCachedSearchService.Verify(x => x.ReIndexAsync(It.Is<CABIndexItem>(x => x.Id == "1" && x.SubStatus == ((int)SubStatus.None).ToString())), Times.Once);
         }
