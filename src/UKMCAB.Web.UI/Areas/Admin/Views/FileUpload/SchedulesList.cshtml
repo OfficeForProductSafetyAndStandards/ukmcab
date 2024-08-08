@@ -141,7 +141,7 @@
 
                                 @*Row 2: Inputbox Row*@
                                 <div class="document-list">
-                                    <div class="document-item-left width-full ukmcab-min-width__350x ukmcab-full-width--mobile ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
+                                    <div class="document-item-left width-full ukmcab-full-width--mobile ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].Label" class="govuk-error-message"></span>
