@@ -196,18 +196,6 @@
             </button>
         </div>
 
-        <div class="govuk-grid-column-two-thirds">
-            TO BE REMOVD:
-            @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
-            {
-                <div class="govuk-button-group">
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove">@Constants.SubmitType.Remove</button>
-                </div>
-            }
-        </div>
-
         <div class="govuk-grid-column-two-thirds ukmcab-float__clear">
             <div class="govuk-button-group ukmcab-padding-top-50">
                 <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">

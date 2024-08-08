@@ -656,7 +656,61 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType != null && submitType.Equals(Constants.SubmitType.Remove))
             {
-                //MOVED: Removed
+                //ISSUE: this block of code causes the deletion of a file on every refresh with this submitType value!!!
+                var FilesSelectedInViewModel = GetFilesSelectedInViewModel(model.UploadedFiles!);
+
+                if (!FilesSelectedInViewModel.Any())
+                {
+                    AddSelectAFileModelStateError(submitType, nameof(model.UploadedFiles), FilesSelectedInViewModel);
+                }
+                else
+                {
+                    var fileUploadsMatchingSelectedFiles =
+                        _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(FilesSelectedInViewModel,
+                            latestDocument.Documents);
+                    if (fileUploadsMatchingSelectedFiles.Any())
+                    {
+                        _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsMatchingSelectedFiles,
+                            latestDocument, nameof(latestDocument.Documents));
+                        var userAccount =
+                            await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                                .Value);
+                        await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                    }
+
+                    var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
+                    {
+                        FileName = s.FileName,
+                        UploadDateTime = s.UploadDateTime,
+                        Label = s.Label,
+                        Category = s.Category,
+                        Archived = s.Archived,
+                        Id = s.Id
+                    }).ToList() ?? new List<FileViewModel>();
+
+                    var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected)
+                        .Select(s => new FileViewModel
+                        {
+                            FileName = s.FileName,
+                            UploadDateTime = s.UploadDateTime,
+                            Label = s.Label,
+                            Category = s.Category,
+                            IsSelected = false,
+                            Archived = s.Archived
+                        }).ToList() ?? new List<FileViewModel>();
+                    ;
+
+                    currentlyUploadedFileViewModels.AddRange(unsavedFileViewModels);
+
+                    return View(new FileListViewModel
+                    {
+                        Title = DocumentsOptions.ListTitle,
+                        UploadedFiles = currentlyUploadedFileViewModels,
+                        CABId = id,
+                        IsFromSummary = fromSummary,
+                        DocumentStatus = latestDocument.StatusValue
+                    });
+                }
             }
 
             if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
@@ -693,18 +747,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     return SaveDraft(latestDocument);
                 }
-
-                /*DONE: UseFileAgain: get selected uploaded file Id
-                if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain))
-                {
-                    return RedirectToAction("DocumentsUseFileAgain", "FileUploadManagement", new { id, fromSummary });
-                }*/
-
-                /*DONE: Replace: get selected uploaded file Id
-                if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
-                {
-                    return RedirectToAction("DocumentsReplaceFile", "FileUploadManagement", new { id, fromSummary });
-                }*/
             }
 
             return View(new FileListViewModel
