@@ -244,6 +244,16 @@
     }
 }
 
+.width-one-quarter-tablet {
+    width: 100% !important;
+}
+
+@include govuk-media-query($from: tablet) {
+    .width-one-quarter-tablet {
+        width: 25% !important;
+    }
+}
+
 .width-three-tenth {
     width: 100% !important;
 }
