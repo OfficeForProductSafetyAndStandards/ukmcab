@@ -280,6 +280,10 @@
                         </dd>
                     </div>
                 </dl>
+                @if (Model.ShowProductSchedulesWarning)
+                {
+                    <p class="govuk-body govuk-!-margin-top-6">Product schedules supplied by UKAS are the active schedules at the time of appointment.</p>
+                }
                 <partial name="Partials/_ProductSchedules" model="@Model.CABProductScheduleDetailsViewModel" />
             </div>
 
