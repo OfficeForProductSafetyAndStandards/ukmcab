@@ -177,8 +177,8 @@
                             Replace
                         </a>
 
-                                <button class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button" name="submitType" asp-action="DocumentListRemove" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" asp-route-documentFileId="@uploadedFile.Id" value="@Constants.SubmitType.Remove">
-                            Remove
+                        <button name="submitType" asp-action="DocumentListRemove" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" asp-route-documentFileId="@uploadedFile.Id" value="@Constants.SubmitType.Remove" class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button">
+                            @Constants.SubmitType.Remove
                         </button>
                     </div>
                     <div class="ukmcab-float__left width-full govuk-!-margin-top-0 govuk-!-padding-top-0">
@@ -187,7 +187,7 @@
                 }
                     </fieldset>
                 </div>
-            }
+                }          
         </div>
 
         <div class="govuk-grid-column-one-third">

@@ -727,22 +727,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             var documents = latestDocument?.Documents ?? new();
-            var fileUploads = documents.Where(n => n.Id == Guid.Parse(documentFileId))
-                .Select(s => new FileViewModel
-                {
-                    FileName = s.FileName,
-                    UploadDateTime = s.UploadDateTime,
-                    Label = s.Label,
-                    Category = s.Category,
-                    Archived = s.Archived,
-                    Id = s.Id
-                })
-                ?? throw new InvalidOperationException("No document found");
+            var selectedFile = documents.First(n => n.Id == Guid.Parse(documentFileId))
+                ?? throw new InvalidOperationException("No support file could be found in the document");
 
-            var fileUploadsMatchingSelectedFiles = _fileUploadUtils.GetSelectedFilesFromLatestDocumentOrReturnEmptyList(fileUploads, documents);
-            if (fileUploadsMatchingSelectedFiles.Any())
+            if (selectedFile!=null)
             {
-                _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(fileUploadsMatchingSelectedFiles,
+                _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(new List<FileUpload> { selectedFile },
                     latestDocument, nameof(latestDocument.Documents));
                 var userAccount =
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))

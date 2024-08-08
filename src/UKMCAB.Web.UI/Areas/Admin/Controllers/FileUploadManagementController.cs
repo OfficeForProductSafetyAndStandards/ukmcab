@@ -97,6 +97,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
+                IndexofSelectedFile = indexOfSelectedFile > -1 ? indexOfSelectedFile.ToString() : null,
                 DocumentStatus = latestVersion.StatusValue
             });
         }
@@ -211,6 +212,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
+                IndexofSelectedFile = indexOfSelectedFile > -1 ? indexOfSelectedFile.ToString() : null,
                 DocumentStatus = latestVersion.StatusValue
             });
         }
