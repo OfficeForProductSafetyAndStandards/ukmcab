@@ -1,4 +1,7 @@
-.document-item {
+.document-item
+.document-item-left,
+.document-item-centre,
+.document-item-right {
     padding-top: 40px;
 }
 
@@ -6,9 +9,15 @@
     .document-list {
         clear: both;
         display: flex;
+        align-items: flex-end;
     }
 
-    .document-item-half {
+    .document-item {
+        flex: 50%;
+        padding-top: 0px;
+    }
+
+    .document-item-left {
         flex: 0 1 50%;
         padding-top: 0px;
         min-width: 350px;

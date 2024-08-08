@@ -181,6 +181,13 @@
     margin-left: 0 !important;
 }
 
+.ukmcab-margin-top-10-mobile {
+    @include govuk-media-query($until: tablet) {
+        margin-top: 10px !important;
+    }
+    margin-top: 0 !important;
+}
+
 @media (min-width: 40.0625em) {
     .ukmcab-margin-left-10 {
         margin-left: 10px !important;

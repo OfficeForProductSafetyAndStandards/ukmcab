@@ -142,7 +142,7 @@
                                 @*Row 2: Inputbox Row*@
                                 <div class="document-list">
                                     <div class="document-item-left width-full ukmcab-full-width--mobile ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
-                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].Label">File</label>
+                                        <label class="govuk-label govuk-label--s ukmcab-padding-top-10 desktop-no-display" asp-for="ActiveFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].Label" class="govuk-error-message"></span>
                                         </p>
@@ -151,7 +151,7 @@
                                         <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                     </div>
                                     <div class="document-item-centre ukmcab-margin-left-10 @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
-                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].LegislativeArea">Legislative area</label>
+                                        <label class="govuk-label govuk-label--s ukmcab-margin-top-10 desktop-no-display" asp-for="ActiveFiles![i].LegislativeArea">Legislative area</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>
