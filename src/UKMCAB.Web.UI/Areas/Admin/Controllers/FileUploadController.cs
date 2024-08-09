@@ -1269,13 +1269,14 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                                 "Select a legislative area");
                         }
 
-                    if (string.IsNullOrWhiteSpace(uploadedFile.CreatedBy))
-                    {
-                        ModelState.AddModelError($"ActiveFiles[{index}].CreatedBy",
-                            "Select a created by value");
-                    }
+                        if (string.IsNullOrWhiteSpace(uploadedFile.CreatedBy))
+                        {
+                            ModelState.AddModelError($"ActiveFiles[{index}].CreatedBy",
+                                "Select a created by value");
+                        }
 
-                    index++;
+                        index++;
+                    }
                 }
             }
         }

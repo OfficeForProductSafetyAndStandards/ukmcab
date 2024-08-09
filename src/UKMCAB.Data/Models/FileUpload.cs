@@ -34,7 +34,7 @@ namespace UKMCAB.Data.Models
                            || (x.Category?.Equals(y.Category) ?? false))
                        && x.UploadDateTime.Date.Equals(y.UploadDateTime.Date)
                        && ((x.CreatedBy == null && y.CreatedBy == null)
-                            || (x.CreatedBy?.Equals(y.CreatedBy) ?? false)))
+                            || (x.CreatedBy?.Equals(y.CreatedBy) ?? false))
                        && ((x.Publication == null && y.Publication == null)
                            || (x.Publication?.Equals(y.Publication) ?? false)));
         }
