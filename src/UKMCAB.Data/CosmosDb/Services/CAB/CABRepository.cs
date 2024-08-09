@@ -67,7 +67,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         s.CreatedBy ??= "ukas";
                     });
 
-
                     document.Documents?.ForEach(s =>
                     {
                         s.Publication ??= DataConstants.Publications.Private;
