@@ -102,7 +102,7 @@
                             <div class="govuk-grid-column-one-half">
                                 <h3 class="govuk-heading-s">Legislative area</h3>
                             </div>
-                            <div class="ukmcab-margin-left-10 ukmcab-float__right">
+                            <div class="ukmcab-float__left">
                                 <h3 class="govuk-heading-s mobile-no-display">Created by</h3>
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].Label" class="govuk-error-message"></span>
                                         </p>
-                                        <input asp-for="ActiveFiles![i].Label" type="text" id="ActiveFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
+                                        <input asp-for="ActiveFiles![i].Label" type="text" id="ActiveFiles[@i].Label" class="govuk-input @Html.ShowModelStateInputErrorClass(ViewData.ModelState, $" ActiveFiles[{i}].Label")" value="@uploadedFile.Label" aria-required="true" maxlength="150">
                                         <input asp-for="ActiveFiles![i].FileName" type="hidden" value="@uploadedFile.FileName" />
                                         <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                     </div>
@@ -173,12 +173,12 @@
                                         </select>
                                     </div>
 
-                                    <div class="document-item ukmcab-margin-left-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].CreatedBy")">
+                                    <div class="document-item-right ukmcab-margin-left-10 @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].CreatedBy")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].CreatedBy">Created by</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].CreatedBy" class="govuk-error-message"></span>
                                         </p>
-                                        <select id="ActiveFiles[@i].CreatedBy" name="ActiveFiles[@i].CreatedBy" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].CreatedBy")">
+                                        <select id="ActiveFiles[@i].CreatedBy" name="ActiveFiles[@i].CreatedBy" class="govuk-select @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].CreatedBy")">
                                             @foreach (var userGroup in Model.CreatedBy)
                                             {
                                                 var selected = uploadedFile.CreatedBy == userGroup.Value;
