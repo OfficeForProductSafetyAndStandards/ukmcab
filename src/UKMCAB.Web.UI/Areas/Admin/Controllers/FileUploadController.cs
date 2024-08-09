@@ -446,7 +446,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Title = DocumentsOptions.UploadTitle,
                 UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel
                 {
-                    FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category
+                    FileName = s.FileName, 
+                    UploadDateTime = s.UploadDateTime, 
+                    Label = s.Label, 
+                    Category = s.Category,
+                    Publication = s.Publication,
                 }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,

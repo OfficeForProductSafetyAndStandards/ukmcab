@@ -40,7 +40,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileUploadViewModel
             {
                 Title = SchedulesOptions.ReplaceFile,
-                UploadedFiles = latestVersion.Schedules?.Where(n => n.Id == Guid.Parse(scheduleId)).Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, LegislativeArea = s.LegislativeArea?.Trim() }).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = latestVersion.Schedules?.Where(n => n.Id == Guid.Parse(scheduleId)).Select(s => new FileViewModel { 
+                    FileName = s.FileName, 
+                    UploadDateTime = s.UploadDateTime, 
+                    Label = s.Label, 
+                    LegislativeArea = s.LegislativeArea?.Trim(),
+                    Publication = s.Publication
+                }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 DocumentStatus = latestVersion.StatusValue,
                 IsFromSummary = fromSummary
@@ -87,7 +93,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileUploadViewModel
             {
                 Title = DocumentsOptions.ReplaceFile,
-                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category, Publication = s.Publication}).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel { 
+                    FileName = s.FileName, 
+                    UploadDateTime = s.UploadDateTime, 
+                    Label = s.Label, 
+                    Category = s.Category, 
+                    Publication = s.Publication
+                }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
@@ -194,7 +206,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileUploadViewModel
             {
                 Title = DocumentsOptions.ListTitle,
-                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category?.Trim(), Publication = s.Publication }).ToList() ?? new List<FileViewModel>(),
+                UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel { 
+                    FileName = s.FileName, 
+                    UploadDateTime = s.UploadDateTime, 
+                    Label = s.Label,
+                    Category = s.Category?.Trim(),
+                    Publication = s.Publication
+                }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
@@ -218,7 +236,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View(new FileUploadViewModel
                 {
                     Title = DocumentsOptions.ListTitle,
-                    UploadedFiles = latestDocument.Documents?.Select(s => new FileViewModel { FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category }).ToList() ?? new List<FileViewModel>(),
+                    UploadedFiles = latestDocument.Documents?.Select(s => new FileViewModel { 
+                        FileName = s.FileName, 
+                        UploadDateTime = s.UploadDateTime, 
+                        Label = s.Label,
+                        Category = s.Category,
+                        Publication = s.Publication
+                    }).ToList() ?? new List<FileViewModel>(),
                     CABId = id,
                     IsFromSummary = fromSummary,
                     DocumentStatus = latestDocument.StatusValue

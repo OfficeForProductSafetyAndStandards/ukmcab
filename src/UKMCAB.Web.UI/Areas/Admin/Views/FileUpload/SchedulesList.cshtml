@@ -87,35 +87,35 @@
             }
             else
             {
-                <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ActiveFiles))">
+                <div class="govuk-form-group govuk-main-wrapper @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.ActiveFiles))">
                     <fieldset class="govuk-fieldset" aria-describedby="enter-file-title-hint">
                         <p id="activefileerrors" class="govuk-error-message">
                             <span class="govuk-error-message">@Html.ValidationMessage("SelectedScheduleId")</span>
                             <span asp-validation-for="ActiveFiles" class="govuk-error-message"></span>
                         </p>
 
-                        @* Header*@
-                        <div>
-                            <div class="width-half ukmcab-float__left mobile-no-display">
+                        @* Header *@
+                        <div style="margin-bottom:0" class="govuk-grid-row display-from-desktop">
+                            <div class="govuk-grid-column-one-half">
                                 <h3 class="govuk-heading-s">File</h3>
-                            </div>                            
-                            <div class="ukmcab-margin-left-10 ukmcab-float__left">
-                                <h3 class="govuk-heading-s mobile-no-display">Legislative area</h3>
+                            </div>
+                            <div class="govuk-grid-column-one-half">
+                                <h3 class="govuk-heading-s">Legislative area</h3>
                             </div>
                         </div>
-                        <div>
-                            <div class="ukmcab-float__clear width-full govuk-!-margin-top-2 govuk-!-margin-bottom-2">
-                                <hr class="ukmcab-border" />
-                            </div>
-                        </div>
+
+                        <hr class="ukmcab-border" />
 
                         <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
 
                             @for (int i = 0; i < Model.ActiveFiles.Count; i++)
                             {
                                 var uploadedFile = Model.ActiveFiles[i];
-
-                                <div class="govuk-radios__item">
+                                
+                            <div class="govuk-grid-row">
+                                <div class="govuk-grid-column-full">
+                                        <div class="govuk-radios__item">
+                                            @*Row 1: Radio Row*@
                                     <div class="row">
                                         <div class="width-one-tenth">
                                             <input type="hidden" asp-for="ActiveFiles![i].FileIndex" value="@i" />
@@ -133,13 +133,15 @@
                                                 <label class="govuk-body govuk-!-font-weight-bold govuk-colour-green">New</label>
                                             }
                                         </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
 
                                 @*Row 2: Inputbox Row*@
-                                <div class="document-list">
-                                    <div class="document-item width-half ukmcab-padding-right-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
-                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].Label">File</label>
+                                <div class="govuk-grid-row">
+                                    <div class="govuk-grid-column-full govuk-grid-column-one-half-from-desktop @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
+                                        <label class="govuk-label govuk-label--s display-until-desktop" asp-for="ActiveFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].Label" class="govuk-error-message"></span>
                                         </p>
@@ -147,8 +149,8 @@
                                         <input asp-for="ActiveFiles![i].FileName" type="hidden" value="@uploadedFile.FileName" />
                                         <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                     </div>
-                                    <div class="document-item ukmcab-margin-left-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
-                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].LegislativeArea">Legislative area</label>
+                                    <div class="govuk-grid-column-full govuk-grid-column-one-half-from-desktop @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
+                                        <label class="govuk-label govuk-label--s display-until-desktop" asp-for="ActiveFiles![i].LegislativeArea">Legislative area</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].LegislativeArea" class="govuk-error-message"></span>
                                         </p>

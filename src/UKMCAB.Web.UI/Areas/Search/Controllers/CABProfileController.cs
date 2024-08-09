@@ -552,6 +552,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     Documents = cabDocument.Schedules?.Select(s => new FileUpload
                     {
                         Label = s.Label ?? s.FileName,
+                        Category = s.Category,
                         FileName = s.FileName,
                         BlobName = s.BlobName,
                         LegislativeArea = s.LegislativeArea,

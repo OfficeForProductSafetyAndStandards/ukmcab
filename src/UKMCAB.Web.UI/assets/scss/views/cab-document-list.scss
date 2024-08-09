@@ -10,7 +10,7 @@
     }
 
     .document-item {
-        flex: 50%;
+        /*flex: 50%;*/
         padding-top: 0px;
     }
 
@@ -23,3 +23,17 @@
     align-items: flex-start;    
 }
 
+.document-file-name {
+    @include govuk-media-query($from: tablet) {
+        padding-left: 51px;
+    }
+}
+
+.document-padding-right-17 {
+    padding-right: 17px;
+}
+
+.document-detail-select {
+    min-width: 1em !important;
+    width: 100%;
+}
