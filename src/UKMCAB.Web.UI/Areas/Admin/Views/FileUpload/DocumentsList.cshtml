@@ -112,10 +112,10 @@
                                 var items = DataConstants.Lists.DocumentCategories.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Category?.Trim() ?? string.Empty))).ToList();
                                 var publications = DataConstants.Lists.Publications.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Publication?.Trim() ?? string.Empty))).ToList();
 
-                                if (uploadedFile.UploadDateTime.HasValue)
-                                {
-                                    uploadedDate = uploadedFile.UploadDateTime.Value.ToString("d MMM yyyy");
-                                }
+                    if (uploadedFile.UploadDateTime.HasValue)
+                    {
+                        uploadedDate = uploadedFile.UploadDateTime.Value.ToString("d MMM yyyy");
+                    }
 
                                 <div class="govuk-grid-row">
                                     <div class="govuk-grid-column-full">
@@ -193,6 +193,22 @@
                                         </select>
                                     </div>
                                 </div>
+                                <!-- RJP TODO -->
+                                <div class="govuk-grid-row">
+                                    <div class="govuk-grid-column-full govuk-button-group govuk-!-margin-bottom-0 govuk-!-margin-top-2 document-item-button-group">
+                                        <a asp-area="admin" asp-controller="FileUploadManagement" asp-action="DocumentsUseFileAgain" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" asp-route-indexOfSelectedFile="@i" class="button-link govuk-link govuk-link--no-visited-state">
+                                            Use again
+                                        </a>
+
+                                        <a asp-area="admin" asp-controller="FileUploadManagement" asp-action="DocumentsReplaceFile" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" asp-route-indexOfSelectedFile="@i" class="button-link govuk-link govuk-link--no-visited-state">
+                                            Replace
+                                        </a>
+
+                                        <button name="submitType" asp-action="DocumentListRemove" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" asp-route-documentFileId="@uploadedFile.Id" value="@Constants.SubmitType.Remove" class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button">
+                                            @Constants.SubmitType.Remove
+                                        </button>
+                                    </div>
+                                </div>
                                 <div class="ukmcab-float__left width-full govuk-!-margin-top-2 govuk-!-margin-bottom-2">
                                     <hr class="ukmcab-border"/>
                                 </div>
@@ -200,23 +216,12 @@
                         </div>
                     </fieldset>
                 </div>
-            }
-        </div>
-
-        <div class="govuk-grid-column-two-thirds">
-            @if (Model.UploadedFiles != null && Model.UploadedFiles.Any())
-            {
-                <div class="govuk-button-group">
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UseFileAgain">Save and use file again</button>
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.ReplaceFile">Replace file</button>
-                    <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Remove">@Constants.SubmitType.Remove</button>
-                </div>
-            }
+                }          
         </div>
 
         <div class="govuk-grid-column-one-third">
             <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.UploadAnother">
-                @Html.Conditional(Model.UploadedFiles != null && Model.UploadedFiles.Any(), "Save and upload another file", "Upload a file")
+                Upload new file
             </button>
         </div>
 

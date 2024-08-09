@@ -52,7 +52,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
-                    d.CABId == cabId.ToString() && d.Schedules.Contains(productSchedule))), Times.Never);
+                    d.CABId == cabId.ToString() && d.Schedules.Contains(productSchedule)), null), Times.Never);
 
             _mockCABRepository.VerifyNoOtherCalls();
         }
@@ -84,7 +84,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
-                    d.CABId == cabId.ToString() && !d.Schedules.Contains(productSchedule))), Times.Once);
+                    d.CABId == cabId.ToString() && !d.Schedules.Contains(productSchedule)), null), Times.Once);
             
         }
     }

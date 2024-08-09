@@ -43,36 +43,32 @@
     text-decoration: none;
     color: black;
 
-    &[aria-sort]:before {
-        content: " \25bc";
+    &[aria-sort] .before-sort {
         position: absolute;
         right: -15px;
         top: 10px;
         font-size: 0.5em;
     }
 
-    &[aria-sort]:after {
-        content: " \25b2";
+    &[aria-sort] .after-sort {
         position: absolute;
         right: -15px;
         top: 1px;
         font-size: 0.5em;
     }
 
-    &[aria-sort="asc"]:before,
-    &[aria-sort="desc"]:before {
+    &[aria-sort="asc"] .before-sort,
+    &[aria-sort="desc"] .before-sort {
         content: none;
     }
 
-    &[aria-sort="asc"]:after {
-        content: " \25b2";
+    &[aria-sort="asc"] .after-sort {
         font-size: 0.8em;
         right: -18px;
         top: 3px;
     }
 
-    &[aria-sort="desc"]:after {
-        content: " \25bc";
+    &[aria-sort="desc"] .after-sort {
         font-size: 0.8em;
         right: -18px;
         top: 3px;

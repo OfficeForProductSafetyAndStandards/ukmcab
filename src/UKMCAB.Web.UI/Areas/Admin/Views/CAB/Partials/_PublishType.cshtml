@@ -1,0 +1,18 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABPublishTypeViewModel
+
+<div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.SelectedPublishType))">
+    <govuk-radios asp-for="SelectedPublishType">
+        <govuk-radios-fieldset>
+            <govuk-radios-fieldset-legend class="govuk-fieldset__legend--s">
+                Select one option.
+            </govuk-radios-fieldset-legend>
+            <govuk-radios-hint>
+
+            </govuk-radios-hint>
+            @foreach(var item in Model.PublishTypes)
+            {
+                <govuk-radios-item value=@item.Value>@item.Text</govuk-radios-item>
+            }
+        </govuk-radios-fieldset>
+    </govuk-radios>
+</div>

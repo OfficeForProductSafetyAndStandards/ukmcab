@@ -102,6 +102,9 @@
                             <div class="govuk-grid-column-one-half">
                                 <h3 class="govuk-heading-s">Legislative area</h3>
                             </div>
+                            <div class="ukmcab-margin-left-10 ukmcab-float__right">
+                                <h3 class="govuk-heading-s mobile-no-display">Created by</h3>
+                            </div>
                         </div>
 
                         <hr class="ukmcab-border" />
@@ -169,6 +172,21 @@
                                             }
                                         </select>
                                     </div>
+
+                                    <div class="document-item ukmcab-margin-left-10 ukmcab-float__left @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].CreatedBy")">
+                                        <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].CreatedBy">Created by</label>
+                                        <p class="govuk-error-message">
+                                            <span asp-validation-for="ActiveFiles![i].CreatedBy" class="govuk-error-message"></span>
+                                        </p>
+                                        <select id="ActiveFiles[@i].CreatedBy" name="ActiveFiles[@i].CreatedBy" class="govuk-select govuk-!-width-full @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].CreatedBy")">
+                                            @foreach (var userGroup in Model.CreatedBy)
+                                            {
+                                                var selected = uploadedFile.CreatedBy == userGroup.Value;
+                                                <option value="@userGroup.Value" selected="@selected">@userGroup.Text</option>
+                                            }
+                                        </select>
+                                    </div>
+
                                 </div>
 
                                 <div class="ukmcab-float__left width-full govuk-!-margin-top-2 govuk-!-margin-bottom-2">

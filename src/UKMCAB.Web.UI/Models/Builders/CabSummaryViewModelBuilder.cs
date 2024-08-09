@@ -109,7 +109,11 @@ namespace UKMCAB.Web.UI.Models.Builders
             _model.CABHistoryViewModel = cabHistoryViewModel;
             return this;
         }
-
+        public ICabSummaryViewModelBuilder WithCabPublishTypeViewModel(CABPublishTypeViewModel CabPublishTypeViewModel)
+        {
+            _model.CABPublishTypeViewModel = CabPublishTypeViewModel;
+            return this;
+        }
         public ICabSummaryViewModelBuilder WithCabGovernmentUserNotesViewModel(CABGovernmentUserNotesViewModel cabGovernmentUserNotesViewModel)
         {
             _model.CABGovernmentUserNotesViewModel = cabGovernmentUserNotesViewModel;

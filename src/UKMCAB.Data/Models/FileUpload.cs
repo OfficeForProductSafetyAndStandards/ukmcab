@@ -12,6 +12,7 @@ namespace UKMCAB.Data.Models
         public string BlobName { get; set; }
         public DateTime UploadDateTime { get; set; }
         public bool? Archived { get; set; }
+        public string? CreatedBy { get; set; }
         public string? Publication { get; set; }
 
         public bool IsPublic => !(Archived ?? false) && (Publication?.Equals(DataConstants.Publications.Public) ?? false);
@@ -32,6 +33,8 @@ namespace UKMCAB.Data.Models
                        && ((x.Category == null && y.Category == null)
                            || (x.Category?.Equals(y.Category) ?? false))
                        && x.UploadDateTime.Date.Equals(y.UploadDateTime.Date)
+                       && ((x.CreatedBy == null && y.CreatedBy == null)
+                            || (x.CreatedBy?.Equals(y.CreatedBy) ?? false)))
                        && ((x.Publication == null && y.Publication == null)
                            || (x.Publication?.Equals(y.Publication) ?? false)));
         }

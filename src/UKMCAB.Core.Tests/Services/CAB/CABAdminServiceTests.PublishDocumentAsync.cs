@@ -8,6 +8,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using System.Linq;
 using UKMCAB.Core.Security;
+using UKMCAB.Data;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -72,6 +73,131 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Assert
             Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
             Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
+        }
+
+        [Test]
+        public async Task PublishDocumentAsync_ShouldReturnaDocumentWithALastUpdatedDateSameAsThePreviousPublishedVersion()
+        {
+            // Arrange
+            (var legislativeAreas, var scopeOfAppointments, var schedules) = GenerateTestData();
+
+            var latestDocument = new Document
+            {
+                CABId = Guid.NewGuid().ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = legislativeAreas,
+                ScopeOfAppointments = scopeOfAppointments,
+                Schedules = schedules,
+                LastUpdatedDate = DateTime.MinValue
+            };
+
+            var lastUpdatedDate = new DateTime(2024, 1, 1);
+
+            var publishDocument = new Document
+            {
+                CABId = Guid.NewGuid().ToString(),
+                StatusValue = Status.Published,
+                SubStatus = SubStatus.None,
+                DocumentLegislativeAreas = new List<DocumentLegislativeArea> { },
+                ScopeOfAppointments = new List<DocumentScopeOfAppointment> { },
+                LastUpdatedDate = lastUpdatedDate
+            };
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { latestDocument, publishDocument });
+            _mockCABRepository.Setup(x => x.UpdateAsync(It.IsAny<Document>(), It.IsAny<DateTime?>()))
+                       .Callback<Document, DateTime?>((doc, date) => doc.LastUpdatedDate = date ?? DateTime.Now)
+                       .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
+                latestDocument, null, null, DataConstants.PublishType.MinorPublish);
+
+            // Assert
+            Assert.AreEqual(latestDocument.LastUpdatedDate, lastUpdatedDate);
+            _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, lastUpdatedDate), Times.Once());
+        }
+
+        [Test]
+        public async Task PublishDocumentAsync_ShouldReturnaDocumentWithCurrentDateIfNoPublishedOrArchivedDocumentExists()
+        {
+            // Arrange
+            (var legislativeAreas, var scopeOfAppointments, var schedules) = GenerateTestData();
+
+            var latestDocument = new Document
+            {
+                CABId = Guid.NewGuid().ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = legislativeAreas,
+                ScopeOfAppointments = scopeOfAppointments,
+                Schedules = schedules,
+                LastUpdatedDate = DateTime.MinValue
+            };
+
+
+            var currentDateBefore = DateTime.Now;
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { latestDocument });
+            _mockCABRepository.Setup(x => x.UpdateAsync(It.IsAny<Document>(), It.IsAny<DateTime?>()))
+                       .Callback<Document, DateTime?>((doc, date) => doc.LastUpdatedDate = date ?? DateTime.Now)
+                       .Returns(Task.CompletedTask);
+
+            var lastUpdatedDate = DateTime.UtcNow;
+
+            // Act
+            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
+                latestDocument, null, null, DataConstants.PublishType.MinorPublish);
+
+            var currentDateAfter = DateTime.Now;
+
+            // Assert
+            Assert.AreEqual(lastUpdatedDate.Date, latestDocument.LastUpdatedDate.Date);
+            _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, It.Is<DateTime>(d => d >= currentDateBefore && d <= currentDateAfter)), Times.Once);
+        }
+
+        [Test]
+        public async Task PublishDocumentAsync_ShouldReturnaDocumentWithCurrentDateIfPublishType_IsMajorPublish()
+        {
+            // Arrange
+            (var legislativeAreas, var scopeOfAppointments, var schedules) = GenerateTestData();
+
+            var latestDocument = new Document
+            {
+                CABId = Guid.NewGuid().ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = legislativeAreas,
+                ScopeOfAppointments = scopeOfAppointments,
+                Schedules = schedules,
+                LastUpdatedDate = DateTime.MinValue
+            };
+
+            var lastUpdatedDate = new DateTime(2024, 1, 1);
+
+            var publishDocument = new Document
+            {
+                CABId = Guid.NewGuid().ToString(),
+                StatusValue = Status.Published,
+                SubStatus = SubStatus.None,
+                DocumentLegislativeAreas = new List<DocumentLegislativeArea> { },
+                ScopeOfAppointments = new List<DocumentScopeOfAppointment> { },
+                LastUpdatedDate = lastUpdatedDate
+            };
+
+            var currentDateBefore = DateTime.Now;
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { latestDocument, publishDocument });
+            _mockCABRepository.Setup(x => x.UpdateAsync(It.IsAny<Document>(), It.IsAny<DateTime?>()))
+                       .Callback<Document, DateTime?>((doc, date) => doc.LastUpdatedDate = date ?? DateTime.Now)
+                       .Returns(Task.CompletedTask);
+
+            // Act
+            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
+                latestDocument, null, null, DataConstants.PublishType.MajorPublish);
+
+            var currentDateAfter = DateTime.Now;
+
+            // Assert
+            Assert.IsTrue(latestDocument.LastUpdatedDate >= currentDateBefore && latestDocument.LastUpdatedDate <= currentDateAfter);
+            _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, It.Is<DateTime>(d => d >= currentDateBefore && d <= currentDateAfter)), Times.Once);
         }
 
         private (List<DocumentLegislativeArea>, List<DocumentScopeOfAppointment>, List<FileUpload>) GenerateTestData()

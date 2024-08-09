@@ -94,7 +94,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
-            _mockCABRepository.Verify(r => r.UpdateAsync(It.Is<Document>(d => d.CABId == cabId && d.AuditLog.First().Action == AuditCABActions.UnpublishApprovalRequest)), Times.Once);
+            _mockCABRepository.Verify(r => r.UpdateAsync(It.Is<Document>(d => d.CABId == cabId && d.AuditLog.First().Action == AuditCABActions.UnpublishApprovalRequest), null), Times.Once);
             _mockCABRepository.Verify(r => r.GetItemLinqQueryable(), Times.Exactly(5));
             _mockCABRepository.VerifyNoOtherCalls();
         }
@@ -120,7 +120,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
-            _mockCABRepository.Verify(r => r.UpdateAsync(It.Is<Document>(d => d.StatusValue == Status.Historical && d.SubStatus == SubStatus.None)), Times.Once);
+            _mockCABRepository.Verify(r => r.UpdateAsync(It.Is<Document>(d => d.StatusValue == Status.Historical && d.SubStatus == SubStatus.None), null), Times.Once);
             _mockCABRepository.Verify(r => r.GetItemLinqQueryable(), Times.Exactly(5));
             _mockCABRepository.VerifyNoOtherCalls();
         }
