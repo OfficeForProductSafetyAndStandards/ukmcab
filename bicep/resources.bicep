@@ -486,7 +486,7 @@ resource cosmosDbContainerDesignatedStandards 'Microsoft.DocumentDB/databaseAcco
       id: 'designated-standards'
       partitionKey: {
         paths: [
-          '/id'
+          '/legislativeAreaId'
         ]
         kind: 'Hash'
       }
