@@ -6,7 +6,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
     public class DesignatedStandardViewModel : LegislativeAreaBaseViewModel
     {
         [Required(ErrorMessage = "Select a designated standard")]
-        public List<Guid>? SelectedDesignatedStandardId { get; set; }
+        public List<Guid>? SelectedDesignatedStandardIds { get; set; }
         
         public Guid CabId { get; set; }
 

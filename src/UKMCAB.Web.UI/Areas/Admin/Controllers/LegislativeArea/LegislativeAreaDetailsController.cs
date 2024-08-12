@@ -1026,7 +1026,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
         if (ModelState.IsValid)
         {
-            documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardId;
+            documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
             await _distCache.SetAsync(string.Format(CacheKey, scopeId.ToString()), documentScopeOfAppointment,
                 TimeSpan.FromHours(1));
 
@@ -1034,6 +1034,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                                  throw new InvalidOperationException();
             var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == documentScopeOfAppointment.LegislativeAreaId);
             documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
+
+            if (latestDocument.ScopeOfAppointments.Any(s => s.Equals(documentScopeOfAppointment)))
+            {
+                return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry });
+            }
+
+            latestDocument.ScopeOfAppointments.Add(documentScopeOfAppointment);
 
             var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);

@@ -16,17 +16,22 @@
             <input type="hidden" asp-for="@Model.LegislativeArea"/>
             <input type="hidden" asp-for="@Model.LegislativeAreaId"/>
             <input type="hidden" asp-for="@Model.ScopeId" value="@Model.ScopeId"/>
-            <govuk-radios asp-for="SelectedDesignatedStandardId">
-                <govuk-radios-fieldset>
-                    <govuk-radios-fieldset-legend class="govuk-label--s">
+
+            <govuk-checkboxes asp-for="SelectedDesignatedStandardIds">
+                <govuk-checkboxes-fieldset>
+                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--l">
                         Designated Standards
-                    </govuk-radios-fieldset-legend>
+                    </govuk-checkboxes-fieldset-legend>
+
                     @foreach (var ds in Model.DesignatedStandards!)
                     {
-                        <govuk-radios-item value="@ds.Value" checked="@ds.Selected">@ds.Text</govuk-radios-item>
+                        <govuk-checkboxes-item value="@ds.Value" checked="@ds.Selected">
+                            @ds.Text
+                        </govuk-checkboxes-item>
                     }
-                </govuk-radios-fieldset>
-            </govuk-radios>
+                </govuk-checkboxes-fieldset>
+            </govuk-checkboxes>
+
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
                 <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CabId">Cancel</a>
