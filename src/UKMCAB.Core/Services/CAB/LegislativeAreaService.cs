@@ -114,6 +114,7 @@ public class LegislativeAreaService : ILegislativeAreaService
 
         return new ScopeOfAppointmentOptionsModel();
     }
+
     public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid purposeOfAppointmentId)
     {
         var categories = await _categoryRepository.QueryAsync(x => x.PurposeOfAppointmentId == purposeOfAppointmentId);
@@ -249,6 +250,38 @@ public class LegislativeAreaService : ILegislativeAreaService
         Guard.IsTrue(designatedStandardId != Guid.Empty, "Guid cannot be empty");
         var designatedStandard = await _designatedStandardRepository.QueryAsync(p => p.Id == designatedStandardId);
         return _mapper.Map<DesignatedStandardModel>(designatedStandard.FirstOrDefault());
+    }
+
+    public async Task<List<DesignatedStandardModel>> GetDesignatedStandardsForDocumentAsync(Document document)
+    {
+        var designatedStandardIds = document.ScopeOfAppointments.SelectMany(soa => soa.DesignatedStandardIds).Distinct();
+        foreach (var id in designatedStandardIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var designatedStandards = (await _designatedStandardRepository.QueryAsync(d => designatedStandardIds.Contains(d.Id)))
+            .OrderBy(d => d.Name)
+            .ToList();
+
+        // TODO: Remove hardcoded values once UKMCAB-1709 is complete
+        designatedStandards = new List<DesignatedStandard>
+        {
+            new DesignatedStandard
+            {
+                Id = Guid.Parse("b4be7979-c764-4cc6-9db5-b333892bfc94"),
+                Name = "Flued oil stoves with vaporizing burners",
+                ReferenceNumber = new List<string>{ "EN 1:1998", "EN 1:1998/A1:2007" },
+                NoticeOfPublicationReference = "0035/21"
+            },
+            new DesignatedStandard
+            {
+                Id = Guid.Parse("afc862a2-24e1-46af-9ccc-39a63c487123"),
+                Name = "Multi-burner gas-fired overhead radiant tube heater systems for non-domestic use — Part 4: System H — Safety",
+                ReferenceNumber = new List<string>{ "EN 777-4:2009" },
+                NoticeOfPublicationReference = "0035/21"
+            }
+        };
+        return _mapper.Map<List<DesignatedStandardModel>>(designatedStandards);
     }
 
     public async Task<List<LegislativeAreaModel>> GetLegislativeAreasForDocumentAsync(Document document)

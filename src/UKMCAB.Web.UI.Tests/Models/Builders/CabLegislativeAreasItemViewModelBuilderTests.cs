@@ -91,6 +91,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             var categories = CabLegislativeAreasItemViewModelBuilderTestsFixture.Categories;
             var procedures = CabLegislativeAreasItemViewModelBuilderTestsFixture.Procedures;
             var products = CabLegislativeAreasItemViewModelBuilderTestsFixture.Products;
+            var designatedStandards = CabLegislativeAreasItemViewModelBuilderTestsFixture.DesignatedStandards;
 
             var legislativeAreaId = legislativeArea.Id;
             var purposeOfAppointmentId = purposeOfAppointments.First().Id;
@@ -142,7 +143,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 categories,
                 subCategories,
                 products,
-                procedures).Build();
+                procedures,
+                designatedStandards).Build();
 
             // Assert
             result.ScopeOfAppointments.Should().BeEquivalentTo(expectedResult);
@@ -158,6 +160,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             var categories = CabLegislativeAreasItemViewModelBuilderTestsFixture.Categories;
             var procedures = CabLegislativeAreasItemViewModelBuilderTestsFixture.Procedures;
             var products = CabLegislativeAreasItemViewModelBuilderTestsFixture.Products;
+            //var designatedStandards = CabLegislativeAreasItemViewModelBuilderTestsFixture.DesignatedStandards;
+            var designatedStandards = new List<DesignatedStandardModel>();
 
             var legislativeAreaId = legislativeArea.Id;
             var purposeOfAppointmentId = purposeOfAppointments.First().Id;
@@ -181,7 +185,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 categories,
                 subCategories,
                 products,
-                procedures);
+                procedures,
+                designatedStandards);
 
             var expectedResult = new List<int> { 2, 0 };
 
@@ -243,6 +248,11 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                     Id = Guid.NewGuid(),
                     Name = "Test product name"
                 }
+            };
+
+            public static List<DesignatedStandardModel> DesignatedStandards => new()
+            {
+                new (Guid.NewGuid(), "Test designated standard", Guid.NewGuid(), new List<string>(), "Test publication reference" )
             };
 
             public static List<DocumentScopeOfAppointment> DocumentScopeOfAppointments(Guid purposeOfAppointmentId, Guid subCategoryId, Guid categoryId, Guid procedureId, Guid productId) 

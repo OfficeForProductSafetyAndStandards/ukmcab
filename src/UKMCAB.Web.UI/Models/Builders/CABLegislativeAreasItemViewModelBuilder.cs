@@ -58,10 +58,12 @@ namespace UKMCAB.Web.UI.Models.Builders
             List<CategoryModel> categories,
             List<SubCategoryModel> subCategories,
             List<ProductModel> products,
-            List<ProcedureModel> procedures)
+            List<ProcedureModel> procedures,
+            List<DesignatedStandardModel> designatedStandards)
         {
             foreach (var documentScopeOfAppointment in documentScopeOfAppointments)
             {
+
                 var purposeOfAppointment = purposeOfAppointments.FirstOrDefault(p => p.Id == documentScopeOfAppointment.PurposeOfAppointmentId);
                 var subCategory = subCategories.FirstOrDefault(p => p.Id == documentScopeOfAppointment.SubCategoryId);
 
@@ -88,6 +90,23 @@ namespace UKMCAB.Web.UI.Models.Builders
                     purposeOfAppointment?.Name);
 
                 _model.ScopeOfAppointments.AddRange(scopeOfAppointmentViewModelForProducts);
+
+                // TODO: Remove hardcoded values once UKMCAB-1709 is complete
+                documentScopeOfAppointment.DesignatedStandardIds = new List<Guid> { Guid.Parse("b4be7979-c764-4cc6-9db5-b333892bfc94"), Guid.Parse("afc862a2-24e1-46af-9ccc-39a63c487123") };
+
+                if (documentScopeOfAppointment.DesignatedStandardIds.Any())
+                {
+                    var scopeOfAppointmentViewModelForDesignatedStandards = CreateScopeOfAppointmentViewModelForDesignatedStandards(
+                    documentScopeOfAppointment.Id,
+                    legislativeArea.Id,
+                    legislativeArea.Name,
+                    subCategory?.Name,
+                    purposeOfAppointment?.Name,
+                    documentScopeOfAppointment.DesignatedStandardIds,
+                    designatedStandards);
+
+                    _model.ScopeOfAppointments.Add(scopeOfAppointmentViewModelForDesignatedStandards);
+                }
             }
             return this;
         }
@@ -165,6 +184,33 @@ namespace UKMCAB.Web.UI.Models.Builders
                 scopeOfAppointments.Add(model);
             }
             return scopeOfAppointments;
+        }
+
+        private LegislativeAreaListItemViewModel CreateScopeOfAppointmentViewModelForDesignatedStandards(
+            Guid documentScopeOfAppointmentId,
+            Guid legislativeAreaId,
+            string legislativeAreaName,
+            string? subCategoryName,
+            string? purposeOfAppointmentName,
+            List<Guid> designatedStandardIds,
+            List<DesignatedStandardModel> designatedStandards
+            )
+        {
+            var soaDesignatedStandards = designatedStandards.Where(d => designatedStandardIds.Contains(d.Id));
+            var soaDesignatedStandardsViewModels = soaDesignatedStandards.Select(d => new DesignatedStandardReadOnlyViewModel(d.Id, d.Name, d.ReferenceNumber, d.NoticeOfPublicationReference)).ToList();
+                
+            var model = new LegislativeAreaListItemViewModel(
+                legislativeAreaId,
+                legislativeAreaName,
+                purposeOfAppointmentName,
+                null,
+                subCategoryName,
+                documentScopeOfAppointmentId,
+                null,
+                null,
+                designatedStandards: soaDesignatedStandardsViewModels);
+
+            return model;
         }
     }
 }

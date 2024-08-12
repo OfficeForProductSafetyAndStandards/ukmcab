@@ -36,4 +36,5 @@ public interface ILegislativeAreaService
     Task<List<SubCategoryModel>> GetSubCategoriesForDocumentAsync(Document document);
     Task<List<ProductModel>> GetProductsForDocumentAsync(Document document);
     Task<List<ProcedureModel>> GetProceduresForDocumentAsync(Document document);
+    Task<List<DesignatedStandardModel>> GetDesignatedStandardsForDocumentAsync(Document document);
 }

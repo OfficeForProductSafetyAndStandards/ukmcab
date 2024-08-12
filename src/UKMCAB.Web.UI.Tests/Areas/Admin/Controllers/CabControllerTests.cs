@@ -152,6 +152,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             var subCategoryModels = new List<SubCategoryModel> { new() { Id = Guid.NewGuid() } };
             var productModels = new List<ProductModel> { new() { Id = Guid.NewGuid() } };
             var procedureModels = new List<ProcedureModel> { new() { Id = Guid.NewGuid() } };
+            var designatedStandardModels = new List<DesignatedStandardModel> { new(Guid.NewGuid(), "Test designated standard", Guid.NewGuid(), new List<string>(), "Test publication reference" ) };
 
             var expectedDocLaIds = documentLegislativeAreas.Select(l => l.Id);
             var expectedLaIds = legislativeAreaModels.Select(l => l.Id);
@@ -161,6 +162,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             var expectedSubCategoryIds = subCategoryModels.Select(l => l.Id);
             var expectedProductsIds = productModels.Select(l => l.Id);
             var expectedProcedureIds = procedureModels.Select(l => l.Id);
+            var expectedDesignatedStandardsIds = designatedStandardModels.Select(l => l.Id);
 
             _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(documentId)).ReturnsAsync(document);
             _mockCabSummaryUiService.Setup(m => m.CreateDocumentAsync(It.Is<Document>(d => d.id == document.id), null)).Returns(Task.CompletedTask);
@@ -176,6 +178,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
                 .ReturnsAsync(productModels);
             _mockLegislativeAreaService.Setup(m => m.GetProceduresForDocumentAsync(It.Is<Document>(d => d.id == document.id)))
                 .ReturnsAsync(procedureModels);
+            _mockLegislativeAreaService.Setup(m => m.GetDesignatedStandardsForDocumentAsync(It.Is<Document>(d => d.id == document.id)))
+                .ReturnsAsync(designatedStandardModels);
             _mockCabAdminService.Setup(m => m.DocumentWithSameNameExistsAsync(It.Is<Document>(d => d.id == document.id)))
                 .ReturnsAsync(cabNameAlreadyExists);
             _mockEditLockService.Setup(m => m.IsCabLockedForUser(cabId, _userId)).ReturnsAsync(isEditLocked);
@@ -188,7 +192,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
                 It.Is<List<CategoryModel>>(categories => categories.Any() && categories.All(c => expectedCategoryIds.Contains(c.Id))),
                 It.Is<List<SubCategoryModel>>(subCategories => subCategories.Any() && subCategories.All(s => expectedSubCategoryIds.Contains(s.Id))),
                 It.Is<List<ProductModel>>(products => products.Any() && products.All(p => expectedProductsIds.Contains(p.Id))),
-                It.Is<List<ProcedureModel>>(procedures => procedures.Any() && procedures.All(p => expectedProcedureIds.Contains(p.Id)))
+                It.Is<List<ProcedureModel>>(procedures => procedures.Any() && procedures.All(p => expectedProcedureIds.Contains(p.Id))),
+                It.Is<List<DesignatedStandardModel>>(designatedStandards => designatedStandards.Any() && designatedStandards.All(p => expectedDesignatedStandardsIds.Contains(p.Id)))
             )).Returns(_mockCabLegislativeAreasViewModelBuilder.Object);
             _mockCabLegislativeAreasViewModelBuilder.Setup(m => m.Build()).Returns(new CABLegislativeAreasViewModel());
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithRoleInfo(It.Is<Document>(d => d.id == document.id))).Returns(_mockCabSummaryViewModelBuilder.Object);
