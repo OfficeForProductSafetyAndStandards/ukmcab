@@ -5,7 +5,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Flued oil stoves with vaporizing burners",
     "referenceNumber": [
-      "EN 1:1998, EN 1:1998/A1:2007"
+      "EN 1:1998", "EN 1:1998/A1:2007"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -15,7 +15,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Lighting columns — Part 4: Requirements for reinforced and prestressed concrete lighting columns",
     "referenceNumber": [
-      "EN 40-4:2005, EN 40-4:2005/AC:2006"
+      "EN 40-4:2005", "EN 40-4:2005/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -55,7 +55,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 2: Control and indicating equipment",
     "referenceNumber": [
-      "EN 54-2:1997, EN 54-2:1997/AC:1999, EN 54-2:1997/A1:2006"
+      "EN 54-2:1997", "EN 54-2:1997/AC:1999", "EN 54-2:1997/A1:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -65,7 +65,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 3: Fire alarm devices — Sounders",
     "referenceNumber": [
-      "EN 54-3:2001, EN 54-3:2001/A2:2006, EN 54-3:2001/A1:2002"
+      "EN 54-3:2001", "EN 54-3:2001/A2:2006", "EN 54-3:2001/A1:2002"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -75,7 +75,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 4: Power supply equipment",
     "referenceNumber": [
-      "EN 54-4:1997, EN 54-4:1997/AC:1999, EN 54-4:1997/A1:2002, EN 54-4:1997/A2:2006"
+      "EN 54-4:1997", "EN 54-4:1997/AC:1999", "EN 54-4:1997/A1:2002", "EN 54-4:1997/A2:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -105,7 +105,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 10: Flame detectors — Point detectors",
     "referenceNumber": [
-      "EN 54-10:2002, EN 54-10:2002/A1:2005"
+      "EN 54-10:2002", "EN 54-10:2002/A1:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -115,7 +115,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 11: Manual call points",
     "referenceNumber": [
-      "EN 54-11:2001, EN 54-11:2001/A1:2005"
+      "EN 54-11:2001", "EN 54-11:2001/A1:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -145,7 +145,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 17: Short-circuit isolators",
     "referenceNumber": [
-      "EN 54-17:2005, EN 54-17:2005/AC:2007"
+      "EN 54-17:2005", "EN 54-17:2005/AC:2007"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -155,7 +155,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 18: Input/output devices",
     "referenceNumber": [
-      "EN 54-18:2005, EN 54-18:2005/AC:2007"
+      "EN 54-18:2005", "EN 54-18:2005/AC:2007"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -165,7 +165,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 20: Aspirating smoke detectors",
     "referenceNumber": [
-      "EN 54-20:2006, EN 54-20:2006/AC:2008"
+      "EN 54-20:2006", "EN 54-20:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -205,7 +205,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fire detection and fire alarm systems — Part 25: Components using radio links",
     "referenceNumber": [
-      "EN 54-25:2008, EN 54-25:2008/AC:2012"
+      "EN 54-25:2008", "EN 54-25:2008/AC:2012"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -285,7 +285,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Manually operated ball valves and closed bottom taper plug valves for gas installations for buildings",
     "referenceNumber": [
-      "EN 331:1998, EN 331:1998/A1:2010"
+      "EN 331:1998", "EN 331:1998/A1:2010"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -505,7 +505,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Elastomeric seals — Materials requirements for pipe joint seals used in water and drainage applications — Part 1: Vulcanized rubber",
     "referenceNumber": [
-      "EN 681-1:1996, EN 681-1:1996/A2:2002, EN 681-1:1996/A3:2005, EN 681-1:1996/A1:1998"
+      "EN 681-1:1996", "EN 681-1:1996/A2:2002", "EN 681-1:1996/A3:2005", "EN 681-1:1996/A1:1998"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -515,7 +515,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Elastomeric Seals — Materials requirements for pipe joint seals used in water and drainage applications — Part 2: Thermoplastic elastomer",
     "referenceNumber": [
-      "EN 681-2:2000, EN 681-2:2000/A1:2002, EN 681-2:2000/A2:2005"
+      "EN 681-2:2000", "EN 681-2:2000/A1:2002", "EN 681-2:2000/A2:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -525,7 +525,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Elastomeric seals — Materials requirements for pipe joint seals used in water and drainage applications — Part 3: Cellular materials of vulcanized rubber",
     "referenceNumber": [
-      "EN 681-3:2000, EN 681-3:2000/A1:2002, EN 681-3:2000/A2:2005"
+      "EN 681-3:2000", "EN 681-3:2000/A1:2002", "EN 681-3:2000/A2:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -535,7 +535,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Elastomeric seals — Materials requirements for pipe joint seals used in water and drainage applications — Part 4: Cast polyurethane sealing elements",
     "referenceNumber": [
-      "EN 681-4:2000, EN 681-4:2000/A1:2002, EN 681-4:2000/A2:2005"
+      "EN 681-4:2000", "EN 681-4:2000/A1:2002", "EN 681-4:2000/A2:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -545,7 +545,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Elastomeric Seals — Materials requirements for seals used in pipes and fittings carrying gas and hydrocarbon fluids",
     "referenceNumber": [
-      "EN 682:2002, EN 682:2002/A1:2005"
+      "EN 682:2002", "EN 682:2002/A1:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -695,7 +695,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Separator systems for light liquids (e.g. oil and petrol) — Part 1: Principles of product design, performance and testing, marking and quality control",
     "referenceNumber": [
-      "EN 858-1:2002, EN 858-1:2002/A1:2004"
+      "EN 858-1:2002", "EN 858-1:2002/A1:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -705,7 +705,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Cast iron pipes and fittings, their joints and accessories for the evacuation of water from buildings — Requirements, test methods and quality assurance",
     "referenceNumber": [
-      "EN 877:1999, EN 877:1999/A1:2006, EN 877:1999/A1:2006/AC:2008"
+      "EN 877:1999", "EN 877:1999/A1:2006", "EN 877:1999/A1:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -765,7 +765,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "WC pans and WC suites with integral trap",
     "referenceNumber": [
-      "EN 997:2012, EN 997:2012/AC:2012"
+      "EN 997:2012", "EN 997:2012/AC:2012"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -865,7 +865,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Pipes and fittings of longitudinally welded hot- dip galvanized steel pipes with spigot and socket for waste water systems — Part 1: Requirements",
     "referenceNumber": [
-      "EN 1123-1:1999, EN 1123-1:1999/A1:2004"
+      "EN 1123-1:1999", "EN 1123-1:1999/A1:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -875,7 +875,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Pipes and fittings of longitudinally welded stainless steel pipes with spigot and socket for waste water systems — Part 1: Requirements, testing, quality control",
     "referenceNumber": [
-      "EN 1124-1:1999, EN 1124-1:1999/A1:2004"
+      "EN 1124-1:1999", "EN 1124-1:1999/A1:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -895,7 +895,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Building hardware — Controlled door closing devices — Requirements and test method",
     "referenceNumber": [
-      "EN 1154:1996, EN 1154:1996/A1:2002, EN 1154:1996/A1:2002/AC:2006"
+      "EN 1154:1996", "EN 1154:1996/A1:2002", "EN 1154:1996/A1:2002/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -905,7 +905,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Building hardware — Electrically powered hold- open devices for swing doors — Requirements and test methods",
     "referenceNumber": [
-      "EN 1155:1997, EN 1155:1997/A1:2002, EN 1155:1997/A1:2002/AC:2006"
+      "EN 1155:1997", "EN 1155:1997/A1:2002", "EN 1155:1997/A1:2002/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -915,7 +915,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Building hardware — Door coordinator devices — Requirements and test methods",
     "referenceNumber": [
-      "EN 1158:1997, EN 1158:1997/A1:2002/AC:2006, EN 1158:1997/A1:2002"
+      "EN 1158:1997", "EN 1158:1997/A1:2002/AC:2006", "EN 1158:1997/A1:2002"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -955,7 +955,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Road restraint systems — Part 5:Product requirements and evaluation of conformity for vehicle restraint system",
     "referenceNumber": [
-      "EN 1317-5:2007+A2:2012, EN 1317-5:2007+A2:2012/AC:2012"
+      "EN 1317-5:2007+A2:2012", "EN 1317-5:2007+A2:2012/AC:2012"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -985,7 +985,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Structural bearings — Part 4: Roller bearings",
     "referenceNumber": [
-      "EN 1337-4:2004, EN 1337-4:2004/AC:2007"
+      "EN 1337-4:2004", "EN 1337-4:2004/AC:2007"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1035,7 +1035,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Concrete paving blocks — Requirements and test methods",
     "referenceNumber": [
-      "EN 1338:2003, EN 1338:2003/AC:2006"
+      "EN 1338:2003", "EN 1338:2003/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1045,7 +1045,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Concrete paving flags — Requirements and test methods",
     "referenceNumber": [
-      "EN 1339:2003, EN 1339:2003/AC:2006"
+      "EN 1339:2003", "EN 1339:2003/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1055,7 +1055,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Concrete kerb units — Requirements and test methods",
     "referenceNumber": [
-      "EN 1340:2003, EN 1340:2003/AC:2006"
+      "EN 1340:2003", "EN 1340:2003/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1095,7 +1095,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Clay pavers — Requirements and test methods",
     "referenceNumber": [
-      "EN 1344:2013, EN 1344:2013/AC:2015"
+      "EN 1344:2013", "EN 1344:2013/AC:2015"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1105,7 +1105,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Road marking materials — Drop on materials — Glass beads, antiskid aggregates and mixtures of the two",
     "referenceNumber": [
-      "EN 1423:2012, EN 1423:2012/AC:2013"
+      "EN 1423:2012", "EN 1423:2012/AC:2013"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1115,7 +1115,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Drainage channels for vehicular and pedestrian areas — Classification, design and testing requirements, marking and evaluation of conformity",
     "referenceNumber": [
-      "EN 1433:2002, EN 1433:2002/A1:2005"
+      "EN 1433:2002", "EN 1433:2002/A1:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1265,7 +1265,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Grease separators — Part 1: Principles of design, performance and testing, marking and quality control",
     "referenceNumber": [
-      "EN 1825-1:2004, EN 1825-1:2004/AC:2006"
+      "EN 1825-1:2004", "EN 1825-1:2004/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1335,7 +1335,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Concrete pipes and fittings, unreinforced, steel fibre and reinforced",
     "referenceNumber": [
-      "EN 1916:2002, EN 1916:2002/AC:2008"
+      "EN 1916:2002", "EN 1916:2002/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1345,7 +1345,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Concrete manholes and inspection chambers, unreinforced, steel fibre and reinforced",
     "referenceNumber": [
-      "EN 1917:2002, EN 1917:2002/AC:2008"
+      "EN 1917:2002", "EN 1917:2002/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1355,7 +1355,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Building hardware — Single-axis hinges — Requirements and test methods",
     "referenceNumber": [
-      "EN 1935:2002, EN 1935:2002/AC:2003"
+      "EN 1935:2002", "EN 1935:2002/AC:2003"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1415,7 +1415,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Non-alloy steel tubes and fittings for the conveyance of aqueous liquids including water for human consumption — Technical delivery conditions",
     "referenceNumber": [
-      "EN 10224:2002, EN 10224:2002/A1:2005"
+      "EN 10224:2002", "EN 10224:2002/A1:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1445,7 +1445,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Welded stainless steel tubes for the conveyance of aqueous liquids including water for human consumption — Technical delivery conditions",
     "referenceNumber": [
-      "EN 10312:2002, EN 10312:2002/A1:2005"
+      "EN 10312:2002", "EN 10312:2002/A1:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1455,7 +1455,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Steel castings for structural uses",
     "referenceNumber": [
-      "EN 10340:2007, EN 10340:2007/AC:2008"
+      "EN 10340:2007", "EN 10340:2007/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1605,7 +1605,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fixed firefighting systems — Components for gas extinguishing systems — Part 7: Requirements and test methods for nozzles for CO2 systems",
     "referenceNumber": [
-      "EN 12094-7:2000, EN 12094-7:2000/A1:2005"
+      "EN 12094-7:2000", "EN 12094-7:2000/A1:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1665,7 +1665,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fixed firefighting systems — Components for gas extinguishing systems — Part 13: Requirements and test methods for check valves and non-return valves",
     "referenceNumber": [
-      "EN 12094-13:2001, EN 12094-13:2001/AC:2002"
+      "EN 12094-13:2001", "EN 12094-13:2001/AC:2002"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1675,7 +1675,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Smoke and heat control systems — Part 1: Specification for smoke barriers",
     "referenceNumber": [
-      "EN 12101-1:2005, EN 12101-1:2005/A1:2006"
+      "EN 12101-1:2005", "EN 12101-1:2005/A1:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1705,7 +1705,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Smoke and heat control systems — Part 6: Specification for pressure differential systems — Kits",
     "referenceNumber": [
-      "EN 12101-6:2005, EN 12101-6:2005/AC:2006"
+      "EN 12101-6:2005", "EN 12101-6:2005/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1735,7 +1735,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Smoke and heat control systems — Part 10: Power supplies",
     "referenceNumber": [
-      "EN 12101-10:2005, EN 12101-10:2005/AC:2007"
+      "EN 12101-10:2005", "EN 12101-10:2005/AC:2007"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1755,7 +1755,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Building hardware — Locks and latches — Mechanically operated locks, latches and locking plates — Requirements and test methods",
     "referenceNumber": [
-      "EN 12209:2003, EN 12209:2003/AC:2005"
+      "EN 12209:2003", "EN 12209:2003/AC:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1765,7 +1765,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fixed firefighting systems — Components for sprinkler and water spray systems — Part 1: Sprinklers",
     "referenceNumber": [
-      "EN 12259-1:1999 + A1:2001, EN 12259-1:1999 + A1:2001/A2:2004, EN 12259-1:1999 + A1:2001/A3:2006"
+      "EN 12259-1:1999 + A1:2001", "EN 12259-1:1999 + A1:2001/A2:2004", "EN 12259-1:1999 + A1:2001/A3:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1775,7 +1775,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fixed firefighting systems — Components for sprinkler and water spray systems — Part 2: Wet alarm valve assemblies",
     "referenceNumber": [
-      "EN 12259-2:1999, EN 12259-2:1999/A1:2001, EN 12259-2:1999/AC:2002, EN 12259-2:1999/A2:2005"
+      "EN 12259-2:1999", "EN 12259-2:1999/A1:2001", "EN 12259-2:1999/AC:2002", "EN 12259-2:1999/A2:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1785,7 +1785,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fixed firefighting systems — Components for automatic sprinkler and water spray systems — Part 3: Dry alarm valve assemblies",
     "referenceNumber": [
-      "EN 12259-3:2000, EN 12259-3:2000/A1:2001, EN 12259-3:2000/A2:2005"
+      "EN 12259-3:2000", "EN 12259-3:2000/A1:2001", "EN 12259-3:2000/A2:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1795,7 +1795,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Fixed firefighting systems — Components for sprinkler and water spray systems — Part 4: Water motor alarms",
     "referenceNumber": [
-      "EN 12259-4:2000, EN 12259-4:2000/A1:2001"
+      "EN 12259-4:2000", "EN 12259-4:2000/A1:2001"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1915,7 +1915,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Small wastewater treatment systems for up to 50 PT — Part 1: Prefabricated septic tanks",
     "referenceNumber": [
-      "EN 12566-1:2000, EN 12566-1:2000/A1:2003"
+      "EN 12566-1:2000", "EN 12566-1:2000/A1:2003"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -1995,7 +1995,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Anti-glare systems for roads — Part 1: Performance and characteristics",
     "referenceNumber": [
-      "EN 12676-1:2000, EN 12676-1:2000/A1:2003"
+      "EN 12676-1:2000", "EN 12676-1:2000/A1:2003"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2025,7 +2025,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Precast concrete products — Foundation piles",
     "referenceNumber": [
-      "EN 12794:2005+A1:2007, EN 12794:2005+A1:2007/AC:2008"
+      "EN 12794:2005+A1:2007", "EN 12794:2005+A1:2007/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2035,7 +2035,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Residential independent boilers fired by solid fuel — Nominal heat output up to 50 kW — Requirements and test methods",
     "referenceNumber": [
-      "EN 12809:2001, EN 12809:2001/A1:2004, EN 12809:2001/A1:2004/AC:2007, EN 12809:2001/AC:2006"
+      "EN 12809:2001", "EN 12809:2001/A1:2004", "EN 12809:2001/A1:2004/AC:2007", "EN 12809:2001/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2045,7 +2045,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Residential cookers fired by solid fuel — Requirements and test methods",
     "referenceNumber": [
-      "EN 12815:2001/AC:2006, EN 12815:2001/A1:2004/AC:2007, EN 12815:2001/A1:2004"
+      "EN 12815:2001/AC:2006", "EN 12815:2001/A1:2004/AC:2007", "EN 12815:2001/A1:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2085,7 +2085,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Gypsum based adhesives for gypsum blocks — Definitions, requirements and test methods",
     "referenceNumber": [
-      "EN 12860:2001, EN 12860:2001/AC:2002"
+      "EN 12860:2001", "EN 12860:2001/AC:2002"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2095,7 +2095,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Pigments for the colouring of building materials based on cement and/or lime — Specifications and methods of test",
     "referenceNumber": [
-      "EN 12878:2005, EN 12878:2005/AC:2006"
+      "EN 12878:2005", "EN 12878:2005/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2165,7 +2165,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Aggregates for bituminous mixtures and surface treatments for roads, airfields and other trafficked areas",
     "referenceNumber": [
-      "EN 13043:2002, EN 13043:2002/AC:2004"
+      "EN 13043:2002", "EN 13043:2002/AC:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2175,7 +2175,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Lightweight aggregates — Part 1: Lightweight aggregates for concrete, mortar and grout",
     "referenceNumber": [
-      "EN 130551:2002, EN 13055-1:2002/AC:2004"
+      "EN 130551:2002", "EN 13055-1:2002/AC:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2235,7 +2235,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Free-standing chimneys — Part 5: Material for brick liners — Product specifications",
     "referenceNumber": [
-      "EN 13084-5:2005, EN 13084-5:2005/AC:2006"
+      "EN 13084-5:2005", "EN 13084-5:2005/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2265,7 +2265,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Bituminous mixtures — Material specifications — Part 1: Asphalt Concrete",
     "referenceNumber": [
-      "EN 13108-1:2006, EN 13108-1:2006/AC:2008"
+      "EN 13108-1:2006", "EN 13108-1:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2275,7 +2275,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Bituminous mixtures — Material specifications — Part 2: Asphalt Concrete for very thin layers",
     "referenceNumber": [
-      "EN 13108-2:2006, EN 13108-2:2006/AC:2008"
+      "EN 13108-2:2006", "EN 13108-2:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2285,7 +2285,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Bituminous mixtures — Material specifications — Part 3: Soft Asphalt",
     "referenceNumber": [
-      "EN 13108-3:2006, EN 13108-3:2006/AC:2008"
+      "EN 13108-3:2006", "EN 13108-3:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2295,7 +2295,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Bituminous mixtures — Material specifications — Part 4: Hot Rolled Asphalt",
     "referenceNumber": [
-      "EN 13108-4:2006, EN 13108-4:2006/AC:2008"
+      "EN 13108-4:2006", "EN 13108-4:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2305,7 +2305,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Bituminous mixtures — Material specifications — Part 5: Stone Mastic Asphalt",
     "referenceNumber": [
-      "EN 13108-5:2006, EN 13108-5:2006/AC:2008"
+      "EN 13108-5:2006", "EN 13108-5:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2315,7 +2315,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Bituminous mixtures — Material specifications — Part 6: Mastic Asphalt",
     "referenceNumber": [
-      "EN 13108-6:2006, EN 13108-6:2006/AC:2008"
+      "EN 13108-6:2006", "EN 13108-6:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2325,7 +2325,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Bituminous mixtures — Material specifications — Part 7: Porous Asphalt",
     "referenceNumber": [
-      "EN 13108-7:2006, EN 13108-7:2006/AC:2008"
+      "EN 13108-7:2006", "EN 13108-7:2006/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2335,7 +2335,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Aggregates for mortar",
     "referenceNumber": [
-      "EN 13139:2002, EN 13139:2002/AC:2004"
+      "EN 13139:2002", "EN 13139:2002/AC:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2475,7 +2475,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Inset appliances including open fires fired by solid fuels — Requirements and test methods",
     "referenceNumber": [
-      "EN 13229:2001, EN 13229:2001/AC:2006, EN 13229:2001/A2:2004/AC:2007, EN 13229:2001/A2:2004, EN 13229:2001/A1:2003"
+      "EN 13229:2001", "EN 13229:2001/AC:2006", "EN 13229:2001/A2:2004/AC:2007", "EN 13229:2001/A2:2004", "EN 13229:2001/A1:2003"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2485,7 +2485,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Roomheaters fired by solid fuel — Requirements and test methods",
     "referenceNumber": [
-      "EN 13240:2001, EN 13240:2001/A2:2004, EN 13240:2001/AC:2006, EN 13240:2001/A2:2004/AC:2007"
+      "EN 13240:2001", "EN 13240:2001/A2:2004", "EN 13240:2001/AC:2006", "EN 13240:2001/A2:2004/AC:2007"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2515,7 +2515,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Plastics — Unplasticized poly(vinyl chloride) (PVC-U) profiles for building applications — Part 2: PVC-U profiles and PVC-UE profiles for internal and external wall and ceiling finishes",
     "referenceNumber": [
-      "EN 13245-2:2008, EN 13245-2:2008/AC:2009"
+      "EN 13245-2:2008", "EN 13245-2:2008/AC:2009"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2675,7 +2675,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Geosynthetic barriers — Characteristics required for use in the construction of reservoirs and dams",
     "referenceNumber": [
-      "EN 13361:2004, EN 13361:2004/A1:2006"
+      "EN 13361:2004", "EN 13361:2004/A1:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2695,7 +2695,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Armourstone — Part 1: Specification",
     "referenceNumber": [
-      "EN 13383-1:2002, EN 13383-1:2002/AC:2004"
+      "EN 13383-1:2002", "EN 13383-1:2002/AC:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2715,7 +2715,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Aggregates for railway ballast",
     "referenceNumber": [
-      "EN 13450:2002, EN 13450:2002/AC:2004"
+      "EN 13450:2002", "EN 13450:2002/AC:2004"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2745,7 +2745,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Geosynthetic barriers — Characteristics required for use as a fluid barrier in the construction of tunnels and underground structures",
     "referenceNumber": [
-      "EN 13491:2004, EN 13491:2004/A1:2006"
+      "EN 13491:2004", "EN 13491:2004/A1:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2755,7 +2755,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Geosynthetic barriers — Characteristics required for use in the construction of liquid waste disposal sites, transfer stations or secondary containment",
     "referenceNumber": [
-      "EN 13492:2004, EN 13492:2004/A1:2006"
+      "EN 13492:2004", "EN 13492:2004/A1:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2805,7 +2805,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Overfill prevention devices for static tanks for liquid petroleum fuels",
     "referenceNumber": [
-      "EN 13616:2004, EN 13616:2004/AC:2006"
+      "EN 13616:2004", "EN 13616:2004/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2875,7 +2875,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Terrazzo tiles — Part 1: Terrazzo tiles for internal use",
     "referenceNumber": [
-      "EN 13748-1:2004, EN 13748-1:2004/A1:2005, EN 13748-1:2004/AC:2005"
+      "EN 13748-1:2004", "EN 13748-1:2004/A1:2005", "EN 13748-1:2004/AC:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -2975,7 +2975,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Bitumen and bituminous binders — Specifications for hard paving grade bitumens",
     "referenceNumber": [
-      "EN 13924:2006, EN 13924:2006/AC:2006"
+      "EN 13924:2006", "EN 13924:2006/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3005,7 +3005,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Jointing materials for gypsum plasterboards — Definitions, requirements and test methods",
     "referenceNumber": [
-      "EN 13963:2005, EN 13963:2005/AC:2006"
+      "EN 13963:2005", "EN 13963:2005/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3035,7 +3035,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Flexible sheets for waterproofing — Bitumen damp proof sheets including bitumen basement tanking sheets — Definitions and characteristics",
     "referenceNumber": [
-      "EN 13969:2004, EN 13969:2004/A1:2006"
+      "EN 13969:2004", "EN 13969:2004/A1:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3045,7 +3045,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Flexible sheets for waterproofing — Bitumen water vapour control layers — Definitions and characteristics",
     "referenceNumber": [
-      "EN 13970:2004, EN 13970:2004/A1:2006"
+      "EN 13970:2004", "EN 13970:2004/A1:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3115,7 +3115,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Resilient, textile and laminate floor coverings — Essential characteristics",
     "referenceNumber": [
-      "EN 14041:2004, EN 14041:2004/AC:2006"
+      "EN 14041:2004", "EN 14041:2004/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3135,7 +3135,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Thermal insulation products for buildings — In- situ formed expanded clay lightweight aggregate products — Part 1: Specification for the loose-fill products before installation",
     "referenceNumber": [
-      "EN 14063-1:2004, EN 14063-1:2004/AC:2006"
+      "EN 14063-1:2004", "EN 14063-1:2004/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3235,7 +3235,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Metal framing components for gypsum plasterboard systems — Definitions, requirements and test methods",
     "referenceNumber": [
-      "EN 14195:2005, EN 14195:2005/AC:2006"
+      "EN 14195:2005", "EN 14195:2005/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3275,7 +3275,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Gypsum elements for suspended ceilings — Definitions, requirements and test methods",
     "referenceNumber": [
-      "EN 14246:2006, EN 14246:2006/AC:2007"
+      "EN 14246:2006", "EN 14246:2006/AC:2007"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3525,7 +3525,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Road traffic noise reducing devices — Specifications",
     "referenceNumber": [
-      "EN 14388:2005, EN 14388:2005/AC:2008"
+      "EN 14388:2005", "EN 14388:2005/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3575,7 +3575,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Glass in building — Laminated glass and laminated safety glass — Evaluation of conformity/Product standard",
     "referenceNumber": [
-      "EN 14449:2005, EN 14449:2005/AC:2005"
+      "EN 14449:2005", "EN 14449:2005/AC:2005"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3675,7 +3675,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Smoke alarm devices",
     "referenceNumber": [
-      "EN 14604:2005, EN 14604:2005/AC:2008"
+      "EN 14604:2005", "EN 14604:2005/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3685,7 +3685,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Calcium aluminate cement — Composition, specifications and conformity criteria",
     "referenceNumber": [
-      "EN 14647:2005, EN 14647:2005/AC:2006"
+      "EN 14647:2005", "EN 14647:2005/AC:2006"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -3835,7 +3835,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Liquid-applied water impermeable products for use beneath ceramic tiling bonded with adhesives — Requirements, test methods, evaluation of conformity, classification and designation",
     "referenceNumber": [
-      "EN 14891:2012, EN 14891:2012/AC:2012"
+      "EN 14891:2012", "EN 14891:2012/AC:2012"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -4145,7 +4145,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Agglomerated stone — Modular tiles for flooring and stairs (internal and external)",
     "referenceNumber": [
-      "EN 15285:2008, EN 15285:2008/AC:2008"
+      "EN 15285:2008", "EN 15285:2008/AC:2008"
     ],
     "noticeOfPublicationReference": "0035/21"
   },
@@ -4435,7 +4435,7 @@
     "regulation": "Regulation (EU) No 305/2011",
     "title": "Power, control and communication cables — Cables for general applications in construction works subject to reaction to fire requirements",
     "referenceNumber": [
-      "EN 50575:2014, EN 50575:2014/A1:2016"
+      "EN 50575:2014", "EN 50575:2014/A1:2016"
     ],
     "noticeOfPublicationReference": "0035/21"
   }
