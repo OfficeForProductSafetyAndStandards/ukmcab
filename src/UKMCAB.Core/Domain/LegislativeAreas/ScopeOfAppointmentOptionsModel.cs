@@ -12,4 +12,5 @@ public class ScopeOfAppointmentOptionsModel
     public IEnumerable<ProductModel> Products { get; set; } = Array.Empty<ProductModel>();
 
     public IEnumerable<ProcedureModel> Procedures { get; set; } = Array.Empty<ProcedureModel>();
+    public IEnumerable<DesignatedStandardModel> DesignatedStandards { get; set; } = Array.Empty<DesignatedStandardModel>();
 }

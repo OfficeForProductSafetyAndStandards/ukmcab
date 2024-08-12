@@ -14,6 +14,8 @@ using UKMCAB.Web.UI.Services;
 using UKMCAB.Core.Security;
 using System.Net;
 using UKMCAB.Core.Extensions;
+using UKMCAB.Data;
+using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -34,6 +36,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         public const string AddSubCategory = "legislative.area.add-sub-category";
         public const string AddProduct = "legislative.area.add-product";
         public const string AddProcedure = "legislative.area.add-procedure";
+        public const string AddDesignatedStandard = "legislative.area.add-designated-standard";
         public const string RemoveOrArchiveLegislativeArea = "legislative.area.remove-archive-legislativearea";
         public const string RemoveOrArchiveLegislativeAreaOption = "legislative.area.remove-archive-legislativearea-option";
         public const string RemoveLegislativeAreaRequest = "legislative.area.remove-legislativearea-request";
@@ -125,6 +128,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             // add new document scope of appointment to cache;
             var scopeOfAppointmentId = Guid.NewGuid();
             await CreateScopeOfAppointmentInCacheAsync(scopeOfAppointmentId, vm.SelectedLegislativeAreaId);
+
+            if (legislativeArea.Name == DataConstants.LegislativeAreasWithDifferentDataModel.Construction && submitType == Constants.SubmitType.Continue)
+            {
+                return RedirectToRoute(Routes.AddDesignatedStandard, new { id, scopeId = scopeOfAppointmentId, fromSummary = vm.IsFromSummary });
+            }
 
             switch (submitType)
             {
@@ -946,6 +954,108 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     }
 
     #endregion
+
+    #endregion
+
+    #region AddDesignatedStandard
+
+    [HttpGet("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)]
+    public async Task<IActionResult> AddDesignatedStandard(Guid id, Guid scopeId, Guid? compareScopeId,
+        Guid? legislativeAreaId, bool fromSummary)
+    {
+        if (scopeId == Guid.Empty && legislativeAreaId != null)
+        {
+            scopeId = Guid.NewGuid();
+        }
+
+        var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
+        if (existingScopeOfAppointment != null || legislativeAreaId != null)
+        {
+            //Create a new scope of id in session to replace existing
+            await CreateScopeOfAppointmentInCacheAsync(scopeId,
+                legislativeAreaId ?? existingScopeOfAppointment.LegislativeAreaId);
+        }
+
+        var documentScopeOfAppointment =
+            await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
+        if (documentScopeOfAppointment == null)
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
+        var options =
+            await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
+                documentScopeOfAppointment.LegislativeAreaId);
+        var legislativeArea =
+            await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentScopeOfAppointment.LegislativeAreaId);
+        if (legislativeArea == null)
+        {
+            throw new InvalidOperationException(
+                $"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
+        }
+
+        var selectListItems = options.DesignatedStandards.OrderBy(ds => ds.Name)
+            .Select(ds => new SelectListItem(ds.Name, ds.Id.ToString())).ToList();
+
+        if (existingScopeOfAppointment is { PurposeOfAppointmentId: not null })
+        {
+            var itemFound = selectListItems.FirstOrDefault(i =>
+                i.Value == existingScopeOfAppointment.PurposeOfAppointmentId.Value.ToString());
+            if (itemFound != null) itemFound.Selected = true;
+        }
+
+        var vm = new DesignatedStandardViewModel
+        {
+            Title = "Select designated standard",
+            LegislativeArea = legislativeArea.Name,
+            LegislativeAreaId = legislativeAreaId,
+            DesignatedStandards = selectListItems,
+            CabId = id,
+            ScopeId = scopeId,
+            IsFromSummary = fromSummary,
+        };
+
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
+    }
+
+    [HttpPost("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)]
+    public async Task<IActionResult> AddDesignatedStandard(Guid id, DesignatedStandardViewModel vm,
+        [FromForm] Guid scopeId,
+        Guid? compareScopeId, string submitType)
+    {
+        var documentScopeOfAppointment =
+            await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
+        if (documentScopeOfAppointment == null)
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
+        if (ModelState.IsValid)
+        {
+            documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardId;
+            await _distCache.SetAsync(string.Format(CacheKey, scopeId.ToString()), documentScopeOfAppointment,
+                TimeSpan.FromHours(1));
+
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
+                                 throw new InvalidOperationException();
+            var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == documentScopeOfAppointment.LegislativeAreaId);
+            documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
+
+            var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+
+            if (submitType == Constants.SubmitType.Add)
+            {
+                return RedirectToRoute(Routes.AddPurposeOfAppointment,
+                    new { id, scopeId = Guid.Empty, legislativeAreaId = vm.LegislativeAreaId, fromSummary = vm.IsFromSummary });
+            }
+
+            return RedirectToRoute(
+                LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
+                new { id, laId = documentScopeOfAppointment.LegislativeAreaId, fromSummary = vm.IsFromSummary });
+        }
+
+        var options =
+            await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
+                documentScopeOfAppointment.LegislativeAreaId);
+        vm.DesignatedStandards = options.DesignatedStandards
+            .Select(ds => new SelectListItem(ds.Name, ds.Id.ToString())).ToList();
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
+    }
 
     #endregion
 
