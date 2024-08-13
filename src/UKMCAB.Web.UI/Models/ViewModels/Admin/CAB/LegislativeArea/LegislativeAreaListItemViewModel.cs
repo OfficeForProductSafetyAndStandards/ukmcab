@@ -13,11 +13,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? Product { get; set; }
 
-        public List<string> Procedures { get; set; } = new();
+        public List<string>? Procedures { get; set; } = new();
 
         public List<string>? Categories { get; set; } = new();
 
         public int NoOfProductsInScopeOfAppointment { get; set; }
+        public List<DesignatedStandardReadOnlyViewModel>? DesignatedStandards { get; set; }
 
         public LegislativeAreaListItemViewModel() : base("Legislative area list item") { }
         public LegislativeAreaListItemViewModel(
@@ -28,7 +29,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             string? subCategory, 
             Guid scopeId,
             string? product,
-            List<string> procedures) : base("Legislative area list item")
+            List<string>? procedures = null,
+            List<DesignatedStandardReadOnlyViewModel>? designatedStandards = null) : base("Legislative area list item")
         {
             LegislativeArea = new ListItem { Id = legislativeAreaId, Title = legislativeArea };
             PurposeOfAppointment = purposeOfAppointment;
@@ -37,6 +39,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             ScopeId = scopeId;
             Product = product;
             Procedures = procedures;
+            DesignatedStandards = designatedStandards;
         }
     }
 }

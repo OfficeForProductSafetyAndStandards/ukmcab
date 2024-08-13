@@ -1,3 +1,6 @@
+using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+
 namespace UKMCAB.Web.UI.Models.ViewModels.Search;
 
 public class CABLegislativeAreasModel
@@ -20,5 +23,6 @@ public class CABLegislativeAreasModel
     public List<(Guid Id, string Name)> SubCategories { get; set; } = new();
     public List<(Guid Id, string Name)> Products { get; set; } = new();
     public List<(Guid Id, string Name)> Procedures { get; set; } = new();
+    public List<DesignatedStandardReadOnlyViewModel> DesignatedStandards { get; set; } = new();
     public bool ShowLabels { get; set; } = true;
 }

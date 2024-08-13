@@ -8,7 +8,8 @@ namespace UKMCAB.Web.UI.Models.Builders
     {
         ICabLegislativeAreasItemViewModelBuilder WithDocumentLegislativeAreaDetails(LegislativeAreaModel legislativeArea, DocumentLegislativeArea documentLegislativeArea);
         ICabLegislativeAreasItemViewModelBuilder WithScopeOfAppointments(LegislativeAreaModel legislativeArea, List<DocumentScopeOfAppointment> documentScopeOfAppointments,
-            List<PurposeOfAppointmentModel> purposeOfAppointments, List<CategoryModel> categories, List<SubCategoryModel> subCategories, List<ProductModel> products, List<ProcedureModel> procedures);
+            List<PurposeOfAppointmentModel> purposeOfAppointments, List<CategoryModel> categories, List<SubCategoryModel> subCategories, List<ProductModel> products, List<ProcedureModel> procedures, 
+            List<DesignatedStandardModel> designatedStandards);
         ICabLegislativeAreasItemViewModelBuilder WithNoOfProductsInScopeOfAppointment();
         CABLegislativeAreasItemViewModel Build();
     }

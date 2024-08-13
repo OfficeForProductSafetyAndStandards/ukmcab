@@ -39,6 +39,12 @@
             }
         </div>
     </div>
+
+    @if (Model.DesignatedStandards.Any())
+    {
+        <partial name="~/Areas/Search/Views/CABProfile/Partials/_legislativeAreasDesignatedStandards.cshtml" model="@Model.DesignatedStandards" />
+    }
+
     @if (Model.PurposeOfAppointment.Id.HasValue)
     {
         <div class="govuk-summary-list__row">
