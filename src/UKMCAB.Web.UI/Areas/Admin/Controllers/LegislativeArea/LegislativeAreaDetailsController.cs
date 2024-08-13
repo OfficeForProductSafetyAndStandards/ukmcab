@@ -991,14 +991,14 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 $"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         }
 
-        var selectListItems = options.DesignatedStandards.OrderBy(ds => ds.Name)
-            .Select(ds => new SelectListItem(ds.Name, ds.Id.ToString())).ToList();
+        var designatedStandardModels = options.DesignatedStandards.OrderBy(ds => ds.Name).ToList();
 
-        if (existingScopeOfAppointment is { PurposeOfAppointmentId: not null })
+        foreach (var ds in designatedStandardModels)
         {
-            var itemFound = selectListItems.FirstOrDefault(i =>
-                i.Value == existingScopeOfAppointment.PurposeOfAppointmentId.Value.ToString());
-            if (itemFound != null) itemFound.Selected = true;
+            if (documentScopeOfAppointment.DesignatedStandardIds.Contains(ds.Id))
+            {
+                ds.Selected = true;
+            }
         }
 
         var vm = new DesignatedStandardViewModel
@@ -1006,7 +1006,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             Title = "Select designated standard",
             LegislativeArea = legislativeArea.Name,
             LegislativeAreaId = legislativeAreaId,
-            DesignatedStandards = selectListItems,
+            DesignatedStandardModels = designatedStandardModels,
             CabId = id,
             ScopeId = scopeId,
             IsFromSummary = fromSummary,
@@ -1017,8 +1017,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
     [HttpPost("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)]
     public async Task<IActionResult> AddDesignatedStandard(Guid id, DesignatedStandardViewModel vm,
-        [FromForm] Guid scopeId,
-        Guid? compareScopeId, string submitType)
+        [FromForm] Guid scopeId, string submitType)
     {
         var documentScopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
@@ -1059,8 +1058,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var options =
             await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
                 documentScopeOfAppointment.LegislativeAreaId);
-        vm.DesignatedStandards = options.DesignatedStandards
-            .Select(ds => new SelectListItem(ds.Name, ds.Id.ToString())).ToList();
+        vm.DesignatedStandardModels = options.DesignatedStandards.ToList();
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
     }
 

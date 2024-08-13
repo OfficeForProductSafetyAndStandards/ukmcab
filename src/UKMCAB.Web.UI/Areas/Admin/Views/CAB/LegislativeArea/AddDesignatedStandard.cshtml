@@ -16,22 +16,56 @@
             <input type="hidden" asp-for="@Model.LegislativeArea"/>
             <input type="hidden" asp-for="@Model.LegislativeAreaId"/>
             <input type="hidden" asp-for="@Model.ScopeId" value="@Model.ScopeId"/>
+            <input type="hidden" asp-for="@Model.DesignatedStandardModels" value="@Model.DesignatedStandardModels"/>
 
-            <govuk-checkboxes asp-for="SelectedDesignatedStandardIds">
-                <govuk-checkboxes-fieldset>
-                    <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--l">
-                        Designated Standards
-                    </govuk-checkboxes-fieldset-legend>
+            <h3 class="govuk-heading-m">Designated Standards</h3>
+            <div id="designated-standard-search-keywords-input-container" class="width-three-fifth">
+                <input type="text" asp-for="SearchTerm" class="govuk-input search-box" />
+                <button class="clear-icon" type="submit" aria-label="Clear your search terms"></button>
+                <button id="search-keyword-button" type="submit">Search</button>
+            </div>
 
-                    @foreach (var ds in Model.DesignatedStandards!)
-                    {
-                        <govuk-checkboxes-item value="@ds.Value" checked="@ds.Selected">
-                            @ds.Text
+            <div class="ukmcab-float__clear">
+                <govuk-checkboxes asp-for="SelectedDesignatedStandardIds">
+                    <govuk-checkboxes-fieldset>
+                        <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
+
+                        </govuk-checkboxes-fieldset-legend>
+
+                        <govuk-checkboxes-item value="@Model.SelectAll.Value" checked="@Model.SelectAll.Selected">
+                                @Model.SelectAll.Text
                         </govuk-checkboxes-item>
-                    }
-                </govuk-checkboxes-fieldset>
-            </govuk-checkboxes>
 
+                        @foreach (var ds in Model.DesignatedStandardModels)
+                        {
+                            var item = new SelectListItem(ds.Name, ds.Id.ToString());
+                            item.Selected = ds.Selected;
+
+                            <govuk-checkboxes-item value="@item.Value" checked="@item.Selected">
+                                @item.Text
+
+                                <govuk-details>
+                                    <govuk-details-summary>
+                                        Details
+                                    </govuk-details-summary>
+                                    <govuk-details-text>
+                                        <p class="govuk-heading-s">Reference number</p>
+                                        @foreach (var refNo in ds.ReferenceNumber)
+                                        {
+                                            <p class="govuk-body">@refNo</p>
+                                        }
+
+                                        <p class="govuk-heading-s">Public reference</p>
+                                        <p class="govuk-body">@ds.NoticeOfPublicationReference</p>
+
+                                    </govuk-details-text>
+                                </govuk-details>
+                            </govuk-checkboxes-item>
+                        }
+                    </govuk-checkboxes-fieldset>
+                </govuk-checkboxes>
+            </div>
+            
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
                 <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CabId">Cancel</a>
