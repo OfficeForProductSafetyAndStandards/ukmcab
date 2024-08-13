@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
-using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.LegislativeAreas;
 
 var serializerSettings = new JsonSerializerSettings
 {

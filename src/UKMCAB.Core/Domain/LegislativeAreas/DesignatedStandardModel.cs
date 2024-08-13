@@ -1,11 +1,11 @@
-﻿namespace UKMCAB.Data.Models
+﻿namespace UKMCAB.Core.Domain.LegislativeAreas
 {
-    public class DesignatedStandard
+    public class DesignatedStandardModel
     {
         public Guid Id { get; set; }
         public Guid LegislativeAreaId { get; set; }
-        public string Regulation { get; set; }
         public string Name { get; set; }
+        public string Regulation { get; set; }
         public List<string> ReferenceNumber { get; set; }
         public string NoticeOfPublicationReference { get; set; }
     }

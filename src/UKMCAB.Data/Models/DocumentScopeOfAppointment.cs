@@ -19,6 +19,7 @@ namespace UKMCAB.Data.Models
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
         public List<CategoryAndProcedures> CategoryIdAndProcedureIds { get; set; } = new();
 
+        public List<Guid> DesignatedStandardIds { get; set; } = new();
         public override bool Equals(object? scopeOfAppointment) 
         { 
             return Equals(scopeOfAppointment as DocumentScopeOfAppointment);
@@ -42,6 +43,9 @@ namespace UKMCAB.Data.Models
 
             if (!AreObjectListsEqual(CategoryIdAndProcedureIds, otherSoa.CategoryIdAndProcedureIds) ||
                 !AreObjectListsEqual(ProductIdAndProcedureIds, otherSoa.ProductIdAndProcedureIds))
+                return false;
+
+            if (!AreListsEqual(DesignatedStandardIds, otherSoa.DesignatedStandardIds))
                 return false;
 
             return true;
@@ -87,6 +91,13 @@ namespace UKMCAB.Data.Models
                 }
             }
 
+            if (DesignatedStandardIds.Any())
+            {
+                foreach (var designatedStandardId in DesignatedStandardIds)
+                {
+                    hash = hash * 31 + designatedStandardId.GetHashCode();
+                }
+            }
             return hash;
         }
         private bool AreListsEqual(List<Guid> list1, List<Guid> list2)
