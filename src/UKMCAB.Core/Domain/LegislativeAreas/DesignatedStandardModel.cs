@@ -8,6 +8,5 @@
         public string Regulation { get; set; }
         public List<string> ReferenceNumber { get; set; }
         public string NoticeOfPublicationReference { get; set; }
-        public bool Selected { get; set; } = false;
     }
 }

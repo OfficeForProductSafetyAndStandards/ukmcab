@@ -993,13 +993,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         var designatedStandardModels = options.DesignatedStandards.OrderBy(ds => ds.Name).ToList();
 
-        foreach (var ds in designatedStandardModels)
-        {
-            if (documentScopeOfAppointment.DesignatedStandardIds.Contains(ds.Id))
-            {
-                ds.Selected = true;
-            }
-        }
+        //foreach (var ds in designatedStandardModels)
+        //{
+        //    if (documentScopeOfAppointment.DesignatedStandardIds.Contains(ds.Id))
+        //    {
+        //        ds.Selected = true;
+        //    }
+        //}
 
         var vm = new DesignatedStandardViewModel
         {

@@ -39,7 +39,7 @@
                         @foreach (var ds in Model.DesignatedStandardModels)
                         {
                             var item = new SelectListItem(ds.Name, ds.Id.ToString());
-                            item.Selected = ds.Selected;
+                            //item.Selected = ds.Selected;
 
                             <govuk-checkboxes-item value="@item.Value" checked="@item.Selected">
                                 @item.Text
