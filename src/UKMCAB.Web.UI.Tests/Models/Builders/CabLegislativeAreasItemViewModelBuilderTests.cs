@@ -160,7 +160,6 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             var categories = CabLegislativeAreasItemViewModelBuilderTestsFixture.Categories;
             var procedures = CabLegislativeAreasItemViewModelBuilderTestsFixture.Procedures;
             var products = CabLegislativeAreasItemViewModelBuilderTestsFixture.Products;
-            //var designatedStandards = CabLegislativeAreasItemViewModelBuilderTestsFixture.DesignatedStandards;
             var designatedStandards = new List<DesignatedStandardModel>();
 
             var legislativeAreaId = legislativeArea.Id;
