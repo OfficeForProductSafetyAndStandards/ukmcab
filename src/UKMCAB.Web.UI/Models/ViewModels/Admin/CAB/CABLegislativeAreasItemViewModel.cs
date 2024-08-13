@@ -49,9 +49,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsComplete => IsProvisional.HasValue &&
                                     (ReviewDate == null || (ReviewDate != null && ReviewDate >= DateTime.Today)) &&
                                     (!CanChooseScopeOfAppointment || (ScopeOfAppointments.Any() && ScopeOfAppointments.All(
-                                        y =>
-                                            y.Procedures != null && y.Procedures.Any() &&
-                                            y.Procedures.All(z => !string.IsNullOrEmpty(z))
+                                        y => 
+                                            (y.Procedures != null && y.Procedures.Any() &&
+                                            y.Procedures.All(z => !string.IsNullOrEmpty(z))) ||
+                                            (y.DesignatedStandards != null && y.DesignatedStandards.Any())
                                         )));
         private string GetStatusName()
         {

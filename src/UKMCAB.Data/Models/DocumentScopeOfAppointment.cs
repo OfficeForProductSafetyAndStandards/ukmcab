@@ -15,7 +15,6 @@ namespace UKMCAB.Data.Models
         public List<CategoryAndProcedures> CategoryIdAndProcedureIds { get; set; } = new();
         public List<Guid> DesignatedStandardIds { get; set; } = new();
 
-        public List<Guid> DesignatedStandardIds { get; set; } = new();
         public override bool Equals(object? scopeOfAppointment) 
         { 
             return Equals(scopeOfAppointment as DocumentScopeOfAppointment);

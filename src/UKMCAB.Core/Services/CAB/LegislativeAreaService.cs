@@ -263,24 +263,6 @@ public class LegislativeAreaService : ILegislativeAreaService
             .OrderBy(d => d.Name)
             .ToList();
 
-        // TODO: Remove hardcoded values once UKMCAB-1709 is complete
-        designatedStandards = new List<DesignatedStandard>
-        {
-            new DesignatedStandard
-            {
-                Id = Guid.Parse("b4be7979-c764-4cc6-9db5-b333892bfc94"),
-                Name = "Flued oil stoves with vaporizing burners",
-                ReferenceNumber = new List<string>{ "EN 1:1998", "EN 1:1998/A1:2007" },
-                NoticeOfPublicationReference = "0035/21"
-            },
-            new DesignatedStandard
-            {
-                Id = Guid.Parse("afc862a2-24e1-46af-9ccc-39a63c487123"),
-                Name = "Multi-burner gas-fired overhead radiant tube heater systems for non-domestic use — Part 4: System H — Safety",
-                ReferenceNumber = new List<string>{ "EN 777-4:2009" },
-                NoticeOfPublicationReference = "0035/21"
-            }
-        };
         return _mapper.Map<List<DesignatedStandardModel>>(designatedStandards);
     }
 

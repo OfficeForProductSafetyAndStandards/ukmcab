@@ -90,10 +90,7 @@ namespace UKMCAB.Web.UI.Models.Builders
                     purposeOfAppointment?.Name);
 
                 _model.ScopeOfAppointments.AddRange(scopeOfAppointmentViewModelForProducts);
-
-                // TODO: Remove hardcoded values once UKMCAB-1709 is complete
-                documentScopeOfAppointment.DesignatedStandardIds = new List<Guid> { Guid.Parse("b4be7979-c764-4cc6-9db5-b333892bfc94"), Guid.Parse("afc862a2-24e1-46af-9ccc-39a63c487123") };
-
+                
                 if (documentScopeOfAppointment.DesignatedStandardIds.Any())
                 {
                     var scopeOfAppointmentViewModelForDesignatedStandards = CreateScopeOfAppointmentViewModelForDesignatedStandards(
