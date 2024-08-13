@@ -48,6 +48,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Infrastructure.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Web.Tests", "UKMCAB.Web.Tests\UKMCAB.Web.Tests.csproj", "{669114EE-C869-4E0B-B002-FDB532737BF8}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{B8194A16-8B2A-4766-AF4C-4D2635DB5E4A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Utilities.StorageDataJsonIdGenerator", "UKMCAB.Utilities.StorageDataJsonIdGenerator\UKMCAB.Utilities.StorageDataJsonIdGenerator.csproj", "{6A950BC2-CB00-464A-9F98-F765527D4FE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -102,9 +106,16 @@ Global
 		{669114EE-C869-4E0B-B002-FDB532737BF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{669114EE-C869-4E0B-B002-FDB532737BF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{669114EE-C869-4E0B-B002-FDB532737BF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6A950BC2-CB00-464A-9F98-F765527D4FE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A950BC2-CB00-464A-9F98-F765527D4FE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A950BC2-CB00-464A-9F98-F765527D4FE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A950BC2-CB00-464A-9F98-F765527D4FE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{6A950BC2-CB00-464A-9F98-F765527D4FE9} = {B8194A16-8B2A-4766-AF4C-4D2635DB5E4A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {DA0ABEBD-CA12-4DCC-9FA1-C56449C1E2E2}

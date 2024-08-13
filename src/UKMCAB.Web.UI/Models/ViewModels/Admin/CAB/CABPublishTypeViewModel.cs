@@ -18,7 +18,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public IEnumerable<SelectListItem> PublishTypes => new List<SelectListItem>()
         {
-            new SelectListItem("Publish as a minor change (this will not update the ‘Last published date’ for the CAB, the site feed, or any email subscriptions that the CAB appears in)", DataConstants.PublishType.MinorPublish),
+            new SelectListItem("Publish as a minor change (this will not update the \'Last published date\' for the CAB, the site feed, or any email subscriptions that the CAB appears in)", DataConstants.PublishType.MinorPublish),
             new SelectListItem("Publish as a major change", DataConstants.PublishType.MajorPublish)
         };
     }
