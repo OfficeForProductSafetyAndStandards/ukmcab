@@ -67,6 +67,8 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         s.CreatedBy ??= "ukas";
                     });
 
+                    document.HiddenText = string.Empty;
+
                     await UpdateAsync(document);
                 }
             }
