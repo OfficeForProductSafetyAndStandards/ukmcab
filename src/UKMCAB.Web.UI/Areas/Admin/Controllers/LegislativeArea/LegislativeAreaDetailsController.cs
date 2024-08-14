@@ -1002,7 +1002,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             PaginationViewModel = new PaginationViewModel
             {
                 PageNumber = pageNumber,
-                Total = options.PaginationInfo?.ResultsCount ?? 0,
+                Total = options.PaginationInfo?.QueryCount ?? 0,
                 ResultsPerPage = options.PaginationInfo?.PageSize ?? 20,
                 ResultType = string.Empty,
             }
@@ -1055,6 +1055,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
                 documentScopeOfAppointment.LegislativeAreaId);
         vm.DesignatedStandardModels = options.DesignatedStandards.ToList();
+        vm.PaginationViewModel = new PaginationViewModel
+        {
+            PageNumber = 1,
+            Total = options.PaginationInfo?.QueryCount ?? 0,
+            ResultsPerPage = options.PaginationInfo?.PageSize ?? 20,
+            ResultType = string.Empty,
+        };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
     }
 

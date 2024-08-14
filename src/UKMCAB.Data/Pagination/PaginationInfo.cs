@@ -4,39 +4,41 @@
     {
         public int PageIndex { get; private set; }
         public int PageSize { get; private set; }
-        public int ResultsCount { get; private set; }
+        public int QueryCount { get; private set; }
         public int PageCount 
         { 
             get
             {
-                if (PageSize >= ResultsCount)
+                if (PageSize >= QueryCount)
                 {
                     return 1;
                 }
                 else
                 {
-                    return (ResultsCount % PageSize == 0)
-                        ? ResultsCount / PageSize
-                        : ResultsCount / PageSize + 1;
+                    return (QueryCount % PageSize == 0)
+                        ? QueryCount / PageSize
+                        : QueryCount / PageSize + 1;
                 }
             } 
         }
+        public int Skip => PageIndex * PageSize;
+        public int Take
+        {
+            get
+            {
+                var hasNextPage = PageCount > (PageIndex + 1);
+                var take = (!hasNextPage && QueryCount % PageSize != 0)
+                    ? QueryCount % PageSize
+                    : PageSize;
+                return take;
+            }
+        }
 
-        public PaginationInfo(int pageIndex, int resultsCount, int pageSize = 20)
+        public PaginationInfo(int pageIndex, int queryCount, int pageSize = 20)
         {
             PageIndex = pageIndex;
             PageSize = pageSize;
-            ResultsCount = resultsCount;
-        }
-
-        public (int Skip, int Take) CalculateSkipAndTake()
-        { 
-            var hasNextPage = PageCount > (PageIndex + 1);
-            var skip = PageIndex * PageSize;
-            var take = (!hasNextPage && ResultsCount % PageSize != 0)
-                ? ResultsCount % PageSize
-                : PageSize;
-            return (skip, take);
+            QueryCount = queryCount;
         }
     }
 }

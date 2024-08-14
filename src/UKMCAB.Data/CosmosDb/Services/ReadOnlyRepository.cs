@@ -58,11 +58,10 @@ public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
     public async Task<(IEnumerable<U> Results, PaginationInfo PaginationInfo)> PaginatedQueryAsync<U>(Expression<Func<U, bool>> predicate, int pageIndex, int pageSize = 20) where U : IOrderable
     {
         var query = _container.GetItemLinqQueryable<U>().Where(predicate);
-        var resultsCount = await query.CountAsync();
+        var queryCount = await query.CountAsync();
 
-        var paginationInfo = new PaginationInfo(pageIndex, resultsCount);
-        (var skip, var take) = paginationInfo.CalculateSkipAndTake();
-        query = query.OrderBy(x => x.Name).Skip(skip).Take(take);
+        var paginationInfo = new PaginationInfo(pageIndex, queryCount);
+        query = query.OrderBy(x => x.Name).Skip(paginationInfo.Skip).Take(paginationInfo.Take);
 
         var feedIterator = _cosmosFeedIterator.GetFeedIterator<U>(query);
 
