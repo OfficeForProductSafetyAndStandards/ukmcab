@@ -156,7 +156,13 @@
                                                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                         <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
                                                                             <div class="govuk-radios__item">
-                                                                                <input id="LA-items[@(i)]-radio-[@(j)]" class="govuk-radios__input" type="radio" asp-for="ActiveLAItems[i].SelectedScopeOfAppointmentId" value="@scopeOfAppointment.ScopeId">
+                                                                                <input 
+                                                                                    id="LA-items[@(i)]-radio-[@(j)]" 
+                                                                                    class="govuk-radios__input" 
+                                                                                    type="radio" 
+                                                                                    asp-for="ActiveLAItems[i].SelectedScopeOfAppointmentId" 
+                                                                                    value="@scopeOfAppointment.ScopeId"
+                                                                                       aria-label="@scopeOfAppointment.RadioDescription">
                                                                                 <label class="govuk-label govuk-radios__label govuk-!-display-block"></label>
                                                                             </div>
                                                                         </div>
