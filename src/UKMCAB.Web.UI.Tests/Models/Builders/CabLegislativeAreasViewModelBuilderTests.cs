@@ -94,7 +94,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                     It.IsAny<List<CategoryModel>>(),
                     It.IsAny<List<SubCategoryModel>>(),
                     It.IsAny<List<ProductModel>>(),
-                    It.IsAny<List<ProcedureModel>>()))
+                    It.IsAny<List<ProcedureModel>>(),
+                    It.IsAny<List<DesignatedStandardModel>>()))
                 .Returns(_mockCabLegislativeAreasItemViewModelBuilder.Object);
             _mockCabLegislativeAreasItemViewModelBuilder.Setup(m => m.WithNoOfProductsInScopeOfAppointment()).Returns(_mockCabLegislativeAreasItemViewModelBuilder.Object);
             _mockCabLegislativeAreasItemViewModelBuilder.Setup(m => m.Build()).Returns(cabLegislativeAreasItemViewModel);
@@ -108,7 +109,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 new List<CategoryModel>(),
                 new List<SubCategoryModel>(),
                 new List<ProductModel>(),
-                new List<ProcedureModel>()).Build();
+                new List<ProcedureModel>(),
+                new List<DesignatedStandardModel>()).Build();
 
             // Assert
             return result;

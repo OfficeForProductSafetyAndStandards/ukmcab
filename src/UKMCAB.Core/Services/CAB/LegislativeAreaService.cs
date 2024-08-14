@@ -15,6 +15,7 @@ public class LegislativeAreaService : ILegislativeAreaService
     private readonly IReadOnlyRepository<SubCategory> _subCategoryRepository;
     private readonly IReadOnlyRepository<Product> _productRepository;
     private readonly IReadOnlyRepository<Procedure> _procedureRepository;
+    private readonly IReadOnlyRepository<DesignatedStandard> _designatedStandardRepository;
     private readonly IMapper _mapper;
 
     public LegislativeAreaService(
@@ -24,6 +25,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         IReadOnlyRepository<Product> productRepository,
         IReadOnlyRepository<Procedure> procedureRepository,
         IReadOnlyRepository<SubCategory> subCategoryRepository,
+        IReadOnlyRepository<DesignatedStandard> designatedStandardRepository,
     IMapper mapper)
     {
         _legislativeAreaRepository = legislativeAreaRepository;
@@ -32,6 +34,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         _productRepository = productRepository;
         _procedureRepository = procedureRepository;
         _subCategoryRepository = subCategoryRepository;
+        _designatedStandardRepository = designatedStandardRepository;
         _mapper = mapper;
     }
 
@@ -100,8 +103,18 @@ public class LegislativeAreaService : ILegislativeAreaService
             };
         }
 
+        var designatedStandards = await _designatedStandardRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId);
+        if (designatedStandards.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                DesignatedStandards = _mapper.Map<IEnumerable<DesignatedStandardModel>>(designatedStandards)
+            };
+        }
+
         return new ScopeOfAppointmentOptionsModel();
     }
+
     public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid purposeOfAppointmentId)
     {
         var categories = await _categoryRepository.QueryAsync(x => x.PurposeOfAppointmentId == purposeOfAppointmentId);
@@ -230,6 +243,27 @@ public class LegislativeAreaService : ILegislativeAreaService
         Guard.IsTrue(subCategoryId != Guid.Empty, "Guid cannot be empty");
         var subCat = await _subCategoryRepository.QueryAsync(p => p.Id == subCategoryId);
         return _mapper.Map<SubCategoryModel>(subCat.FirstOrDefault());
+    }
+
+    public async Task<DesignatedStandardModel?> GetDesignatedStandardByIdAsync(Guid designatedStandardId)
+    {
+        Guard.IsTrue(designatedStandardId != Guid.Empty, "Guid cannot be empty");
+        var designatedStandard = await _designatedStandardRepository.QueryAsync(p => p.Id == designatedStandardId);
+        return _mapper.Map<DesignatedStandardModel>(designatedStandard.FirstOrDefault());
+    }
+
+    public async Task<List<DesignatedStandardModel>> GetDesignatedStandardsForDocumentAsync(Document document)
+    {
+        var designatedStandardIds = document.ScopeOfAppointments.SelectMany(soa => soa.DesignatedStandardIds).Distinct();
+        foreach (var id in designatedStandardIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var designatedStandards = (await _designatedStandardRepository.QueryAsync(d => designatedStandardIds.Contains(d.Id)))
+            .OrderBy(d => d.Name)
+            .ToList();
+
+        return _mapper.Map<List<DesignatedStandardModel>>(designatedStandards);
     }
 
     public async Task<List<LegislativeAreaModel>> GetLegislativeAreasForDocumentAsync(Document document)

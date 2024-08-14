@@ -152,6 +152,7 @@ builder.Services.AddSingleton<IReadOnlyRepository<Category>>(new ReadOnlyReposit
 builder.Services.AddSingleton<IReadOnlyRepository<Product>>(new ReadOnlyRepository<Product>(cosmosClient, new CosmosFeedIterator(), "products"));
 builder.Services.AddSingleton<IReadOnlyRepository<Procedure>>(new ReadOnlyRepository<Procedure>(cosmosClient, new CosmosFeedIterator(), "procedures"));
 builder.Services.AddSingleton<IReadOnlyRepository<SubCategory>>(new ReadOnlyRepository<SubCategory>(cosmosClient, new CosmosFeedIterator(), "sub-categories"));
+builder.Services.AddSingleton<IReadOnlyRepository<DesignatedStandard>>(new ReadOnlyRepository<DesignatedStandard>(cosmosClient, new CosmosFeedIterator(), "designated-standards"));
 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();

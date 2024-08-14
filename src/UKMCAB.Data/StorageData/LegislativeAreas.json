@@ -121,8 +121,8 @@
     {
         "id": "8256e281-9ec9-436b-8357-bd4792deab01",
         "name": "Construction products",
-        "regulation": "",
-        "hasDataModel": "false",
+        "regulation": "(EU) No 305/2011",
+        "hasDataModel": "true",
         "roleId": "dluhc"
     },
     {

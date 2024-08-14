@@ -319,4 +319,8 @@ public static class DataConstants
         public const string MajorPublish = "Major publish";
         public const string MinorPublish = "Minor publish";
     }
+    public static class LegislativeAreasWithDifferentDataModel
+    {
+        public const string Construction = "Construction products";
+    }
 }

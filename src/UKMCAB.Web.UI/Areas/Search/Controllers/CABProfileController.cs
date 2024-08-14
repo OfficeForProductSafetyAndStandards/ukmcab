@@ -25,6 +25,8 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Infrastructure.Cache;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
+using LegislativeAreaViewModel = UKMCAB.Web.UI.Models.ViewModels.Search.LegislativeAreaViewModel;
 using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
@@ -131,6 +133,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             vm.CabLegislativeAreas.ShowProvisionalTag = cabDocument.DocumentLegislativeAreas
                 .Where(l => l.IsProvisional == true).Select(l => l.LegislativeAreaId).Contains(legislativeAreaId);
             vm.CabLegislativeAreas.Regulation = la.Regulation;
+
+            var designatedStandards = await _legislativeAreaService.GetDesignatedStandardsForDocumentAsync(cabDocument);
+            vm.CabLegislativeAreas.DesignatedStandards = designatedStandards.Select(d => new DesignatedStandardReadOnlyViewModel(d.Id, d.Name, d.ReferenceNumber, d.NoticeOfPublicationReference)).ToList();
 
             if (productId.HasValue)
             {
@@ -610,6 +615,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ActiveLegislativeAreas = listCabLegislateArea.Where(l => !l.IsArchived).ToList(),
                 ArchivedLegislativeAreas = listCabLegislateArea.Where(l => l.IsArchived).ToList()
             };
+
             return cab;
         }
 

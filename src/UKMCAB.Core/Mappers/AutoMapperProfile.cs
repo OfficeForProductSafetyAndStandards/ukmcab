@@ -24,5 +24,6 @@ public class AutoMapperProfile : Profile
         CreateMap<SubCategory, SubCategoryModel>();
         CreateMap<DocumentLegislativeArea, DocumentLegislativeAreaIndexItem>()
             .ForMember(s => s.Status, opt => opt.MapFrom(d => (int)d.Status));
+        CreateMap<DesignatedStandard, DesignatedStandardModel>();
     }
 }

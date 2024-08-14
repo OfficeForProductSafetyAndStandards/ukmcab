@@ -22,6 +22,7 @@
         private Mock<IReadOnlyRepository<SubCategory>> _mockSubCategoryRepository;
         private Mock<IReadOnlyRepository<Product>> _mockProductRepository;
         private Mock<IReadOnlyRepository<Procedure>> _mockProcedureRepository;
+        private Mock<IReadOnlyRepository<DesignatedStandard>> _mockDesignatedStandardRepository;
 
         private ILegislativeAreaService _legislativeAreaService;
 
@@ -34,13 +35,14 @@
             _mockSubCategoryRepository = new Mock<IReadOnlyRepository<SubCategory>>();
             _mockProductRepository = new Mock<IReadOnlyRepository<Product>>();
             _mockProcedureRepository = new Mock<IReadOnlyRepository<Procedure>>();
+            _mockDesignatedStandardRepository = new Mock<IReadOnlyRepository<DesignatedStandard>>(MockBehavior.Strict);
 
             var mapper = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); }).CreateMapper();
 
             _legislativeAreaService = new LegislativeAreaService(_mockLegislativeAreaRepository.Object,
                 _mockPurposeOfAppointmentRepository.Object,
                 _mockCategoryRepository.Object, _mockProductRepository.Object, _mockProcedureRepository.Object,
-                _mockSubCategoryRepository.Object, mapper);
+                _mockSubCategoryRepository.Object, _mockDesignatedStandardRepository.Object, mapper);
         }
 
         #region GetAllLegislativeAreas
