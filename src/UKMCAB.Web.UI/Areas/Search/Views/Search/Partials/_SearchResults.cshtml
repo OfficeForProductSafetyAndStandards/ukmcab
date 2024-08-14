@@ -72,16 +72,23 @@
         baseSortPath += baseSortPath.Contains("?") ? "&sort=" : "?sort=";
         <div id="search-results-sort-container">
             <fieldset>
-                <legend>Sort view</legend>
+                <legend>Sort view <span class="govuk-visually-hidden">@Model.SortDescription</span></legend>
                 @foreach (var sortOption in Model.SortOptions)
                 {
                     if (string.IsNullOrWhiteSpace(Model.Sort) || Model.Sort.Equals(sortOption.Value, StringComparison.InvariantCultureIgnoreCase))
                     {
-                        <label aria-pressed aria-describe="Results sorted by @sortOption.Label">@sortOption.Label</label>
+                        <label aria-pressed>@sortOption.Label</label>
                     }
                     else
                     {
-                        <a href="@(baseSortPath + sortOption.Value)" class="govuk-link govuk-link--no-visited-state" aria-sort="@sortOption.AriaSort" aria-describe="Sort results by @sortOption.Label">@sortOption.Label</a>
+                        <a 
+                            href="@(baseSortPath + sortOption.Value)" 
+                            class="govuk-link govuk-link--no-visited-state" 
+                            aria-sort="@sortOption.AriaSort" 
+                            aria-description="Sort results by @sortOption.Label"
+                        >
+                            @sortOption.Label
+                        </a>
                     }
                 }
             </fieldset>
