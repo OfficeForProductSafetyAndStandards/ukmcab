@@ -16,8 +16,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public IEnumerable<DesignatedStandardModel> DesignatedStandardModels { get; set; }
         public SelectListItem SelectAll { get; set; } = new SelectListItem("Select all", "SelectAll");
         public IEnumerable<SelectListItem>? DesignatedStandards { get; set; }
-        public PaginationViewModel PaginationViewModel { get; set; }
-
+        public PaginationViewModel? PaginationViewModel { get; set; }
+        public int PageNumber { get; set; }
         public DesignatedStandardViewModel() : base("Legislative area designated standards") { }
     }
 }

@@ -1005,7 +1005,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 Total = options.PaginationInfo?.QueryCount ?? 0,
                 ResultsPerPage = options.PaginationInfo?.PageSize ?? 20,
                 ResultType = string.Empty,
-            }
+            },
+            PageNumber = pageNumber
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
@@ -1013,7 +1014,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
     [HttpPost("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)]
     public async Task<IActionResult> AddDesignatedStandard(Guid id, DesignatedStandardViewModel vm,
-        [FromForm] Guid scopeId, string submitType)
+        [FromForm] Guid scopeId, string submitType, int pageNumber)
     {
         var documentScopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
@@ -1053,11 +1054,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         var options =
             await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
-                documentScopeOfAppointment.LegislativeAreaId);
+                documentScopeOfAppointment.LegislativeAreaId, pageNumber - 1);
         vm.DesignatedStandardModels = options.DesignatedStandards.ToList();
         vm.PaginationViewModel = new PaginationViewModel
         {
-            PageNumber = 1,
+            PageNumber = pageNumber,
             Total = options.PaginationInfo?.QueryCount ?? 0,
             ResultsPerPage = options.PaginationInfo?.PageSize ?? 20,
             ResultType = string.Empty,
