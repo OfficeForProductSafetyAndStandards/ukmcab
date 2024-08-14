@@ -15,7 +15,7 @@ using UKMCAB.Core.Security;
 using System.Net;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Data;
-using static UKMCAB.Web.UI.Constants;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -961,7 +961,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
     [HttpGet("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)]
     public async Task<IActionResult> AddDesignatedStandard(Guid id, Guid scopeId, Guid? compareScopeId,
-        Guid? legislativeAreaId, bool fromSummary)
+        Guid? legislativeAreaId, bool fromSummary, int pageNumber = 1)
     {
         if (scopeId == Guid.Empty && legislativeAreaId != null)
         {
@@ -981,8 +981,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         if (documentScopeOfAppointment == null)
             return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
         var options =
-            await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
-                documentScopeOfAppointment.LegislativeAreaId);
+            await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, pageNumber - 1);
         var legislativeArea =
             await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentScopeOfAppointment.LegislativeAreaId);
         if (legislativeArea == null)
@@ -991,25 +990,22 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 $"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         }
 
-        var designatedStandardModels = options.DesignatedStandards.OrderBy(ds => ds.Name).ToList();
-
-        //foreach (var ds in designatedStandardModels)
-        //{
-        //    if (documentScopeOfAppointment.DesignatedStandardIds.Contains(ds.Id))
-        //    {
-        //        ds.Selected = true;
-        //    }
-        //}
-
         var vm = new DesignatedStandardViewModel
         {
             Title = "Select designated standard",
             LegislativeArea = legislativeArea.Name,
             LegislativeAreaId = legislativeAreaId,
-            DesignatedStandardModels = designatedStandardModels,
+            DesignatedStandardModels = options.DesignatedStandards,
             CabId = id,
             ScopeId = scopeId,
             IsFromSummary = fromSummary,
+            PaginationViewModel = new PaginationViewModel
+            {
+                PageNumber = pageNumber,
+                Total = options.PaginationInfo?.ResultsCount ?? 0,
+                ResultsPerPage = options.PaginationInfo?.PageSize ?? 20,
+                ResultType = string.Empty,
+            }
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);

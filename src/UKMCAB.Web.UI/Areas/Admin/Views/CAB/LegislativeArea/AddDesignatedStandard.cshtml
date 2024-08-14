@@ -66,6 +66,8 @@
                 </govuk-checkboxes>
             </div>
             
+            <partial name="Partials/_Pagination" model="Model.PaginationViewModel" />
+
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
                 <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CabId">Cancel</a>

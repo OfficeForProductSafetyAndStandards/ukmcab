@@ -64,8 +64,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         var la = await _legislativeAreaRepository.QueryAsync(l => l.Id == legislativeAreaId);
         return _mapper.Map<LegislativeAreaModel>(la.First());
     }
-
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId)
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId, int pageIndex = 0, int pageSize = 20)
     {
         var purposeOfAppointments = await _purposeOfAppointmentRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId);
         if (purposeOfAppointments.Any())
@@ -103,12 +102,13 @@ public class LegislativeAreaService : ILegislativeAreaService
             };
         }
 
-        var designatedStandards = await _designatedStandardRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId);
+        (var designatedStandards, var paginationInfo) = await _designatedStandardRepository.PaginatedQueryAsync<DesignatedStandard>(x => x.LegislativeAreaId == legislativeAreaId, pageIndex, pageSize);
         if (designatedStandards.Any())
         {
             return new ScopeOfAppointmentOptionsModel
             {
-                DesignatedStandards = _mapper.Map<IEnumerable<DesignatedStandardModel>>(designatedStandards)
+                DesignatedStandards = _mapper.Map<IEnumerable<DesignatedStandardModel>>(designatedStandards),
+                PaginationInfo = paginationInfo
             };
         }
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using UKMCAB.Core.Domain.LegislativeAreas;
+using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
@@ -13,9 +14,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? LegislativeArea { get; set; } = string.Empty;
         public Guid? LegislativeAreaId { get; set; }
         public IEnumerable<DesignatedStandardModel> DesignatedStandardModels { get; set; }
-
         public SelectListItem SelectAll { get; set; } = new SelectListItem("Select all", "SelectAll");
         public IEnumerable<SelectListItem>? DesignatedStandards { get; set; }
+        public PaginationViewModel PaginationViewModel { get; set; }
 
         public DesignatedStandardViewModel() : base("Legislative area designated standards") { }
     }
