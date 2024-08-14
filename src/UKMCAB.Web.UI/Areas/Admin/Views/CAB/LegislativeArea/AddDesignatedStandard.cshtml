@@ -1,4 +1,4 @@
-@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.DesignatedStandardViewModel
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.DesignatedStandardsViewModel
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -16,7 +16,7 @@
             <input type="hidden" asp-for="@Model.LegislativeArea"/>
             <input type="hidden" asp-for="@Model.LegislativeAreaId"/>
             <input type="hidden" asp-for="@Model.ScopeId" value="@Model.ScopeId"/>
-            <input type="hidden" asp-for="@Model.DesignatedStandardModels" value="@Model.DesignatedStandardModels"/>
+            <input type="hidden" asp-for="@Model.DesignatedStandardViewModels" value="@Model.DesignatedStandardViewModels"/>
 
             <h3 class="govuk-heading-m">Designated Standards</h3>
             <div id="designated-standard-search-keywords-input-container" class="width-three-fifth">
@@ -36,7 +36,7 @@
                                 @Model.SelectAll.Text
                         </govuk-checkboxes-item>
 
-                        @foreach (var ds in Model.DesignatedStandardModels)
+                        @foreach (var ds in Model.DesignatedStandardViewModels)
                         {
                             var item = new SelectListItem(ds.Name, ds.Id.ToString());
                             //item.Selected = ds.Selected;

@@ -126,9 +126,15 @@
                                                     {
                                                         <th scope="col" class="govuk-table__header">Product</th>
                                                     }
-                                                    @if (legislativeArea.ScopeOfAppointments.Any())
+                                                    @if (legislativeArea.ShowProcedureColumn)
                                                     {
                                                         <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
+                                                    }
+                                                    @if (legislativeArea.ShowDesignatedStandardColumns)
+                                                    {
+                                                        <th scope="col" class="govuk-table__header">Designated standrd</th>
+                                                        <th scope="col" class="govuk-table__header">Reference number</th>
+                                                        <th scope="col" class="govuk-table__header">Publication reference</th>
                                                     }
                                                 </tr>
                                             </thead>
@@ -228,6 +234,34 @@
                                                                     <label aria-hidden="true">Product</label>
                                                                     @Html.ValueOrNotApplicable(scopeOfAppointment.Product)
                                                                 </td>
+                                                            }
+
+                                                            @if (legislativeArea.ShowDesignatedStandardColumns)
+                                                            {
+                                                                
+                                                                @foreach (var ds in scopeOfAppointment.DesignatedStandards)
+                                                                {
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                        <label aria-hidden="true">Designated standard</label>
+                                                                        @Html.ValueOrNotApplicable(ds.Name)
+                                                                    </td>
+
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                        <label aria-hidden="true">Reference number</label>
+                                                                        @foreach (var refNo in ds.ReferenceNumber)
+                                                                        {
+                                                                            @Html.ValueOrNotApplicable(refNo)
+                                                                        }
+
+                                                                    </td>
+
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                        <label aria-hidden="true">Public reference</label>
+                                                                        @Html.ValueOrNotApplicable(ds.NoticeOfPublicationReference)
+                                                                    </td>
+                                                                }
+                                                                
+
                                                             }
                                                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                 <label aria-hidden="true">Applicable conformity assessment procedure</label>

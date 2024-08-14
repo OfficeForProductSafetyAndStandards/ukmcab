@@ -255,6 +255,29 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 
                     legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
                 }
+
+
+                if (scopeOfAppointment.DesignatedStandardIds.Any())
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel
+                    {
+                        LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                        DesignatedStandards = new()
+                    };
+
+                    foreach (var designatedStandardId in scopeOfAppointment.DesignatedStandardIds)
+                    {
+                        var designatedStandard = await _legislativeAreaService.GetDesignatedStandardByIdAsync(designatedStandardId);
+                        //var soaViewModel = new LegislativeAreaListItemViewModel(legislativeArea.Id, legislativeArea.Name, null, null, null, designatedStandardId);
+
+                        var designatedStandardReadOnlyVM = new DesignatedStandardReadOnlyViewModel(
+                            designatedStandard.Id, designatedStandard.Name, designatedStandard.ReferenceNumber, designatedStandard.NoticeOfPublicationReference);
+
+                        soaViewModel.DesignatedStandards.Add(designatedStandardReadOnlyVM);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
             }
 
             var distinctSoa = legislativeAreaViewModel.ScopeOfAppointments.GroupBy(s => s.ScopeId).ToList();

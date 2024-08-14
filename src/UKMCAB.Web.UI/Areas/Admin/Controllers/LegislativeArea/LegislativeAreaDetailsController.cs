@@ -211,6 +211,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 $"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         }
 
+        if (options.DesignatedStandards.Any())
+        {
+            return RedirectToRoute(Routes.AddDesignatedStandard, new { id, scopeId, compareScopeId, fromSummary });
+        }
+
         if (!options.PurposeOfAppointments.Any())
         {
             return RedirectToRoute(Routes.AddCategory, new { id, scopeId, compareScopeId, fromSummary });
@@ -991,7 +996,16 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 $"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         }
 
-        var designatedStandardModels = options.DesignatedStandards.OrderBy(ds => ds.Name).ToList();
+        var designatedStandardModels = options.DesignatedStandards.OrderBy(ds => ds.Name);
+        //var designatedStandardModels = options.DesignatedStandards;
+        var designatedStandardViewModels = designatedStandardModels?.Select(ds => new DesignatedStandardViewModel(ds));
+
+        var existingDesignatedStandardIds = documentScopeOfAppointment.DesignatedStandardIds;
+
+        foreach (var item in designatedStandardViewModels?.Where(ds => existingDesignatedStandardIds.Contains(ds.Id)))
+        {
+            item.IsSelected = true;
+        }
 
         //foreach (var ds in designatedStandardModels)
         //{
@@ -1001,12 +1015,12 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         //    }
         //}
 
-        var vm = new DesignatedStandardViewModel
+        var vm = new DesignatedStandardsViewModel
         {
             Title = "Select designated standard",
             LegislativeArea = legislativeArea.Name,
             LegislativeAreaId = legislativeAreaId,
-            DesignatedStandardModels = designatedStandardModels,
+            DesignatedStandardViewModels = designatedStandardViewModels,
             CabId = id,
             ScopeId = scopeId,
             IsFromSummary = fromSummary,
@@ -1016,7 +1030,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     }
 
     [HttpPost("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)]
-    public async Task<IActionResult> AddDesignatedStandard(Guid id, DesignatedStandardViewModel vm,
+    public async Task<IActionResult> AddDesignatedStandard(Guid id, DesignatedStandardsViewModel vm,
         [FromForm] Guid scopeId, string submitType)
     {
         var documentScopeOfAppointment =
@@ -1058,7 +1072,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var options =
             await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
                 documentScopeOfAppointment.LegislativeAreaId);
-        vm.DesignatedStandardModels = options.DesignatedStandards.ToList();
+        vm.DesignatedStandardViewModels = options.DesignatedStandards.Select(ds => new DesignatedStandardViewModel(ds)).ToList();
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
     }
 
