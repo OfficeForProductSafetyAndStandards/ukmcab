@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Data.Models.LegislativeAreas
 {
-    public class DesignatedStandard : ISortable
+    public class DesignatedStandard : IOrderable
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

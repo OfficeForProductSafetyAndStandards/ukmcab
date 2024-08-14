@@ -1,7 +1,7 @@
 ﻿
 namespace UKMCAB.Data.Pagination
 {
-    public interface ISortable
+    public interface IOrderable
     {
         public string Name { get; set; }
     }
