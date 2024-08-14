@@ -41,18 +41,26 @@
                 }
                 else
                 {
-                    <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.UploadedFiles))">
+                    <div class="govuk-form-group govuk-main-wrapper @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.UploadedFiles))">
                         <fieldset class="govuk-fieldset" aria-describedby="file-you-have-uploaded">
                             <p id="UploadedFiles" class="govuk-error-message">
                                 <span asp-validation-for="UploadedFiles" class="govuk-error-message"></span>
                             </p>
 
                             @* Header *@
-                            <div style="margin-bottom:0">
-                                <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display"><h3 class="govuk-heading-s">File</h3></div>
-                                <div class="ukmcab-float__left"><h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Category</h3></div>
-                                <div class="ukmcab-float__clear width-full"><hr class="ukmcab-border" /></div>
+                            <div style="margin-bottom:0" class="govuk-grid-row display-from-desktop">
+                                <div class="govuk-grid-column-one-half">
+                                    <h3 class="govuk-heading-s">File</h3>
+                                </div>
+                                <div class="govuk-grid-column-one-quarter">
+                                    <h3 class="govuk-heading-s">Category</h3>
+                                </div>
+                                <div class="govuk-grid-column-one-quarter">
+                                    <h3 class="govuk-heading-s">Publications</h3>
+                                </div>
                             </div>
+
+                            <hr class="ukmcab-border" />
 
                             <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
 
@@ -63,27 +71,32 @@
                                     {
                                         uploadedDate = uploadedFile.UploadDateTime.Value.ToString("d MMM yyyy");
                                     }
-                                    <div class="govuk-checkboxes__item">
-                                        @*Row 1: Checkbox Row*@
-                                        <div class="row">
-                                            <div class="width-one-tenth">
-                                                <input type="hidden" asp-for="UploadedFiles![i].FileIndex" value="@i" />
-                                            </div>
 
-                                            <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
-                                                <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles![i].IsSelected" />
-                                                <label class="govuk-label govuk-checkboxes__label" asp-for="UploadedFiles![i].IsSelected">
-                                                    <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
-                                                </label>
+                                    <div class="govuk-grid-row">
+                                        <div class="govuk-grid-column-full">
+                                            <div class="govuk-checkboxes__item">
+                                                @*Row 1: Checkbox Row*@
+                                                <div class="row">
+                                                    <div class="width-one-tenth">
+                                                        <input type="hidden" asp-for="UploadedFiles![i].FileIndex" value="@i" />
+                                                    </div>
+
+                                                    <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
+                                                        <input class="govuk-checkboxes__input file-upload-checkbox" type="checkbox" asp-for="UploadedFiles![i].IsSelected" />
+                                                        <label class="govuk-label govuk-checkboxes__label" asp-for="UploadedFiles![i].IsSelected">
+                                                            <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
+                                                        </label>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
 
                                     @*Row 2: Inputbox Row*@
-                                    <div class="row">
-                                        <div class="width-three-fifth ukmcab-padding-left-35 ukmcab-padding-bottom-15 ukmcab-float__left">
+                                    <div class="govuk-grid-row">
+                                        <div class="govuk-grid-column-full govuk-grid-column-one-half-from-desktop">
                                             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Label")">
-                                                <label class="govuk-label govuk-label--s desktop-no-display" asp-for="UploadedFiles![i].Label">File</label>
+                                                <label class="govuk-label display-until-desktop" asp-for="UploadedFiles![i].Label">File</label>
                                                 <p class="govuk-body file-label">@uploadedFile.Label</p>
                                                 <p class="govuk-body file-label">Date added: @uploadedDate</p>
                                                 <input asp-for="UploadedFiles![i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
@@ -93,10 +106,17 @@
                                             </div>
                                         </div>
 
-                                        <div class="width-three-tenth ukmcab-padding-left-40 ukmcab-float__left govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
-                                            <label class="govuk-label govuk-label--s desktop-no-display">Category</label>
+                                        <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Category")">
+                                            <label class="govuk-label display-until-desktop">Category</label>
                                             <p class="govuk-body">
                                                 @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.Category), uploadedFile.Category, @Constants.NotAssigned)
+                                            </p>
+                                        </div>
+
+                                        <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Publication")">
+                                            <label class="govuk-label display-until-desktop">Publication</label>
+                                            <p class="govuk-body">
+                                                @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.Publication), uploadedFile.Publication, @Constants.NotAssigned)
                                             </p>
                                         </div>
                                     </div>
