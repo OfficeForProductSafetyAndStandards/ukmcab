@@ -89,11 +89,13 @@
     function showFilter(e) {
         e.preventDefault();
         toggleFilter(true);
+        searchResultsListToggle.focus();
     }
 
     function showList(e) {
         e.preventDefault();
         toggleFilter(false);
+        searchResultsFilterToggle.focus();
     }
 
     function toggleFilter(filter) {
