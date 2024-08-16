@@ -262,13 +262,13 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     var soaViewModel = new LegislativeAreaListItemViewModel
                     {
                         LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
-                        DesignatedStandards = new()
+                        DesignatedStandards = new(),
+                        ScopeId = scopeOfAppointment.Id,
                     };
 
                     foreach (var designatedStandardId in scopeOfAppointment.DesignatedStandardIds)
                     {
                         var designatedStandard = await _legislativeAreaService.GetDesignatedStandardByIdAsync(designatedStandardId);
-                        //var soaViewModel = new LegislativeAreaListItemViewModel(legislativeArea.Id, legislativeArea.Name, null, null, null, designatedStandardId);
 
                         var designatedStandardReadOnlyVM = new DesignatedStandardReadOnlyViewModel(
                             designatedStandard.Id, designatedStandard.Name, designatedStandard.ReferenceNumber, designatedStandard.NoticeOfPublicationReference);

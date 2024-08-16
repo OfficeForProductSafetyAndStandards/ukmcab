@@ -18,6 +18,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public List<string>? Categories { get; set; } = new();
 
         public int NoOfProductsInScopeOfAppointment { get; set; }
+        public int NoOfDesignatedStandardsInScopeOfAppointment  => DesignatedStandards?.Count ?? 0;
         public List<DesignatedStandardReadOnlyViewModel>? DesignatedStandards { get; set; }
 
         public LegislativeAreaListItemViewModel() : base("Legislative area list item") { }

@@ -1,4 +1,5 @@
 ﻿using Ganss.Xss;
+using Microsoft.VisualBasic;
 using System.Text;
 using System.Web;
 using UKMCAB.Common;
@@ -131,16 +132,18 @@ namespace UKMCAB.Data.Models
                     previousScopes.Count(ps => !currentScopes.Contains(ps));
                 var countScopesAdded =
                     currentScopes.Count(cs => !previousScopes.Contains(cs));
+                var standardName = la.Value.ToString() == DataConstants.LegislativeAreasWithDifferentDataModel.Construction ? 
+                    "designated standard" : "scope of appointment";
                 if (countScopesAdded > 0)
                 {
                     sb.Append(
-                        $"<p class=\"govuk-body\">{countScopesAdded} scope of appointment{(countScopesAdded > 1 ? "s" : null)} {(countScopesAdded > 1 ? "have" : "has")} been added to {la.Value}.</p>");
+                        $"<p class=\"govuk-body\">{countScopesAdded} {standardName}{(countScopesAdded > 1 ? "s" : null)} {(countScopesAdded > 1 ? "have" : "has")} been added to {la.Value}.</p>");
                 }
 
                 if (countScopesRemoved > 0)
                 {
                     sb.Append(
-                        $"<p class=\"govuk-body\">{countScopesRemoved} scope of appointment{(countScopesRemoved > 1 ? "s" : null)} {(countScopesRemoved > 1 ? "have" : "has")} been removed from {la.Value}.</p>");
+                        $"<p class=\"govuk-body\">{countScopesRemoved} {standardName}{(countScopesRemoved > 1 ? "s" : null)} {(countScopesRemoved > 1 ? "have" : "has")} been removed from {la.Value}.</p>");
                 }
             }
         }

@@ -12,11 +12,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public Guid CabId { get; set; }
         public string? LegislativeArea { get; set; } = string.Empty;
         public Guid? LegislativeAreaId { get; set; }
-        public IEnumerable<DesignatedStandardViewModel> DesignatedStandardViewModels { get; set; }
-
-        public SelectListItem SelectAll { get; set; } = new SelectListItem("Select all", "SelectAll");
-        //public IEnumerable<SelectListItem>? DesignatedStandards { get; set; }
-
+        public IEnumerable<DesignatedStandardViewModel> DesignatedStandardViewModels { get; set; } = Enumerable.Empty<DesignatedStandardViewModel>();
+        public SelectListItem SelectAll { get; set; } = new SelectListItem("Select all", Guid.Empty.ToString());
         public DesignatedStandardsViewModel() : base("Legislative area designated standards") { }
     }
 }
