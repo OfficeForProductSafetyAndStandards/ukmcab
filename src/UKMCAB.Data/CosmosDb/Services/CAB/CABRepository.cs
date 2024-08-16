@@ -67,6 +67,7 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                         s.CreatedBy ??= "ukas";
                     });
 
+                    document.HiddenText = string.Empty;
                     document.Documents?.ForEach(s =>
                     {
                         s.Publication ??= DataConstants.Publications.Private;
