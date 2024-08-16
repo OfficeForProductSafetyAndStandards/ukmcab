@@ -391,21 +391,32 @@
                     </govuk-warning-text>
                 }
 
-                @if (Model.ShowReviewButton)
-                {
-                    <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
-                        @($"You have {Model.LegislativeAreasPendingApprovalForCurrentUserCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalForCurrentUserCount > 1 ? "s" : null)} to approve or decline.")
-                    </govuk-warning-text>
-                    <div class="govuk-button-group govuk-!-margin-top-5">
-                        <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnUrl)" class="@(Model.ShowPublishButton ? "govuk-button--secondary" : "")">
-                            Review
-                        </govuk-button-link>
-                        @if (!Model.ShowApproveToPublishButton)
-                        {
-                            <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                        }
-                    </div>
-                }
+            @if (Model.ShowSupportingDocumentsWarning)
+            {
+                <div class="govuk-warning-text govuk-!-margin-top-5">
+                    <span class="govuk-warning-text__icon" aria-hidden="true">!</span>
+                    <strong class="govuk-warning-text__text">
+                        <span class="govuk-warning-text__assistive">Warning</span>
+                        <text>Support documents with a Publication value of All users (public) will be publicly viewable.</text>
+                    </strong>
+                </div>
+            }
+
+            @if (Model.ShowReviewButton)
+            {
+                <govuk-warning-text icon-fallback-text="Warning" class="govuk-!-margin-top-5">
+                    @($"You have {Model.LegislativeAreasPendingApprovalForCurrentUserCount.ToWords()} legislative area{(Model.LegislativeAreasPendingApprovalForCurrentUserCount > 1 ? "s" : null)} to approve or decline.")
+                </govuk-warning-text>
+                <div class="govuk-button-group govuk-!-margin-top-5">
+                    <govuk-button-link id="reviewLa" asp-route="@LegislativeAreaApproveController.Routes.LegislativeAreaApprovalList" asp-route-id="@Model.CABId" asp-route-returnUrl="@WebUtility.UrlEncode(Model.ReturnUrl)" class="@(Model.ShowPublishButton ? "govuk-button--secondary" : "")">
+                        Review
+                    </govuk-button-link>
+                    @if (!Model.ShowApproveToPublishButton)
+                    {
+                        <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    }
+                </div>
+            }
 
                 <div class="govuk-!-margin-top-5">
                     <input type="hidden" asp-for="Id" />

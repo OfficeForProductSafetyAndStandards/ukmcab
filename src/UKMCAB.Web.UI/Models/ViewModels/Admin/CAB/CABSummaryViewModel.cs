@@ -1,10 +1,12 @@
-﻿using UKMCAB.Core.Security;
+﻿using Humanizer;
+using UKMCAB.Data;
+using UKMCAB.Core.Security;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 {
     public class CABSummaryViewModel : ILayoutModel
-    {        
+    {
         public string? Id { get; set; }
         public Status Status { get; set; }
         public string? StatusCssStyle { get; set; }
@@ -44,6 +46,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool RequestedFromCabProfilePage { get; set; }
         public bool HasActiveLAs { get; set; }
         public bool DraftUpdated { get; set; }
+
+        public bool ShowSupportingDocumentsWarning =>
+            RevealEditActions &&
+            !IsEditLocked &&
+            IsOpssAdmin && 
+            (CABSupportingDocumentDetailsViewModel?.HasPublicDocuments ?? false);
 
         public bool ShowProductSchedulesWarning => 
             CABProductScheduleDetailsViewModel?.ActiveSchedules?.Any(p => p.CreatedBy?.Equals(Roles.UKAS.Id) ?? false) ?? false;

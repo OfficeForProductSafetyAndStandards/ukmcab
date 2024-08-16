@@ -741,6 +741,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         Guid? productId = null;
+        Guid? categoryId = null;
 
         if (scopeOfAppointment == null)
             return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
@@ -838,10 +839,10 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         if (scopeOfAppointment.CategoryIds.Any() && indexOfProduct < scopeOfAppointment.CategoryIds.Count)
         {
-            productId = scopeOfAppointment.CategoryIds[indexOfProduct];
+            categoryId = scopeOfAppointment.CategoryIds[indexOfProduct];
         }
 
-        vm.Procedures = await GetProcedureSelectListItemsAsync(productId, scopeOfAppointment.CategoryId,
+        vm.Procedures = await GetProcedureSelectListItemsAsync(productId, categoryId,
             scopeOfAppointment.PurposeOfAppointmentId);
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProcedure.cshtml", vm);
