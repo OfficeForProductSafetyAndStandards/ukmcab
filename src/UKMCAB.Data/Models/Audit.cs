@@ -441,6 +441,7 @@ namespace UKMCAB.Data.Models
             UnpublishApprovalRequestDeclined =
                 "Request to unpublish declined"; // UKAS request to un publish and create draft
 
+        public const string LegislativeAreaAdded = "Legislative area added";
         public const string ApproveLegislativeArea = "Legislative area approved";
         public const string DeclineLegislativeArea = "Legislative area declined";
         public const string LegislativeAreaReviewDateAdded = "Legislative area review date added";
