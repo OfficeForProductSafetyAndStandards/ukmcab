@@ -16,6 +16,18 @@
     }
 }
 
+.display-until-desktop {
+    @include govuk-media-query($from: desktop) {
+        display: none !important;
+    }
+}
+
+.display-from-desktop {
+    @include govuk-media-query($until: desktop) {
+        display: none !important;
+    }
+}
+
 .app-no-display {
     display: none !important;
 }

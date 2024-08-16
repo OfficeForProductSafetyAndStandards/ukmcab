@@ -68,6 +68,10 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     });
 
                     document.HiddenText = string.Empty;
+                    document.Documents?.ForEach(s =>
+                    {
+                        s.Publication ??= DataConstants.Publications.Private;
+                    });
 
                     await UpdateAsync(document);
                 }

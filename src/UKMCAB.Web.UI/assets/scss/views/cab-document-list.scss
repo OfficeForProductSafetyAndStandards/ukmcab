@@ -13,7 +13,7 @@
     }
 
     .document-item {
-        flex: 50%;
+        /*flex: 50%;*/
         padding-top: 0px;
     }
 
@@ -37,9 +37,29 @@
     .legislative-area-label {
         padding-top: 8px;
     }
+
+    .document-item-button-group {
+        button {
+            padding: 0px 5px 0px 5px !important;
+        }
+    }
 }
 
 .document-list-align-normal {
     align-items: flex-start;    
 }
 
+.document-file-name {
+    @include govuk-media-query($from: tablet) {
+        padding-left: 51px;
+    }
+}
+
+.document-padding-right-17 {
+    padding-right: 17px;
+}
+
+.document-detail-select {
+    min-width: 1em !important;
+    width: 100%;
+}

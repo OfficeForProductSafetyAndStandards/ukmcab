@@ -1,5 +1,6 @@
 ﻿using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Models.Builders
@@ -30,7 +31,8 @@ namespace UKMCAB.Web.UI.Models.Builders
             List<CategoryModel> categories,
             List<SubCategoryModel> subCategories,
             List<ProductModel> products,
-            List<ProcedureModel> procedures)
+            List<ProcedureModel> procedures,
+            List<DesignatedStandardModel> designatedStandards)
         {
             foreach (var documentLegislativeArea in documentLegislativeAreas)
             {
@@ -46,7 +48,8 @@ namespace UKMCAB.Web.UI.Models.Builders
                         categories,
                         subCategories,
                         products,
-                        procedures)
+                        procedures,
+                        designatedStandards)
                     .WithNoOfProductsInScopeOfAppointment()
                     .Build();
 

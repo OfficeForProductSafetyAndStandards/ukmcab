@@ -139,6 +139,18 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             }
         };
 
+        public string SortDescription { get
+            {
+                var currentSort = string.IsNullOrWhiteSpace(Keywords) ? "Random" : "Relevant";
+                if (!string.IsNullOrEmpty(Sort))
+                {
+                    currentSort = SortOptions.FirstOrDefault(x => Sort.Equals(x.Value, StringComparison.InvariantCultureIgnoreCase))?.Label;
+                    currentSort = currentSort ?? (string.IsNullOrWhiteSpace(Keywords) ? "Random" : "Relevant");
+                }
+                return $"results sorted by {currentSort}";
+            } 
+        }
+
 
         // Results
         public List<ResultViewModel>? SearchResults { get; set; }
