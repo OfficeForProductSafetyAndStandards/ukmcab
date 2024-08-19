@@ -63,6 +63,7 @@ public static class Constants
         public const string Edit = nameof(Edit);
         public const string Archive = nameof(Archive);
         public const string RemoveArchived = nameof(RemoveArchived);
+        public const string Search = nameof(Search);
     }
 
     public class ErrorMessages
