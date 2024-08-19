@@ -46,8 +46,20 @@ public static class DataConstants
         public const string Private = "private";
     }
 
+    public static class Publications
+    {
+        public const string Public = "All users (public)";
+        public const string Private = "Internal users";
+
+    }
     public static class Lists
     {
+        public static readonly List<string> Publications = new()
+        {
+            DataConstants.Publications.Public,
+            DataConstants.Publications.Private,
+        };
+
         public static readonly List<string> DocumentCategories = new()
         {
             "Appointment",

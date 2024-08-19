@@ -61,14 +61,14 @@
                             <tr class="govuk-table__row">
                                 <th scope="row" class="govuk-table__header">@(Model.Action == AuditCABActions.Published ? "User notes and changes" : "User notes")</th>
                                 <td class="govuk-table__cell">
-                                     @HttpUtility.HtmlDecode(@Model.InternalComment)
+                                    @Html.Raw(HttpUtility.HtmlDecode(@Model.InternalComment))
                                 </td>
                             </tr>
                         }
                         <tr class="govuk-table__row">
                             <th scope="row" class="govuk-table__header">Reason</th>
                             <td class="govuk-table__cell">
-                                @HttpUtility.HtmlDecode(@Model.PublicComment)
+                                @Html.Raw(HttpUtility.HtmlDecode(@Model.PublicComment))
                             </td>
                         </tr>
                     </tbody>

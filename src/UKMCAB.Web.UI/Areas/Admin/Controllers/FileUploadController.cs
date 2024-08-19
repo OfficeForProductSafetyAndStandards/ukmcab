@@ -13,6 +13,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 using UKMCAB.Web.UI.Helpers;
+using static UKMCAB.Web.UI.Constants;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -428,7 +429,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return View(model);
         }
-
+        
+        #region "supporting documents upload"
         [HttpGet]
         [Route("admin/cab/documents-upload/{id}")]
         public async Task<IActionResult> DocumentsUpload(string id, bool fromSummary)
@@ -447,7 +449,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 Title = DocumentsOptions.UploadTitle,
                 UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel
                 {
-                    FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category
+                    FileName = s.FileName, 
+                    UploadDateTime = s.UploadDateTime, 
+                    Label = s.Label, 
+                    Category = s.Category,
+                    Publication = s.Publication,
                 }).ToList() ?? new List<FileViewModel>(),
                 CABId = id,
                 IsFromSummary = fromSummary,
@@ -548,8 +554,13 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                     {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                        Category = s.Category, Archived = s.Archived, Id = s.Id
+                        FileName = s.FileName, 
+                        UploadDateTime = s.UploadDateTime, 
+                        Label = s.Label,
+                        Category = s.Category, 
+                        Archived = s.Archived, 
+                        Id = s.Id,
+                        Publication = s.Publication
                     }).ToList() ?? new List<FileViewModel>();
 
                     var selectedViewModel = latestDocument.Documents[fileToUseAgainIndex];
@@ -574,10 +585,45 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View(viewModel);
             }
 
+            if (fromAction == nameof(DocumentListRemove))
+            {
+                /*
+                 * ??? do we need this
+                 * var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
+                {
+                    FileName = s.FileName,
+                    UploadDateTime = s.UploadDateTime,
+                    Label = s.Label,
+                    Category = s.Category,
+                    Archived = s.Archived,
+                    Id = s.Id
+                }).ToList() ?? new List<FileViewModel>();
+
+                var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected)
+                    .Select(s => new FileViewModel
+                    {
+                        FileName = s.FileName,
+                        UploadDateTime = s.UploadDateTime,
+                        Label = s.Label,
+                        Category = s.Category,
+                        IsSelected = false,
+                        Archived = s.Archived
+                    }).ToList() ?? new List<FileViewModel>();
+                ;
+
+                currentlyUploadedFileViewModels.AddRange(unsavedFileViewModels);*/
+            }
+
+
             uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                 {
-                    FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label, Category = s.Category,
-                    Archived = s.Archived, Id = s.Id
+                    FileName = s.FileName, 
+                    UploadDateTime = s.UploadDateTime, 
+                    Label = s.Label, 
+                    Category = s.Category,
+                    Archived = s.Archived, 
+                    Id = s.Id,
+                    Publication = s.Publication
                 })
                 .ToList() ?? new List<FileViewModel>();
 
@@ -624,7 +670,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             if (submitType != null && submitType.Equals(Constants.SubmitType.Remove))
             {
-                var FilesSelectedInViewModel = GetFilesSelectedInViewModel(model.UploadedFiles);
+                //ISSUE: this block of code causes the deletion of a file on every refresh with this submitType value!!!
+                var FilesSelectedInViewModel = GetFilesSelectedInViewModel(model.UploadedFiles!);
 
                 if (!FilesSelectedInViewModel.Any())
                 {
@@ -647,15 +694,23 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                     var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                     {
-                        FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                        Category = s.Category, Archived = s.Archived, Id = s.Id
+                        FileName = s.FileName,
+                        UploadDateTime = s.UploadDateTime,
+                        Label = s.Label,
+                        Category = s.Category,
+                        Archived = s.Archived,
+                        Id = s.Id
                     }).ToList() ?? new List<FileViewModel>();
 
                     var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected)
                         .Select(s => new FileViewModel
                         {
-                            FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                            Category = s.Category, IsSelected = false, Archived = s.Archived
+                            FileName = s.FileName,
+                            UploadDateTime = s.UploadDateTime,
+                            Label = s.Label,
+                            Category = s.Category,
+                            IsSelected = false,
+                            Archived = s.Archived
                         }).ToList() ?? new List<FileViewModel>();
                     ;
 
@@ -675,7 +730,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType != null && submitType.Equals(Constants.SubmitType.Continue))
             {
                 AddCategoryLabelAndFileModelStateErrors(model);
-                AddCategorySelectionModelStateErrors(model);
+                AddFileUploadViewModelStateErrors(model);
             }
 
             if (ModelState.IsValid)
@@ -706,16 +761,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 {
                     return SaveDraft(latestDocument);
                 }
-
-                if (submitType != null && submitType.Equals(Constants.SubmitType.UseFileAgain))
-                {
-                    return RedirectToAction("DocumentsUseFileAgain", "FileUploadManagement", new { id, fromSummary });
-                }
-
-                if (submitType != null && submitType.Equals(Constants.SubmitType.ReplaceFile))
-                {
-                    return RedirectToAction("DocumentsReplaceFile", "FileUploadManagement", new { id, fromSummary });
-                }
             }
 
             return View(new FileListViewModel
@@ -728,10 +773,38 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             });
         }
 
+        [HttpPost]
+        [Route("admin/cab/documents-list/remove/{id}")]
+        public async Task<IActionResult> DocumentListRemove(string id, string documentFileId, bool fromSummary)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var documents = latestDocument?.Documents ?? new();
+            var selectedFile = documents.First(n => n.Id == Guid.Parse(documentFileId))
+                ?? throw new InvalidOperationException("No support file could be found in the document");
+
+            if (selectedFile!=null)
+            {
+                _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(new List<FileUpload> { selectedFile },
+                    latestDocument, nameof(latestDocument.Documents));
+                var userAccount =
+                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                        .Value);
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+            }
+
+            return RedirectToAction("DocumentsList", new { id, fromSummary, fromAction = nameof(DocumentListRemove) });
+        }
+        
+        #endregion //supporting documents upload
+
         [HttpGet]
         [Route("admin/cab/schedules-list/remove/{id}/{scheduleId}/{actionType}", Name = Routes.SchedulesListRemove)]
         public async Task<IActionResult> SchedulesListRemove(string id, string scheduleId, RemoveActionEnum actionType, bool fromSummary)
-
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -1184,43 +1257,48 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private void AddScheduleFileListViewModelErrors(ScheduleFileListViewModel model)
         {
             if (model.ActiveFiles != null && model.ActiveFiles.Any())
-            {   
-                var index = 0;
-                foreach (var uploadedFile in model.ActiveFiles)
-                {
-                    if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
-                    {
-                        ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
-                            "Select a legislative area");
-                    }
-
-                    if (string.IsNullOrWhiteSpace(uploadedFile.CreatedBy))
-                    {
-                        ModelState.AddModelError($"ActiveFiles[{index}].CreatedBy",
-                            "Select a created by value");
-                    }
-
-                    index++;
-                }
-            }
-        }
-
-        private void AddCategorySelectionModelStateErrors(FileUploadViewModel model)
-        {
-            if (model.UploadedFiles != null && model.UploadedFiles.Any())
             {
-                if (model.UploadedFiles.Any(u => string.IsNullOrWhiteSpace(u.Category)))
+                if (model.ActiveFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
                 {
                     var index = 0;
-                    foreach (var uploadedFile in model.UploadedFiles)
+                    foreach (var uploadedFile in model.ActiveFiles)
                     {
-                        if (string.IsNullOrWhiteSpace(uploadedFile.Category))
+                        if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
                         {
-                            ModelState.AddModelError($"UploadedFiles[{index}].Category", "Select a category");
+                            ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
+                                "Select a legislative area");
+                        }
+
+                        if (string.IsNullOrWhiteSpace(uploadedFile.CreatedBy))
+                        {
+                            ModelState.AddModelError($"ActiveFiles[{index}].CreatedBy",
+                                "Select a created by value");
                         }
 
                         index++;
                     }
+                }
+            }
+        }
+
+        private void AddFileUploadViewModelStateErrors(FileUploadViewModel model)
+        {
+            if (model.UploadedFiles != null && model.UploadedFiles.Any())
+            {
+                var index = 0;
+                foreach (var uploadedFile in model.UploadedFiles)
+                {
+                    if (string.IsNullOrWhiteSpace(uploadedFile.Category))
+                    {
+                        ModelState.AddModelError($"UploadedFiles[{index}].Category", "Select a category");
+                    }
+
+                    if (string.IsNullOrWhiteSpace(uploadedFile.Publication))
+                    {
+                        ModelState.AddModelError($"UploadedFiles[{index}].Publication", "Select a publication");
+                    }
+
+                    index++;
                 }
             }
         }
@@ -1233,6 +1311,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private void AddSelectAFileModelStateError(string submitType, string modelKey,
             IEnumerable<FileViewModel> selectedViewModels)
         {
+            //TODO: Remove: get file selected for removal
             if (submitType == Constants.SubmitType.Remove && !selectedViewModels.Any())
             {
                 ModelState.AddModelError(modelKey, "Select a schedule to remove");
@@ -1362,7 +1441,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         Label = fileViewModel.Label,
                         Category = fileViewModel.Category,
                         UploadDateTime = uploadDateTime??DateTime.UtcNow,
-                        Id = fileViewModel.Id
+                        Id = fileViewModel.Id,
+                        Publication = fileViewModel.Publication
                     });
                 }
             }

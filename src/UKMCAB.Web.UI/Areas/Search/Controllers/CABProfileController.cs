@@ -27,6 +27,7 @@ using UKMCAB.Web.UI.Services;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using LegislativeAreaViewModel = UKMCAB.Web.UI.Models.ViewModels.Search.LegislativeAreaViewModel;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -507,6 +508,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             var cab = new CABProfileViewModel
             {
+                HasUserAccount = loggedIn,
                 IsArchived = isArchived,
                 IsUnarchivedRequest = isUnarchivedRequest,
                 ShowRequestToUnarchive = showRequestToUnarchive,
@@ -555,6 +557,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     Documents = cabDocument.Schedules?.Select(s => new FileUpload
                     {
                         Label = s.Label ?? s.FileName,
+                        Category = s.Category,
                         FileName = s.FileName,
                         BlobName = s.BlobName,
                         LegislativeArea = s.LegislativeArea,
@@ -568,14 +571,24 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     Id = "supporting-documents",
                     Title = "Supporting documents",
                     CABId = cabDocument.CABId,
-                    Documents = cabDocument.Documents?.Select(s => new FileUpload
-                    {
-                        Label = s.Label ?? s.FileName,
-                        FileName = s.FileName,
-                        BlobName = s.BlobName,
-                        Category = s.Category
-                    }).ToList() ?? new List<FileUpload>(),
-                    DocumentType = DataConstants.Storage.Documents
+                    Documents = loggedIn
+                        ? cabDocument.Documents?.Select(s => new FileUpload
+                        {
+                            Label = s.Label ?? s.FileName,
+                            FileName = s.FileName,
+                            BlobName = s.BlobName,
+                            Category = s.Category,
+                            Publication = s.Publication
+                        }).ToList() ?? new List<FileUpload>()
+                        : cabDocument.PublicDocuments().Select(f => new FileUpload
+                        {
+                            Label = f.Label ?? f.FileName,
+                            FileName = f.FileName,
+                            BlobName = f.BlobName,
+                            Category = f.Category,
+                            Publication = f.Publication
+                        }).ToList(),
+                    DocumentType = DataConstants.Storage.Documents,
                 },
                 GovernmentUserNotes = new UserNoteListViewModel(new Guid(cabDocument.id),
                     cabDocument.GovernmentUserNotes, pagenumber)
