@@ -77,6 +77,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var internalSearch = User != null && User.Identity.IsAuthenticated;
             model.InternalSearch = internalSearch;
             model.IsOPSSUser = User != null && User.IsInRole(Roles.OPSS.Id);
+
+            // Un-authenticated users either get Archived or Published, never both.
             if (!internalSearch)
             {
                 if (model.Statuses != null && model.Statuses.Any(s => s == ((int)Status.Archived).ToString()))
