@@ -435,6 +435,11 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
+            if (submitType == Constants.SubmitType.Save)
+            {
+                return RedirectToCabManagementWithUnlockCab(latest.CABId);
+            }
+
             if (model.SelectedPublishType == null && model.IsOpssAdmin)
             {
                 ModelState.Clear();
@@ -452,11 +457,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType == Constants.SubmitType.Approve)
             {
                 return RedirectToRoute(ApproveCABController.Routes.Approve, new { id = latest.CABId, returnUrl = model.ReturnUrl });
-            }
-
-            if (submitType == Constants.SubmitType.Save)
-            {
-                return RedirectToCabManagementWithUnlockCab(latest.CABId);
             }
 
             var publishModel = new CABSummaryViewModel
