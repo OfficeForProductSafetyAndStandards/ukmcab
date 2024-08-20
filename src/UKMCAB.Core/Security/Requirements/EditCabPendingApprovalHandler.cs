@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Extensions;
+using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Core.Security.Requirements
 {
@@ -39,7 +39,7 @@ namespace UKMCAB.Core.Security.Requirements
             else
             {
                 var isOpssAdminOrInCreatorUserGroup = isOpssAdmin || user.IsInRole(document.CreatedByUserGroup);
-                var legislativeAreaHasBeenActioned = document.DocumentLegislativeAreas.HasAnyBeenActioned();
+                var legislativeAreaHasBeenActioned = document.LegislativeAreaHasBeenActioned();
 
                 if ((document.SubStatus == SubStatus.PendingApprovalToPublish && isOpssAdmin && legislativeAreaHasBeenActioned) ||
                     (document.SubStatus != SubStatus.PendingApprovalToPublish && isOpssAdminOrInCreatorUserGroup))

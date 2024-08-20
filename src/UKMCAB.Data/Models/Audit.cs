@@ -31,7 +31,7 @@ namespace UKMCAB.Data.Models
         }
 
         public Audit(UserAccount? userAccount, string action, Document publishedDocument,
-            Document? previousDocument = null, string? comment = null, string? publicComment = null) : this(
+            Document? previousDocument = null, string? comment = null, string? publicComment = null, string? publishType = null) : this(
             userAccount?.Id, $"{userAccount?.FirstName} {userAccount?.Surname}", userAccount?.Role, DateTime.UtcNow,
             action, comment, publicComment)
         {
@@ -93,12 +93,13 @@ namespace UKMCAB.Data.Models
                 sbInternalComment.Insert(0, "<p class=\"govuk-body\">Changes:</p>");                
             }
 
+            publishType = !string.IsNullOrEmpty(publishType) ? $"<p class=\"govuk-body\">{publishType}</p>" : string.Empty;
             comment = !string.IsNullOrEmpty(comment) ? $"<p class=\"govuk-body\">{comment}</p>" : string.Empty;
             publicComment = !string.IsNullOrEmpty(publicComment)
                 ? $"<p class=\"govuk-body\">{publicComment}</p>"
                 : string.Empty;
 
-            Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbInternalComment.ToString()));
+            Comment = string.Join("", HttpUtility.HtmlEncode(comment), HttpUtility.HtmlEncode(sbInternalComment.ToString()), HttpUtility.HtmlEncode(publishType));
             PublicComment = HttpUtility.HtmlEncode(publicComment);
         }
 

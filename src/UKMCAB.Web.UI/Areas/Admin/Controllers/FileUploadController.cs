@@ -13,7 +13,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.Schedule;
 using UKMCAB.Web.UI.Services;
 using Document = UKMCAB.Data.Models.Document;
 using UKMCAB.Web.UI.Helpers;
-using UKMCAB.Core.Security;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -153,8 +152,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var userAccount =
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestVersion, false);
-            TempData[Constants.TempDraftKey] =
-                $"Draft record saved for {latestVersion.Name} <br>CAB number {latestVersion.CABNumber}";
+            TempData[Constants.TempDraftKeyLine1] =
+                $"Draft record saved for {latestVersion.Name}";
+            TempData[Constants.TempDraftKeyLine2] = $"CAB number {latestVersion.CABNumber}";
             return RedirectToAction("CABManagement", "CabManagement",
                 new { Area = "admin", unlockCab = latestVersion.CABId });
         }
@@ -177,7 +177,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var uploadedFileViewModels = latestDocument.Schedules?.Select(s => new FileViewModel
             {
                 FileName = s.FileName, UploadDateTime = s.UploadDateTime, Label = s.Label,
-                LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id
+                LegislativeArea = s.LegislativeArea?.Trim(), Archived = s.Archived, Id = s.Id,
+                CreatedBy = s.CreatedBy
             }).ToList() ?? new List<FileViewModel>();
 
 
@@ -231,7 +232,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 if (fromSummary)
                 {
-                    return RedirectToAction("Summary", "CAB", new { id, subSectionEditAllowed = true });
+                    return RedirectToAction("Summary", "CAB", new { id, revealEditActions = true });
                 }
                 else
                 {
@@ -252,7 +253,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType == Constants.SubmitType.Continue)
             {
                 AddLegislativeLabelAndFileModelStateErrors(model);
-                AddLegislativeSelectionModelStateErrors(model);
+                AddScheduleFileListViewModelErrors(model);
             }
 
             if (ModelState.IsValid)
@@ -400,7 +401,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {
                         return model.IsFromSummary
                             ? RedirectToAction("Summary", "CAB",
-                                new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true })
+                                new { Area = "admin", id = latestDocument.CABId, revealEditActions = true })
                             : RedirectToAction("DocumentsUpload", "FileUpload",
                                 new { Area = "admin", id = latestDocument.CABId });
                     }
@@ -612,7 +613,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
                 if (fromSummary)
                 {
-                    return RedirectToAction("Summary", "CAB", new { id, subSectionEditAllowed = true });
+                    return RedirectToAction("Summary", "CAB", new { id, revealEditActions = true });
                 }
                 else
                 {
@@ -698,7 +699,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 if (submitType == Constants.SubmitType.Continue)
                 {
                     return RedirectToAction("Summary", "CAB",
-                        new { Area = "admin", id = latestDocument.CABId, subSectionEditAllowed = true });
+                        new { Area = "admin", id = latestDocument.CABId, revealEditActions = true });
                 }
 
                 if (submitType == Constants.SubmitType.Save)
@@ -1180,23 +1181,26 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
         }
 
-        private void AddLegislativeSelectionModelStateErrors(ScheduleFileListViewModel model)
+        private void AddScheduleFileListViewModelErrors(ScheduleFileListViewModel model)
         {
             if (model.ActiveFiles != null && model.ActiveFiles.Any())
             {   
-                if (model.ActiveFiles.Any(u => string.IsNullOrWhiteSpace(u.LegislativeArea)))
+                var index = 0;
+                foreach (var uploadedFile in model.ActiveFiles)
                 {
-                    var index = 0;
-                    foreach (var uploadedFile in model.ActiveFiles)
+                    if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
                     {
-                        if (string.IsNullOrWhiteSpace(uploadedFile.LegislativeArea))
-                        {
-                            ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
-                                "Select a legislative area");
-                        }
-
-                        index++;
+                        ModelState.AddModelError($"ActiveFiles[{index}].LegislativeArea",
+                            "Select a legislative area");
                     }
+
+                    if (string.IsNullOrWhiteSpace(uploadedFile.CreatedBy))
+                    {
+                        ModelState.AddModelError($"ActiveFiles[{index}].CreatedBy",
+                            "Select a created by value");
+                    }
+
+                    index++;
                 }
             }
         }
@@ -1303,7 +1307,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                         BlobName = current.BlobName,
                         Label = fileViewModel.Label!,
                         LegislativeArea = fileViewModel.LegislativeArea,
-                        UploadDateTime = current.UploadDateTime
+                        UploadDateTime = current.UploadDateTime,
+                        CreatedBy = fileViewModel.CreatedBy
                     });
                 }
             }
@@ -1321,6 +1326,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     {   
                         schedule.Label = update.Label;
                         schedule.LegislativeArea = update.LegislativeArea;
+                        schedule.CreatedBy = update.CreatedBy;
                     }
                 }
                 return true;
@@ -1376,8 +1382,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         private IActionResult SaveDraft(Document document)
         {
-            TempData[Constants.TempDraftKey] =
-                $"Draft record saved for {document.Name} <br>CAB number {document.CABNumber}";
+            TempData[Constants.TempDraftKeyLine1] =
+                $"Draft record saved for {document.Name}";
+            TempData[Constants.TempDraftKeyLine2] = $"CAB number {document.CABNumber}";
             return RedirectToAction("CABManagement", "CabManagement",
                 new { Area = "admin", unlockCab = document.CABId });
         }

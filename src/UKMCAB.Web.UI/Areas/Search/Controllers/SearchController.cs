@@ -158,6 +158,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Total = searchResults.Total,
                 PageNumber = model.PageNumber,
                 ResultsPerPage = DataConstants.Search.SearchResultsPerPage,
+                MaxPageRange = DataConstants.Search.SearchMaxPageRange,
                 ResultType = "bodies"
             };
             model.FeedLinksViewModel = new FeedLinksViewModel

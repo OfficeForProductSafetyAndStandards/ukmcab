@@ -15,5 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? Category { get; set; }
 
         public IEnumerable<SelectListItem> SubCategories { get; set; } = new List<SelectListItem>();
+
+        public SubCategoryViewModel() : base("Legislative crea sub-category") { }
     }
 }

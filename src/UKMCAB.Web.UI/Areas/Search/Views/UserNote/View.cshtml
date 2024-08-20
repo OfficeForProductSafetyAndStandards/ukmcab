@@ -1,5 +1,10 @@
 ﻿@using UKMCAB.Core.Security;
+@using UKMCAB.Web.UI.Areas.Search.Controllers
 @model UKMCAB.Web.UI.Models.ViewModels.Shared.UserNoteViewModel
+
+@{
+    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}#usernotes";
+}
 
 @section BackButton
 {
@@ -44,16 +49,11 @@
         <div class="govuk-grid-column-full">
             <govuk-warning-text icon-fallback-text="Warning">It is not possible to recover a note once it has been deleted.</govuk-warning-text>
 
-            <form id="deletegovernmentusernoteform" method="post" asp-action="Delete">
-                <input type="hidden" asp-for="CabDocumentId" />
-                <input type="hidden" asp-for="Id" />
-                <input type="hidden" asp-for="ReturnUrl" />
-
-                <div class="govuk-button-group">
-                    <input type="submit" name="upvote" value="Delete" class="govuk-button govuk-button--warning" />
-                    <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
-                </div>
-            </form>
+            <div class="govuk-button-group">
+                <a class="govuk-button govuk-button--warning" asp-area="search" asp-controller="UserNote" asp-action="ConfirmDelete"
+                   asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-userNoteId="@Model.Id" asp-route-returnUrl="@Model.ReturnUrl" asp-route-backUrl="@returnUrl">Delete</a>
+                <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
         </div>
     </div>
 }

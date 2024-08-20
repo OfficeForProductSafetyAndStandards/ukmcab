@@ -15,7 +15,7 @@
             }
             else if (Model.IsFromSummary)
             {
-                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" />
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl" />
             }
             else
             {
@@ -60,7 +60,7 @@
                                     asp-items="@DataConstants.Lists.Countries.Select(s => new SelectListItem(s, s, s.Equals(testingLocation)))">
                                 <option value="">Choose location</option>
                             </select>
-                            <a href="#" class="test-location-remove-link govuk-link govuk-link--no-visited-state govuk-visually-hidden">Remove</a>
+                            <a href="#" class="test-location-remove-link govuk-link govuk-link--no-visited-state app-no-display">Remove</a>
                             @if (!string.IsNullOrEmpty(testingLocation))
                             {
                                 <button class="govuk-button govuk-button--secondary remove-test-location-button" data-module="govuk-button" name="submitType" value="Remove-@testingLocation">
@@ -111,7 +111,7 @@
                 </button>
                 @if (Model.IsFromSummary)
                 {
-                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-subSectionEditAllowed="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
                 }
                 else
                 {

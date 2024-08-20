@@ -16,6 +16,7 @@
     var feedbackForm = document.getElementById("feedback-form");
     var feedbackSuccess = document.getElementById("feedback-success");
     var feedbackError = document.getElementById("feedback-form-error");
+    var feedbackErrorHeading = document.getElementById("feedback-form-error-heading");
     var feedbackErrorMessage = document.getElementById("feedback-form-error-message");
 
     function init() {
@@ -80,9 +81,12 @@
 
 
     function displaySuccess() {
-        feedbackForm.classList.add("govuk-visually-hidden");
-        feedbackError.classList.add("govuk-visually-hidden");
-        feedbackSuccess.classList.remove("govuk-visually-hidden");
+        feedbackForm.classList.add("app-no-display");
+        feedbackError.classList.add("app-no-display");
+        feedbackSuccess.classList.remove("app-no-display");
+
+        feedbackErrorMessage.innerText = "";
+        feedbackErrorHeading.innerText = "";
     }
 
     function displayErrors(errorMessage) {
@@ -91,35 +95,46 @@
             if (!validValue(whatWereYouDoing.value)) {
                 whatWereYouDoing.classList.add("feedback-form-error");
                 errorMessage = "Enter information about what you were doing";
+                whatWereYouDoing.focus();
             } else {
                 whatWereYouDoing.classList.remove("feedback-form-error");
             }
             if (!validValue(whatWentWrong.value)) {
                 whatWentWrong.classList.add("feedback-form-error");
-                errorMessage += errorMessage.length ? " and what went wrong" : "Enter details of what went wrong";
+                if (errorMessage.length === 0) {
+                    errorMessage += "Enter details of what went wrong";
+                    whatWentWrong.focus();
+                } else {
+                    errorMessage += " and what went wrong";
+                }
             } else {
                 whatWentWrong.classList.remove("feedback-form-error");
             }
 
             if (!isAValidEmail(email.value)) {
                 email.classList.add("feedback-form-error");
-                errorMessage += errorMessage.length ? ".\n\nEnter an email address in the correct format, like name@example.com" :
-                    "Enter an email address in the correct format, like name@example.com";
+                if (errorMessage.length === 0) {
+                    errorMessage += "Enter an email address in the correct format, like name@example.com";
+                    email.focus();
+                } else {
+                    errorMessage += ".\n\nEnter an email address in the correct format, like name@example.com";
+                }
             } else {
                 email.classList.remove("feedback-form-error");
             }
         }
 
-        feedbackError.classList.remove("govuk-visually-hidden");
+        feedbackError.classList.remove("app-no-display");
         feedbackErrorMessage.innerText = errorMessage;
+        feedbackErrorHeading.innerText = "There is a problem";
     }
 
     function reset(e) {
         e.preventDefault();
         // Show form
-        feedbackForm.classList.remove("govuk-visually-hidden");
+        feedbackForm.classList.remove("app-no-display");
         // Remove errors
-        feedbackError.classList.add("govuk-visually-hidden");
+        feedbackError.classList.add("app-no-display");
         feedbackErrorMessage.innerText = "";
         whatWereYouDoing.classList.remove("feedback-form-error");
         whatWentWrong.classList.remove("feedback-form-error");
@@ -129,7 +144,7 @@
         whatWentWrong.value = "";
         email.value = "";
         // Remove success
-        feedbackSuccess.classList.add("govuk-visually-hidden");
+        feedbackSuccess.classList.add("app-no-display");
     }
 
     return {

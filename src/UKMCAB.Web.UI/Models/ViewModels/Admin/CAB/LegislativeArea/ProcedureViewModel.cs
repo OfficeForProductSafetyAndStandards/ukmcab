@@ -26,6 +26,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public int IndexOfProduct { get; set; }
         public bool IsLastAction { get; set; } = true;
+        public ProcedureViewModel() : base("Legislative area procedure") { }
 
     }
 }

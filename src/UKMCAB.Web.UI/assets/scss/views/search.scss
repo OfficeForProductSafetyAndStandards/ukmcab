@@ -20,6 +20,16 @@
     outline: 0;
 }
 
+.clear-icon:focus:before {
+    border: 3px solid $govuk-focus-colour;
+    display: block;
+    width: 18px;
+    content: close-quote;
+    height: 20px;
+    padding-left: 5px;
+    margin-right: -9px;
+}
+
 .clear-icon:after {
     content: "X";
     display: block;
@@ -252,6 +262,10 @@
 
             .search-results-pagination-container {
                 height: 40px;
+
+                &.search-results-pagination-container-top {
+                    margin-bottom: 15px;
+                }
             }
 
             #search-results-mobile-filters {
@@ -333,6 +347,8 @@
                         .search-result-list-item-link {
                             margin: 0 25px 5px 0;
                             overflow-wrap: break-word;
+                            display: inline-block;
+                            width: calc(100% - 44px);
                         }
 
                         .search-result-list-item-details {
@@ -358,7 +374,7 @@
 
                                     &.search-result-published {
                                         background-color: $status-published-background-color;
-                                        color:$status-published-color;
+                                        color: $status-published-color;
                                         border-color: $status-published-color;
                                     }
 
@@ -416,7 +432,7 @@
                 order: 1;
 
                 .search-results-pagination-container {
-                    height: 20px;
+                    height: 25px;
 
                     &.search-results-pagination-container-top {
                         display: none;

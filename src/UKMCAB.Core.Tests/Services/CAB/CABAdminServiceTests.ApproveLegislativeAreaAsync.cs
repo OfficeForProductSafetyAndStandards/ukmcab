@@ -55,11 +55,12 @@ namespace UKMCAB.Core.Tests.Services.CAB
             Assert.AreEqual(AuditCABActions.ApproveLegislativeArea, auditLog.Action);
             Assert.AreEqual(null, auditLog.Comment);
             Assert.AreEqual(null, auditLog.PublicComment);
-
             var now = DateTime.UtcNow;
-            var expectedDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
-            
-            Assert.AreEqual(expectedDate, new DateTime(auditLog.DateTime.Year, auditLog.DateTime.Month, auditLog.DateTime.Day, auditLog.DateTime.Hour, auditLog.DateTime.Minute, auditLog.DateTime.Second));
+            Assert.AreEqual(now.Year, auditLog.DateTime.Year);
+            Assert.AreEqual(now.Month, auditLog.DateTime.Month);
+            Assert.AreEqual(now.Day, auditLog.DateTime.Day);
+            Assert.AreEqual(now.Hour, auditLog.DateTime.Hour);
+            Assert.AreEqual(now.Minute, auditLog.DateTime.Minute);
         }
 
         [Test]

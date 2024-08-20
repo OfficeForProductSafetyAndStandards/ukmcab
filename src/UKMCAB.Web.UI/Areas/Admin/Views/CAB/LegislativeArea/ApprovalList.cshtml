@@ -7,7 +7,7 @@
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds ukmcab-padding-bottom-20">
-                <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CabId" asp-route-subSectionEditAllowed="true" />
+                <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@Model.CabId" asp-route-revealEditActions="true" />
             </div>
         </div>
     </div>
@@ -52,6 +52,6 @@
     </div>
 </div>
 
-<govuk-button-link asp-route="@CABController.Routes.CabSummary" class="govuk-button--primary" asp-route-id="@Model.CabId" asp-route-subSectionEditAllowed="true">
+<govuk-button-link asp-route="@CABController.Routes.CabSummary" class="govuk-button--primary" asp-route-id="@Model.CabId" asp-route-revealEditActions="true">
     Return to summary
 </govuk-button-link>

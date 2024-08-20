@@ -25,6 +25,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Infrastructure.Cache;
+using UKMCAB.Web.UI.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {
@@ -524,7 +525,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 AppointmentDate = cabDocument.AppointmentDate,
                 ReviewDate = cabDocument.RenewalDate,
                 UKASReferenceNumber = cabDocument.UKASReference,
-                Address = cabDocument.GetFormattedAddress(),
+                Address = cabDocument.GetAddressArray().ToList(),
                 Website = cabDocument.Website,
                 Email = cabDocument.Email,
                 Phone = cabDocument.Phone,
@@ -554,6 +555,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                         BlobName = s.BlobName,
                         LegislativeArea = s.LegislativeArea,
                         Archived = s.Archived,
+                        CreatedBy = s.CreatedBy,
                     }).ToList() ?? new List<FileUpload>(),
                     DocumentType = DataConstants.Storage.Schedules
                 },
@@ -644,7 +646,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             profileViewModel.RequestFirstAndLastName = task?.Submitter.FirstAndLastName;
             profileViewModel.RequestUserGroup = task?.Submitter.UserGroup;
             profileViewModel.RequestReasonSummary =
-                summaryBreak.HasValue ? task?.Body.Substring(0, summaryBreak.Value) : null;
+                summaryBreak.HasValue ? task?.Body.TruncateWithEllipsis(summaryBreak.Value) : null;
             profileViewModel.RequestReason = task?.Body;
             profileViewModel.RequestTaskType = task?.TaskType;
             return profileViewModel;

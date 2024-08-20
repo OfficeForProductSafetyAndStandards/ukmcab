@@ -1,11 +1,13 @@
-﻿@model CABDocumentsViewModel
+﻿@using UKMCAB.Core.Security;
+@model CABDocumentsViewModel
 @{
     var isSchedule = Model.Documents.Any(d => !string.IsNullOrWhiteSpace(d.LegislativeArea));
+    var createdByUkas = Model.Documents.Any(d => !string.IsNullOrWhiteSpace(d.LegislativeArea) && (!d.Archived ?? true) && (d.CreatedBy?.Equals(Roles.UKAS.Id) ?? false));
 }
 <div class="govuk-tabs__panel cabs-panel govuk-tabs__panel--hidden" id="@Model.Id">
     <div class="cab-detail-section">
         <h2 class="govuk-heading-l">@Model.Title</h2>
-        @if (isSchedule && Model.Documents.Any())
+        @if (createdByUkas)
         {
             <p class="govuk-body">Product schedules supplied by UKAS are the active schedules at the time of appointment.</p>
         }

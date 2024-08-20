@@ -59,7 +59,7 @@ namespace UKMCAB.Core.Services.CAB
         Task SetSubStatusAsync(Guid cabId, Status status, SubStatus subStatus, Audit audit);
 
         Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument,
-            string? publishInternalReason = default, string? publishPublicReason = default);
+            string? publishInternalReason = default, string? publishPublicReason = default, string? publishType = default);
 
         Task<Document> ArchiveDocumentAsync(UserAccount userAccount, string CABId, string? archiveInternalReason,
             string archivePublicReason);
@@ -73,8 +73,16 @@ namespace UKMCAB.Core.Services.CAB
         /// <returns>Historical Document</returns>
         Task<Document> UnPublishDocumentAsync(UserAccount userAccount, string cabId, string? archiveInternalReason);
 
+        /// <summary>
+        /// Un-archives a CAB. Status becomes Draft, the CAB is not visible to public users, and only visible to Admin users.
+        /// </summary>
+        /// <param name="userAccount">User approving un-unarchiving the CAB.</param>
+        /// <param name="cabId">Cab to unarchive</param>
+        /// <param name="archiveInternalReason">Reason for unarchiving</param>
+        /// <param name="legislativeAreasAsDraft">whether the Legislative Areas should be set as draft when un-archiving</param>
+        /// <returns>Draft Document</returns>
         Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string CABId, string? unarchiveInternalReason,
-            string unarchivePublicReason, bool requestedByUkas);
+            string unarchivePublicReason, bool requestedByUkas, bool legislativeAreasAsDraft = false);
 
         IAsyncEnumerable<string> GetAllCabIds();
         Task RecordStatsAsync();

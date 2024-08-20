@@ -5,21 +5,21 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
 using UKMCAB.Web.UI.Helpers;
-using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Web.UI.Services
 {
+    [Obsolete("This class is obsolete. Use UKMCAB.Core.Extensions.DocumentLegislativeAreaExtensions instead.")]
     public class LegislativeAreaDetailService : ILegislativeAreaDetailService
     {
         private readonly ILegislativeAreaService _legislativeAreaService;
 
-        public LegislativeAreaDetailService (ILegislativeAreaService legislativeAreaService)
+        public LegislativeAreaDetailService(ILegislativeAreaService legislativeAreaService)
         {
             _legislativeAreaService = legislativeAreaService;
         }
 
-        public async Task<CABLegislativeAreasItemViewModel> PopulateCABLegislativeAreasItemViewModelAsync(Document? cab,
-       Guid LegislativeAreaId)
+        [Obsolete("This method is obsolete. Use UKMCAB.Web.UI.Models.Builders CabLegislativeAreasItemViewModelBuilder instead.")]
+        public async Task<CABLegislativeAreasItemViewModel> PopulateCABLegislativeAreasItemViewModelAsync(Document? cab, Guid LegislativeAreaId)
         {
             var documentLegislativeArea =
                 cab.DocumentLegislativeAreas.Where(n => n.LegislativeAreaId == LegislativeAreaId).First() ??
@@ -131,7 +131,7 @@ namespace UKMCAB.Web.UI.Services
             return legislativeAreaViewModel;
         }
 
-
+        [Obsolete("This method is obsolete. Use UKMCAB.Core.Extensions GetLegislativeAreasPendingApprovalByOgd instead.")]
         public List<DocumentLegislativeArea> GetPendingApprovalDocumentLegislativeAreaList(Document document, ClaimsPrincipal user)
         {
             return document.DocumentLegislativeAreas.Where(dla =>

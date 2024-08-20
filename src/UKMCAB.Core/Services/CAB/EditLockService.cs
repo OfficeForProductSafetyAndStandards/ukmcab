@@ -19,15 +19,15 @@ public class EditLockService : IEditLockService
     }
 
     ///<inheritdoc />
-    public async Task<string?> LockExistsForCabAsync(string cabId)
+    public async Task<bool> IsCabLockedForUser(string cabId, string userId)
     {
         var cabsWithEditLock =
             await _distCache.GetAsync<Dictionary<string, Tuple<string, DateTime>>?>(EditLockCacheKey) ?? new();
         var cacheItem = cabsWithEditLock.GetValueOrDefault(cabId);
         if (cacheItem == null)
-            return null;
+            return false;
         var lockExists = cacheItem.Item2 > DateTime.Now;
-        return lockExists ? cacheItem.Item1 : null;
+        return lockExists && cacheItem.Item1 != userId;
     }
 
     ///<inheritdoc />

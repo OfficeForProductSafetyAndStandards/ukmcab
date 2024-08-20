@@ -5,6 +5,7 @@ using MoreLinq;
 using UKMCAB.Common;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain;
+using UKMCAB.Core.Extensions;
 using UKMCAB.Core.Security;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
@@ -126,7 +127,7 @@ namespace UKMCAB.Core.Services.CAB
         public async Task FilterCabContentsByLaIfPendingOgdApproval(Document latestDocument, string userRoleId)
         {
             // Check if the CAB is pending OGD approval. If so, only display data for the LAs that the current user's role is linked to.
-            if (latestDocument.IsPendingOgdApproval)
+            if (latestDocument.IsPendingOgdApproval())
             {
                 latestDocument.DocumentLegislativeAreas.RemoveAll(la => la.RoleId != userRoleId);
 
@@ -157,7 +158,7 @@ namespace UKMCAB.Core.Services.CAB
             if (!document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.PendingApproval || la.Status == LAStatus.Declined || la.Status == LAStatus.DeclinedByOpssAdmin || la.Status == LAStatus.Approved))
             {
                 document.CreatedByUserGroup = userAccount.Role!.ToLower();
-            }   
+            }
 
             var rv = await _cabRepository.CreateAsync(document, auditItem.DateTime);
             await UpdateSearchIndexAsync(rv);
@@ -306,7 +307,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> PublishDocumentAsync(UserAccount userAccount, Document latestDocument,
-            string? publishInternalReason = default, string? publishPublicReason = default)
+            string? publishInternalReason = default, string? publishPublicReason = default, string? publishType = default)
         {
             if (latestDocument.StatusValue == Status.Published)
             {
@@ -320,6 +321,16 @@ namespace UKMCAB.Core.Services.CAB
             var allDocument = await FindAllDocumentsByCABIdAsync(latestDocument.CABId);
             var publishedOrArchivedDocument = allDocument.SingleOrDefault(doc =>
                 doc is { StatusValue: Status.Published or Status.Archived });
+
+            
+
+            var lastUpdatedDate = DateTime.Now;
+
+            if (publishType == DataConstants.PublishType.MinorPublish && publishedOrArchivedDocument != null)
+            {
+                lastUpdatedDate = publishedOrArchivedDocument.LastUpdatedDate;
+            }
+
             if (publishedOrArchivedDocument != null)
             {
                 publishedOrArchivedDocument.StatusValue = Status.Historical;
@@ -390,9 +401,9 @@ namespace UKMCAB.Core.Services.CAB
             latestDocument.SubStatus = SubStatus.None;
             
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.Published, latestDocument,
-                publishedOrArchivedDocument, publishInternalReason, publishPublicReason));
+                publishedOrArchivedDocument, publishInternalReason, publishPublicReason, publishType));
             latestDocument.RandomSort = Guid.NewGuid().ToString();
-            await _cabRepository.UpdateAsync(latestDocument);
+            await _cabRepository.UpdateAsync(latestDocument, lastUpdatedDate);
 
             var urlSlug = publishedOrArchivedDocument != null &&
                           !publishedOrArchivedDocument.URLSlug.Equals(latestDocument.URLSlug)
@@ -440,7 +451,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Document> UnarchiveDocumentAsync(UserAccount userAccount, string cabId,
-            string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas)
+            string? unarchiveInternalReason, string unarchivePublicReason, bool requestedByUkas, bool legislativeAreasAsDraft = false)
         {
             var documents = await FindAllDocumentsByCABIdAsync(cabId);
             var draft = documents.SingleOrDefault(d => d is { StatusValue: Status.Draft });
@@ -459,10 +470,18 @@ namespace UKMCAB.Core.Services.CAB
             await _cabRepository.UpdateAsync(archivedDoc);
             await UpdateSearchIndexAsync(archivedDoc);
 
-            // Create new draft or publish from latest with unarchive entry and reset audit
+            // Create new draft or publish from latest with unarchive entry, unarchive legislative areas, and reset audit
             archivedDoc.StatusValue = Status.Draft;
             archivedDoc.SubStatus = SubStatus.None;
             archivedDoc.id = string.Empty;
+            archivedDoc.DocumentLegislativeAreas.ForEach(la =>
+            {
+                la.Archived = false;
+                if (legislativeAreasAsDraft)
+                {
+                    la.Status = LAStatus.Draft;
+                }
+            });
             archivedDoc.AuditLog = new List<Audit>
             {
                 new(userAccount, AuditCABActions.Unarchived)
@@ -509,8 +528,9 @@ namespace UKMCAB.Core.Services.CAB
                 await _cachedSearchService.RemoveFromIndexAsync(draft.id);
             }
 
-            publishedVersion.StatusValue = Status.Archived;
+            publishedVersion!.StatusValue = Status.Archived;
             publishedVersion.SubStatus = SubStatus.None;
+            publishedVersion.DocumentLegislativeAreas.ForEach(la => la.Archived = true );
             publishedVersion.AuditLog.Add(new Audit(userAccount, AuditCABActions.Archived, archiveInternalReason,
                 archivePublicReason));
             await _cabRepository.UpdateAsync(publishedVersion);

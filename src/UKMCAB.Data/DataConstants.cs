@@ -4,7 +4,7 @@ public static class DataConstants
 {
     public static class Version
     {
-        public const string Number = "v4-2";
+        public const string Number = "v5-0";
     }
 
     public static class CosmosDb
@@ -17,6 +17,7 @@ public static class DataConstants
     public static class Search
     {
         public const int SearchResultsPerPage = 20;
+        public const int SearchMaxPageRange = 3;
         public const int CABManagementQueueResultsPerPage = 10;
         public const string SEARCH_INDEX = "ukmcab-search-index-" + Version.Number ;
         public const string SEARCH_INDEXER = "ukmcab-search-indexer-" + Version.Number;
@@ -295,5 +296,15 @@ public static class DataConstants
             "UK body designated under MRA: USA",
             "User inspectorate"
         };
+    }
+
+    public static class UserAccount
+    {
+        public const string UnassignedUserId = "unassigned-user-id";
+    }    
+    public static class PublishType
+    {
+        public const string MajorPublish = "Major publish";
+        public const string MinorPublish = "Minor publish";
     }
 }

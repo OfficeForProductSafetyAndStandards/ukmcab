@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
+﻿
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
     public class LegislativeAreaListItemViewModel : LegislativeAreaBaseViewModel
@@ -14,10 +13,30 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public string? Product { get; set; }
 
-        public List<string>? Procedures { get; set; } = new();
+        public List<string> Procedures { get; set; } = new();
 
         public List<string>? Categories { get; set; } = new();
 
         public int NoOfProductsInScopeOfAppointment { get; set; }
+
+        public LegislativeAreaListItemViewModel() : base("Legislative area list item") { }
+        public LegislativeAreaListItemViewModel(
+            Guid legislativeAreaId, 
+            string legislativeArea, 
+            string? purposeOfAppointment, 
+            string? category, 
+            string? subCategory, 
+            Guid scopeId,
+            string? product,
+            List<string> procedures) : base("Legislative area list item")
+        {
+            LegislativeArea = new ListItem { Id = legislativeAreaId, Title = legislativeArea };
+            PurposeOfAppointment = purposeOfAppointment;
+            Category = category;
+            SubCategory = subCategory;
+            ScopeId = scopeId;
+            Product = product;
+            Procedures = procedures;
+        }
     }
 }

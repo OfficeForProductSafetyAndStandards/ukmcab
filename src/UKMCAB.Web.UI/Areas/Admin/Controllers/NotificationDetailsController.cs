@@ -7,8 +7,10 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Domain;
+using UKMCAB.Data;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.Notification;
+using System.Security.Claims;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
@@ -60,16 +62,23 @@ public class NotificationDetailsController : UI.Controllers.ControllerBase
         model.CompletedBy = notificationDetail.CompletedBy;
         model.AssignedOn = notificationDetail.AssignedOn;
         model.SelectAssignee = notificationDetail.SelectAssignee;
-        model.SelectedAssignee = model.SelectedAssignee;
 
         if (!ModelState.IsValid)
         {
             return View(model);
         }
 
-        var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
-        workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
-        workFlowTask.Assigned = DateTime.Now;
+        if (model.SelectedAssignee != DataConstants.UserAccount.UnassignedUserId)
+        {
+            var userAccount = await _userService.GetAsync(model.SelectedAssignee) ?? throw new InvalidOperationException();
+            workFlowTask.Assignee = new User(model.SelectedAssignee, userAccount.FirstName, userAccount.Surname, userAccount.Role, userAccount.EmailAddress ?? throw new InvalidOperationException());
+            workFlowTask.Assigned = DateTime.Now;
+        }
+        else
+        {
+            workFlowTask.Assignee = null;
+            workFlowTask.Assigned = null;
+        }
         await _workflowTaskService.UpdateAsync(workFlowTask);
 
         return RedirectToAction("Index", "Notification", new { Area = "admin" });
@@ -90,6 +99,7 @@ public class NotificationDetailsController : UI.Controllers.ControllerBase
     {
         var workFlowTask = await _workflowTaskService.GetAsync(id);
         var (assigneeList, group) = await GetUser();
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         var notificationDetail = new NotificationDetailViewModel()
         {
             Status = workFlowTask.Completed ? "Completed" :
@@ -108,8 +118,9 @@ public class NotificationDetailsController : UI.Controllers.ControllerBase
             SelectAssignee = assigneeList,
             UserGroup = Roles.NameFor(group),
             IsSameUserGroup = group.ToLowerInvariant().Trim().Equals(workFlowTask.ForRoleId.ToLowerInvariant().Trim()),
+            IsSameUser = userId.Equals(workFlowTask.Assignee?.UserId),
             SelectedAssignee = workFlowTask.Assignee?.FirstAndLastName!,
-            SelectedAssigneeId = workFlowTask.Assignee?.UserId,
+            SelectedAssigneeId = workFlowTask.Assignee?.UserId
         };
         if (workFlowTask.Completed)
         {
@@ -119,16 +130,18 @@ public class NotificationDetailsController : UI.Controllers.ControllerBase
 
         var cabs = await _cabAdminService.FindAllDocumentsByCABIdAsync(workFlowTask.CABId.ToString()!);
         var cabDetails = cabs.First();
+        var currentUrl = Url.ActionContext.HttpContext.Request.GetRequestUri().AbsolutePath + "?";
+
         notificationDetail.ViewLink = workFlowTask.TaskType switch
         {
             TaskType.RequestToUnarchiveForDraft or TaskType.RequestToUnarchiveForPublish
                 or TaskType.RequestToUnarchiveDeclined or TaskType.CABPublished or TaskType.RequestToUnpublish
                 or TaskType.RequestToUnpublishDeclined or TaskType.RequestToArchive =>
                 (cabDetails.Name,
-                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId })),
+                    Url.RouteUrl(CABProfileController.Routes.CabDetails, new { id = workFlowTask.CABId, returnUrl = currentUrl })),
             _ =>
                 (cabDetails.Name,
-                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId })),
+                    Url.RouteUrl(CABController.Routes.CabSummary, new { id = workFlowTask.CABId, returnUrl = currentUrl })),
         };
 
         return (notificationDetail, workFlowTask);

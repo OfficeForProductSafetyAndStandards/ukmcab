@@ -17,5 +17,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? SubCategory { get; set; }
 
         public IEnumerable<SelectListItem> Products { get; set; } = new List<SelectListItem>();
+        
+        public ProductViewModel() : base("Legislative area product") { }
     }
 }

@@ -54,7 +54,9 @@
     @* ReSharper disable once OtherTagsInsideScript1 *@
     @if (loadAnalytics)
     {
-        <script nonce="@Nonces.AppInsights">@Html.Raw(JavaScriptSnippet.ScriptBody)</script>
+        <script nonce="@Nonces.AppInsights" type="text/javascript">
+            @JavaScriptSnippet.ScriptBody
+        </script>
     }
 </head>
 

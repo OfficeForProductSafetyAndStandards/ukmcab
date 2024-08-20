@@ -75,20 +75,21 @@
 
     <div class="govuk-grid-column-full desktop-no-display">
         <div class="cab-detail-date-meta">
-            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5 govuk-!-margin-top-5 ">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-        </div>
-        <div class="govuk-!-margin-bottom-7">
-            <span class="govuk-caption-m govuk-!-display-inline-block">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
-        </div>
+            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToStringBeisDateFormat() : string.Empty)</span>
+            <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-right-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToStringBeisDateFormat() : string.Empty)</span>
+
+             <div class="govuk-!-margin-bottom-3">
+                <span class="govuk-caption-m govuk-!-margin-right-1 govuk-!-display-inline-block">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
+
         @if (User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
         {
-            <div class="govuk-!-margin-bottom-6">
                 <span class="govuk-caption-m govuk-!-display-inline-block">
                     <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatus</strong>
                 </span>
-            </div>
         }
+            </div>
+        </div>
+        <!--<div class="govuk-!-margin-bottom-6">-->
     </div>
 
     <div class="govuk-grid-column-one-half">
@@ -125,7 +126,7 @@
                         if (Model.RequestTaskType == null)
                         {
                             <span>
-                                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-subSectionEditAllowed="True" asp-route-returnUrl="@returnUrl" asp-route-id="@Model.CABId" asp-route-fromCabProfilePage="@true">Edit</a>
+                                    <a class="govuk-button govuk-button--secondary" asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-revealEditActions="True" asp-route-returnUrl="@returnUrl" asp-route-id="@Model.CABId" asp-route-fromCabProfilePage="@true">Edit</a>
                             </span>
 
                             if (Model.IsOPSSUser)
@@ -152,18 +153,18 @@
     <div class="govuk-grid-column-full mobile-no-display">
         <div class="cab-detail-date-meta">
             <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Published: @(Model.PublishedDate.HasValue ? Model.PublishedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
-            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5 govuk-!-margin-bottom-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
+            <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-right-5">Last updated: @(Model.LastModifiedDate.HasValue ? Model.LastModifiedDate.Value.ToString("d MMM yyyy") : string.Empty)</span>
 
             @if (User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
             {
-                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-5">
+                <span class="govuk-caption-m govuk-!-display-block govuk-!-margin-top-2">
                     Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong>
                     <strong class="cab-status-tag govuk-tag--yellow">@Model.SubStatus</strong>
                 </span>
             }
             else
             {
-                <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-5">
+                <span class="govuk-caption-m govuk-!-display-inline-block govuk-!-margin-top-2">
                     Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong>
                 </span>
             }
@@ -285,9 +286,16 @@
                                 Address
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @if (!string.IsNullOrWhiteSpace(Model.Address))
+                                @if (Model.Address.Any())
                                 {
-                                    <text>@Html.Raw(Model.Address)</text>
+                                    @for (int i = 0; i < Model.Address.Count(); i++)
+                                    {
+                                        @Model.Address[i]
+                                        @if (i < Model.Address.Count() - 1)
+                                        {
+                                            <br />
+                                        }
+                                    }
                                 }
                                 else
                                 {

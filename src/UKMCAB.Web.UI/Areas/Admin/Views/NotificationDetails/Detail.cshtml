@@ -1,10 +1,12 @@
+@using UKMCAB.Data
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.Notification.NotificationDetailViewModel
 
 @{
     ViewBag.Title = Model.Title!;
+    var routeParms = new Dictionary<string, string> {{ "pagenumber", "1" }};
 }
 
-<govuk-back-link asp-area="Admin" asp-controller="Notification" asp-action="Index"/>
+<govuk-back-link asp-area="Admin" asp-controller="Notification" asp-action="Index" asp-all-route-data="routeParms" asp-fragment="@Model.BackLinkFragment" />
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -143,7 +145,7 @@
                                 Assignee
                             </govuk-summary-list-row-key>
                             <govuk-summary-list-row-value>
-
+                                <p class="govuk-body">@Model.SelectedAssignee</p>
                             </govuk-summary-list-row-value>
                         </govuk-summary-list-row>
                         <govuk-summary-list-row>
@@ -152,6 +154,7 @@
                             </govuk-summary-list-row-key>
                             <govuk-summary-list-row-value>
                                 <govuk-select name="SelectedAssignee" select-class="govuk-!-width-one-thirds" label-class="govuk-visually-hidden" asp-for="SelectedAssignee">
+                                    <govuk-select-item value=@DataConstants.UserAccount.UnassignedUserId>Deselect assignee</govuk-select-item>
                                     @foreach (var assignee in Model.SelectAssignee!)
                                     {
                                         if (assignee.Value == Model.SelectedAssigneeId)
@@ -163,6 +166,7 @@
                                             <govuk-select-item value="@assignee.Value">@assignee.Text</govuk-select-item>
                                         }
                                     }
+
                                 </govuk-select>
                             </govuk-summary-list-row-value>
                         </govuk-summary-list-row>

@@ -1,0 +1,48 @@
+﻿@using System.Net
+@using UKMCAB.Core.Domain
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABBodyDetailsViewModel
+
+<div class="cab-summary-detail">
+    <dl class="govuk-summary-list">
+        <div class="govuk-summary-list__row  govuk-!-padding-top-5">
+            <dt class="govuk-summary-list__key">
+                Registered test location
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model.TestingLocations.Any(tl => !string.IsNullOrWhiteSpace(tl)))
+                {
+                    @foreach (var tl in Model.TestingLocations)
+                    {
+                        <p class="govuk-body">@tl</p>
+                    }
+                }
+                else
+                {
+                    <text>@Constants.NotProvided</text>
+                }
+            </dd>
+        </div>
+        <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+                Body type
+            </dt>
+            <dd class="govuk-summary-list__value">
+                @if (Model.BodyTypes.Any())
+                {
+                    @for (int i = 0; i < Model.BodyTypes.Count; i++)
+                    {
+                        @Model.BodyTypes[i]
+                        @if (i < Model.BodyTypes.Count - 1)
+                        {
+                            <br />
+                        }
+                    }
+                }
+                else
+                {
+                    <text>@Constants.NotProvided</text>
+                }
+            </dd>
+        </div>
+    </dl>
+</div>

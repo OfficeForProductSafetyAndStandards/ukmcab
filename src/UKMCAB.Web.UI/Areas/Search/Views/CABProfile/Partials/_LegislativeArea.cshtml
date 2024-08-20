@@ -56,7 +56,7 @@
                             @if (!string.IsNullOrWhiteSpace(Model.LegislativeArea.Reason))
                             {
                                 <dt class="govuk-!-font-weight-bold">Reason for change of review date</dt>
-                                <dd class="govuk-!-margin-bottom-4">@Html.Raw(htmlSanitizer.Sanitize(Model.LegislativeArea.Reason))</dd>
+                                <dd class="govuk-!-margin-bottom-4">@htmlSanitizer.Sanitize(Model.LegislativeArea.Reason)</dd>
                             }
                         }
                         @if ((Model.LegislativeArea.IsPointOfContactPublicDisplay.HasValue && Model.LegislativeArea.IsPointOfContactPublicDisplay.Value) || User.Identity.IsAuthenticated)

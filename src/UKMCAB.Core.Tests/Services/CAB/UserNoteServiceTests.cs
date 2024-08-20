@@ -164,7 +164,7 @@
                 x.GovernmentUserNotes.Last().UserName == "First Last" &&
                 x.GovernmentUserNotes.Last().UserId == "userid" &&
                 x.GovernmentUserNotes.Last().UserRole == "role" &&
-                x.GovernmentUserNotes.Last().DateTime.ToStringBeisFormat() == DateTime.Now.ToStringBeisFormat())), Times.Once);
+                x.GovernmentUserNotes.Last().DateTime.ToStringBeisFormat() == DateTime.Now.ToStringBeisFormat()), null), Times.Once);
 
             _mockCachedPublishedCAB.Verify(x => x.ClearAsync(cabId.ToString(), "urlSlug"), Times.Once);
         }
@@ -182,7 +182,7 @@
 
             // Assert
             Assert.AreEqual($"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.", exception.Message);
-            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
+            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
         }
 
         [Test]
@@ -210,7 +210,7 @@
             _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x =>
                 x.id == cabDocumentId.ToString() &&
                 x.GovernmentUserNotes.Count == 2 &&
-                x.GovernmentUserNotes.All(y => y.Id != userNoteId))), Times.Once);
+                x.GovernmentUserNotes.All(y => y.Id != userNoteId)), null), Times.Once);
 
             _mockCachedPublishedCAB.Verify(x => x.ClearAsync(cabId.ToString(), "urlSlug"), Times.Once);
         }
@@ -228,7 +228,7 @@
 
             // Assert
             Assert.AreEqual($"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.", exception.Message);
-            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>()), Times.Never);
+            _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
         }
     }
 }

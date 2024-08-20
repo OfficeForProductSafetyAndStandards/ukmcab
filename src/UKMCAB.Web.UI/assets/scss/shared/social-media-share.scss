@@ -24,7 +24,8 @@
     background-color: #ddd
 }
 
-.dropup:hover .dropup-content {
+.dropup:hover .dropup-content,
+.dropup:focus-within .dropup-content {
     display: block;
 }
 

@@ -29,33 +29,21 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
             if (items.Any() && 
                 (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))))
             {
-                var legislativeAreaContainer = database.GetContainer(DataConstants.CosmosDb.LegislativeAreasContainer);
-                var legislativeAreas = await Query<LegislativeArea>(legislativeAreaContainer, x => true);
-
-                // UKAS Reference Import
-                var csvFilePath = "ukas-reference-numbers-import.csv";
-                var ukasReferences =
-                    (File.Exists(csvFilePath)
-                        ? File.ReadAllLines(csvFilePath)
-                            .Skip(1) 
-                            .Select(r => r.Split(","))
-                        : Array.Empty<string[]>())
-                            .Select(r => new { CabId = r[0], UKASRef = r[1] });
-
                 foreach (var document in items)
                 {
-                    // UKAS Reference Import
-                    if (document.StatusValue == Status.Published || document.StatusValue == Status.Draft)
-                    {
-                        var re = ukasReferences.FirstOrDefault(e => e.CabId.Equals(document.CABId));
-                        if (re != null)
-                        {
-                            document.UKASReference = re.UKASRef;
-                        }
-                    }                    
-
                     document.Version = DataConstants.Version.Number;
-                 
+
+                    // Archive LAs in Archived CABs 
+                    if (document.StatusValue == Status.Archived)
+                    {
+                        document.DocumentLegislativeAreas.ForEach(la => la.Archived = true);
+                    }
+
+                    document.Schedules?.ForEach(s =>
+                    {
+                        s.CreatedBy ??= "ukas";
+                    });
+
                     await UpdateAsync(document);
                 }
             }
@@ -83,9 +71,9 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
         }
 
         public IQueryable<Document> GetItemLinqQueryable() => _container.GetItemLinqQueryable<Document>();
-        public async Task UpdateAsync(Document document)
+        public async Task UpdateAsync(Document document, DateTime? lastUpdatedDate = default)
         {
-            document.LastUpdatedDate = DateTime.Now;
+            document.LastUpdatedDate = lastUpdatedDate ?? DateTime.Now;
             var response = await _container.UpsertItemAsync(document);
             Guard.IsTrue(response.StatusCode == HttpStatusCode.OK,
                 $"The CAB document was not updated; http status={response.StatusCode}");
