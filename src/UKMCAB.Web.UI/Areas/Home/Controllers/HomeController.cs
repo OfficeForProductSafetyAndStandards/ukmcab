@@ -25,7 +25,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         [Route("/about")]
         public async Task<IActionResult> About()
         {
-            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
+            if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                await _editLockService.RemoveEditLockForUserAsync(User.GetUserId());
+            }
             var model = new BasicPageModel
             {
                 Title = Constants.PageTitle.About
@@ -36,7 +39,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         [Route("/help")]
         public async Task<IActionResult> Help()
         {
-            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
+            if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                await _editLockService.RemoveEditLockForUserAsync(User.GetUserId());
+            }
             var model = new BasicPageModel
             {
                 Title = Constants.PageTitle.Help
@@ -54,7 +60,10 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         [Route("/updates", Name = Routes.Updates)]
         public async Task<IActionResult> Updates()
         {
-            await _editLockService.RemoveEditLockForUserAsync(User.GetUserId()!);
+            if (User?.Identity?.IsAuthenticated ?? false)
+            {
+                await _editLockService.RemoveEditLockForUserAsync(User.GetUserId());
+            }
             var model = new UpdatesViewModel
             {
                 FeedLinksViewModel = new FeedLinksViewModel()
