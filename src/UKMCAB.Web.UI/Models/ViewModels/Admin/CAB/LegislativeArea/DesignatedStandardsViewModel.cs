@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.Extensions.Options;
 using System.ComponentModel.DataAnnotations;
-using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Pagination;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
@@ -14,7 +12,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public List<Guid> SelectedDesignatedStandardIds { get; set; } = new();
         public List<Guid> PageSelectedDesignatedStandardIds { get; set; } = new();
         public string? SearchTerm { get; set; }
-        public int PageNumber { get; set; }
+        public int? PageNumber { get; set; }
 
         public SelectListItem SelectAll { get; set; } = new SelectListItem("Select all", Guid.Empty.ToString());
         public IEnumerable<DesignatedStandardViewModel> DesignatedStandardViewModels { get; set; } = Enumerable.Empty<DesignatedStandardViewModel>();
@@ -39,7 +37,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             SelectedDesignatedStandardIds = selectedDesignatedStandardIds;
             DesignatedStandardViewModels = designatedStandardViewModels;
             PaginationInfo = paginationInfo;
-            PageNumber = paginationInfo.PageIndex + 1;
+            PageNumber = paginationInfo is not null ? paginationInfo.PageIndex + 1 : null;
         }
     }
 }

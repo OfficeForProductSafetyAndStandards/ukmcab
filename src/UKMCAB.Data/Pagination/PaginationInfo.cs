@@ -31,11 +31,5 @@
             PageSize = pageSize;
             QueryCount = queryCount;
         }
-        //public PaginationInfo(int pageIndex, int queryCount, int pageSize = 20)
-        //{
-        //    PageIndex = pageIndex;
-        //    PageSize = pageSize;
-        //    QueryCount = queryCount;
-        //}
     }
 }

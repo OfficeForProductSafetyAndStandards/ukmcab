@@ -15,7 +15,6 @@ using UKMCAB.Core.Security;
 using System.Net;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Data;
-using UKMCAB.Web.UI.Models.ViewModels.Shared;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
