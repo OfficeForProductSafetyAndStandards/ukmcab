@@ -1,8 +1,4 @@
-﻿using StackExchange.Redis;
-using System.Web;
-using UKMCAB.Data;
-
-namespace UKMCAB.Web.UI.Models.ViewModels.Shared
+﻿namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 {
     public class PaginationViewModel
     {
@@ -10,8 +6,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public int Total { get; set; }
         public int ResultsPerPage { get; set; } 
         public string ResultType { get; set; } 
-        public string TabId { get; set; }
+        public string? TabId { get; set; }
         public int MaxPageRange { get; set; } = 5;
+        public string? QueryString { get; set; }
 
 
         public int TotalPages => Total % ResultsPerPage == 0
@@ -24,6 +21,18 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         public int LastResult => PageNumber * ResultsPerPage < Total
             ? PageNumber * ResultsPerPage
             : Total;
+
+        public PaginationViewModel() 
+        { 
+        }
+
+        public PaginationViewModel(int pageNumber, int total, int resultsPerPage, string? resultType = null)
+        {
+            PageNumber = pageNumber;
+            Total = total;
+            ResultsPerPage = resultsPerPage;
+            ResultType = resultType ?? string.Empty;
+        }
 
         public List<int> PageRange()
         {

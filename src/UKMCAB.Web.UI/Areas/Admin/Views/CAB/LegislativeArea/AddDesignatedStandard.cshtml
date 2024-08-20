@@ -16,7 +16,7 @@
             <input type="hidden" asp-for="@Model.LegislativeArea"/>
             <input type="hidden" asp-for="@Model.LegislativeAreaId"/>
             <input type="hidden" asp-for="@Model.ScopeId" value="@Model.ScopeId"/>
-            <input type="hidden" asp-for="PageNumber" value="@Model.PageNumber" />
+            <input type="hidden" asp-for="@Model.PageNumber" value="@Model.PageNumber" />
 
             <h3 class="govuk-heading-m">Designated Standards</h3>
             <div id="designated-standard-search-keywords-input-container" class="width-three-fifth">
@@ -26,7 +26,7 @@
             </div>
 
             <div class="ukmcab-float__clear">
-                <govuk-checkboxes asp-for="SelectedDesignatedStandardIds">
+                <govuk-checkboxes asp-for="@Model.SelectedDesignatedStandardIds">
                     <govuk-checkboxes-fieldset>
                         <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
 
@@ -36,6 +36,9 @@
                                 @Model.SelectAll.Text
                         </govuk-checkboxes-item>
 
+                        @{
+                            var selected = Model.DesignatedStandardViewModels.Where(d => d.IsSelected);
+                        }
                         @foreach (var ds in Model.DesignatedStandardViewModels)
                         {
                             var item = new SelectListItem(ds.Name, ds.Id.ToString());
@@ -65,12 +68,12 @@
                     </govuk-checkboxes-fieldset>
                 </govuk-checkboxes>
             </div>
-            
-            <partial name="Partials/_Pagination" model="Model.PaginationViewModel" />
+
+            <partial name="Partials/_Pagination" model="@Model.PaginationViewModel" />
 
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
-                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CabId">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CABId">Cancel</a>
             </div>
         </form>
     </div>

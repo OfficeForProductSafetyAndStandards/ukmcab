@@ -155,6 +155,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
     #region PrivateMethods
 
+    // Andrei: Remove private method and move to ScopeOfAppointmentCache SetAsync
+    // Make SetAsync virtual in DistCache
     private async Task CreateScopeOfAppointmentInCacheAsync(Guid scopeId, Guid legislativeAreaId)
     {
         var scopeOfAppointment = new DocumentScopeOfAppointment
@@ -895,6 +897,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         return new List<SelectListItem>();
     }
 
+    // Andrei: Remove private method
     private async Task<List<string>> SetHiddenScopeOfAppointmentsAsync(
         IEnumerable<DocumentScopeOfAppointment> scopeOfAppointments)
     {
@@ -979,61 +982,43 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
     #region AddDesignatedStandard
 
-    [HttpGet("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)]
-    public async Task<IActionResult> AddDesignatedStandard(Guid id, Guid scopeId, Guid? compareScopeId,
-        Guid? legislativeAreaId, string? searchTerm, bool fromSummary, int pageNumber = 1)
+    [HttpGet("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)] 
+    public async Task<IActionResult> AddDesignatedStandard(Guid id, Guid scopeId, Guid? compareScopeId,Guid? legislativeAreaId, string? searchTerm, bool fromSummary, List<Guid> selectedDesignatedStandardIds, int pageNumber = 1)
     {
         var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
-        if (existingScopeOfAppointment != null || legislativeAreaId != null)
-        {
-            //Create a new scope of id in session to replace existing
-            await CreateScopeOfAppointmentInCacheAsync(scopeId,
-                legislativeAreaId ?? existingScopeOfAppointment.LegislativeAreaId);
-        }
-
-        var documentScopeOfAppointment =
-            await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
-        if (documentScopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
-        var options =
-            await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, pageNumber - 1);
-        var legislativeArea =
-            await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentScopeOfAppointment.LegislativeAreaId);
-        if (legislativeArea == null)
-        {
-            throw new InvalidOperationException(
-                $"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
-        }
-
-        var designatedStandardViewModels = options.DesignatedStandards?.
-                                            Select(ds => new DesignatedStandardViewModel(ds)).
-                                            OrderBy(x => x.Name).ToList();
-
         var existingDesignatedStandardIds = existingScopeOfAppointment?.DesignatedStandardIds ?? new List<Guid>();
 
-        foreach (var item in designatedStandardViewModels?.Where(ds => existingDesignatedStandardIds.Contains(ds.Id)))
+        if (existingScopeOfAppointment != null || legislativeAreaId != null)
         {
-            item.IsSelected = true;
+            // Andrei: Test after wiping Redis cache
+            // Create a new scope of id in session to replace existing
+            await CreateScopeOfAppointmentInCacheAsync(scopeId, legislativeAreaId ?? existingScopeOfAppointment.LegislativeAreaId);
         }
 
-        // Temporary Search
-        if (!string.IsNullOrEmpty(searchTerm))
+        // Andrei: Move to ScopeOfAppointmentCache
+        var documentScopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
+        if (documentScopeOfAppointment == null)
         {
-            designatedStandardViewModels = designatedStandardViewModels.Where(ds => ds.Name.Contains(searchTerm)).ToList();
+            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
         }
 
-        var vm = new DesignatedStandardsViewModel
+        var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(documentScopeOfAppointment.LegislativeAreaId) 
+            ?? throw new InvalidOperationException($"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
+        var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, pageNumber - 1);
+
+        var designatedStandardViewModels = options.DesignatedStandards.Select(ds => new DesignatedStandardViewModel(ds)).ToList();
+        designatedStandardViewModels.Where(ds => existingDesignatedStandardIds.Contains(ds.Id)).ForEach(d =>
         {
-            Title = "Select designated standard",
+            d.IsSelected = true;
+        });
+
+        var vm = new DesignatedStandardsViewModel(id, scopeId, fromSummary)
+        {
             LegislativeArea = legislativeArea.Name,
             LegislativeAreaId = legislativeAreaId,
             DesignatedStandardViewModels = designatedStandardViewModels,
             SelectedDesignatedStandardIds = existingDesignatedStandardIds,
-            //DesignatedStandardModels = options.DesignatedStandards,
-            CabId = id,
-            ScopeId = scopeId,
             SearchTerm = searchTerm,
-            IsFromSummary = fromSummary,
             PaginationViewModel = new PaginationViewModel
             {
                 PageNumber = pageNumber,
@@ -1048,87 +1033,69 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     }
 
     [HttpPost("add-designated-standard/{scopeId}", Name = Routes.AddDesignatedStandard)]
-    public async Task<IActionResult> AddDesignatedStandard(Guid id, DesignatedStandardsViewModel vm,
-        [FromForm] Guid scopeId, Guid? compareScopeId, string submitType, int pageNumber)
+    public async Task<IActionResult> AddDesignatedStandard(Guid id, Guid scopeId, Guid? compareScopeId, string submitType, DesignatedStandardsViewModel vm)
     {
-        var documentScopeOfAppointment =
-            await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
+        // Andrei: Move to ScopeOfAppointmentCache
+        var documentScopeOfAppointment = await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (documentScopeOfAppointment == null)
-            return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
+        {
+            return RedirectToRoute(
+                LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, 
+                new { id, fromSummary = vm.IsFromSummary });
+        }
 
-        var options =
-                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
-                    documentScopeOfAppointment.LegislativeAreaId, pageNumber - 1);
+        var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber - 1, searchTerm: vm.SearchTerm);
+        vm.DesignatedStandardViewModels = options.DesignatedStandards.Select(ds => new DesignatedStandardViewModel(ds));
 
-        // Temporary Search 
         if (submitType == Constants.SubmitType.Search)
         {
-            //var options =
-            //    await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
-            //        documentScopeOfAppointment.LegislativeAreaId, pageNumber - 1);
-            vm.DesignatedStandardViewModels = options.DesignatedStandards.Where(ds => ds.Name.Contains(vm.SearchTerm ?? string.Empty)).Select(ds => new DesignatedStandardViewModel(ds)).ToList();
+            vm.PaginationViewModel = new PaginationViewModel(vm.PageNumber, options.PaginationInfo?.QueryCount ?? 0, options.PaginationInfo?.PageSize ?? 20);
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
-
         }
 
-        if (ModelState.IsValid)
+        if (!ModelState.IsValid)
         {
-            if (vm.SelectedDesignatedStandardIds.Contains(Guid.Empty))
-            {
-                vm.SelectedDesignatedStandardIds.Remove(Guid.Empty);
-            }
-            documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
+            vm.PaginationViewModel = new PaginationViewModel(vm.PageNumber, options.PaginationInfo?.QueryCount ?? 0, options.PaginationInfo?.PageSize ?? 20);
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
+        }
 
-            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
-                                 throw new InvalidOperationException();
-            var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == documentScopeOfAppointment.LegislativeAreaId);
-            documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
+        documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
 
-            if (latestDocument.ScopeOfAppointments.Any(s => s.Equals(documentScopeOfAppointment)))
-            {
-                return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry });
-            }
-
-            latestDocument.ScopeOfAppointments.Add(documentScopeOfAppointment);
-
-            latestDocument.HiddenScopeOfAppointments =
-                await SetHiddenScopeOfAppointmentsAsync(latestDocument.ScopeOfAppointments);
-            var userAccount =
-                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
-            var updatedDocument = await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
-            var existingScopeOfAppointment =
-                updatedDocument.ScopeOfAppointments.FirstOrDefault(s => s.Id == compareScopeId);
-
-            if (existingScopeOfAppointment != null)
-            {
-                updatedDocument.ScopeOfAppointments.Remove(existingScopeOfAppointment);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, updatedDocument);
-            }
-
-            if (submitType == Constants.SubmitType.Add)
-            {
-                return RedirectToRoute(Routes.AddPurposeOfAppointment,
-                    new { id, scopeId = Guid.Empty, legislativeAreaId = vm.LegislativeAreaId, fromSummary = vm.IsFromSummary });
-            }
-
+        var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ?? throw new InvalidOperationException();
+        if (latestDocument.ScopeOfAppointments.Any(s => s.Equals(documentScopeOfAppointment)))
+        {
             return RedirectToRoute(
-                LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
-                new { id, laId = documentScopeOfAppointment.LegislativeAreaId, fromSummary = vm.IsFromSummary });
+                LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, 
+                new { id, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry });
+        }
+        latestDocument.ScopeOfAppointments.Add(documentScopeOfAppointment);
+        latestDocument.HiddenScopeOfAppointments = await SetHiddenScopeOfAppointmentsAsync(latestDocument.ScopeOfAppointments);
+
+        // Andrei: Move to DocumentExtensions GetDocumentLegislativeArea
+        var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == documentScopeOfAppointment.LegislativeAreaId);
+        documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
+
+        var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+        var updatedDocument = await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+            
+        var existingScopeOfAppointment = updatedDocument.ScopeOfAppointments.FirstOrDefault(s => s.Id == compareScopeId);
+        if (existingScopeOfAppointment != null)
+        {
+            updatedDocument.ScopeOfAppointments.Remove(existingScopeOfAppointment);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, updatedDocument);
         }
 
-        //var options =
-        //    await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
-        //        documentScopeOfAppointment.LegislativeAreaId, pageNumber - 1);
-        //vm.DesignatedStandardModels = options.DesignatedStandards.ToList();
-        vm.PaginationViewModel = new PaginationViewModel
+        // Andrei: When is this ever executed?
+        if (submitType == Constants.SubmitType.Add)
         {
-            PageNumber = pageNumber,
-            Total = options.PaginationInfo?.QueryCount ?? 0,
-            ResultsPerPage = options.PaginationInfo?.PageSize ?? 20,
-            ResultType = string.Empty,
-        };
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
-        //return RedirectToRoute(Routes.AddDesignatedStandard, new { id, scopeId, compareScopeId, legislativeAreaId = documentScopeOfAppointment.LegislativeAreaId, searchTerm = vm.SearchTerm, fromSummary = vm.IsFromSummary });
+            return RedirectToRoute(
+                Routes.AddPurposeOfAppointment, 
+                new { id, scopeId = Guid.Empty, legislativeAreaId = vm.LegislativeAreaId, fromSummary = vm.IsFromSummary });
+        }
+
+        return RedirectToRoute(
+            LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation, 
+            new { id, laId = documentScopeOfAppointment.LegislativeAreaId, fromSummary = vm.IsFromSummary });
     }
 
     #endregion
@@ -1360,12 +1327,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaRequest.cshtml", vm);
     }
-    
+
     #endregion
 
     #region PrivateMethods
-
+    // Andrei: Remove private method and move to DocumentExtensions as GetScopeOfAppointment
     private async Task<DocumentScopeOfAppointment?> GetCompareScopeOfAppointment(Guid id, Guid? compareScopeId)
+    //private async Task<DocumentScopeOfAppointment> GetCompareScopeOfAppointment(Guid id, Guid? compareScopeId)
     {
         var cab = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ?? throw new InvalidOperationException();
         var existingScopeOfAppointment = cab.ScopeOfAppointments.FirstOrDefault(s => s.Id == compareScopeId);

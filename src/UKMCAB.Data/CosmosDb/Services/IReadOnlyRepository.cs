@@ -7,6 +7,6 @@ public interface IReadOnlyRepository<T> where T : class
 {
     Task<IEnumerable<T>> GetAllAsync();
     Task<IEnumerable<T>> QueryAsync(Expression<Func<T, bool>> predicate);
-    Task<(IEnumerable<U> Results, PaginationInfo PaginationInfo)> PaginatedQueryAsync<U>(Expression<Func<U, bool>> predicate, int pageIndex, int pageSize = 20) where U : IOrderable;
+    Task<(IEnumerable<O> Results, PaginationInfo PaginationInfo)> PaginatedQueryAsync<O>(Expression<Func<O, bool>> predicate, int pageIndex, int pageSize = 20, string? searchTerm = null) where O : IOrderable;
     Task<T> GetAsync(string id);
 }

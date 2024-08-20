@@ -55,17 +55,21 @@ public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
         return list;
     }
 
-    public async Task<(IEnumerable<U> Results, PaginationInfo PaginationInfo)> PaginatedQueryAsync<U>(Expression<Func<U, bool>> predicate, int pageIndex, int pageSize = 20) where U : IOrderable
+    public async Task<(IEnumerable<O> Results, PaginationInfo PaginationInfo)> PaginatedQueryAsync<O>(Expression<Func<O, bool>> predicate, int pageIndex, int pageSize = 20, string? searchTerm = null) where O : IOrderable
     {
-        var query = _container.GetItemLinqQueryable<U>().Where(predicate);
+        var query = _container.GetItemLinqQueryable<O>().Where(predicate);
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(x => x.Name.Contains(searchTerm));
+        }
         var queryCount = await query.CountAsync();
 
         var paginationInfo = new PaginationInfo(pageIndex, queryCount);
         query = query.OrderBy(x => x.Name).Skip(paginationInfo.Skip).Take(paginationInfo.Take);
 
-        var feedIterator = _cosmosFeedIterator.GetFeedIterator<U>(query);
+        var feedIterator = _cosmosFeedIterator.GetFeedIterator(query);
 
-        var list = new List<U>();
+        var list = new List<O>();
         while (feedIterator.HasMoreResults)
         {
             var response = await feedIterator.ReadNextAsync();

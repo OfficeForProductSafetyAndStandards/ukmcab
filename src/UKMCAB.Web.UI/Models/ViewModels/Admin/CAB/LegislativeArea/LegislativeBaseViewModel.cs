@@ -15,5 +15,13 @@
         public Guid ScopeId { get; set; }
 
         public bool IsFromSummary { get; set; }
+
+        public LegislativeAreaBaseViewModel(string title, Guid cabId, Guid scopeId, bool isFromSummary)
+        {
+            Title = title;
+            CABId = cabId;
+            ScopeId = scopeId;
+            IsFromSummary = isFromSummary;
+        }
     }
 }
