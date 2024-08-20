@@ -79,6 +79,44 @@
         </dl>
     </div>
 
+    @{
+        var scopeOfAppointmentsWithDesignatedStandards = Model.ScopeOfAppointments.Where(soa => soa.DesignatedStandards?.Any() ?? false);
+    }
+    @if (scopeOfAppointmentsWithDesignatedStandards.Any())
+    {
+        <table class="govuk-table govuk-!-margin-top-3">
+            <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-half">Designated standard</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reference number</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Publication reference</th>
+                </tr>
+            </thead>
+            <tbody class="govuk-table__body">
+                @foreach (var scopeOfAppointment in scopeOfAppointmentsWithDesignatedStandards)
+                {
+                    @foreach (var designatedStandard in scopeOfAppointment.DesignatedStandards!)
+                    {
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">@designatedStandard.Name</td>
+                            <td class="govuk-table__cell">
+                                <ul class="govuk-list">
+                                    @foreach (var referenceNumber in @designatedStandard.ReferenceNumber)
+                                    {
+                                        <li>
+                                            <p class="govuk-body govuk-!-margin-bottom-0">@referenceNumber</p>
+                                        </li>
+                                    }
+                                </ul>
+                            </td>
+                            <td class="govuk-table__cell">@designatedStandard.NoticeOfPublicationReference</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    }
+
     @if (Model.CanChooseScopeOfAppointment)
     {
         <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
@@ -210,6 +248,8 @@
                         j = nextProductIndex;
                     }
                 }
+
+
             }
             </tbody>
         </table>

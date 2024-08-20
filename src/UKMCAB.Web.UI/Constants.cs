@@ -8,6 +8,7 @@ public static class Constants
     public const string NotApplicable = "Not applicable";
     public const string None = "None";
     public const string NotAssigned = "Not assigned";
+    public const string Select = "Select";
     public const string DeclinedLA = nameof(DeclinedLA);
     public const string ApprovedLA = nameof(ApprovedLA);
 
@@ -62,6 +63,7 @@ public static class Constants
         public const string Edit = nameof(Edit);
         public const string Archive = nameof(Archive);
         public const string RemoveArchived = nameof(RemoveArchived);
+        public const string Search = nameof(Search);
     }
 
     public class ErrorMessages

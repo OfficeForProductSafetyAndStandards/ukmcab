@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UKMCAB.Core.Extensions;
+using UKMCAB.Data;
 using UKMCAB.Data.Models;
 
 namespace UKMCAB.Core.Tests.Extensions
@@ -411,6 +412,125 @@ namespace UKMCAB.Core.Tests.Extensions
             // Assert
             result.Should().Be(new DateTime(2024, 1, 2));
         }
+
+        [Test]
+        public void PublicDocuments_Returns_Only_Public_Unarchived_Documents()
+        {
+            var document = new Document()
+            {
+                Documents = new List<FileUpload>
+                {
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Archived = true,
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Private
+                    }
+                }
+            };
+
+            var publicDocs = document.PublicDocuments();
+
+            publicDocs.Should().HaveCount(2);
+            publicDocs.Any(i => !i.IsPublic).Should().BeFalse();
+            publicDocs.Any(i => i.Archived ?? false).Should().BeFalse();
+            publicDocs.Any(i => i.Publication == DataConstants.Publications.Private).Should().BeFalse();
+        }
+
+        [Test]
+        public void HasPublicDocuments_Returns_True_If_Public_Documents()
+        {
+            var document = new Document()
+            {
+                Documents = new List<FileUpload>
+                {
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Archived = true,
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Private
+                    }
+                }
+            };
+
+            var publicDocs = document.HasPublicDocuments();
+
+            publicDocs.Should().BeTrue();
+        }
+
+        [Test]
+        public void HasPublicDocuments_Returns_Fase_If_No_Public_Documents()
+        {
+            var document = new Document()
+            {
+                Documents = new List<FileUpload>
+                {
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Private
+                    },
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Private
+                    },
+                    new FileUpload() {
+                        Archived = true,
+                        Publication = DataConstants.Publications.Private
+                    },
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Private
+                    }
+                }
+            };
+
+            var publicDocs = document.HasPublicDocuments();
+
+            publicDocs.Should().BeFalse();
+        }
+
+        [Test]
+        public void HasPublicDocuments_Returns_Fase_If_Public_Documents_Are_Archived()
+        {
+            var document = new Document()
+            {
+                Documents = new List<FileUpload>
+                {
+                    new FileUpload() {
+                        Archived = true,
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Archived = true,
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Archived = true,
+                        Publication = DataConstants.Publications.Public
+                    },
+                    new FileUpload() {
+                        Publication = DataConstants.Publications.Private
+                    }
+                }
+            };
+
+            var publicDocs = document.HasPublicDocuments();
+
+            publicDocs.Should().BeFalse();
+        }
+
+
         private static IEnumerable<TestCaseData> IsPendingOgdApprovalInvalidStatuses
         {
             get

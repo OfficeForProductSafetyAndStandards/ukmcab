@@ -191,7 +191,7 @@
                         Product schedules
                     </a>
                 </li>
-                @if (User.Identity.IsAuthenticated /*todo*/)
+                @if (Model.ShowSupportingDocuments)
                 {
                     <li class="govuk-tabs__list-item">
                         <a class="govuk-tabs__tab" href="#supporting-documents">
@@ -437,7 +437,7 @@
             </div>
             <partial name="Partials/_Documents" model="Model.ProductSchedules"/>
 
-            @if (User.Identity.IsAuthenticated)
+            @if (Model.ShowSupportingDocuments)
             {
                 <partial name="Partials/_Documents" model="Model.SupportingDocuments"/>
             }

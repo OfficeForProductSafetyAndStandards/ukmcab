@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Models;
+﻿using UKMCAB.Data;
+using UKMCAB.Data.Models;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Search
 {
@@ -9,5 +10,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string CABId { get; set; }
         public string DocumentType { get; set; }
         public List<FileUpload> Documents { get; set; }
+
+        public bool HasPublicDocuments => Documents?.Any(c => c.IsPublic) ?? false;
     }
 }

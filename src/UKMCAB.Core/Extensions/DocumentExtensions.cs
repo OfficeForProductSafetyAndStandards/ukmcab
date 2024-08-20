@@ -50,5 +50,11 @@ namespace UKMCAB.Core.Extensions
         {
             return document.AuditLog.OrderBy(a => a.DateTime).LastOrDefault(al => al.Action == AuditCABActions.Published)?.DateTime;
         }
+
+        public static List<FileUpload> PublicDocuments(this Document document) =>
+            document?.Documents?.Where(d => d.IsPublic).ToList() ?? new List<FileUpload>();
+
+        public static bool HasPublicDocuments(this Document document) =>
+            document?.Documents?.Any(c => c.IsPublic) ?? false;
     }
 }

@@ -6,18 +6,14 @@ namespace UKMCAB.Data.Models
     {
         public Guid Id { get; set; }
         public Guid LegislativeAreaId { get; set; }
-
         public Guid? PurposeOfAppointmentId { get; set; }
-
         public Guid? CategoryId { get; set; }
         public List<Guid> CategoryIds { get; set; } = new();
-
         public Guid? SubCategoryId { get; set; }
-
         public List<Guid> ProductIds { get; set; } = new();
-
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
         public List<CategoryAndProcedures> CategoryIdAndProcedureIds { get; set; } = new();
+        public List<Guid> DesignatedStandardIds { get; set; } = new();
 
         public override bool Equals(object? scopeOfAppointment) 
         { 
@@ -42,6 +38,9 @@ namespace UKMCAB.Data.Models
 
             if (!AreObjectListsEqual(CategoryIdAndProcedureIds, otherSoa.CategoryIdAndProcedureIds) ||
                 !AreObjectListsEqual(ProductIdAndProcedureIds, otherSoa.ProductIdAndProcedureIds))
+                return false;
+
+            if (!AreListsEqual(DesignatedStandardIds, otherSoa.DesignatedStandardIds))
                 return false;
 
             return true;
@@ -87,6 +86,13 @@ namespace UKMCAB.Data.Models
                 }
             }
 
+            if (DesignatedStandardIds.Any())
+            {
+                foreach (var designatedStandardId in DesignatedStandardIds)
+                {
+                    hash = hash * 31 + designatedStandardId.GetHashCode();
+                }
+            }
             return hash;
         }
         private bool AreListsEqual(List<Guid> list1, List<Guid> list2)

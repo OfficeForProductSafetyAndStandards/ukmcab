@@ -17,9 +17,11 @@
     var resultsAnchor = Model.SearchResults.Any() ? Model.SearchResults.First().Name : "no-results";
 }
 <div id="search-page">
-    <a href="#@resultsAnchor" class="govuk-skip-link" data-module="govuk-skip-link">Skip to results</a>
+    <div id="skip-to-search-results-anchor">
+        <a href="#@resultsAnchor" class="govuk-skip-link" data-module="govuk-skip-link">Skip to results</a>
+    </div>
     <div id="search-header" class="govuk-grid-row">
-        <div class="search-grid-column-three-fifth">
+        <div class="search-grid-column-three-fifth" id="search-page-title">
             <h1 class="govuk-heading-l">@title</h1>
         </div>
         <div class="atom-feed atom-feed-top search-grid-column-two-fifth">

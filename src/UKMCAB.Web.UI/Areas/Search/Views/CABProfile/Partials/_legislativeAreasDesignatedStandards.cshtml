@@ -1,0 +1,35 @@
+﻿@using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
+@model List<DesignatedStandardReadOnlyViewModel>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Designated standard</h3>
+    </div>
+</div>
+<hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-1">
+@foreach (var designatedStandard in Model)
+{
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            <p class="govuk-body govuk-!-margin-bottom-2">@designatedStandard.Name</p>
+            <details class="govuk-details govuk-!-margin-bottom-2">
+                <summary class="govuk-details__summary">
+                    <span class="govuk-details__summary-text">
+                        Details
+                    </span>
+                </summary>
+                <div class="govuk-details__text">
+                    <h3 class="govuk-heading-s">Reference number</h3>
+                    @foreach (var referenceNumber in designatedStandard.ReferenceNumber)
+                    {
+                        <p class="govuk-body govuk-!-margin-bottom-0">@referenceNumber</p>
+                    }
+                    <h3 class="govuk-heading-s govuk-!-margin-top-4 govuk-!-padding-0">Publication reference</h3>
+                    <p class="govuk-body govuk-!-margin-bottom-0">@designatedStandard.NoticeOfPublicationReference</p>
+                </div>
+            </details>
+        </div>
+    </div>
+    <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-bottom-1">
+}
+<hr class="govuk-section-break govuk-!-margin-bottom-4">

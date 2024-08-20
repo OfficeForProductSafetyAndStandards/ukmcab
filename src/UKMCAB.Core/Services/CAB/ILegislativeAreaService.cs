@@ -29,10 +29,12 @@ public interface ILegislativeAreaService
     Task<ProcedureModel?> GetProcedureByIdAsync(Guid procedureId);
 
     Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid subCategoryId);
+    Task<DesignatedStandardModel?> GetDesignatedStandardByIdAsync(Guid designatedStandardId);
     Task<List<LegislativeAreaModel>> GetLegislativeAreasForDocumentAsync(Document document);
     Task<List<PurposeOfAppointmentModel>> GetPurposeOfAppointmentsForDocumentAsync(Document document);
     Task<List<CategoryModel>> GetCategoriesForDocumentAsync(Document document);
     Task<List<SubCategoryModel>> GetSubCategoriesForDocumentAsync(Document document);
     Task<List<ProductModel>> GetProductsForDocumentAsync(Document document);
     Task<List<ProcedureModel>> GetProceduresForDocumentAsync(Document document);
+    Task<List<DesignatedStandardModel>> GetDesignatedStandardsForDocumentAsync(Document document);
 }
