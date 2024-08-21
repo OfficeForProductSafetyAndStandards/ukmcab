@@ -15,6 +15,7 @@ using UKMCAB.Core.Security;
 using System.Net;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Data;
+using UKMCAB.Data.Pagination;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -1005,6 +1006,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             d.IsSelected = true;
         });
 
+        if (options.PaginationInfo is null)
+        {
+            throw new InvalidOperationException($"No {nameof(PaginationInfo)} available for {nameof(DesignatedStandardsViewModel)}");
+        }
+
         var vm = new DesignatedStandardsViewModel(
             id, 
             scopeId, 
@@ -1012,6 +1018,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             compareScopeId, 
             legislativeArea.Name, 
             existingDesignatedStandardIds,
+            designatedStandardViewModels.Select(d => d.Id).ToList(),
             designatedStandardViewModels,
             options.PaginationInfo);
 
@@ -1029,38 +1036,55 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 new { vm.CABId, fromSummary = vm.IsFromSummary });
         }
 
-        if (submitType == Constants.SubmitType.Search)
+        vm.UpdateSelectedDesignatedStandardIds();
+        documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
+
+        if (submitType != Constants.SubmitType.Continue)
         {
+            ScopeOfAppointmentOptionsModel? options = null;
+            if (submitType == Constants.SubmitType.Search) 
+            {
+                options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.SearchTerm);
+                vm.PaginationSearchTerm = vm.SearchTerm;
+            }
+
+            if (submitType == Constants.SubmitType.PaginatedQuery)
+            {
+                options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.PaginationSearchTerm);
+            }
+
+            if (options is null)
+            {
+                throw new InvalidOperationException($"No {typeof(ScopeOfAppointmentOptionsModel)} found");
+            }
+
+            vm.SetDesignatedStandardViewModels(options.DesignatedStandards);
+            vm.SetPageDesignatedStandardsIds();
+            vm.PaginationInfo = options.PaginationInfo;
+
             ModelState.Clear();
+            return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
         }
 
-        if (!ModelState.IsValid || submitType == Constants.SubmitType.Search)
+        if (!ModelState.IsValid)
         {
-            var newPageSelectedDesignatedStandardIds = vm.PageSelectedDesignatedStandardIds.Except(vm.SelectedDesignatedStandardIds);
-            vm.SelectedDesignatedStandardIds.AddRange(newPageSelectedDesignatedStandardIds);
+            var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.PaginationSearchTerm);
 
-            var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.SearchTerm);
-            
-            var designatedStandardViewModels = options.DesignatedStandards.Select(ds => new DesignatedStandardViewModel(ds)).ToList();
-            designatedStandardViewModels.Where(ds => vm.SelectedDesignatedStandardIds.Contains(ds.Id)).ForEach(d =>
-            {
-                d.IsSelected = true;
-            });
-            vm.DesignatedStandardViewModels = designatedStandardViewModels;
+            vm.SetDesignatedStandardViewModels(options.DesignatedStandards);
+            vm.SetPageDesignatedStandardsIds();
             vm.PaginationInfo = options.PaginationInfo;
             
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
         }
 
-        documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
-
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(vm.CABId.ToString()) ?? throw new InvalidOperationException();
-        if (latestDocument.ScopeOfAppointments.Any(s => s.Equals(documentScopeOfAppointment)))
+        if (latestDocument.ScopeOfAppointments.Where(s => s.Id != vm.CompareScopeId).Any(s => s.Equals(documentScopeOfAppointment)))
         {
             return RedirectToRoute(
                 LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, 
                 new { vm.CABId, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry });
         }
+
         latestDocument.ScopeOfAppointments.Add(documentScopeOfAppointment);
         latestDocument.HiddenScopeOfAppointments = await SetHiddenScopeOfAppointmentsAsync(latestDocument.ScopeOfAppointments);
 
@@ -1079,7 +1103,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         return RedirectToRoute(
             LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation, 
-            new { vm.CABId, laId = documentScopeOfAppointment.LegislativeAreaId, fromSummary = vm.IsFromSummary });
+            new { id = vm.CABId, laId = documentScopeOfAppointment.LegislativeAreaId, fromSummary = vm.IsFromSummary });
     }
 
     #endregion
