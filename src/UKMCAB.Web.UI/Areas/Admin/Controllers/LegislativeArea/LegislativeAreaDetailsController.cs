@@ -15,7 +15,6 @@ using UKMCAB.Core.Security;
 using System.Net;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Data;
-using UKMCAB.Data.Pagination;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -1000,17 +999,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             ?? throw new InvalidOperationException($"Legislative area not found for {documentScopeOfAppointment.LegislativeAreaId}");
         var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, pageNumber);
 
-        var designatedStandardViewModels = options.DesignatedStandards.Select(ds => new DesignatedStandardViewModel(ds)).ToList();
-        designatedStandardViewModels.Where(ds => existingDesignatedStandardIds.Contains(ds.Id)).ForEach(d =>
-        {
-            d.IsSelected = true;
-        });
-
-        if (options.PaginationInfo is null)
-        {
-            throw new InvalidOperationException($"No {nameof(PaginationInfo)} available for {nameof(DesignatedStandardsViewModel)}");
-        }
-
         var vm = new DesignatedStandardsViewModel(
             id, 
             scopeId, 
@@ -1018,8 +1006,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             compareScopeId, 
             legislativeArea.Name, 
             existingDesignatedStandardIds,
-            designatedStandardViewModels.Select(d => d.Id).ToList(),
-            designatedStandardViewModels,
+            options.DesignatedStandards,
             options.PaginationInfo);
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
@@ -1037,7 +1024,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         }
 
         vm.UpdateSelectedDesignatedStandardIds();
-        documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
 
         if (submitType != Constants.SubmitType.Continue)
         {
@@ -1055,11 +1041,10 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
             if (options is null)
             {
-                throw new InvalidOperationException($"No {typeof(ScopeOfAppointmentOptionsModel)} found");
+                throw new InvalidOperationException($"{nameof(options)} is null");
             }
 
-            vm.SetDesignatedStandardViewModels(options.DesignatedStandards);
-            vm.SetPageDesignatedStandardsIds();
+            vm.SetPageDesignatedStandardViewModels(options.DesignatedStandards);
             vm.PaginationInfo = options.PaginationInfo;
 
             ModelState.Clear();
@@ -1070,8 +1055,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.PaginationSearchTerm);
 
-            vm.SetDesignatedStandardViewModels(options.DesignatedStandards);
-            vm.SetPageDesignatedStandardsIds();
+            vm.SetPageDesignatedStandardViewModels(options.DesignatedStandards);
             vm.PaginationInfo = options.PaginationInfo;
             
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
@@ -1084,6 +1068,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, 
                 new { vm.CABId, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry });
         }
+
+        documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
 
         latestDocument.ScopeOfAppointments.Add(documentScopeOfAppointment);
         latestDocument.HiddenScopeOfAppointments = await SetHiddenScopeOfAppointmentsAsync(latestDocument.ScopeOfAppointments);

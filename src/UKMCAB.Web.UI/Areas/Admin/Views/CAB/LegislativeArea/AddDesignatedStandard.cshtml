@@ -49,9 +49,9 @@
                         </govuk-checkboxes-item>
 
                         @{
-                            var selected = Model.DesignatedStandardViewModels.Where(d => d.IsSelected);
+                            var selected = Model.PageDesignatedStandardViewModels.Where(d => d.IsSelected);
                         }
-                        @foreach (var ds in Model.DesignatedStandardViewModels)
+                        @foreach (var ds in Model.PageDesignatedStandardViewModels)
                         {
                             var item = new SelectListItem(ds.Name, ds.Id.ToString());
                             item.Selected = ds.IsSelected;

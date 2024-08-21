@@ -13,12 +13,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public List<Guid> SelectedDesignatedStandardIds { get; set; } = new();
         public List<Guid> PageSelectedDesignatedStandardIds { get; set; } = new();
         public List<Guid> PageDesignatedStandardsIds { get; set; } = new();
+        public List<DesignatedStandardViewModel> PageDesignatedStandardViewModels { get; set; } = new();
+        public SelectListItem SelectAll { get; set; } = new SelectListItem("Select all", Guid.Empty.ToString());
         public string? SearchTerm { get; set; }
         public string? PaginationSearchTerm { get; set; }
         public int? PageNumber { get; set; }
-
-        public SelectListItem SelectAll { get; set; } = new SelectListItem("Select all", Guid.Empty.ToString());
-        public IEnumerable<DesignatedStandardViewModel> DesignatedStandardViewModels { get; set; } = Enumerable.Empty<DesignatedStandardViewModel>();
         public PaginationInfo? PaginationInfo { get; set; }
 
         public DesignatedStandardsViewModel() : base("Legislative area designated standards") 
@@ -30,17 +29,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             Guid scopeId, 
             bool isFromSummary, 
             Guid? compareScopeId, 
-            string? legislativeAreaName, 
+            string? legislativeAreaName,
             List<Guid> selectedDesignatedStandardIds,
-            List<Guid> pageDesignatedStandardsIds,
-            IEnumerable<DesignatedStandardViewModel> designatedStandardViewModels,
+            IEnumerable<DesignatedStandardModel> designatedStandards,
             PaginationInfo? paginationInfo) : base("Select designated standard", cabId, scopeId, isFromSummary)
         {
             CompareScopeId = compareScopeId;
             LegislativeArea = legislativeAreaName;
             SelectedDesignatedStandardIds = selectedDesignatedStandardIds;
-            DesignatedStandardViewModels = designatedStandardViewModels;
-            PageDesignatedStandardsIds = pageDesignatedStandardsIds;
+            SetPageDesignatedStandardViewModels(designatedStandards);
             PaginationInfo = paginationInfo;
             PageNumber = paginationInfo is not null ? paginationInfo.PageIndex + 1 : null;
         }
@@ -54,19 +51,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             SelectedDesignatedStandardIds.RemoveAll(id => removedPageDesignatedStandardIds.Contains(id));
         }
 
-        public void SetDesignatedStandardViewModels(IEnumerable<DesignatedStandardModel> designatedStandards)
+        public void SetPageDesignatedStandardViewModels(IEnumerable<DesignatedStandardModel> designatedStandards)
         {
-            var designatedStandardViewModels = designatedStandards.Select(d => new DesignatedStandardViewModel(d)).ToList();
-            designatedStandardViewModels.Where(d => SelectedDesignatedStandardIds.Contains(d.Id)).ForEach(d =>
-            {
-                d.IsSelected = true;
-            });
-            DesignatedStandardViewModels = designatedStandardViewModels;
-        }
-
-        public void SetPageDesignatedStandardsIds()
-        {
-            PageDesignatedStandardsIds = DesignatedStandardViewModels.Select(d => d.Id).ToList();
+            PageDesignatedStandardViewModels = designatedStandards.Select(d => 
+                new DesignatedStandardViewModel(d, SelectedDesignatedStandardIds.Contains(d.Id))).ToList();
+            PageDesignatedStandardsIds = PageDesignatedStandardViewModels.Select(d => d.Id).ToList();
         }
     }
 }
