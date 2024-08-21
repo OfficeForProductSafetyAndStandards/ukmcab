@@ -1051,7 +1051,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
         }
 
-        if (!ModelState.IsValid)
+        var isValid = TryValidateModel(vm);
+        if (!isValid)
         {
             var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.PaginationSearchTerm);
 

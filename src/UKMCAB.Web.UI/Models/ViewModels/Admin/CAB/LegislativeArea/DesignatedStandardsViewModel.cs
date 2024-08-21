@@ -17,7 +17,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public SelectListItem SelectAll { get; set; } = new SelectListItem("Select all", Guid.Empty.ToString());
         public string? SearchTerm { get; set; }
         public string? PaginationSearchTerm { get; set; }
-        public int? PageNumber { get; set; }
+        public int? PageNumber { get; set; } = 1;
         public PaginationInfo? PaginationInfo { get; set; }
 
         public DesignatedStandardsViewModel() : base("Legislative area designated standards") 
