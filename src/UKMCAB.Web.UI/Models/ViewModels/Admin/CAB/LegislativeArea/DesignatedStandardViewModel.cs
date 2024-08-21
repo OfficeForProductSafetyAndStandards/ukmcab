@@ -22,7 +22,5 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public List<string> ReferenceNumber { get; private set; }
         public string NoticeOfPublicationReference { get; private set; }
         public bool IsSelected { get; private set; } = false;
-        public PaginationViewModel? PaginationViewModel { get; private set; }
-        public int PageNumber { get; private set; }
     }
 }
