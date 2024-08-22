@@ -823,7 +823,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
                         .Value);
                 await _cabAdminService.UnarchiveDocumentAsync(userAccount, cabDocument.CABId,
-                    model.UnarchiveInternalReason, model.UnarchivePublicReason, false);
+                    model.UnarchiveInternalReason, model.UnarchivePublicReason, false, true);
                 _telemetryClient.TrackEvent(AiTracking.Events.CabArchived, HttpContext.ToTrackingMetadata(new()
                 {
                     [AiTracking.Metadata.CabId] = id,
