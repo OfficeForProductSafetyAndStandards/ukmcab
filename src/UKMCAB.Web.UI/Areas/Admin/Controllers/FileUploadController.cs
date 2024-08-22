@@ -746,7 +746,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
         [HttpPost]
         [Route("admin/cab/documents-list/remove/{id}")]
-        public async Task<IActionResult> DocumentListRemove(string id, string documentFileId, bool fromSummary)
+        public async Task<IActionResult> DocumentListRemove(string id, int indexOfSelectedFile, bool fromSummary)
         {
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latestDocument == null) // Implies no document or archived
@@ -755,18 +755,15 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             var documents = latestDocument?.Documents ?? new();
-            var selectedFile = documents.First(n => n.Id == Guid.Parse(documentFileId))
+            var selectedFile = documents[indexOfSelectedFile]
                 ?? throw new InvalidOperationException("No support file could be found in the document");
 
-            if (selectedFile!=null)
-            {
-                _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(new List<FileUpload> { selectedFile },
-                    latestDocument, nameof(latestDocument.Documents));
-                var userAccount =
-                    await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
-                        .Value);
-                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
-            }
+            _fileUploadUtils.RemoveSelectedUploadedFilesFromDocumentAsync(new List<FileUpload> { selectedFile },
+                latestDocument!, nameof(latestDocument.Documents));
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier))
+                    .Value);
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument!);
 
             return RedirectToAction("DocumentsList", new { id, fromSummary, fromAction = nameof(DocumentListRemove) });
         }
