@@ -104,6 +104,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
 
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
         var documentLegislativeArea = latestDocument!.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId);
+        var isNew = documentLegislativeArea.IsProvisional == null;
 
         documentLegislativeArea.IsProvisional = vm.IsProvisionalLegislativeArea;
         documentLegislativeArea.AppointmentDate = vm.AppointmentDate;
@@ -115,7 +116,14 @@ public class LegislativeAreaAdditionalInformationController : Controller
 
         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
 
-        if (documentLegislativeArea.ReviewDate == null)
+        // Is Provisional is only null if this is a new addition
+        if(isNew)
+        {
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.LegislativeAreaAdded));
+        }
+        // If we're adding a Review Date, then we can audit that
+        if (documentLegislativeArea.ReviewDate == null &&
+            vm.ReviewDate != null)
         {
             documentLegislativeArea.ReviewDate = vm.ReviewDate;
             latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.LegislativeAreaReviewDateAdded));
