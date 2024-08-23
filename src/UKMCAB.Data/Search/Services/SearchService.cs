@@ -160,9 +160,6 @@ namespace UKMCAB.Data.Search.Services
                 filters.Add($"({statuses})");
             }
 
-            // Force the search to exlude all historical entries
-            filters.Add($"StatusValue ne '{(int)Status.Historical}'");
-
             if (options.InternalSearch && options.UserGroupsFilter != null && options.UserGroupsFilter.Any())
             {
                 var userGroups = string.Join(" or ",

@@ -309,7 +309,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             if (itemFound != null) itemFound.Selected = true;
         }
 
-        if (existingScopeOfAppointment.CategoryIds != null && existingScopeOfAppointment.CategoryIds.Any())
+        if (existingScopeOfAppointment?.CategoryIds != null && existingScopeOfAppointment.CategoryIds.Any())
         {
             var itemFound = selectListItems.FirstOrDefault(i =>
                 i.Value == existingScopeOfAppointment.CategoryIds.First().ToString());

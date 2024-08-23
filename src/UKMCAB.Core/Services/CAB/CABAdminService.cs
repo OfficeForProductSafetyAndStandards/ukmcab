@@ -273,7 +273,10 @@ namespace UKMCAB.Core.Services.CAB
                 previous.SubStatus = SubStatus.None;
 
                 await _cabRepository.UpdateAsync(previous);
-                await UpdateSearchIndexAsync(previous);
+                if (previous.StatusValue != Status.Historical)
+                {
+                    await UpdateSearchIndexAsync(previous);
+                }  
             }
 
             // Update the search index & caches
