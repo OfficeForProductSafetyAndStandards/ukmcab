@@ -1,4 +1,6 @@
 ﻿.pagination-container {
+    font-family: GDS Transport,arial,sans-serif;
+    font-size: 19px;
 
     .pagination-detail-container {
         width: 50%;
@@ -30,6 +32,19 @@
                     position: relative;
                     padding: 0 5px;
                 }
+
+                button {
+                    background: none;
+                    border: none;
+                    color: #1d70b8;
+                    cursor: pointer;
+                    padding: 0;
+                    line-height: inherit;
+
+                    span {
+                        text-decoration: underline;
+                    }
+                }
             }
         }
     }
@@ -51,6 +66,13 @@
                             padding: 0;
                         }
                     }
+
+                    button {
+
+                        span {
+                            padding: 0;
+                        }
+                    }
                 }
 
                 .pagination-page-link {
@@ -59,6 +81,13 @@
 
                 .pagination-previous {
                     a {
+                        span {
+                            padding-right: 10px;
+                        }
+                    }
+
+                    button {
+
                         span {
                             padding-right: 10px;
                         }

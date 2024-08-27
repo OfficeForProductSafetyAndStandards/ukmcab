@@ -44,6 +44,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public void UpdateSelectedDesignatedStandardIds()
         {
+            PageSelectedDesignatedStandardIds.Remove(Guid.Empty);
+
             var newPageSelectedDesignatedStandardIds = PageSelectedDesignatedStandardIds.Except(SelectedDesignatedStandardIds);
             SelectedDesignatedStandardIds.AddRange(newPageSelectedDesignatedStandardIds);
 

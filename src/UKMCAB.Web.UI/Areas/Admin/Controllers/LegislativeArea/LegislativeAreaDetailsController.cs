@@ -1024,6 +1024,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         }
 
         vm.UpdateSelectedDesignatedStandardIds();
+        documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
+        ModelState.Clear();
 
         if (submitType != Constants.SubmitType.Continue)
         {
@@ -1047,7 +1049,6 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             vm.SetPageDesignatedStandardViewModels(options.DesignatedStandards);
             vm.PaginationInfo = options.PaginationInfo;
 
-            ModelState.Clear();
             return View("~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml", vm);
         }
 
@@ -1067,10 +1068,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             return RedirectToRoute(
                 LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, 
-                new { vm.CABId, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry });
+                new { id = vm.CABId, fromSummary = vm.IsFromSummary, bannerContent = Constants.ErrorMessages.DuplicateEntry });
         }
-
-        documentScopeOfAppointment.DesignatedStandardIds = vm.SelectedDesignatedStandardIds;
 
         latestDocument.ScopeOfAppointments.Add(documentScopeOfAppointment);
         latestDocument.HiddenScopeOfAppointments = await SetHiddenScopeOfAppointmentsAsync(latestDocument.ScopeOfAppointments);
