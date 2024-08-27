@@ -585,36 +585,6 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View(viewModel);
             }
 
-            if (fromAction == nameof(DocumentListRemove))
-            {
-                /*
-                 * ??? do we need this
-                 * var currentlyUploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
-                {
-                    FileName = s.FileName,
-                    UploadDateTime = s.UploadDateTime,
-                    Label = s.Label,
-                    Category = s.Category,
-                    Archived = s.Archived,
-                    Id = s.Id
-                }).ToList() ?? new List<FileViewModel>();
-
-                var unsavedFileViewModels = model.UploadedFiles?.Where(u => u.IsDuplicated && !u.IsSelected)
-                    .Select(s => new FileViewModel
-                    {
-                        FileName = s.FileName,
-                        UploadDateTime = s.UploadDateTime,
-                        Label = s.Label,
-                        Category = s.Category,
-                        IsSelected = false,
-                        Archived = s.Archived
-                    }).ToList() ?? new List<FileViewModel>();
-                ;
-
-                currentlyUploadedFileViewModels.AddRange(unsavedFileViewModels);*/
-            }
-
-
             uploadedFileViewModels = latestDocument.Documents?.Select(s => new FileViewModel
                 {
                     FileName = s.FileName, 
@@ -671,6 +641,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (submitType != null && submitType.Equals(Constants.SubmitType.Remove))
             {
                 //ISSUE: this block of code causes the deletion of a file on every refresh with this submitType value!!!
+                //MAY NOT BE IN USE!
                 var FilesSelectedInViewModel = GetFilesSelectedInViewModel(model.UploadedFiles!);
 
                 if (!FilesSelectedInViewModel.Any())
@@ -1041,6 +1012,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     Label = s.Label,
                     LegislativeArea = s.LegislativeArea,
                     Category = s.Category,
+                    Publication = s.Publication,
                     Id = s.Id,
                     IsReplaced = i == indexOfFileToReplace
                 };
