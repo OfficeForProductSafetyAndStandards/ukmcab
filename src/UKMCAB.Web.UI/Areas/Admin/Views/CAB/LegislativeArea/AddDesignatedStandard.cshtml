@@ -7,7 +7,7 @@
     </div>
 </div>
 
-<div id="add-designated-standard-page" class="govuk-grid-row">
+<div id="add-designated-standard-page" class="govuk-grid-row govuk-!-margin-bottom-4">
     <div class="govuk-grid-column-two-thirds">
 
         @if (!ViewData.ModelState.IsValid) 
@@ -24,7 +24,7 @@
             </govuk-error-summary>
         }
 
-        <form id="poaPaginationForm" method="post">
+        <form id="designatedStandardsForm" method="post">
             <input type="hidden" asp-for="CABId" />
             <input type="hidden" asp-for="Title" />
             <input type="hidden" asp-for="ScopeId" />
@@ -156,11 +156,16 @@
                     }
                 </div>
             }
-
-            <div class="govuk-button-group">
-                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
-                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CABId">Cancel</a>
-            </div>
         </form>
+        
+    </div>
+</div>
+
+<div id="add-designated-standard-page" class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-button-group">
+            <govuk-button name="submitType" type="submit" form="designatedStandardsForm" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
+            <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CABId">Cancel</a>
+        </div>
     </div>
 </div>
