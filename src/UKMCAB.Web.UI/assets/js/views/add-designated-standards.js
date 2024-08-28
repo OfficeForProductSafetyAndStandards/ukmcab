@@ -25,7 +25,7 @@
 
         if (addDesignatedStandardSelectAllCheckbox) {
             addDesignatedStandardSelectAllCheckbox.addEventListener('change', function () {
-                var checkboxes = document.querySelectorAll('input[type="checkbox"][id^="SelectedDesignatedStandardIds-"]');
+                var checkboxes = document.querySelectorAll('input[type="checkbox"][id^="PageSelectedDesignatedStandardIds-"]');
                 for (var i = 0; i < checkboxes.length; i++) {
                     checkboxes[i].checked = this.checked;
                 }

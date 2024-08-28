@@ -64,6 +64,7 @@ public static class Constants
         public const string Archive = nameof(Archive);
         public const string RemoveArchived = nameof(RemoveArchived);
         public const string Search = nameof(Search);
+        public const string PaginatedQuery = nameof(PaginatedQuery);
     }
 
     public class ErrorMessages

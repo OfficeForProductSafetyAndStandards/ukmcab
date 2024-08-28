@@ -1,8 +1,8 @@
 ﻿using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
-using System.Collections;
 using System.Linq.Expressions;
 using UKMCAB.Data.CosmosDb.Utilities;
+using UKMCAB.Data.Pagination;
 
 namespace UKMCAB.Data.CosmosDb.Services;
 
@@ -53,6 +53,30 @@ public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
         }
 
         return list;
+    }
+
+    public async Task<(IEnumerable<O> Results, PaginationInfo PaginationInfo)> PaginatedQueryAsync<O>(Expression<Func<O, bool>> predicate, int pageNumber, string? searchTerm = null, int pageSize = 20) where O : IOrderable
+    {
+        var query = _container.GetItemLinqQueryable<O>().Where(predicate);
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(x => x.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+        }
+        var queryCount = await query.CountAsync();
+
+        var paginationInfo = new PaginationInfo(pageNumber, queryCount);
+        query = query.OrderBy(x => x.Name).Skip(paginationInfo.Skip).Take(paginationInfo.Take);
+
+        var feedIterator = _cosmosFeedIterator.GetFeedIterator(query);
+
+        var list = new List<O>();
+        while (feedIterator.HasMoreResults)
+        {
+            var response = await feedIterator.ReadNextAsync();
+            list.AddRange(response.Resource.Select(r => r));
+        }
+
+        return (list, paginationInfo);
     }
 
     public async Task<T> GetAsync(string id)
