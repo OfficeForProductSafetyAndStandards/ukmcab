@@ -194,7 +194,7 @@
                                             Replace
                                         </a>
 
-                                        <button name="submitType" asp-action="DocumentListRemove" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" asp-route-documentFileId="@uploadedFile.Id" value="@Constants.SubmitType.Remove" class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button">
+                                        <button name="submitType" asp-action="DocumentListRemove" asp-route-id="@Model.CABId" asp-route-fromSummary="@Model.IsFromSummary" asp-route-indexOfSelectedFile="@i" value="@Constants.SubmitType.Remove" class="button-link govuk-link govuk-link--no-visited-state" data-module="govuk-button">
                                             @Constants.SubmitType.Remove
                                         </button>
                                     </div>
