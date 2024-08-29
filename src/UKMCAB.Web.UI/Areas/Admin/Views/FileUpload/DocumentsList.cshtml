@@ -110,7 +110,7 @@
                                 var uploadedFile = Model.UploadedFiles[i];
                                 var uploadedDate = Constants.NotProvided;
                                 var items = DataConstants.Lists.DocumentCategories.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Category?.Trim() ?? string.Empty))).ToList();
-                                var publications = DataConstants.Lists.Publications.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Publication?.Trim() ?? string.Empty))).ToList();
+                                var publications = DataConstants.Lists.Publications.Select(s => new SelectListItem(s, s, s.Equals(uploadedFile.Publication?.Trim() ?? DataConstants.Publications.Private))).ToList();
 
                                 if (uploadedFile.UploadDateTime.HasValue)
                                 {
@@ -176,7 +176,7 @@
                                             <span asp-validation-for="UploadedFiles![i].Publication" class="govuk-error-message"></span>
                                         </p>
                                         <select id="UploadedFiles[@i].Publication" name="UploadedFiles[@i].Publication" class="govuk-select document-detail-select @Html.ShowModelStateSelectErrorClass(ViewData.ModelState, $"UploadedFiles[{i}].Publication")">
-                                            <option value="">@Constants.Select</option>
+                                            
                                             @foreach (var publication in publications)
                                             {
                                                 <option value="@publication.Value" selected="@publication.Selected">@publication.Text</option>
