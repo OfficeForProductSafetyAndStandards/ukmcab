@@ -16,6 +16,7 @@ public class LegislativeAreaService : ILegislativeAreaService
     private readonly IReadOnlyRepository<Product> _productRepository;
     private readonly IReadOnlyRepository<Procedure> _procedureRepository;
     private readonly IReadOnlyRepository<DesignatedStandard> _designatedStandardRepository;
+    private readonly IReadOnlyRepository<PpeProductType> _ppeProductTypeRepository;
     private readonly IMapper _mapper;
 
     public LegislativeAreaService(
@@ -26,6 +27,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         IReadOnlyRepository<Procedure> procedureRepository,
         IReadOnlyRepository<SubCategory> subCategoryRepository,
         IReadOnlyRepository<DesignatedStandard> designatedStandardRepository,
+        IReadOnlyRepository<PpeProductType> ppeProductTypeRepository,
     IMapper mapper)
     {
         _legislativeAreaRepository = legislativeAreaRepository;
@@ -35,6 +37,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         _procedureRepository = procedureRepository;
         _subCategoryRepository = subCategoryRepository;
         _designatedStandardRepository = designatedStandardRepository;
+        _ppeProductTypeRepository = ppeProductTypeRepository;
         _mapper = mapper;
     }
 
@@ -112,6 +115,15 @@ public class LegislativeAreaService : ILegislativeAreaService
             {
                 DesignatedStandards = _mapper.Map<IEnumerable<DesignatedStandardModel>>(designatedStandards),
                 PaginationInfo = paginationInfo
+            };
+        }
+
+        var ppeProductType = await _ppeProductTypeRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId);
+        if (ppeProductType.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                PpeProductType = _mapper.Map<IEnumerable<PpeProductTypeModel>>(ppeProductType)
             };
         }
 

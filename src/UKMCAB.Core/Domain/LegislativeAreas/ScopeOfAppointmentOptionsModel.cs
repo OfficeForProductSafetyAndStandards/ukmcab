@@ -1,4 +1,5 @@
-﻿using UKMCAB.Data.Pagination;
+﻿using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Data.Pagination;
 
 namespace UKMCAB.Core.Domain.LegislativeAreas;
 
@@ -15,5 +16,8 @@ public class ScopeOfAppointmentOptionsModel
 
     public IEnumerable<ProcedureModel> Procedures { get; set; } = Array.Empty<ProcedureModel>();
     public IEnumerable<DesignatedStandardModel> DesignatedStandards { get; set; } = Array.Empty<DesignatedStandardModel>();
+    public IEnumerable<PpeProductTypeModel> PpeProductType { get; set; } = Array.Empty<PpeProductTypeModel>();
+    public IEnumerable<ProtectionAgainstRiskModel> ProtectionAgainstRisk { get; set; } = Array.Empty<ProtectionAgainstRiskModel>();
+    public IEnumerable<AreasOfCompetencyModel> AreasOfCompetency { get; set; } = Array.Empty<AreasOfCompetencyModel>();
     public PaginationInfo? PaginationInfo { get; set; }
 }
