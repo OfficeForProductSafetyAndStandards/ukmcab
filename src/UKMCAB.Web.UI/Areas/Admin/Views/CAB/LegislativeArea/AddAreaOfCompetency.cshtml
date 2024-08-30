@@ -1,0 +1,36 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.AreaOfCompetencyViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">Edit a CAB</span>
+        <h1 class="govuk-heading-l">Legislative area</h1>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="legislativeForm" method="post" novalidate>
+            <input type="hidden" asp-for="IsFromSummary" />
+            <input type="hidden" asp-for="LegislativeArea" />
+            <h2 class="govuk-heading-s">Legislative area</h2>
+            <p class="govuk-body">@Model.LegislativeArea</p>
+
+            <govuk-radios asp-for="SelectedAreaOfCompetencyId">
+                    <govuk-radios-fieldset>
+                        <govuk-radios-fieldset-legend class="govuk-label--s">
+                        Area of competencies
+                        </govuk-radios-fieldset-legend>
+                    @foreach (var item in Model.AreaOfCompetencies)
+                        {
+                            <govuk-radios-item value="@item.Value" checked="@item.Selected">@item.Text</govuk-radios-item>
+                        }
+                    </govuk-radios-fieldset>
+                </govuk-radios>
+
+            <div class="govuk-button-group">
+                <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
+                <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CABId" asp-route-returnUrl="@Model.ReturnUrl">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>

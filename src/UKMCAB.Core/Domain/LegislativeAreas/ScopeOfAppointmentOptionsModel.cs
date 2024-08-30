@@ -18,6 +18,6 @@ public class ScopeOfAppointmentOptionsModel
     public IEnumerable<DesignatedStandardModel> DesignatedStandards { get; set; } = Array.Empty<DesignatedStandardModel>();
     public IEnumerable<PpeProductTypeModel> PpeProductType { get; set; } = Array.Empty<PpeProductTypeModel>();
     public IEnumerable<ProtectionAgainstRiskModel> ProtectionAgainstRisk { get; set; } = Array.Empty<ProtectionAgainstRiskModel>();
-    public IEnumerable<AreasOfCompetencyModel> AreasOfCompetency { get; set; } = Array.Empty<AreasOfCompetencyModel>();
+    public IEnumerable<AreaOfCompetencyModel> AreaOfCompetency { get; set; } = Array.Empty<AreaOfCompetencyModel>();
     public PaginationInfo? PaginationInfo { get; set; }
 }

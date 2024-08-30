@@ -13,7 +13,12 @@ namespace UKMCAB.Data.Models
         public List<Guid> ProductIds { get; set; } = new();
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
         public List<CategoryAndProcedures> CategoryIdAndProcedureIds { get; set; } = new();
+        public List<AreaOfCompetencyAndProcedures> AreaOfCompetencyIdAndProcedureIds { get; set; } = new();
         public List<Guid> DesignatedStandardIds { get; set; } = new();
+        public Guid? PpeProductTypeId { get; set; }
+        public Guid? ProtectionAgainstRiskId { get; set; }
+        public Guid? AreaOfCompetencyId { get; set; }
+
 
         public override bool Equals(object? scopeOfAppointment) 
         { 
@@ -28,7 +33,10 @@ namespace UKMCAB.Data.Models
             if (!LegislativeAreaId.Equals(otherSoa.LegislativeAreaId) ||
                 PurposeOfAppointmentId != otherSoa.PurposeOfAppointmentId ||
                 CategoryId != otherSoa.CategoryId ||
-                SubCategoryId != otherSoa.SubCategoryId)
+                SubCategoryId != otherSoa.SubCategoryId ||
+                PpeProductTypeId != otherSoa.PpeProductTypeId ||
+                ProtectionAgainstRiskId != otherSoa.ProtectionAgainstRiskId ||
+                AreaOfCompetencyId != otherSoa.AreaOfCompetencyId)
             {
                 return false;
             }
@@ -37,7 +45,8 @@ namespace UKMCAB.Data.Models
                 return false;
 
             if (!AreObjectListsEqual(CategoryIdAndProcedureIds, otherSoa.CategoryIdAndProcedureIds) ||
-                !AreObjectListsEqual(ProductIdAndProcedureIds, otherSoa.ProductIdAndProcedureIds))
+                !AreObjectListsEqual(ProductIdAndProcedureIds, otherSoa.ProductIdAndProcedureIds) ||
+                !AreObjectListsEqual(AreaOfCompetencyIdAndProcedureIds, otherSoa.AreaOfCompetencyIdAndProcedureIds))
                 return false;
 
             if (!AreListsEqual(DesignatedStandardIds, otherSoa.DesignatedStandardIds))
@@ -53,6 +62,9 @@ namespace UKMCAB.Data.Models
             hash = hash * 31 + PurposeOfAppointmentId.GetHashCode();
             hash = hash * 31 + CategoryId.GetHashCode();
             hash = hash * 31 + SubCategoryId.GetHashCode();
+            hash = hash * 31 + PpeProductTypeId.GetHashCode();
+            hash = hash * 31 + ProtectionAgainstRiskId.GetHashCode();
+            hash = hash * 31 + AreaOfCompetencyId.GetHashCode();
 
             if (CategoryIds.Any())
             {
@@ -83,6 +95,14 @@ namespace UKMCAB.Data.Models
                 foreach (var catAndProcedureId in CategoryIdAndProcedureIds)
                 {
                     hash = hash * 31 + catAndProcedureId.GetHashCode();
+                }
+            }
+
+            if (AreaOfCompetencyIdAndProcedureIds.Any())
+            {
+                foreach (var areaOfCompetencyAndProcedureId in AreaOfCompetencyIdAndProcedureIds)
+                {
+                    hash = hash * 31 + areaOfCompetencyAndProcedureId.GetHashCode();
                 }
             }
 

@@ -17,6 +17,8 @@ public class LegislativeAreaService : ILegislativeAreaService
     private readonly IReadOnlyRepository<Procedure> _procedureRepository;
     private readonly IReadOnlyRepository<DesignatedStandard> _designatedStandardRepository;
     private readonly IReadOnlyRepository<PpeProductType> _ppeProductTypeRepository;
+    private readonly IReadOnlyRepository<ProtectionAgainstRisk> _protectionAgainstRiskRepository;
+    private readonly IReadOnlyRepository<AreaOfCompetency> _areaOfCompetencyRepository;
     private readonly IMapper _mapper;
 
     public LegislativeAreaService(
@@ -28,6 +30,9 @@ public class LegislativeAreaService : ILegislativeAreaService
         IReadOnlyRepository<SubCategory> subCategoryRepository,
         IReadOnlyRepository<DesignatedStandard> designatedStandardRepository,
         IReadOnlyRepository<PpeProductType> ppeProductTypeRepository,
+        IReadOnlyRepository<ProtectionAgainstRisk> protectionAgainstRiskRepository,
+        IReadOnlyRepository<AreaOfCompetency> areaOfCompetencyRepository,
+
     IMapper mapper)
     {
         _legislativeAreaRepository = legislativeAreaRepository;
@@ -38,6 +43,8 @@ public class LegislativeAreaService : ILegislativeAreaService
         _subCategoryRepository = subCategoryRepository;
         _designatedStandardRepository = designatedStandardRepository;
         _ppeProductTypeRepository = ppeProductTypeRepository;
+        _protectionAgainstRiskRepository = protectionAgainstRiskRepository;
+        _areaOfCompetencyRepository = areaOfCompetencyRepository;
         _mapper = mapper;
     }
 
@@ -225,6 +232,47 @@ public class LegislativeAreaService : ILegislativeAreaService
         return new ScopeOfAppointmentOptionsModel();
     }
 
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPpeProductTypeAsync()
+    {
+        var protectionAgainstRisks = await _protectionAgainstRiskRepository.GetAllAsync();
+        if (protectionAgainstRisks.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                ProtectionAgainstRisk = _mapper.Map<IEnumerable<ProtectionAgainstRiskModel>>(protectionAgainstRisks)
+            };
+        }
+
+        return new ScopeOfAppointmentOptionsModel();
+    }
+
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProtectionAgainstRiskAsync()
+    {
+        var areaOfCompetencies = await _areaOfCompetencyRepository.GetAllAsync();
+        if (areaOfCompetencies.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                AreaOfCompetency = _mapper.Map<IEnumerable<AreaOfCompetencyModel>>(areaOfCompetencies)
+            };
+        }
+
+        return new ScopeOfAppointmentOptionsModel();
+    }
+
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForAreaOfCompetencyAsync(Guid areaOfCompetencyId)
+    {
+        var procedures = await _procedureRepository.QueryAsync(x => x.AreaOfCompetencyIds.Contains(areaOfCompetencyId));
+        if (procedures.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                Procedures = _mapper.Map<IEnumerable<ProcedureModel>>(procedures)
+            };
+        }
+
+        return new ScopeOfAppointmentOptionsModel();
+    }
     public async Task<PurposeOfAppointmentModel?> GetPurposeOfAppointmentByIdAsync(Guid purposeOfAppointmentId)
     {
         Guard.IsTrue(purposeOfAppointmentId != Guid.Empty, "Guid cannot be empty");

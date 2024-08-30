@@ -1,6 +1,6 @@
 ﻿namespace UKMCAB.Data.Models.LegislativeAreas
 {
-    public class AreasOfCompetency
+    public class AreaOfCompetencyModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

@@ -27,6 +27,6 @@ public class AutoMapperProfile : Profile
         CreateMap<DesignatedStandard, DesignatedStandardModel>();
         CreateMap<PpeProductType, PpeProductTypeModel>();
         CreateMap<ProtectionAgainstRisk, ProtectionAgainstRiskModel>();
-        CreateMap<AreasOfCompetency, AreasOfCompetencyModel>();
+        CreateMap<AreaOfCompetency, AreaOfCompetencyModel>();
     }
 }
