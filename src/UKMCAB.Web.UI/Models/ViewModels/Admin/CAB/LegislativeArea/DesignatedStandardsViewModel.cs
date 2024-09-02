@@ -19,6 +19,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? PaginationSearchTerm { get; set; }
         public int? PageNumber { get; set; } = 1;
         public PaginationInfo? PaginationInfo { get; set; }
+        public bool ShowAllSelected { get; set; } = false;
+        public int? PreviousPageNumber { get; set; }
 
         public DesignatedStandardsViewModel() : base("Legislative area designated standards") 
         { 
