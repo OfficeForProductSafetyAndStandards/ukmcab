@@ -448,6 +448,8 @@ namespace UKMCAB.Data.Models
         public const string DeclineLegislativeArea = "Legislative area declined";
         public const string LegislativeAreaReviewDateAdded = "Legislative area review date added";
         public const string LegislativeAreaReviewDateUpdated = "Legislative area review date updated";
+        public static string DesignatedStandardsAdded(int number) => $"{number} designated standards added to construction";
+        public static string DesignatedStandardsRemoved(int number) => $"{number} designated standards removed from construction";
     }
 
     public class AuditUserActions
