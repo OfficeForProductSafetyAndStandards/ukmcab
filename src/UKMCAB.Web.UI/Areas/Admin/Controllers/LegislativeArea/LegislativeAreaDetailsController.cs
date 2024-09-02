@@ -1085,11 +1085,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             updatedDocument.ScopeOfAppointments.Remove(existingScopeOfAppointment);
             
-            var existingDesignatedStandards = existingScopeOfAppointment.DesignatedStandardIds;
-            var newDesignatedStandards = documentScopeOfAppointment.DesignatedStandardIds;
+            var existingDesignatedStandardIds = existingScopeOfAppointment.DesignatedStandardIds;
+            var updatedDesignatedStandardIds = documentScopeOfAppointment.DesignatedStandardIds;
 
-            var adddedDesignatedStandardsCount = newDesignatedStandards.Except(existingDesignatedStandards).Count();
-            var removedDesignatedStandardsCount = existingDesignatedStandards.Except(newDesignatedStandards).Count();
+            var adddedDesignatedStandardsCount = updatedDesignatedStandardIds.Except(existingDesignatedStandardIds).Count();
+            var removedDesignatedStandardsCount = existingDesignatedStandardIds.Except(updatedDesignatedStandardIds).Count();
 
             if (adddedDesignatedStandardsCount > 0)
             {
