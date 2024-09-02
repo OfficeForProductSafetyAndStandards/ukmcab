@@ -1084,6 +1084,22 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         if (existingScopeOfAppointment != null)
         {
             updatedDocument.ScopeOfAppointments.Remove(existingScopeOfAppointment);
+            
+            var existingDesignatedStandardIds = existingScopeOfAppointment.DesignatedStandardIds;
+            var updatedDesignatedStandardIds = documentScopeOfAppointment.DesignatedStandardIds;
+
+            var adddedDesignatedStandardsCount = updatedDesignatedStandardIds.Except(existingDesignatedStandardIds).Count();
+            var removedDesignatedStandardsCount = existingDesignatedStandardIds.Except(updatedDesignatedStandardIds).Count();
+
+            if (adddedDesignatedStandardsCount > 0)
+            {
+                latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.DesignatedStandardsAdded(adddedDesignatedStandardsCount)));
+            }
+            if (removedDesignatedStandardsCount > 0)
+            {
+                latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.DesignatedStandardsRemoved(removedDesignatedStandardsCount)));
+            }
+
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, updatedDocument);
         }
 
