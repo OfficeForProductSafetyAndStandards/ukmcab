@@ -139,13 +139,13 @@
         "hasDataModel": "false",
         "roleId": "mhra"
     },
-    {
-        "id": "87f42cf5-1ada-417f-a699-072ea9bb9ce2",
-        "name": "Personal protective equipment",
-        "regulation": "",
-        "hasDataModel": "false",
-        "roleId": "opss_ogd"
-    },
+  {
+    "id": "87f42cf5-1ada-417f-a699-072ea9bb9ce2",
+    "name": "Personal protective equipment",
+    "regulation": "The personal protective equipment regulations",
+    "hasDataModel": "true",
+    "roleId": "opss_ogd"
+  },
     {
         "id": "eb2e7f0b-4f7a-424b-a77a-e39579a724eb",
         "name": "Railway interoperability",
