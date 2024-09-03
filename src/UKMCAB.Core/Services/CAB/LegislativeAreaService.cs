@@ -308,6 +308,26 @@ public class LegislativeAreaService : ILegislativeAreaService
         return _mapper.Map<SubCategoryModel>(subCat.FirstOrDefault());
     }
 
+    public async Task<PpeProductTypeModel?> GetPpeProductTypeByIdAsync(Guid ppeProductTypeId)
+    {
+        Guard.IsTrue(ppeProductTypeId != Guid.Empty, "Guid cannot be empty");
+        var ppeTypes = await _ppeProductTypeRepository.QueryAsync(p => p.Id == ppeProductTypeId);
+        return _mapper.Map<PpeProductTypeModel>(ppeTypes.FirstOrDefault());
+    }
+
+    public async Task<ProtectionAgainstRiskModel?> GetProtectionAgainstRiskByIdAsync(Guid protectionAgainstRiskId)
+    {
+        Guard.IsTrue(protectionAgainstRiskId != Guid.Empty, "Guid cannot be empty");
+        var parTypes = await _protectionAgainstRiskRepository.QueryAsync(p => p.Id == protectionAgainstRiskId);
+        return _mapper.Map<ProtectionAgainstRiskModel>(parTypes.FirstOrDefault());
+    }
+
+    public async Task<AreaOfCompetencyModel?> GetAreaOfCompetencyByIdAsync(Guid areaOfCompetencyId)
+    {
+        Guard.IsTrue(areaOfCompetencyId != Guid.Empty, "Guid cannot be empty");
+        var aOfCompetencies = await _areaOfCompetencyRepository.QueryAsync(p => p.Id == areaOfCompetencyId);
+        return _mapper.Map<AreaOfCompetencyModel>(aOfCompetencies.FirstOrDefault());
+    }
     public async Task<DesignatedStandardModel?> GetDesignatedStandardByIdAsync(Guid designatedStandardId)
     {
         Guard.IsTrue(designatedStandardId != Guid.Empty, "Guid cannot be empty");
@@ -412,5 +432,39 @@ public class LegislativeAreaService : ILegislativeAreaService
         }
         var procedures = (await _procedureRepository.QueryAsync(p => distictProcedureIds.Contains(p.Id))).ToList();
         return _mapper.Map<List<ProcedureModel>>(procedures);
+    }
+
+    public async Task<List<PpeProductTypeModel>> GetPpeProductTypesForDocumentAsync(Document document)
+    {
+        var ppeProductTypeIds = document.ScopeOfAppointments.Where(soa => soa.PpeProductTypeId.HasValue).Select(soa => soa.PpeProductTypeId!.Value);
+        foreach (var id in ppeProductTypeIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var ppeProductTypes = (await _ppeProductTypeRepository.QueryAsync(p => ppeProductTypeIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<PpeProductTypeModel>>(ppeProductTypes);
+    }
+    public async Task<List<ProtectionAgainstRiskModel>> GetProtectionAgainstRisksForDocumentAsync(Document document)
+    {
+        var protectionAgainstRiskIds = document.ScopeOfAppointments.Where(soa => soa.ProtectionAgainstRiskId.HasValue).Select(soa => soa.ProtectionAgainstRiskId!.Value);
+        foreach (var id in protectionAgainstRiskIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var protectionAgainstRisks = (await _protectionAgainstRiskRepository.QueryAsync(p => protectionAgainstRiskIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<ProtectionAgainstRiskModel>>(protectionAgainstRisks);
+    }
+
+    public async Task<List<AreaOfCompetencyModel>> GetAreaOfCompetenciesForDocumentAsync(Document document)
+    {
+        var areaOfCompetencyIds = document.ScopeOfAppointments.Where(soa => soa.AreaOfCompetencyId.HasValue).Select(soa => soa.AreaOfCompetencyId!.Value);
+
+        foreach (var id in areaOfCompetencyIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var areaOfCompetencies = (await _areaOfCompetencyRepository.QueryAsync(p => areaOfCompetencyIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<AreaOfCompetencyModel>>(areaOfCompetencies);       
+
     }
 }

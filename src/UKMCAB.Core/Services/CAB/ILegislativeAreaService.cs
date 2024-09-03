@@ -1,5 +1,6 @@
 ﻿using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Core.Services.CAB;
 
@@ -31,6 +32,9 @@ public interface ILegislativeAreaService
     Task<ProcedureModel?> GetProcedureByIdAsync(Guid procedureId);
 
     Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid subCategoryId);
+    Task<PpeProductTypeModel?> GetPpeProductTypeByIdAsync(Guid ppeProductTypeId);
+    Task<ProtectionAgainstRiskModel?> GetProtectionAgainstRiskByIdAsync(Guid protectionAgainstRiskId);
+    Task<AreaOfCompetencyModel?> GetAreaOfCompetencyByIdAsync(Guid areaOfCompetencyId);
     Task<DesignatedStandardModel?> GetDesignatedStandardByIdAsync(Guid designatedStandardId);
     Task<List<LegislativeAreaModel>> GetLegislativeAreasForDocumentAsync(Document document);
     Task<List<PurposeOfAppointmentModel>> GetPurposeOfAppointmentsForDocumentAsync(Document document);
@@ -39,4 +43,7 @@ public interface ILegislativeAreaService
     Task<List<ProductModel>> GetProductsForDocumentAsync(Document document);
     Task<List<ProcedureModel>> GetProceduresForDocumentAsync(Document document);
     Task<List<DesignatedStandardModel>> GetDesignatedStandardsForDocumentAsync(Document document);
+    Task<List<PpeProductTypeModel>> GetPpeProductTypesForDocumentAsync(Document document);
+    Task<List<ProtectionAgainstRiskModel>> GetProtectionAgainstRisksForDocumentAsync(Document document);
+    Task<List<AreaOfCompetencyModel>> GetAreaOfCompetenciesForDocumentAsync(Document document);
 }

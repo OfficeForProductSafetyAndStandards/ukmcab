@@ -203,6 +203,21 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                         .Value))?.Name
                     : null;
 
+                var ppeProductType = scopeOfAppointment.PpeProductTypeId.HasValue
+                    ? (await _legislativeAreaService.GetPpeProductTypeByIdAsync(scopeOfAppointment.PpeProductTypeId
+                        .Value))?.Name
+                    : null;
+
+                var protectionAgainstRisk = scopeOfAppointment.ProtectionAgainstRiskId.HasValue
+                    ? (await _legislativeAreaService.GetProtectionAgainstRiskByIdAsync(scopeOfAppointment.ProtectionAgainstRiskId
+                        .Value))?.Name
+                    : null;
+
+                var areaOfCompetency = scopeOfAppointment.AreaOfCompetencyId.HasValue
+                    ? (await _legislativeAreaService.GetAreaOfCompetencyByIdAsync(scopeOfAppointment.AreaOfCompetencyId
+                        .Value))?.Name
+                    : null;
+
                 foreach (var productProcedure in scopeOfAppointment.ProductIdAndProcedureIds)
                 {
                     var soaViewModel = new LegislativeAreaListItemViewModel
@@ -246,6 +261,12 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                         category = await _legislativeAreaService.GetCategoryByIdAsync(categoryProcedure.CategoryId.Value);
                         soaViewModel.Category = category!.Name;
                     }
+
+                    // TEMPORARILY PLACED PPE HERE                    
+                    soaViewModel.PpeProductType = ppeProductType;
+                    soaViewModel.ProtectionAgainstRisk = protectionAgainstRisk;
+                    soaViewModel.AreaOfCompetency = areaOfCompetency;
+
 
                     foreach (var procedureId in categoryProcedure.ProcedureIds)
                     {

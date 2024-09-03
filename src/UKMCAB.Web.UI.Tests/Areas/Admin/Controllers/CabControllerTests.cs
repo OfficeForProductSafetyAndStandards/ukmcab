@@ -17,6 +17,7 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Web.UI.Areas.Admin.Controllers;
 using UKMCAB.Web.UI.Models.Builders;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
@@ -153,6 +154,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             var productModels = new List<ProductModel> { new() { Id = Guid.NewGuid() } };
             var procedureModels = new List<ProcedureModel> { new() { Id = Guid.NewGuid() } };
             var designatedStandardModels = new List<DesignatedStandardModel> { new(Guid.NewGuid(), "Test designated standard", Guid.NewGuid(), new List<string>(), "Test publication reference" ) };
+            var ppeProductTypeModels = new List<PpeProductTypeModel> { new() { Id = Guid.NewGuid() } };
+            var protectionAgainstRiskModels = new List<ProtectionAgainstRiskModel> { new() { Id = Guid.NewGuid() } };
+            var areaOfCompetencyModels = new List<AreaOfCompetencyModel> { new() { Id = Guid.NewGuid() } };
 
             var expectedDocLaIds = documentLegislativeAreas.Select(l => l.Id);
             var expectedLaIds = legislativeAreaModels.Select(l => l.Id);
@@ -163,6 +167,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             var expectedProductsIds = productModels.Select(l => l.Id);
             var expectedProcedureIds = procedureModels.Select(l => l.Id);
             var expectedDesignatedStandardsIds = designatedStandardModels.Select(l => l.Id);
+            var expectedPpeProductTypeIds = ppeProductTypeModels.Select(l => l.Id);
+            var expectedProtectionAgainstRiskIds = protectionAgainstRiskModels.Select(l => l.Id);
+            var expectedAreaOfCompetencyIds = areaOfCompetencyModels.Select(l => l.Id);
 
             _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(documentId)).ReturnsAsync(document);
             _mockCabSummaryUiService.Setup(m => m.CreateDocumentAsync(It.Is<Document>(d => d.id == document.id), null)).Returns(Task.CompletedTask);
@@ -193,7 +200,10 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
                 It.Is<List<SubCategoryModel>>(subCategories => subCategories.Any() && subCategories.All(s => expectedSubCategoryIds.Contains(s.Id))),
                 It.Is<List<ProductModel>>(products => products.Any() && products.All(p => expectedProductsIds.Contains(p.Id))),
                 It.Is<List<ProcedureModel>>(procedures => procedures.Any() && procedures.All(p => expectedProcedureIds.Contains(p.Id))),
-                It.Is<List<DesignatedStandardModel>>(designatedStandards => designatedStandards.Any() && designatedStandards.All(p => expectedDesignatedStandardsIds.Contains(p.Id)))
+                It.Is<List<DesignatedStandardModel>>(designatedStandards => designatedStandards.Any() && designatedStandards.All(p => expectedDesignatedStandardsIds.Contains(p.Id))),
+                It.Is<List<PpeProductTypeModel>>(ppeProductTypes => ppeProductTypes.Any() && ppeProductTypes.All(p => expectedPpeProductTypeIds.Contains(p.Id))),
+                It.Is<List<ProtectionAgainstRiskModel>>(protectionAgainstRisks => protectionAgainstRisks.Any() && protectionAgainstRisks.All(p => expectedProtectionAgainstRiskIds.Contains(p.Id))),
+                It.Is<List<AreaOfCompetencyModel>>(areaOfCompetencies => areaOfCompetencies.Any() && areaOfCompetencies.All(a => expectedAreaOfCompetencyIds.Contains(a.Id)))
             )).Returns(_mockCabLegislativeAreasViewModelBuilder.Object);
             _mockCabLegislativeAreasViewModelBuilder.Setup(m => m.Build()).Returns(new CABLegislativeAreasViewModel());
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithRoleInfo(It.Is<Document>(d => d.id == document.id))).Returns(_mockCabSummaryViewModelBuilder.Object);

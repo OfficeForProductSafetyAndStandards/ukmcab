@@ -1374,6 +1374,14 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var legislativeArea =
             await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
 
+        if (existingScopeOfAppointment != null && existingScopeOfAppointment.PpeProductTypeId != null)
+        {
+            foreach (var item in selectListItems)
+            {
+                item.Selected = existingScopeOfAppointment.PpeProductTypeId == Guid.Parse(item.Value);
+            }
+        }
+
         var vm = new PpeProductTypeViewModel
         {
             CABId = id,
@@ -1429,6 +1437,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     [HttpGet("add-protection-against-risk/{scopeId}", Name = Routes.AddProtectionAgainstRisk)]
     public async Task<IActionResult> AddProtectionAgainstRisk(Guid id, Guid scopeId, Guid? compareScopeId, bool fromSummary)
     {
+        var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
+
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
@@ -1440,6 +1450,14 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         var legislativeArea =
             await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
+
+        if (existingScopeOfAppointment != null && existingScopeOfAppointment.ProtectionAgainstRiskId != null)
+        {
+            foreach (var item in selectListItems)
+            {
+                item.Selected = existingScopeOfAppointment.ProtectionAgainstRiskId == Guid.Parse(item.Value);
+            }
+        }
 
         var vm = new ProtectionAgainstRiskViewModel
         {
@@ -1496,6 +1514,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
     [HttpGet("add-area-of-competency/{scopeId}", Name = Routes.AddAreaOfCompetency)]
     public async Task<IActionResult> AddAreaOfCompetency(Guid id, Guid scopeId, Guid? compareScopeId, bool fromSummary)
     {
+        var existingScopeOfAppointment = await GetCompareScopeOfAppointment(id, compareScopeId);
+
         var scopeOfAppointment =
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         if (scopeOfAppointment == null)
@@ -1507,6 +1527,14 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         var legislativeArea =
             await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
+
+        if (existingScopeOfAppointment != null && existingScopeOfAppointment.AreaOfCompetencyId != null)
+        {
+            foreach (var item in selectListItems)
+            {
+                item.Selected = existingScopeOfAppointment.AreaOfCompetencyId == Guid.Parse(item.Value);
+            }
+        }
 
         var vm = new AreaOfCompetencyViewModel
         {
