@@ -248,10 +248,20 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
 
+                var isMRA = latestDocument.BodyTypes.Any(t => t.Equals("UK body designated under MRA"));
+                if (!isMRA)
+                {
+                    latestDocument.MRACountries = new List<string>();
+                } 
+
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    if (model.IsFromSummary)
+                    if (isMRA)
+                    {
+                        return RedirectToAction("BodyDetailsMRA", "CAB", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl, fromSummary = model.IsFromSummary });
+                    }
+                    else if (model.IsFromSummary)
                     {
                         return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl });
                     }
@@ -271,6 +281,67 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (!model.TestingLocations.Any())
             {
                 model.TestingLocations.Add(string.Empty);
+            }
+
+            model.DocumentStatus = latestDocument.StatusValue;
+            model.IsFromSummary = fromSummary;
+            return View(model);
+        }
+
+        [HttpGet("admin/cab/body-details-mra/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
+        public async Task<IActionResult> BodyDetailsMRA(string id, bool fromSummary, string? returnUrl)
+        {
+            var latest = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latest == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            // Pre-populate model for edit
+            var model = new CABBodyDetailsMRAViewModel(latest);
+
+            model.DocumentStatus = latest.StatusValue;
+            model.IsFromSummary = fromSummary;
+            model.ReturnUrl = returnUrl;
+            return View(model);
+        }
+
+        [HttpPost("admin/cab/body-details-mra/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
+        public async Task<IActionResult> BodyDetailsMRA(string id, CABBodyDetailsMRAViewModel model, string submitType,
+            bool fromSummary)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
+            {
+                latestDocument.MRACountries = model.MRACountries;
+
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                if (submitType == Constants.SubmitType.Continue)
+                {
+                    if (model.IsFromSummary)
+                    {
+                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl });
+                    }
+                    else if (!latestDocument.DocumentLegislativeAreas.Any())
+                    {
+                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
+                    }
+                    else
+                    {
+                        return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
+                    }
+                }
+
+                return SaveDraft(latestDocument);
             }
 
             model.DocumentStatus = latestDocument.StatusValue;

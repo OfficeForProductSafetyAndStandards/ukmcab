@@ -59,7 +59,8 @@
         // Body details
         public List<string> TestingLocations { get; set; } = new();
         public List<string> BodyTypes { get; set; } = new();
-        
+        public List<string> MRACountries { get; set; } = new();
+
         public List<DocumentLegislativeArea> DocumentLegislativeAreas { get; set; } = new();
 
         public List<DocumentScopeOfAppointment> ScopeOfAppointments { get; set; } = new();

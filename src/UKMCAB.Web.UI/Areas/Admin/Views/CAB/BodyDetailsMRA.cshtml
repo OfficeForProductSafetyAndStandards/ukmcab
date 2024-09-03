@@ -1,0 +1,92 @@
+﻿@using UKMCAB.Data.Models
+@using UKMCAB.Data
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABBodyDetailsMRAViewModel
+@{
+    var id = this.Url.ActionContext.HttpContext.Request.RouteValues.GetValueOrDefault("id").ToString();
+    var cabId = Model.CABId ?? id;
+}
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (cabId == null)
+                {
+                    <govuk-back-link asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" />
+                }
+                else if (Model.IsFromSummary)
+                {
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl" />
+                }
+                else
+                {
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@cabId" asp-route-returnUrl="@Model.ReturnUrl" />
+                }
+            </div>
+        </div>
+    </div>
+}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <partial name="Partials/_ValidationSummary" model="Model.FieldOrder" />
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">@Model.Title</span>
+        <h1 class="govuk-heading-l">UK body designated under MRA</h1>
+    </div>
+</div>
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form id="cab-body-details-form" method="post">
+            <input type="hidden" asp-for="IsFromSummary" />
+            <input type="hidden" asp-for="ReturnUrl" />
+            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"MRACountries")">
+                <fieldset class="govuk-fieldset" aria-describedby="body-types-hint">
+                    <h3 class="govuk-label-wrapper">
+                        <label class="govuk-label govuk-label--s" asp-for="MRACountries" id="MRACountries">
+                            UK body designated under MRA
+                        </label>
+                    </h3>
+                    <div id="body-types-hint" class="govuk-hint">
+                        Select all that apply
+                    </div>
+                    <p class="govuk-error-message">
+                        <span asp-validation-for="MRACountries" class="govuk-error-message"></span>
+                    </p>
+                    <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        @foreach (var MRACountry in DataConstants.Lists.MRACountries)
+                        {
+                            <div class="govuk-checkboxes__item">
+                                <input class="govuk-checkboxes__input" id="@MRACountry" name="MRACountries" type="checkbox" value="@MRACountry" checked="@(Model?.MRACountries!= null && Model.MRACountries.Any(bt => bt.Equals(MRACountry, StringComparison.InvariantCultureIgnoreCase)))">
+                                <label class="govuk-label govuk-checkboxes__label" for="@MRACountry">
+                                    @MRACountry
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="govuk-button-group">
+                <button class="govuk-button" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Continue">
+                    Continue
+                </button>
+                <button class="govuk-button govuk-button--secondary" data-module="govuk-button" name="submitType" value="@Constants.SubmitType.Save">
+                    Save as draft
+                </button>
+                @if (Model.IsFromSummary)
+                {
+                    <a asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+                else
+                {
+                    <a asp-area="Admin" asp-controller="CabManagement" asp-action="CABManagement" asp-route-unlockCab="@cabId" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+                }
+            </div>
+
+        </form>
+    </div>
+</div>
