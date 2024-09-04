@@ -1,4 +1,5 @@
 ﻿.pagination-container {
+    font-family: GDS Transport,arial,sans-serif;
 
     .pagination-detail-container {
         width: 50%;
@@ -26,9 +27,24 @@
                 }
 
                 span {
-                    float: left;
                     position: relative;
                     padding: 0 5px;
+                }
+
+                button {
+                    font-size: 16px;
+                    background: none;
+                    border: none;
+                    color: #1d70b8;
+                    cursor: pointer;
+                    padding: 0;
+                    line-height: inherit;
+                    box-shadow: none;
+                    margin: 0;
+
+                    span {
+                        text-decoration: underline;
+                    }
                 }
             }
         }
@@ -51,6 +67,13 @@
                             padding: 0;
                         }
                     }
+
+                    button {
+
+                        span {
+                            padding: 0;
+                        }
+                    }
                 }
 
                 .pagination-page-link {
@@ -59,6 +82,13 @@
 
                 .pagination-previous {
                     a {
+                        span {
+                            padding-right: 10px;
+                        }
+                    }
+
+                    button {
+
                         span {
                             padding-right: 10px;
                         }

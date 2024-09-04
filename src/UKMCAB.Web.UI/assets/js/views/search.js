@@ -25,10 +25,23 @@
     const searchBox = document.querySelector(".search-box");
     const clearButton = document.querySelector(".clear-icon");
 
+    const skipToSearchResultsAnchor = document.getElementById("skip-to-search-results-anchor");
+    const pageTitleElement = document.getElementById("search-page-title");
+
+    const searchKeywordButton = document.getElementById("search-keyword-button");
+    const searchForm = document.getElementById('search-results-form');
+
     var mql;
 
     function init() {
         if (searchPage && searchResultsForm) {
+            searchForm.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchKeywordButton.click();
+                }
+            });
+
             searchFilterContainer.classList.add("search-result-mobile-hidden");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);
@@ -86,11 +99,13 @@
     function showFilter(e) {
         e.preventDefault();
         toggleFilter(true);
+        searchResultsListToggle.focus();
     }
 
     function showList(e) {
         e.preventDefault();
         toggleFilter(false);
+        searchResultsFilterToggle.focus();
     }
 
     function toggleFilter(filter) {
@@ -103,6 +118,8 @@
             feedbackSection.classList.add("search-result-mobile-hidden");
             searchKeywordContainer.classList.add("search-result-mobile-hidden");
             searchResultsPaginationMobile.classList.add("search-result-mobile-hidden");
+            skipToSearchResultsAnchor.classList.add("search-result-mobile-hidden");
+            pageTitleElement.classList.add("search-result-mobile-hidden");
 
             searchFilterContainer.classList.remove("search-result-mobile-hidden");
         } else {
@@ -114,6 +131,8 @@
             feedbackSection.classList.remove("search-result-mobile-hidden");
             searchKeywordContainer.classList.remove("search-result-mobile-hidden");
             searchResultsPaginationMobile.classList.remove("search-result-mobile-hidden");
+            skipToSearchResultsAnchor.classList.remove("search-result-mobile-hidden");
+            pageTitleElement.classList.remove("search-result-mobile-hidden");
 
             searchFilterContainer.classList.add("search-result-mobile-hidden");
         }

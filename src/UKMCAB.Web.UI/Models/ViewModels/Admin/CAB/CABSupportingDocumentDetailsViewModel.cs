@@ -19,6 +19,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
 
         public string? CABId { get; set; }
 
+        public bool HasPublicDocuments => Documents?.Any(c => c.IsPublic) ?? false;
+
         public bool SupportingDocumentsCompleted()
         {
             if (this.Documents != null && this.Documents.Any())

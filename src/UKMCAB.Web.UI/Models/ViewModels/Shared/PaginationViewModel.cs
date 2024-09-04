@@ -1,8 +1,4 @@
-﻿using StackExchange.Redis;
-using System.Web;
-using UKMCAB.Data;
-
-namespace UKMCAB.Web.UI.Models.ViewModels.Shared
+﻿namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 {
     public class PaginationViewModel
     {

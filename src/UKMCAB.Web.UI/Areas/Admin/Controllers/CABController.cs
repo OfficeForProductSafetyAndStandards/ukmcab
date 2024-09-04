@@ -604,6 +604,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var subCategories = await _legislativeAreaService.GetSubCategoriesForDocumentAsync(latest);
             var products = await _legislativeAreaService.GetProductsForDocumentAsync(latest);
             var procedures = await _legislativeAreaService.GetProceduresForDocumentAsync(latest);
+            var designatedStandards = await _legislativeAreaService.GetDesignatedStandardsForDocumentAsync(latest);
 
             var cabNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest);
             var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, userId);
@@ -626,7 +627,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     categories,
                     subCategories,
                     products,
-                    procedures)
+                    procedures,
+                    designatedStandards)
                 .Build();
 
             ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);

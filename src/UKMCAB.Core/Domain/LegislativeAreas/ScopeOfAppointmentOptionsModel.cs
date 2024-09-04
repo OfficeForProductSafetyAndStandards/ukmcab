@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Core.Domain.LegislativeAreas;
+﻿using UKMCAB.Data.Pagination;
+
+namespace UKMCAB.Core.Domain.LegislativeAreas;
 
 public class ScopeOfAppointmentOptionsModel
 {
@@ -12,4 +14,6 @@ public class ScopeOfAppointmentOptionsModel
     public IEnumerable<ProductModel> Products { get; set; } = Array.Empty<ProductModel>();
 
     public IEnumerable<ProcedureModel> Procedures { get; set; } = Array.Empty<ProcedureModel>();
+    public IEnumerable<DesignatedStandardModel> DesignatedStandards { get; set; } = Array.Empty<DesignatedStandardModel>();
+    public PaginationInfo? PaginationInfo { get; set; }
 }

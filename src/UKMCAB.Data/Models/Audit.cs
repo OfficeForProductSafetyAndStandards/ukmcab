@@ -131,16 +131,18 @@ namespace UKMCAB.Data.Models
                     previousScopes.Count(ps => !currentScopes.Contains(ps));
                 var countScopesAdded =
                     currentScopes.Count(cs => !previousScopes.Contains(cs));
+                var standardName = la.Value.ToString() == DataConstants.LegislativeAreasWithDifferentDataModel.Construction ? 
+                    "designated standard" : "scope of appointment";
                 if (countScopesAdded > 0)
                 {
                     sb.Append(
-                        $"<p class=\"govuk-body\">{countScopesAdded} scope of appointment{(countScopesAdded > 1 ? "s" : null)} {(countScopesAdded > 1 ? "have" : "has")} been added to {la.Value}.</p>");
+                        $"<p class=\"govuk-body\">{countScopesAdded} {standardName}{(countScopesAdded > 1 ? "s" : null)} {(countScopesAdded > 1 ? "have" : "has")} been added to {la.Value}.</p>");
                 }
 
                 if (countScopesRemoved > 0)
                 {
                     sb.Append(
-                        $"<p class=\"govuk-body\">{countScopesRemoved} scope of appointment{(countScopesRemoved > 1 ? "s" : null)} {(countScopesRemoved > 1 ? "have" : "has")} been removed from {la.Value}.</p>");
+                        $"<p class=\"govuk-body\">{countScopesRemoved} {standardName}{(countScopesRemoved > 1 ? "s" : null)} {(countScopesRemoved > 1 ? "have" : "has")} been removed from {la.Value}.</p>");
                 }
             }
         }
@@ -441,10 +443,13 @@ namespace UKMCAB.Data.Models
             UnpublishApprovalRequestDeclined =
                 "Request to unpublish declined"; // UKAS request to un publish and create draft
 
+        public const string LegislativeAreaAdded = "Legislative area added";
         public const string ApproveLegislativeArea = "Legislative area approved";
         public const string DeclineLegislativeArea = "Legislative area declined";
         public const string LegislativeAreaReviewDateAdded = "Legislative area review date added";
         public const string LegislativeAreaReviewDateUpdated = "Legislative area review date updated";
+        public static string DesignatedStandardsAdded(int number) => $"{number} designated standards added to construction";
+        public static string DesignatedStandardsRemoved(int number) => $"{number} designated standards removed from construction";
     }
 
     public class AuditUserActions

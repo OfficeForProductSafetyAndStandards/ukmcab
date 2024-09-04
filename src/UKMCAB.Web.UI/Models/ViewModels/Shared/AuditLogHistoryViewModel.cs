@@ -8,18 +8,35 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
     {
         public readonly string[] PublicAuditActionsToShow =
         {
-            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchivedToDraft, AuditCABActions.LegislativeAreaReviewDateAdded, AuditCABActions.LegislativeAreaReviewDateUpdated
+            AuditCABActions.Published, 
+            AuditCABActions.Archived, 
+            AuditCABActions.UnarchivedToDraft, 
+            AuditCABActions.LegislativeAreaAdded, 
+            AuditCABActions.LegislativeAreaReviewDateAdded, 
+            AuditCABActions.LegislativeAreaReviewDateUpdated
         };
 
         public readonly string[] LoggedInUserAuditActionsToShow =
         {
-            AuditCABActions.Published, AuditCABActions.Archived, AuditCABActions.UnarchivedToDraft,
-            AuditCABActions.Unarchived, AuditCABActions.Created, AuditCABActions.CABApproved,
-            AuditCABActions.CABDeclined, AuditCABActions.SubmittedForApproval, AuditCABActions.UnarchiveApprovalRequest,
-            AuditCABActions.DraftDeleted, AuditCABActions.UnArchiveApprovalRequestDeclined,
-            AuditCABActions.ArchiveApprovalRequest, AuditCABActions.UnpublishApprovalRequest,
-            AuditCABActions.UnpublishApprovalRequestDeclined, AuditCABActions.ApproveLegislativeArea, AuditCABActions.DeclineLegislativeArea,
-            AuditCABActions.LegislativeAreaReviewDateAdded, AuditCABActions.LegislativeAreaReviewDateUpdated
+            AuditCABActions.Published, 
+            AuditCABActions.Archived, 
+            AuditCABActions.UnarchivedToDraft,
+            AuditCABActions.Unarchived,
+            AuditCABActions.Created, 
+            AuditCABActions.CABApproved,
+            AuditCABActions.CABDeclined, 
+            AuditCABActions.SubmittedForApproval, 
+            AuditCABActions.UnarchiveApprovalRequest,
+            AuditCABActions.DraftDeleted,
+            AuditCABActions.UnArchiveApprovalRequestDeclined,
+            AuditCABActions.ArchiveApprovalRequest, 
+            AuditCABActions.UnpublishApprovalRequest,
+            AuditCABActions.UnpublishApprovalRequestDeclined,
+            AuditCABActions.LegislativeAreaAdded,
+            AuditCABActions.ApproveLegislativeArea, 
+            AuditCABActions.DeclineLegislativeArea,
+            AuditCABActions.LegislativeAreaReviewDateAdded,
+            AuditCABActions.LegislativeAreaReviewDateUpdated
         };
 
 

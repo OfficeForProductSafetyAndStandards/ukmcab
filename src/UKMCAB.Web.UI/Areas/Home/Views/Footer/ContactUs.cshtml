@@ -1,18 +1,27 @@
 ﻿@model UKMCAB.Web.UI.Models.ViewModels.Footer.ContactUsViewModel
 @{
-    // TEMPORARILY HIDE Contact Us functionality - UKMCAB-1983 / hotfix 4.2.1 
+    // TEMPORARILY HIDE Contact Us functionality - UKMCAB-1983 / hotfix 4.2.1
     var mailtoLink = "mailto:" + @Model.Email;
 }
 
+@section BackButton
+{
+    <div class="govuk-width-container ">
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                @if (!string.IsNullOrWhiteSpace(Model.ReturnUrl))
+                {
+                    <a href="@Model.ReturnUrl" class="govuk-back-link">Back</a>
+                }
+            </div>
+        </div>
+    </div>
+}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Contact us</h1>
         <p class="govuk-body">
             Email us at <a href=@mailtoLink>@Model.Email</a> with any questions about using this service.
         </p>
-        @if (!string.IsNullOrWhiteSpace(Model.ReturnUrl))
-        {
-            <a href="@Model.ReturnUrl" class="govuk-link">Back</a>
-        }
     </div>
 </div>

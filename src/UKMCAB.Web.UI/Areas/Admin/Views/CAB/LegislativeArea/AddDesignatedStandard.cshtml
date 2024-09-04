@@ -1,0 +1,171 @@
+@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea.DesignatedStandardsViewModel
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-m">Edit a CAB</span>
+        <h1 class="govuk-heading-l">Legislative area</h1>
+    </div>
+</div>
+
+<div id="add-designated-standard-page" class="govuk-grid-row govuk-!-margin-bottom-4">
+    <div class="govuk-grid-column-two-thirds">
+
+        @if (!ViewData.ModelState.IsValid) 
+        {
+
+            <govuk-error-summary>
+            @foreach (var modelState in ViewData.ModelState.Values)
+            {
+                foreach (var error in modelState.Errors)
+                {
+                    <govuk-error-summary-item href="#">@error.ErrorMessage</govuk-error-summary-item>
+                }
+            }
+            </govuk-error-summary>
+        }
+
+        <form id="designatedStandardsForm" method="post">
+            <input type="hidden" asp-for="CABId" />
+            <input type="hidden" asp-for="Title" />
+            <input type="hidden" asp-for="ScopeId" />
+            <input type="hidden" asp-for="IsFromSummary" />
+            <input type="hidden" asp-for="CompareScopeId" />
+            <input type="hidden" asp-for="LegislativeArea" />
+            <input type="hidden" asp-for="PaginationSearchTerm" />
+            @for (int idx = 0; idx < Model.SelectedDesignatedStandardIds.Count; idx++)
+            {
+                @Html.HiddenFor(model => Model.SelectedDesignatedStandardIds[idx])
+            }
+            @for (int idx = 0; idx < Model.PageDesignatedStandardsIds.Count; idx++)
+            {
+                @Html.HiddenFor(model => Model.PageDesignatedStandardsIds[idx])
+            }
+
+            <h2 class="govuk-heading-s">Legislative area</h2>
+            <p class="govuk-body">@Model.LegislativeArea</p>
+
+            <div class="ukmcab-float__clear">
+                <govuk-fieldset>
+                    <govuk-fieldset-legend class="govuk-fieldset__legend--s">
+                        Designated Standards
+                    </govuk-fieldset-legend>
+
+                    <div id="designated-standard-search-keywords-input-container" class="width-three-fifth">
+                        <input type="text" asp-for="SearchTerm" class="govuk-input search-box" />
+                        <button class="clear-icon" type="submit" name="submitType" aria-label="Clear your search terms" asp-route-SearchTerm="" asp-route-pageNumber=1 value="@Constants.SubmitType.Search"></button>
+                        <button id="search-keyword-button" type="submit" name="submitType" asp-route-pageNumber=1 value="@Constants.SubmitType.Search">Search</button>
+                    </div>
+
+                    <govuk-checkboxes asp-for="@Model.PageSelectedDesignatedStandardIds">
+                        <govuk-checkboxes-fieldset>
+                            <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--m">
+                            </govuk-checkboxes-fieldset-legend>
+                            <govuk-checkboxes-item id="add-designated-standard-select-all" value="@Model.SelectAll.Value" checked="@Model.SelectAll.Selected">
+                                @Model.SelectAll.Text
+                            </govuk-checkboxes-item>
+
+                            @{
+                                var selected = Model.PageDesignatedStandardViewModels.Where(d => d.IsSelected);
+                            }
+                            @foreach (var ds in Model.PageDesignatedStandardViewModels)
+                            {
+                                var item = new SelectListItem(ds.Name, ds.Id.ToString());
+                                item.Selected = ds.IsSelected;
+
+                                <govuk-checkboxes-item value="@item.Value" checked="@item.Selected">
+                                    @item.Text
+
+                                    <govuk-details>
+                                        <govuk-details-summary>
+                                            Details
+                                        </govuk-details-summary>
+                                        <govuk-details-text>
+                                            <p class="govuk-heading-s">Reference number</p>
+                                            @foreach (var refNo in ds.ReferenceNumber)
+                                            {
+                                                <p class="govuk-body">@refNo</p>
+                                            }
+
+                                            <p class="govuk-heading-s">Public reference</p>
+                                            <p class="govuk-body">@ds.NoticeOfPublicationReference</p>
+
+                                        </govuk-details-text>
+                                    </govuk-details>
+                                </govuk-checkboxes-item>
+                            }
+                        </govuk-checkboxes-fieldset>
+                    </govuk-checkboxes>
+                </govuk-fieldset>
+            </div>
+
+            @if (Model.PaginationInfo is not null)
+            {
+                <div class="pagination-container">
+                    <div class="pagination-detail-container">
+                        @if (Model.PaginationInfo.QueryCount == 0)
+                        {
+                            <span>Showing <span class="govuk-!-font-weight-bold">0</span> designated standards</span>
+                        }
+                        else
+                        {
+                            <span>Showing @Model.PaginationInfo.FirstPageItemNo - @Model.PaginationInfo.LastPageItemNo of <span class="govuk-!-font-weight-bold">@Model.PaginationInfo.QueryCount</span> designated standards</span>
+                        }
+                    </div>
+
+                    @if (Model.PaginationInfo.PageCount > 1)
+                    {
+                        <nav class="pagination-links-container">
+                            <ul class="pagination-links">
+                                @if (Model.PaginationInfo.HasPreviousPage)
+                                {
+                                    <li class="pagination-link-item pagination-previous">
+                                        <govuk-button name="prev" type="submit" asp-route-pageNumber=@(Model.PaginationInfo.PageNumber - 1) asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
+                                            <span>Previous</span>
+                                        </govuk-button>
+                                    </li>
+                                }
+                                @foreach (var pageNumber in Model.PaginationInfo.PageRange)
+                                {
+                                    if (pageNumber == Model.PageNumber)
+                                    {
+                                        <li class="pagination-link-item pagination-page-link" aria-current="page">@Model.PageNumber</li>
+                                    }
+                                    else
+                                    {
+                                        <li class="pagination-link-item pagination-page-link">
+                                            <govuk-button name="@pageNumber" type="submit" asp-route-pageNumber=@pageNumber asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
+                                                <span>@pageNumber</span>
+                                            </govuk-button>
+                                        </li>
+                                    }
+                                    if (pageNumber == 1 && !Model.PaginationInfo.PageRange.Contains(2))
+                                    {
+                                        <li class="pagination-link-item pagination-page-link" aria-hidden="true"><span>&hellip;</span></li>
+                                    }
+                                }
+                                @if (Model.PaginationInfo.HasNextPage)
+                                {
+                                    <li class="pagination-link-item">
+                                        <govuk-button name="next" type="submit" asp-route-pageNumber=@(Model.PaginationInfo.PageNumber + 1) asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
+                                            <span>Next</span>
+                                        </govuk-button>
+                                    </li>
+                                }
+                            </ul>
+                        </nav>
+                    }
+                </div>
+            }
+        </form>
+        
+    </div>
+</div>
+
+<div id="add-designated-standard-page" class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-button-group">
+            <govuk-button name="submitType" type="submit" form="designatedStandardsForm" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
+            <a class="govuk-link govuk-link--no-visited-state" asp-area="admin" asp-controller="cab" asp-action="summary" asp-route-id="@Model.CABId">Cancel</a>
+        </div>
+    </div>
+</div>

@@ -26,6 +26,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
         private Mock<IReadOnlyRepository<SubCategory>> _mockSubCategoryRepository;
         private Mock<IReadOnlyRepository<Product>> _mockProductRepository;
         private Mock<IReadOnlyRepository<Procedure>> _mockProcedureRepository;
+        private Mock<IReadOnlyRepository<DesignatedStandard>> _mockDesignatedStandardRepository;
         private Mock<IMapper> _mockMapper;
 
         private LegislativeAreaService _sut;
@@ -39,6 +40,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockSubCategoryRepository = new Mock<IReadOnlyRepository<SubCategory>>(MockBehavior.Strict);
             _mockProductRepository = new Mock<IReadOnlyRepository<Product>>(MockBehavior.Strict);
             _mockProcedureRepository = new Mock<IReadOnlyRepository<Procedure>>(MockBehavior.Strict);
+            _mockDesignatedStandardRepository = new Mock<IReadOnlyRepository<DesignatedStandard>>(MockBehavior.Strict);
             _mockMapper = new Mock<IMapper>(MockBehavior.Strict);
 
             _sut = new LegislativeAreaService(
@@ -47,7 +49,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 _mockCategoryRepository.Object, 
                 _mockProductRepository.Object, 
                 _mockProcedureRepository.Object,
-                _mockSubCategoryRepository.Object, 
+                _mockSubCategoryRepository.Object,
+                _mockDesignatedStandardRepository.Object,
                 _mockMapper.Object);
         }
 

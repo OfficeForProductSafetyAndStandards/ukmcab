@@ -478,7 +478,35 @@ resource cosmosDbContainerProducts  'Microsoft.DocumentDB/databaseAccounts/sqlDa
   }
 }
 
-
+resource cosmosDbContainerDesignatedStandards 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'designated-standards'
+  properties: {
+    resource: {
+      id: 'designated-standards'
+      partitionKey: {
+        paths: [
+          '/legislativeAreaId'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
 
 /*
   KEY VAULT

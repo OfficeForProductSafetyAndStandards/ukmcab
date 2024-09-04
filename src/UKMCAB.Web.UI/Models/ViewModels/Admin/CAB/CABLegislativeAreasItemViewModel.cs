@@ -40,6 +40,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowProductColumn => ScopeOfAppointments != null &&
                                          ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.Product));
 
+        public bool ShowProcedureColumn => ScopeOfAppointments != null &&
+                                         ScopeOfAppointments.Any(x => x.Procedures != null && x.Procedures!.Any());
+
+        public bool ShowDesignatedStandardColumns => ScopeOfAppointments != null &&
+                                          ScopeOfAppointments.Any(x => x.DesignatedStandards != null && x.DesignatedStandards.Any());
+
         public LAStatus Status { get; set; }
         public string StatusName => GetStatusName();
         public string StatusCssStyle { get; set; } = string.Empty;
@@ -49,9 +55,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsComplete => IsProvisional.HasValue &&
                                     (ReviewDate == null || (ReviewDate != null && ReviewDate >= DateTime.Today)) &&
                                     (!CanChooseScopeOfAppointment || (ScopeOfAppointments.Any() && ScopeOfAppointments.All(
-                                        y =>
-                                            y.Procedures != null && y.Procedures.Any() &&
-                                            y.Procedures.All(z => !string.IsNullOrEmpty(z))
+                                        y => 
+                                            (y.Procedures != null && y.Procedures.Any() &&
+                                            y.Procedures.All(z => !string.IsNullOrEmpty(z))) ||
+                                            (y.DesignatedStandards != null && y.DesignatedStandards.Any())
                                         )));
         private string GetStatusName()
         {

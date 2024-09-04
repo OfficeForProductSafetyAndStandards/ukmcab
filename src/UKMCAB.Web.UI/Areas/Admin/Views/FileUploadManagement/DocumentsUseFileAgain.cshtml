@@ -30,65 +30,77 @@
                 </h2>
             </div>
 
-            <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IndexofSelectedFile))">
+            <div class="govuk-form-group govuk-main-wrapper @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, nameof(Model.IndexofSelectedFile))">
                 <fieldset class="govuk-fieldset" aria-describedby="selectFileToUseAgainHint">
                     <p class="govuk-error-message">
                         <span asp-validation-for="IndexofSelectedFile" class="govuk-error-message"></span>
                     </p>
 
                     @* Header *@
-                    <div>
-                        <div class="width-thirteen-twentieth ukmcab-float__left mobile-no-display">
+                    <div style="margin-bottom:0" class="govuk-grid-row display-from-desktop">
+                        <div class="govuk-grid-column-one-half">
                             <h3 class="govuk-heading-s">File</h3>
                         </div>
-                        <div class="ukmcab-float__left">
-                            <h3 class="govuk-heading-s ukmcab-padding-left-40 mobile-no-display">Category</h3>
+                        <div class="govuk-grid-column-one-quarter">
+                            <h3 class="govuk-heading-s">Category</h3>
+                        </div>
+                        <div class="govuk-grid-column-one-quarter">
+                            <h3 class="govuk-heading-s">Publications</h3>
                         </div>
                     </div>
 
-                    <div class="ukmcab-float__left width-full">
-                        <hr class="ukmcab-border"/>
-                    </div>
+                    <hr class="ukmcab-border" />
 
                     <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
 
                         @for (int i = 0; i < Model.UploadedFiles.Count; i++)
                         {
                             var uploadedFile = Model.UploadedFiles[i];
+                            
+                            <div class="govuk-grid-row">
+                                <div class="govuk-grid-column-full">
+                                    <div class="govuk-radios__item">
+                                        @*Row 1: Radio Row*@
+                                        <div class="row">
+                                            <div class="width-one-tenth">
+                                                <input asp-for="UploadedFiles![i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
+                                                <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
+                                                <input asp-for="UploadedFiles![i].Category" type="hidden" value="@uploadedFile.Category">
+                                                <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
+                                                <input asp-for="UploadedFiles![i].Publication" type="hidden" value="@uploadedFile.Publication">
+                                            </div>
+                                            <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
+                                                <input class="govuk-radios__input" asp-for="IndexofSelectedFile" type="radio" value="@i">
+                                                <label class="govuk-label govuk-radios__label" asp-for="IndexofSelectedFile">
+                                                    <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@uploadedFile.FileName</a>
+                                                </label>
+                                            </div>
 
-                            <div class="govuk-radios__item ukmcab-padding-bottom-10">
-                                @* Row 1*@
-                                <div class="row">
-                                    <div class="width-one-tenth">
-                                        <input asp-for="UploadedFiles![i].Label" type="hidden" id="UploadedFiles[@i].Label" value="@uploadedFile.Label">
-                                        <input asp-for="UploadedFiles![i].FileName" type="hidden" value="@uploadedFile.FileName">
-                                        <input asp-for="UploadedFiles![i].Category" type="hidden" value="@uploadedFile.Category">
-                                        <input asp-for="UploadedFiles![i].IsDuplicated" type="hidden" value="@uploadedFile.IsDuplicated">
-                                    </div>
-                                    <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
-                                        <input class="govuk-radios__input" asp-for="IndexofSelectedFile" type="radio" value="@i">
-                                        <label class="govuk-label govuk-radios__label" asp-for="IndexofSelectedFile">
-                                            <span class="file-number">@(i + 1).</span> <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Documents">@uploadedFile.FileName</a>
-                                        </label>
-                                    </div>
-
-                                    <div class="width-one-fifth ukmcab-float__left">
-                                        <label class="govuk-label break-word"></label>
+                                            <div class="width-one-fifth ukmcab-float__left">
+                                                <label class="govuk-label break-word"></label>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             @* Row 2*@
-                            <div class="row">
-                                <div class="width-three-fifth ukmcab-float__left ukmcab-padding-left-35 ukmcab-padding-bottom-15">
-                                    <label class="govuk-label govuk-label--s desktop-no-display">File</label>
-                                    <p class="govuk-body file-label">@uploadedFile.Label</p>
+                            <div class="govuk-grid-row">
+                                <div class="govuk-grid-column-full govuk-grid-column-one-half-from-desktop">
+                                    <label class="govuk-label govuk-label--s display-until-desktop">File</label>
+                                    <p class="govuk-body file-label document-file-name">@uploadedFile.Label</p>
                                 </div>
 
-                                <div class="width-three-tenth ukmcab-float__left ukmcab-padding-left-40">
-                                    <label class="govuk-label govuk-label--s desktop-no-display">Category</label>
+                                <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop">
+                                    <label class="govuk-label govuk-label--s display-until-desktop">Category</label>
                                     <p class="govuk-body">
                                         @Html.Conditional(!string.IsNullOrWhiteSpace(uploadedFile.Category), uploadedFile.Category, @Constants.NotAssigned)
+                                    </p>
+                                </div>
+                                <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop">
+                                    <label class="govuk-label govuk-label--s display-until-desktop">Publications</label>
+                                    <p class="govuk-body">
+                                        @uploadedFile.Publication
                                     </p>
                                 </div>
                             </div>

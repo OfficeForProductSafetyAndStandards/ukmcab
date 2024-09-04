@@ -16,6 +16,18 @@
     }
 }
 
+.display-until-desktop {
+    @include govuk-media-query($from: desktop) {
+        display: none !important;
+    }
+}
+
+.display-from-desktop {
+    @include govuk-media-query($until: desktop) {
+        display: none !important;
+    }
+}
+
 .app-no-display {
     display: none !important;
 }
@@ -128,10 +140,16 @@
     .ukmcab-padding-right-10 {
         padding-right: 0 !important;
     }
+    .ukmcab-padding-right-20 {
+        padding-right: 0 !important;
+    }
 }
 
 .ukmcab-padding-right-10 {
     padding-right: 10px !important;
+}
+.ukmcab-padding-right-20 {
+    padding-right: 20px !important;
 }
 
 .ukmcab-padding-top-5 {
