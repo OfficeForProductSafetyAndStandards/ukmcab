@@ -25,8 +25,6 @@
         }
 
         <form id="designatedStandardsForm" method="post">
-            <govuk-button type="submit" disabled="true" style="display: none"></govuk-button>
-
             <input type="hidden" asp-for="CABId" />
             <input type="hidden" asp-for="Title" />
             <input type="hidden" asp-for="ScopeId" />
@@ -68,7 +66,7 @@
 
                     <div id="designated-standard-search-keywords-input-container" class="width-three-fifth">
                         <input type="text" asp-for="SearchTerm" class="govuk-input search-box" />
-                        <button class="clear-icon" type="submit" name="submitType" aria-label="Clear your search terms" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected =@Model.ShowAllSelected value="@Constants.SubmitType.Search"></button>
+                        <button class="clear-icon" type="submit" name="submitType" aria-label="Clear your search terms" asp-route-SearchTerm="" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected =@Model.ShowAllSelected value="@Constants.SubmitType.Search"></button>
                         <button id="search-keyword-button" type="submit" name="submitType" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected =@Model.ShowAllSelected value="@Constants.SubmitType.Search">Search</button>
                     </div>
 
