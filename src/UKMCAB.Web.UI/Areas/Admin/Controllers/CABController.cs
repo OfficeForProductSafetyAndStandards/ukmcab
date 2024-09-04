@@ -535,7 +535,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 SelectedPublishType = model.SelectedPublishType,
                 CabDetailsViewModel = new CABDetailsViewModel(latest, User),
                 CabContactViewModel = new CABContactViewModel(latest),
-                CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
+                CabBodyDetailsMRAViewModel = new CABBodyDetailsMRAViewModel(latest),
                 CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latest),
                 CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latest)
             };
@@ -682,7 +682,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var cabDetails = new CABDetailsViewModel(latest, User, cabNameAlreadyExists);
             var cabContact = new CABContactViewModel(latest);
-            var cabBody = new CABBodyDetailsViewModel(latest);
+            var cabBody = new CABBodyDetailsMRAViewModel(latest);
             var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
             var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
             var cabHistory = new CABHistoryViewModel(latest, currentUrl);
@@ -709,7 +709,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 .WithLegislativeAreasPendingApprovalCount(latest)
                 .WithCabDetails(cabDetails)
                 .WithCabContactViewModel(cabContact)
-                .WithCabBodyDetailsViewModel(cabBody)
+                .WithCabBodyDetailsMRAViewModel(cabBody)
                 .WithCabLegislativeAreasViewModel(cabLegislativeAreas)
                 .WithProductScheduleDetailsViewModel(cabProductSchedules)
                 .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)

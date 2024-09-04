@@ -10,7 +10,7 @@ namespace UKMCAB.Web.UI.Models.Builders
         ICabSummaryViewModelBuilder WithReturnUrl(string? returnUrl);
         ICabSummaryViewModelBuilder WithCabDetails(CABDetailsViewModel cabDetailsViewModel);
         ICabSummaryViewModelBuilder WithCabContactViewModel(CABContactViewModel cabContactViewModel);
-        ICabSummaryViewModelBuilder WithCabBodyDetailsViewModel(CABBodyDetailsViewModel cabBodyDetailsViewModel);
+        ICabSummaryViewModelBuilder WithCabBodyDetailsMRAViewModel(CABBodyDetailsMRAViewModel cabBodyDetailsMRAViewModel);
         ICabSummaryViewModelBuilder WithCabLegislativeAreasViewModel(CABLegislativeAreasViewModel cabLegislativeAreasViewModel);
         ICabSummaryViewModelBuilder WithProductScheduleDetailsViewModel(CABProductScheduleDetailsViewModel cabProductScheduleDetailsViewModel);
         ICabSummaryViewModelBuilder WithCabSupportingDocumentDetailsViewModel(CABSupportingDocumentDetailsViewModel cabSupportingDocumentDetailsViewModel);

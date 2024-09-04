@@ -43,8 +43,14 @@
         <form id="cab-body-details-form" method="post">
             <input type="hidden" asp-for="IsFromSummary" />
             <input type="hidden" asp-for="ReturnUrl" />
-            <input type="hidden" asp-for="TestingLocations" />
-            <input type="hidden" asp-for="BodyTypes" />
+            @for (int i = 0; i < Model.TestingLocations.Count; i++)
+            {
+                @Html.HiddenFor(model => Model.TestingLocations[i])
+            }
+            @for (int i = 0; i < Model.BodyTypes.Count; i++)
+            {
+                @Html.HiddenFor(model => Model.BodyTypes[i])
+            }
             <div class="govuk-form-group @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState,"MRACountries")">
                 <fieldset class="govuk-fieldset" aria-describedby="body-types-hint">
                     <h3 class="govuk-label-wrapper">

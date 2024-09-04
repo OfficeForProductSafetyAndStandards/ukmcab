@@ -12,7 +12,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             IsCompleted = TestingLocations.Any() && BodyTypes.Any() && (!isMRA || MRACountries.Any());
         }
 
-        [CannotBeEmpty(ErrorMessage = "Select a country")]
+        [CannotBeEmptyIfTrue(nameof(isMRA),ErrorMessage = "Select a country")]
         public List<string> MRACountries { get; set; } = new();
 
         public new string? Title => "Body MRA details";

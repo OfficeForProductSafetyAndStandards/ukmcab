@@ -15,7 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? CABId { get; set; }
         public CABDetailsViewModel? CabDetailsViewModel { get; set; }
         public CABContactViewModel? CabContactViewModel { get; set; }
-        public CABBodyDetailsViewModel? CabBodyDetailsViewModel { get; set; }
+        public CABBodyDetailsMRAViewModel? CabBodyDetailsMRAViewModel { get; set; }
         public CABLegislativeAreasViewModel? CabLegislativeAreasViewModel { get; set; }
         public CABProductScheduleDetailsViewModel? CABProductScheduleDetailsViewModel { get; set; }
         public CABSupportingDocumentDetailsViewModel? CABSupportingDocumentDetailsViewModel { get; set; }
@@ -145,8 +145,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool IsComplete =>
             CabDetailsViewModel != null &&
             CabDetailsViewModel.IsCompleted &&
-            CabBodyDetailsViewModel != null &&
-            CabBodyDetailsViewModel.IsCompleted &&
+            CabBodyDetailsMRAViewModel != null &&
+            CabBodyDetailsMRAViewModel.IsCompleted &&
             CabContactViewModel != null &&
             CabContactViewModel.IsCompleted &&
             CabLegislativeAreasViewModel != null &&
