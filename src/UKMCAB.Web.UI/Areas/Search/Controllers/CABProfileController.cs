@@ -499,7 +499,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit =
                 isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
-            var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
+            var publishedAudit = auditLogOrdered.FirstOrDefault(al => al.Action == AuditCABActions.Published);
 
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
             var hasDraft = fullHistory.Any(d => d.StatusValue == Status.Draft);

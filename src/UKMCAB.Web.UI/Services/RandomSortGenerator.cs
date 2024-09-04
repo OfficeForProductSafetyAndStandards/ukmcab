@@ -73,7 +73,7 @@ namespace UKMCAB.Web.UI.Services
             foreach (var cab in allCabs)
             {
                 cab.RandomSort = Guid.NewGuid().ToString();
-                await _repository.UpdateAsync(cab);
+                await _repository.UpdateAsync(cab, cab.LastUpdatedDate);
             }
 
             await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
