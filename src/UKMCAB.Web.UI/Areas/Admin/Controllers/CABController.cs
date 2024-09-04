@@ -248,8 +248,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
 
-                var isMRA = latestDocument.BodyTypes.Any(t => t.Equals("UK body designated under MRA"));
-                if (!isMRA)
+                if (!model.isMRA)
                 {
                     latestDocument.MRACountries = new List<string>();
                 } 
@@ -257,7 +256,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    if (isMRA)
+                    if (model.isMRA)
                     {
                         return RedirectToAction("BodyDetailsMRA", "CAB", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl, fromSummary = model.IsFromSummary });
                     }
