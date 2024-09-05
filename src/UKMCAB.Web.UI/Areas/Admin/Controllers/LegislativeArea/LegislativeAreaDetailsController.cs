@@ -697,12 +697,12 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             categoryName = category!.Name;
         }
 
-        var existingProcedures = existingScopeOfAppointment?.ProductIdAndProcedureIds.SelectMany(p => p.ProcedureIds)
+        var existingProcedures = existingScopeOfAppointment?.ProductIdAndProcedureIds.Where(p => p.ProductId == productId).SelectMany(p => p.ProcedureIds)
             .ToList() ?? new();
 
         if (!existingProcedures.Any())
         {
-            existingProcedures = existingScopeOfAppointment?.CategoryIdAndProcedureIds.SelectMany(p => p.ProcedureIds)
+            existingProcedures = existingScopeOfAppointment?.CategoryIdAndProcedureIds.Where(c => c.CategoryId == categoryId).SelectMany(p => p.ProcedureIds)
             .ToList();
         }
 
