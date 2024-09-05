@@ -660,6 +660,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         Guid? productId = null;
         Guid? categoryId = null;
+        Guid? areaOfCompetencyId = null;
 
         if (scopeOfAppointment == null)
             return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary });
@@ -678,8 +679,14 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             categoryId = scopeOfAppointment.CategoryId;
         }
 
+        if (scopeOfAppointment.AreaOfCompetencyIds.Any() && indexOfProduct < scopeOfAppointment.AreaOfCompetencyIds.Count)
+        {
+            areaOfCompetencyId = scopeOfAppointment.AreaOfCompetencyIds[indexOfProduct];
+        }
+
         var procedures = await GetProcedureSelectListItemsAsync(productId, categoryId,
-            scopeOfAppointment.PurposeOfAppointmentId, scopeOfAppointment.AreaOfCompetencyId);
+            scopeOfAppointment.PurposeOfAppointmentId, areaOfCompetencyId);
+
         var selectListItems = procedures.ToList();
 
         var legislativeArea =
@@ -691,6 +698,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var subCategory = scopeOfAppointment.SubCategoryId != null
             ? await _legislativeAreaService.GetSubCategoryByIdAsync((Guid)scopeOfAppointment.SubCategoryId)
             : null;
+        var ppeProductType = scopeOfAppointment.PpeProductTypeId != null
+            ? await _legislativeAreaService.GetPpeProductTypeByIdAsync((Guid)scopeOfAppointment.PpeProductTypeId)
+            : null;
+        var protectionAgainstRisk = scopeOfAppointment.ProtectionAgainstRiskId != null
+            ? await _legislativeAreaService.GetProtectionAgainstRiskByIdAsync((Guid)scopeOfAppointment.ProtectionAgainstRiskId)
+            : null;
+
         string? productName = null;
         if (productId != null)
         {
@@ -705,12 +719,25 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             categoryName = category!.Name;
         }
 
-        var existingProcedures = existingScopeOfAppointment?.ProductIdAndProcedureIds.SelectMany(p => p.ProcedureIds)
+        string? areaOfCompetencyName = null;
+        if (areaOfCompetencyId != null)
+        {
+            var areaOfCompetency = await _legislativeAreaService.GetAreaOfCompetencyByIdAsync((Guid)areaOfCompetencyId);
+            areaOfCompetencyName = areaOfCompetency!.Name;
+        }
+
+        var existingProcedures = existingScopeOfAppointment?.ProductIdAndProcedureIds.Where(p => p.ProductId == productId).SelectMany(p => p.ProcedureIds)
             .ToList() ?? new();
 
         if (!existingProcedures.Any())
         {
-            existingProcedures = existingScopeOfAppointment?.CategoryIdAndProcedureIds.SelectMany(p => p.ProcedureIds)
+            existingProcedures = existingScopeOfAppointment?.CategoryIdAndProcedureIds.Where(c => c.CategoryId == categoryId).SelectMany(c => c.ProcedureIds)
+            .ToList() ?? new();
+        }
+
+        if (!existingProcedures.Any())
+        {
+            existingProcedures = existingScopeOfAppointment?.AreaOfCompetencyIdAndProcedureIds.Where(a => a.AreaOfCompetencyId == areaOfCompetencyId).SelectMany(a => a.ProcedureIds)
             .ToList();
         }
 
@@ -727,12 +754,16 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             CABId = id,
             Product = productName,
             CurrentProductId = productId,
-            Procedures = selectListItems,
+            Procedures = selectListItems, 
             LegislativeAreaId = legislativeArea?.Id,
             LegislativeArea = legislativeArea?.Name,
             PurposeOfAppointment = purposeOfAppointment?.Name,
             Category = categoryName,
             CurrentCategoryId = categoryId,
+            CurrentAreaOfCompetencyId = areaOfCompetencyId,
+            PpeProductType = ppeProductType?.Name,
+            ProtectionAgainstRisk = protectionAgainstRisk?.Name,
+            AreaOfCompetency = areaOfCompetencyName,
             SubCategory = subCategory?.Name,
             IsLastAction = indexOfProduct >= scopeOfAppointment.ProductIds.Count - 1
                 || indexOfCategory >= scopeOfAppointment.CategoryIds.Count - 1,
@@ -750,6 +781,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             await _distCache.GetAsync<DocumentScopeOfAppointment>(string.Format(CacheKey, scopeId.ToString()));
         Guid? productId = null;
         Guid? categoryId = null;
+        Guid? areaOfCompetencyId = null;
 
         if (scopeOfAppointment == null)
             return RedirectToRoute(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas, new { id, fromSummary = vm.IsFromSummary });
@@ -771,6 +803,23 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                 else
                 {
                     thisProduct.ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!;
+                }
+            }
+            else if (vm.CurrentAreaOfCompetencyId.HasValue)
+            {
+                var thisAreaOfCompetency = scopeOfAppointment.AreaOfCompetencyIdAndProcedureIds.Where(p => p.AreaOfCompetencyId == vm.CurrentAreaOfCompetencyId).FirstOrDefault();
+                if (thisAreaOfCompetency == null)
+                {
+                    var areaOfCompetencyAndProcedures = new AreaOfCompetencyAndProcedures
+                    {
+                        AreaOfCompetencyId = vm.CurrentAreaOfCompetencyId,
+                        ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!
+                    };
+                    scopeOfAppointment.AreaOfCompetencyIdAndProcedureIds.Add(areaOfCompetencyAndProcedures);
+                }
+                else
+                {
+                    thisAreaOfCompetency.ProcedureIds = (List<Guid>)vm.SelectedProcedureIds!;
                 }
             }
             else
@@ -802,6 +851,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             {
                 return RedirectToRoute(Routes.AddProcedure,
                     new { id, scopeId, indexOfProduct = 0, indexOfCategory = indexOfCategory + 1, compareScopeId, fromSummary = vm.IsFromSummary });
+            }
+            if (indexOfProduct + 1 < scopeOfAppointment.AreaOfCompetencyIds.Count)
+            {
+                return RedirectToRoute(Routes.AddProcedure,
+                    new { id, scopeId, indexOfProduct = indexOfProduct + 1, indexOfCategory = 0, compareScopeId, fromSummary = vm.IsFromSummary });
             }
 
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
@@ -850,8 +904,13 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             categoryId = scopeOfAppointment.CategoryIds[indexOfProduct];
         }
 
+        if (scopeOfAppointment.AreaOfCompetencyIds.Any() && indexOfProduct < scopeOfAppointment.AreaOfCompetencyIds.Count)
+        {
+            areaOfCompetencyId = scopeOfAppointment.AreaOfCompetencyIds[indexOfProduct];
+        }
+
         vm.Procedures = await GetProcedureSelectListItemsAsync(productId, categoryId,
-            scopeOfAppointment.PurposeOfAppointmentId, scopeOfAppointment.AreaOfCompetencyId);
+            scopeOfAppointment.PurposeOfAppointmentId, areaOfCompetencyId);
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProcedure.cshtml", vm);
     }
@@ -903,7 +962,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             scopeOfAppointmentOptionsModel =
                 await _legislativeAreaService
-                    .GetNextScopeOfAppointmentOptionsForAreaOfCompetencyAsync((Guid)areaOfCompetencyId);
+                    .GetNextScopeOfAppointmentOptionsForAreaOfCompetencyAsync(areaOfCompetencyId.Value);
             if (scopeOfAppointmentOptionsModel.Procedures.Any())
             {
                 return scopeOfAppointmentOptionsModel.Procedures.OrderBy(p => p.Name).Select(x => new SelectListItem
@@ -1451,6 +1510,9 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var legislativeArea =
             await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
 
+        var ppeProductType = scopeOfAppointment.PpeProductTypeId != null ?
+            await _legislativeAreaService.GetPpeProductTypeByIdAsync((Guid)scopeOfAppointment.PpeProductTypeId) : null;
+
         if (existingScopeOfAppointment != null && existingScopeOfAppointment.ProtectionAgainstRiskId != null)
         {
             foreach (var item in selectListItems)
@@ -1464,6 +1526,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             CABId = id,
             ProtectionAgainstRisks = selectListItems,
             LegislativeArea = legislativeArea.Name,
+            PpeProductType = ppeProductType?.Name,
             IsFromSummary = fromSummary,
         };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddProtectionAgainstRisk.cshtml", vm);
@@ -1528,11 +1591,17 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var legislativeArea =
             await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
 
-        if (existingScopeOfAppointment != null && existingScopeOfAppointment.AreaOfCompetencyId != null)
+        var ppeProductType = scopeOfAppointment.PpeProductTypeId != null ?
+            await _legislativeAreaService.GetPpeProductTypeByIdAsync((Guid)scopeOfAppointment.PpeProductTypeId) : null;
+
+        var protectionAgainstRisk = scopeOfAppointment.ProtectionAgainstRiskId != null ?
+            await _legislativeAreaService.GetProtectionAgainstRiskByIdAsync((Guid)scopeOfAppointment.ProtectionAgainstRiskId) : null;
+
+        if (existingScopeOfAppointment != null && existingScopeOfAppointment.AreaOfCompetencyIds != null)
         {
             foreach (var item in selectListItems)
             {
-                item.Selected = existingScopeOfAppointment.AreaOfCompetencyId == Guid.Parse(item.Value);
+                item.Selected = existingScopeOfAppointment.AreaOfCompetencyIds.Contains(Guid.Parse(item.Value));
             }
         }
 
@@ -1541,6 +1610,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             CABId = id,
             AreaOfCompetencies = selectListItems,
             LegislativeArea = legislativeArea.Name,
+            PpeProductType = ppeProductType?.Name,
+            ProtectionAgainstRisk = protectionAgainstRisk?.Name,
             IsFromSummary = fromSummary,
         };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddAreaOfCompetency.cshtml", vm);
@@ -1556,7 +1627,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         if (ModelState.IsValid)
         {
-            scopeOfAppointment.AreaOfCompetencyId = vm.SelectedAreaOfCompetencyId;
+            scopeOfAppointment.AreaOfCompetencyIds = vm.SelectedAreaOfCompetencyId;
             await _distCache.SetAsync(string.Format(CacheKey, scopeId.ToString()), scopeOfAppointment,
                 TimeSpan.FromHours(1));
             return RedirectToRoute(Routes.AddProcedure, new { id, scopeId, compareScopeId, fromSummary = vm.IsFromSummary });

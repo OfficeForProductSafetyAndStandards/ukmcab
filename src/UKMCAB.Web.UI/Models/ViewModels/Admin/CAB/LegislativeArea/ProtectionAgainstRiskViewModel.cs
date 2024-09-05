@@ -8,6 +8,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         [Required(ErrorMessage = "Select a protection against risk")]
         public Guid? SelectedProtectionAgainstRiskId { get; set; }
         public string? LegislativeArea { get; set; }
+        public string? PpeProductType { get; set; }
         public IEnumerable<SelectListItem> ProtectionAgainstRisks { get; set; } = new List<SelectListItem>();
         public ProtectionAgainstRiskViewModel() : base("Legislative area providing protection against the following risks") { }
     }

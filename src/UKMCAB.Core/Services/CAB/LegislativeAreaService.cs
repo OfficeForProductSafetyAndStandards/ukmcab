@@ -457,7 +457,11 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<List<AreaOfCompetencyModel>> GetAreaOfCompetenciesForDocumentAsync(Document document)
     {
-        var areaOfCompetencyIds = document.ScopeOfAppointments.Where(soa => soa.AreaOfCompetencyId.HasValue).Select(soa => soa.AreaOfCompetencyId!.Value);
+        var areaOfCompetencyIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.AreaOfCompetencyIdAndProcedureIds
+                .Where(areaOfCompetencyAndProcedures => areaOfCompetencyAndProcedures.AreaOfCompetencyId.HasValue)
+                .Select(areaOfCompetencyAndProcedures => areaOfCompetencyAndProcedures.AreaOfCompetencyId!.Value))
+            .Distinct();
 
         foreach (var id in areaOfCompetencyIds)
         {

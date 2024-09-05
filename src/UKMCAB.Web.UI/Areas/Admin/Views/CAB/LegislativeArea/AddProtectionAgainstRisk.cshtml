@@ -12,13 +12,20 @@
         <form id="legislativeForm" method="post" novalidate>
             <input type="hidden" asp-for="IsFromSummary" />
             <input type="hidden" asp-for="LegislativeArea" />
+            <input type="hidden" asp-for="PpeProductType" />
             <h2 class="govuk-heading-s">Legislative area</h2>
             <p class="govuk-body">@Model.LegislativeArea</p>
+
+            @if (Model.PpeProductType != null)
+            {
+                <h2 class="govuk-heading-s">PPE product type</h2>
+                <p class="govuk-body">@Model.PpeProductType</p>
+            }
 
             <govuk-radios asp-for="SelectedProtectionAgainstRiskId">
                     <govuk-radios-fieldset>
                         <govuk-radios-fieldset-legend class="govuk-label--s">
-                        Protection Against Risk
+                        Protection against risk
                         </govuk-radios-fieldset-legend>
                     @foreach (var item in Model.ProtectionAgainstRisks)
                         {

@@ -213,11 +213,6 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                         .Value))?.Name
                     : null;
 
-                var areaOfCompetency = scopeOfAppointment.AreaOfCompetencyId.HasValue
-                    ? (await _legislativeAreaService.GetAreaOfCompetencyByIdAsync(scopeOfAppointment.AreaOfCompetencyId
-                        .Value))?.Name
-                    : null;
-
                 foreach (var productProcedure in scopeOfAppointment.ProductIdAndProcedureIds)
                 {
                     var soaViewModel = new LegislativeAreaListItemViewModel
@@ -262,13 +257,34 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                         soaViewModel.Category = category!.Name;
                     }
 
-                    // TEMPORARILY PLACED PPE HERE                    
-                    soaViewModel.PpeProductType = ppeProductType;
-                    soaViewModel.ProtectionAgainstRisk = protectionAgainstRisk;
-                    soaViewModel.AreaOfCompetency = areaOfCompetency;
-
-
                     foreach (var procedureId in categoryProcedure.ProcedureIds)
+                    {
+                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                        soaViewModel.Procedures?.Add(procedure!.Name);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
+
+                foreach (var areaOfCompetencyProcedure in scopeOfAppointment.AreaOfCompetencyIdAndProcedureIds)
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel
+                    {
+                        LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                        PurposeOfAppointment = purposeOfAppointment,
+                        PpeProductType = ppeProductType,
+                        ProtectionAgainstRisk = protectionAgainstRisk,
+                        ScopeId = scopeOfAppointment.Id,
+                    };
+
+                    if (areaOfCompetencyProcedure.AreaOfCompetencyId.HasValue)
+                    {
+                        var areaOfCompetency =
+                            await _legislativeAreaService.GetAreaOfCompetencyByIdAsync(areaOfCompetencyProcedure.AreaOfCompetencyId.Value);
+                        soaViewModel.AreaOfCompetency = areaOfCompetency!.Name;
+                    }
+
+                    foreach (var procedureId in areaOfCompetencyProcedure.ProcedureIds)
                     {
                         var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
                         soaViewModel.Procedures?.Add(procedure!.Name);

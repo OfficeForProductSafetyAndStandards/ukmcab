@@ -7,17 +7,17 @@
 }
 
 @section BackButton
-    {
+{
     <div class="govuk-width-container">
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 @if (Model.FromSummary && cabId != null)
                 {
-                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl"/>
+                    <govuk-back-link asp-area="Admin" asp-controller="CAB" asp-action="Summary" asp-route-id="@cabId" asp-route-revealEditActions="true" asp-route-returnUrl="@Model.ReturnUrl" />
                 }
                 else
                 {
-                    <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })"/>
+                    <govuk-back-link href="@Url.RouteUrl(LegislativeAreaDetailsController.Routes.AddLegislativeArea, new { id = Model.CABId })" />
                 }
             </div>
         </div>
@@ -127,7 +127,7 @@
                                                         <th scope="col" class="govuk-table__header">Product</th>
                                                     }
 
-                                                    @* PPE - Start *@
+                                                    @* PPE Section *@
                                                     @if (legislativeArea.ShowPpeProductTypeColumn)
                                                     {
                                                         <th scope="col" class="govuk-table__header">PPE product type</th>
@@ -141,7 +141,7 @@
                                                     {
                                                         <th scope="col" class="govuk-table__header">Area of competency</th>
                                                     }
-                                                    @* PPE - End *@
+                                                    @* PPE Section - End *@
 
                                                     @if (legislativeArea.ShowProcedureColumn)
                                                     {
@@ -181,12 +181,11 @@
                                                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                         <div class="govuk-radios govuk-radios--inline" data-module="govuk-radios">
                                                                             <div class="govuk-radios__item">
-                                                                                <input 
-                                                                                    id="LA-items[@(i)]-radio-[@(j)]" 
-                                                                                    class="govuk-radios__input" 
-                                                                                    type="radio" 
-                                                                                    asp-for="ActiveLAItems[i].SelectedScopeOfAppointmentId" 
-                                                                                    value="@scopeOfAppointment.ScopeId"
+                                                                                <input id="LA-items[@(i)]-radio-[@(j)]"
+                                                                                       class="govuk-radios__input"
+                                                                                       type="radio"
+                                                                                       asp-for="ActiveLAItems[i].SelectedScopeOfAppointmentId"
+                                                                                       value="@scopeOfAppointment.ScopeId"
                                                                                        aria-label="@scopeOfAppointment.RadioDescription">
                                                                                 <label class="govuk-label govuk-radios__label govuk-!-display-block"></label>
                                                                             </div>
@@ -203,6 +202,22 @@
                                                                         @scopeOfAppointment.PurposeOfAppointment
                                                                     </td>
                                                                 }
+                                                                @* PPE Section*@
+                                                                @if (legislativeArea.ShowPpeProductTypeColumn)
+                                                                {
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                        <label aria-hidden="true">Ppe product type</label>
+                                                                        @Html.ValueOrNotApplicable(scopeOfAppointment.PpeProductType)
+                                                                    </td>
+                                                                }
+                                                                @if (legislativeArea.ShowProtectionAgainstRiskColumn)
+                                                                {
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                        <label aria-hidden="true">Protection against risk</label>
+                                                                        @Html.ValueOrNotApplicable(scopeOfAppointment.ProtectionAgainstRisk)
+                                                                    </td>
+                                                                }
+                                                                @* PPE Section - End*@
                                                             }
                                                             else
                                                             {
@@ -213,6 +228,19 @@
                                                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                     </td>
                                                                 }
+
+                                                                @* PPE Section*@
+                                                                @if (legislativeArea.ShowPpeProductTypeColumn)
+                                                                {
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                    </td>
+                                                                }
+                                                                @if (legislativeArea.ShowProtectionAgainstRiskColumn)
+                                                                {
+                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                    </td>
+                                                                }
+                                                                @* PPE Section - End*@
                                                             }
 
                                                             @if (legislativeArea.ShowCategoryColumn)
@@ -285,21 +313,8 @@
                                                                 </td>
                                                             }
 
-                                                            @* PPE - Start*@
-                                                            @if (legislativeArea.ShowPpeProductTypeColumn)
-                                                            {
-                                                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                                    <label aria-hidden="true">Ppe product type</label>
-                                                                    @Html.ValueOrNotApplicable(scopeOfAppointment.PpeProductType)
-                                                                </td>
-                                                            }
-                                                            @if (legislativeArea.ShowProtectionAgainstRiskColumn)
-                                                            {
-                                                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                                    <label aria-hidden="true">Protection against risk</label>
-                                                                    @Html.ValueOrNotApplicable(scopeOfAppointment.ProtectionAgainstRisk)
-                                                                </td>
-                                                            }
+                                                            @* PPE Section*@
+
                                                             @if (legislativeArea.ShowAreaOfCompetencyColumn)
                                                             {
                                                                 <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
@@ -307,7 +322,7 @@
                                                                     @Html.ValueOrNotApplicable(scopeOfAppointment.AreaOfCompetency)
                                                                 </td>
                                                             }
-                                                            @* PPE - End*@
+                                                            @* PPE Section - End*@
 
                                                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                 <label aria-hidden="true">Applicable conformity assessment procedure</label>
@@ -350,20 +365,22 @@
                                                                         @Html.ValueOrNotApplicable(nextDesignatedStandardToDisplay.NoticeOfPublicationReference)
                                                                     </td>
                                                                 </tr>
-                                                            }                                                     
+                                                            }
                                                         }
-                                                    }
-                                                    if ((nextProductIndex + 1) < (j + noOfProductsInScopeOfAppointment))
-                                                    {
-                                                        nextProductIndex += 1;
-                                                        scopeOfAppointment = legislativeArea.ScopeOfAppointments[nextProductIndex];
-                                                        <input type="hidden" asp-for="ActiveLAItems[i].ScopeOfAppointments[nextProductIndex].ScopeId">
-                                                        <input type="hidden" asp-for="ActiveLAItems[i].ScopeOfAppointments[nextProductIndex].LegislativeArea.Id">
-                                                        <input type="hidden" asp-for="ActiveLAItems[i].ScopeOfAppointments[nextProductIndex].LegislativeArea.Title">
-                                                    }
-                                                    else
-                                                    {
-                                                        j = nextProductIndex;
+
+                                                        if ((nextProductIndex + 1) < (j + noOfProductsInScopeOfAppointment))
+                                                        {
+                                                            nextProductIndex += 1;
+                                                            scopeOfAppointment = legislativeArea.ScopeOfAppointments[nextProductIndex];
+                                                            <input type="hidden" asp-for="ActiveLAItems[i].ScopeOfAppointments[nextProductIndex].ScopeId">
+                                                            <input type="hidden" asp-for="ActiveLAItems[i].ScopeOfAppointments[nextProductIndex].LegislativeArea.Id">
+                                                            <input type="hidden" asp-for="ActiveLAItems[i].ScopeOfAppointments[nextProductIndex].LegislativeArea.Title">
+                                                        }
+                                                        else
+                                                        {
+                                                            j = nextProductIndex;
+                                                        }
+
                                                     }
                                                 }
                                             </tbody>

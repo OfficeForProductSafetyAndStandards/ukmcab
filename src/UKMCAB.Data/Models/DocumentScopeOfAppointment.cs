@@ -11,20 +11,18 @@ namespace UKMCAB.Data.Models
         public List<Guid> CategoryIds { get; set; } = new();
         public Guid? SubCategoryId { get; set; }
         public List<Guid> ProductIds { get; set; } = new();
+        public List<Guid> AreaOfCompetencyIds { get; set; } = new();
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
         public List<CategoryAndProcedures> CategoryIdAndProcedureIds { get; set; } = new();
         public List<AreaOfCompetencyAndProcedures> AreaOfCompetencyIdAndProcedureIds { get; set; } = new();
         public List<Guid> DesignatedStandardIds { get; set; } = new();
         public Guid? PpeProductTypeId { get; set; }
         public Guid? ProtectionAgainstRiskId { get; set; }
-        public Guid? AreaOfCompetencyId { get; set; }
-
 
         public override bool Equals(object? scopeOfAppointment) 
         { 
             return Equals(scopeOfAppointment as DocumentScopeOfAppointment);
         }
-
         public bool Equals(DocumentScopeOfAppointment? otherSoa)
         {            
             if (otherSoa == null) 
@@ -35,13 +33,14 @@ namespace UKMCAB.Data.Models
                 CategoryId != otherSoa.CategoryId ||
                 SubCategoryId != otherSoa.SubCategoryId ||
                 PpeProductTypeId != otherSoa.PpeProductTypeId ||
-                ProtectionAgainstRiskId != otherSoa.ProtectionAgainstRiskId ||
-                AreaOfCompetencyId != otherSoa.AreaOfCompetencyId)
+                ProtectionAgainstRiskId != otherSoa.ProtectionAgainstRiskId)
             {
                 return false;
             }
 
-            if (!AreListsEqual(CategoryIds, otherSoa.CategoryIds) || !AreListsEqual(ProductIds, otherSoa.ProductIds))
+            if (!AreListsEqual(CategoryIds, otherSoa.CategoryIds) || 
+                !AreListsEqual(ProductIds, otherSoa.ProductIds) || 
+                !AreListsEqual(AreaOfCompetencyIds, otherSoa.AreaOfCompetencyIds))
                 return false;
 
             if (!AreObjectListsEqual(CategoryIdAndProcedureIds, otherSoa.CategoryIdAndProcedureIds) ||
@@ -64,7 +63,6 @@ namespace UKMCAB.Data.Models
             hash = hash * 31 + SubCategoryId.GetHashCode();
             hash = hash * 31 + PpeProductTypeId.GetHashCode();
             hash = hash * 31 + ProtectionAgainstRiskId.GetHashCode();
-            hash = hash * 31 + AreaOfCompetencyId.GetHashCode();
 
             if (CategoryIds.Any())
             {
@@ -79,6 +77,14 @@ namespace UKMCAB.Data.Models
                 foreach (var prodId in ProductIds)
                 {
                     hash = hash * 31 + prodId.GetHashCode();
+                }
+            }
+
+            if (AreaOfCompetencyIds.Any())
+            {
+                foreach (var areaOfCompId in AreaOfCompetencyIds)
+                {
+                    hash = hash * 31 + areaOfCompId.GetHashCode();
                 }
             }
 
