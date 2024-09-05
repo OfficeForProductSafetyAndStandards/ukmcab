@@ -28,10 +28,20 @@
     const skipToSearchResultsAnchor = document.getElementById("skip-to-search-results-anchor");
     const pageTitleElement = document.getElementById("search-page-title");
 
+    const searchKeywordButton = document.getElementById("search-keyword-button");
+    const searchForm = document.getElementById('search-results-form');
+
     var mql;
 
     function init() {
         if (searchPage && searchResultsForm) {
+            searchForm.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    searchKeywordButton.click();
+                }
+            });
+
             searchFilterContainer.classList.add("search-result-mobile-hidden");
             searchResultsFilterToggle.addEventListener('click', showFilter);
             searchResultsListToggle.addEventListener('click', showList);

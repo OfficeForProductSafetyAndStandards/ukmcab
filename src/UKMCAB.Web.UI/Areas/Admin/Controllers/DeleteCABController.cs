@@ -80,8 +80,13 @@ public class DeleteCABController : Controller
         EnsureCabStatusIsDraft(document);
 
         var deleter = await _userService.GetAsync(User.FindFirstValue(ClaimTypes.NameIdentifier)) ?? throw new InvalidOperationException();
-        var creator = await _userService.GetAsync(document.AuditLog.Where(x => x.Action == AuditCABActions.Created).OrderByDescending(x => x.DateTime).First().UserId) ?? throw new InvalidOperationException();
 
+        var auditLogs = document.AuditLog
+            .Where(x => (new[] { AuditCABActions.Created, AuditCABActions.Unarchived }).Contains(x.Action))
+            .OrderByDescending(x => x.DateTime);
+        if(!auditLogs.Any()) throw new InvalidOperationException("CAB must have audit entry matching Created or Unarchived");
+
+        var creator = await _userService.GetAsync(auditLogs.First().UserId) ?? throw new InvalidOperationException();
         await _cabAdminService.DeleteDraftDocumentAsync(deleter, cabId, vm.DeleteReason);
         await SendNotificationOfDeletionAsync(Guid.Parse(document.CABId), document.Name!, deleter, creator!, vm.DeleteReason);
 
