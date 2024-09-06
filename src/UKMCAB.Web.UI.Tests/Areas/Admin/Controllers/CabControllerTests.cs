@@ -202,7 +202,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithReturnUrl(null)).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabDetails(It.IsAny<CABDetailsViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabContactViewModel(It.IsAny<CABContactViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
-            _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabBodyDetailsViewModel(It.IsAny<CABBodyDetailsViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
+            _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabBodyDetailsMRAViewModel(It.IsAny<CABBodyDetailsMRAViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabLegislativeAreasViewModel(It.IsAny<CABLegislativeAreasViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithProductScheduleDetailsViewModel(It.IsAny<CABProductScheduleDetailsViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
             _mockCabSummaryViewModelBuilder.Setup(m => m.WithCabSupportingDocumentDetailsViewModel(It.IsAny<CABSupportingDocumentDetailsViewModel>())).Returns(_mockCabSummaryViewModelBuilder.Object);
