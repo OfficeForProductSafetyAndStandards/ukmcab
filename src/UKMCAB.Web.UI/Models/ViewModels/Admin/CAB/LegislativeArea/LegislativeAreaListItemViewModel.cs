@@ -45,6 +45,28 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         }
 
         public LegislativeAreaListItemViewModel() : base("Legislative area list item") { }
+
+        public LegislativeAreaListItemViewModel(
+            Guid legislativeAreaId,
+            string legislativeArea,
+            string? purposeOfAppointment,
+            string? category,
+            string? subCategory,
+            Guid scopeId,
+            string? product,
+            List<string>? procedures = null,
+            List<DesignatedStandardReadOnlyViewModel>? designatedStandards = null) : base("Legislative area list item")
+        {
+            LegislativeArea = new ListItem { Id = legislativeAreaId, Title = legislativeArea };
+            PurposeOfAppointment = purposeOfAppointment;
+            Category = category;
+            SubCategory = subCategory;
+            ScopeId = scopeId;
+            Product = product;
+            Procedures = procedures;
+            DesignatedStandards = designatedStandards;
+        }
+
         public LegislativeAreaListItemViewModel(
             Guid legislativeAreaId,
             string legislativeArea,

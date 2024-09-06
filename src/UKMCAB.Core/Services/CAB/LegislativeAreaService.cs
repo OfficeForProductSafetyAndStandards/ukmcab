@@ -30,6 +30,25 @@ public class LegislativeAreaService : ILegislativeAreaService
         IReadOnlyRepository<Procedure> procedureRepository,
         IReadOnlyRepository<SubCategory> subCategoryRepository,
         IReadOnlyRepository<DesignatedStandard> designatedStandardRepository,
+        IMapper mapper)
+    {
+        _legislativeAreaRepository = legislativeAreaRepository;
+        _purposeOfAppointmentRepository = purposeOfAppointmentRepository;
+        _categoryRepository = categoryAreRepository;
+        _productRepository = productRepository;
+        _procedureRepository = procedureRepository;
+        _subCategoryRepository = subCategoryRepository;
+        _designatedStandardRepository = designatedStandardRepository;
+        _mapper = mapper;
+    }
+    public LegislativeAreaService(
+        IReadOnlyRepository<LegislativeArea> legislativeAreaRepository,
+        IReadOnlyRepository<PurposeOfAppointment> purposeOfAppointmentRepository,
+        IReadOnlyRepository<Category> categoryAreRepository,
+        IReadOnlyRepository<Product> productRepository,
+        IReadOnlyRepository<Procedure> procedureRepository,
+        IReadOnlyRepository<SubCategory> subCategoryRepository,
+        IReadOnlyRepository<DesignatedStandard> designatedStandardRepository,
         IReadOnlyRepository<PpeProductType> ppeProductTypeRepository,
         IReadOnlyRepository<ProtectionAgainstRisk> protectionAgainstRiskRepository,
         IReadOnlyRepository<AreaOfCompetency> areaOfCompetencyRepository,

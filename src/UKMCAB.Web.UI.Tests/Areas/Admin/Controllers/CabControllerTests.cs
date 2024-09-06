@@ -187,6 +187,12 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
                 .ReturnsAsync(procedureModels);
             _mockLegislativeAreaService.Setup(m => m.GetDesignatedStandardsForDocumentAsync(It.Is<Document>(d => d.id == document.id)))
                 .ReturnsAsync(designatedStandardModels);
+            _mockLegislativeAreaService.Setup(m => m.GetPpeProductTypesForDocumentAsync(It.Is<Document>(d => d.id == document.id)))
+                .ReturnsAsync(ppeProductTypeModels);
+            _mockLegislativeAreaService.Setup(m => m.GetProtectionAgainstRisksForDocumentAsync(It.Is<Document>(d => d.id == document.id)))
+                .ReturnsAsync(protectionAgainstRiskModels);
+            _mockLegislativeAreaService.Setup(m => m.GetAreaOfCompetenciesForDocumentAsync(It.Is<Document>(d => d.id == document.id)))
+                .ReturnsAsync(areaOfCompetencyModels);
             _mockCabAdminService.Setup(m => m.DocumentWithSameNameExistsAsync(It.Is<Document>(d => d.id == document.id)))
                 .ReturnsAsync(cabNameAlreadyExists);
             _mockEditLockService.Setup(m => m.IsCabLockedForUser(cabId, _userId)).ReturnsAsync(isEditLocked);
