@@ -13,7 +13,7 @@ public interface ILegislativeAreaService
     
     Task<LegislativeAreaModel> GetLegislativeAreaByIdAsync(Guid legislativeAreaId);
 
-    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId, int? pageNumber = null, string? searchTerm = null, int pageSize = 20);
+    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId, int? pageNumber = null, string? searchTerm = null, int pageSize = 20, List<Guid>? designatedStandardIds = null);
 
     Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(Guid purposeOfAppointmentId);
 

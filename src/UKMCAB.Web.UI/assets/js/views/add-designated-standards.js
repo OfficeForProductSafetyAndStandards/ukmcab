@@ -7,9 +7,17 @@
     var keywordsButton = document.getElementById('search-keyword-button');
     const searchBox = document.querySelector(".search-box");
     const clearButton = document.querySelector(".clear-icon");
+    const searchForm = document.getElementById('designatedStandardsForm');
 
     function init() {
         if (addDesignatedStandardPage) {
+
+            searchForm.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    keywordsButton.click();
+                }
+            });
 
             clearButton.style.display = searchBox.value ? "block" : "none";
 

@@ -4,6 +4,7 @@ using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Models;
+using LinqKit;
 
 namespace UKMCAB.Core.Services.CAB;
 
@@ -74,7 +75,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         var la = await _legislativeAreaRepository.QueryAsync(l => l.Id == legislativeAreaId);
         return _mapper.Map<LegislativeAreaModel>(la.First());
     }
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId, int? pageNumber = null, string? searchTerm = null, int pageSize = 20)
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId, int? pageNumber = null, string? searchTerm = null, int pageSize = 20, List<Guid>? designatedStandardIds = null)
     {
         var purposeOfAppointments = await _purposeOfAppointmentRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId);
         if (purposeOfAppointments.Any())
@@ -112,10 +113,16 @@ public class LegislativeAreaService : ILegislativeAreaService
             };
         }
 
+        var designatedStandardPredicate = PredicateBuilder.New<DesignatedStandard>(x => x.LegislativeAreaId == legislativeAreaId);
+        if (designatedStandardIds is not null)
+        {
+            designatedStandardPredicate = designatedStandardPredicate.And(x => designatedStandardIds.Contains(x.Id));
+        }
+
         (var designatedStandards, var paginationInfo) = pageNumber is not null
-            ? await _designatedStandardRepository.PaginatedQueryAsync<DesignatedStandard>(x => x.LegislativeAreaId == legislativeAreaId, (int)pageNumber, searchTerm, pageSize)
+            ? await _designatedStandardRepository.PaginatedQueryAsync<DesignatedStandard>(designatedStandardPredicate, (int)pageNumber, searchTerm, pageSize)
             : (await _designatedStandardRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId), null);
-        
+
         if (designatedStandards.Any())
         {
             return new ScopeOfAppointmentOptionsModel
