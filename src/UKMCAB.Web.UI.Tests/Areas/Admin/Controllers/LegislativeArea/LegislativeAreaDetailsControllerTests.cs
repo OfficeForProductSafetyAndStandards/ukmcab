@@ -507,10 +507,10 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
 
             var expectedResult = new RedirectToRouteResult(
                 LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
-                new 
-                { 
-                    id = cabId, 
-                    laId = legislativeAreaId, 
+                new
+                {
+                    id = cabId,
+                    laId = legislativeAreaId,
                     fromSummary = false
                 });
 
@@ -520,18 +520,18 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
             _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(cabId.ToString()))
-                .ReturnsAsync(new Document 
-                { 
+                .ReturnsAsync(new Document
+                {
                     id = documentId,
                 }).Verifiable();
             _mockUserService.Setup(m => m.GetAsync(It.IsAny<string>()))
-                .ReturnsAsync(new UserAccount 
-                { 
+                .ReturnsAsync(new UserAccount
+                {
                     Id = userId,
                 }).Verifiable();
             _mockCabAdminService.Setup(m => m.UpdateOrCreateDraftDocumentAsync(It.Is<UserAccount>(u => u.Id == userId), It.Is<Document>(u => u.id == documentId), false)).ReturnsAsync(new Document()).Verifiable();
-            
-            
+
+
             //Act
             var result = await _sut.AddDesignatedStandard(Constants.SubmitType.Continue,
                 new DesignatedStandardsViewModel
@@ -547,6 +547,36 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             _mockUserService.VerifyAll();
 
             result.Should().BeEquivalentTo(expectedResult);
+        }
+        [Test]
+
+        public Task AddDesignatedStandard_InvalidSubmitType_ThrowsError()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+
+            // Act and Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                {
+                    var result = await _sut.AddDesignatedStandard("InvalidSubmitType",
+                                    new DesignatedStandardsViewModel
+                                    {
+                                        ScopeId = scopeId,
+                                        CABId = cabId,
+                                        IsFromSummary = false,
+                                    });
+                });
+
+                return Task.CompletedTask;
+
         }
     }
 }
