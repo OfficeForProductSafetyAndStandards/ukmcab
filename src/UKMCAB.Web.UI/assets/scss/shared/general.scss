@@ -289,6 +289,26 @@
     }
 }
 
+.width-31-percent {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-31-percent {
+        width: 31% !important;
+    }
+}
+
+.width-one-third {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-one-third {
+        width: 33% !important;
+    }
+}
+
 .width-seven-tenth {
     width: 100% !important;
 }
