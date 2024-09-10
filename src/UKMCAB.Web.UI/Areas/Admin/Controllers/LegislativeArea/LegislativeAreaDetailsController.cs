@@ -697,12 +697,12 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             categoryName = category!.Name;
         }
 
-        var existingProcedures = existingScopeOfAppointment?.ProductIdAndProcedureIds.SelectMany(p => p.ProcedureIds)
+        var existingProcedures = existingScopeOfAppointment?.ProductIdAndProcedureIds.Where(p => p.ProductId == productId).SelectMany(p => p.ProcedureIds)
             .ToList() ?? new();
 
         if (!existingProcedures.Any())
         {
-            existingProcedures = existingScopeOfAppointment?.CategoryIdAndProcedureIds.SelectMany(p => p.ProcedureIds)
+            existingProcedures = existingScopeOfAppointment?.CategoryIdAndProcedureIds.Where(c => c.CategoryId == categoryId).SelectMany(p => p.ProcedureIds)
             .ToList();
         }
 
@@ -1086,11 +1086,35 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
         var userAccount = await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
         var updatedDocument = await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
-            
+
         var existingScopeOfAppointment = updatedDocument.ScopeOfAppointments.FirstOrDefault(s => s.Id == vm.CompareScopeId);
-        if (existingScopeOfAppointment != null)
+        if (existingScopeOfAppointment == null)
+        {
+            var adddedDesignatedStandardsCount = vm.SelectedDesignatedStandardIds.Count();
+
+            updatedDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.DesignatedStandardsAdded(adddedDesignatedStandardsCount)));
+
+            await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, updatedDocument);
+        } 
+        else
         {
             updatedDocument.ScopeOfAppointments.Remove(existingScopeOfAppointment);
+            
+            var existingDesignatedStandardIds = existingScopeOfAppointment.DesignatedStandardIds;
+            var updatedDesignatedStandardIds = documentScopeOfAppointment.DesignatedStandardIds;
+
+            var adddedDesignatedStandardsCount = updatedDesignatedStandardIds.Except(existingDesignatedStandardIds).Count();
+            var removedDesignatedStandardsCount = existingDesignatedStandardIds.Except(updatedDesignatedStandardIds).Count();
+
+            if (adddedDesignatedStandardsCount > 0)
+            {
+                updatedDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.DesignatedStandardsAdded(adddedDesignatedStandardsCount)));
+            }
+            if (removedDesignatedStandardsCount > 0)
+            {
+                updatedDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.DesignatedStandardsRemoved(removedDesignatedStandardsCount)));
+            }
+
             await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, updatedDocument);
         }
 
