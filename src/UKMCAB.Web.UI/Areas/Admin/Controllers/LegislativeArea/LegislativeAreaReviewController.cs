@@ -145,7 +145,10 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == legislativeAreaId);
                     documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
 
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
+                    latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ScopeOfAppointmentRemoved));
+
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+
                     return RedirectToRoute(Routes.ReviewLegislativeAreas, new { id, actionType = LegislativeAreaActionMessageEnum.ScopeOfAppointmentRemoved, fromSummary = reviewLaVM.FromSummary });
                 }
             }

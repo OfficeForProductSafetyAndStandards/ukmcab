@@ -115,7 +115,7 @@
             @if (Model.PaginationInfo is not null)
             {
                 <div class="pagination-container">
-                    <div class="pagination-detail-container">
+                    <div class="pagination-detail-container govuk-body">
                         @if (Model.PaginationInfo.QueryCount == 0)
                         {
                             <span>Showing <span class="govuk-!-font-weight-bold">0</span> designated standards</span>
@@ -142,7 +142,11 @@
                                 {
                                     if (pageNumber == Model.PageNumber)
                                     {
-                                        <li class="pagination-link-item pagination-page-link" aria-current="page">@Model.PageNumber</li>
+                                        <li class="pagination-link-item pagination-page-link" aria-current="page">
+                                            <govuk-button disabled class="govuk-button--secondary" name="@pageNumber" type="submit" asp-route-pageNumber=@pageNumber asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected=@Model.ShowAllSelected asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
+                                                <span>@pageNumber</span>
+                                            </govuk-button>
+                                        </li>
                                     }
                                     else
                                     {
