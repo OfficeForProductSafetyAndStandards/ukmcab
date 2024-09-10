@@ -450,7 +450,11 @@ public class LegislativeAreaService : ILegislativeAreaService
             .SelectMany(soa => soa.CategoryIdAndProcedureIds
                 .SelectMany(categoryIdAndProcedureIds => categoryIdAndProcedureIds.ProcedureIds));
 
-        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds).Distinct();
+        var areaOfCompetencyProcedureIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.AreaOfCompetencyIdAndProcedureIds
+                .SelectMany(areaOfCompetencyIdAndProcedureIds => areaOfCompetencyIdAndProcedureIds.ProcedureIds));
+
+        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds).Concat(areaOfCompetencyProcedureIds).Distinct();
 
         foreach (var id in distictProcedureIds)
         {

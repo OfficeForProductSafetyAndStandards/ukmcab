@@ -182,10 +182,52 @@
                                         @scopeOfAppointment.PurposeOfAppointment
                                     </td>
                                 }
+
+                                @* PPE *@
+                                @if (Model.ShowPpeProductTypeColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                        <label aria-hidden="true">Product</label>
+                                        @Html.ValueOrNotApplicable(scopeOfAppointment.PpeProductType)
+                                    </td>
+                                }
+
+                                @if (Model.ShowProtectionAgainstRiskColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                        <label aria-hidden="true">Protection against risk</label>
+                                        @Html.ValueOrNotApplicable(scopeOfAppointment.ProtectionAgainstRisk)
+                                    </td>
+                                }
+                                @if (Model.ShowAreaOfCompetencyColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                        <label aria-hidden="true">Area of competency</label>
+                                        @Html.ValueOrNotApplicable(scopeOfAppointment.AreaOfCompetency)
+                                    </td>
+                                }
                             }
                             else
                             {
                                 @if (Model.ShowPurposeOfAppointmentColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    </td>
+                                }
+
+                                @* PPE *@
+                                @if (Model.ShowPpeProductTypeColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    </td>
+                                }
+
+                                @if (Model.ShowProtectionAgainstRiskColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    </td>
+                                }
+                                @if (Model.ShowAreaOfCompetencyColumn)
                                 {
                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                     </td>
@@ -237,31 +279,7 @@
                                     <label aria-hidden="true">Product</label>
                                     @Html.ValueOrNotApplicable(scopeOfAppointment.Product)
                                 </td>
-                            }
-
-                            @* PPE *@
-                            @if (Model.ShowPpeProductTypeColumn)
-                            {
-                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                    <label aria-hidden="true">Product</label>
-                                    @Html.ValueOrNotApplicable(scopeOfAppointment.PpeProductType)
-                                </td>
-                            }
-
-                            @if (Model.ShowProtectionAgainstRiskColumn)
-                            {
-                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                    <label aria-hidden="true">Protection against risk</label>
-                                    @Html.ValueOrNotApplicable(scopeOfAppointment.ProtectionAgainstRisk)
-                                </td>
-                            }
-                            @if (Model.ShowAreaOfCompetencyColumn)
-                            {
-                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                    <label aria-hidden="true">Area of competency</label>
-                                    @Html.ValueOrNotApplicable(scopeOfAppointment.AreaOfCompetency)
-                                </td>
-                            }
+                            }                            
 
                             @* Procedures *@
                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">

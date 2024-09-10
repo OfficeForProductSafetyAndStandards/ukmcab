@@ -74,7 +74,7 @@ namespace UKMCAB.Web.UI.Models.Builders
 
                 if (ppeProductType is not null)
                 {
-                    var scopeOfAppointmentViewModelForPpeProductTypes = CreateScopeOfAppointmentViewModelForPpeProductTypes(
+                    var scopeOfAppointmentViewModelForPpeProductTypes = CreateScopeOfAppointmentViewModelForAreaOfCompetencies(
                     documentScopeOfAppointment.Id,
                     legislativeArea.Id,
                     legislativeArea.Name, ppeProductType.Name, protectionAgainstRisk?.Name, documentScopeOfAppointment.AreaOfCompetencyIdAndProcedureIds, areaOfCompetencies, procedures);
@@ -227,7 +227,7 @@ namespace UKMCAB.Web.UI.Models.Builders
             return model;
         }
 
-        private List<LegislativeAreaListItemViewModel> CreateScopeOfAppointmentViewModelForPpeProductTypes(
+        private List<LegislativeAreaListItemViewModel> CreateScopeOfAppointmentViewModelForAreaOfCompetencies(
             Guid documentScopeOfAppointmentId,
             Guid legislativeAreaId,
             string legislativeAreaName,
@@ -239,10 +239,10 @@ namespace UKMCAB.Web.UI.Models.Builders
             )
         {
             var scopeOfAppointments = new List<LegislativeAreaListItemViewModel>();
-            foreach (var aocp in areaOfCompetencies)
+            foreach (var aocp in areaOfCompetencyAndProcedureIds)
             {
-                var areaOfCompetency = areaOfCompetencies.FirstOrDefault(a => a.Id == aocp.Id);
-                var procedureNames = procedures.GetNamesByIds(procedures.Select(p => p.Id).ToList());
+                var areaOfCompetency = areaOfCompetencies.FirstOrDefault(a => a.Id == aocp.AreaOfCompetencyId);
+                var procedureNames = procedures.GetNamesByIds(aocp.ProcedureIds);
 
                 var model = new LegislativeAreaListItemViewModel(
                     legislativeAreaId,
