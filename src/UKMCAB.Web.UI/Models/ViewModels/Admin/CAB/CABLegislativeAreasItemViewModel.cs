@@ -61,6 +61,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string RoleName { get; set; } = string.Empty;
         public string RoleId { get; set; } = string.Empty;
         public bool ShowEditActions { get; set; }
+        public bool? NewlyCreated { get; set; }
+        public bool IsNewlyCreated => NewlyCreated ?? false;
         public bool IsComplete => IsProvisional.HasValue &&
                                     (ReviewDate == null || (ReviewDate != null && ReviewDate >= DateTime.Today)) &&
                                     (!CanChooseScopeOfAppointment || (ScopeOfAppointments.Any() && ScopeOfAppointments.All(

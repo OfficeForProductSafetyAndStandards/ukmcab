@@ -46,7 +46,8 @@ namespace UKMCAB.Web.UI.Models.Builders
                 StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
                 RoleName = Roles.NameFor(documentLegislativeArea.RoleId) ?? throw new NotFoundException($"Role name could not be resolved for id: {documentLegislativeArea.RoleId}."),
                 RoleId = documentLegislativeArea.RoleId,
-                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId
+                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId,
+                NewlyCreated = documentLegislativeArea.NewlyCreated,
             };
             return this;
         }
