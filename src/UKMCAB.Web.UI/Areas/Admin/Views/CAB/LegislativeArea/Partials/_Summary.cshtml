@@ -199,13 +199,7 @@
                                         @Html.ValueOrNotApplicable(scopeOfAppointment.ProtectionAgainstRisk)
                                     </td>
                                 }
-                                @if (Model.ShowAreaOfCompetencyColumn)
-                                {
-                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                        <label aria-hidden="true">Area of competency</label>
-                                        @Html.ValueOrNotApplicable(scopeOfAppointment.AreaOfCompetency)
-                                    </td>
-                                }
+                                
                             }
                             else
                             {
@@ -227,11 +221,7 @@
                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                     </td>
                                 }
-                                @if (Model.ShowAreaOfCompetencyColumn)
-                                {
-                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                    </td>
-                                }
+                                
                             }
 
                             @if (Model.ShowCategoryColumn)
@@ -279,7 +269,15 @@
                                     <label aria-hidden="true">Product</label>
                                     @Html.ValueOrNotApplicable(scopeOfAppointment.Product)
                                 </td>
-                            }                            
+                            }
+
+                            @if (Model.ShowAreaOfCompetencyColumn)
+                            {
+                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    <label aria-hidden="true">Area of competency</label>
+                                    @Html.ValueOrNotApplicable(scopeOfAppointment.AreaOfCompetency)
+                                </td>
+                            }
 
                             @* Procedures *@
                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
