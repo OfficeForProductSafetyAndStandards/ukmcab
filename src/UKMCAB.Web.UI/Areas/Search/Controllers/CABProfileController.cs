@@ -120,7 +120,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         [HttpGet("search/cab-profile/{id}/{legislativeAreaId}", Name = Routes.CabDetailsLegislativeArea)]
         public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, Guid legislativeAreaId,
-            Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategoryId, Guid? productId, int pagenumber = 1)
+    Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategoryId, Guid? productId, Guid? scopeOfAppointmentId, Guid? ppeProductTypeId, Guid? protectionAgainstRiskId, Guid? areaOfCompetencyId, int pagenumber = 1)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id) ??
                               throw new InvalidOperationException();
@@ -194,6 +194,45 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     }
                 }
             }
+            else if (scopeOfAppointmentId.HasValue && ppeProductTypeId.HasValue)
+            {
+                await GetProtectionAgainstRiskAsync(scopeOfAppointmentId, ppeProductTypeId, cabDocument, vm);
+            }
+
+            var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
+                .Where(a => a.LegislativeAreaId == legislativeAreaId)
+                .Where(a => a.PurposeOfAppointmentId.HasValue)
+                .Select(p => p.PurposeOfAppointmentId!.Value).ToList();
+            foreach (var pId in purposeOfAppointmentIds)
+            {
+                vm.CabLegislativeAreas.PurposeOfAppointments.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = pId,
+                    Item2 = (await _legislativeAreaService
+                        .GetPurposeOfAppointmentByIdAsync(pId))!.Name
+                });
+            }
+
+            var ppeProductTypeIds = cabDocument.ScopeOfAppointments
+                .Where(a => a.LegislativeAreaId == legislativeAreaId)
+                .Where(a => a.PpeProductTypeId.HasValue)
+                .Select(p => p.PpeProductTypeId!.Value).ToList();
+
+            foreach (var soa in cabDocument.ScopeOfAppointments)
+            {
+                if (soa.LegislativeAreaId == legislativeAreaId && soa.PpeProductTypeId.HasValue)
+                {
+                    vm.CabLegislativeAreas.PpeProductTypes.Add(new ValueTuple<Guid, Guid, string>
+                    {
+                        Item1 = soa.PpeProductTypeId.Value,
+                        Item2 = soa.Id,
+                        Item3 = (await _legislativeAreaService
+                        .GetPpeProductTypeByIdAsync(soa.PpeProductTypeId.Value))!.Name
+                    });
+
+                    vm.CabLegislativeAreas.ScopeOfAppointmentId = soa.Id;
+                }
+            }
 
             var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
                 .Where(a => a.LegislativeAreaId == legislativeAreaId)
@@ -260,6 +299,22 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(vm);
         }
 
+        private async Task GetProtectionAgainstRiskAsync(Guid? scopeOfAppointmentId, Guid? ppeProductTypeId,
+     Document cabDocument,
+     CABProfileViewModel vm)
+        {
+            Guid? protectionAgainstRiskId = cabDocument.ScopeOfAppointments
+                .Where(soa => soa.Id == scopeOfAppointmentId)
+                .First().ProtectionAgainstRiskId;
+
+            vm.CabLegislativeAreas.ProtectionAgainstRisk = new ValueTuple<Guid?, Guid?, string>
+            {
+                Item1 = protectionAgainstRiskId,
+                Item2 = scopeOfAppointmentId,
+                Item3 = (await _legislativeAreaService
+                        .GetProtectionAgainstRiskByIdAsync(protectionAgainstRiskId.Value))!.Name
+            };
+        }
         private async Task GetCategoriesAsync(Guid? legislativeId, Guid? purposeOfAppointmentId, Document cabDocument,
             CABProfileViewModel vm)
         {

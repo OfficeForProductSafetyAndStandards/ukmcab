@@ -108,6 +108,22 @@
             </dl>
         </div>
     }
+
+    @if (Model.PpeProductType.Id.HasValue)
+    {
+        <div class="govuk-summary-list__row">
+            <dl class="govuk-summary-list">
+                <dt class="govuk-summary-list__key">
+                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link govuk-link--no-visited-state">
+                        Purpose of appointment
+                    </a>
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.PpeProductType.Name
+                </dd>
+            </dl>
+        </div>
+    }
 }
 @if (Model.Procedures.Any())
 {
@@ -168,6 +184,23 @@ else if (Model.Categories.Any())
                     <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@category.Id" asp-fragment="legislative-areas">
                         @category.Name
+                    </a>
+                </dt>
+            </div>
+        }
+    </dl>
+}
+else if (!Model.PurposeOfAppointments.Any() && Model.PpeProductTypes.Any())
+{
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">PPE Product type</h3>
+    <dl class="govuk-summary-list table-top-border">
+        @foreach (var ppeProductType in Model.PpeProductTypes)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-ScopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-ppeProductTypeId="@ppeProductType.Id" asp-fragment="legislative-areas">
+                        @ppeProductType.Name
                     </a>
                 </dt>
             </div>
