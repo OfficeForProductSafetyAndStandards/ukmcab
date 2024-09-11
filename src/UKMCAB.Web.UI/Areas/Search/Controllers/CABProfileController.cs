@@ -234,20 +234,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 }
             }
 
-            var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
-                .Where(a => a.LegislativeAreaId == legislativeAreaId)
-                .Where(a => a.PurposeOfAppointmentId.HasValue)
-                .Select(p => p.PurposeOfAppointmentId!.Value).ToList();
-            foreach (var pId in purposeOfAppointmentIds)
-            {
-                vm.CabLegislativeAreas.PurposeOfAppointments.Add(new ValueTuple<Guid, string>
-                {
-                    Item1 = pId,
-                    Item2 = (await _legislativeAreaService
-                        .GetPurposeOfAppointmentByIdAsync(pId))!.Name
-                });
-            }
-
             if (!purposeOfAppointmentIds.Any())
             {
                 //Get Next Level Categories
