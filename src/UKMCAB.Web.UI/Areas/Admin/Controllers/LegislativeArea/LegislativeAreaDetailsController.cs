@@ -1168,7 +1168,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
             if (vm.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
             {
-                if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc)
+                if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc && !vm.LegislativeArea.IsNewlyCreated)
                 {
                     return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, new
                     {
@@ -1249,7 +1249,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             // legislative arease selected to remove
             if (vm.LegislativeAreaRemoveAction == RemoveActionEnum.Remove)
             {
-                if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc)
+                if (UserRoleId == Roles.UKAS.Id && !singleDraftDoc && !vm.LegislativeArea.IsNewlyCreated)
                 {
                     return RedirectToRoute(Routes.RemoveLegislativeAreaRequest, 
                         new 
