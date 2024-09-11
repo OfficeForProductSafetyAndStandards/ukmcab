@@ -17,6 +17,9 @@ public class LegislativeAreaService : ILegislativeAreaService
     private readonly IReadOnlyRepository<Product> _productRepository;
     private readonly IReadOnlyRepository<Procedure> _procedureRepository;
     private readonly IReadOnlyRepository<DesignatedStandard> _designatedStandardRepository;
+    private readonly IReadOnlyRepository<PpeProductType> _ppeProductTypeRepository;
+    private readonly IReadOnlyRepository<ProtectionAgainstRisk> _protectionAgainstRiskRepository;
+    private readonly IReadOnlyRepository<AreaOfCompetency> _areaOfCompetencyRepository;
     private readonly IMapper _mapper;
 
     public LegislativeAreaService(
@@ -27,6 +30,29 @@ public class LegislativeAreaService : ILegislativeAreaService
         IReadOnlyRepository<Procedure> procedureRepository,
         IReadOnlyRepository<SubCategory> subCategoryRepository,
         IReadOnlyRepository<DesignatedStandard> designatedStandardRepository,
+        IMapper mapper)
+    {
+        _legislativeAreaRepository = legislativeAreaRepository;
+        _purposeOfAppointmentRepository = purposeOfAppointmentRepository;
+        _categoryRepository = categoryAreRepository;
+        _productRepository = productRepository;
+        _procedureRepository = procedureRepository;
+        _subCategoryRepository = subCategoryRepository;
+        _designatedStandardRepository = designatedStandardRepository;
+        _mapper = mapper;
+    }
+    public LegislativeAreaService(
+        IReadOnlyRepository<LegislativeArea> legislativeAreaRepository,
+        IReadOnlyRepository<PurposeOfAppointment> purposeOfAppointmentRepository,
+        IReadOnlyRepository<Category> categoryAreRepository,
+        IReadOnlyRepository<Product> productRepository,
+        IReadOnlyRepository<Procedure> procedureRepository,
+        IReadOnlyRepository<SubCategory> subCategoryRepository,
+        IReadOnlyRepository<DesignatedStandard> designatedStandardRepository,
+        IReadOnlyRepository<PpeProductType> ppeProductTypeRepository,
+        IReadOnlyRepository<ProtectionAgainstRisk> protectionAgainstRiskRepository,
+        IReadOnlyRepository<AreaOfCompetency> areaOfCompetencyRepository,
+
     IMapper mapper)
     {
         _legislativeAreaRepository = legislativeAreaRepository;
@@ -36,6 +62,9 @@ public class LegislativeAreaService : ILegislativeAreaService
         _procedureRepository = procedureRepository;
         _subCategoryRepository = subCategoryRepository;
         _designatedStandardRepository = designatedStandardRepository;
+        _ppeProductTypeRepository = ppeProductTypeRepository;
+        _protectionAgainstRiskRepository = protectionAgainstRiskRepository;
+        _areaOfCompetencyRepository = areaOfCompetencyRepository;
         _mapper = mapper;
     }
 
@@ -119,6 +148,15 @@ public class LegislativeAreaService : ILegislativeAreaService
             {
                 DesignatedStandards = _mapper.Map<IEnumerable<DesignatedStandardModel>>(designatedStandards),
                 PaginationInfo = paginationInfo
+            };
+        }
+
+        var ppeProductType = await _ppeProductTypeRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId);
+        if (ppeProductType.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                PpeProductType = _mapper.Map<IEnumerable<PpeProductTypeModel>>(ppeProductType)
             };
         }
 
@@ -220,6 +258,47 @@ public class LegislativeAreaService : ILegislativeAreaService
         return new ScopeOfAppointmentOptionsModel();
     }
 
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPpeProductTypeAsync()
+    {
+        var protectionAgainstRisks = await _protectionAgainstRiskRepository.GetAllAsync();
+        if (protectionAgainstRisks.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                ProtectionAgainstRisk = _mapper.Map<IEnumerable<ProtectionAgainstRiskModel>>(protectionAgainstRisks)
+            };
+        }
+
+        return new ScopeOfAppointmentOptionsModel();
+    }
+
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProtectionAgainstRiskAsync()
+    {
+        var areaOfCompetencies = await _areaOfCompetencyRepository.GetAllAsync();
+        if (areaOfCompetencies.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                AreaOfCompetency = _mapper.Map<IEnumerable<AreaOfCompetencyModel>>(areaOfCompetencies)
+            };
+        }
+
+        return new ScopeOfAppointmentOptionsModel();
+    }
+
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForAreaOfCompetencyAsync(Guid areaOfCompetencyId)
+    {
+        var procedures = await _procedureRepository.QueryAsync(x => x.AreaOfCompetencyIds.Contains(areaOfCompetencyId));
+        if (procedures.Any())
+        {
+            return new ScopeOfAppointmentOptionsModel
+            {
+                Procedures = _mapper.Map<IEnumerable<ProcedureModel>>(procedures)
+            };
+        }
+
+        return new ScopeOfAppointmentOptionsModel();
+    }
     public async Task<PurposeOfAppointmentModel?> GetPurposeOfAppointmentByIdAsync(Guid purposeOfAppointmentId)
     {
         Guard.IsTrue(purposeOfAppointmentId != Guid.Empty, "Guid cannot be empty");
@@ -255,6 +334,26 @@ public class LegislativeAreaService : ILegislativeAreaService
         return _mapper.Map<SubCategoryModel>(subCat.FirstOrDefault());
     }
 
+    public async Task<PpeProductTypeModel?> GetPpeProductTypeByIdAsync(Guid ppeProductTypeId)
+    {
+        Guard.IsTrue(ppeProductTypeId != Guid.Empty, "Guid cannot be empty");
+        var ppeTypes = await _ppeProductTypeRepository.QueryAsync(p => p.Id == ppeProductTypeId);
+        return _mapper.Map<PpeProductTypeModel>(ppeTypes.FirstOrDefault());
+    }
+
+    public async Task<ProtectionAgainstRiskModel?> GetProtectionAgainstRiskByIdAsync(Guid protectionAgainstRiskId)
+    {
+        Guard.IsTrue(protectionAgainstRiskId != Guid.Empty, "Guid cannot be empty");
+        var parTypes = await _protectionAgainstRiskRepository.QueryAsync(p => p.Id == protectionAgainstRiskId);
+        return _mapper.Map<ProtectionAgainstRiskModel>(parTypes.FirstOrDefault());
+    }
+
+    public async Task<AreaOfCompetencyModel?> GetAreaOfCompetencyByIdAsync(Guid areaOfCompetencyId)
+    {
+        Guard.IsTrue(areaOfCompetencyId != Guid.Empty, "Guid cannot be empty");
+        var aOfCompetencies = await _areaOfCompetencyRepository.QueryAsync(p => p.Id == areaOfCompetencyId);
+        return _mapper.Map<AreaOfCompetencyModel>(aOfCompetencies.FirstOrDefault());
+    }
     public async Task<DesignatedStandardModel?> GetDesignatedStandardByIdAsync(Guid designatedStandardId)
     {
         Guard.IsTrue(designatedStandardId != Guid.Empty, "Guid cannot be empty");
@@ -351,7 +450,11 @@ public class LegislativeAreaService : ILegislativeAreaService
             .SelectMany(soa => soa.CategoryIdAndProcedureIds
                 .SelectMany(categoryIdAndProcedureIds => categoryIdAndProcedureIds.ProcedureIds));
 
-        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds).Distinct();
+        var areaOfCompetencyProcedureIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.AreaOfCompetencyIdAndProcedureIds
+                .SelectMany(areaOfCompetencyIdAndProcedureIds => areaOfCompetencyIdAndProcedureIds.ProcedureIds));
+
+        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds).Concat(areaOfCompetencyProcedureIds).Distinct();
 
         foreach (var id in distictProcedureIds)
         {
@@ -359,5 +462,43 @@ public class LegislativeAreaService : ILegislativeAreaService
         }
         var procedures = (await _procedureRepository.QueryAsync(p => distictProcedureIds.Contains(p.Id))).ToList();
         return _mapper.Map<List<ProcedureModel>>(procedures);
+    }
+
+    public async Task<List<PpeProductTypeModel>> GetPpeProductTypesForDocumentAsync(Document document)
+    {
+        var ppeProductTypeIds = document.ScopeOfAppointments.Where(soa => soa.PpeProductTypeId.HasValue).Select(soa => soa.PpeProductTypeId!.Value);
+        foreach (var id in ppeProductTypeIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var ppeProductTypes = (await _ppeProductTypeRepository.QueryAsync(p => ppeProductTypeIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<PpeProductTypeModel>>(ppeProductTypes);
+    }
+    public async Task<List<ProtectionAgainstRiskModel>> GetProtectionAgainstRisksForDocumentAsync(Document document)
+    {
+        var protectionAgainstRiskIds = document.ScopeOfAppointments.Where(soa => soa.ProtectionAgainstRiskId.HasValue).Select(soa => soa.ProtectionAgainstRiskId!.Value);
+        foreach (var id in protectionAgainstRiskIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var protectionAgainstRisks = (await _protectionAgainstRiskRepository.QueryAsync(p => protectionAgainstRiskIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<ProtectionAgainstRiskModel>>(protectionAgainstRisks);
+    }
+
+    public async Task<List<AreaOfCompetencyModel>> GetAreaOfCompetenciesForDocumentAsync(Document document)
+    {
+        var areaOfCompetencyIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.AreaOfCompetencyIdAndProcedureIds
+                .Where(areaOfCompetencyAndProcedures => areaOfCompetencyAndProcedures.AreaOfCompetencyId.HasValue)
+                .Select(areaOfCompetencyAndProcedures => areaOfCompetencyAndProcedures.AreaOfCompetencyId!.Value))
+            .Distinct();
+
+        foreach (var id in areaOfCompetencyIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+        var areaOfCompetencies = (await _areaOfCompetencyRepository.QueryAsync(p => areaOfCompetencyIds.Contains(p.Id))).ToList();
+        return _mapper.Map<List<AreaOfCompetencyModel>>(areaOfCompetencies);       
+
     }
 }

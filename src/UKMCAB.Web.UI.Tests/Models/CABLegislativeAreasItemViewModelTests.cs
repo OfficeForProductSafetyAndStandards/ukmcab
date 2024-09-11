@@ -37,5 +37,18 @@ namespace UKMCAB.Web.UI.Tests.Models
             yield return new TestCaseData("Schedule 4 – Module B Type examination", true, true, new DateTime(2085, 1, 1), true);
             yield return new TestCaseData("Schedule 4 – Module B Type examination", true, true, new DateTime(2023, 1, 1), false);
         }
+
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        [TestCase(null, false)]
+        public void CABLegislativeAreasItemViewModel_IsNewlyCreated_Returns_Expected_Value(bool? newlyCreated, bool expected)
+        {
+            // Arrange
+            var _sut = new CABLegislativeAreasItemViewModel();
+            _sut.NewlyCreated = newlyCreated;
+
+            // Assert
+            Assert.AreEqual(expected, _sut.IsNewlyCreated);
+        }
     }
 }

@@ -605,6 +605,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var products = await _legislativeAreaService.GetProductsForDocumentAsync(latest);
             var procedures = await _legislativeAreaService.GetProceduresForDocumentAsync(latest);
             var designatedStandards = await _legislativeAreaService.GetDesignatedStandardsForDocumentAsync(latest);
+            var ppeProductTypes = await _legislativeAreaService.GetPpeProductTypesForDocumentAsync(latest);
+            var protectionAgainstRisks = await _legislativeAreaService.GetProtectionAgainstRisksForDocumentAsync(latest);
+            var areaOfCompetencies = await _legislativeAreaService.GetAreaOfCompetenciesForDocumentAsync(latest);
 
             var cabNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest);
             var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, userId);
@@ -628,7 +631,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     subCategories,
                     products,
                     procedures,
-                    designatedStandards)
+                    designatedStandards,
+                    ppeProductTypes,
+                    protectionAgainstRisks,
+                    areaOfCompetencies)
                 .Build();
 
             ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);

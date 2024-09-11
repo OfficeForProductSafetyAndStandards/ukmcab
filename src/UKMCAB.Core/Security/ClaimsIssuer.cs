@@ -42,6 +42,7 @@ public static class ClaimsIssuer
             {
                 new(Claims.LegislativeAreaApprove, role), // Approve/Decline Legislative Area
                 new(Claims.CabGovernmentUserNotes, string.Empty), // can view/add Government user notes on cabs
+                new(Claims.CabManagement, string.Empty), // can manage all cabs
             };
         }
 

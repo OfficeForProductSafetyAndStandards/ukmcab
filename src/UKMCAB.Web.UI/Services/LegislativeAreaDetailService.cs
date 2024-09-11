@@ -47,7 +47,8 @@ namespace UKMCAB.Web.UI.Services
                 StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
                 RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
                 RoleId = documentLegislativeArea.RoleId,
-                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId
+                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId,
+                NewlyCreated = documentLegislativeArea.NewlyCreated,
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);

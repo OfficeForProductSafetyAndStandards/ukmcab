@@ -121,78 +121,112 @@
     {
         <table class="govuk-table ukmcab-table govuk-!-margin-top-3 govuk-!-margin-bottom-0">
             <thead class="govuk-table__head">
-            <tr class="govuk-table__row">
-                @if (Model.ShowPurposeOfAppointmentColumn)
-                {
-                    <th scope="col" class="govuk-table__header">Purpose of appointment</th>
-                }
-                @if (Model.ShowCategoryColumn)
-                {
-                    <th scope="col" class="govuk-table__header">Product category</th>
-                }
-                @if (Model.ShowProductColumn)
-                {
-                    <th scope="col" class="govuk-table__header">Product</th>
-                }
-                @if (Model.ScopeOfAppointments.Any())
-                {
-                    <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
-                }
-            </tr>
+                <tr class="govuk-table__row">
+                    @if (Model.ShowPurposeOfAppointmentColumn)
+                    {
+                        <th scope="col" class="govuk-table__header">Purpose of appointment</th>
+                    }
+                    @if (Model.ShowCategoryColumn)
+                    {
+                        <th scope="col" class="govuk-table__header">Product category</th>
+                    }
+                    @if (Model.ShowProductColumn)
+                    {
+                        <th scope="col" class="govuk-table__header">Product</th>
+                    }
+
+                    @* PPE *@
+                    @if (Model.ShowPpeProductTypeColumn)
+                    {
+                        <th scope="col" class="govuk-table__header">PPE product type</th>
+                    }
+
+                    @if (Model.ShowProtectionAgainstRiskColumn)
+                    {
+                        <th scope="col" class="govuk-table__header">Protection against risk</th>
+                    }
+                    @if (Model.ShowAreaOfCompetencyColumn)
+                    {
+                        <th scope="col" class="govuk-table__header">Area of competency</th>
+                    }
+
+                    @if (Model.ScopeOfAppointments.Any())
+                    {
+                        <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
+                    }
+                </tr>
             </thead>
             <tbody class="govuk-table__body">
-            @if (!Model.ScopeOfAppointments.Any())
-            {
-                <tr>
-                    <td>No scope of appointments</td>
-                </tr>
-            }
-
-            @for (int j = 0; j < Model.ScopeOfAppointments.Count; j++)
-            {
-                var scopeOfAppointment = Model.ScopeOfAppointments[j];
-                var noOfProductsInScopeOfAppointment = scopeOfAppointment.NoOfProductsInScopeOfAppointment;
-                var nextProductIndex = j;
-                @for (int k = 0; k < noOfProductsInScopeOfAppointment; k++)
+                @if (!Model.ScopeOfAppointments.Any())
                 {
-                    var showBorder = k == noOfProductsInScopeOfAppointment - 1;
-                    <tr class="govuk-table__row">
-                        @if (k == 0)
-                        {
-                            @if (Model.ShowPurposeOfAppointmentColumn)
-                            {
-                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                    <label aria-hidden="true">Purpose of appointment</label>
-                                    @scopeOfAppointment.PurposeOfAppointment
-                                </td>
-                            }
-                        }
-                        else
-                        {
-                            @if (Model.ShowPurposeOfAppointmentColumn)
-                            {
-                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                </td>
-                            }
-                        }
+                    <tr>
+                        <td>No scope of appointments</td>
+                    </tr>
+                }
 
-                        @if (Model.ShowCategoryColumn)
-                        {
-                            @if (string.IsNullOrEmpty(scopeOfAppointment.Product))
+                @for (int j = 0; j < Model.ScopeOfAppointments.Count; j++)
+                {
+                    var scopeOfAppointment = Model.ScopeOfAppointments[j];
+                    var noOfProductsInScopeOfAppointment = scopeOfAppointment.NoOfProductsInScopeOfAppointment;
+                    var nextProductIndex = j;
+                    @for (int k = 0; k < noOfProductsInScopeOfAppointment; k++)
+                    {
+                        var showBorder = k == noOfProductsInScopeOfAppointment - 1;
+                        <tr class="govuk-table__row">
+                            @if (k == 0)
                             {
-                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                    <label aria-hidden="true">Product category</label>
-                                    @scopeOfAppointment.Category
-                                    @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
-                                    {
-                                        <div class="govuk-!-margin-top-3">Product sub-category</div>
-                                        <div>@scopeOfAppointment.SubCategory</div>
-                                    }
-                                </td>
+                                @if (Model.ShowPurposeOfAppointmentColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                        <label aria-hidden="true">Purpose of appointment</label>
+                                        @scopeOfAppointment.PurposeOfAppointment
+                                    </td>
+                                }
+
+                                @* PPE *@
+                                @if (Model.ShowPpeProductTypeColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                        <label aria-hidden="true">Product</label>
+                                        @Html.ValueOrNotApplicable(scopeOfAppointment.PpeProductType)
+                                    </td>
+                                }
+
+                                @if (Model.ShowProtectionAgainstRiskColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                        <label aria-hidden="true">Protection against risk</label>
+                                        @Html.ValueOrNotApplicable(scopeOfAppointment.ProtectionAgainstRisk)
+                                    </td>
+                                }
+                                
                             }
                             else
                             {
-                                @if (k == 0)
+                                @if (Model.ShowPurposeOfAppointmentColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    </td>
+                                }
+
+                                @* PPE *@
+                                @if (Model.ShowPpeProductTypeColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    </td>
+                                }
+
+                                @if (Model.ShowProtectionAgainstRiskColumn)
+                                {
+                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    </td>
+                                }
+                                
+                            }
+
+                            @if (Model.ShowCategoryColumn)
+                            {
+                                @if (string.IsNullOrEmpty(scopeOfAppointment.Product))
                                 {
                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                         <label aria-hidden="true">Product category</label>
@@ -206,51 +240,75 @@
                                 }
                                 else
                                 {
-                                        @if (Model.ShowCategoryColumn)
+                                    @if (k == 0)
                                     {
                                         <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                            <label aria-hidden="true">Product category</label>
+                                            @scopeOfAppointment.Category
+                                            @if (!string.IsNullOrEmpty(scopeOfAppointment.SubCategory))
+                                            {
+                                                <div class="govuk-!-margin-top-3">Product sub-category</div>
+                                                <div>@scopeOfAppointment.SubCategory</div>
+                                            }
                                         </td>
+                                    }
+                                    else
+                                    {
+                                        @if (Model.ShowCategoryColumn)
+                                        {
+                                            <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                            </td>
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        @if (Model.ShowProductColumn)
-                        {
+                            @if (Model.ShowProductColumn)
+                            {
+                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    <label aria-hidden="true">Product</label>
+                                    @Html.ValueOrNotApplicable(scopeOfAppointment.Product)
+                                </td>
+                            }
+
+                            @if (Model.ShowAreaOfCompetencyColumn)
+                            {
+                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                    <label aria-hidden="true">Area of competency</label>
+                                    @Html.ValueOrNotApplicable(scopeOfAppointment.AreaOfCompetency)
+                                </td>
+                            }
+
+                            @* Procedures *@
                             <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                <label aria-hidden="true">Product</label>
-                                @Html.ValueOrNotApplicable(scopeOfAppointment.Product)
-                            </td>
-                        }
-                        <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                            <label aria-hidden="true">Applicable conformity assessment procedure</label>
-                            @if (scopeOfAppointment.Procedures != null)
-                            {
-                                @foreach (var procedure in scopeOfAppointment.Procedures)
+                                <label aria-hidden="true">Applicable conformity assessment procedure</label>
+                                @if (scopeOfAppointment.Procedures != null)
                                 {
-                                    <p class="govuk-!-margin-bottom-4">@procedure</p>
+                                    @foreach (var procedure in scopeOfAppointment.Procedures)
+                                    {
+                                        <p class="govuk-!-margin-bottom-4">@procedure</p>
+                                    }
                                 }
-                            }
-                            else
-                            {
-                                <span>Not provided</span>
-                            }
-                        </td>
-                    </tr>
+                                else
+                                {
+                                    <span>Not provided</span>
+                                }
+                            </td>
+                        </tr>
 
-                    if ((nextProductIndex + 1) < (j + noOfProductsInScopeOfAppointment))
-                    {
-                        nextProductIndex += 1;
-                        scopeOfAppointment = Model.ScopeOfAppointments[nextProductIndex];
+                        if ((nextProductIndex + 1) < (j + noOfProductsInScopeOfAppointment))
+                        {
+                            nextProductIndex += 1;
+                            scopeOfAppointment = Model.ScopeOfAppointments[nextProductIndex];
+                        }
+                        else
+                        {
+                            j = nextProductIndex;
+                        }
                     }
-                    else
-                    {
-                        j = nextProductIndex;
-                    }
+
+
                 }
-
-
-            }
             </tbody>
         </table>
     }

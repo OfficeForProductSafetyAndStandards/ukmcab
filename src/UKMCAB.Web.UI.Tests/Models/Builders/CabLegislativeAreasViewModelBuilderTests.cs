@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Web.UI.Models.Builders;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
@@ -95,7 +96,10 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                     It.IsAny<List<SubCategoryModel>>(),
                     It.IsAny<List<ProductModel>>(),
                     It.IsAny<List<ProcedureModel>>(),
-                    It.IsAny<List<DesignatedStandardModel>>()))
+                    It.IsAny<List<DesignatedStandardModel>>(),
+                    It.IsAny<List<PpeProductTypeModel>>(),
+                    It.IsAny<List<ProtectionAgainstRiskModel>>(),
+                    It.IsAny<List<AreaOfCompetencyModel>>()))
                 .Returns(_mockCabLegislativeAreasItemViewModelBuilder.Object);
             _mockCabLegislativeAreasItemViewModelBuilder.Setup(m => m.WithNoOfProductsInScopeOfAppointment()).Returns(_mockCabLegislativeAreasItemViewModelBuilder.Object);
             _mockCabLegislativeAreasItemViewModelBuilder.Setup(m => m.Build()).Returns(cabLegislativeAreasItemViewModel);
@@ -110,7 +114,10 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 new List<SubCategoryModel>(),
                 new List<ProductModel>(),
                 new List<ProcedureModel>(),
-                new List<DesignatedStandardModel>()).Build();
+                new List<DesignatedStandardModel>(),
+                new List<PpeProductTypeModel>(),
+                new List<ProtectionAgainstRiskModel>(),
+                new List<AreaOfCompetencyModel>()).Build();
 
             // Assert
             return result;
