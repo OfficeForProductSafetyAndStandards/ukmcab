@@ -51,7 +51,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 IsPointOfContactPublicDisplay = true,
                 Status = LAStatus.Approved,
                 RoleId = Roles.DFTP.Id,
-                LegislativeAreaId = legislativeAreaId
+                LegislativeAreaId = legislativeAreaId, 
+                NewlyCreated = true
             };
             var expectedResult = new CABLegislativeAreasItemViewModel
             {
@@ -71,7 +72,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 StatusCssStyle = "govuk-tag--turquoise",
                 RoleName = "DFTP",
                 RoleId = documentLegislativeArea.RoleId,
-                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId
+                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId, 
+                NewlyCreated = documentLegislativeArea.NewlyCreated
             };
 
             // Act

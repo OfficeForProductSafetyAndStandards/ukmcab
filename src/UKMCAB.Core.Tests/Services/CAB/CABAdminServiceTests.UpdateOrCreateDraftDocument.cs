@@ -18,28 +18,28 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Arrange
             var userAccount = new UserAccount();
             var submitForApproval = true;
-            var draftDocument = new Document 
-            { 
+            var draftDocument = new Document
+            {
                 CABId = "2efe970d-cb83-4f1e-9ced-5489de4af8ca",
                 URLSlug = "Test-Kab-17-04-24",
-                StatusValue = Status.Draft, 
+                StatusValue = Status.Draft,
                 SubStatus = SubStatus.None,
-                DocumentLegislativeAreas =  new List<DocumentLegislativeArea>
+                DocumentLegislativeAreas = new List<DocumentLegislativeArea>
                 {
-                    new DocumentLegislativeArea { Status = LAStatus.Draft},
-                    new DocumentLegislativeArea { Status = LAStatus.Draft},
+                    new DocumentLegislativeArea { Status = LAStatus.Draft, NewlyCreated = true },
+                    new DocumentLegislativeArea { Status = LAStatus.Draft, NewlyCreated = false },
                     new DocumentLegislativeArea { Status = LAStatus.Draft},
                 },
-                
+
             };
 
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument, submitForApproval);
-            
+
             // Assert
             Assert.AreEqual(result.SubStatus, SubStatus.PendingApprovalToPublish);
             Assert.AreEqual(result.AuditLog.First().Action, AuditCABActions.SubmittedForApproval);
-            Assert.IsTrue(result.DocumentLegislativeAreas.All(x => x.Status == LAStatus.PendingApproval));
+            Assert.IsTrue(result.DocumentLegislativeAreas.All(x => x.Status == LAStatus.PendingApproval && x.NewlyCreated == null));
             _mockCABRepository.Verify(r => r.UpdateAsync(draftDocument, null), Times.Once);
         }
 
