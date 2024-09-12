@@ -139,7 +139,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (productId.HasValue)
             {
-                await GetProceduresAsync(null, null, null, null, productId, cabDocument, vm);
+                await GetProceduresAsync(null, null, null, null, productId, null, null, cabDocument, vm);
             }
 
             if (subCategoryId.HasValue)
@@ -173,7 +173,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId,
+                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId, null, null,
                             cabDocument, vm);
                     }
                 }
@@ -188,7 +188,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId,
+                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId, null, null,
                             cabDocument,
                             vm);
                     }
@@ -196,7 +196,37 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
             else if (scopeOfAppointmentId.HasValue && ppeProductTypeId.HasValue)
             {
-                await GetProtectionAgainstRiskAsync(scopeOfAppointmentId, ppeProductTypeId, cabDocument, vm);
+                vm.CabLegislativeAreas.PpeProductType = new ValueTuple<Guid, string>
+                {
+                    Item1 = ppeProductTypeId.Value,
+                    Item2 = (await _legislativeAreaService
+                        .GetPpeProductTypeByIdAsync((Guid)ppeProductTypeId))!.Name
+                };
+                await GetProtectionAgainstRiskAsync(scopeOfAppointmentId, cabDocument, vm);
+            }
+
+            if (scopeOfAppointmentId.HasValue && protectionAgainstRiskId.HasValue)
+            {                
+                vm.CabLegislativeAreas.ProtectionAgainstRisk = new ValueTuple<Guid, string>
+                {
+                    Item1 = protectionAgainstRiskId.Value,
+                    Item2 = (await _legislativeAreaService
+                        .GetProtectionAgainstRiskByIdAsync(protectionAgainstRiskId.Value))!.Name
+                };
+
+                await GetAreaOfCompetenciesAsync(scopeOfAppointmentId, cabDocument, vm);
+            }
+
+            if (scopeOfAppointmentId.HasValue && areaOfCompetencyId.HasValue)
+            {
+                await GetProceduresAsync(null, null, null, null, null, areaOfCompetencyId, scopeOfAppointmentId, cabDocument, vm);
+
+                vm.CabLegislativeAreas.AreaOfCompetency = new ValueTuple<Guid?, string?>
+                {
+                    Item1 = areaOfCompetencyId,
+                    Item2 = (await _legislativeAreaService
+                        .GetAreaOfCompetencyByIdAsync(areaOfCompetencyId.Value))!.Name
+                };
             }
 
             var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
@@ -222,11 +252,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 if (soa.LegislativeAreaId == legislativeAreaId && soa.PpeProductTypeId.HasValue)
                 {
-                    vm.CabLegislativeAreas.PpeProductTypes.Add(new ValueTuple<Guid, Guid, string>
+                    vm.CabLegislativeAreas.PpeProductTypes.Add(new ValueTuple<Guid, string>
                     {
                         Item1 = soa.PpeProductTypeId.Value,
-                        Item2 = soa.Id,
-                        Item3 = (await _legislativeAreaService
+                        Item2 = (await _legislativeAreaService
                         .GetPpeProductTypeByIdAsync(soa.PpeProductTypeId.Value))!.Name
                     });
 
@@ -244,7 +273,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(legislativeAreaId, null, null, null, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(legislativeAreaId, null, null, null, null, cabDocument, vm);
+                        await GetProceduresAsync(legislativeAreaId, null, null, null, null, null, null, cabDocument, vm);
                     }
                 }
             }
@@ -285,21 +314,35 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(vm);
         }
 
-        private async Task GetProtectionAgainstRiskAsync(Guid? scopeOfAppointmentId, Guid? ppeProductTypeId,
-     Document cabDocument,
-     CABProfileViewModel vm)
+        private async Task GetProtectionAgainstRiskAsync(Guid? scopeOfAppointmentId, Document cabDocument, CABProfileViewModel vm)
         {
             Guid? protectionAgainstRiskId = cabDocument.ScopeOfAppointments
                 .Where(soa => soa.Id == scopeOfAppointmentId)
                 .First().ProtectionAgainstRiskId;
 
-            vm.CabLegislativeAreas.ProtectionAgainstRisk = new ValueTuple<Guid?, Guid?, string>
+            vm.CabLegislativeAreas.ProtectionAgainstRisks.Add( new ValueTuple<Guid?, string>
             {
                 Item1 = protectionAgainstRiskId,
-                Item2 = scopeOfAppointmentId,
-                Item3 = (await _legislativeAreaService
+                Item2 = (await _legislativeAreaService
                         .GetProtectionAgainstRiskByIdAsync(protectionAgainstRiskId.Value))!.Name
-            };
+            });
+        }
+
+        private async Task GetAreaOfCompetenciesAsync(Guid? scopeOfAppointmentId, Document cabDocument, CABProfileViewModel vm)
+        {
+            var areaOfCompetencyIds = cabDocument.ScopeOfAppointments
+                .Where(soa => soa.Id == scopeOfAppointmentId)
+                .SelectMany(soa => soa.AreaOfCompetencyIds).ToList(); 
+
+            foreach (var id in areaOfCompetencyIds)
+            {
+                vm.CabLegislativeAreas.AreaOfCompetencies.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = id,
+                    Item2 = (await _legislativeAreaService
+                        .GetAreaOfCompetencyByIdAsync(id))!.Name
+                });
+            }
         }
         private async Task GetCategoriesAsync(Guid? legislativeId, Guid? purposeOfAppointmentId, Document cabDocument,
             CABProfileViewModel vm)
@@ -381,7 +424,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task GetProceduresAsync(Guid? legislativeAreaId, Guid? purposeOfAppointmentId, Guid? categoryId,
             Guid? subCategoryId,
-            Guid? productId, Document cabDocument,
+            Guid? productId, Guid? areaOfCompetencyId, Guid? scopeOfAppointmentId, Document cabDocument,
             CABProfileViewModel vm)
         {
             IEnumerable<DocumentScopeOfAppointment> scopeOfAppointments;
@@ -408,6 +451,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
                     .Where(s => s.ProductIds.Contains(productId!.Value) && s.ProductIdAndProcedureIds.Any());
             }
+            else if (areaOfCompetencyId.HasValue)
+            {
+                scopeOfAppointments = cabDocument.ScopeOfAppointments
+                    .Where(s => s.AreaOfCompetencyIds.Contains(areaOfCompetencyId!.Value) && s.AreaOfCompetencyIdAndProcedureIds.Any());
+            }
             else
             {
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
@@ -423,12 +471,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     .Where(i => i.ProductId == productId)
                     .SelectMany(pr => pr.ProcedureIds);
             }
-            else
+            else if (categoryId.HasValue)
             {
                 procIds = scopeOfAppointments.ToList()
-                    .Select(s => s.ProductIdAndProcedureIds)
-                    .SelectMany(pp => pp)
+                    .Select(s => s.CategoryIdAndProcedureIds)
+                    .SelectMany(cp => cp)
                     .SelectMany(pr => pr.ProcedureIds);
+            }
+            else
+            {
+                procIds = scopeOfAppointments.Where(soa => soa.Id == scopeOfAppointmentId).ToList()
+                    .SelectMany(s => s.AreaOfCompetencyIdAndProcedureIds)
+                    .Where(aoc => aoc.AreaOfCompetencyId == areaOfCompetencyId)                 
+                    .SelectMany(pr => pr.ProcedureIds);                
             }
             
             foreach (var procId in procIds)
