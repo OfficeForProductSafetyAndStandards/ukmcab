@@ -1107,12 +1107,12 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         ModelState.Clear();
 
         if (submitType != Constants.SubmitType.Continue)
-        {
+        {            
             ScopeOfAppointmentOptionsModel? options = null;
             switch (submitType)
             {
                 case Constants.SubmitType.Search:
-                    options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.SearchTerm, designatedStandardIds: vm.SelectedDesignatedStandardIds);
+                    options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.SearchTerm, designatedStandardIds: vm.SelectedDesignatedStandardIds, isShowAllSelectedDesignatedRequest: false, ShowAllSelectedIsOn: vm.ShowAllSelected);
                     vm.PaginationSearchTerm = vm.SearchTerm;
                     break;
                 case Constants.SubmitType.PaginatedQuery:
@@ -1120,7 +1120,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                         designatedStandardIds: vm.ShowAllSelected ? vm.SelectedDesignatedStandardIds : null);
                     break;
                 case Constants.SubmitType.ShowAllSelected:
-                    options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, designatedStandardIds: vm.SelectedDesignatedStandardIds);
+                    options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, designatedStandardIds: vm.SelectedDesignatedStandardIds, isShowAllSelectedDesignatedRequest: true);
                     break;
                 case Constants.SubmitType.ClearShowAllSelected:
                     options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, vm.PageNumber, vm.PaginationSearchTerm);
