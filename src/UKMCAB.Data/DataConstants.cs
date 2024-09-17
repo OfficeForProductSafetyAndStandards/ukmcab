@@ -297,6 +297,7 @@ public static class DataConstants
         public static readonly List<string> BodyTypes = new()
         {
             "Approved body",
+            "Designated body",
             "NI Notified body",
             "Overseas body",
             "Recognised third-party",
