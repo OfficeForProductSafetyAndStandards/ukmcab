@@ -253,7 +253,7 @@ namespace UKMCAB.Data.Search.Services
         private IEnumerable<string> GetLegislativeAreaStatusFacetList(IEnumerable<FacetResult> facets)
             => facets.Select(f => f.Value.ToString()).OrderBy(f => f).ToList();
         
-        private static readonly Regex SpecialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
+        private static readonly Regex SpecialCharsRegex = new("[+\\-&|\\[!()\\]{}\\^\"~*?:\\/]");
 
         private string GetKeywordsQuery(string? keywords, bool internalSearch)
         {
