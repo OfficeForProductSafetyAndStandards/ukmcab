@@ -133,6 +133,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         }
 
         var designatedStandardPredicate = PredicateBuilder.New<DesignatedStandard>(x => x.LegislativeAreaId == legislativeAreaId);
+
         if ((isShowAllSelectedDesignatedRequest || showAllSelectedIsOn) && designatedStandardIds is not null && designatedStandardIds?.Count > 0)
         {
             designatedStandardPredicate = designatedStandardPredicate.And(x => designatedStandardIds.Contains(x.Id));
