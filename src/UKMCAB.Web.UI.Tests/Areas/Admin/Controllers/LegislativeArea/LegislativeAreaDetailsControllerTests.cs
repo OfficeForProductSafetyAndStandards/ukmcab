@@ -260,7 +260,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                 {
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
-            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, searchTerm, 20, designatedStandardIds))
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, searchTerm, 20, designatedStandardIds, false, false))
                 .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
 
             //Act
@@ -315,7 +315,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                 {
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
-            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, designatedStandardIds))
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, designatedStandardIds, false, false))
                 .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
 
             //Act
@@ -371,7 +371,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                 {
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
-            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, null))
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, null, false, false))
                 .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
 
             //Act
@@ -424,7 +424,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                 {
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
-            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, null, 20, designatedStandardIds))
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, null, 20, designatedStandardIds, It.IsAny<bool>(), It.IsAny<bool>()))
                 .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
 
             //Act
@@ -477,7 +477,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                 {
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
-            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, null))
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, null, false, false))
                 .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
 
             //Act
@@ -682,7 +682,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                     Name = legislativeAreaName,
                 }).Verifiable();
 
-            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<List<Guid>>()))
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<List<Guid>>(), false, false))
                 .ReturnsAsync(new ScopeOfAppointmentOptionsModel
                 {
                     DesignatedStandards = designatedStandards,
@@ -754,7 +754,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                     Name = legislativeAreaName,
                 }).Verifiable();
 
-            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<List<Guid>>()))
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<List<Guid>>(), false, false))
                 .ReturnsAsync(new ScopeOfAppointmentOptionsModel
                 {
                     DesignatedStandards = designatedStandards,
