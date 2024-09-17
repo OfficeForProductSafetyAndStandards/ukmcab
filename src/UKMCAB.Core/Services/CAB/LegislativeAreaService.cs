@@ -94,7 +94,12 @@ public class LegislativeAreaService : ILegislativeAreaService
         var la = await _legislativeAreaRepository.QueryAsync(l => l.Id == legislativeAreaId);
         return _mapper.Map<LegislativeAreaModel>(la.First());
     }
-    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid legislativeAreaId, int? pageNumber = null, string? searchTerm = null, int pageSize = 20, List<Guid>? designatedStandardIds = null)
+    public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(
+        Guid legislativeAreaId, 
+        int? pageNumber = null, 
+        string? searchTerm = null, 
+        int pageSize = 20, 
+        List<Guid>? designatedStandardIds = null)
     {
         var purposeOfAppointments = await _purposeOfAppointmentRepository.QueryAsync(x => x.LegislativeAreaId == legislativeAreaId);
         if (purposeOfAppointments.Any())
@@ -133,7 +138,7 @@ public class LegislativeAreaService : ILegislativeAreaService
         }
 
         var designatedStandardPredicate = PredicateBuilder.New<DesignatedStandard>(x => x.LegislativeAreaId == legislativeAreaId);
-        if (designatedStandardIds is not null)
+        if (designatedStandardIds is not null && designatedStandardIds.Count > 0)
         {
             designatedStandardPredicate = designatedStandardPredicate.And(x => designatedStandardIds.Contains(x.Id));
         }
