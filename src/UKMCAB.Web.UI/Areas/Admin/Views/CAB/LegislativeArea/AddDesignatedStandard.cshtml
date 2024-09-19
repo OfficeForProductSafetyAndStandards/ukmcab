@@ -61,13 +61,23 @@
                         <govuk-button class="govuk-button--secondary govuk-!-margin-bottom-2" type="submit" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PageNumber asp-route-showAllSelected=true asp-route-submitType=@Constants.SubmitType.ShowAllSelected>
                             Show all selected
                         </govuk-button>
-                    } 
+                    }
 
-
-                    <div id="designated-standard-search-keywords-input-container" class="width-three-fifth">
-                        <input type="text" asp-for="SearchTerm" class="govuk-input search-box" />
-                        <button class="clear-icon" type="submit" name="submitType" aria-label="Clear your search terms" asp-route-SearchTerm="" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected =@Model.ShowAllSelected value="@Constants.SubmitType.Search"></button>
-                        <button id="search-keyword-button" type="submit" name="submitType" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected =@Model.ShowAllSelected value="@Constants.SubmitType.Search">Search</button>
+                    <div id="search-keyword-container">
+                        <div id="search-filter-keywords">
+                            <fieldset aria-describe="search the designated standards list using keywords or search terms">
+                                <h3 class="govuk-label-wrapper">
+                                    <label class="govuk-label govuk-label--s" asp-for="SearchTerm">
+                                        Search
+                                    </label>
+                                </h3>
+                                <div id="search-filter-keywords-input-container">
+                                    <input type="text" asp-for="SearchTerm" class="govuk-input search-box" />
+                                    <button class="clear-icon" type="submit" name="submitType" aria-label="Clear your search terms" asp-route-SearchTerm="" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected=@Model.ShowAllSelected value="@Constants.SubmitType.Search"></button>
+                                    <button id="search-keyword-button" type="submit" name="submitType" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected=@Model.ShowAllSelected value="@Constants.SubmitType.Search">Search</button>
+                                </div>
+                            </fieldset>
+                        </div>
                     </div>
 
                     <govuk-checkboxes asp-for="@Model.PageSelectedDesignatedStandardIds">
