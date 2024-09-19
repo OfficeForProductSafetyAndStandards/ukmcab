@@ -248,10 +248,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
 
+                if (!model.isMRA)
+                {
+                    latestDocument.MRACountries = new List<string>();
+                } 
+
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    if (model.IsFromSummary)
+                    if (model.isMRA)
+                    {
+                        return RedirectToAction("BodyDetailsMRA", "CAB", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl, fromSummary = model.IsFromSummary });
+                    }
+                    else if (model.IsFromSummary)
                     {
                         return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl });
                     }
@@ -271,6 +280,67 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (!model.TestingLocations.Any())
             {
                 model.TestingLocations.Add(string.Empty);
+            }
+
+            model.DocumentStatus = latestDocument.StatusValue;
+            model.IsFromSummary = fromSummary;
+            return View(model);
+        }
+
+        [HttpGet("admin/cab/body-details-mra/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
+        public async Task<IActionResult> BodyDetailsMRA(string id, bool fromSummary, string? returnUrl)
+        {
+            var latest = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latest == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            // Pre-populate model for edit
+            var model = new CABBodyDetailsMRAViewModel(latest);
+
+            model.DocumentStatus = latest.StatusValue;
+            model.IsFromSummary = fromSummary;
+            model.ReturnUrl = returnUrl;
+            return View(model);
+        }
+
+        [HttpPost("admin/cab/body-details-mra/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
+        public async Task<IActionResult> BodyDetailsMRA(string id, CABBodyDetailsMRAViewModel model, string submitType,
+            bool fromSummary)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
+            {
+                latestDocument.MRACountries = model.MRACountries;
+
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                if (submitType == Constants.SubmitType.Continue)
+                {
+                    if (model.IsFromSummary)
+                    {
+                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl });
+                    }
+                    else if (!latestDocument.DocumentLegislativeAreas.Any())
+                    {
+                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
+                    }
+                    else
+                    {
+                        return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
+                    }
+                }
+
+                return SaveDraft(latestDocument);
             }
 
             model.DocumentStatus = latestDocument.StatusValue;
@@ -465,7 +535,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 SelectedPublishType = model.SelectedPublishType,
                 CabDetailsViewModel = new CABDetailsViewModel(latest, User),
                 CabContactViewModel = new CABContactViewModel(latest),
-                CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
+                CabBodyDetailsMRAViewModel = new CABBodyDetailsMRAViewModel(latest),
                 CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latest),
                 CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latest)
             };
@@ -615,7 +685,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var cabDetails = new CABDetailsViewModel(latest, User, cabNameAlreadyExists);
             var cabContact = new CABContactViewModel(latest);
-            var cabBody = new CABBodyDetailsViewModel(latest);
+            var cabBody = new CABBodyDetailsMRAViewModel(latest);
             var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
             var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
             var cabHistory = new CABHistoryViewModel(latest, currentUrl);
@@ -645,7 +715,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 .WithLegislativeAreasPendingApprovalCount(latest)
                 .WithCabDetails(cabDetails)
                 .WithCabContactViewModel(cabContact)
-                .WithCabBodyDetailsViewModel(cabBody)
+                .WithCabBodyDetailsMRAViewModel(cabBody)
                 .WithCabLegislativeAreasViewModel(cabLegislativeAreas)
                 .WithProductScheduleDetailsViewModel(cabProductSchedules)
                 .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)

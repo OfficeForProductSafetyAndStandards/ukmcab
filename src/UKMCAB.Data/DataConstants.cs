@@ -4,7 +4,7 @@ public static class DataConstants
 {
     public static class Version
     {
-        public const string Number = "v5-1";
+        public const string Number = "v5-2";
     }
 
     public static class CosmosDb
@@ -302,12 +302,17 @@ public static class DataConstants
             "Overseas body",
             "Recognised third-party",
             "Technical assessment body",
-            "UK body designated under MRA: Australia",
-            "UK body designated under MRA: Canada",
-            "UK body designated under MRA: Japan",
-            "UK body designated under MRA: New Zealand",
-            "UK body designated under MRA: USA",
+            "UK body designated under MRA",
             "User inspectorate"
+        };
+
+        public static readonly List<string> MRACountries = new()
+        {
+            "Australia",
+            "Canada",
+            "Japan",
+            "New Zealand",
+            "USA"
         };
     }
 

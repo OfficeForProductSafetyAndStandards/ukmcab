@@ -50,7 +50,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Web.Tests", "UKMCAB.
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Utilities", "Utilities", "{B8194A16-8B2A-4766-AF4C-4D2635DB5E4A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Utilities.StorageDataJsonIdGenerator", "UKMCAB.Utilities.StorageDataJsonIdGenerator\UKMCAB.Utilities.StorageDataJsonIdGenerator.csproj", "{6A950BC2-CB00-464A-9F98-F765527D4FE9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UKMCAB.Utilities.StorageDataJsonIdGenerator", "UKMCAB.Utilities.StorageDataJsonIdGenerator\UKMCAB.Utilities.StorageDataJsonIdGenerator.csproj", "{6A950BC2-CB00-464A-9F98-F765527D4FE9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
