@@ -9,7 +9,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public Guid SelectedLegislativeAreaId { get; set; }
 
         public IEnumerable<SelectListItem>? LegislativeAreas { get; set; }
-        
+        public bool IsMRA { get; set; }
+        public bool MRABypass { get; set; }
+
         public LegislativeAreaViewModel() : base("Legislative area") { }
     }
 }

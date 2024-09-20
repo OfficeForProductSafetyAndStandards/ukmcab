@@ -23,7 +23,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), Guid.NewGuid(), "Lifts","ogd"), "No document found");
+                await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), Guid.NewGuid(), "Lifts","ogd", false), "No document found");
             return Task.CompletedTask;
         }
 
@@ -49,7 +49,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act and Assert
             Assert.ThrowsAsync<InvalidOperationException>(async () =>
-                await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), laId, "test","ogd"), "Legislative id already exists on cab");
+                await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), laId, "test","ogd", false), "Legislative id already exists on cab");
             return Task.CompletedTask;
         }
 
@@ -74,7 +74,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
 
             // Act
-            await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, Guid.NewGuid(), "La to Add","ogd");
+            await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, Guid.NewGuid(), "La to Add","ogd", false);
 
             // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);

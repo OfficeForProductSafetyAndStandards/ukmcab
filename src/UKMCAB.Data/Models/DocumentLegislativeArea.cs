@@ -27,6 +27,7 @@
         public bool? IsPointOfContactPublicDisplay { get; set; }
         public LAStatus Status { get; set; }
         public string RoleId { get; set; }
-        public bool? NewlyCreated { get; set; }        
+        public bool? NewlyCreated { get; set; }   
+        public bool? MRABypass { get; set; }
     }
 }
