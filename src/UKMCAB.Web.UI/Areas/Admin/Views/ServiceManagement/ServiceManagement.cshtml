@@ -56,7 +56,9 @@
 
                 <div id="search-keyword-container">
                     <div id="search-filter-keywords">
-                        <fieldset aria-describe="search the conformity assessment body database using keywords or search terms">
+                        <fieldset
+                            <fieldset aria-describedby="search-description">
+                                <p id="search-description" class="govuk-visually-hidden">search the conformity assessment body database using keywords or search terms</p>
                             <h2 class="govuk-heading-m">
                                 <a class="govuk-link govuk-link--no-visited-state" asp-route="@SearchController.Routes.Search">
                                     Search for a CAB
