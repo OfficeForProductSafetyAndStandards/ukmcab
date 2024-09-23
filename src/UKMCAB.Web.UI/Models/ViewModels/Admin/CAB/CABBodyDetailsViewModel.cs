@@ -22,6 +22,9 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         [CannotBeEmpty(ErrorMessage = "Select a body type")]
         public List<string> BodyTypes { get; set; } = new();
 
+        public bool isMRA => BodyTypes.Any(t => t.Equals("UK body designated under MRA"));
+        public List<string> BodyTypesSummary => BodyTypes.Where(t => !t.Equals("UK body designated under MRA")).ToList();
+
         public string? Title => "Body details";
         public string[] FieldOrder => new[] { nameof(TestingLocations), nameof(BodyTypes) };
     }

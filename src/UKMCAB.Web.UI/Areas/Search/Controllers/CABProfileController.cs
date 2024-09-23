@@ -639,6 +639,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 PreviousBodyNumbers = cabDocument.PreviousCABNumbers,
                 CabNumberVisibility = cabDocument.CabNumberVisibility,
                 BodyTypes = cabDocument.BodyTypes,
+                MRACountries = cabDocument.MRACountries,
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations,
                 Status = cabDocument.Status,

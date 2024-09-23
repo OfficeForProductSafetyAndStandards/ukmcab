@@ -81,9 +81,9 @@ namespace UKMCAB.Web.UI.Models.Builders
             return this;
         }
 
-        public ICabSummaryViewModelBuilder WithCabBodyDetailsViewModel(CABBodyDetailsViewModel cabBodyDetailsViewModel)
+        public ICabSummaryViewModelBuilder WithCabBodyDetailsMRAViewModel(CABBodyDetailsMRAViewModel cabBodyDetailsMRAViewModel)
         {
-            _model.CabBodyDetailsViewModel = cabBodyDetailsViewModel;
+            _model.CabBodyDetailsMRAViewModel = cabBodyDetailsMRAViewModel;
             return this;
         }
 

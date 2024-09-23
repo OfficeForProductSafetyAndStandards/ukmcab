@@ -100,9 +100,10 @@ namespace UKMCAB.Core.Services.CAB
         /// <param name="laToAdd">New Legislative area id to create</param>
         /// <param name="laName">Name of Legislative Area to add to labels</param>
         /// <param name="roleId"></param>
+        /// <param name="MRABypass">Whether this LA is associated with MRA and has SOA bypassed</param>
         /// <returns>DocumentLegislativeId created</returns>
         Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd, string laName,
-            string roleId);
+            string roleId, bool MRABypass);
 
         Task RemoveLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid legislativeAreaId, string laName);
 

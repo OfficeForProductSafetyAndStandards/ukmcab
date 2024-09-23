@@ -56,6 +56,10 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string PreviousBodyNumbers { get; set; }
         public string? CabNumberVisibility { get; set; }
         public List<string> BodyTypes { get; set; } = new();
+        public List<string> BodyTypesSummary => BodyTypes.Where(t => !t.Equals("UK body designated under MRA")).ToList();
+        public bool isMRA => BodyTypes.Any(t => t.Equals("UK body designated under MRA"));
+        public List<string> MRACountries { get; set; } = new();
+
         public List<string> LegislativeAreas { get; set; } = new();
         public CABDocumentsViewModel ProductSchedules { get; set; } = new();
         public CABLegislativeAreasModel CabLegislativeAreas { get; set; } = new();

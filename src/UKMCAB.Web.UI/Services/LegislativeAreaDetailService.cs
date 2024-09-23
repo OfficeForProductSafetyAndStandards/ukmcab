@@ -49,6 +49,7 @@ namespace UKMCAB.Web.UI.Services
                 RoleId = documentLegislativeArea.RoleId,
                 LegislativeAreaId = documentLegislativeArea.LegislativeAreaId,
                 NewlyCreated = documentLegislativeArea.NewlyCreated,
+                MRABypass = documentLegislativeArea.MRABypass
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);

@@ -360,15 +360,15 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
         public void WithCABBodyDetailsViewModel_PopulatesCABBodyDetailsViewModel()
         {
             // Arrange
-            var model = new CABBodyDetailsViewModel();
+            var model = new CABBodyDetailsMRAViewModel();
 
             _sut = new CabSummaryViewModelBuilder(_mockCabLegislativeAreasItemViewModelBuilder.Object, _mockHttpContextAccessor.Object);
 
             // Act
-            var result = _sut.WithCabBodyDetailsViewModel(model).Build();
+            var result = _sut.WithCabBodyDetailsMRAViewModel(model).Build();
 
             // Assert
-            result.CabBodyDetailsViewModel.Should().NotBeNull();
+            result.CabBodyDetailsMRAViewModel.Should().NotBeNull();
         }
 
         [Test]

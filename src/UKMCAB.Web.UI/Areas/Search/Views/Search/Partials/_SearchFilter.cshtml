@@ -1,6 +1,7 @@
 ﻿@model FilterViewModel
 <div class="search-filter-option govuk-checkboxes--small">
-    <fieldset aria-describe="Filter the conformity assessment body results by @Model.Label">
+    <fieldset aria-describedby="search-description">
+        <p id="search-description" class="govuk-visually-hidden">Filter the conformity assessment body results by @Model.Label</p>
         <h3 class="govuk-heading-s">@Model.Label</h3>
         <div class="search-filter-option-list">
             @foreach (var filterOption in Model.FilterOptions.Where(filterOption => !string.IsNullOrWhiteSpace(filterOption.Label)))

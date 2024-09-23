@@ -206,7 +206,7 @@
                             {
                                 <a asp-area="Admin" asp-controller="CAB" asp-action="BodyDetails" asp-route-id="@Model.CABId" asp-route-fromSummary="true" asp-route-returnUrl="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Edit</a>
                             }
-                            @if (Model.CabBodyDetailsViewModel.IsCompleted)
+                            @if (Model.CabBodyDetailsMRAViewModel.IsCompleted)
                             {
                                 <div class="cab-result-status-label cab-result-completed cab-details-result-status-label">
                                     COMPLETED
@@ -221,7 +221,7 @@
                         </dd>
                     </div>
                 </dl>
-                <partial name="Partials/_BodyDetails" model="@Model.CabBodyDetailsViewModel" />
+                <partial name="Partials/_BodyDetails" model="@Model.CabBodyDetailsMRAViewModel" />
             </div>
 
             <div class="govuk-!-padding-top-1">

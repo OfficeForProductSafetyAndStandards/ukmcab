@@ -15,6 +15,17 @@
                 });
             });
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlParams = new URLSearchParams(window.location.search);
+            const tabName = urlParams.get('tabName');
+            const tabNav = urlParams.get('tabNav');
+
+            if (tabNav == "true") {
+                var tab = document.getElementById(tabName);
+                tab.focus();
+            }
+        });
     }
 
     return {
