@@ -48,6 +48,7 @@ namespace UKMCAB.Web.UI.Models.Builders
                 RoleId = documentLegislativeArea.RoleId,
                 LegislativeAreaId = documentLegislativeArea.LegislativeAreaId,
                 NewlyCreated = documentLegislativeArea.NewlyCreated,
+                MRABypass = documentLegislativeArea.MRABypass
             };
             return this;
         }

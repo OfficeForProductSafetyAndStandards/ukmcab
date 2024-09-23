@@ -71,7 +71,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             CABId = id,
             LegislativeAreas = await GetLegislativeSelectListItemsAsync(cabLegislativeAreaIds),
             ReturnUrl = returnUrl,
-            IsFromSummary = fromSummary
+            IsFromSummary = fromSummary,
+            IsMRA = latestDocument.BodyTypes.Any(t => t.Equals("UK body designated under MRA"))
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddLegislativeArea.cshtml", vm);
@@ -117,11 +118,12 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             var userAccount =
                 await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            var mraBypass = (submitType == Constants.SubmitType.MRABypass);
 
             // add document new legislative area;
-            await _cabAdminService.AddLegislativeAreaAsync(userAccount, id, vm.SelectedLegislativeAreaId, legislativeArea.Name, legislativeArea.RoleId);
+            await _cabAdminService.AddLegislativeAreaAsync(userAccount, id, vm.SelectedLegislativeAreaId, legislativeArea.Name, legislativeArea.RoleId, mraBypass);
 
-            if (!legislativeArea.HasDataModel)
+            if (!legislativeArea.HasDataModel || mraBypass)
             {
                 return RedirectToRoute(LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
                     new { id, laId = vm.SelectedLegislativeAreaId, fromSummary = vm.IsFromSummary });

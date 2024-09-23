@@ -588,7 +588,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd,
-            string laName, string roleId)
+            string laName, string roleId, bool MRABypass)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
@@ -604,6 +604,7 @@ namespace UKMCAB.Core.Services.CAB
                 RoleId = roleId,
                 Status = LAStatus.Draft,
                 NewlyCreated = true,
+                MRABypass = MRABypass
             });
 
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
