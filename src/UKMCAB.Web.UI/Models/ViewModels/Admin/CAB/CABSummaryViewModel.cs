@@ -131,7 +131,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool CanPublish =>
             IsOpssAdmin &&
             DraftUpdated &&
-            LegislativeAreasApprovedByAdminCount > 0;
+            LegislativeAreasApprovedByAdminCount > 0 &&
+            !CannotPublish;
+
+        public bool CannotPublish =>
+            !HasActionableLegislativeAreaForOpssAdmin &&
+            IsPendingOgdApproval;
 
         public bool ShowOgdActions =>
             RevealEditActions &&
