@@ -302,7 +302,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
            ShowEditButtonForOwnerBase;
 
         private bool ShowEditButtonForOpssOwnerThatSubmitsForOgdApproval =>
-            IsOPSSOrInCreatorUserGroup &&
+            IsOpssAdmin &&
+            UserInCreatorUserGroup &&
             (Status == Status.Draft &&
             SubStatus == SubStatus.PendingApprovalToPublish &&
             IsActionableByOpssAdmin);
