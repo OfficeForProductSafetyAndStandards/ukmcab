@@ -93,7 +93,8 @@
                 }
             </fieldset>
         </div>
-        <div id="search-results-list-container" aria-description="Results of search of conformity assessment bodies">
+        <div id="search-results-list-container" aria-describedby="search-description">
+            <p id="search-description" class="govuk-visually-hidden">Results of search of conformity assessment bodies</p>
             <ul id="search-results-list">
                 @foreach (var searchResult in Model.SearchResults)
                 {
@@ -148,7 +149,8 @@
     }
     else
     {
-        <div id="search-no-results-container" aria-description="Results of search of conformity assessment bodies returned no results">
+        <div id="search-no-results-container" aria-describedby="search-description">
+            <p id="search-description" class="govuk-visually-hidden">Results of search of conformity assessment bodies returned no results</p>
             <p class="govuk-body">
                 <a name="no-results">There are no matching results.</a>
             </p>
