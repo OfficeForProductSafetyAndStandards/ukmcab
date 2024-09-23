@@ -60,14 +60,15 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             !RevealEditActions &&
             !IsEditLocked &&
             (ShowEditButtonForOgdOrOpssNonOwner ||
-            ShowEditButtonForUkasOrOpssOwner);
+            ShowEditButtonForUkasOrOpssOwner ||
+            ShowEditButtonForOpssOwnerThatSubmitsForOgdApproval);
 
         public bool ShowSubSectionEditAction =>
            RevealEditActions &&
            !IsEditLocked && (           
            ShowSubSectionEditActionForOpss ||
-           ShowSubSectionEditActionForOwner
-           );
+           ShowSubSectionEditActionForOwner ||
+           ShowSubSectionEditActionForOpssOnSubmitForApproval);
 
         public bool ShowProfileVisibilityWarning =>
             RevealEditActions &&
@@ -89,19 +90,28 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             LegislativeAreasPendingApprovalForCurrentUserCount > 0;
 
         public bool ShowApproveToPublishButton =>
-            RevealEditActions &&
+            (ShowPublishButtonForOpssOwnerOnSubmitForApproval ||
+            (RevealEditActions &&
             !IsEditLocked &&
-            !UserInCreatorUserGroup &&
+            !UserInCreatorUserGroup)) &&
             CanPublish;
 
-        public bool ShowPublishButton =>
+        public bool ShowPublishButton =>            
             ShowSubSectionEditAction &&
             SubStatus == SubStatus.None &&
             DraftUpdated &&
             IsOpssAdmin &&
             UserInCreatorUserGroup;
 
-        public bool ShowDeclineButton => ShowApproveToPublishButton;
+        public bool ShowPublishButtonForOpssOwnerOnSubmitForApproval =>            
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            (ShowSubSectionEditAction &&
+            DraftUpdated &&
+            IsOpssAdmin &&
+            UserInCreatorUserGroup);
+
+        public bool ShowDeclineButton =>
+            ShowApproveToPublishButton; 
 
         public bool ShowSubmitForApprovalButton =>
             ShowSubSectionEditAction &&
@@ -140,7 +150,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             IsPendingOgdApproval &&
             LegislativeAreasPendingApprovalForCurrentUserCount > 0;
 
-        public bool CanSubmitForApproval => IsUkas && DraftUpdated && IsComplete;
+        public bool CanSubmitForApproval => (IsUkas || IsOpssAdmin) && DraftUpdated && IsComplete;
 
         public bool IsComplete =>
             CabDetailsViewModel != null &&
@@ -173,6 +183,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (ShowBannerEmptyStringForOwner ||
             ShowBannerEmptyStringForNonOwnerOpss ||
             ShowBannerEmptyStringForNonOwnerOgd ||
+            ShowBannerEmptyStringForOpssOwnerOnSubmitForApproval ||
             Status != Status.Draft);
 
         public bool ShowBannerContentCannotBeEdited =>
@@ -195,6 +206,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (IsOpssAdmin || IsUkas) &&
             Status == Status.Draft &&
             SubStatus == SubStatus.None;
+        
+        private bool ShowBannerEmptyStringForOpssOwnerOnSubmitForApproval =>
+            UserInCreatorUserGroup &&
+            IsOpssAdmin  &&
+            Status == Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            IsActionableByOpssAdmin;
         private bool ShowBannerEmptyStringForNonOwnerOgd =>
             !UserInCreatorUserGroup &&
             HasOgdRole &&
@@ -278,6 +296,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             (IsUkas || IsOpssAdmin) &&
            ShowEditButtonForOwnerBase;
 
+        private bool ShowEditButtonForOpssOwnerThatSubmitsForOgdApproval =>
+            IsOPSSOrInCreatorUserGroup &&
+            (Status == Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            IsActionableByOpssAdmin);
+
         private bool ShowEditButtonForOwnerBase =>
            UserInCreatorUserGroup &&
            (Status == Status.Draft || Status == Status.Published) &&
@@ -289,6 +313,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             SubStatus != SubStatus.None &&
             HasActionableLegislativeAreaForOpssAdmin &&
             IsOpssAdmin;
+        
+        private bool ShowSubSectionEditActionForOpssOnSubmitForApproval =>
+            IsOpssAdmin &&
+            UserInCreatorUserGroup &&
+            Status == Status.Draft &&
+            SubStatus == SubStatus.PendingApprovalToPublish &&
+            IsActionableByOpssAdmin;
 
         private bool ShowSubSectionEditActionForOwner =>
             UserInCreatorUserGroup &&
