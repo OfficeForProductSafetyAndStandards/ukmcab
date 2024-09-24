@@ -733,6 +733,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        [Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> Publish(string id, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -750,6 +751,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        [Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> Publish(PublishCABViewModel model)
         {
             var latest =
