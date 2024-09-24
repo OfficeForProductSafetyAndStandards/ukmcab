@@ -49,10 +49,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         [Required(ErrorMessage = "Select a country")]
         public string? Country { get; set; }
 
-        public string? FormattedAddress => string.Join("<br />",
-            new [] { AddressLine1, AddressLine2, TownCity, County, Postcode, Country }.Where(a =>
-                !string.IsNullOrWhiteSpace(a)));
-
         [RegularExpression(@"^http(s)?://([\w-]+.)+[\w-]+(/[\w- ./?%&=])?$", ErrorMessage = "Enter a URL in the correct format")]
         public string? Website { get; set; }
 

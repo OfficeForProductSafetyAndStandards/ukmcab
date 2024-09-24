@@ -510,7 +510,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToCabManagementWithUnlockCab(latest.CABId);
             }
 
-            if (model.SelectedPublishType == null && model.IsOpssAdmin)
+            if (submitType != Constants.SubmitType.SubmitForApproval && model.SelectedPublishType == null && model.IsOpssAdmin)
             {
                 ModelState.Clear();
                 model = await PopulateCABSummaryViewModel(latest, model.RevealEditActions, model.ReturnUrl, model.FromCabProfilePage);
@@ -519,7 +519,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View("~/Areas/Admin/views/CAB/Summary.cshtml", model);
             }
 
-            if (model.IsOpssAdmin)
+            if (submitType != Constants.SubmitType.SubmitForApproval && model.IsOpssAdmin)
             {
                 TempData["PublishType"] = model.SelectedPublishType;
             }
@@ -733,6 +733,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        [Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> Publish(string id, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -750,6 +751,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpPost("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        [Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> Publish(PublishCABViewModel model)
         {
             var latest =

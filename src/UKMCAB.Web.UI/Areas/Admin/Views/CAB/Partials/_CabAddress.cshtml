@@ -1,0 +1,12 @@
+﻿@model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABContactViewModel
+@foreach (var line in new[] {
+        Model.AddressLine1,
+        Model.AddressLine2,
+        Model.TownCity,
+        Model.County,
+        Model.Postcode,
+        Model.Country
+    }.Where(a => !string.IsNullOrWhiteSpace(a)))
+{
+    @line<br /> 
+}
