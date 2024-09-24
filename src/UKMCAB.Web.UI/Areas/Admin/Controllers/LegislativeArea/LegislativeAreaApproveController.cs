@@ -32,7 +32,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly ILegislativeAreaDetailService _legislativeAreaDetailService;
-    
+
     public static class Routes
     {
         public const string LegislativeAreaApprovalList = "legislative.area.approval.list";
