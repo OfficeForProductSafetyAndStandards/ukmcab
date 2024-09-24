@@ -382,7 +382,7 @@ namespace UKMCAB.Core.Services.CAB
                 await UnArchiveLegislativeAreaAsync(userAccount, cabId, docLa.LegislativeAreaId);
             }               
 
-            if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
+            if (latestDocument.SubStatus != SubStatus.PendingApprovalToPublish && latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
             {
                 latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
             }

@@ -160,7 +160,7 @@ public class ApproveCABController : Controller
 
         await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason, publishType);
 
-        if (clonedDocument.CreatedByUserGroup == Roles.OPSS.Id)
+        if (clonedDocument.CreatedByUserGroup == Roles.OPSS.Id && clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Draft))
         {
             clonedDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
         }

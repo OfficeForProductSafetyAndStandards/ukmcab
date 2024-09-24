@@ -510,7 +510,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToCabManagementWithUnlockCab(latest.CABId);
             }
 
-            if (model.SelectedPublishType == null && model.IsOpssAdmin)
+            if (submitType != Constants.SubmitType.SubmitForApproval && model.SelectedPublishType == null && model.IsOpssAdmin)
             {
                 ModelState.Clear();
                 model = await PopulateCABSummaryViewModel(latest, model.RevealEditActions, model.ReturnUrl, model.FromCabProfilePage);
@@ -519,7 +519,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View("~/Areas/Admin/views/CAB/Summary.cshtml", model);
             }
 
-            if (model.IsOpssAdmin)
+            if (submitType != Constants.SubmitType.SubmitForApproval && model.IsOpssAdmin)
             {
                 TempData["PublishType"] = model.SelectedPublishType;
             }
