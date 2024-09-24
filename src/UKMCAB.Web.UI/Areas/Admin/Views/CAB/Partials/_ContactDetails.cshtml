@@ -9,7 +9,7 @@
                     Address
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @Html.ValueOrNotProvided(Model.FormattedAddress)
+                    <partial name="Partials/_CabAddress" model="@Model" />
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -65,7 +65,7 @@
                     Display point of contact details
                 </dt>
                 <dd class="govuk-summary-list__value">
-                    @Html.ValueOrNotProvided(Model.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted")
+                    @(Model.IsPointOfContactPublicDisplay == true ? "Public" : "Restricted")
                 </dd>
             </div>
             <div class="govuk-summary-list__row">
