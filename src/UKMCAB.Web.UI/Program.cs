@@ -108,6 +108,11 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser();
         policy.Requirements.Add(new EditCabPendingApprovalRequirement());
+    }); 
+    options.AddPolicy(Policies.CanRequest, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.CanRequest);
     });
 });
 
