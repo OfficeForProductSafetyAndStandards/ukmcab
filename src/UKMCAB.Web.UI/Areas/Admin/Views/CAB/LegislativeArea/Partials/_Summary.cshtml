@@ -87,9 +87,9 @@
         <table class="govuk-table govuk-!-margin-top-3">
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-half">Designated standard</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Reference number</th>
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Publication reference</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-third">Designated standard</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-half">Reference number</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-fifth">Publication reference</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
@@ -100,12 +100,10 @@
                         <tr class="govuk-table__row">
                             <td class="govuk-table__cell">@designatedStandard.Name</td>
                             <td class="govuk-table__cell">
-                                <ul class="govuk-list">
+                                <ul class="govuk-list govuk-list--spaced">
                                     @foreach (var referenceNumber in @designatedStandard.ReferenceNumber)
                                     {
-                                        <li>
-                                            <p class="govuk-body govuk-!-margin-bottom-0">@referenceNumber</p>
-                                        </li>
+                                        <li>@referenceNumber</li>
                                     }
                                 </ul>
                             </td>
