@@ -467,6 +467,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                         IsFromSummary = false,
                         PageNumber = pageNumber,
                         SelectedDesignatedStandardIds = designatedStandardIds,
+                        SearchTerm = paginationSearchTerm,
                         PaginationSearchTerm = paginationSearchTerm,
                     }
                 }
@@ -477,7 +478,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                 {
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
-            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, null, false, false))
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, designatedStandardIds, false, false))
                 .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
 
             //Act
@@ -489,7 +490,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                     IsFromSummary = false,
                     PageNumber = pageNumber,
                     SelectedDesignatedStandardIds = designatedStandardIds,
-                    PaginationSearchTerm = paginationSearchTerm,
+                    SearchTerm = paginationSearchTerm,
                 });
 
             //Assert
