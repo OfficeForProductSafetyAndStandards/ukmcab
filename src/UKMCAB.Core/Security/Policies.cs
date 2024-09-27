@@ -8,4 +8,5 @@ public static class Policies
     public const string ApproveRequests = "approve-requests";
     public const string LegislativeAreaApprove = "la.approve";
     public const string EditCabPendingApproval = "edit-cab-pending-approval";
+    public const string CanRequest = "can-request-";
 }

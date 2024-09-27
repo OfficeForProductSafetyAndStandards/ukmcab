@@ -4,6 +4,7 @@ public class Claims
     public const string CabEdit = "cab.edit";
     public const string CabCreateDraft = "cab.draft";
     public const string CabCanApprove = "cab.approve";
+    public const string CanRequest = "can.request";
     public const string CabManagement = "cab.manage.all";
     public const string CabGovernmentUserNotes = "cab.gov-user-notes";
     public const string Organisation = "org";

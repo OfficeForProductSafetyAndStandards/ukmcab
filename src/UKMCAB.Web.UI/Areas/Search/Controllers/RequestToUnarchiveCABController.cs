@@ -14,7 +14,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search.RequestToUnarchiveCAB;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers;
 
-[Area("search"), Route("search/request-to-unarchive/"), Authorize]
+[Area("search"), Route("search/request-to-unarchive/"), Authorize(Policy = Policies.CanRequest)]
 public class RequestToUnarchiveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
