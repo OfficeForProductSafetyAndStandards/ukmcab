@@ -13,7 +13,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Search.RequestToUnpublishCAB;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers;
 
-[Area("search"), Route("search/request-to-unpublish/"), Authorize]
+[Area("search"), Route("search/request-to-unpublish/"), Authorize(Policy = Policies.CanRequest)]
 public class RequestToUnpublishCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;

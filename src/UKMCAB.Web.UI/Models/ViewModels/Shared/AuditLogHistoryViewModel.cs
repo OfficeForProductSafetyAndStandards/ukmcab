@@ -1,6 +1,5 @@
 ﻿using UKMCAB.Core.Security;
 using UKMCAB.Data.Models;
-using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 {
@@ -8,37 +7,13 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
     {
         public readonly string[] PublicAuditActionsToShow =
         {
-            AuditCABActions.Published, 
-            AuditCABActions.Archived, 
-            AuditCABActions.UnarchivedToDraft, 
-            AuditCABActions.LegislativeAreaAdded, 
-            AuditCABActions.LegislativeAreaReviewDateAdded, 
-            AuditCABActions.LegislativeAreaReviewDateUpdated
-        };
-
-        public readonly string[] LoggedInUserAuditActionsToShow =
-        {
-            AuditCABActions.Published, 
-            AuditCABActions.Archived, 
+            AuditCABActions.Published,
+            AuditCABActions.Archived,
             AuditCABActions.UnarchivedToDraft,
-            AuditCABActions.Unarchived,
-            AuditCABActions.Created, 
-            AuditCABActions.CABApproved,
-            AuditCABActions.CABDeclined, 
-            AuditCABActions.SubmittedForApproval, 
-            AuditCABActions.UnarchiveApprovalRequest,
-            AuditCABActions.DraftDeleted,
-            AuditCABActions.UnArchiveApprovalRequestDeclined,
-            AuditCABActions.ArchiveApprovalRequest, 
-            AuditCABActions.UnpublishApprovalRequest,
-            AuditCABActions.UnpublishApprovalRequestDeclined,
             AuditCABActions.LegislativeAreaAdded,
-            AuditCABActions.ApproveLegislativeArea, 
-            AuditCABActions.DeclineLegislativeArea,
             AuditCABActions.LegislativeAreaReviewDateAdded,
             AuditCABActions.LegislativeAreaReviewDateUpdated
         };
-
 
         public const int resultsPerPage = 10;
 
@@ -74,25 +49,39 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
         }
 
 
-        public AuditLogHistoryViewModel(IEnumerable<Document?> documents, int pageNumber,
+        public AuditLogHistoryViewModel(
+            IEnumerable<Document?> documents,
+            int pageNumber,
             bool showLoggedInAuditActions = false)
         {
             documents = documents
-                .Where(d => d.StatusValue == Status.Published || d.StatusValue == Status.Archived ||
-                            d.StatusValue == Status.Historical)
+                .Where(d =>
+                        d.StatusValue == Status.Published ||
+                        d.StatusValue == Status.Archived ||
+                        d.StatusValue == Status.Historical
+                    )
                 .OrderBy(d => d.LastUpdatedDate);
 
-            var auditActionsToShow =
-                showLoggedInAuditActions ? LoggedInUserAuditActionsToShow : PublicAuditActionsToShow;
-
-            var auditLog = documents
-                .SelectMany(d => d.AuditLog.Where(a => auditActionsToShow.Any(action => action.Equals(a.Action))))
-                .ToList();
+            List<Audit>? auditLog;
+            if (showLoggedInAuditActions)
+            {
+                auditLog = documents
+                    .SelectMany(d => d.AuditLog)
+                    .ToList();
+            }
+            else
+            {
+                auditLog = documents
+                    .SelectMany(d => d.AuditLog.Where(a => AuditActionIsPublicAction(a)))
+                    .ToList();
+            }
 
             if (auditLog.Any())
             {
-                auditLog = auditLog.GroupBy(a => new { a.Action, a.DateTime, a.UserId })
-                    .Select(g => g.First()).ToList();
+                auditLog = auditLog
+                    .GroupBy(a => new { a.Action, a.DateTime, a.UserId })
+                    .Select(g => g.First())
+                    .ToList();
             }
 
             if ((pageNumber - 1) * resultsPerPage > auditLog.Count)
@@ -122,8 +111,12 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
                 PageNumber = pageNumber,
                 TabId = "history"
             };
-        }
 
+            bool AuditActionIsPublicAction(Audit a)
+            {
+                return PublicAuditActionsToShow.Any(action => action.Equals(a.Action));
+            }
+        }
 
         private static string NormaliseAction(string action)
         {

@@ -17,7 +17,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.PublishApproval;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
-[Area("admin"), Authorize]
+[Area("admin"), Authorize(Policy = Policies.ApproveRequests)]
 public class ApproveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
