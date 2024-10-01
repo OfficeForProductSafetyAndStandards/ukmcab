@@ -890,7 +890,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         #region UnarchiveCAB
 
-        [HttpGet, Route("search/unarchive-cab/{id}"), Authorize]
+        [HttpGet, Route("search/unarchive-cab/{id}"), Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> UnarchiveCAB(string id, string? returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
@@ -909,7 +909,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpPost]
-        [Route("search/unarchive-cab/{id}")]
+        [Route("search/unarchive-cab/{id}"), Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> UnarchiveCAB(string id, UnarchiveCABViewModel model)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
