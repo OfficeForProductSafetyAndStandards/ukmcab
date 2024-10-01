@@ -1035,12 +1035,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeName)
           }
-          customHeaders: [
-            {
-              name: 'Strict-Transport-Security'
-              value: 'max-age=31536000; includeSubDomains; preload'
-            }
-          ]
         }
       }
     ], provisionAppSvcVNextSlot ? [
@@ -1057,12 +1051,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeNameVNext)
           }
-          customHeaders: [
-            {
-              name: 'Strict-Transport-Security'
-              value: 'max-age=31536000; includeSubDomains; preload'
-            }
-          ]
         }
       }
     ] : [])
