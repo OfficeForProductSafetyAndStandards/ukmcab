@@ -43,7 +43,7 @@ public class UserNoteController : Controller
             UserName = userNote.UserName,
             UserGroup = userNote.UserRole,
             Note = userNote.Note,
-            ReturnUrl = returnUrl,
+            ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
             IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || User.IsInRole(userNote.UserRole),
         };
 
@@ -57,7 +57,7 @@ public class UserNoteController : Controller
         {
             Title = "Government user note",
             CabDocumentId = cabDocumentId,
-            ReturnUrl = returnUrl,
+            ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
         };
 
         return View(vm);
@@ -94,7 +94,7 @@ public class UserNoteController : Controller
             UserName = userNote.UserName,
             UserGroup = userNote.UserRole,
             Note = userNote.Note,
-            ReturnUrl = returnUrl,
+            ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
             BackUrl = backUrl,
             IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || User.IsInRole(userNote.UserRole),
         };

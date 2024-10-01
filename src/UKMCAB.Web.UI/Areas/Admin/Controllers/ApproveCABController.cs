@@ -52,6 +52,7 @@ public class ApproveCABController : Controller
     [HttpGet("admin/cab/approve/{id}", Name = Routes.Approve)]
     public async Task<IActionResult> ApproveAsync(string id, string? returnUrl)
     {
+        returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
         var cabId = Guid.Parse(id);
         var document = await GetDocumentAsync(cabId);
         if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
@@ -91,6 +92,7 @@ public class ApproveCABController : Controller
     {
         var cabId = Guid.Parse(id);
         var document = await GetDocumentAsync(cabId);
+        returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
         if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
         {
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");

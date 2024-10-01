@@ -70,7 +70,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             CABId = id,
             LegislativeAreas = await GetLegislativeSelectListItemsAsync(cabLegislativeAreaIds),
-            ReturnUrl = returnUrl,
+            ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default,
             IsFromSummary = fromSummary,
             IsMRA = latestDocument.BodyTypes.Any(t => t.Equals("UK body designated under MRA"))
         };
@@ -1221,6 +1221,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
 
+        returnUrl = (returnUrl == "remove-legislative-area" || Url.IsLocalUrl(returnUrl)) ? returnUrl : default;
+
         // if legislative area has any schedules then give an option to remove/archive product schedules
         var schedules = latestDocument!.Schedules;
         if (schedules != null && schedules.Any(n => n.LegislativeArea != null && string.Equals(n.LegislativeArea, legislativeArea.Name, StringComparison.CurrentCultureIgnoreCase)))
@@ -1314,7 +1316,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             CabId = id,
             LegislativeArea = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
             ProductSchedules = latestDocument.Schedules?.Where(n => n.LegislativeArea == legislativeArea.Name).ToList(),
-            ReturnUrl = returnUrl,
+            ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default,
             FromSummary = fromSummary
         };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaWithOption.cshtml", vm);
@@ -1416,7 +1418,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         {
             CabId = id,
             Title = legislativeArea.Name,
-            ReturnUrl = returnUrl
+            ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default
         };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaRequest.cshtml", vm);
     }

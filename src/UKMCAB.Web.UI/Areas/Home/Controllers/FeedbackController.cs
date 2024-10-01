@@ -23,11 +23,11 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
 
         [HttpGet]
         [Route("feedback-form/submit")]
-        public IActionResult Submit(string? returnURL)
+        public IActionResult Submit(string? returnUrl)
         {
             return View(new FeedbackFormViewModel
             {
-                ReturnURL = returnURL ?? "/"
+                ReturnURL = Url.IsLocalUrl(returnUrl) ? returnUrl :  "/"
             });
         }
 

@@ -166,7 +166,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             ProductScheduleActionMessageEnum? actionType)
         {   
             var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
-            string? successBannerTitle = default;            
+            string? successBannerTitle = default;
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
             if (latestDocument == null) // Implies no document or document archived
             {
@@ -533,6 +534,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             var uploadedFileViewModels = new List<FileViewModel>();
 
             if (fromAction == nameof(FileUploadManagementController.DocumentsReplaceFile) ||

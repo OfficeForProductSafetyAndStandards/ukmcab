@@ -77,6 +77,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> About(string id, bool fromSummary, string? returnUrl = null)
         {
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             var model = (await _cabAdminService.GetLatestDocumentAsync(id))
                 .Map(x => new CABDetailsViewModel(x, User, false, fromSummary, returnUrl)) ??
                     // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
@@ -193,6 +194,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string? returnUrl)
         {
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
             {
@@ -302,7 +304,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             model.DocumentStatus = latest.StatusValue;
             model.IsFromSummary = fromSummary;
-            model.ReturnUrl = returnUrl;
+            model.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             return View(model);
         }
 
@@ -390,7 +392,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new CABContactViewModel(latest)
             {
                 IsFromSummary = fromSummary,
-                ReturnUrl = returnUrl
+                ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default
             };
             return View(model);
         }
@@ -466,6 +468,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             var cabSummary = await PopulateCABSummaryViewModel(latest, revealEditActions, returnUrl, fromCabProfilePage);
 
             var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, User.GetUserId());
@@ -665,6 +668,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             var currentUrl = HttpContext.Request.GetRequestUri().PathAndQuery;
             var userId = User.GetUserId();
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
             await _cabSummaryUiService.CreateDocumentAsync(latest, revealEditActions);
 
@@ -746,8 +750,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 CABId = id,
                 CABName = latest.Name,
-                ReturnURL = returnUrl
-            });
+                ReturnURL = Url.IsLocalUrl(returnUrl) ? returnUrl : default
+        });
         }
 
         [HttpPost("admin/cab/publish/{id}", Name = Routes.CabPublish)]
@@ -789,7 +793,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 CABId = cabId,
                 GovernmentUserNotes = new UserNoteListViewModel(cabDocumentId, userNotes, pagenumber),
-                ReturnUrl = returnUrl,
+                ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default,
             };
 
             return View(model);
@@ -807,7 +811,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new CABAuditLogHistoryViewModel
             {
                 AuditLogHistory = new AuditLogHistoryViewModel(latest.AuditLog, pageNumber),
-                ReturnUrl = returnUrl,
+                ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default,
             };
 
             return View("History", model);
