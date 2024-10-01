@@ -137,7 +137,12 @@
                                 </li>
                             }
                             <li class="search-result-list-item-detail">Address: @(!string.IsNullOrWhiteSpace(searchResult.Address) ? searchResult.Address : @Constants.NotProvided)</li>
-                            <li class="search-result-list-item-detail">Body type: @(!string.IsNullOrWhiteSpace(searchResult.BodyType) ? searchResult.BodyType : @Constants.NotProvided)</li>
+                            <li class="search-result-list-item-detail">
+                                Body type: @(!string.IsNullOrWhiteSpace(searchResult.BodyType) ? searchResult.BodyType : @Constants.NotProvided)
+                            </li>
+                            <li class="search-result-list-item-detail">
+                                @(!string.IsNullOrWhiteSpace(searchResult.MRACountry) ? $"UK body designated under MRA: {searchResult.MRACountry}" : string.Empty)
+                            </li>
                             <li class="search-result-list-item-detail">Registered office location: @(!string.IsNullOrWhiteSpace(searchResult.RegisteredOfficeLocation) ? searchResult.RegisteredOfficeLocation : @Constants.NotProvided)</li>
                             <li class="search-result-list-item-detail">Testing location: @(!string.IsNullOrWhiteSpace(searchResult.RegisteredTestLocation) ? searchResult.RegisteredTestLocation : @Constants.NotProvided)</li>
                             <li class="search-result-list-item-detail">Legislative area: @(!string.IsNullOrWhiteSpace(searchResult.LegislativeArea) ? searchResult.LegislativeArea : @Constants.NotProvided)</li>

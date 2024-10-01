@@ -192,6 +192,7 @@ namespace UKMCAB.Core.Services.CAB
                 Phone = document.Phone,
                 Website = document.Website,
                 BodyTypes = document.BodyTypes?.ToArray() ?? Array.Empty<string>(),
+                MRACountries = document.MRACountries?.ToArray() ?? Array.Empty<string>(),
                 TestingLocations = document.TestingLocations?.ToArray() ?? Array.Empty<string>(),
                 RegisteredOfficeLocation = document.RegisteredOfficeLocation,
                 URLSlug = document.URLSlug,

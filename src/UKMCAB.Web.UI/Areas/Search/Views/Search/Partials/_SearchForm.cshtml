@@ -35,6 +35,10 @@
 
             <div id="search-filter-options">
                 <partial name="Partials/_SearchFilter" model="Model.BodyTypeOptions"/>
+                @if (Model.MRACountryOptions != null && Model.MRACountryOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
+                {
+                    <partial name="Partials/_SearchFilter" model="Model.MRACountryOptions" />
+                }
                 <partial name="Partials/_SearchFilter" model="Model.RegisteredOfficeLocationOptions"/>
                 <partial name="Partials/_SearchFilter" model="Model.LegislativeAreaOptions"/>
                 @if (Model.StatusOptions != null && Model.StatusOptions.FilterOptions.Any(a => !string.IsNullOrWhiteSpace(a.Label)))
