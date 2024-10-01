@@ -30,7 +30,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
         }
 
         [Test]
-        public async Task Should_Throw_Exception_When_Cab_Not_Found()
+        public async Task Should_Throw_Exception_When_CabId_Not_In_Route()
         { 
             //Arrange 
             _mockContextAccessor.Setup(m => m.HttpContext).Returns(new DefaultHttpContext());
@@ -41,6 +41,30 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             //Assert
             Assert.ThrowsAsync<Exception>(() => _handlerUnderTest.HandleAsync(authorizationContext)); 
         }
+
+        [Test]
+        public async Task Should_Fail_When_CAB_Not_Found()
+        {
+            //Arrange 
+            var mockContext = new DefaultHttpContext();
+            mockContext.Request.RouteValues = new RouteValueDictionary() { { "cabId", "a-test-cab-id-000" } };
+            _mockContextAccessor.Setup(m => m.HttpContext).Returns(mockContext);
+
+            _mockCABAdminService.Setup(s => s.GetLatestDocumentAsync(It.IsAny<string>()))
+                .ReturnsAsync((Document?)null);
+
+            var authorizationContext = new AuthorizationHandlerContext(
+                new[] { new DeleteCabRequirement() },
+                new ClaimsPrincipal(),
+                null);
+
+            //Act
+            await _handlerUnderTest.HandleAsync(authorizationContext);
+
+            //Assert 
+            Assert.IsFalse(authorizationContext.HasSucceeded);
+        }
+
 
         [Test]
         public async Task Should_Fail_When_Status_Is_Not_Draft()
