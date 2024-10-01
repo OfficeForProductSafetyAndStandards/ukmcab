@@ -33,6 +33,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         // Form fields
         public string? Keywords { get; set; }
         public string[]? BodyTypes { get; set; }
+        public string[]? MRACountries { get; set; }
         public string[]? RegisteredOfficeLocations { get; set; }
         public string[]? LegislativeAreas { get; set; }
         public string[]? Statuses { get; set; }
@@ -47,6 +48,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
 
         // Form elements
         public FilterViewModel? BodyTypeOptions { get; set; }
+        public FilterViewModel? MRACountryOptions { get; set; }
         public FilterViewModel? RegisteredOfficeLocationOptions { get; set; }
         public FilterViewModel? LegislativeAreaOptions { get; set; }
         public FilterViewModel? StatusOptions { get; set; }
@@ -57,7 +59,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public FilterViewModel? LegislativeAreaStatusOptions { get; set; }
         public FilterViewModel? LAStatusOptions { get; set; }
 
-        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) +
+        public int FilterCount => (BodyTypes?.Length ?? 0) + (RegisteredOfficeLocations?.Length ?? 0) 
+                                + (MRACountries?.Length ?? 0) +
                                   (LegislativeAreas?.Length ?? 0) +
                                   (Statuses != null && (InternalSearch ||
                                                         Statuses.Contains(((int)Status.Archived).ToString()))
@@ -74,6 +77,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public Dictionary<string, string[]> SelectedFilters => new()
         {
             { nameof(BodyTypes), BodyTypes ?? Array.Empty<string>() },
+            { nameof(MRACountries), MRACountries ?? Array.Empty<string>() },
             { nameof(RegisteredOfficeLocations), RegisteredOfficeLocations ?? Array.Empty<string>() },
             { nameof(LegislativeAreas), LegislativeAreas ?? Array.Empty<string>() },
             { nameof(Statuses), Statuses ?? Array.Empty<string>() },
