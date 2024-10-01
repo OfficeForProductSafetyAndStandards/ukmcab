@@ -1025,8 +1025,8 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       {
         name: applicationGatewayBackendHttpSettingsName
         properties: {
-          port: 80
-          protocol: 'Http'
+          port: 443
+          protocol: 'Https'
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
@@ -1035,14 +1035,20 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeName)
           }
+          customHeaders: [
+            {
+              name: 'Strict-Transport-Security'
+              value: 'max-age=31536000; includeSubDomains; preload'
+            }
+          ]
         }
       }
     ], provisionAppSvcVNextSlot ? [
       {
         name: applicationGatewayBackendHttpSettingsNameVNext
         properties: {
-          port: 80
-          protocol: 'Http'
+          port: 443
+          protocol: 'Https'
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
@@ -1051,6 +1057,12 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeNameVNext)
           }
+          customHeaders: [
+            {
+              name: 'Strict-Transport-Security'
+              value: 'max-age=31536000; includeSubDomains; preload'
+            }
+          ]
         }
       }
     ] : [])
