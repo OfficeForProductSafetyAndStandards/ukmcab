@@ -16,7 +16,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
-[Area("admin"), Route("admin/cab/delete"), Authorize]
+[Area("admin"), Route("admin/cab/delete"), Authorize(Policy = Policies.DeleteCab)]
 public class DeleteCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
