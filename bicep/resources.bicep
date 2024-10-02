@@ -1055,7 +1055,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }
     ] : [])
 
-
     backendAddressPools: concat([
       {
         name: applicationGatewayBackendPool
@@ -1081,7 +1080,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ] : [])
-
     
     frontendPorts: [
       {
@@ -1129,7 +1127,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }
     ] : [])
 
-
     sslProfiles: [
       {
         name: applicationGatewaySslProfileName
@@ -1141,7 +1138,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ]
-
     
     httpListeners: concat(
       provisionAppSvcVNextSlot ? [
@@ -1177,8 +1173,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
             ]
           }
         }
-      ] : [],
-      
+      ] : [],      
       [{
         name: applicationGatewayHttpsListener
         properties: {
@@ -1213,6 +1208,53 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }]
     ) //concat
 
+    rewriteRuleSets: concat([
+      {
+        name: 'forceHttpsRuleSet'
+        rewriteRules: [
+          {
+            name: 'forceHttpsRule'
+            conditions: [
+              {
+                variable: 'http_req_scheme'
+                pattern: '^http$'
+              }
+            ]
+            actionSet: {
+              urlConfiguration: {
+                modifiedPath: '{http_req_original_url}'
+                modifiedQueryString: '{http_req_query_string}'
+                reroute: true
+                rerouteType: 'Found'
+              }
+            }
+          }
+        ]
+      }
+    ], provisionAppSvcVNextSlot ? [
+      {
+        name: 'forceHttpsRuleSet-vnext'
+        rewriteRules: [
+          {
+            name: 'forceHttpsRule-vnext'
+            conditions: [
+              {
+                variable: 'http_req_scheme'
+                pattern: '^http$'
+              }
+            ]
+            actionSet: {
+              urlConfiguration: {
+                modifiedPath: '{http_req_original_url}'
+                modifiedQueryString: '{http_req_query_string}'
+                reroute: true
+                rerouteType: 'Found'
+              }
+            }
+          }
+        ]
+      }
+    ]: [])
     
     requestRoutingRules: concat([
       {
@@ -1250,7 +1292,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ] : [])
-
 
     probes: concat([
       {
@@ -1297,10 +1338,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       } 
     ] : [])
 
-
-    
-
-    
     gatewayIPConfigurations: [
       {
         name: 'appGatewayIpConfig'
