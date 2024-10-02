@@ -43,6 +43,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             nameof(CABIndexItem.Postcode),
             nameof(CABIndexItem.Country),
             nameof(CABIndexItem.BodyTypes),
+            nameof(CABIndexItem.MRACountries),
             nameof(CABIndexItem.RegisteredOfficeLocation),
             nameof(CABIndexItem.TestingLocations),
             nameof(CABIndexItem.LastUpdatedDate),
@@ -216,6 +217,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 Keywords = model.Keywords,
                 Sort = model.Sort,
                 BodyTypesFilter = model.BodyTypes,
+                MRACountriesFilter = model.MRACountries,
                 LegislativeAreasFilter = model.LegislativeAreas,
                 RegisteredOfficeLocationsFilter = model.RegisteredOfficeLocations,
                 StatusesFilter = model.Statuses,
@@ -283,6 +285,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var facets = await _cachedSearchService.GetFacetsAsync(model.InternalSearch);
 
             model.BodyTypeOptions = GetFilterOptions(nameof(model.BodyTypes), "Body type", facets.BodyTypes, model.BodyTypes);
+            model.MRACountryOptions = GetFilterOptions(nameof(model.MRACountries), "UK body designated under MRA", facets.MRACountries, model.MRACountries);
             model.LegislativeAreaOptions = GetFilterOptions(nameof(model.LegislativeAreas), "Legislative area", facets.LegislativeAreas, model.LegislativeAreas);
             model.RegisteredOfficeLocationOptions = GetFilterOptions(nameof(model.RegisteredOfficeLocations), "Registered office location", facets.RegisteredOfficeLocation, model.RegisteredOfficeLocations);
 

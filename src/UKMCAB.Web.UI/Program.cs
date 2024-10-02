@@ -114,6 +114,11 @@ builder.Services.AddAuthorization(options =>
         policy.RequireAuthenticatedUser();
         policy.RequireClaim(Claims.CanRequest);
     });
+    options.AddPolicy(Policies.DeleteCab, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.Requirements.Add(new DeleteCabRequirement());
+    });
 });
 
 builder.Services.AddControllersWithViews();
@@ -149,6 +154,7 @@ builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
 builder.Services.AddSingleton<IEditLockService, EditLockService>();
 builder.Services.AddSingleton<IAuthorizationHandler, EditCabPendingApprovalHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, DeleteCabHandler>(); 
 
 var cosmosClient = CosmosClientFactory.Create(cosmosDbConnectionString);
 builder.Services.AddSingleton<IReadOnlyRepository<LegislativeArea>>(new ReadOnlyRepository<LegislativeArea>(cosmosClient, new CosmosFeedIterator(), "legislative-areas"));
