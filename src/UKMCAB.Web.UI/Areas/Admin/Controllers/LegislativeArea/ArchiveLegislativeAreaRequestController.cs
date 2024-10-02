@@ -34,7 +34,7 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
 
         vm.LegislativeAreaName = document.DocumentLegislativeAreas.Single(a => a.LegislativeAreaId == legislativeAreaId)
             .LegislativeAreaName;
-        vm.ReturnUrl = returnUrl;
+        vm.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default; ;
         return View("~/Areas/Admin/Views/CAB/LegislativeArea/ArchiveLegislativeAreaReason.cshtml", vm);
     }
 

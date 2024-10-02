@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
-using CsvHelper.Configuration.Attributes;
 using UKMCAB.Data.Domain;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Common.Security.Tokens;
@@ -12,7 +11,6 @@ using UKMCAB.Web.UI.Models.ViewModels;
 using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.User;
 using UKMCAB.Web.UI.Models.ViewModels.Shared;
-using UKMCAB.Web.UI.Areas.Account.Controllers;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
@@ -114,7 +112,7 @@ public class UserAdminController : Controller
                 UserAccount = account,
                 IsMyOwnAccount = User.FindFirstValue(ClaimTypes.NameIdentifier) == account.Id,
                 AuditLogHistoryViewModel = new AuditLogHistoryViewModel(account.AuditLog, pagenumber),
-                ReturnURL = returnUrl
+                ReturnURL = Url.IsLocalUrl(returnUrl) ? returnUrl : default
             });
         }
     }
@@ -136,7 +134,7 @@ public class UserAdminController : Controller
                 Email = account.ContactEmailAddress,
                 Organisation = account.OrganisationName,
                 UserGroup = account.Role,
-                ReturnURL = returnUrl
+                ReturnURL = Url.IsLocalUrl(returnUrl) ? returnUrl : default
             });
         }
     }

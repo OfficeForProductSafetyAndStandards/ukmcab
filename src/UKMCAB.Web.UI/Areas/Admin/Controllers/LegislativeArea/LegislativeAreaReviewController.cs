@@ -56,7 +56,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             vm.BannerContent = bannerContent;
         }
         vm.FromSummary = fromSummary;
-        vm.ReturnUrl = returnUrl;
+        vm.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }

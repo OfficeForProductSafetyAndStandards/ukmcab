@@ -93,6 +93,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
+            returnUrl = (returnUrl == "confirmation" || Url.IsLocalUrl(returnUrl)) ? returnUrl : default;
+
             if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
             {
                 return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl });
@@ -124,6 +126,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id) ??
                               throw new InvalidOperationException();
+            returnUrl = (returnUrl == "confirmation" || Url.IsLocalUrl(returnUrl)) ? returnUrl : default;
             var vm = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
             var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
             vm.CabLegislativeAreas.LegislativeAreaId = legislativeAreaId;
@@ -561,6 +564,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ? await _userService.GetAsync(
                     User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
                 : null;
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
             var unarchiveRequests = await _workflowTaskService.GetByCabIdAsync(
                 cabDocument.CABId.ToGuid()!.Value,
@@ -589,6 +593,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
+
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
             var isUnarchivedRequest =
                 auditLogOrdered.Last().Action == AuditCABActions.UnarchivedToDraft;
@@ -895,6 +901,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             if (cabDocument.StatusValue != Status.Archived)
             {
                 return RedirectToAction("Index", new { url = id, returnUrl });
