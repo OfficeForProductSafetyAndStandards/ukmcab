@@ -1025,8 +1025,8 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       {
         name: applicationGatewayBackendHttpSettingsName
         properties: {
-          port: 443
-          protocol: 'Https'
+          port: 80
+          protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
@@ -1035,14 +1035,20 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeName)
           }
+          customHeaders: [
+            {
+              name: 'Strict-Transport-Security'
+              value: 'max-age=31536000; includeSubDomains; preload'
+            }
+          ]
         }
       }
     ], provisionAppSvcVNextSlot ? [
       {
         name: applicationGatewayBackendHttpSettingsNameVNext
         properties: {
-          port: 443
-          protocol: 'Https'
+          port: 80
+          protocol: 'Http'
           cookieBasedAffinity: 'Disabled'
           pickHostNameFromBackendAddress: false
           affinityCookieName: 'ApplicationGatewayAffinity'
@@ -1051,9 +1057,16 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           probe: {
             id: resourceId('Microsoft.Network/applicationGateways/probes', applicationGatewayName, applicationGatewayCustomProbeNameVNext)
           }
+          customHeaders: [
+            {
+              name: 'Strict-Transport-Security'
+              value: 'max-age=31536000; includeSubDomains; preload'
+            }
+          ]
         }
       }
     ] : [])
+
 
     backendAddressPools: concat([
       {
@@ -1080,6 +1093,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ] : [])
+
     
     frontendPorts: [
       {
@@ -1127,6 +1141,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }
     ] : [])
 
+
     sslProfiles: [
       {
         name: applicationGatewaySslProfileName
@@ -1138,6 +1153,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ]
+
     
     httpListeners: concat(
       provisionAppSvcVNextSlot ? [
@@ -1173,7 +1189,8 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
             ]
           }
         }
-      ] : [],      
+      ] : [],
+      
       [{
         name: applicationGatewayHttpsListener
         properties: {
@@ -1208,53 +1225,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }]
     ) //concat
 
-    rewriteRuleSets: concat([
-      {
-        name: 'forceHttpsRuleSet'
-        rewriteRules: [
-          {
-            name: 'forceHttpsRule'
-            conditions: [
-              {
-                variable: 'http_req_scheme'
-                pattern: '^http$'
-              }
-            ]
-            actionSet: {
-              urlConfiguration: {
-                modifiedPath: '{http_req_original_url}'
-                modifiedQueryString: '{http_req_query_string}'
-                reroute: true
-                rerouteType: 'Found'
-              }
-            }
-          }
-        ]
-      }
-    ], provisionAppSvcVNextSlot ? [
-      {
-        name: 'forceHttpsRuleSet-vnext'
-        rewriteRules: [
-          {
-            name: 'forceHttpsRule-vnext'
-            conditions: [
-              {
-                variable: 'http_req_scheme'
-                pattern: '^http$'
-              }
-            ]
-            actionSet: {
-              urlConfiguration: {
-                modifiedPath: '{http_req_original_url}'
-                modifiedQueryString: '{http_req_query_string}'
-                reroute: true
-                rerouteType: 'Found'
-              }
-            }
-          }
-        ]
-      }
-    ]: [])
     
     requestRoutingRules: concat([
       {
@@ -1292,6 +1262,7 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
         }
       }
     ] : [])
+
 
     probes: concat([
       {
@@ -1338,6 +1309,10 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       } 
     ] : [])
 
+
+    
+
+    
     gatewayIPConfigurations: [
       {
         name: 'appGatewayIpConfig'
