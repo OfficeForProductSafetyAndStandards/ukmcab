@@ -126,7 +126,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id) ??
                               throw new InvalidOperationException();
-            returnUrl = (returnUrl == "" || Url.IsLocalUrl(returnUrl)) ? returnUrl : default;
+            returnUrl = (returnUrl == "confirmation" || Url.IsLocalUrl(returnUrl)) ? returnUrl : default;
             var vm = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
             var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
             vm.CabLegislativeAreas.LegislativeAreaId = legislativeAreaId;
