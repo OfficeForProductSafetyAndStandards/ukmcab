@@ -1178,7 +1178,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
         }
       ] : [],
-      
       [{
         name: applicationGatewayHttpsListener
         properties: {
@@ -1213,7 +1212,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }]
     ) //concat
 
-    
     requestRoutingRules: concat([
       {
         name: 'httpsrule'
@@ -1228,6 +1226,9 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsName)
+          }
+          rewriteRuleSet: {
+            id: resourceId('Microsoft.Network/applicationGateways/rewriteRuleSets', applicationGatewayName, 'addHstsHeaderRuleSet')
           }
         }
       }
@@ -1247,10 +1248,12 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsNameVNext)
           }
+          rewriteRuleSet: {
+            id: resourceId('Microsoft.Network/applicationGateways/rewriteRuleSets', applicationGatewayName, 'addHstsHeaderRuleSet')
+          }
         }
       }
     ] : [])
-
 
     probes: concat([
       {
@@ -1297,10 +1300,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       } 
     ] : [])
 
-
-    
-
-    
     gatewayIPConfigurations: [
       {
         name: 'appGatewayIpConfig'
@@ -1312,6 +1311,26 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }
     ]
 
+    rewriteRuleSets: [
+      {
+        name: 'addHstsHeaderRuleSet'
+        properties: {
+          rewriteRules: [
+            {
+              name: 'addHstsHeaderRule'
+              actionSet: {
+                responseHeaderConfigurations: [
+                  {
+                    headerName: 'Strict-Transport-Security'
+                    headerValue: 'max-age=31536000; includeSubDomains; preload'
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }
 
