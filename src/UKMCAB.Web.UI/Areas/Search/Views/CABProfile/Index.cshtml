@@ -349,7 +349,7 @@
                                     Point of contact name
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @Html.Conditional(!string.IsNullOrWhiteSpace(Model.PointOfContactName), Model.PointOfContactName, @Constants.NotProvided)
+                                    @(!string.IsNullOrWhiteSpace(Model.PointOfContactName) ? Model.PointOfContactName : @Constants.NotProvided)
                                 </dd>
                             </div>
                             <div class="govuk-summary-list__row">
