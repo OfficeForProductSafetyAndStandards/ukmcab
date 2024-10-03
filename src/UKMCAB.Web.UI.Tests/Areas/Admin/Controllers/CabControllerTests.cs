@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.AspNetCore.Mvc.Routing;
 using Microsoft.Extensions.Options;
 using Moq;
 using Notify.Interfaces;
@@ -71,7 +72,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
                 _mockLegislativeAreaService.Object,
                 _mockCabSummaryViewModelBuilder.Object,
                 _mockCabLegislativeAreasViewModelBuilder.Object,
-            _mockCabSummaryUiService.Object);
+            _mockCabSummaryUiService.Object);            
 
             var claims = new List<Claim>
             {
@@ -102,6 +103,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
 
             _mockCabSummaryUiService.Setup(m => m.LockCabForUser(It.Is<CABSummaryViewModel>(m => m.Id == cabSummaryViewModelId))).Returns(Task.CompletedTask);
 
+            _sut.Url = new Mock<IUrlHelper>().Object;
+
             // Act
             var result = await _sut.Summary(documentId, null, null, null) as ViewResult;
 
@@ -119,6 +122,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             {
                 Id = cabSummaryViewModelId
             };
+
+            _sut.Url = new Mock<IUrlHelper>().Object;
 
             // Act
             var result = await _sut.Summary(documentId, null, null, null) as ViewResult;
