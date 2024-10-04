@@ -4,8 +4,8 @@ public interface IDistCache : ICachedFactory
 {
     Task InitialiseAsync();
     void Append(string key, string item, int databaseId = -1);
-    void AssertLockRelease(string name, LockOwner lockOwner);
-    Task AssertLockReleaseAsync(string name, LockOwner lockOwner);
+    void ClassicAssertLockRelease(string name, LockOwner lockOwner);
+    Task ClassicAssertLockReleaseAsync(string name, LockOwner lockOwner);
     void Flush(int databaseId = 0);
     Task FlushAsync(int databaseId = 0);
     T Get<T>(string key, int databaseId = -1);

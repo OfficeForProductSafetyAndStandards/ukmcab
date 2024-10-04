@@ -32,7 +32,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.GetNamesByIds(new List<Guid> { procedureId });
 
-            // Assert
+            // ClassicAssert
             result.Should().BeEquivalentTo(expectedResult);
         }
     }

@@ -8,6 +8,7 @@ using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using System.Linq;
 using UKMCAB.Core.Security;
+using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -35,10 +36,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.ArchiveDocumentAsync(new Mock<UserAccount>().Object, document.CABId, "test internal reason", "test publicreason");
 
-            // Assert
-            Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
-            Assert.True(result.DocumentLegislativeAreas.All(la => la.Archived!.Value));
-            Assert.AreEqual(Status.Archived, result.StatusValue);
+            // ClassicAssert
+            ClassicAssert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
+            ClassicAssert.True(result.DocumentLegislativeAreas.All(la => la.Archived!.Value));
+            ClassicAssert.AreEqual(Status.Archived, result.StatusValue);
         }
     }
 }

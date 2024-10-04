@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using UKMCAB.Common.ConnectionStrings;
 
 namespace UKMCAB.Common.Tests;
@@ -14,8 +15,8 @@ public class CognitiveSearchConnectionStringTest
         var str = $"endpoint={ep};apikey={apikey}";
         var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(str);
 
-        Assert.That(cognitiveSearchConnectionString.Endpoint,Is.EqualTo(ep));
-        Assert.That(cognitiveSearchConnectionString.ApiKey,Is.EqualTo(apikey));
+        ClassicAssert.That(cognitiveSearchConnectionString.Endpoint,Is.EqualTo(ep));
+        ClassicAssert.That(cognitiveSearchConnectionString.ApiKey,Is.EqualTo(apikey));
     }
 
     [Test]

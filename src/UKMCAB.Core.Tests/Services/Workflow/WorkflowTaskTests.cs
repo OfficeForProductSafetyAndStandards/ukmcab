@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Bogus;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Mappers;
@@ -43,8 +44,8 @@ public class WorkflowTaskServiceTests
         // Act
         var result = await _sut.GetAsync(Guid.NewGuid());
 
-        // Assert
-        Assert.AreEqual(task, result);
+        // ClassicAssert
+        ClassicAssert.AreEqual(task, result);
     }
 
     [Test]
@@ -55,8 +56,8 @@ public class WorkflowTaskServiceTests
         _mockWorkflowTaskRepository.Setup(r => r.GetAsync(guid.ToString()))
             .ThrowsAsync(new NotFoundException("Workflow Task not found"));
 
-        // Act and Assert
-        Assert.ThrowsAsync<NotFoundException>(async () => await _sut.GetAsync(guid));
+        // Act and ClassicAssert
+        ClassicAssert.ThrowsAsync<NotFoundException>(async () => await _sut.GetAsync(guid));
     }
 
     [Test]
@@ -72,8 +73,8 @@ public class WorkflowTaskServiceTests
         // Act
         var returnedTask = await _sut.CreateAsync(task);
 
-        // Assert
-        Assert.AreEqual(task, returnedTask);
+        // ClassicAssert
+        ClassicAssert.AreEqual(task, returnedTask);
     }
 
     private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User? userAssigned = null,
@@ -106,8 +107,8 @@ public class WorkflowTaskServiceTests
         _mockWorkflowTaskRepository.Setup(r => r.CreateAsync(It.IsAny<Data.Models.Workflow.WorkflowTask>()))
             .ThrowsAsync(new InvalidOperationException());
 
-        // Act and Assert
-        Assert.ThrowsAsync<InvalidOperationException>(() => _sut.CreateAsync(task));
+        // Act and ClassicAssert
+        ClassicAssert.ThrowsAsync<InvalidOperationException>(() => _sut.CreateAsync(task));
     }
 
     [Test]
@@ -135,15 +136,15 @@ public class WorkflowTaskServiceTests
         // Act
         var returnedTask = await _sut.UpdateAsync(task);
 
-        // Assert
-        Assert.AreEqual(newTask.Completed, returnedTask.Completed);
-        Assert.AreEqual(newTask.ForRoleId, returnedTask.ForRoleId);
-        Assert.AreEqual(newTask.Assignee, returnedTask.Assignee);
-        Assert.AreEqual(newTask.Assigned, returnedTask.Assigned);
-        Assert.AreEqual(newTask.Approved, returnedTask.Approved);
-        Assert.AreEqual(newTask.Body, returnedTask.Body);
-        Assert.AreEqual(newTask.LastUpdatedBy, returnedTask.LastUpdatedBy);
-        Assert.AreEqual(newTask.LastUpdatedOn, returnedTask.LastUpdatedOn);
+        // ClassicAssert
+        ClassicAssert.AreEqual(newTask.Completed, returnedTask.Completed);
+        ClassicAssert.AreEqual(newTask.ForRoleId, returnedTask.ForRoleId);
+        ClassicAssert.AreEqual(newTask.Assignee, returnedTask.Assignee);
+        ClassicAssert.AreEqual(newTask.Assigned, returnedTask.Assigned);
+        ClassicAssert.AreEqual(newTask.Approved, returnedTask.Approved);
+        ClassicAssert.AreEqual(newTask.Body, returnedTask.Body);
+        ClassicAssert.AreEqual(newTask.LastUpdatedBy, returnedTask.LastUpdatedBy);
+        ClassicAssert.AreEqual(newTask.LastUpdatedOn, returnedTask.LastUpdatedOn);
     }
 
     [Test]
@@ -162,8 +163,8 @@ public class WorkflowTaskServiceTests
         _mockWorkflowTaskRepository.Setup(r => r.ReplaceAsync(It.IsAny<Data.Models.Workflow.WorkflowTask>()))
             .ThrowsAsync(new InvalidOperationException());
 
-        // Act and Assert
-        Assert.ThrowsAsync<InvalidOperationException>(async () => await _sut.UpdateAsync(task));
+        // Act and ClassicAssert
+        ClassicAssert.ThrowsAsync<InvalidOperationException>(async () => await _sut.UpdateAsync(task));
     }
 
     [Test]
@@ -183,10 +184,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByAssignedUserAsync(userAssigned.UserId);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        ClassicAssert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(userAssigned, task.Assignee);
+            ClassicAssert.AreEqual(userAssigned, task.Assignee);
         }
     }
 
@@ -209,10 +210,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetAssignedToGroupForRoleIdAsync(userAssigned.UserId);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        ClassicAssert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(userAssigned, task.Assignee);
+            ClassicAssert.AreEqual(userAssigned, task.Assignee);
         }
     }
 
@@ -235,10 +236,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetAssignedToGroupForRoleIdAsync(userSubmitter.RoleId!);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        ClassicAssert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(userSubmitter, task.Submitter);
+            ClassicAssert.AreEqual(userSubmitter, task.Submitter);
         }
     }
 
@@ -261,12 +262,12 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetCompletedForRoleIdAsync(userSubmitter.RoleId!);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        ClassicAssert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(userSubmitter, task.Submitter);
-            Assert.AreEqual(Roles.OPSS.Id, task.ForRoleId);
-            Assert.True(task.Completed);
+            ClassicAssert.AreEqual(userSubmitter, task.Submitter);
+            ClassicAssert.AreEqual(Roles.OPSS.Id, task.ForRoleId);
+            ClassicAssert.True(task.Completed);
         }
     }
 
@@ -289,10 +290,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByCabIdAsync(cabId);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        ClassicAssert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(cabId, task.CABId);
+            ClassicAssert.AreEqual(cabId, task.CABId);
         }
     }
 
@@ -314,11 +315,11 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByCabIdAsync(cabId, new List<TaskType> { TaskType.RequestToPublish });
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        ClassicAssert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(TaskType.RequestToPublish, task.TaskType);
-            Assert.AreEqual(cabId, task.CABId);
+            ClassicAssert.AreEqual(TaskType.RequestToPublish, task.TaskType);
+            ClassicAssert.AreEqual(cabId, task.CABId);
         }
     }
 
@@ -340,10 +341,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByDocumentLAIdAsync(documentLAId);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        ClassicAssert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(documentLAId, task.DocumentLAId);
+            ClassicAssert.AreEqual(documentLAId, task.DocumentLAId);
         }
     }
     
@@ -365,11 +366,11 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByDocumentLAIdAsync(cabId, new List<TaskType> { TaskType.RequestToPublish });
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        ClassicAssert.AreEqual(2, result.Count);
         foreach (var task in result)
         {
-            Assert.AreEqual(TaskType.RequestToPublish, task.TaskType);
-            Assert.AreEqual(cabId, task.CABId);
+            ClassicAssert.AreEqual(TaskType.RequestToPublish, task.TaskType);
+            ClassicAssert.AreEqual(cabId, task.CABId);
         }
     }
 

@@ -1,5 +1,6 @@
 ﻿using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System.Threading.Tasks;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Services;
@@ -99,9 +100,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             var result = await _sut.AddProcedure(id, scopeId, 0, 0, vm, compareScopeId, submitType);
 
             //Assert
-            Assert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.EqualTo(1));
-            Assert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
-            Assert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+            ClassicAssert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.EqualTo(1));
+            ClassicAssert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+            ClassicAssert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
         }
 
         [Test]
@@ -147,9 +148,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             var result = await _sut.AddProcedure(id, scopeId, 0, 0, vm, compareScopeId, submitType);
 
             //Assert
-            Assert.That(scopeOfAppointment.ProductIdAndProcedureIds.Count, Is.AtLeast(1));
-            Assert.Contains(procedureId1, scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds);
-            Assert.Contains(procedureId2, scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds);
+            ClassicAssert.That(scopeOfAppointment.ProductIdAndProcedureIds.Count, Is.AtLeast(1));
+            ClassicAssert.Contains(procedureId1, scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds);
+            ClassicAssert.Contains(procedureId2, scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds);
         }
 
         [Test]
@@ -195,9 +196,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             var result = await _sut.AddProcedure(id, scopeId, 0, 0, vm, compareScopeId, submitType);
 
             //Assert
-            Assert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.AtLeast(1));
-            Assert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
-            Assert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+            ClassicAssert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.AtLeast(1));
+            ClassicAssert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+            ClassicAssert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
         }
 
         [Test]
@@ -623,8 +624,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
 
-            // Act and Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            // Act and ClassicAssert
+            ClassicAssert.ThrowsAsync<InvalidOperationException>(async () =>
                 {
                     var result = await _sut.AddDesignatedStandard("InvalidSubmitType",
                                     new DesignatedStandardsViewModel
@@ -865,7 +866,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                 }).Verifiable();
 
             //Act //Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            ClassicAssert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 var result = await _sut.AddDesignatedStandard(cabId, scopeId, compareScopeId, fromSummary, pageNumber);
             });

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -24,7 +25,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.DeleteDraftDocumentAsync(new UserAccount(), Guid.NewGuid(), _faker.Random.Word());
 
-            // Assert
+            // ClassicAssert
             _mockCABRepository.Verify(x => x.DeleteAsync(It.IsAny<Document>()), Times.Never);
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
         }
@@ -40,10 +41,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 });
 
             // Act
-            Exception exception = Assert.ThrowsAsync<Exception>(async () => await _sut.DeleteDraftDocumentAsync(new UserAccount(), Guid.NewGuid(), null));
+            Exception exception = ClassicAssert.ThrowsAsync<Exception>(async () => await _sut.DeleteDraftDocumentAsync(new UserAccount(), Guid.NewGuid(), null));
 
-            // Assert
-            Assert.AreEqual("The delete reason must be specified when an earlier document version exists.", exception.Message);
+            // ClassicAssert
+            ClassicAssert.AreEqual("The delete reason must be specified when an earlier document version exists.", exception.Message);
 
             _mockCABRepository.Verify(x => x.DeleteAsync(It.IsAny<Document>()), Times.Never);
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
@@ -65,10 +66,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             // Act
             var cabId = Guid.NewGuid();
-            Exception exception = Assert.ThrowsAsync<Exception>(async () => await _sut.DeleteDraftDocumentAsync(new UserAccount(), cabId, _faker.Random.Word()));
+            Exception exception = ClassicAssert.ThrowsAsync<Exception>(async () => await _sut.DeleteDraftDocumentAsync(new UserAccount(), cabId, _faker.Random.Word()));
 
-            // Assert
-            Assert.AreEqual($"Failed to delete draft version, CAB Id: {cabId}", exception.Message);
+            // ClassicAssert
+            ClassicAssert.AreEqual($"Failed to delete draft version, CAB Id: {cabId}", exception.Message);
 
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
             _mockCachedSearchService.Verify(x => x.RemoveFromIndexAsync(It.IsAny<string>()), Times.Never);
@@ -94,7 +95,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.DeleteDraftDocumentAsync(new UserAccount(), cabId, _faker.Random.Word());
 
-            // Assert
+            // ClassicAssert
             _mockCachedSearchService.Verify(x => x.RemoveFromIndexAsync("1"), Times.Once);
             _mockCachedSearchService.Verify(x => x.ClearAsync(), Times.Once);
             _mockCachedSearchService.Verify(x => x.ClearAsync(cabId.ToString()), Times.Once);
@@ -117,7 +118,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.DeleteDraftDocumentAsync(new UserAccount(), Guid.NewGuid(), _faker.Random.Word());
 
-            // Assert
+            // ClassicAssert
             _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Published && 
                 x.AuditLog.Count == 1 && x.AuditLog.First().Action == AuditCABActions.DraftDeleted), null), Times.Once);
         }
@@ -137,7 +138,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.DeleteDraftDocumentAsync(new UserAccount(), Guid.NewGuid(), _faker.Random.Word());
 
-            // Assert
+            // ClassicAssert
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
         }
 
@@ -158,7 +159,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.DeleteDraftDocumentAsync(new UserAccount(), cabId, _faker.Random.Word());
 
-            // Assert
+            // ClassicAssert
             _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x => x.id == "1" && x.StatusValue == Status.Archived &&
                 x.SubStatus == SubStatus.None && x.SubStatusName == "None"), null), Times.Once);
 

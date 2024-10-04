@@ -30,7 +30,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.HasActiveLAs();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeTrue();
         }
 
@@ -52,7 +52,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.HasActiveLAs();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeFalse();
         }
 
@@ -76,7 +76,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.IsPendingOgdApproval();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeTrue();
         }
 
@@ -100,7 +100,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.IsPendingOgdApproval();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeFalse();
         }
 
@@ -126,7 +126,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.LegislativeAreasApprovedByAdminCount();
 
-            // Assert
+            // ClassicAssert
             result.Should().Be(1);
         }
 
@@ -148,7 +148,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.LegislativeAreaHasBeenActioned();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeTrue();
         }
 
@@ -170,7 +170,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.LegislativeAreaHasBeenActioned();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeFalse();
         }
 
@@ -192,7 +192,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.HasActionableLegislativeAreaForOpssAdmin();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeTrue();
         }
 
@@ -214,7 +214,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.LegislativeAreaHasBeenActioned();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeFalse();
         }
 
@@ -246,7 +246,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.LegislativeAreasPendingApprovalByOgd(roleId);
 
-            // Assert
+            // ClassicAssert
             result.Should().BeOfType(typeof(List<DocumentLegislativeArea>));
             result.Should().HaveCount(1);
         }
@@ -273,7 +273,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.LegislativeAreasPendingApprovalByOpss();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeOfType(typeof(List<DocumentLegislativeArea>));
             result.Should().HaveCount(1);
         }
@@ -301,7 +301,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.LastGovernmentUserNoteDate();
 
-            // Assert
+            // ClassicAssert
             result.Should().Be(expectedResult);
         }
 
@@ -328,7 +328,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.LastAuditLogHistoryDate();
 
-            // Assert
+            // ClassicAssert
             result.Should().Be(expectedResult);
         }
 
@@ -352,7 +352,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.DraftUpdated();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeTrue();
         }
 
@@ -376,7 +376,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.DraftUpdated();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeFalse();
         }
 
@@ -409,7 +409,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.PublishedDate();
 
-            // Assert
+            // ClassicAssert
             result.Should().Be(new DateTime(2024, 1, 1));
         }
 

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Bogus;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Infrastructure.Cache;
 
@@ -35,7 +36,7 @@ public class EditLockServiceTests
                 { cabId, new Tuple<string, DateTime>(userIdWithLock, DateTime.Now.AddMinutes(10)) }
             });
 
-        Assert.True(await _sut.IsCabLockedForUser(cabId, userId));
+        ClassicAssert.True(await _sut.IsCabLockedForUser(cabId, userId));
     }
 
     [Test]
@@ -44,7 +45,7 @@ public class EditLockServiceTests
         var cabId = _faker.Random.Word();
         var userId = _faker.Random.Word();
 
-        Assert.False(await _sut.IsCabLockedForUser(cabId, userId));
+        ClassicAssert.False(await _sut.IsCabLockedForUser(cabId, userId));
     }
 
     [Test]
@@ -59,7 +60,7 @@ public class EditLockServiceTests
                 { cabId, new Tuple<string, DateTime>(userId, DateTime.Now.AddMinutes(10)) }
             });
 
-        Assert.False(await _sut.IsCabLockedForUser(cabId, userId));
+        ClassicAssert.False(await _sut.IsCabLockedForUser(cabId, userId));
     }
 
     [Test]
@@ -81,8 +82,8 @@ public class EditLockServiceTests
         // Act
         var userFound = await _sut.IsCabLockedForUser(cabId2, userIdWithLock);
 
-        // Assert
-        Assert.True(userFound);
+        // ClassicAssert
+        ClassicAssert.True(userFound);
     }
 
     [Test]
@@ -104,8 +105,8 @@ public class EditLockServiceTests
         // Act
         var userFound = await _sut.IsCabLockedForUser(cabId2, userIdWithLock2);
 
-        // Assert
-        Assert.False(userFound);
+        // ClassicAssert
+        ClassicAssert.False(userFound);
     }
 
     [Test]
@@ -162,7 +163,7 @@ public class EditLockServiceTests
         // Act
         await _sut.RemoveEditLockForCabAsync(testCabId);
         
-        // Assert
+        // ClassicAssert
         _distCache.Verify(
             c => c.SetAsync("CabEditLock", It.Is<Dictionary<string, Tuple<string, DateTime>>>(d => d.Count == 0),
                 TimeSpan.FromHours(1), -1),

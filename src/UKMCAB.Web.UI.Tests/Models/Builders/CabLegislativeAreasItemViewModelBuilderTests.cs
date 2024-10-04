@@ -79,7 +79,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithDocumentLegislativeAreaDetails(legislativeArea, documentLegislativeArea).Build();
 
-            // Assert
+            // ClassicAssert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -154,7 +154,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 protectionAgainstRisks,
                 areaOfCompetencies).Build();
 
-            // Assert
+            // ClassicAssert
             result.ScopeOfAppointments.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -206,7 +206,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = builder.WithNoOfProductsInScopeOfAppointment().Build();
 
-            // Assert
+            // ClassicAssert
             result.ScopeOfAppointments.Select(s => s.NoOfProductsInScopeOfAppointment).Should().BeEquivalentTo(expectedResult);
         }
 

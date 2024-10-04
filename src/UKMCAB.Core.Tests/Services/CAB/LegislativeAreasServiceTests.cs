@@ -3,6 +3,7 @@
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
+    using NUnit.Framework.Legacy;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -62,12 +63,12 @@
             // Act
             var legislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
 
-            // Assert
-            Assert.IsNotNull(legislativeAreas);
-            Assert.AreEqual(3, legislativeAreas.Count());
-            Assert.AreEqual("Name1", legislativeAreas.ElementAt(0).Name);
-            Assert.AreEqual("Name2", legislativeAreas.ElementAt(1).Name);
-            Assert.AreEqual("Name3", legislativeAreas.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(legislativeAreas);
+            ClassicAssert.AreEqual(3, legislativeAreas.Count());
+            ClassicAssert.AreEqual("Name1", legislativeAreas.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", legislativeAreas.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", legislativeAreas.ElementAt(2).Name);
         }
 
         #endregion
@@ -99,11 +100,11 @@
             var availableLegislativeAreas =
                 await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
 
-            // Assert
-            Assert.IsNotNull(availableLegislativeAreas);
-            Assert.AreEqual(2, availableLegislativeAreas.Count());
-            Assert.AreEqual("Name3", availableLegislativeAreas.ElementAt(0).Name);
-            Assert.AreEqual("Name4", availableLegislativeAreas.ElementAt(1).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(availableLegislativeAreas);
+            ClassicAssert.AreEqual(2, availableLegislativeAreas.Count());
+            ClassicAssert.AreEqual("Name3", availableLegislativeAreas.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name4", availableLegislativeAreas.ElementAt(1).Name);
         }
 
         #endregion
@@ -113,8 +114,8 @@
         [Test]
         public void EmptyGuid_GetLegislativeAreaById_ShouldThrowException()
         {
-            // Arrange & Act & Assert
-            Assert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetLegislativeAreaByIdAsync(Guid.Empty));
+            // Arrange & Act & ClassicAssert
+            ClassicAssert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetLegislativeAreaByIdAsync(Guid.Empty));
         }
 
         [Test]
@@ -133,9 +134,9 @@
             // Act
             var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(testGuid);
 
-            // Assert
-            Assert.IsNotNull(legislativeArea);
-            Assert.AreEqual("Name1", legislativeArea!.Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(legislativeArea);
+            ClassicAssert.AreEqual("Name1", legislativeArea!.Name);
         }
 
         #endregion
@@ -144,8 +145,8 @@
         [Test]
         public void EmptyRoleId_GetLegislativeAreaByRoleId_ShouldThrowArgumentNullException()
         {
-            // Arrange & Act & Assert
-            Assert.ThrowsAsync<ArgumentNullException>(() => _legislativeAreaService.GetLegislativeAreasByRoleId(string.Empty));
+            // Arrange & Act & ClassicAssert
+            ClassicAssert.ThrowsAsync<ArgumentNullException>(() => _legislativeAreaService.GetLegislativeAreasByRoleId(string.Empty));
         }
         
         [Test]
@@ -164,9 +165,9 @@
             // Act
             var legislativeAreas = (await _legislativeAreaService.GetLegislativeAreasByRoleId(testRoleId)).ToList();
 
-            // Assert
-            Assert.IsNotEmpty(legislativeAreas);
-            Assert.AreEqual(testRoleId, legislativeAreas.First().RoleId);
+            // ClassicAssert
+            ClassicAssert.IsNotEmpty(legislativeAreas);
+            ClassicAssert.AreEqual(testRoleId, legislativeAreas.First().RoleId);
         }
         
         [Test]
@@ -180,8 +181,8 @@
             // Act
             var legislativeAreas = (await _legislativeAreaService.GetLegislativeAreasByRoleId(testRoleId)).ToList();
 
-            // Assert
-            Assert.IsEmpty(legislativeAreas);
+            // ClassicAssert
+            ClassicAssert.IsEmpty(legislativeAreas);
         }
         #endregion
 
@@ -205,17 +206,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNotNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.PurposeOfAppointments.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.PurposeOfAppointments.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.PurposeOfAppointments.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.PurposeOfAppointments.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsNotNull(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.PurposeOfAppointments.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.PurposeOfAppointments.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.PurposeOfAppointments.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.PurposeOfAppointments.ElementAt(2).Name);
         }
 
         [Test]
@@ -239,17 +240,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Categories.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Categories.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
         }
 
         [Test]
@@ -276,17 +277,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsNotEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Products.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Products.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
         }
 
         [Test]
@@ -316,17 +317,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsNotNull(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsNotNull(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Procedures.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
         }
 
         #endregion
@@ -351,17 +352,17 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(
                     Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Categories.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Categories.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
         }
 
         [Test]
@@ -385,17 +386,17 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(
                     Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Categories.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Categories.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
         }
 
         [Test]
@@ -419,17 +420,17 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(
                     Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsNotEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Products.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Products.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
         }
 
         [Test]
@@ -456,17 +457,17 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForPurposeOfAppointmentAsync(
                     Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsNotEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Procedures.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
         }
 
         #endregion
@@ -497,17 +498,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsNotEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Subcategories.Count());
-            Assert.AreEqual("Sub1", nextScopeOptions.Subcategories.ElementAt(0).Name);
-            Assert.AreEqual("Sub2", nextScopeOptions.Subcategories.ElementAt(1).Name);
-            Assert.AreEqual("Sub3", nextScopeOptions.Subcategories.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Subcategories.Count());
+            ClassicAssert.AreEqual("Sub1", nextScopeOptions.Subcategories.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Sub2", nextScopeOptions.Subcategories.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Sub3", nextScopeOptions.Subcategories.ElementAt(2).Name);
         }
 
         [Test]
@@ -532,17 +533,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsNotEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Products.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Products.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
         }
 
         [Test]
@@ -570,17 +571,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsNotEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Procedures.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
         }
 
         #endregion
@@ -598,13 +599,13 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForSubCategoryAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
         }
 
         [Test]
@@ -625,17 +626,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForSubCategoryAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsNotEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Products.Count());
-            Assert.AreEqual("Prod1", nextScopeOptions.Products.ElementAt(0).Name);
-            Assert.AreEqual("Prod2", nextScopeOptions.Products.ElementAt(1).Name);
-            Assert.AreEqual("Prod3", nextScopeOptions.Products.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Products.Count());
+            ClassicAssert.AreEqual("Prod1", nextScopeOptions.Products.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Prod2", nextScopeOptions.Products.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Prod3", nextScopeOptions.Products.ElementAt(2).Name);
         }
 
         #endregion
@@ -658,17 +659,17 @@
             var nextScopeOptions =
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForProductAsync(Guid.NewGuid());
 
-            // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions!.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsNotEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(nextScopeOptions);
+            ClassicAssert.IsEmpty(nextScopeOptions!.PurposeOfAppointments);
+            ClassicAssert.IsEmpty(nextScopeOptions.Categories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Subcategories);
+            ClassicAssert.IsEmpty(nextScopeOptions.Products);
+            ClassicAssert.IsNotEmpty(nextScopeOptions.Procedures);
+            ClassicAssert.AreEqual(3, nextScopeOptions.Procedures.Count());
+            ClassicAssert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
+            ClassicAssert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
+            ClassicAssert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
         }
 
         #endregion
@@ -679,8 +680,8 @@
         [Test]
         public void EmptyGuid_GetPurposeOfAppointmentById_ShouldThrowException()
         {
-            // Arrange & Act & Assert
-            Assert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(Guid.Empty));
+            // Arrange & Act & ClassicAssert
+            ClassicAssert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(Guid.Empty));
         }
 
         [Test]
@@ -701,9 +702,9 @@
             // Act
             var purposeOfAppointment = await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(testGuid);
 
-            // Assert
-            Assert.IsNotNull(purposeOfAppointment);
-            Assert.AreEqual("Name1", purposeOfAppointment!.Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(purposeOfAppointment);
+            ClassicAssert.AreEqual("Name1", purposeOfAppointment!.Name);
         }
 
         #endregion
@@ -713,8 +714,8 @@
         [Test]
         public void EmptyGuid_GetCategoryById_ShouldThrowException()
         {
-            // Arrange & Act & Assert
-            Assert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetCategoryByIdAsync(Guid.Empty));
+            // Arrange & Act & ClassicAssert
+            ClassicAssert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetCategoryByIdAsync(Guid.Empty));
         }
 
         [Test]
@@ -745,9 +746,9 @@
             // Act
             var category = await _legislativeAreaService.GetCategoryByIdAsync(testGuid);
 
-            // Assert
-            Assert.IsNotNull(category);
-            Assert.AreEqual("Name1", category!.Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(category);
+            ClassicAssert.AreEqual("Name1", category!.Name);
         }
 
         #endregion
@@ -757,8 +758,8 @@
         [Test]
         public void EmptyGuid_GetSubCategoryById_ShouldThrowException()
         {
-            // Arrange & Act & Assert
-            Assert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetSubCategoryByIdAsync(Guid.Empty));
+            // Arrange & Act & ClassicAssert
+            ClassicAssert.ThrowsAsync<Exception>(() => _legislativeAreaService.GetSubCategoryByIdAsync(Guid.Empty));
         }
 
         [Test]
@@ -777,9 +778,9 @@
             // Act
             var subCategory = await _legislativeAreaService.GetSubCategoryByIdAsync(testGuid);
 
-            // Assert
-            Assert.IsNotNull(subCategory);
-            Assert.AreEqual("Name1", subCategory!.Name);
+            // ClassicAssert
+            ClassicAssert.IsNotNull(subCategory);
+            ClassicAssert.AreEqual("Name1", subCategory!.Name);
         }
 
         #endregion
