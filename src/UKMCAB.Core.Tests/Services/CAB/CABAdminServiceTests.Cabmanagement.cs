@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -78,40 +77,40 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.FindAllCABManagementQueueDocumentsForUserRole(role);
 
             // ClassicAssert
-            ClassicAssert.AreEqual(12, result.AllCabs.Count());
-            ClassicAssert.AreEqual(2, result.DraftCabs.Count());
-            ClassicAssert.AreEqual(4, result.PendingDraftCabs.Count());
-            ClassicAssert.AreEqual(4, result.PendingPublishCabs.Count());
-            ClassicAssert.AreEqual(2, result.PendingArchiveCabs.Count());
+            Assert.That(12, Is.EqualTo(result.AllCabs.Count()));
+            Assert.That(2, Is.EqualTo(result.DraftCabs.Count()));
+            Assert.That(4, Is.EqualTo(result.PendingDraftCabs.Count()));
+            Assert.That(4, Is.EqualTo(result.PendingPublishCabs.Count()));
+            Assert.That(2, Is.EqualTo(result.PendingArchiveCabs.Count()));
 
-            ClassicAssert.AreEqual(result.AllCabs[0].CABId, queryResults[0].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[1].CABId, queryResults[1].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[2].CABId, queryResults[2].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[3].CABId, queryResults[3].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[4].CABId, queryResults[4].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[5].CABId, queryResults[5].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[6].CABId, queryResults[6].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[7].CABId, queryResults[7].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[8].CABId, queryResults[8].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[9].CABId, queryResults[9].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[10].CABId, queryResults[10].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[11].CABId, queryResults[11].CABId);
+            Assert.That(result.AllCabs[0].CABId, Is.EqualTo(queryResults[0].CABId));
+            Assert.That(result.AllCabs[1].CABId, Is.EqualTo(queryResults[1].CABId));
+            Assert.That(result.AllCabs[2].CABId, Is.EqualTo(queryResults[2].CABId));
+            Assert.That(result.AllCabs[3].CABId, Is.EqualTo(queryResults[3].CABId));
+            Assert.That(result.AllCabs[4].CABId, Is.EqualTo(queryResults[4].CABId));
+            Assert.That(result.AllCabs[5].CABId, Is.EqualTo(queryResults[5].CABId));
+            Assert.That(result.AllCabs[6].CABId, Is.EqualTo(queryResults[6].CABId));
+            Assert.That(result.AllCabs[7].CABId, Is.EqualTo(queryResults[7].CABId));
+            Assert.That(result.AllCabs[8].CABId, Is.EqualTo(queryResults[8].CABId));
+            Assert.That(result.AllCabs[9].CABId, Is.EqualTo(queryResults[9].CABId));
+            Assert.That(result.AllCabs[10].CABId, Is.EqualTo(queryResults[10].CABId));
+            Assert.That(result.AllCabs[11].CABId, Is.EqualTo(queryResults[11].CABId));
 
-            ClassicAssert.AreEqual(result.DraftCabs[0].CABId, queryResults[0].CABId);
-            ClassicAssert.AreEqual(result.DraftCabs[1].CABId, queryResults[1].CABId);
+            Assert.That(result.DraftCabs[0].CABId, Is.EqualTo(queryResults[0].CABId));
+            Assert.That(result.DraftCabs[1].CABId, Is.EqualTo(queryResults[1].CABId));
 
-            ClassicAssert.AreEqual(result.PendingDraftCabs[0].CABId, queryResults[2].CABId);
-            ClassicAssert.AreEqual(result.PendingDraftCabs[1].CABId, queryResults[3].CABId);
-            ClassicAssert.AreEqual(result.PendingDraftCabs[2].CABId, queryResults[4].CABId);
-            ClassicAssert.AreEqual(result.PendingDraftCabs[3].CABId, queryResults[5].CABId);
+            Assert.That(result.PendingDraftCabs[0].CABId, Is.EqualTo(queryResults[2].CABId));
+            Assert.That(result.PendingDraftCabs[1].CABId, Is.EqualTo(queryResults[3].CABId));
+            Assert.That(result.PendingDraftCabs[2].CABId, Is.EqualTo(queryResults[4].CABId));
+            Assert.That(result.PendingDraftCabs[3].CABId, Is.EqualTo(queryResults[5].CABId));
 
-            ClassicAssert.AreEqual(result.PendingPublishCabs[0].CABId, queryResults[6].CABId);
-            ClassicAssert.AreEqual(result.PendingPublishCabs[1].CABId, queryResults[7].CABId);
-            ClassicAssert.AreEqual(result.PendingPublishCabs[2].CABId, queryResults[8].CABId);
-            ClassicAssert.AreEqual(result.PendingPublishCabs[3].CABId, queryResults[9].CABId);
+            Assert.That(result.PendingPublishCabs[0].CABId, Is.EqualTo(queryResults[6].CABId));
+            Assert.That(result.PendingPublishCabs[1].CABId, Is.EqualTo(queryResults[7].CABId));
+            Assert.That(result.PendingPublishCabs[2].CABId, Is.EqualTo(queryResults[8].CABId));
+            Assert.That(result.PendingPublishCabs[3].CABId, Is.EqualTo(queryResults[9].CABId));
 
-            ClassicAssert.AreEqual(result.PendingArchiveCabs[0].CABId, queryResults[10].CABId);
-            ClassicAssert.AreEqual(result.PendingArchiveCabs[1].CABId, queryResults[11].CABId);
+            Assert.That(result.PendingArchiveCabs[0].CABId, Is.EqualTo(queryResults[10].CABId));
+            Assert.That(result.PendingArchiveCabs[1].CABId, Is.EqualTo(queryResults[11].CABId));
         }
 
         [Theory]
@@ -143,28 +142,28 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.FindAllCABManagementQueueDocumentsForUserRole(role);
 
             // ClassicAssert
-            ClassicAssert.AreEqual(6, result.AllCabs.Count());
-            ClassicAssert.AreEqual(1, result.DraftCabs.Count());
-            ClassicAssert.AreEqual(2, result.PendingDraftCabs.Count());
-            ClassicAssert.AreEqual(2, result.PendingPublishCabs.Count());
-            ClassicAssert.AreEqual(1, result.PendingArchiveCabs.Count());
+            Assert.That(6, Is.EqualTo(result.AllCabs.Count()));
+            Assert.That(1, Is.EqualTo(result.DraftCabs.Count()));
+            Assert.That(2, Is.EqualTo(result.PendingDraftCabs.Count()));
+            Assert.That(2, Is.EqualTo(result.PendingPublishCabs.Count()));
+            Assert.That(1, Is.EqualTo(result.PendingArchiveCabs.Count()));
 
-            ClassicAssert.AreEqual(result.AllCabs[0].CABId, queryResults[0].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[1].CABId, queryResults[1].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[2].CABId, queryResults[2].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[3].CABId, queryResults[3].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[4].CABId, queryResults[4].CABId);
-            ClassicAssert.AreEqual(result.AllCabs[5].CABId, queryResults[5].CABId);
+            Assert.That(result.AllCabs[0].CABId, Is.EqualTo(queryResults[0].CABId));
+            Assert.That(result.AllCabs[1].CABId, Is.EqualTo(queryResults[1].CABId));
+            Assert.That(result.AllCabs[2].CABId, Is.EqualTo(queryResults[2].CABId));
+            Assert.That(result.AllCabs[3].CABId, Is.EqualTo(queryResults[3].CABId));
+            Assert.That(result.AllCabs[4].CABId, Is.EqualTo(queryResults[4].CABId));
+            Assert.That(result.AllCabs[5].CABId, Is.EqualTo(queryResults[5].CABId));
 
-            ClassicAssert.AreEqual(result.DraftCabs[0].CABId, queryResults[0].CABId);
+            Assert.That(result.DraftCabs[0].CABId, Is.EqualTo(queryResults[0].CABId));
 
-            ClassicAssert.AreEqual(result.PendingDraftCabs[0].CABId, queryResults[1].CABId);
-            ClassicAssert.AreEqual(result.PendingDraftCabs[1].CABId, queryResults[2].CABId);
+            Assert.That(result.PendingDraftCabs[0].CABId, Is.EqualTo(queryResults[1].CABId));
+            Assert.That(result.PendingDraftCabs[1].CABId, Is.EqualTo(queryResults[2].CABId));
 
-            ClassicAssert.AreEqual(result.PendingPublishCabs[0].CABId, queryResults[3].CABId);
-            ClassicAssert.AreEqual(result.PendingPublishCabs[1].CABId, queryResults[4].CABId);
+            Assert.That(result.PendingPublishCabs[0].CABId, Is.EqualTo(queryResults[3].CABId));
+            Assert.That(result.PendingPublishCabs[1].CABId, Is.EqualTo(queryResults[4].CABId));
 
-            ClassicAssert.AreEqual(result.PendingArchiveCabs[0].CABId, queryResults[5].CABId);
+            Assert.That(result.PendingArchiveCabs[0].CABId, Is.EqualTo(queryResults[5].CABId));
         }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System.Linq;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Common.Tests;
 
@@ -15,15 +14,15 @@ public class FixedSizedConcurrentQueueTest
         q.EnqueueAll(arr);
 
         var data = q.DequeueAll().ToArray();
-        ClassicAssert.That(data.SequenceEqual(arr), Is.True);
-        ClassicAssert.That(q.DequeueAll(), Is.Empty);
+        Assert.That(data.SequenceEqual(arr), Is.True);
+        Assert.That(q.DequeueAll(), Is.Empty);
 
         var arr2 = new[] { 11, 12, 13, 14, 15, 16, 17, 18, 19, 20 }.Cast<object>();
         q.EnqueueAll(arr2);
 
         data = q.DequeueAll().ToArray();
-        ClassicAssert.That(data.SequenceEqual(arr2), Is.True);
-        ClassicAssert.That(q.DequeueAll(), Is.Empty);
+        Assert.That(data.SequenceEqual(arr2), Is.True);
+        Assert.That(q.DequeueAll(), Is.Empty);
 
     }
 }

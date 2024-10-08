@@ -1,13 +1,10 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Data.Models;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Tests.Services.CAB
@@ -22,8 +19,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
                 .ReturnsAsync(new List<Document>());
 
-            // Act and ClassicAssert
-            ClassicAssert.ThrowsAsync<InvalidOperationException>(async () =>
+            // Act and Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), Guid.NewGuid(), "Lifts","ogd", false), "No document found");
             return Task.CompletedTask;
         }
@@ -48,8 +45,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     }
                 });
 
-            // Act and ClassicAssert
-            ClassicAssert.ThrowsAsync<InvalidOperationException>(async () =>
+            // Act and Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), laId, "test","ogd", false), "Legislative id already exists on cab");
             return Task.CompletedTask;
         }
@@ -77,7 +74,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.AddLegislativeAreaAsync(new Mock<UserAccount>().Object, cabId, Guid.NewGuid(), "La to Add","ogd", false);
 
-            // ClassicAssert
+            // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>

@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Common.Tests;
 
@@ -9,14 +8,14 @@ public class StringExtTest
     public void TestJoin()
     {
         var d = StringExt.Join(", ", new[] { "", "54", "West Road", null, null, "", "Exeter", "Devon" });
-        ClassicAssert.That(d, Is.EqualTo("54, West Road, Exeter, Devon"));
+        Assert.That(d, Is.EqualTo("54, West Road, Exeter, Devon"));
     }
 
     [Test]
     public void TestKeyify()
     {
         var d = StringExt.Keyify("test1", "test2", "test3");
-        ClassicAssert.That(d, Is.EqualTo("test1-test2-test3"));
+        Assert.That(d, Is.EqualTo("test1-test2-test3"));
     }
 
     [TestCase(null, 10, "")]
@@ -32,6 +31,6 @@ public class StringExtTest
     public void TruncateWithEllipsis_ShouldReturnExpectedResult(string input, int maxLength, string expected)
     {
         string result = input.TruncateWithEllipsis(maxLength);
-        ClassicAssert.AreEqual(expected, result);
+        Assert.That(expected, Is.EqualTo(result));
     }
 }
