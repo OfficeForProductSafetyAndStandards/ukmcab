@@ -11,19 +11,24 @@
     <div class="govuk-grid-column-two-thirds">
         <form id="legislativeForm" method="post" novalidate>
             <input type="hidden" asp-for="IsFromSummary" />
-                <govuk-radios asp-for="SelectedLegislativeAreaId">
-                    <govuk-radios-fieldset>
-                        <govuk-radios-fieldset-legend class="govuk-label--s">
-                            Legislative area
-                        </govuk-radios-fieldset-legend>
-                        @foreach (var item in Model.LegislativeAreas)
-                        {
-                            <govuk-radios-item value="@item.Value">@item.Text</govuk-radios-item>
-                        }
-                    </govuk-radios-fieldset>
-                </govuk-radios>
+            <input type="hidden" asp-for="IsMRA" />
+            <govuk-radios asp-for="SelectedLegislativeAreaId">
+                <govuk-radios-fieldset>
+                    <govuk-radios-fieldset-legend class="govuk-label--s">
+                        Legislative area
+                    </govuk-radios-fieldset-legend>
+                    @foreach (var item in Model.LegislativeAreas)
+                    {
+                        <govuk-radios-item value="@item.Value">@item.Text</govuk-radios-item>
+                    }
+                </govuk-radios-fieldset>
+            </govuk-radios>
             <div class="govuk-button-group">
                 <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.Continue">Continue to next step</govuk-button>
+                @if (Model.IsMRA)
+                {
+                    <govuk-button name="submitType" type="submit" value="@Constants.SubmitType.MRABypass">Continue without scope of appointment</govuk-button>
+                }
             </div>
             <div class="govuk-button-group">
                 <govuk-button name="submitType" class="govuk-button--secondary" type="submit" value="@Constants.SubmitType.AdditionalInfo">Go to additional information</govuk-button>

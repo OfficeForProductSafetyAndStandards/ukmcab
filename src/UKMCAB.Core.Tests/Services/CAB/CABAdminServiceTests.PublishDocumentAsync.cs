@@ -66,12 +66,55 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     CABId = Guid.NewGuid().ToString(),
                     CreatedByUserGroup = Roles.OPSS.Id,
                     StatusValue = Status.Draft,
+                    SubStatus = SubStatus.None,
                     DocumentLegislativeAreas = legislativeAreas,
                     ScopeOfAppointments = scopeOfAppointments,
                 });
 
             // Assert
             Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
+            Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
+        }
+
+        [Test]
+        public async Task DocumentCreatedByOPSSAndSubmittedForOGDApproval_PublishDocumentAsync_AllLAsPublished()
+        {
+            // Arrange
+            (var legislativeAreas, var scopeOfAppointments, var schedules) = GenerateTestData();
+
+            var document = new Document
+            {
+                CABId = Guid.NewGuid().ToString(),
+                StatusValue = Status.Draft,
+                DocumentLegislativeAreas = legislativeAreas,
+                ScopeOfAppointments = scopeOfAppointments,
+                Schedules = schedules
+            };
+
+            _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>())).ReturnsAsync(new List<Document> { document });
+
+            // Act
+            var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
+                new Document
+                {
+                    CABId = Guid.NewGuid().ToString(),
+                    CreatedByUserGroup = Roles.OPSS.Id,
+                    StatusValue = Status.Draft,
+                    SubStatus = SubStatus.PendingApprovalToPublish,
+                    DocumentLegislativeAreas = new() 
+                    {
+                        new() {Status = LAStatus.ApprovedByOpssAdmin}, 
+                        new() { Status = LAStatus.PendingApproval },
+                        new() { Status = LAStatus.DeclinedByOpssAdmin },
+                    },
+                    ScopeOfAppointments = new()
+                    {
+                        new(){LegislativeAreaId = Guid.NewGuid()},
+                    },
+                });
+
+            // Assert
+            Assert.AreEqual(1, result.DocumentLegislativeAreas.Count);
             Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
         }
 

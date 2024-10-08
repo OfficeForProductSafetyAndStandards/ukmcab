@@ -349,7 +349,7 @@
                                     Point of contact name
                                 </dt>
                                 <dd class="govuk-summary-list__value">
-                                    @Html.Conditional(!string.IsNullOrWhiteSpace(Model.PointOfContactName), Model.PointOfContactName, @Constants.NotProvided)
+                                    @(!string.IsNullOrWhiteSpace(Model.PointOfContactName) ? Model.PointOfContactName : @Constants.NotProvided)
                                 </dd>
                             </div>
                             <div class="govuk-summary-list__row">
@@ -413,19 +413,40 @@
                                 Body type
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                @if (!Model.BodyTypes.Any())
+                                @if (!Model.BodyTypesSummary.Any())
                                 {
-                                    <text>@Constants.NotProvided</text>
+                                    <text>@Constants.None</text>
                                 }
                                 else
                                 {
-                                    @foreach (var bodyType in Model.BodyTypes)
+                                    @foreach (var bodyType in Model.BodyTypesSummary)
                                     {
                                         <span class="cab-detail-list-item">@bodyType</span>
                                     }
                                 }
                             </dd>
-                        </div>                        
+                        </div>
+                        @if (Model.isMRA)
+                        {
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    UK body designated under MRA
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    @if (!Model.MRACountries.Any())
+                                    {
+                                        <text>@Constants.NotProvided</text>
+                                    }
+                                    else
+                                    {
+                                        @foreach (var MRACountry in Model.MRACountries)
+                                        {
+                                            <span class="cab-detail-list-item">@MRACountry</span>
+                                        }
+                                    }
+                                </dd>
+                            </div>
+                        }
                     </dl>
                 </div>
             </div>

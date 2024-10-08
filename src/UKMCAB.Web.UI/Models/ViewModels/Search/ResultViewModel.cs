@@ -15,6 +15,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
             URLSlug = cab.URLSlug;
             Address = StringExt.Join(", ", cab.AddressLine1, cab.AddressLine2, cab.TownCity, cab.County, cab.Postcode, cab.Country);
             BodyType = ListItems(cab.BodyTypes);
+            MRACountry = ListItems(cab.MRACountries);
             RegisteredOfficeLocation = cab.RegisteredOfficeLocation;
             RegisteredTestLocation = ListItems(cab.TestingLocations);
             LegislativeArea = ListItems(cab.DocumentLegislativeAreas.Select(l => l.LegislativeAreaName));
@@ -37,6 +38,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Search
         public string URLSlug { get; set; }
         public string? Address { get; set; }
         public string? BodyType { get; set; }
+        public string? MRACountry { get; set; }
         public string? RegisteredOfficeLocation { get; set; }
         public string? RegisteredTestLocation { get; set; }
         public string? LegislativeArea { get; set; }

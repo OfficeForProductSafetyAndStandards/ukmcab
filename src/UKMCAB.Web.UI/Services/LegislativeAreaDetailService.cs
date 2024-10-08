@@ -47,7 +47,9 @@ namespace UKMCAB.Web.UI.Services
                 StatusCssStyle = CssClassUtils.LAStatusStyle(documentLegislativeArea.Status),
                 RoleName = Roles.NameFor(documentLegislativeArea.RoleId),
                 RoleId = documentLegislativeArea.RoleId,
-                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId
+                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId,
+                NewlyCreated = documentLegislativeArea.NewlyCreated,
+                MRABypass = documentLegislativeArea.MRABypass
             };
 
             var scopeOfAppointments = cab.ScopeOfAppointments.Where(x => x.LegislativeAreaId == legislativeArea.Id);
@@ -64,6 +66,16 @@ namespace UKMCAB.Web.UI.Services
 
                 var subCategory = scopeOfAppointment.SubCategoryId.HasValue
                     ? (await _legislativeAreaService.GetSubCategoryByIdAsync(scopeOfAppointment.SubCategoryId
+                        .Value))?.Name
+                    : null;
+
+                var ppeProductType = scopeOfAppointment.PpeProductTypeId.HasValue
+                ? (await _legislativeAreaService.GetPpeProductTypeByIdAsync(scopeOfAppointment.PpeProductTypeId
+                    .Value))?.Name
+                : null;
+
+                var protectionAgainstRisk = scopeOfAppointment.ProtectionAgainstRiskId.HasValue
+                    ? (await _legislativeAreaService.GetProtectionAgainstRiskByIdAsync(scopeOfAppointment.ProtectionAgainstRiskId
                         .Value))?.Name
                     : null;
 
@@ -112,6 +124,33 @@ namespace UKMCAB.Web.UI.Services
                     }
 
                     foreach (var procedureId in categoryProcedure.ProcedureIds)
+                    {
+                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                        soaViewModel.Procedures?.Add(procedure!.Name);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
+
+                foreach (var areaOfCompetencyProcedure in scopeOfAppointment.AreaOfCompetencyIdAndProcedureIds)
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel
+                    {
+                        LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                        PurposeOfAppointment = purposeOfAppointment,
+                        PpeProductType = ppeProductType,
+                        ProtectionAgainstRisk = protectionAgainstRisk,
+                        ScopeId = scopeOfAppointment.Id,
+                    };
+
+                    if (areaOfCompetencyProcedure.AreaOfCompetencyId.HasValue)
+                    {
+                        var areaOfCompetency =
+                            await _legislativeAreaService.GetAreaOfCompetencyByIdAsync(areaOfCompetencyProcedure.AreaOfCompetencyId.Value);
+                        soaViewModel.AreaOfCompetency = areaOfCompetency!.Name;
+                    }
+
+                    foreach (var procedureId in areaOfCompetencyProcedure.ProcedureIds)
                     {
                         var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
                         soaViewModel.Procedures?.Add(procedure!.Name);

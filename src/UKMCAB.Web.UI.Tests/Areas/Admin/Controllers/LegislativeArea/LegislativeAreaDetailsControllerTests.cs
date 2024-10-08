@@ -12,7 +12,14 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using UKMCAB.Data.Models.Users;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using Microsoft.Extensions.Options;
+using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Data.Pagination;
 
 namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
 {
@@ -36,9 +43,16 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             _mockLegislativeAreaDetailService = new Mock<ILegislativeAreaDetailService>();
             _mockUserService = new Mock<IUserService>();
 
+            var mockBbjectValidator = new Mock<IObjectModelValidator>();
+            mockBbjectValidator.Setup(o => o.Validate(It.IsAny<ActionContext>(),
+                                              It.IsAny<ValidationStateDictionary>(),
+                                              It.IsAny<string>(),
+                                              It.IsAny<object>()));
+
             _sut = new LegislativeAreaDetailsController(_mockCabAdminService.Object, _mockLegislativeAreaService.Object, _mockLegislativeAreaDetailService.Object, _mockUserService.Object, _mockDistCache.Object)
             {
-                ControllerContext = GetControllerContextWithUser()
+                ControllerContext = GetControllerContextWithUser(),
+                ObjectValidator = mockBbjectValidator.Object,
             };
 
         }
@@ -184,6 +198,679 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             Assert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.AtLeast(1));
             Assert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
             Assert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_NoDocumentScopeOfAppointment_RedirectsToReviewLegislativeAreas()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var expectedResult = new RedirectToRouteResult(LegislativeAreaReviewController.Routes.ReviewLegislativeAreas,
+                new
+                {
+                    CABId = cabId,
+                    fromSummary = false
+                });
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(string.Empty,
+                new DesignatedStandardsViewModel
+                {
+                    ScopeId = scopeId,
+                    CABId = cabId,
+                    IsFromSummary = false
+                });
+
+            //Assert
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_SubmitTypeSearch_ReturnsAddDesignatedStandardView()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var pageNumber = 1;
+            var searchTerm = "Test keywords";
+            var designatedStandardIds = new List<Guid>() { Guid.NewGuid() };
+
+            var expectedResult = new ViewResult()
+            {
+                ViewName = "~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml",
+                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = new DesignatedStandardsViewModel
+                    {
+                        ScopeId = scopeId,
+                        CABId = cabId,
+                        IsFromSummary = false,
+                        PageNumber = pageNumber,
+                        SearchTerm = searchTerm,
+                        SelectedDesignatedStandardIds = designatedStandardIds,
+                        PaginationSearchTerm = searchTerm
+                    }
+                }
+            };
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, searchTerm, 20, designatedStandardIds, false, false))
+                .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(Constants.SubmitType.Search,
+                new DesignatedStandardsViewModel
+                {
+                    ScopeId = scopeId,
+                    CABId = cabId,
+                    IsFromSummary = false,
+                    PageNumber = pageNumber,
+                    SearchTerm = searchTerm,
+                    SelectedDesignatedStandardIds = designatedStandardIds,
+                });
+
+            //Assert
+            _mockDistCache.VerifyAll();
+            _mockLegislativeAreaService.VerifyAll();
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_SubmitTypePaginatedQueryShowAllSelectedTrue_ReturnsAddDesignatedStandardView()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var pageNumber = 1;
+            var designatedStandardIds = new List<Guid>() { Guid.NewGuid() };
+            var paginationSearchTerm = "Test keywords";
+
+            var expectedResult = new ViewResult()
+            {
+                ViewName = "~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml",
+                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = new DesignatedStandardsViewModel
+                    {
+                        ScopeId = scopeId,
+                        CABId = cabId,
+                        IsFromSummary = false,
+                        PageNumber = pageNumber,
+                        SelectedDesignatedStandardIds = designatedStandardIds,
+                        PaginationSearchTerm = paginationSearchTerm,
+                        ShowAllSelected = true
+                    }
+                }
+            };
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, designatedStandardIds, false, false))
+                .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(Constants.SubmitType.PaginatedQuery,
+                new DesignatedStandardsViewModel
+                {
+                    ScopeId = scopeId,
+                    CABId = cabId,
+                    IsFromSummary = false,
+                    PageNumber = pageNumber,
+                    SelectedDesignatedStandardIds = designatedStandardIds,
+                    PaginationSearchTerm = paginationSearchTerm,
+                    ShowAllSelected = true
+                });
+
+            //Assert
+            _mockDistCache.VerifyAll();
+            _mockLegislativeAreaService.VerifyAll();
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_SubmitTypePaginatedQueryShowAllSelectedFalse_ReturnsAddDesignatedStandardView()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var pageNumber = 1;
+            var designatedStandardIds = new List<Guid>() { Guid.NewGuid() };
+            var paginationSearchTerm = "Test keywords";
+
+            var expectedResult = new ViewResult()
+            {
+                ViewName = "~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml",
+                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = new DesignatedStandardsViewModel
+                    {
+                        ScopeId = scopeId,
+                        CABId = cabId,
+                        IsFromSummary = false,
+                        PageNumber = pageNumber,
+                        SelectedDesignatedStandardIds = designatedStandardIds,
+                        PaginationSearchTerm = paginationSearchTerm,
+                        ShowAllSelected = false
+                    }
+                }
+            };
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, null, false, false))
+                .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(Constants.SubmitType.PaginatedQuery,
+                new DesignatedStandardsViewModel
+                {
+                    ScopeId = scopeId,
+                    CABId = cabId,
+                    IsFromSummary = false,
+                    PageNumber = pageNumber,
+                    SelectedDesignatedStandardIds = designatedStandardIds,
+                    PaginationSearchTerm = paginationSearchTerm,
+                    ShowAllSelected = false
+                });
+
+            //Assert
+            _mockDistCache.VerifyAll();
+            _mockLegislativeAreaService.VerifyAll();
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_SubmitTypeShowAllSelected_ReturnsAddDesignatedStandardView()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var pageNumber = 1;
+            var designatedStandardIds = new List<Guid>() { Guid.NewGuid() };
+
+            var expectedResult = new ViewResult()
+            {
+                ViewName = "~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml",
+                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = new DesignatedStandardsViewModel
+                    {
+                        ScopeId = scopeId,
+                        CABId = cabId,
+                        IsFromSummary = false,
+                        PageNumber = pageNumber,
+                        SelectedDesignatedStandardIds = designatedStandardIds,
+                    }
+                }
+            };
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, null, 20, designatedStandardIds, It.IsAny<bool>(), It.IsAny<bool>()))
+                .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(Constants.SubmitType.ShowAllSelected,
+                new DesignatedStandardsViewModel
+                {
+                    ScopeId = scopeId,
+                    CABId = cabId,
+                    IsFromSummary = false,
+                    PageNumber = pageNumber,
+                    SelectedDesignatedStandardIds = designatedStandardIds,
+                });
+
+            //Assert
+            _mockDistCache.VerifyAll();
+            _mockLegislativeAreaService.VerifyAll();
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_SubmitTypeClearShowAllSelected_ReturnsAddDesignatedStandardView()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var pageNumber = 1;
+            var designatedStandardIds = new List<Guid>() { Guid.NewGuid() };
+            var paginationSearchTerm = "Test keywords";
+
+            var expectedResult = new ViewResult()
+            {
+                ViewName = "~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml",
+                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = new DesignatedStandardsViewModel
+                    {
+                        ScopeId = scopeId,
+                        CABId = cabId,
+                        IsFromSummary = false,
+                        PageNumber = pageNumber,
+                        SelectedDesignatedStandardIds = designatedStandardIds,
+                        SearchTerm = paginationSearchTerm,
+                        PaginationSearchTerm = paginationSearchTerm,
+                    }
+                }
+            };
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, paginationSearchTerm, 20, designatedStandardIds, false, false))
+                .ReturnsAsync(new ScopeOfAppointmentOptionsModel()).Verifiable();
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(Constants.SubmitType.ClearShowAllSelected,
+                new DesignatedStandardsViewModel
+                {
+                    ScopeId = scopeId,
+                    CABId = cabId,
+                    IsFromSummary = false,
+                    PageNumber = pageNumber,
+                    SelectedDesignatedStandardIds = designatedStandardIds,
+                    SearchTerm = paginationSearchTerm,
+                });
+
+            //Assert
+            _mockDistCache.VerifyAll();
+            _mockLegislativeAreaService.VerifyAll();
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_ValidModel_RedirectToLegislativeAreaAdditionalInformation()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var userId = Guid.NewGuid().ToString();
+            var documentId = Guid.NewGuid().ToString();
+
+            var expectedResult = new RedirectToRouteResult(
+                LegislativeAreaAdditionalInformationController.Routes.LegislativeAreaAdditionalInformation,
+                new
+                {
+                    id = cabId,
+                    laId = legislativeAreaId,
+                    fromSummary = false
+                });
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+            _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(cabId.ToString()))
+                .ReturnsAsync(new Document
+                {
+                    id = documentId,
+                }).Verifiable();
+            _mockUserService.Setup(m => m.GetAsync(It.IsAny<string>()))
+                .ReturnsAsync(new UserAccount
+                {
+                    Id = userId,
+                }).Verifiable();
+            _mockCabAdminService.Setup(m => m.UpdateOrCreateDraftDocumentAsync(It.Is<UserAccount>(u => u.Id == userId), It.Is<Document>(u => u.id == documentId), false)).ReturnsAsync(new Document()).Verifiable();
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(Constants.SubmitType.Continue,
+                new DesignatedStandardsViewModel
+                {
+                    ScopeId = scopeId,
+                    CABId = cabId,
+                    IsFromSummary = false,
+                });
+
+            //Assert
+            _mockDistCache.VerifyAll();
+            _mockCabAdminService.VerifyAll();
+            _mockUserService.VerifyAll();
+
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_DuplicateScopeOfAppointment_RedirectToReviewLegislativeAreas()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var userId = Guid.NewGuid().ToString();
+            var documentId = Guid.NewGuid().ToString();
+
+            var expectedResult = new RedirectToRouteResult(
+                LegislativeAreaReviewController.Routes.ReviewLegislativeAreas,
+                new
+                {
+                    id = cabId,
+                    fromSummary = false,
+                    bannerContent = Constants.ErrorMessages.DuplicateEntry
+                });
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+            _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(cabId.ToString()))
+                .ReturnsAsync(new Document
+                {
+                    id = documentId,
+                    ScopeOfAppointments = new List<DocumentScopeOfAppointment> {
+                        new DocumentScopeOfAppointment
+                        {
+                            LegislativeAreaId = legislativeAreaId,
+                        }
+                    }
+                }).Verifiable();
+            _mockUserService.Setup(m => m.GetAsync(It.IsAny<string>())).ReturnsAsync(It.IsAny<UserAccount>()).Verifiable();
+            _mockCabAdminService.Setup(m => m.UpdateOrCreateDraftDocumentAsync(It.IsAny<UserAccount>(), It.IsAny<Document>(), false))
+                .ReturnsAsync(new Document()).Verifiable();
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(Constants.SubmitType.Continue,
+                new DesignatedStandardsViewModel
+                {
+                    ScopeId = scopeId,
+                    CABId = cabId,
+                    IsFromSummary = false,
+                });
+
+            //Assert
+            _mockDistCache.VerifyAll();
+            _mockCabAdminService.Verify(m => m.GetLatestDocumentAsync(cabId.ToString()));
+            _mockCabAdminService.VerifyNoOtherCalls();
+            _mockUserService.VerifyNoOtherCalls();
+
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_InvalidSubmitType_ThrowsInvalidOperationException()
+        {
+            // Arrange 
+            var scopeId = Guid.NewGuid();
+            var cabId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+
+            // Act and Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+                {
+                    var result = await _sut.AddDesignatedStandard("InvalidSubmitType",
+                                    new DesignatedStandardsViewModel
+                                    {
+                                        ScopeId = scopeId,
+                                        CABId = cabId,
+                                        IsFromSummary = false,
+                                    });
+                });
+
+            await Task.CompletedTask;
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_NewSOA_ReturnsAddDesignatedStandardView()
+        {
+            // Arrange 
+            var cabId = Guid.NewGuid();
+            var documentId = Guid.NewGuid();
+            var scopeId = Guid.NewGuid();
+            var compareScopeId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var legislativeAreaName = "test la";
+            var fromSummary = false;
+            var pageNumber = 1;
+            var selectedDesignatedStandardIds = new List<Guid>() { Guid.NewGuid() };
+            var designatedStandards = new List<DesignatedStandardModel>() { new DesignatedStandardModel(Guid.NewGuid(), "standard name", legislativeAreaId, new List<string>() { "abc 123" }, "pub notice") };
+            var paginationInfo = new PaginationInfo(pageNumber, 1);
+
+            _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(cabId.ToString()))
+                .ReturnsAsync(new Document()
+                {
+                    id = documentId.ToString(),
+                    CABId = cabId.ToString(),
+                    ScopeOfAppointments = new List<DocumentScopeOfAppointment> {
+                        new DocumentScopeOfAppointment
+                        {
+                            Id = compareScopeId,
+                            LegislativeAreaId = legislativeAreaId,
+                            DesignatedStandardIds = selectedDesignatedStandardIds,
+                        }
+                }
+                }).Verifiable();
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    Id = scopeId,
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+
+            _mockLegislativeAreaService.Setup(m => m.GetLegislativeAreaByIdAsync(legislativeAreaId))
+                .ReturnsAsync(new LegislativeAreaModel
+                {
+                    Id = legislativeAreaId,
+                    Name = legislativeAreaName,
+                }).Verifiable();
+
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<List<Guid>>(), false, false))
+                .ReturnsAsync(new ScopeOfAppointmentOptionsModel
+                {
+                    DesignatedStandards = designatedStandards,
+                    PaginationInfo = paginationInfo,
+                }).Verifiable();
+
+            var expectedResult = new ViewResult()
+            {
+                ViewName = "~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml",
+                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = new DesignatedStandardsViewModel(
+                        cabId,
+                        scopeId,
+                        fromSummary,
+                        compareScopeId,
+                        legislativeAreaName,
+                        selectedDesignatedStandardIds,
+                        designatedStandards,
+                        paginationInfo)
+                }
+            };
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(cabId, scopeId, compareScopeId, fromSummary, pageNumber);
+
+            //Assert
+            _mockCabAdminService.VerifyAll();
+            _mockDistCache.VerifyAll();
+            _mockUserService.VerifyAll();
+            _mockLegislativeAreaService.VerifyAll();
+
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_ExistingSOA_ReturnsAddDesignatedStandardView()
+        {
+            // Arrange 
+            var cabId = Guid.NewGuid();
+            var documentId = Guid.NewGuid();
+            var scopeId = Guid.NewGuid();
+            var compareScopeId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var legislativeAreaName = "test la";
+            var fromSummary = false;
+            var pageNumber = 1;
+            var designatedStandards = new List<DesignatedStandardModel>() { new DesignatedStandardModel(Guid.NewGuid(), "standard name", legislativeAreaId, new List<string>() { "abc 123" }, "pub notice") };
+            var paginationInfo = new PaginationInfo(pageNumber, 1);
+
+            _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(cabId.ToString()))
+                .ReturnsAsync(new Document()
+                {
+                    id = documentId.ToString(),
+                    CABId = cabId.ToString(),
+                }).Verifiable();
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    Id = scopeId,
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+
+            _mockLegislativeAreaService.Setup(m => m.GetLegislativeAreaByIdAsync(legislativeAreaId))
+                .ReturnsAsync(new LegislativeAreaModel
+                {
+                    Id = legislativeAreaId,
+                    Name = legislativeAreaName,
+                }).Verifiable();
+
+            _mockLegislativeAreaService.Setup(m => m.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(legislativeAreaId, pageNumber, It.IsAny<string>(), It.IsAny<int>(), It.IsAny<List<Guid>>(), false, false))
+                .ReturnsAsync(new ScopeOfAppointmentOptionsModel
+                {
+                    DesignatedStandards = designatedStandards,
+                    PaginationInfo = paginationInfo,
+                }).Verifiable();
+
+            var expectedResult = new ViewResult()
+            {
+                ViewName = "~/Areas/Admin/views/CAB/LegislativeArea/AddDesignatedStandard.cshtml",
+                ViewData = new ViewDataDictionary(new EmptyModelMetadataProvider(), new ModelStateDictionary())
+                {
+                    Model = new DesignatedStandardsViewModel(
+                        cabId,
+                        scopeId,
+                        fromSummary,
+                        compareScopeId,
+                        legislativeAreaName,
+                        new List<Guid>(),
+                        designatedStandards,
+                        paginationInfo)
+                }
+            };
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(cabId, scopeId, compareScopeId, fromSummary, pageNumber);
+
+            //Assert
+            _mockCabAdminService.VerifyAll();
+            _mockDistCache.VerifyAll();
+            _mockUserService.VerifyAll();
+            _mockLegislativeAreaService.VerifyAll();
+
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_NoCachedSOA_RedirectsToReviewLegislativeAreas()
+        {
+            // Arrange 
+            var cabId = Guid.NewGuid();
+            var documentId = Guid.NewGuid();
+            var scopeId = Guid.NewGuid();
+            var compareScopeId = Guid.NewGuid();
+            var fromSummary = false;
+            var pageNumber = 1;
+
+            _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(cabId.ToString()))
+                .ReturnsAsync(new Document()
+                {
+                    id = documentId.ToString(),
+                    CABId = cabId.ToString(),
+                }).Verifiable();
+
+            var expectedResult = new RedirectToRouteResult(
+                LegislativeAreaReviewController.Routes.ReviewLegislativeAreas,
+                new
+                {
+                    id = cabId,
+                    fromSummary = false
+                });
+
+            //Act
+            var result = await _sut.AddDesignatedStandard(cabId, scopeId, compareScopeId, fromSummary, pageNumber);
+
+            //Assert
+            _mockCabAdminService.VerifyAll();
+            _mockUserService.VerifyAll();
+
+            result.Should().BeEquivalentTo(expectedResult);
+        }
+
+        [Test]
+        public async Task AddDesignatedStandard_LegislativeAreaNotFound_ThrowsInvalidOperationException()
+        {
+            // Arrange 
+            var cabId = Guid.NewGuid();
+            var documentId = Guid.NewGuid();
+            var scopeId = Guid.NewGuid();
+            var compareScopeId = Guid.NewGuid();
+            var legislativeAreaId = Guid.NewGuid();
+            var fromSummary = false;
+            var pageNumber = 1;
+            var selectedDesignatedStandardIds = new List<Guid>() { Guid.NewGuid() };
+            var designatedStandards = new List<DesignatedStandardModel>() { new DesignatedStandardModel(Guid.NewGuid(), "standard name", legislativeAreaId, new List<string>() { "abc 123" }, "pub notice") };
+            var paginationInfo = new PaginationInfo(pageNumber, 1);
+
+            _mockCabAdminService.Setup(m => m.GetLatestDocumentAsync(cabId.ToString()))
+                .ReturnsAsync(new Document()
+                {
+                    id = documentId.ToString(),
+                    CABId = cabId.ToString(),
+                    ScopeOfAppointments = new List<DocumentScopeOfAppointment> {
+                        new DocumentScopeOfAppointment
+                        {
+                            Id = compareScopeId,
+                            LegislativeAreaId = legislativeAreaId,
+                            DesignatedStandardIds = selectedDesignatedStandardIds,
+                        }
+                }
+                }).Verifiable();
+
+            _mockDistCache.Setup(m => m.GetAsync<DocumentScopeOfAppointment>($"soa_create_{scopeId}", -1))
+                .ReturnsAsync(new DocumentScopeOfAppointment
+                {
+                    Id = scopeId,
+                    LegislativeAreaId = legislativeAreaId,
+                }).Verifiable();
+
+            //Act //Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            {
+                var result = await _sut.AddDesignatedStandard(cabId, scopeId, compareScopeId, fromSummary, pageNumber);
+            });
+
+            await Task.CompletedTask;
         }
     }
 }

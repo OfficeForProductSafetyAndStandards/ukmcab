@@ -160,7 +160,7 @@ public static class CABSummaryViewModelTestsHelpers
     { 
         cabSummary.CabDetailsViewModel = new CABDetailsViewModel { IsCompleted = true };
         cabSummary.CabContactViewModel = new CABContactViewModel { IsCompleted = true };
-        cabSummary.CabBodyDetailsViewModel = new CABBodyDetailsViewModel { IsCompleted = true };
+        cabSummary.CabBodyDetailsMRAViewModel = new CABBodyDetailsMRAViewModel { IsCompleted = true };
         cabSummary.CabLegislativeAreasViewModel = new CABLegislativeAreasViewModel { IsCompleted = true };
         cabSummary.CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel { IsCompleted = true };
         cabSummary.CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel { IsCompleted = true };

@@ -143,7 +143,7 @@
     "id": "87f42cf5-1ada-417f-a699-072ea9bb9ce2",
     "name": "Personal protective equipment",
     "regulation": "The personal protective equipment regulations",
-    "hasDataModel": "false",
+    "hasDataModel": "true",
     "roleId": "opss_ogd"
   },
   {

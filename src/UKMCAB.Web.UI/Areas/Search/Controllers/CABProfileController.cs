@@ -93,6 +93,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         {
             
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
+            returnUrl = (returnUrl == "confirmation" || Url.IsLocalUrl(returnUrl)) ? returnUrl : default;
+
             if (cabDocument != null && !id.Equals(cabDocument.URLSlug))
             {
                 return RedirectToActionPermanent("Index", new { id = cabDocument.URLSlug, returnUrl });
@@ -120,10 +122,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         [HttpGet("search/cab-profile/{id}/{legislativeAreaId}", Name = Routes.CabDetailsLegislativeArea)]
         public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, Guid legislativeAreaId,
-            Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategoryId, Guid? productId, int pagenumber = 1)
+    Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategoryId, Guid? productId, Guid? scopeOfAppointmentId, Guid? ppeProductTypeId, Guid? protectionAgainstRiskId, Guid? areaOfCompetencyId, int pagenumber = 1)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id) ??
                               throw new InvalidOperationException();
+            returnUrl = (returnUrl == "confirmation" || Url.IsLocalUrl(returnUrl)) ? returnUrl : default;
             var vm = await GetCabProfileForIndex(cabDocument, returnUrl, pagenumber);
             var la = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
             vm.CabLegislativeAreas.LegislativeAreaId = legislativeAreaId;
@@ -139,7 +142,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (productId.HasValue)
             {
-                await GetProceduresAsync(null, null, null, null, productId, cabDocument, vm);
+                await GetProceduresAsync(null, null, null, null, productId, null, null, cabDocument, vm);
             }
 
             if (subCategoryId.HasValue)
@@ -173,7 +176,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId,
+                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId, null, null,
                             cabDocument, vm);
                     }
                 }
@@ -188,11 +191,45 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId,
+                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId, null, null,
                             cabDocument,
                             vm);
                     }
                 }
+            }
+            else if (scopeOfAppointmentId.HasValue && ppeProductTypeId.HasValue)
+            {
+                vm.CabLegislativeAreas.PpeProductType = new ValueTuple<Guid, string>
+                {
+                    Item1 = ppeProductTypeId.Value,
+                    Item2 = (await _legislativeAreaService
+                        .GetPpeProductTypeByIdAsync((Guid)ppeProductTypeId))!.Name
+                };
+                await GetProtectionAgainstRiskAsync(scopeOfAppointmentId, cabDocument, vm);
+            }
+
+            if (scopeOfAppointmentId.HasValue && protectionAgainstRiskId.HasValue)
+            {                
+                vm.CabLegislativeAreas.ProtectionAgainstRisk = new ValueTuple<Guid, string>
+                {
+                    Item1 = protectionAgainstRiskId.Value,
+                    Item2 = (await _legislativeAreaService
+                        .GetProtectionAgainstRiskByIdAsync(protectionAgainstRiskId.Value))!.Name
+                };
+
+                await GetAreaOfCompetenciesAsync(scopeOfAppointmentId, cabDocument, vm);
+            }
+
+            if (scopeOfAppointmentId.HasValue && areaOfCompetencyId.HasValue)
+            {
+                await GetProceduresAsync(null, null, null, null, null, areaOfCompetencyId, scopeOfAppointmentId, cabDocument, vm);
+
+                vm.CabLegislativeAreas.AreaOfCompetency = new ValueTuple<Guid?, string?>
+                {
+                    Item1 = areaOfCompetencyId,
+                    Item2 = (await _legislativeAreaService
+                        .GetAreaOfCompetencyByIdAsync(areaOfCompetencyId.Value))!.Name
+                };
             }
 
             var purposeOfAppointmentIds = cabDocument.ScopeOfAppointments
@@ -209,6 +246,26 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 });
             }
 
+            var ppeProductTypeIds = cabDocument.ScopeOfAppointments
+                .Where(a => a.LegislativeAreaId == legislativeAreaId)
+                .Where(a => a.PpeProductTypeId.HasValue)
+                .Select(p => p.PpeProductTypeId!.Value).ToList();
+
+            foreach (var soa in cabDocument.ScopeOfAppointments)
+            {
+                if (soa.LegislativeAreaId == legislativeAreaId && soa.PpeProductTypeId.HasValue)
+                {
+                    vm.CabLegislativeAreas.PpeProductTypes.Add(new ValueTuple<Guid, string>
+                    {
+                        Item1 = soa.PpeProductTypeId.Value,
+                        Item2 = (await _legislativeAreaService
+                        .GetPpeProductTypeByIdAsync(soa.PpeProductTypeId.Value))!.Name
+                    });
+
+                    vm.CabLegislativeAreas.ScopeOfAppointmentId = soa.Id;
+                }
+            }
+
             if (!purposeOfAppointmentIds.Any())
             {
                 //Get Next Level Categories
@@ -219,7 +276,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(legislativeAreaId, null, null, null, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(legislativeAreaId, null, null, null, null, cabDocument, vm);
+                        await GetProceduresAsync(legislativeAreaId, null, null, null, null, null, null, cabDocument, vm);
                     }
                 }
             }
@@ -260,6 +317,36 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             return View(vm);
         }
 
+        private async Task GetProtectionAgainstRiskAsync(Guid? scopeOfAppointmentId, Document cabDocument, CABProfileViewModel vm)
+        {
+            Guid? protectionAgainstRiskId = cabDocument.ScopeOfAppointments
+                .Where(soa => soa.Id == scopeOfAppointmentId)
+                .First().ProtectionAgainstRiskId;
+
+            vm.CabLegislativeAreas.ProtectionAgainstRisks.Add( new ValueTuple<Guid?, string>
+            {
+                Item1 = protectionAgainstRiskId,
+                Item2 = (await _legislativeAreaService
+                        .GetProtectionAgainstRiskByIdAsync(protectionAgainstRiskId.Value))!.Name
+            });
+        }
+
+        private async Task GetAreaOfCompetenciesAsync(Guid? scopeOfAppointmentId, Document cabDocument, CABProfileViewModel vm)
+        {
+            var areaOfCompetencyIds = cabDocument.ScopeOfAppointments
+                .Where(soa => soa.Id == scopeOfAppointmentId)
+                .SelectMany(soa => soa.AreaOfCompetencyIds).ToList(); 
+
+            foreach (var id in areaOfCompetencyIds)
+            {
+                vm.CabLegislativeAreas.AreaOfCompetencies.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = id,
+                    Item2 = (await _legislativeAreaService
+                        .GetAreaOfCompetencyByIdAsync(id))!.Name
+                });
+            }
+        }
         private async Task GetCategoriesAsync(Guid? legislativeId, Guid? purposeOfAppointmentId, Document cabDocument,
             CABProfileViewModel vm)
         {
@@ -340,7 +427,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task GetProceduresAsync(Guid? legislativeAreaId, Guid? purposeOfAppointmentId, Guid? categoryId,
             Guid? subCategoryId,
-            Guid? productId, Document cabDocument,
+            Guid? productId, Guid? areaOfCompetencyId, Guid? scopeOfAppointmentId, Document cabDocument,
             CABProfileViewModel vm)
         {
             IEnumerable<DocumentScopeOfAppointment> scopeOfAppointments;
@@ -367,6 +454,11 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
                     .Where(s => s.ProductIds.Contains(productId!.Value) && s.ProductIdAndProcedureIds.Any());
             }
+            else if (areaOfCompetencyId.HasValue)
+            {
+                scopeOfAppointments = cabDocument.ScopeOfAppointments
+                    .Where(s => s.AreaOfCompetencyIds.Contains(areaOfCompetencyId!.Value) && s.AreaOfCompetencyIdAndProcedureIds.Any());
+            }
             else
             {
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
@@ -382,12 +474,19 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     .Where(i => i.ProductId == productId)
                     .SelectMany(pr => pr.ProcedureIds);
             }
-            else
+            else if (categoryId.HasValue)
             {
                 procIds = scopeOfAppointments.ToList()
-                    .Select(s => s.ProductIdAndProcedureIds)
-                    .SelectMany(pp => pp)
+                    .Select(s => s.CategoryIdAndProcedureIds)
+                    .SelectMany(cp => cp)
                     .SelectMany(pr => pr.ProcedureIds);
+            }
+            else
+            {
+                procIds = scopeOfAppointments.Where(soa => soa.Id == scopeOfAppointmentId).ToList()
+                    .SelectMany(s => s.AreaOfCompetencyIdAndProcedureIds)
+                    .Where(aoc => aoc.AreaOfCompetencyId == areaOfCompetencyId)                 
+                    .SelectMany(pr => pr.ProcedureIds);                
             }
             
             foreach (var procId in procIds)
@@ -465,6 +564,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 ? await _userService.GetAsync(
                     User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value)
                 : null;
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
             var unarchiveRequests = await _workflowTaskService.GetByCabIdAsync(
                 cabDocument.CABId.ToGuid()!.Value,
@@ -494,12 +594,14 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             var isArchived = cabDocument.StatusValue == Status.Archived;
             var auditLogOrdered = cabDocument.AuditLog.OrderBy(a => a.DateTime).ToList();
 
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
+
             var isUnarchivedRequest =
                 auditLogOrdered.Last().Action == AuditCABActions.UnarchivedToDraft;
             var isPublished = cabDocument.StatusValue == Status.Published;
             var archiveAudit =
                 isArchived ? auditLogOrdered.Last(al => al.Action == AuditCABActions.Archived) : null;
-            var publishedAudit = auditLogOrdered.LastOrDefault(al => al.Action == AuditCABActions.Published);
+            var publishedAudit = auditLogOrdered.FirstOrDefault(al => al.Action == AuditCABActions.Published);
 
             var fullHistory = await _cachedPublishedCabService.FindAllDocumentsByCABIdAsync(cabDocument.CABId);
             var hasDraft = fullHistory.Any(d => d.StatusValue == Status.Draft);
@@ -543,6 +645,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 PreviousBodyNumbers = cabDocument.PreviousCABNumbers,
                 CabNumberVisibility = cabDocument.CabNumberVisibility,
                 BodyTypes = cabDocument.BodyTypes,
+                MRACountries = cabDocument.MRACountries,
                 RegisteredOfficeLocation = cabDocument.RegisteredOfficeLocation,
                 RegisteredTestLocations = cabDocument.TestingLocations,
                 Status = cabDocument.Status,
@@ -672,7 +775,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         #region ArchiveCAB
 
-        [HttpGet, Route("search/archive-cab/{cabUrl}"), Authorize]
+        [HttpGet, Route("search/archive-cab/{cabUrl}"), Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> ArchiveCAB(string cabUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(cabUrl);
@@ -691,7 +794,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             });
         }
 
-        [HttpPost, Route("search/archive-cab/{cabUrl}"), Authorize]
+        [HttpPost, Route("search/archive-cab/{cabUrl}"), Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> ArchiveCAB(string cabUrl, ArchiveCABViewModel model)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(cabUrl);
@@ -793,11 +896,12 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         #region UnarchiveCAB
 
-        [HttpGet, Route("search/unarchive-cab/{id}"), Authorize]
+        [HttpGet, Route("search/unarchive-cab/{id}"), Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> UnarchiveCAB(string id, string? returnUrl)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);
             Guard.IsTrue(cabDocument != null, $"No published document found for CAB URL: {id}");
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             if (cabDocument.StatusValue != Status.Archived)
             {
                 return RedirectToAction("Index", new { url = id, returnUrl });
@@ -812,7 +916,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpPost]
-        [Route("search/unarchive-cab/{id}")]
+        [Route("search/unarchive-cab/{id}"), Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> UnarchiveCAB(string id, UnarchiveCABViewModel model)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id);

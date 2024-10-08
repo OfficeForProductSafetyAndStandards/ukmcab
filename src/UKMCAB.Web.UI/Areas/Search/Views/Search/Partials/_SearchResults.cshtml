@@ -93,7 +93,8 @@
                 }
             </fieldset>
         </div>
-        <div id="search-results-list-container" aria-describe="Results of search of conformity assessment bodies">
+        <div id="search-results-list-container" aria-describedby="search-description">
+            <p id="search-description" class="govuk-visually-hidden">Results of search of conformity assessment bodies</p>
             <ul id="search-results-list">
                 @foreach (var searchResult in Model.SearchResults)
                 {
@@ -135,11 +136,16 @@
                                     }
                                 </li>
                             }
-                            <li class="search-result-list-item-detail">Address: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.Address), searchResult.Address, @Constants.NotProvided)</li>
-                            <li class="search-result-list-item-detail">Body type: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.BodyType), searchResult.BodyType, @Constants.NotProvided)</li>
-                            <li class="search-result-list-item-detail">Registered office location: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.RegisteredOfficeLocation), searchResult.RegisteredOfficeLocation, @Constants.NotProvided)</li>
-                            <li class="search-result-list-item-detail">Testing location: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.RegisteredTestLocation), searchResult.RegisteredTestLocation, @Constants.NotProvided)</li>
-                            <li class="search-result-list-item-detail">Legislative area: @Html.Conditional(!string.IsNullOrWhiteSpace(searchResult.LegislativeArea), searchResult.LegislativeArea, @Constants.NotProvided)</li>
+                            <li class="search-result-list-item-detail">Address: @(!string.IsNullOrWhiteSpace(searchResult.Address) ? searchResult.Address : @Constants.NotProvided)</li>
+                            <li class="search-result-list-item-detail">
+                                Body type: @(!string.IsNullOrWhiteSpace(searchResult.BodyType) ? searchResult.BodyType : @Constants.NotProvided)
+                            </li>
+                            <li class="search-result-list-item-detail">
+                                @(!string.IsNullOrWhiteSpace(searchResult.MRACountry) ? $"UK body designated under MRA: {searchResult.MRACountry}" : string.Empty)
+                            </li>
+                            <li class="search-result-list-item-detail">Registered office location: @(!string.IsNullOrWhiteSpace(searchResult.RegisteredOfficeLocation) ? searchResult.RegisteredOfficeLocation : @Constants.NotProvided)</li>
+                            <li class="search-result-list-item-detail">Testing location: @(!string.IsNullOrWhiteSpace(searchResult.RegisteredTestLocation) ? searchResult.RegisteredTestLocation : @Constants.NotProvided)</li>
+                            <li class="search-result-list-item-detail">Legislative area: @(!string.IsNullOrWhiteSpace(searchResult.LegislativeArea) ? searchResult.LegislativeArea : @Constants.NotProvided)</li>
                         </ul>
                     </li>
                 }
@@ -148,7 +154,8 @@
     }
     else
     {
-        <div id="search-no-results-container" aria-describe="Results of search of conformity assessment bodies returned no results">
+        <div id="search-no-results-container" aria-describedby="search-description">
+            <p id="search-description" class="govuk-visually-hidden">Results of search of conformity assessment bodies returned no results</p>
             <p class="govuk-body">
                 <a name="no-results">There are no matching results.</a>
             </p>

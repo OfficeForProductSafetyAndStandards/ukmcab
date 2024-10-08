@@ -55,7 +55,11 @@ public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
         return list;
     }
 
-    public async Task<(IEnumerable<O> Results, PaginationInfo PaginationInfo)> PaginatedQueryAsync<O>(Expression<Func<O, bool>> predicate, int pageNumber, string? searchTerm = null, int pageSize = 20) where O : IOrderable
+    public async Task<(IEnumerable<O> Results, PaginationInfo PaginationInfo)> PaginatedQueryAsync<O>(
+        Expression<Func<O, bool>> predicate, 
+        int pageNumber, 
+        string? searchTerm = null, 
+        int pageSize = 20) where O : IOrderable
     {
         var query = _container.GetItemLinqQueryable<O>().Where(predicate);
         if (!string.IsNullOrWhiteSpace(searchTerm))

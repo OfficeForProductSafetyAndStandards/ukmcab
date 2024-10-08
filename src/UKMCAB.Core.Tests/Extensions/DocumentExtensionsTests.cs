@@ -381,7 +381,7 @@ namespace UKMCAB.Core.Tests.Extensions
         }
 
         [Test]
-        public void PublishedDate_ReturnsLastAuditLogPublishedActionDate()
+        public void PublishedDate_ReturnsFirstAuditLogPublishedActionDate()
         {
             // Arrange
             var sut = new Document()
@@ -410,7 +410,7 @@ namespace UKMCAB.Core.Tests.Extensions
             var result = sut.PublishedDate();
 
             // Assert
-            result.Should().Be(new DateTime(2024, 1, 2));
+            result.Should().Be(new DateTime(2024, 1, 1));
         }
 
         [Test]

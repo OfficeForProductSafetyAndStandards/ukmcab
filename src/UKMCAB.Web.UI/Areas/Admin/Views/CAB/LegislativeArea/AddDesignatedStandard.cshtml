@@ -50,10 +50,35 @@
                         Designated Standards
                     </govuk-fieldset-legend>
 
-                    <div id="designated-standard-search-keywords-input-container" class="width-three-fifth">
-                        <input type="text" asp-for="SearchTerm" class="govuk-input search-box" />
-                        <button class="clear-icon" type="submit" name="submitType" aria-label="Clear your search terms" asp-route-SearchTerm="" asp-route-pageNumber=1 value="@Constants.SubmitType.Search"></button>
-                        <button id="search-keyword-button" type="submit" name="submitType" asp-route-pageNumber=1 value="@Constants.SubmitType.Search">Search</button>
+                    @if (Model.ShowAllSelected)
+                    {
+                        <govuk-button class="govuk-button--secondary govuk-!-margin-bottom-2" type="submit" asp-route-pageNumber=@Model.PreviousPageNumber asp-route-showAllSelected=false asp-route-submitType=@Constants.SubmitType.ClearShowAllSelected>
+                            Clear show all selected
+                        </govuk-button>
+                    } 
+                    else
+                    {
+                        <govuk-button class="govuk-button--secondary govuk-!-margin-bottom-2" type="submit" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PageNumber asp-route-showAllSelected=true asp-route-submitType=@Constants.SubmitType.ShowAllSelected>
+                            Show all selected
+                        </govuk-button>
+                    }
+
+                    <div id="search-keyword-container">
+                        <div id="search-filter-keywords">
+                            <fieldset aria-describedby="search-description">
+                                <p id="search-description" class="govuk-visually-hidden">search the designated standards list using keywords or search terms</p>
+                                <h3 class="govuk-label-wrapper">
+                                    <label class="govuk-label govuk-label--s" asp-for="SearchTerm">
+                                        Search
+                                    </label>
+                                </h3>
+                                <div id="search-filter-keywords-input-container">
+                                    <input type="text" asp-for="SearchTerm" class="govuk-input search-box" />
+                                    <button class="clear-icon" type="submit" name="submitType" aria-label="Clear your search terms" asp-route-SearchTerm="" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected=@Model.ShowAllSelected value="@Constants.SubmitType.Search"></button>
+                                    <button id="search-keyword-button" type="submit" name="submitType" asp-route-pageNumber=1 asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected=@Model.ShowAllSelected value="@Constants.SubmitType.Search">Search</button>
+                                </div>
+                            </fieldset>
+                        </div>
                     </div>
 
                     <govuk-checkboxes asp-for="@Model.PageSelectedDesignatedStandardIds">
@@ -101,7 +126,7 @@
             @if (Model.PaginationInfo is not null)
             {
                 <div class="pagination-container">
-                    <div class="pagination-detail-container">
+                    <div class="pagination-detail-container govuk-body">
                         @if (Model.PaginationInfo.QueryCount == 0)
                         {
                             <span>Showing <span class="govuk-!-font-weight-bold">0</span> designated standards</span>
@@ -119,7 +144,7 @@
                                 @if (Model.PaginationInfo.HasPreviousPage)
                                 {
                                     <li class="pagination-link-item pagination-previous">
-                                        <govuk-button name="prev" type="submit" asp-route-pageNumber=@(Model.PaginationInfo.PageNumber - 1) asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
+                                        <govuk-button name="prev" type="submit" asp-route-pageNumber=@(Model.PaginationInfo.PageNumber - 1) asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected =@Model.ShowAllSelected asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
                                             <span>Previous</span>
                                         </govuk-button>
                                     </li>
@@ -128,12 +153,16 @@
                                 {
                                     if (pageNumber == Model.PageNumber)
                                     {
-                                        <li class="pagination-link-item pagination-page-link" aria-current="page">@Model.PageNumber</li>
+                                        <li class="pagination-link-item pagination-page-link" aria-current="page">
+                                            <govuk-button disabled class="govuk-button--secondary" name="@pageNumber" type="submit" asp-route-pageNumber=@pageNumber asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected=@Model.ShowAllSelected asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
+                                                <span>@pageNumber</span>
+                                            </govuk-button>
+                                        </li>
                                     }
                                     else
                                     {
                                         <li class="pagination-link-item pagination-page-link">
-                                            <govuk-button name="@pageNumber" type="submit" asp-route-pageNumber=@pageNumber asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
+                                            <govuk-button name="@pageNumber" type="submit" asp-route-pageNumber=@pageNumber asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected =@Model.ShowAllSelected asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
                                                 <span>@pageNumber</span>
                                             </govuk-button>
                                         </li>
@@ -146,7 +175,7 @@
                                 @if (Model.PaginationInfo.HasNextPage)
                                 {
                                     <li class="pagination-link-item">
-                                        <govuk-button name="next" type="submit" asp-route-pageNumber=@(Model.PaginationInfo.PageNumber + 1) asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
+                                        <govuk-button name="next" type="submit" asp-route-pageNumber=@(Model.PaginationInfo.PageNumber + 1) asp-route-previousPageNumber=@Model.PreviousPageNumber asp-route-showAllSelected =@Model.ShowAllSelected asp-route-submitType=@Constants.SubmitType.PaginatedQuery>
                                             <span>Next</span>
                                         </govuk-button>
                                     </li>

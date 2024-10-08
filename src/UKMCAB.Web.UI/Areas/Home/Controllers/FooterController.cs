@@ -1,8 +1,6 @@
 ﻿using System.Net;
-using CsvHelper.Configuration.Attributes;
 using Microsoft.Extensions.Options;
 using Notify.Interfaces;
-using UKMCAB.Core;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Web.UI.Models.ViewModels.Footer;
 
@@ -63,6 +61,8 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         [Route("/contact-us", Name = Routes.ContactUs)]
         public IActionResult ContactUs(string? returnUrl)
         {
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
+
             return View(new ContactUsViewModel { 
                 ReturnUrl = string.IsNullOrWhiteSpace(returnUrl) ? null : WebUtility.UrlDecode(returnUrl), 
                 Email = _templateOptions.ContactUsOPSSEmail

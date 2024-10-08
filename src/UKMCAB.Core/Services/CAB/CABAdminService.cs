@@ -192,6 +192,7 @@ namespace UKMCAB.Core.Services.CAB
                 Phone = document.Phone,
                 Website = document.Website,
                 BodyTypes = document.BodyTypes?.ToArray() ?? Array.Empty<string>(),
+                MRACountries = document.MRACountries?.ToArray() ?? Array.Empty<string>(),
                 TestingLocations = document.TestingLocations?.ToArray() ?? Array.Empty<string>(),
                 RegisteredOfficeLocation = document.RegisteredOfficeLocation,
                 URLSlug = document.URLSlug,
@@ -208,16 +209,20 @@ namespace UKMCAB.Core.Services.CAB
             bool submitForApproval = false)
         {
             if (submitForApproval)
-            {                
-                if(draft.SubStatus != SubStatus.PendingApprovalToPublish)
+            {
+                if (draft.SubStatus != SubStatus.PendingApprovalToPublish)
                 {
                     draft.SubStatus = SubStatus.PendingApprovalToPublish;
                     draft.AuditLog.Add(new Audit(userAccount, AuditCABActions.SubmittedForApproval));
                 }
-                
+
                 draft.DocumentLegislativeAreas.Where(la => la.Status == LAStatus.Draft)
-                    .ForEach(la => la.Status = LAStatus.PendingApproval);
-            } 
+                    .ForEach(la =>
+                    {
+                        la.Status = LAStatus.PendingApproval;
+                        la.NewlyCreated = null;
+                    });
+            }
             else
             {
                 if (draft.DocumentLegislativeAreas.All(la => la.Status is LAStatus.Published or LAStatus.Declined or LAStatus.DeclinedByOpssAdmin or LAStatus.DeclinedToArchiveAndArchiveScheduleByOPSS or LAStatus.DeclinedToArchiveAndRemoveScheduleByOPSS or LAStatus.DeclinedToRemoveByOPSS or LAStatus.DeclinedToUnarchiveByOPSS))
@@ -378,7 +383,7 @@ namespace UKMCAB.Core.Services.CAB
                 await UnArchiveLegislativeAreaAsync(userAccount, cabId, docLa.LegislativeAreaId);
             }               
 
-            if (latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
+            if (latestDocument.SubStatus != SubStatus.PendingApprovalToPublish && latestDocument.CreatedByUserGroup == Roles.OPSS.Id)
             {
                 latestDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
             }
@@ -584,7 +589,7 @@ namespace UKMCAB.Core.Services.CAB
         }
 
         public async Task<Guid> AddLegislativeAreaAsync(UserAccount userAccount, Guid cabId, Guid laToAdd,
-            string laName, string roleId)
+            string laName, string roleId, bool MRABypass)
         {
             var latestDocument = await GetLatestDocumentAsync(cabId.ToString()) ??
                                  throw new InvalidOperationException("No document found");
@@ -599,6 +604,8 @@ namespace UKMCAB.Core.Services.CAB
                 LegislativeAreaId = laToAdd,
                 RoleId = roleId,
                 Status = LAStatus.Draft,
+                NewlyCreated = true,
+                MRABypass = MRABypass
             });
 
             await UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);

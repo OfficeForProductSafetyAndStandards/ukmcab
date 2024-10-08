@@ -28,6 +28,7 @@ namespace UKMCAB.Data.Search.Services
                 Facets =
                 {
                     $"{nameof(result.BodyTypes)},count:0", $"{LaDocumentsName},count:0",
+                    $"{nameof(result.MRACountries)},count:0",
                     $"{nameof(result.RegisteredOfficeLocation)},count:0", $"{nameof(result.StatusValue)},count:0",
                     $"{nameof(result.SubStatus)},count:0", $"{nameof(result.CreatedByUserGroup)},count:0",
                     $"{provisionalLegislativeAreaPath},count:0", $"{legislativeAreaStatus},count:0",
@@ -41,6 +42,7 @@ namespace UKMCAB.Data.Search.Services
                 var facets = search.Value.Facets;
 
                 result.BodyTypes = GetFacetList(facets[nameof(result.BodyTypes)]);
+                result.MRACountries = GetFacetList(facets[nameof(result.MRACountries)]);
                 result.LegislativeAreas = GetFacetList(facets[LaDocumentsName]).ToList();
                 result.RegisteredOfficeLocation = GetFacetList(facets[nameof(result.RegisteredOfficeLocation)]);
                 result.StatusValue = GetFacetList(facets[nameof(result.StatusValue)]);
@@ -126,6 +128,13 @@ namespace UKMCAB.Data.Search.Services
                 var bodyTypes = string.Join(" or ",
                     options.BodyTypesFilter.Select(bt => $"BodyTypes/any(bt: bt eq '{bt}')"));
                 filters.Add($"({bodyTypes})");
+            }
+
+            if (options.MRACountriesFilter != null && options.MRACountriesFilter.Any())
+            {
+                var mraCountries = string.Join(" or ",
+                    options.MRACountriesFilter.Select(mra => $"MRACountries/any(mra: mra eq '{mra}')"));
+                filters.Add($"({mraCountries})");
             }
 
             if (options.LegislativeAreasFilter != null && options.LegislativeAreasFilter.Any())
@@ -253,7 +262,7 @@ namespace UKMCAB.Data.Search.Services
         private IEnumerable<string> GetLegislativeAreaStatusFacetList(IEnumerable<FacetResult> facets)
             => facets.Select(f => f.Value.ToString()).OrderBy(f => f).ToList();
         
-        private static readonly Regex SpecialCharsRegex = new("[+&|\\[!()\\]{}\\^\"~*?:\\/]");
+        private static readonly Regex SpecialCharsRegex = new("[+\\-&|\\[!()\\]{}\\^\"~*?:\\/]");
 
         private string GetKeywordsQuery(string? keywords, bool internalSearch)
         {

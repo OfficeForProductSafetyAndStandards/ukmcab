@@ -56,7 +56,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
             vm.BannerContent = bannerContent;
         }
         vm.FromSummary = fromSummary;
-        vm.ReturnUrl = returnUrl;
+        vm.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
@@ -145,7 +145,10 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == legislativeAreaId);
                     documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
 
-                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);                    
+                    latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ScopeOfAppointmentRemoved));
+
+                    await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
+
                     return RedirectToRoute(Routes.ReviewLegislativeAreas, new { id, actionType = LegislativeAreaActionMessageEnum.ScopeOfAppointmentRemoved, fromSummary = reviewLaVM.FromSummary });
                 }
             }
@@ -203,6 +206,16 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                         .Value))?.Name
                     : null;
 
+                var ppeProductType = scopeOfAppointment.PpeProductTypeId.HasValue
+                    ? (await _legislativeAreaService.GetPpeProductTypeByIdAsync(scopeOfAppointment.PpeProductTypeId
+                        .Value))?.Name
+                    : null;
+
+                var protectionAgainstRisk = scopeOfAppointment.ProtectionAgainstRiskId.HasValue
+                    ? (await _legislativeAreaService.GetProtectionAgainstRiskByIdAsync(scopeOfAppointment.ProtectionAgainstRiskId
+                        .Value))?.Name
+                    : null;
+
                 foreach (var productProcedure in scopeOfAppointment.ProductIdAndProcedureIds)
                 {
                     var soaViewModel = new LegislativeAreaListItemViewModel
@@ -248,6 +261,33 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     }
 
                     foreach (var procedureId in categoryProcedure.ProcedureIds)
+                    {
+                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                        soaViewModel.Procedures?.Add(procedure!.Name);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
+
+                foreach (var areaOfCompetencyProcedure in scopeOfAppointment.AreaOfCompetencyIdAndProcedureIds)
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel
+                    {
+                        LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                        PurposeOfAppointment = purposeOfAppointment,
+                        PpeProductType = ppeProductType,
+                        ProtectionAgainstRisk = protectionAgainstRisk,
+                        ScopeId = scopeOfAppointment.Id,
+                    };
+
+                    if (areaOfCompetencyProcedure.AreaOfCompetencyId.HasValue)
+                    {
+                        var areaOfCompetency =
+                            await _legislativeAreaService.GetAreaOfCompetencyByIdAsync(areaOfCompetencyProcedure.AreaOfCompetencyId.Value);
+                        soaViewModel.AreaOfCompetency = areaOfCompetency!.Name;
+                    }
+
+                    foreach (var procedureId in areaOfCompetencyProcedure.ProcedureIds)
                     {
                         var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
                         soaViewModel.Procedures?.Add(procedure!.Name);

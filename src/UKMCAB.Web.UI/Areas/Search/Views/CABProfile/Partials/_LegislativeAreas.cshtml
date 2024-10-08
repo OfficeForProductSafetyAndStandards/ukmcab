@@ -8,6 +8,10 @@
                 &lt; View all legislative areas
             </a>
         </div>
+
+
+        @* Heading *@
+
         <div class="govuk-grid-column-full">
             <div class="govuk-caption-m">Legislative area</div>
             <div class="display-flex">
@@ -39,6 +43,9 @@
             }
         </div>
     </div>
+
+
+    @* Summary table*@
 
     @if (Model.DesignatedStandards.Any())
     {
@@ -108,7 +115,59 @@
             </dl>
         </div>
     }
+
+    @if (Model.PpeProductType.Id.HasValue)
+    {
+        <div class="govuk-summary-list__row">
+            <dl class="govuk-summary-list">
+                <dt class="govuk-summary-list__key">
+                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" class="govuk-link govuk-link--no-visited-state">
+                        PPE product type
+                    </a>
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.PpeProductType.Name
+                </dd>
+            </dl>
+        </div>
+    }
+
+    @if (Model.ProtectionAgainstRisk.Id.HasValue)
+    {
+        <div class="govuk-summary-list__row">
+            <dl class="govuk-summary-list">
+                <dt class="govuk-summary-list__key">
+                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-ppeProductTypeId="@Model.PpeProductType.Id" asp-route-scopeOfAppointmentId="@Model.ScopeOfAppointmentId" class="govuk-link govuk-link--no-visited-state">
+                        Protection against risk
+                    </a>
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.ProtectionAgainstRisk.Name
+                </dd>
+            </dl>
+        </div>
+    }
+
+    @if (Model.AreaOfCompetency.Id.HasValue)
+    {
+        <div class="govuk-summary-list__row">
+            <dl class="govuk-summary-list">
+                <dt class="govuk-summary-list__key">
+                    <a asp-route="@CABProfileController.Routes.CabDetailsLegislativeArea" asp-fragment="legislative-areas" asp-route-id="@Model.CabUrl" asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-ppeProductTypeId="@Model.PpeProductType.Id" asp-route-scopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-protectionAgainstRiskId="@Model.ProtectionAgainstRisk.Id" asp-route-areaOfCompetencyIdx="@Model.AreaOfCompetency.Id" class="govuk-link govuk-link--no-visited-state">
+                        Area of competencies
+                    </a>
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    @Model.AreaOfCompetency.Name
+                </dd>
+            </dl>
+        </div>
+    }
 }
+
+
+@* Drill-down section*@
+
 @if (Model.Procedures.Any())
 {
     <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Procedures</h3>
@@ -168,6 +227,57 @@ else if (Model.Categories.Any())
                     <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
                        asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-categoryId="@category.Id" asp-fragment="legislative-areas">
                         @category.Name
+                    </a>
+                </dt>
+            </div>
+        }
+    </dl>
+}
+else if (!Model.PurposeOfAppointments.Any() && Model.AreaOfCompetencies.Any())
+{
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Area of competencies</h3>
+    <dl class="govuk-summary-list table-top-border">        
+            @foreach (var aoc in Model.AreaOfCompetencies)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                           asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-ScopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-ppeProductTypeId="@Model.PpeProductType.Id" asp-route-protectionAgainstRiskId="@Model.ProtectionAgainstRisk.Id" asp-route-areaOfCompetencyId="@aoc.Id" asp-fragment="legislative-areas">
+                            @aoc.Name
+                        </a>
+                    </dt>
+                </div>
+            }       
+    </dl>
+}
+else if (!Model.PurposeOfAppointments.Any() && Model.ProtectionAgainstRisks.Any())
+{
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Protection against risks</h3>
+    <dl class="govuk-summary-list table-top-border">
+        @foreach (var protectionAgainstRisk in Model.ProtectionAgainstRisks)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-ScopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-ppeProductTypeId="@Model.PpeProductType.Id" asp-route-protectionAgainstRiskId="@protectionAgainstRisk.Id" asp-fragment="legislative-areas">
+                        @protectionAgainstRisk.Name
+                    </a>
+                </dt>
+            </div>
+        }
+    </dl>
+}
+else if (!Model.PurposeOfAppointments.Any() && Model.PpeProductTypes.Any())
+{
+    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">PPE Product type</h3>
+    <dl class="govuk-summary-list table-top-border">
+        @foreach (var ppeProductType in Model.PpeProductTypes)
+        {
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-ScopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-ppeProductTypeId="@ppeProductType.Id" asp-fragment="legislative-areas">
+                        @ppeProductType.Name
                     </a>
                 </dt>
             </div>

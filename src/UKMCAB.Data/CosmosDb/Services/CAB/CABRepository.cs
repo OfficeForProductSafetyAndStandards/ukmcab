@@ -2,6 +2,7 @@
 using System.Net;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using MoreLinq;
 using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Models;
@@ -49,6 +50,15 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                     {
                         s.Publication ??= DataConstants.Publications.Private;
                     });
+
+                    //Populate the MRA countries for the CAB
+                    var MRABodies = document.BodyTypes.Where(t => t.StartsWith("UK body designated under MRA:"));
+                    if (MRABodies.Any())
+                    {
+                        document.BodyTypes = document.BodyTypes.Where(t => !t.StartsWith("UK body designated under MRA")).ToList();
+                        document.BodyTypes.Add("UK body designated under MRA");
+                        document.MRACountries = MRABodies.Select(b => b.Replace("UK body designated under MRA: ", "")).ToList();
+                    }
 
                     await UpdateAsync(document);
                 }

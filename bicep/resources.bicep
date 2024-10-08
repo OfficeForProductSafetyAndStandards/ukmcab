@@ -508,6 +508,96 @@ resource cosmosDbContainerDesignatedStandards 'Microsoft.DocumentDB/databaseAcco
   }
 }
 
+resource cosmosDbContainerAreasOfCompetencies 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'areas-of-competencies'
+  properties: {
+    resource: {
+      id: 'areas-of-competencies'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
+resource cosmosDbContainerPpeProductTypes 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'ppe-product-types'
+  properties: {
+    resource: {
+      id: 'ppe-product-types'
+      partitionKey: {
+        paths: [
+          '/legislativeAreaId'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
+resource cosmosDbContainerProtectionAgainstRisks 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'protection-against-risks'
+  properties: {
+    resource: {
+      id: 'protection-against-risks'
+      partitionKey: {
+        paths: [
+          '/id'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
 /*
   KEY VAULT
 */
@@ -1088,7 +1178,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
         }
       ] : [],
-      
       [{
         name: applicationGatewayHttpsListener
         properties: {
@@ -1123,7 +1212,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }]
     ) //concat
 
-    
     requestRoutingRules: concat([
       {
         name: 'httpsrule'
@@ -1138,6 +1226,9 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           }
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsName)
+          }
+          rewriteRuleSet: {
+            id: resourceId('Microsoft.Network/applicationGateways/rewriteRuleSets', applicationGatewayName, 'addHstsHeaderRuleSet')
           }
         }
       }
@@ -1157,10 +1248,12 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
           backendHttpSettings: {
             id: resourceId('Microsoft.Network/applicationGateways/backendHttpSettingsCollection', applicationGatewayName, applicationGatewayBackendHttpSettingsNameVNext)
           }
+          rewriteRuleSet: {
+            id: resourceId('Microsoft.Network/applicationGateways/rewriteRuleSets', applicationGatewayName, 'addHstsHeaderRuleSet')
+          }
         }
       }
     ] : [])
-
 
     probes: concat([
       {
@@ -1207,10 +1300,6 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       } 
     ] : [])
 
-
-    
-
-    
     gatewayIPConfigurations: [
       {
         name: 'appGatewayIpConfig'
@@ -1222,6 +1311,26 @@ resource applicationGateway 'Microsoft.Network/applicationGateways@2022-05-01' =
       }
     ]
 
+    rewriteRuleSets: [
+      {
+        name: 'addHstsHeaderRuleSet'
+        properties: {
+          rewriteRules: [
+            {
+              name: 'addHstsHeaderRule'
+              actionSet: {
+                responseHeaderConfigurations: [
+                  {
+                    headerName: 'Strict-Transport-Security'
+                    headerValue: 'max-age=31536000; includeSubDomains; preload'
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    ]
   }
 }
 

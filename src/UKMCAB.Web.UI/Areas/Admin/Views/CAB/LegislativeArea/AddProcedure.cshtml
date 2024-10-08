@@ -17,8 +17,10 @@
             <input type="hidden" asp-for="Category"/>
             <input type="hidden" asp-for="SubCategory"/>
             <input type="hidden" asp-for="Product"/>
+            <input type="hidden" asp-for="AreaOfCompetency"/>
             <input type="hidden" asp-for="CurrentProductId"/>
             <input type="hidden" asp-for="CurrentCategoryId" />
+            <input type="hidden" asp-for="CurrentAreaOfCompetencyId" />
             <input type="hidden" asp-for="IndexOfProduct"/>
             <h2 class="govuk-heading-s">Legislative area</h2>
             <p class="govuk-body">@Model.LegislativeArea</p>
@@ -42,6 +44,22 @@
                 <h2 class="govuk-heading-s">Product</h2>
                 <p class="govuk-body">@Model.Product</p>
             }
+            @if (Model.PpeProductType != null)
+            {
+                <h2 class="govuk-heading-s">PPE product type</h2>
+                <p class="govuk-body">@Model.PpeProductType</p>
+            }            
+            @if (Model.ProtectionAgainstRisk != null)
+            {
+                <h2 class="govuk-heading-s">Protection against risk</h2>
+                <p class="govuk-body">@Model.ProtectionAgainstRisk</p>
+            }
+            @if (Model.AreaOfCompetency != null)
+            {
+                <h2 class="govuk-heading-s">Area of competency</h2>
+                <p class="govuk-body">@Model.AreaOfCompetency</p>
+            }
+
             <govuk-checkboxes asp-for="SelectedProcedureIds">
                 <govuk-checkboxes-fieldset>
                     <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
@@ -79,6 +97,4 @@
             </div>
         </form>
     </div>
-
-
 </div>

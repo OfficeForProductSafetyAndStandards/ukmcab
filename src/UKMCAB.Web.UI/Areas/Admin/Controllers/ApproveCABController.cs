@@ -17,7 +17,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.PublishApproval;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
-[Area("admin"), Authorize]
+[Area("admin"), Authorize(Policy = Policies.ApproveRequests)]
 public class ApproveCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
@@ -52,6 +52,7 @@ public class ApproveCABController : Controller
     [HttpGet("admin/cab/approve/{id}", Name = Routes.Approve)]
     public async Task<IActionResult> ApproveAsync(string id, string? returnUrl)
     {
+        returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
         var cabId = Guid.Parse(id);
         var document = await GetDocumentAsync(cabId);
         if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
@@ -91,6 +92,7 @@ public class ApproveCABController : Controller
     {
         var cabId = Guid.Parse(id);
         var document = await GetDocumentAsync(cabId);
+        returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
         if (document.StatusValue != Status.Draft || document.SubStatus != SubStatus.PendingApprovalToPublish)
         {
             throw new PermissionDeniedException("CAB status needs to be Submitted for approval");
@@ -160,7 +162,7 @@ public class ApproveCABController : Controller
 
         await _cabAdminService.PublishDocumentAsync(user, document, userNotes, reason, publishType);
 
-        if (clonedDocument.CreatedByUserGroup == Roles.OPSS.Id)
+        if (clonedDocument.CreatedByUserGroup == Roles.OPSS.Id && clonedDocument.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Draft))
         {
             clonedDocument.DocumentLegislativeAreas.ForEach(la => la.Status = LAStatus.Published);
         }

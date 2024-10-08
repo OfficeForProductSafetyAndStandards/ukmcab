@@ -45,6 +45,7 @@ namespace UKMCAB.Web.UI.Tests.Services
                 Reason = "Test reason",
                 RequestReason = "Test request reason",
                 LegislativeAreaId = legislativeAreaId,
+                NewlyCreated = false
             };
 
             _mockLegislativeAreaService.Setup(m => m.GetLegislativeAreaByIdAsync(legislativeAreaId)).ReturnsAsync(legislativeArea);
@@ -69,6 +70,7 @@ namespace UKMCAB.Web.UI.Tests.Services
             Assert.AreEqual(documentLegislativeArea.RequestReason, result.RequestReason);
             Assert.AreEqual(legislativeArea.HasDataModel, result.CanChooseScopeOfAppointment);
             Assert.AreEqual(legislativeAreaId, result.LegislativeAreaId);
+            Assert.AreEqual(documentLegislativeArea.NewlyCreated, result.NewlyCreated);
         }
     }
 }

@@ -299,6 +299,16 @@
     }
 }
 
+.width-34-percent {
+    width: 100% !important;
+}
+
+@media (min-width: 40.0625em) {
+    .width-34-percent {
+        width: 34% !important;
+    }
+}
+
 .width-one-third {
     width: 100% !important;
 }

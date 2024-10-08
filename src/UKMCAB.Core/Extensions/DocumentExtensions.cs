@@ -48,7 +48,7 @@ namespace UKMCAB.Core.Extensions
 
         public static DateTime? PublishedDate(this Document document)
         {
-            return document.AuditLog.OrderBy(a => a.DateTime).LastOrDefault(al => al.Action == AuditCABActions.Published)?.DateTime;
+            return document.AuditLog.OrderBy(a => a.DateTime).FirstOrDefault(al => al.Action == AuditCABActions.Published)?.DateTime;
         }
 
         public static List<FileUpload> PublicDocuments(this Document document) =>

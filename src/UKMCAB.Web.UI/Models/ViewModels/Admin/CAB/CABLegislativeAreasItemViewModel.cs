@@ -46,15 +46,28 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public bool ShowDesignatedStandardColumns => ScopeOfAppointments != null &&
                                           ScopeOfAppointments.Any(x => x.DesignatedStandards != null && x.DesignatedStandards.Any());
 
+        public bool ShowPpeProductTypeColumn => ScopeOfAppointments != null &&
+                                         ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.PpeProductType));
+
+        public bool ShowProtectionAgainstRiskColumn => ScopeOfAppointments != null &&
+                                         ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.ProtectionAgainstRisk));
+
+        public bool ShowAreaOfCompetencyColumn => ScopeOfAppointments != null &&
+                                         ScopeOfAppointments.Any(x => !string.IsNullOrEmpty(x.AreaOfCompetency));
+
         public LAStatus Status { get; set; }
         public string StatusName => GetStatusName();
         public string StatusCssStyle { get; set; } = string.Empty;
         public string RoleName { get; set; } = string.Empty;
         public string RoleId { get; set; } = string.Empty;
         public bool ShowEditActions { get; set; }
+        public bool? NewlyCreated { get; set; }
+        public bool IsNewlyCreated => NewlyCreated ?? false;
+        public bool? MRABypass { get; set; }
+
         public bool IsComplete => IsProvisional.HasValue &&
                                     (ReviewDate == null || (ReviewDate != null && ReviewDate >= DateTime.Today)) &&
-                                    (!CanChooseScopeOfAppointment || (ScopeOfAppointments.Any() && ScopeOfAppointments.All(
+                                    (!CanChooseScopeOfAppointment || (MRABypass ?? false) || (ScopeOfAppointments.Any() && ScopeOfAppointments.All(
                                         y => 
                                             (y.Procedures != null && y.Procedures.Any() &&
                                             y.Procedures.All(z => !string.IsNullOrEmpty(z))) ||

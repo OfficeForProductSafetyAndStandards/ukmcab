@@ -32,7 +32,11 @@ namespace UKMCAB.Web.UI.Models.Builders
             List<SubCategoryModel> subCategories,
             List<ProductModel> products,
             List<ProcedureModel> procedures,
-            List<DesignatedStandardModel> designatedStandards)
+            List<DesignatedStandardModel> designatedStandards,
+            List<PpeProductTypeModel> ppeProductTypes,
+            List<ProtectionAgainstRiskModel> protectionAgainstRisks,
+            List<AreaOfCompetencyModel> areaOfCompetencies
+            )
         {
             foreach (var documentLegislativeArea in documentLegislativeAreas)
             {
@@ -49,7 +53,11 @@ namespace UKMCAB.Web.UI.Models.Builders
                         subCategories,
                         products,
                         procedures,
-                        designatedStandards)
+                        designatedStandards,
+                        ppeProductTypes,
+                        protectionAgainstRisks,
+                        areaOfCompetencies
+                        )
                     .WithNoOfProductsInScopeOfAppointment()
                     .Build();
 

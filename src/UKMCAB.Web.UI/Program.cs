@@ -108,6 +108,16 @@ builder.Services.AddAuthorization(options =>
     {
         policy.RequireAuthenticatedUser();
         policy.Requirements.Add(new EditCabPendingApprovalRequirement());
+    }); 
+    options.AddPolicy(Policies.CanRequest, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim(Claims.CanRequest);
+    });
+    options.AddPolicy(Policies.DeleteCab, policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.Requirements.Add(new DeleteCabRequirement());
     });
 });
 
@@ -144,6 +154,7 @@ builder.Services.AddSingleton<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
 builder.Services.AddSingleton<IEditLockService, EditLockService>();
 builder.Services.AddSingleton<IAuthorizationHandler, EditCabPendingApprovalHandler>();
+builder.Services.AddSingleton<IAuthorizationHandler, DeleteCabHandler>(); 
 
 var cosmosClient = CosmosClientFactory.Create(cosmosDbConnectionString);
 builder.Services.AddSingleton<IReadOnlyRepository<LegislativeArea>>(new ReadOnlyRepository<LegislativeArea>(cosmosClient, new CosmosFeedIterator(), "legislative-areas"));
@@ -153,6 +164,9 @@ builder.Services.AddSingleton<IReadOnlyRepository<Product>>(new ReadOnlyReposito
 builder.Services.AddSingleton<IReadOnlyRepository<Procedure>>(new ReadOnlyRepository<Procedure>(cosmosClient, new CosmosFeedIterator(), "procedures"));
 builder.Services.AddSingleton<IReadOnlyRepository<SubCategory>>(new ReadOnlyRepository<SubCategory>(cosmosClient, new CosmosFeedIterator(), "sub-categories"));
 builder.Services.AddSingleton<IReadOnlyRepository<DesignatedStandard>>(new ReadOnlyRepository<DesignatedStandard>(cosmosClient, new CosmosFeedIterator(), "designated-standards"));
+builder.Services.AddSingleton<IReadOnlyRepository<PpeProductType>>(new ReadOnlyRepository<PpeProductType>(cosmosClient, new CosmosFeedIterator(), "ppe-product-types"));
+builder.Services.AddSingleton<IReadOnlyRepository<ProtectionAgainstRisk>>(new ReadOnlyRepository<ProtectionAgainstRisk>(cosmosClient, new CosmosFeedIterator(), "protection-against-risks"));
+builder.Services.AddSingleton<IReadOnlyRepository<AreaOfCompetency>>(new ReadOnlyRepository<AreaOfCompetency>(cosmosClient, new CosmosFeedIterator(), "areas-of-competencies"));
 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();

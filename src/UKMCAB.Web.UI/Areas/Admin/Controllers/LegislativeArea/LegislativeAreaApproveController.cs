@@ -32,7 +32,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly ILegislativeAreaDetailService _legislativeAreaDetailService;
-    
+
     public static class Routes
     {
         public const string LegislativeAreaApprovalList = "legislative.area.approval.list";
@@ -151,7 +151,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             CABId = latestDocument.CABId,
             CabDetailsViewModel = new CABDetailsViewModel(latestDocument, User),
             CabContactViewModel = new CABContactViewModel(latestDocument),
-            CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latestDocument),
+            CabBodyDetailsMRAViewModel = new CABBodyDetailsMRAViewModel(latestDocument),
             CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latestDocument),
             CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latestDocument)
         };

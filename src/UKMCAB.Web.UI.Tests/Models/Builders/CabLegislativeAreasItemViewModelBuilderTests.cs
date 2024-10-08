@@ -51,7 +51,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 IsPointOfContactPublicDisplay = true,
                 Status = LAStatus.Approved,
                 RoleId = Roles.DFTP.Id,
-                LegislativeAreaId = legislativeAreaId
+                LegislativeAreaId = legislativeAreaId, 
+                NewlyCreated = true
             };
             var expectedResult = new CABLegislativeAreasItemViewModel
             {
@@ -71,7 +72,8 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 StatusCssStyle = "govuk-tag--turquoise",
                 RoleName = "DFTP",
                 RoleId = documentLegislativeArea.RoleId,
-                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId
+                LegislativeAreaId = documentLegislativeArea.LegislativeAreaId, 
+                NewlyCreated = documentLegislativeArea.NewlyCreated
             };
 
             // Act
@@ -92,6 +94,9 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             var procedures = CabLegislativeAreasItemViewModelBuilderTestsFixture.Procedures;
             var products = CabLegislativeAreasItemViewModelBuilderTestsFixture.Products;
             var designatedStandards = CabLegislativeAreasItemViewModelBuilderTestsFixture.DesignatedStandards;
+            var ppeProductTypes = CabLegislativeAreasItemViewModelBuilderTestsFixture.PpeProductTypes;
+            var protectionAgainstRisks = CabLegislativeAreasItemViewModelBuilderTestsFixture.ProtectionAgainstRisks;
+            var areaOfCompetencies = CabLegislativeAreasItemViewModelBuilderTestsFixture.AreaOfCompetencies;
 
             var legislativeAreaId = legislativeArea.Id;
             var purposeOfAppointmentId = purposeOfAppointments.First().Id;
@@ -144,7 +149,10 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 subCategories,
                 products,
                 procedures,
-                designatedStandards).Build();
+                designatedStandards,
+                ppeProductTypes,
+                protectionAgainstRisks,
+                areaOfCompetencies).Build();
 
             // Assert
             result.ScopeOfAppointments.Should().BeEquivalentTo(expectedResult);
@@ -161,6 +169,9 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             var procedures = CabLegislativeAreasItemViewModelBuilderTestsFixture.Procedures;
             var products = CabLegislativeAreasItemViewModelBuilderTestsFixture.Products;
             var designatedStandards = new List<DesignatedStandardModel>();
+            var ppeProductTypes = CabLegislativeAreasItemViewModelBuilderTestsFixture.PpeProductTypes;
+            var protectionAgainstRisks = CabLegislativeAreasItemViewModelBuilderTestsFixture.ProtectionAgainstRisks;
+            var areaOfCompetencies = CabLegislativeAreasItemViewModelBuilderTestsFixture.AreaOfCompetencies;
 
             var legislativeAreaId = legislativeArea.Id;
             var purposeOfAppointmentId = purposeOfAppointments.First().Id;
@@ -185,7 +196,10 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 subCategories,
                 products,
                 procedures,
-                designatedStandards);
+                designatedStandards,
+                ppeProductTypes,
+                protectionAgainstRisks,
+                areaOfCompetencies);
 
             var expectedResult = new List<int> { 2, 0 };
 
@@ -252,6 +266,33 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             public static List<DesignatedStandardModel> DesignatedStandards => new()
             {
                 new (Guid.NewGuid(), "Test designated standard", Guid.NewGuid(), new List<string>(), "Test publication reference" )
+            };
+
+            public static List<PpeProductTypeModel> PpeProductTypes => new()
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Test ppe product type name"
+                }
+            };
+
+            public static List<ProtectionAgainstRiskModel> ProtectionAgainstRisks => new()
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Test protection against risk name"
+                }
+            };
+
+            public static List<AreaOfCompetencyModel> AreaOfCompetencies => new()
+            {
+                new()
+                {
+                    Id = Guid.NewGuid(),
+                    Name = "Test area of competency name"
+                }
             };
 
             public static List<DocumentScopeOfAppointment> DocumentScopeOfAppointments(Guid purposeOfAppointmentId, Guid subCategoryId, Guid categoryId, Guid procedureId, Guid productId) 

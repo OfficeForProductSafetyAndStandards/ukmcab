@@ -77,6 +77,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> About(string id, bool fromSummary, string? returnUrl = null)
         {
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             var model = (await _cabAdminService.GetLatestDocumentAsync(id))
                 .Map(x => new CABDetailsViewModel(x, User, false, fromSummary, returnUrl)) ??
                     // ReSharper disable once NullCoalescingConditionIsAlwaysNotNullAccordingToAPIContract
@@ -193,6 +194,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         [Authorize(Policy = Policies.EditCabPendingApproval)]
         public async Task<IActionResult> BodyDetails(string id, bool fromSummary, string? returnUrl)
         {
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
             if (latest == null) // Implies no document or archived
             {
@@ -248,10 +250,19 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 latestDocument.TestingLocations = model.TestingLocations;
                 latestDocument.BodyTypes = model.BodyTypes;
 
+                if (!model.isMRA)
+                {
+                    latestDocument.MRACountries = new List<string>();
+                } 
+
                 await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
                 if (submitType == Constants.SubmitType.Continue)
                 {
-                    if (model.IsFromSummary)
+                    if (model.isMRA)
+                    {
+                        return RedirectToAction("BodyDetailsMRA", "CAB", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl, fromSummary = model.IsFromSummary });
+                    }
+                    else if (model.IsFromSummary)
                     {
                         return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl });
                     }
@@ -271,6 +282,67 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             if (!model.TestingLocations.Any())
             {
                 model.TestingLocations.Add(string.Empty);
+            }
+
+            model.DocumentStatus = latestDocument.StatusValue;
+            model.IsFromSummary = fromSummary;
+            return View(model);
+        }
+
+        [HttpGet("admin/cab/body-details-mra/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
+        public async Task<IActionResult> BodyDetailsMRA(string id, bool fromSummary, string? returnUrl)
+        {
+            var latest = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latest == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            // Pre-populate model for edit
+            var model = new CABBodyDetailsMRAViewModel(latest);
+
+            model.DocumentStatus = latest.StatusValue;
+            model.IsFromSummary = fromSummary;
+            model.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
+            return View(model);
+        }
+
+        [HttpPost("admin/cab/body-details-mra/{id}")]
+        [Authorize(Policy = Policies.EditCabPendingApproval)]
+        public async Task<IActionResult> BodyDetailsMRA(string id, CABBodyDetailsMRAViewModel model, string submitType,
+            bool fromSummary)
+        {
+            var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id);
+            if (latestDocument == null) // Implies no document or archived
+            {
+                return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
+            }
+
+            var userAccount =
+                await _userService.GetAsync(User.Claims.First(c => c.Type.Equals(ClaimTypes.NameIdentifier)).Value);
+            if (ModelState.IsValid || submitType == Constants.SubmitType.Save)
+            {
+                latestDocument.MRACountries = model.MRACountries;
+
+                await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount, latestDocument);
+                if (submitType == Constants.SubmitType.Continue)
+                {
+                    if (model.IsFromSummary)
+                    {
+                        return RedirectToAction("Summary", "CAB", new { Area = "admin", id = latestDocument.CABId, revealEditActions = true, returnUrl = model.ReturnUrl });
+                    }
+                    else if (!latestDocument.DocumentLegislativeAreas.Any())
+                    {
+                        return RedirectToAction("AddLegislativeArea", "LegislativeAreaDetails", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
+                    }
+                    else
+                    {
+                        return RedirectToAction("ReviewLegislativeAreas", "LegislativeAreaReview", new { Area = "admin", id = latestDocument.CABId, returnUrl = model.ReturnUrl });
+                    }
+                }
+
+                return SaveDraft(latestDocument);
             }
 
             model.DocumentStatus = latestDocument.StatusValue;
@@ -320,7 +392,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new CABContactViewModel(latest)
             {
                 IsFromSummary = fromSummary,
-                ReturnUrl = returnUrl
+                ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default
             };
             return View(model);
         }
@@ -396,6 +468,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToAction("CABManagement", "CabManagement", new { Area = "admin" });
             }
 
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
             var cabSummary = await PopulateCABSummaryViewModel(latest, revealEditActions, returnUrl, fromCabProfilePage);
 
             var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, User.GetUserId());
@@ -440,7 +513,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return RedirectToCabManagementWithUnlockCab(latest.CABId);
             }
 
-            if (model.SelectedPublishType == null && model.IsOpssAdmin)
+            if (submitType != Constants.SubmitType.SubmitForApproval && model.SelectedPublishType == null && model.IsOpssAdmin)
             {
                 ModelState.Clear();
                 model = await PopulateCABSummaryViewModel(latest, model.RevealEditActions, model.ReturnUrl, model.FromCabProfilePage);
@@ -449,7 +522,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View("~/Areas/Admin/views/CAB/Summary.cshtml", model);
             }
 
-            if (model.IsOpssAdmin)
+            if (submitType != Constants.SubmitType.SubmitForApproval && model.IsOpssAdmin)
             {
                 TempData["PublishType"] = model.SelectedPublishType;
             }
@@ -465,7 +538,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 SelectedPublishType = model.SelectedPublishType,
                 CabDetailsViewModel = new CABDetailsViewModel(latest, User),
                 CabContactViewModel = new CABContactViewModel(latest),
-                CabBodyDetailsViewModel = new CABBodyDetailsViewModel(latest),
+                CabBodyDetailsMRAViewModel = new CABBodyDetailsMRAViewModel(latest),
                 CABProductScheduleDetailsViewModel = new CABProductScheduleDetailsViewModel(latest),
                 CABSupportingDocumentDetailsViewModel = new CABSupportingDocumentDetailsViewModel(latest)
             };
@@ -595,6 +668,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             var currentUrl = HttpContext.Request.GetRequestUri().PathAndQuery;
             var userId = User.GetUserId();
+            returnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
             await _cabSummaryUiService.CreateDocumentAsync(latest, revealEditActions);
 
@@ -605,6 +679,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var products = await _legislativeAreaService.GetProductsForDocumentAsync(latest);
             var procedures = await _legislativeAreaService.GetProceduresForDocumentAsync(latest);
             var designatedStandards = await _legislativeAreaService.GetDesignatedStandardsForDocumentAsync(latest);
+            var ppeProductTypes = await _legislativeAreaService.GetPpeProductTypesForDocumentAsync(latest);
+            var protectionAgainstRisks = await _legislativeAreaService.GetProtectionAgainstRisksForDocumentAsync(latest);
+            var areaOfCompetencies = await _legislativeAreaService.GetAreaOfCompetenciesForDocumentAsync(latest);
 
             var cabNameAlreadyExists = await _cabAdminService.DocumentWithSameNameExistsAsync(latest);
             var isCabLockedForUser = await _editLockService.IsCabLockedForUser(latest.CABId, userId);
@@ -612,7 +689,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var cabDetails = new CABDetailsViewModel(latest, User, cabNameAlreadyExists);
             var cabContact = new CABContactViewModel(latest);
-            var cabBody = new CABBodyDetailsViewModel(latest);
+            var cabBody = new CABBodyDetailsMRAViewModel(latest);
             var cabProductSchedules = new CABProductScheduleDetailsViewModel(latest);
             var cabSupportingDocuments = new CABSupportingDocumentDetailsViewModel(latest);
             var cabHistory = new CABHistoryViewModel(latest, currentUrl);
@@ -628,7 +705,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     subCategories,
                     products,
                     procedures,
-                    designatedStandards)
+                    designatedStandards,
+                    ppeProductTypes,
+                    protectionAgainstRisks,
+                    areaOfCompetencies)
                 .Build();
 
             ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);
@@ -639,7 +719,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 .WithLegislativeAreasPendingApprovalCount(latest)
                 .WithCabDetails(cabDetails)
                 .WithCabContactViewModel(cabContact)
-                .WithCabBodyDetailsViewModel(cabBody)
+                .WithCabBodyDetailsMRAViewModel(cabBody)
                 .WithCabLegislativeAreasViewModel(cabLegislativeAreas)
                 .WithProductScheduleDetailsViewModel(cabProductSchedules)
                 .WithCabSupportingDocumentDetailsViewModel(cabSupportingDocuments)
@@ -657,6 +737,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         }
 
         [HttpGet("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        [Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> Publish(string id, string? returnUrl)
         {
             var latest = await _cabAdminService.GetLatestDocumentAsync(id);
@@ -669,11 +750,12 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 CABId = id,
                 CABName = latest.Name,
-                ReturnURL = returnUrl
-            });
+                ReturnURL = Url.IsLocalUrl(returnUrl) ? returnUrl : default
+        });
         }
 
         [HttpPost("admin/cab/publish/{id}", Name = Routes.CabPublish)]
+        [Authorize(Policy = Policies.ApproveRequests)]
         public async Task<IActionResult> Publish(PublishCABViewModel model)
         {
             var latest =
@@ -711,7 +793,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             {
                 CABId = cabId,
                 GovernmentUserNotes = new UserNoteListViewModel(cabDocumentId, userNotes, pagenumber),
-                ReturnUrl = returnUrl,
+                ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default,
             };
 
             return View(model);
@@ -729,7 +811,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new CABAuditLogHistoryViewModel
             {
                 AuditLogHistory = new AuditLogHistoryViewModel(latest.AuditLog, pageNumber),
-                ReturnUrl = returnUrl,
+                ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default,
             };
 
             return View("History", model);

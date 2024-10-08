@@ -8,6 +8,7 @@
         public string Sort { get; set; }
 
         public string[] BodyTypesFilter { get; set; }
+        public string[] MRACountriesFilter { get; set; }
         public string[] LegislativeAreasFilter { get; set; }
         public string[] RegisteredOfficeLocationsFilter { get; set; }
         public string[] StatusesFilter { get; set; }

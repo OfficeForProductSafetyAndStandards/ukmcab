@@ -48,6 +48,27 @@ namespace UKMCAB.Web.Tests.Models
             //Assert
             Assert.That(result, Is.EqualTo(""));
         }
+        
+        [Category("CAB Summary page - Banner Content Happy Path")]
+        [Test]
+        public void GetBannerContent_Should_Return_EmptyString_When_OpssAdminIsReviewingAnOpssActionableCabThatWasSubmittedForOgdApproval()
+        {
+            // Arrange
+            var _sut = new CABSummaryViewModel
+            {
+                IsOpssAdmin = true,
+                UserInCreatorUserGroup = true,
+                Status = Status.Draft,
+                SubStatus = SubStatus.PendingApprovalToPublish,
+                IsActionableByOpssAdmin = true,
+            };
+
+            //Act
+            var result = _sut.GetBannerContent();
+
+            //Assert
+            Assert.That(result, Is.EqualTo(string.Empty));
+        }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
         [Test]
@@ -302,6 +323,52 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.EqualTo(expectedResult));
         }
 
+        [Category("CAB Summary page - Show Edit Button when OPSS admin submits cab for ogd's approval")]
+        [TestCase(true, true, Status.Draft, SubStatus.PendingApprovalToPublish, true, false, false, true)]
+        [TestCase(true, true, Status.Draft, SubStatus.PendingApprovalToPublish, false, false, false,false)]
+        public void ShowEditButton_Should_Return_CorrectValue_When_OpssAdminSubmitsACabForOgdApproval(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool isActionableByOpssAdmin, bool revealEditActions, bool isEditLoced, bool expectedResult)
+        {
+            // Arrange
+            cabSummary.IsOpssAdmin = isOpss;
+            cabSummary.UserInCreatorUserGroup = inUserGroup;
+            cabSummary.Status = status;
+            cabSummary.SubStatus = substatus;
+            cabSummary.IsActionableByOpssAdmin = isActionableByOpssAdmin;
+            cabSummary.RevealEditActions = revealEditActions;
+            cabSummary.IsEditLocked = isEditLoced;
+
+            //Act
+            var result = cabSummary.ShowEditButton;
+
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+        #endregion
+
+        #region Test - Show Subsection Edit action
+
+        [Category("CAB Summary page - Show Subsection Edit action")]
+        [TestCase(true, true, Status.Draft, SubStatus.PendingApprovalToPublish, true, true, false, true)]
+        [TestCase(true, true, Status.Draft, SubStatus.PendingApprovalToPublish, false, true, false, false)]
+
+        public void ShowSubsectionEditAction_Should_Return_CorrectValue_WhenOpssAdminSubmitsForOgdApproval(bool isOpss, bool inUserGroup, Status status, SubStatus substatus, bool isActionableByOpssAdmin, bool revealEditActions, bool isEditLoced, bool expectedResult)
+        {
+            // Arrange            
+            cabSummary.IsOpssAdmin = isOpss;
+            cabSummary.UserInCreatorUserGroup = inUserGroup;
+            cabSummary.Status = status;
+            cabSummary.SubStatus = substatus;
+            cabSummary.IsActionableByOpssAdmin = isActionableByOpssAdmin;
+            cabSummary.RevealEditActions = revealEditActions;
+            cabSummary.IsEditLocked = isEditLoced;
+
+            //Act
+            var result = cabSummary.ShowSubSectionEditAction;
+
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
         #endregion
 
 
@@ -383,7 +450,7 @@ namespace UKMCAB.Web.Tests.Models
         #region Test - Show Approve To Publish Button
 
         [Category("CAB Summary page - Show Approve To Publish Button")]
-        [Test]
+        [Test]        
         public void ShowApproveToPublishButton_Should_Return_True_When_OgdHasApproved()
         {
             // Arrange            
@@ -401,8 +468,54 @@ namespace UKMCAB.Web.Tests.Models
             Assert.That(result, Is.True);
         }
 
+        [Category("CAB Summary page - Show Approve To Publish Button")]
+        [TestCase(true, true)]
+        [TestCase(false, false)]
+        public void ShowApproveToPublishButton_Should_Return_CorrectValue_When_OpssAdminSubmitsForOgdApproval(bool isActionableByOpssAdmin, bool expectedResult)
+        {
+            // Arrange            
+            CABSummaryViewModelTestsHelpers.SetShowSubSectionEditActionToTrueOpssAdmin(cabSummary);
+            CABSummaryViewModelTestsHelpers.SetCanPublishToTrueOpssAdmin(cabSummary);
+            cabSummary.Status = Status.Draft;
+            cabSummary.SubStatus = SubStatus.PendingApprovalToPublish;
+            cabSummary.IsActionableByOpssAdmin = isActionableByOpssAdmin;
+            cabSummary.UserInCreatorUserGroup = true;
+
+            // Act
+            var result = cabSummary.ShowApproveToPublishButton;
+
+            // Assert
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
         #endregion
 
+        #region Test - Can submit for approval
+
+        [Category("CAB Summary page - Can Submit For Approval action")]
+        [TestCase(true, false, true, true)]
+        [TestCase(false, true, true, true)]
+        [TestCase(true, false, false, false)]
+        [TestCase(false, true, false, false)]
+
+        public void CanSubmitForApproval_Should_Return_CorrectValue_WhenOpssAdminSubmitsForOgdApproval(bool isOpss, bool isUkas, bool draftUpdated, bool expectedResult)
+        {
+            // Arrange            
+            cabSummary.IsOpssAdmin = isOpss;
+            cabSummary.IsUkas = isUkas;
+            cabSummary.DraftUpdated = draftUpdated;
+            CABSummaryViewModelTestsHelpers.SetIsCompleteToTrue(cabSummary);
+
+
+            //Act
+            var result = cabSummary.CanSubmitForApproval;
+
+            //Assert
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+
+        #endregion
 
         #region Test - Show Mandatory Info Warning
 
