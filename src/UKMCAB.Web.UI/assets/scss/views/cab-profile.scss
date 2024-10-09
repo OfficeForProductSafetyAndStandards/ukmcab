@@ -105,7 +105,7 @@
                 background-color: $govuk-body-background-colour;
                 border-bottom: 0;
                 margin-top: govuk-spacing(-1);
-                margin-bottom: -$border-width;
+                margin-bottom: -$border-width - $border-width;
                 padding-top: govuk-spacing(3) - $border-width;
                 padding-right: govuk-spacing(4) - $border-width;
                 padding-bottom: govuk-spacing(3) + $border-width;
@@ -176,7 +176,7 @@
 
                 @include govuk-media-query($until: tablet) {
                     font-size: 16px;
-                    margin-left:0px!important;
+                    margin-left: 0px !important;
                 }
 
                 font-size: 19px;
