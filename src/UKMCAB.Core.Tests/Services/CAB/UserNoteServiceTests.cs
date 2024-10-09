@@ -3,7 +3,6 @@
     using Bogus;
     using Moq;
     using NUnit.Framework;
-    using NUnit.Framework.Legacy;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -52,12 +51,12 @@
             // Act
             var userNotes = await _userNoteService.GetAllUserNotesForCabDocumentId(cabDocumentId);
 
-            // ClassicAssert
-            ClassicAssert.IsNotNull(userNotes);
-            ClassicAssert.AreEqual(3, userNotes.Count());
-            ClassicAssert.AreEqual("First user note", userNotes.ElementAt(0).Note);
-            ClassicAssert.AreEqual("Second user note", userNotes.ElementAt(1).Note);
-            ClassicAssert.AreEqual("Third user note", userNotes.ElementAt(2).Note);
+            // Assert
+            Assert.That(userNotes, Is.Not.Null);
+            Assert.That(3, Is.EqualTo(userNotes.Count()));
+            Assert.That("First user note", Is.EqualTo(userNotes.ElementAt(0).Note));
+            Assert.That("Second user note", Is.EqualTo(userNotes.ElementAt(1).Note));
+            Assert.That("Third user note", Is.EqualTo(userNotes.ElementAt(2).Note));
         }
 
         [Test]
@@ -82,9 +81,9 @@
             // Act
             var userNote = await _userNoteService.GetUserNote(cabDocumentId, userNoteId);
 
-            // ClassicAssert
-            ClassicAssert.IsNotNull(userNote);
-            ClassicAssert.AreEqual(userNoteId, userNote.Id);
+            // Assert
+            Assert.That(userNote, Is.Not.Null);
+            Assert.That(userNoteId, Is.EqualTo(userNote.Id));
         }
 
         [Test]
@@ -97,10 +96,10 @@
                 .ReturnsAsync(new List<Document>());
 
             // Act
-            Exception exception = ClassicAssert.ThrowsAsync<Exception>(async () => await _userNoteService.GetUserNote(cabDocumentId, userNoteId));
+            Exception exception = Assert.ThrowsAsync<Exception>(async () => await _userNoteService.GetUserNote(cabDocumentId, userNoteId));
 
-            // ClassicAssert
-            ClassicAssert.AreEqual($"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.", exception.Message);
+            // Assert
+            Assert.That($"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.", Is.EqualTo(exception.Message));
         }
 
         [Test]
@@ -122,10 +121,10 @@
                 });
 
             // Act
-            Exception exception = ClassicAssert.ThrowsAsync<Exception>(async () => await _userNoteService.GetUserNote(cabDocumentId, userNoteId));
+            Exception exception = Assert.ThrowsAsync<Exception>(async () => await _userNoteService.GetUserNote(cabDocumentId, userNoteId));
 
-            // ClassicAssert
-            ClassicAssert.AreEqual($"UserNote not found. UserNote ID: {userNoteId}.", exception.Message);
+            // Assert
+            Assert.That($"UserNote not found. UserNote ID: {userNoteId}.", Is.EqualTo(exception.Message));
         }
 
         [Test]
@@ -157,7 +156,7 @@
             // Act
             await _userNoteService.CreateUserNote(userAccount, cabDocumentId, note);
 
-            // ClassicAssert
+            // Assert
             _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x =>
                 x.id == cabDocumentId.ToString() && 
                 x.GovernmentUserNotes.Count == 4 &&
@@ -179,10 +178,10 @@
                 .ReturnsAsync(new List<Document>());
 
             // Act
-            Exception exception = ClassicAssert.ThrowsAsync<Exception>(async () => await _userNoteService.CreateUserNote(new UserAccount(), cabDocumentId, _faker.Random.Word()));
+            Exception exception = Assert.ThrowsAsync<Exception>(async () => await _userNoteService.CreateUserNote(new UserAccount(), cabDocumentId, _faker.Random.Word()));
 
-            // ClassicAssert
-            ClassicAssert.AreEqual($"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.", exception.Message);
+            // Assert
+            Assert.That($"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.", Is.EqualTo(exception.Message));
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
         }
 
@@ -207,7 +206,7 @@
             // Act
             await _userNoteService.DeleteUserNote(cabDocumentId, userNoteId);
 
-            // ClassicAssert
+            // Assert
             _mockCABRepository.Verify(x => x.UpdateAsync(It.Is<Document>(x =>
                 x.id == cabDocumentId.ToString() &&
                 x.GovernmentUserNotes.Count == 2 &&
@@ -225,10 +224,10 @@
                 .ReturnsAsync(new List<Document>());
 
             // Act
-            Exception exception = ClassicAssert.ThrowsAsync<Exception>(async () => await _userNoteService.DeleteUserNote(cabDocumentId, Guid.NewGuid()));
+            Exception exception = Assert.ThrowsAsync<Exception>(async () => await _userNoteService.DeleteUserNote(cabDocumentId, Guid.NewGuid()));
 
-            // ClassicAssert
-            ClassicAssert.AreEqual($"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.", exception.Message);
+            // Assert
+            Assert.That($"CAB document not found. Document ID {cabDocumentId}. Note: this parameter is the Document.id, not the Document.CABId.", Is.EqualTo(exception.Message));
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
         }
     }

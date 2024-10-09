@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Bogus;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Infrastructure.Cache;
 
@@ -36,7 +35,7 @@ public class EditLockServiceTests
                 { cabId, new Tuple<string, DateTime>(userIdWithLock, DateTime.Now.AddMinutes(10)) }
             });
 
-        ClassicAssert.True(await _sut.IsCabLockedForUser(cabId, userId));
+        Assert.That(await _sut.IsCabLockedForUser(cabId, userId), Is.True);
     }
 
     [Test]
@@ -45,7 +44,7 @@ public class EditLockServiceTests
         var cabId = _faker.Random.Word();
         var userId = _faker.Random.Word();
 
-        ClassicAssert.False(await _sut.IsCabLockedForUser(cabId, userId));
+        Assert.That(await _sut.IsCabLockedForUser(cabId, userId), Is.False);
     }
 
     [Test]
@@ -60,7 +59,7 @@ public class EditLockServiceTests
                 { cabId, new Tuple<string, DateTime>(userId, DateTime.Now.AddMinutes(10)) }
             });
 
-        ClassicAssert.False(await _sut.IsCabLockedForUser(cabId, userId));
+        Assert.That(await _sut.IsCabLockedForUser(cabId, userId), Is.False);
     }
 
     [Test]
@@ -82,8 +81,8 @@ public class EditLockServiceTests
         // Act
         var userFound = await _sut.IsCabLockedForUser(cabId2, userIdWithLock);
 
-        // ClassicAssert
-        ClassicAssert.True(userFound);
+        // Assert
+        Assert.That(userFound, Is.True);
     }
 
     [Test]
@@ -105,8 +104,8 @@ public class EditLockServiceTests
         // Act
         var userFound = await _sut.IsCabLockedForUser(cabId2, userIdWithLock2);
 
-        // ClassicAssert
-        ClassicAssert.False(userFound);
+        // Assert
+        Assert.That(userFound, Is.False);
     }
 
     [Test]
@@ -163,7 +162,7 @@ public class EditLockServiceTests
         // Act
         await _sut.RemoveEditLockForCabAsync(testCabId);
         
-        // ClassicAssert
+        // Assert
         _distCache.Verify(
             c => c.SetAsync("CabEditLock", It.Is<Dictionary<string, Tuple<string, DateTime>>>(d => d.Count == 0),
                 TimeSpan.FromHours(1), -1),

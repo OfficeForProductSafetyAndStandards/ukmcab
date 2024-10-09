@@ -1,7 +1,6 @@
 ﻿using System;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using UKMCAB.Web.UI.Helpers;
 
 namespace UKMCAB.Web.UI.Tests;
@@ -28,8 +27,8 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.EqualTo(dateTime));
-        ClassicAssert.That(modelState.ErrorCount, Is.Zero);
+        Assert.That(result, Is.EqualTo(dateTime));
+        Assert.That(modelState.ErrorCount, Is.Zero);
     }
 
     [Category("Date Validation Happy Path")]
@@ -52,8 +51,8 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart,appointmentDate);
 
         //Assert
-        ClassicAssert.That(result, Is.EqualTo(dateTime));
-        ClassicAssert.That(modelState.ErrorCount, Is.Zero);
+        Assert.That(result, Is.EqualTo(dateTime));
+        Assert.That(modelState.ErrorCount, Is.Zero);
     }
 
     [Category("Date Validation Happy Path")]
@@ -74,8 +73,8 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.EqualTo(dateTime));
-        ClassicAssert.That(modelState.ErrorCount, Is.Zero);
+        Assert.That(result, Is.EqualTo(dateTime));
+        Assert.That(modelState.ErrorCount, Is.Zero);
     }
 
     [Category("Date Validation")]
@@ -95,9 +94,9 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -117,9 +116,9 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -140,9 +139,9 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart,aptDate);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     
@@ -164,9 +163,9 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey,errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage)); 
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage)); 
     }
 
     [Category("Date Validation")]
@@ -186,9 +185,9 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(modelState.ErrorCount, Is.EqualTo(2)); // Error 1 for the day field and Error 2 for the AppointmentDate field
-        ClassicAssert.That(modelState[modelKey].Errors.Count, Is.EqualTo(1));
-        ClassicAssert.That(modelState[modelKeyDay].Errors.Count, Is.EqualTo(1));
+        Assert.That(modelState.ErrorCount, Is.EqualTo(2)); // Error 1 for the day field and Error 2 for the AppointmentDate field
+        Assert.That(modelState[modelKey].Errors.Count, Is.EqualTo(1));
+        Assert.That(modelState[modelKeyDay].Errors.Count, Is.EqualTo(1));
     }
 
     [Category("Date Validation")]
@@ -209,9 +208,9 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -233,10 +232,10 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyMonth));
-        ClassicAssert.That(modelState.ErrorCount, Is.EqualTo(2)); // 2 Errors for the day & month fields and 1 Error for the AppointmentDate field
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyMonth));
+        Assert.That(modelState.ErrorCount, Is.EqualTo(2)); // 2 Errors for the day & month fields and 1 Error for the AppointmentDate field
     }
 
 
@@ -258,10 +257,10 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyDay));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyDay));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -283,11 +282,11 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyMonth));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyYear));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyMonth));
+        Assert.That(modelState.ContainsKey(modelKeyYear));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -309,11 +308,11 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyMonth));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyYear));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyMonth));
+        Assert.That(modelState.ContainsKey(modelKeyYear));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -335,11 +334,11 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyDay));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyYear));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyDay));
+        Assert.That(modelState.ContainsKey(modelKeyYear));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -361,11 +360,11 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyDay));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyYear));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyDay));
+        Assert.That(modelState.ContainsKey(modelKeyYear));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -387,11 +386,11 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyDay));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyMonth));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyDay));
+        Assert.That(modelState.ContainsKey(modelKeyMonth));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -413,11 +412,11 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyDay));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyMonth));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyDay));
+        Assert.That(modelState.ContainsKey(modelKeyMonth));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -438,10 +437,10 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyDay));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyDay));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -462,10 +461,10 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyDay));    
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyDay));    
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -486,10 +485,10 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyMonth));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyMonth));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -510,10 +509,10 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyMonth));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyMonth));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
 
@@ -535,10 +534,10 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyYear));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyYear));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
     [Category("Date Validation")]
@@ -559,10 +558,10 @@ public class DateUtilsShould
         var result = DateUtils.CheckDate(modelState, day, month, year, modelKey, errorMessagePart);
 
         //Assert
-        ClassicAssert.That(result, Is.Null);
-        ClassicAssert.That(modelState.ContainsKey(modelKey));
-        ClassicAssert.That(modelState.ContainsKey(modelKeyYear));
-        ClassicAssert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
+        Assert.That(result, Is.Null);
+        Assert.That(modelState.ContainsKey(modelKey));
+        Assert.That(modelState.ContainsKey(modelKeyYear));
+        Assert.That(modelState[modelKey].Errors[0].ErrorMessage, Is.EqualTo(errorMessage));
     }
 
 }

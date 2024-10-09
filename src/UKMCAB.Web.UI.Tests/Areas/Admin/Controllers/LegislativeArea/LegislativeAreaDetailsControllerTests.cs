@@ -1,6 +1,5 @@
 ﻿using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using System.Threading.Tasks;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Web.UI.Services;
@@ -18,9 +17,8 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.Extensions.Options;
-using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Pagination;
+using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
 {
@@ -100,9 +98,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             var result = await _sut.AddProcedure(id, scopeId, 0, 0, vm, compareScopeId, submitType);
 
             //Assert
-            ClassicAssert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.EqualTo(1));
-            ClassicAssert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
-            ClassicAssert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+            Assert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.EqualTo(1));
+            CollectionAssert.Contains(scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds, procedureId1);
+            CollectionAssert.Contains(scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds, procedureId2);
         }
 
         [Test]
@@ -148,9 +146,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             var result = await _sut.AddProcedure(id, scopeId, 0, 0, vm, compareScopeId, submitType);
 
             //Assert
-            ClassicAssert.That(scopeOfAppointment.ProductIdAndProcedureIds.Count, Is.AtLeast(1));
-            ClassicAssert.Contains(procedureId1, scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds);
-            ClassicAssert.Contains(procedureId2, scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds);
+            Assert.That(scopeOfAppointment.ProductIdAndProcedureIds.Count, Is.AtLeast(1));
+            CollectionAssert.Contains(scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds,procedureId1);
+            CollectionAssert.Contains(scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds, procedureId2);
         }
 
         [Test]
@@ -196,9 +194,9 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
             var result = await _sut.AddProcedure(id, scopeId, 0, 0, vm, compareScopeId, submitType);
 
             //Assert
-            ClassicAssert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.AtLeast(1));
-            ClassicAssert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
-            ClassicAssert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+            Assert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.AtLeast(1));
+            CollectionAssert.Contains(scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds, procedureId1);
+            CollectionAssert.Contains(scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds, procedureId2);
         }
 
         [Test]
@@ -624,8 +622,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                     LegislativeAreaId = legislativeAreaId,
                 }).Verifiable();
 
-            // Act and ClassicAssert
-            ClassicAssert.ThrowsAsync<InvalidOperationException>(async () =>
+            // Act and Assert
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
                 {
                     var result = await _sut.AddDesignatedStandard("InvalidSubmitType",
                                     new DesignatedStandardsViewModel
@@ -866,7 +864,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
                 }).Verifiable();
 
             //Act //Assert
-            ClassicAssert.ThrowsAsync<InvalidOperationException>(async () =>
+            Assert.ThrowsAsync<InvalidOperationException>(async () =>
             {
                 var result = await _sut.AddDesignatedStandard(cabId, scopeId, compareScopeId, fromSummary, pageNumber);
             });

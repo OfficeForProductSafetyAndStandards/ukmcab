@@ -1,5 +1,4 @@
 ﻿using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -21,8 +20,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Setup(x => x.Query<Document>(It.IsAny<Expression<Func<Document, bool>>>()))
                 .ReturnsAsync(new List<Document>());
 
-            // Act and ClassicAssert
-            ClassicAssert.ThrowsAsync<Exception>(async () =>
+            // Act and Assert
+            Assert.ThrowsAsync<Exception>(async () =>
                 await _sut.UnPublishDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Word(), null));
             return Task.CompletedTask;
         }
@@ -40,8 +39,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     }
                 });
 
-            // Act and ClassicAssert
-            ClassicAssert.ThrowsAsync<Exception>(async () =>
+            // Act and Assert
+            Assert.ThrowsAsync<Exception>(async () =>
                 await _sut.UnPublishDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Word(), null));
             return Task.CompletedTask;
         }
@@ -65,8 +64,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             _mockCABRepository.Setup(x => x.DeleteAsync(It.IsAny<Document>())).ReturnsAsync(false);
 
-            // Act and ClassicAssert
-            ClassicAssert.ThrowsAsync<Exception>(async () =>
+            // Act and Assert
+            Assert.ThrowsAsync<Exception>(async () =>
                 await _sut.UnPublishDocumentAsync(new Mock<UserAccount>().Object, _faker.Random.Word(), null));
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(r => r.DeleteAsync(It.IsAny<Document>()), Times.Once());
@@ -93,7 +92,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.UnPublishDocumentAsync(new Mock<UserAccount>().Object, cabId, null);
 
-            // ClassicAssert
+            // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(r => r.UpdateAsync(It.Is<Document>(d => d.CABId == cabId && d.AuditLog.First().Action == AuditCABActions.UnpublishApprovalRequest), null), Times.Once);
             _mockCABRepository.Verify(r => r.GetItemLinqQueryable(), Times.Exactly(5));
@@ -119,7 +118,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.UnPublishDocumentAsync(new Mock<UserAccount>().Object, cabId, null);
 
-            // ClassicAssert
+            // Assert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(r => r.UpdateAsync(It.Is<Document>(d => d.StatusValue == Status.Historical && d.SubStatus == SubStatus.None), null), Times.Once);
             _mockCABRepository.Verify(r => r.GetItemLinqQueryable(), Times.Exactly(5));
