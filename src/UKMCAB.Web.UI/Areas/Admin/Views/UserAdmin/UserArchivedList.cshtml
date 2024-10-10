@@ -10,16 +10,16 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
 
-        <div class="govuk-tabs user-tabs" data-module="govuk-tabs">
+        <div class="govuk-tabs user-tabs">
             <ul class="govuk-tabs__list">
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="tab-item-title">Requests (@Model.PendingAccountsCount)</a>
+                    <a asp-route="@UserAdminController.Routes.UserAccountRequestsList" class="govuk-tabs__tab">Requests (@Model.PendingAccountsCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserList" class="tab-item-title">Active (@Model.ActiveUsersCount)</a>
+                    <a asp-route="@UserAdminController.Routes.UserList" class="govuk-tabs__tab">Active (@Model.ActiveUsersCount)</a>
                 </li>                
                 <li class="govuk-tabs__list-item">
-                    <a asp-route="@UserAdminController.Routes.UserListLocked" class="tab-item-title">Locked (@Model.LockedUsersCount)</a>
+                    <a asp-route="@UserAdminController.Routes.UserListLocked" class="govuk-tabs__tab">Locked (@Model.LockedUsersCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item govuk-tabs__list-item--selected">
                     <a class="govuk-tabs__tab" href="#archived-user-list">Archived (@Model.ArchivedUsersCount)</a>

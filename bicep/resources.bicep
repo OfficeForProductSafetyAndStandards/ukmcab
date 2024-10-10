@@ -726,7 +726,7 @@ var siteProperties = {
   httpsOnly: false
   serverFarmId: appServicePlan.id
   siteConfig: {
-    linuxFxVersion: 'DOTNETCORE|6.0'
+    linuxFxVersion: 'DOTNETCORE|8.0'
     alwaysOn: true
   }
 }
