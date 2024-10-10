@@ -6,7 +6,6 @@ using Microsoft.Extensions.Options;
 using Moq;
 using Notify.Interfaces;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Services.Users;
@@ -156,14 +155,14 @@ namespace UKMCAB.Core.Tests.Services.Users
 
             var results = await _sut.ListRequestsAsync(new UserAccountRequestListOptions(new SkipTake(0,10000), new SortBy(nameof(UserAccountRequest.CreatedUtc), null), UserAccountRequestStatus.Pending));
 
-            ClassicAssert.AreEqual(results.Count(), 1);
+            Assert.That(results.Count(), Is.EqualTo(1));
             var createdRequest = results.First();
-            ClassicAssert.IsTrue(createdRequest.Status == UserAccountRequestStatus.Pending);
-            ClassicAssert.IsTrue(createdRequest.SubjectId == "1");
+            Assert.That(createdRequest.Status == UserAccountRequestStatus.Pending, Is.True);
+            Assert.That(createdRequest.SubjectId == "1", Is.True);
             var auditLog = createdRequest.AuditLog;
-            ClassicAssert.AreEqual(auditLog.Count, 1);
+            Assert.That(auditLog.Count, Is.EqualTo(1));
             var auditEntry = auditLog.First();
-            ClassicAssert.AreEqual(auditEntry.UserName, "Test Surname");
+            Assert.That(auditEntry.UserName, Is.EqualTo("Test Surname"));
         }
 
         [Test]
@@ -180,7 +179,7 @@ namespace UKMCAB.Core.Tests.Services.Users
                 Organisation = "ukmcab"
             };
             await _sut.SubmitRequestAccountAsync(newRequest);
-            ClassicAssert.ThrowsAsync<DomainException>(async () => await _sut.SubmitRequestAccountAsync(newRequest));
+            Assert.ThrowsAsync<DomainException>(async () => await _sut.SubmitRequestAccountAsync(newRequest));
         }
 
         [Test]
@@ -192,7 +191,7 @@ namespace UKMCAB.Core.Tests.Services.Users
             await _sut.UpdateLastLogonDate("2");
             var user2After = await _sut.GetAsync("2");
 
-            ClassicAssert.AreNotEqual(loggedOnBefore, user2After.LastLogonUtc);
+            Assert.That(loggedOnBefore, Is.Not.EqualTo(user2After.LastLogonUtc));
         }
 
         [Test]
@@ -200,7 +199,7 @@ namespace UKMCAB.Core.Tests.Services.Users
         {
             ((FakeUserAccountRequestRepository)_fakeUserAccountRequestRepository).SeedData();
 
-            ClassicAssert.ThrowsAsync<DomainException>(async () =>await _sut.ApproveAsync("rejected-user", "UKAS", new UserAccount()));
+            Assert.ThrowsAsync<DomainException>(async () =>await _sut.ApproveAsync("rejected-user", "UKAS", new UserAccount()));
         }
 
 

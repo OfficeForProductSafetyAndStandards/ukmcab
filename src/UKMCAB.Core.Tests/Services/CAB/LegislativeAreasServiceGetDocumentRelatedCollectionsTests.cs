@@ -89,7 +89,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.GetLegislativeAreasForDocumentAsync(new Document());
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -128,7 +128,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.GetPurposeOfAppointmentsForDocumentAsync(new Document());
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -167,7 +167,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.GetCategoriesForDocumentAsync(new Document());
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -206,7 +206,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.GetSubCategoriesForDocumentAsync(new Document());
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -245,7 +245,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.GetProductsForDocumentAsync(new Document());
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -284,7 +284,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.GetProceduresForDocumentAsync(new Document());
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
     }

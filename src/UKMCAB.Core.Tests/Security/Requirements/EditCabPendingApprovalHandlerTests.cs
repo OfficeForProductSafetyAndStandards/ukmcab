@@ -11,7 +11,6 @@ using Microsoft.AspNetCore.Routing;
 using UKMCAB.Data.Models;
 using System.Collections.Generic;
 using System;
-using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Core.Tests.Security.Requirements
 {
@@ -37,8 +36,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
 
             var authorizationContext = new AuthorizationHandlerContext(new[] { new EditCabPendingApprovalRequirement() }, new ClaimsPrincipal(), null);
 
-            // Act & ClassicAssert
-            ClassicAssert.ThrowsAsync<Exception>(() => _handler.HandleAsync(authorizationContext));
+            // Act & Assert
+            Assert.ThrowsAsync<Exception>(() => _handler.HandleAsync(authorizationContext));
         }
 
         [Test]
@@ -56,8 +55,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.True(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -75,8 +74,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.True(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -94,8 +93,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.False(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.False);
         }
 
         [Test]
@@ -123,8 +122,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.True(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -145,8 +144,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.False(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.False);
         }
 
         [Test]
@@ -167,8 +166,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.False(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.False);
         }
 
         [Test]
@@ -189,8 +188,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.True(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -212,8 +211,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.True(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -234,8 +233,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // ClassicAssert
-            ClassicAssert.False(authorizationContext.HasSucceeded);
+            // Assert
+            Assert.That(authorizationContext.HasSucceeded, Is.False);
         }
 
         private ClaimsPrincipal GenerateMockPrincipal(string roleId, params Claim[] claims)

@@ -1,6 +1,5 @@
 ﻿using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,10 +36,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument, submitForApproval);
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(result.SubStatus, SubStatus.PendingApprovalToPublish);
-            ClassicAssert.AreEqual(result.AuditLog.First().Action, AuditCABActions.SubmittedForApproval);
-            ClassicAssert.IsTrue(result.DocumentLegislativeAreas.All(x => x.Status == LAStatus.PendingApproval && x.NewlyCreated == null));
+            // Assert
+            Assert.That(result.SubStatus, Is.EqualTo(SubStatus.PendingApprovalToPublish));
+            Assert.That(result.AuditLog.First().Action, Is.EqualTo(AuditCABActions.SubmittedForApproval));
+            Assert.That(result.DocumentLegislativeAreas.All(x => x.Status == LAStatus.PendingApproval && x.NewlyCreated == null), Is.True);
             _mockCABRepository.Verify(r => r.UpdateAsync(draftDocument, null), Times.Once);
         }
 
@@ -62,10 +61,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(intermediateDocument.StatusValue, Status.Draft);
-            ClassicAssert.AreEqual(intermediateDocument.AuditLog.First().Action, AuditCABActions.Created);
-            ClassicAssert.That(intermediateDocument.CreatedByUserGroup, Is.EqualTo("opss"));
+            // Assert
+            Assert.That(intermediateDocument.StatusValue, Is.EqualTo(Status.Draft));
+            Assert.That(intermediateDocument.AuditLog.First().Action, Is.EqualTo(AuditCABActions.Created));
+            Assert.That(intermediateDocument.CreatedByUserGroup, Is.EqualTo("opss"));
             _mockCABRepository.Verify(r => r.CreateAsync(draftDocument, It.IsAny<DateTime>()), Times.Once);
         }
 
@@ -95,8 +94,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(result.SubStatus, SubStatus.None);
+            // Assert
+            Assert.That(result.SubStatus, Is.EqualTo(SubStatus.None));
             _mockCABRepository.Verify(r => r.UpdateAsync(draftDocument, null), Times.Once);
         }
 
@@ -123,8 +122,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.UpdateOrCreateDraftDocumentAsync(userAccount, draftDocument);
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(result.SubStatus, SubStatus.PendingApprovalToPublish);
+            // Assert
+            Assert.That(result.SubStatus, Is.EqualTo(SubStatus.PendingApprovalToPublish));
         }    
     }
 }

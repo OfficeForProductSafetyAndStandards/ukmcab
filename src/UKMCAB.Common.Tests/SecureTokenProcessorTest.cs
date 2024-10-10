@@ -1,7 +1,6 @@
 ﻿using System;
 using NUnit.Framework;
 using UKMCAB.Common.Security.Tokens;
-using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Common.Tests;
 
@@ -18,6 +17,6 @@ public class SecureTokenProcessorTest
         var token = stp.Enclose(data);
         var data2 = stp.Disclose<Tuple<int, int>>(token);
 
-        ClassicAssert.That(data2, Is.EqualTo(data));
+        Assert.That(data2, Is.EqualTo(data));
     }
 }

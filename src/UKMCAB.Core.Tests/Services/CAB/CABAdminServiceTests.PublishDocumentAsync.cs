@@ -9,7 +9,6 @@ using UKMCAB.Data.Models.Users;
 using System.Linq;
 using UKMCAB.Core.Security;
 using UKMCAB.Data;
-using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -36,11 +35,11 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object, document);
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(9, result.DocumentLegislativeAreas.Count);
-            ClassicAssert.AreEqual(LAStatus.Published, result.DocumentLegislativeAreas.First().Status);
-            ClassicAssert.AreEqual(9, result.ScopeOfAppointments.Count);
-            ClassicAssert.AreEqual(8, result.Schedules?.Count);
+            // Assert
+            Assert.That(9, Is.EqualTo(result.DocumentLegislativeAreas.Count));
+            Assert.That(LAStatus.Published, Is.EqualTo(result.DocumentLegislativeAreas.First().Status));
+            Assert.That(9, Is.EqualTo(result.ScopeOfAppointments.Count));
+            Assert.That(8, Is.EqualTo(result.Schedules?.Count));
         }
 
         [Test]
@@ -72,9 +71,9 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     ScopeOfAppointments = scopeOfAppointments,
                 });
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
-            ClassicAssert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
+            // Assert
+            Assert.That(Enum.GetNames(typeof(LAStatus)).Length - 1, Is.EqualTo(result.DocumentLegislativeAreas.Count));
+            Assert.That(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published), Is.True);
         }
 
         [Test]
@@ -114,9 +113,9 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     },
                 });
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(1, result.DocumentLegislativeAreas.Count);
-            ClassicAssert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
+            // Assert
+            Assert.That(1, Is.EqualTo(result.DocumentLegislativeAreas.Count));
+            Assert.That(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published), Is.True);
         }
 
         [Test]
@@ -156,8 +155,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
                 latestDocument, null, null, DataConstants.PublishType.MinorPublish);
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(latestDocument.LastUpdatedDate, lastUpdatedDate);
+            // Assert
+            Assert.That(latestDocument.LastUpdatedDate, Is.EqualTo(lastUpdatedDate));
             _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, lastUpdatedDate), Times.Once());
         }
 
@@ -193,8 +192,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             var currentDateAfter = DateTime.Now;
 
-            // ClassicAssert
-            ClassicAssert.AreEqual(lastUpdatedDate.Date, latestDocument.LastUpdatedDate.Date);
+            // Assert
+            Assert.That(lastUpdatedDate.Date, Is.EqualTo(latestDocument.LastUpdatedDate.Date));
             _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, It.Is<DateTime>(d => d >= currentDateBefore && d <= currentDateAfter)), Times.Once);
         }
 
@@ -239,8 +238,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             var currentDateAfter = DateTime.Now;
 
-            // ClassicAssert
-            ClassicAssert.IsTrue(latestDocument.LastUpdatedDate >= currentDateBefore && latestDocument.LastUpdatedDate <= currentDateAfter);
+            // Assert
+            Assert.That(latestDocument.LastUpdatedDate >= currentDateBefore && latestDocument.LastUpdatedDate <= currentDateAfter, Is.True);
             _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, It.Is<DateTime>(d => d >= currentDateBefore && d <= currentDateAfter)), Times.Once);
         }
 

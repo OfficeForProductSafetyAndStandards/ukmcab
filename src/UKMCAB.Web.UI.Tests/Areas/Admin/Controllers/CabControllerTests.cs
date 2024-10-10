@@ -108,7 +108,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             // Act
             var result = await _sut.Summary(documentId, null, null, null) as ViewResult;
 
-            // ClassicAssert
+            // Assert
             result.Model.Should().BeEquivalentTo(expectedResult);
             _mockCabSummaryUiService.Verify(m => m.LockCabForUser(It.Is<CABSummaryViewModel>(m => m.Id == cabSummaryViewModelId)), Times.Once);
         }
@@ -128,7 +128,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             // Act
             var result = await _sut.Summary(documentId, null, null, null) as ViewResult;
 
-            // ClassicAssert
+            // Assert
             result.Model.Should().BeEquivalentTo(expectedResult);
             _mockCabSummaryUiService.Verify(m => m.LockCabForUser(It.IsAny<CABSummaryViewModel>()), Times.Never);
         }
@@ -251,7 +251,7 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers
             // Act
             var result = await _sut.Summary(documentId, null, null, null) as RedirectToActionResult;
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
     }

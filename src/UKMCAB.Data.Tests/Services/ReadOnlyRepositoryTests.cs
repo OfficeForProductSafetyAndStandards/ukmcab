@@ -2,7 +2,6 @@
 using Microsoft.Azure.Cosmos;
 using Moq;
 using NUnit.Framework;
-using NUnit.Framework.Legacy;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,11 +64,11 @@ public class ReadOnlyRepositoryTests
         // Act
         var products = await _repository.GetAllAsync();
 
-        // ClassicAssert
+        // Assert
         // The above mocks will result in a list of 2 products being returned.
         mockIterator.Verify(q => q.ReadNextAsync(It.IsAny<CancellationToken>()), Times.Exactly(2));
         mockIterator.Verify(q => q.HasMoreResults, Times.Exactly(3));
-        ClassicAssert.AreEqual(2, products.Count());
+        Assert.That(2, Is.EqualTo(products.Count()));
     }
 
     [Test]
@@ -109,11 +108,11 @@ public class ReadOnlyRepositoryTests
         // Act
         var products = await _repository.QueryAsync(p => true);
 
-        // ClassicAssert
+        // Assert
         // The above mocks will result in a list of 2 products being returned.
         mockIterator.Verify(q => q.ReadNextAsync(It.IsAny<CancellationToken>()), Times.Exactly(2));
         mockIterator.Verify(q => q.HasMoreResults, Times.Exactly(3));
-        ClassicAssert.AreEqual(2, products.Count());
+        Assert.That(2, Is.EqualTo(products.Count()));
     }
 
     [Test]
@@ -125,7 +124,7 @@ public class ReadOnlyRepositoryTests
         // Act
         var returnedProduct = _repository.GetAsync(productId.ToString());
 
-        // ClassicAssert
+        // Assert
         _mockCosmosClient.Verify(x => x.GetContainer(It.IsAny<string>(), "products"), Times.Once);
         _mockContainer.Verify(x => x.ReadItemAsync<Product>(productId.ToString(), It.IsAny<PartitionKey>(), It.IsAny<ItemRequestOptions>(), It.IsAny<CancellationToken>()), Times.Once);
     }

@@ -75,7 +75,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithDocumentDetails(document).Build();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -102,7 +102,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithLegislativeAreasPendingApprovalCount(document).Build();
 
-            // ClassicAssert
+            // Assert
             result.LegislativeAreasPendingApprovalForCurrentUserCount.Should().Be(1);
         }
 
@@ -129,7 +129,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithLegislativeAreasPendingApprovalCount(document).Build();
 
-            // ClassicAssert
+            // Assert
             result.LegislativeAreasPendingApprovalForCurrentUserCount.Should().Be(1);
         }
 
@@ -144,7 +144,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithReturnUrl(encodedUrl).Build();
 
-            // ClassicAssert
+            // Assert
             return result.ReturnUrl;
         }
 
@@ -154,7 +154,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithReturnUrl("  ").Build();
 
-            // ClassicAssert
+            // Assert
             result.ReturnUrl.Should().Be("");
         }
 
@@ -182,7 +182,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithRoleInfo(document).Build();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -210,7 +210,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithRoleInfo(document).Build();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -238,7 +238,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithRoleInfo(document).Build();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -266,7 +266,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithRoleInfo(document).Build();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeEquivalentTo(expectedResult);
         }
 
@@ -281,7 +281,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithRevealEditActions(revealEditActions).Build();
 
-            // ClassicAssert
+            // Assert
             return result.RevealEditActions;
         }
 
@@ -296,7 +296,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithRequestedFromCabProfilePage(fromCabProfilePage).Build();
 
-            // ClassicAssert
+            // Assert
             return result.RequestedFromCabProfilePage;
         }
 
@@ -309,7 +309,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithSuccessBannerMessage("Test message").Build();
 
-            // ClassicAssert
+            // Assert
             result.SuccessBannerMessage.Should().Be("Test message");
         }
 
@@ -322,7 +322,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithIsEditLocked(true).Build();
 
-            // ClassicAssert
+            // Assert
             result.IsEditLocked.Should().BeTrue();
         }
 
@@ -337,7 +337,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithCabDetails(model).Build();
 
-            // ClassicAssert
+            // Assert
             result.CabDetailsViewModel.Should().NotBeNull();
         }
 
@@ -352,7 +352,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithCabContactViewModel(model).Build();
 
-            // ClassicAssert
+            // Assert
             result.CabContactViewModel.Should().NotBeNull();
         }
 
@@ -367,7 +367,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithCabBodyDetailsMRAViewModel(model).Build();
 
-            // ClassicAssert
+            // Assert
             result.CabBodyDetailsMRAViewModel.Should().NotBeNull();
         }
 
@@ -382,7 +382,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithCabLegislativeAreasViewModel(model).Build();
 
-            // ClassicAssert
+            // Assert
             result.CabLegislativeAreasViewModel.Should().NotBeNull();
         }
 
@@ -397,7 +397,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithProductScheduleDetailsViewModel(model).Build();
 
-            // ClassicAssert
+            // Assert
             result.CABProductScheduleDetailsViewModel.Should().NotBeNull();
         }
 
@@ -412,7 +412,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithCabSupportingDocumentDetailsViewModel(model).Build();
 
-            // ClassicAssert
+            // Assert
             result.CABSupportingDocumentDetailsViewModel.Should().NotBeNull();
         }
 
@@ -427,7 +427,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithCabGovernmentUserNotesViewModel(model).Build();
 
-            // ClassicAssert
+            // Assert
             result.CABGovernmentUserNotesViewModel.Should().NotBeNull();
         }
 
@@ -442,7 +442,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = _sut.WithCabHistoryViewModel(model).Build();
 
-            // ClassicAssert
+            // Assert
             result.CABHistoryViewModel.Should().NotBeNull();
         }
 
