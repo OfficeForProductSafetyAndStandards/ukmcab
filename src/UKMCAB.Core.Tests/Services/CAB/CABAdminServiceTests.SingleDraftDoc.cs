@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Data.Models;
+using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -21,8 +22,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.IsSingleDraftDocAsync(Guid.NewGuid());
             
-            // Assert
-            Assert.False(result);
+            // ClassicAssert
+            ClassicAssert.False(result);
         }
 
         [Test]
@@ -54,8 +55,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.IsSingleDraftDocAsync(cabId);
 
-            // Assert
-            Assert.True(true);
+            // ClassicAssert
+            ClassicAssert.True(true);
         }
 
         [Test]
@@ -87,8 +88,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.IsSingleDraftDocAsync(cabId);
 
-            // Assert
-            Assert.False(result);
+            // ClassicAssert
+            ClassicAssert.False(result);
         }       
     }
 }

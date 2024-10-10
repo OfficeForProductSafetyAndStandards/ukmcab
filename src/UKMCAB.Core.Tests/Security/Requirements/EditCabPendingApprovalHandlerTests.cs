@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Routing;
 using UKMCAB.Data.Models;
 using System.Collections.Generic;
 using System;
+using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Core.Tests.Security.Requirements
 {
@@ -36,8 +37,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
 
             var authorizationContext = new AuthorizationHandlerContext(new[] { new EditCabPendingApprovalRequirement() }, new ClaimsPrincipal(), null);
 
-            // Act & Assert
-            Assert.ThrowsAsync<Exception>(() => _handler.HandleAsync(authorizationContext));
+            // Act & ClassicAssert
+            ClassicAssert.ThrowsAsync<Exception>(() => _handler.HandleAsync(authorizationContext));
         }
 
         [Test]
@@ -55,8 +56,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.True(authorizationContext.HasSucceeded);
         }
 
         [Test]
@@ -74,8 +75,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.True(authorizationContext.HasSucceeded);
         }
 
         [Test]
@@ -93,8 +94,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.False(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.False(authorizationContext.HasSucceeded);
         }
 
         [Test]
@@ -122,8 +123,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.True(authorizationContext.HasSucceeded);
         }
 
         [Test]
@@ -144,8 +145,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.False(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.False(authorizationContext.HasSucceeded);
         }
 
         [Test]
@@ -166,8 +167,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.False(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.False(authorizationContext.HasSucceeded);
         }
 
         [Test]
@@ -188,8 +189,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.True(authorizationContext.HasSucceeded);
         }
 
         [Test]
@@ -211,8 +212,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.True(authorizationContext.HasSucceeded);
         }
 
         [Test]
@@ -233,8 +234,8 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             // Act
             await _handler.HandleAsync(authorizationContext);
 
-            // Assert
-            Assert.False(authorizationContext.HasSucceeded);
+            // ClassicAssert
+            ClassicAssert.False(authorizationContext.HasSucceeded);
         }
 
         private ClaimsPrincipal GenerateMockPrincipal(string roleId, params Claim[] claims)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Moq;
 using UKMCAB.Web.UI.Services;
 using Microsoft.AspNetCore.Http;
@@ -33,7 +34,7 @@ namespace UKMCAB.Web.UI.Tests
             var result = _sut.GetContentType(fileMock.Object, acceptedFileExtensionsContentTypes);
 
             //Assert
-            Assert.That(result, Is.EqualTo("application/pdf"));
+            ClassicAssert.That(result, Is.EqualTo("application/pdf"));
         }
 
         [Category("File Upload Utils Happy Path")]
@@ -52,7 +53,7 @@ namespace UKMCAB.Web.UI.Tests
             var result = _sut.GetContentType(null, acceptedFileExtensionsContentTypes);
 
             //Assert
-            Assert.That(result, Is.Empty);
+            ClassicAssert.That(result, Is.Empty);
         }
 
         [Category("File Upload Utils Sad Path")]
@@ -73,7 +74,7 @@ namespace UKMCAB.Web.UI.Tests
             var result = _sut.GetContentType(fileMock.Object, acceptedFileExtensionsContentTypes);
 
             //Assert
-            Assert.That(result, Is.Null);
+            ClassicAssert.That(result, Is.Null);
         }
 
         [Category("File Upload Utils Happy Path")]
@@ -109,8 +110,8 @@ namespace UKMCAB.Web.UI.Tests
 
 
             //Assert
-            Assert.That(result.Count, Is.EqualTo(2));
-            Assert.That(result, Is.EquivalentTo(selectedUploadedFiles));
+            ClassicAssert.That(result.Count, Is.EqualTo(2));
+            ClassicAssert.That(result, Is.EquivalentTo(selectedUploadedFiles));
         }
 
         [Category("File Upload Utils Sad Path")]
@@ -141,8 +142,8 @@ namespace UKMCAB.Web.UI.Tests
 
 
             //Assert
-            Assert.That(result.Count, Is.EqualTo(0));
-            Assert.That(result, Is.EquivalentTo(selectedUploadedFiles));
+            ClassicAssert.That(result.Count, Is.EqualTo(0));
+            ClassicAssert.That(result, Is.EquivalentTo(selectedUploadedFiles));
         }
 
 
@@ -180,8 +181,8 @@ namespace UKMCAB.Web.UI.Tests
 
 
             //Assert
-            Assert.That(uploadedFilesInLatestDocument.Count, Is.EqualTo(2));
-            Assert.That(latestdoc.Schedules.First().FileName, Is.EquivalentTo("file3.pdf"));
+            ClassicAssert.That(uploadedFilesInLatestDocument.Count, Is.EqualTo(2));
+            ClassicAssert.That(latestdoc.Schedules.First().FileName, Is.EquivalentTo("file3.pdf"));
         }
 
         [Category("File Upload Utils Sad Path")]
@@ -212,8 +213,8 @@ namespace UKMCAB.Web.UI.Tests
             _sut.RemoveSelectedUploadedFilesFromDocumentAsync(selectedUploadedFiles, latestdoc, "Schedules");
 
             //Assert
-            Assert.That(uploadedFilesInLatestDocument.Count, Is.EqualTo(3));
-            Assert.That(latestdoc.Schedules.First().FileName, Is.EquivalentTo("file1.pdf"));
+            ClassicAssert.That(uploadedFilesInLatestDocument.Count, Is.EqualTo(3));
+            ClassicAssert.That(latestdoc.Schedules.First().FileName, Is.EquivalentTo("file1.pdf"));
         }
 
         [Category("File Upload Utils Sad Path")]
@@ -231,10 +232,10 @@ namespace UKMCAB.Web.UI.Tests
             // Act
             var result = _sut.ValidateUploadFileAndAddAnyModelStateError(modelState, file, contentType, acceptedFileTypes);
 
-            // Assert
-            Assert.That(result, Is.False);
-            Assert.Contains("File", modelState.Keys.ToList());
-            Assert.That($"Select a {acceptedFileTypes} file 10 megabytes or less.", Is.EqualTo(modelState["File"].Errors[0].ErrorMessage));
+            // ClassicAssert
+            ClassicAssert.That(result, Is.False);
+            ClassicAssert.Contains("File", modelState.Keys.ToList());
+            ClassicAssert.That($"Select a {acceptedFileTypes} file 10 megabytes or less.", Is.EqualTo(modelState["File"].Errors[0].ErrorMessage));
         }
 
         [Category("File Upload Utils Sad Path")]
@@ -254,11 +255,11 @@ namespace UKMCAB.Web.UI.Tests
             // Act
             var result = _sut.ValidateUploadFileAndAddAnyModelStateError(modelState, fileMock.Object, contentType, acceptedFileTypes);
 
-            // Assert
-            Assert.That(result, Is.False);
-            Assert.Contains("File", modelState.Keys.ToList());
-            Assert.That("appointmentletter.doc can't be uploaded. Select a Doc file 10 megabytes or less.", Is.EqualTo(modelState["File"].Errors[0].ErrorMessage));
-            Assert.That("appointmentletter.doc can't be uploaded. Files must be in Doc format to be uploaded.", Is.EqualTo(modelState["File"].Errors[1].ErrorMessage));
+            // ClassicAssert
+            ClassicAssert.That(result, Is.False);
+            ClassicAssert.Contains("File", modelState.Keys.ToList());
+            ClassicAssert.That("appointmentletter.doc can't be uploaded. Select a Doc file 10 megabytes or less.", Is.EqualTo(modelState["File"].Errors[0].ErrorMessage));
+            ClassicAssert.That("appointmentletter.doc can't be uploaded. Files must be in Doc format to be uploaded.", Is.EqualTo(modelState["File"].Errors[1].ErrorMessage));
         }
 
         [Category("File Upload Utils Happy Path")]
@@ -278,9 +279,9 @@ namespace UKMCAB.Web.UI.Tests
             // Act
             var result = _sut.ValidateUploadFileAndAddAnyModelStateError(modelState, fileMock.Object, contentType, acceptedFileTypes);
 
-            // Assert
-            Assert.That(result, Is.True);
-            Assert.IsFalse(modelState.ContainsKey("File"));
+            // ClassicAssert
+            ClassicAssert.That(result, Is.True);
+            ClassicAssert.IsFalse(modelState.ContainsKey("File"));
         }
     }
 }

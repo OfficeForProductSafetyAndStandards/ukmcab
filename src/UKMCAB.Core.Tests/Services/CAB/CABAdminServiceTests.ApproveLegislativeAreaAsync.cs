@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -45,22 +46,22 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.ApproveLegislativeAreaAsync(userAccount, Guid.NewGuid(), legislativeAreaId, LAStatus.Approved);
 
-            // Assert
+            // ClassicAssert
             var auditLog = document.AuditLog.Single();
 
-            Assert.AreEqual(1, document.AuditLog.Count);
-            Assert.AreEqual(userAccount.Id, auditLog.UserId);
-            Assert.AreEqual($"{userAccount.FirstName} {userAccount.Surname}", auditLog.UserName);
-            Assert.AreEqual(userAccount.Role, auditLog.UserRole);
-            Assert.AreEqual(AuditCABActions.ApproveLegislativeArea, auditLog.Action);
-            Assert.AreEqual(null, auditLog.Comment);
-            Assert.AreEqual(null, auditLog.PublicComment);
+            ClassicAssert.AreEqual(1, document.AuditLog.Count);
+            ClassicAssert.AreEqual(userAccount.Id, auditLog.UserId);
+            ClassicAssert.AreEqual($"{userAccount.FirstName} {userAccount.Surname}", auditLog.UserName);
+            ClassicAssert.AreEqual(userAccount.Role, auditLog.UserRole);
+            ClassicAssert.AreEqual(AuditCABActions.ApproveLegislativeArea, auditLog.Action);
+            ClassicAssert.AreEqual(null, auditLog.Comment);
+            ClassicAssert.AreEqual(null, auditLog.PublicComment);
             var now = DateTime.UtcNow;
-            Assert.AreEqual(now.Year, auditLog.DateTime.Year);
-            Assert.AreEqual(now.Month, auditLog.DateTime.Month);
-            Assert.AreEqual(now.Day, auditLog.DateTime.Day);
-            Assert.AreEqual(now.Hour, auditLog.DateTime.Hour);
-            Assert.AreEqual(now.Minute, auditLog.DateTime.Minute);
+            ClassicAssert.AreEqual(now.Year, auditLog.DateTime.Year);
+            ClassicAssert.AreEqual(now.Month, auditLog.DateTime.Month);
+            ClassicAssert.AreEqual(now.Day, auditLog.DateTime.Day);
+            ClassicAssert.AreEqual(now.Hour, auditLog.DateTime.Hour);
+            ClassicAssert.AreEqual(now.Minute, auditLog.DateTime.Minute);
         }
 
         [Test]
@@ -96,21 +97,21 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.DeclineLegislativeAreaAsync(userAccount, Guid.NewGuid(), legislativeAreaId, "Test reason", LAStatus.Approved);
 
-            // Assert
+            // ClassicAssert
             var auditLog = document.AuditLog.Single();
 
-            Assert.AreEqual(1, document.AuditLog.Count);
-            Assert.AreEqual(userAccount.Id, auditLog.UserId);
-            Assert.AreEqual($"{userAccount.FirstName} {userAccount.Surname}", auditLog.UserName);
-            Assert.AreEqual(userAccount.Role, auditLog.UserRole);
-            Assert.AreEqual(AuditCABActions.DeclineLegislativeArea, auditLog.Action);
-            Assert.AreEqual("Legislative area Test name declined: </br>Test reason", auditLog.Comment);
-            Assert.AreEqual(null, auditLog.PublicComment);
+            ClassicAssert.AreEqual(1, document.AuditLog.Count);
+            ClassicAssert.AreEqual(userAccount.Id, auditLog.UserId);
+            ClassicAssert.AreEqual($"{userAccount.FirstName} {userAccount.Surname}", auditLog.UserName);
+            ClassicAssert.AreEqual(userAccount.Role, auditLog.UserRole);
+            ClassicAssert.AreEqual(AuditCABActions.DeclineLegislativeArea, auditLog.Action);
+            ClassicAssert.AreEqual("Legislative area Test name declined: </br>Test reason", auditLog.Comment);
+            ClassicAssert.AreEqual(null, auditLog.PublicComment);
 
             var now = DateTime.UtcNow;
             var expectedDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 
-            Assert.AreEqual(expectedDate, new DateTime(auditLog.DateTime.Year, auditLog.DateTime.Month, auditLog.DateTime.Day, auditLog.DateTime.Hour, auditLog.DateTime.Minute, auditLog.DateTime.Second));
+            ClassicAssert.AreEqual(expectedDate, new DateTime(auditLog.DateTime.Year, auditLog.DateTime.Month, auditLog.DateTime.Day, auditLog.DateTime.Hour, auditLog.DateTime.Minute, auditLog.DateTime.Second));
         }
     }
 }

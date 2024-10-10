@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using NUnit.Framework;
+using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Common.Tests;
 
@@ -15,7 +16,7 @@ public class UriTests
     public void EmptyPath_GetAbsoluteUriFromRequestAndPath_ThrowsArgumentNullException(string path)
     {
         Mock<HttpContext> httpContext = new Mock<HttpContext>();
-        Assert.Throws<ArgumentNullException>(() =>
+        ClassicAssert.Throws<ArgumentNullException>(() =>
             UriHelper.GetAbsoluteUriFromRequestAndPath(httpContext.Object.Request, path));
     }
     
@@ -28,6 +29,6 @@ public class UriTests
         httpContext.SetupGet(h => h.Request.Host)
             .Returns(() => new HostString("test", 99));
         var result = UriHelper.GetAbsoluteUriFromRequestAndPath(httpContext.Object.Request, "/path");
-        Assert.AreEqual("https://test:99/path", result);
+        ClassicAssert.AreEqual("https://test:99/path", result);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -22,8 +23,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.FindAllDocumentsByCABIdAsync(_faker.Random.Word());
 
-            // Assert
-            Assert.False(result.Any());
+            // ClassicAssert
+            ClassicAssert.False(result.Any());
         }
 
 
@@ -59,10 +60,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act 
             var result = await _sut.FindAllDocumentsByCABIdAsync(_faker.Random.Word());
 
-            // Assert
-            Assert.AreEqual(expectedResults[2].CABId, result[0].CABId);
-            Assert.AreEqual(expectedResults[1].CABId, result[1].CABId);
-            Assert.AreEqual(expectedResults[0].CABId, result[2].CABId);
+            // ClassicAssert
+            ClassicAssert.AreEqual(expectedResults[2].CABId, result[0].CABId);
+            ClassicAssert.AreEqual(expectedResults[1].CABId, result[1].CABId);
+            ClassicAssert.AreEqual(expectedResults[0].CABId, result[2].CABId);
         }
     }
 }

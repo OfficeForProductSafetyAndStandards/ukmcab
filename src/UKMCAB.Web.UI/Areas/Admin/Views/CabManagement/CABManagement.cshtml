@@ -54,22 +54,22 @@
 </div>
 <div class="govuk-grid-row">
     <div class="govuk-body govuk-grid-column-full">
-        <div class="govuk-tabs draft-tabs" data-module="govuk-tabs">
+        <div class="govuk-tabs">
             <ul class="govuk-tabs__list">
                 <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.All, "govuk-tabs__list-item--selected")">
-                    <a id="@CabManagementController.TabNames.All" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.All" asp-route-tabNav="true" class="tab-item-title">All (@Model.AllCount)</a>
+                    <a id="@CabManagementController.TabNames.All" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.All" asp-route-tabNav="true" class="govuk-tabs__tab">All (@Model.AllCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.Draft, "govuk-tabs__list-item--selected")">
-                    <a id="@CabManagementController.TabNames.Draft" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.Draft" asp-route-tabNav="true" class="tab-item-title">Draft (@Model.DraftCount)</a>
+                    <a id="@CabManagementController.TabNames.Draft" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.Draft" asp-route-tabNav="true" class="govuk-tabs__tab">Draft (@Model.DraftCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.PendingDraft, "govuk-tabs__list-item--selected")">
-                    <a id="@CabManagementController.TabNames.PendingDraft" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingDraft" asp-route-tabNav="true" class="tab-item-title">Pending draft (@Model.PendingDraftCount)</a>
+                    <a id="@CabManagementController.TabNames.PendingDraft" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingDraft" asp-route-tabNav="true" class="govuk-tabs__tab">Pending draft (@Model.PendingDraftCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.PendingPublish, "govuk-tabs__list-item--selected")">
-                    <a id="@CabManagementController.TabNames.PendingPublish" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingPublish" asp-route-tabNav="true" class="tab-item-title">Pending publish (@Model.PendingPublishCount)</a>
+                    <a id="@CabManagementController.TabNames.PendingPublish" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingPublish" asp-route-tabNav="true" class="govuk-tabs__tab">Pending publish (@Model.PendingPublishCount)</a>
                 </li>
                 <li class="govuk-tabs__list-item @Html.Conditional(Model.TabName == CabManagementController.TabNames.PendingArchive, "govuk-tabs__list-item--selected")">
-                    <a id="@CabManagementController.TabNames.PendingArchive" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingArchive" asp-route-tabNav="true" class="tab-item-title">Pending archive (@Model.PendingArchiveCount)</a>
+                    <a id="@CabManagementController.TabNames.PendingArchive" asp-route="@CabManagementController.Routes.CABManagement" asp-route-tabName="@CabManagementController.TabNames.PendingArchive" asp-route-tabNav="true" class="govuk-tabs__tab">Pending archive (@Model.PendingArchiveCount)</a>
                 </li>
             </ul>
 

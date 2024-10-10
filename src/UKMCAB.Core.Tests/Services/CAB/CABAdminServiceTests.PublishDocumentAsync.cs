@@ -9,6 +9,7 @@ using UKMCAB.Data.Models.Users;
 using System.Linq;
 using UKMCAB.Core.Security;
 using UKMCAB.Data;
+using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {
@@ -35,11 +36,11 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object, document);
 
-            // Assert
-            Assert.AreEqual(9, result.DocumentLegislativeAreas.Count);
-            Assert.AreEqual(LAStatus.Published, result.DocumentLegislativeAreas.First().Status);
-            Assert.AreEqual(9, result.ScopeOfAppointments.Count);
-            Assert.AreEqual(8, result.Schedules?.Count);
+            // ClassicAssert
+            ClassicAssert.AreEqual(9, result.DocumentLegislativeAreas.Count);
+            ClassicAssert.AreEqual(LAStatus.Published, result.DocumentLegislativeAreas.First().Status);
+            ClassicAssert.AreEqual(9, result.ScopeOfAppointments.Count);
+            ClassicAssert.AreEqual(8, result.Schedules?.Count);
         }
 
         [Test]
@@ -71,9 +72,9 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     ScopeOfAppointments = scopeOfAppointments,
                 });
 
-            // Assert
-            Assert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
-            Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
+            // ClassicAssert
+            ClassicAssert.AreEqual(Enum.GetNames(typeof(LAStatus)).Length - 1, result.DocumentLegislativeAreas.Count);
+            ClassicAssert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
         }
 
         [Test]
@@ -113,9 +114,9 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     },
                 });
 
-            // Assert
-            Assert.AreEqual(1, result.DocumentLegislativeAreas.Count);
-            Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
+            // ClassicAssert
+            ClassicAssert.AreEqual(1, result.DocumentLegislativeAreas.Count);
+            ClassicAssert.True(result.DocumentLegislativeAreas.All(la => la.Status == LAStatus.Published));
         }
 
         [Test]
@@ -155,8 +156,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.PublishDocumentAsync(new Mock<UserAccount>().Object,
                 latestDocument, null, null, DataConstants.PublishType.MinorPublish);
 
-            // Assert
-            Assert.AreEqual(latestDocument.LastUpdatedDate, lastUpdatedDate);
+            // ClassicAssert
+            ClassicAssert.AreEqual(latestDocument.LastUpdatedDate, lastUpdatedDate);
             _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, lastUpdatedDate), Times.Once());
         }
 
@@ -192,8 +193,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             var currentDateAfter = DateTime.Now;
 
-            // Assert
-            Assert.AreEqual(lastUpdatedDate.Date, latestDocument.LastUpdatedDate.Date);
+            // ClassicAssert
+            ClassicAssert.AreEqual(lastUpdatedDate.Date, latestDocument.LastUpdatedDate.Date);
             _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, It.Is<DateTime>(d => d >= currentDateBefore && d <= currentDateAfter)), Times.Once);
         }
 
@@ -238,8 +239,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
 
             var currentDateAfter = DateTime.Now;
 
-            // Assert
-            Assert.IsTrue(latestDocument.LastUpdatedDate >= currentDateBefore && latestDocument.LastUpdatedDate <= currentDateAfter);
+            // ClassicAssert
+            ClassicAssert.IsTrue(latestDocument.LastUpdatedDate >= currentDateBefore && latestDocument.LastUpdatedDate <= currentDateAfter);
             _mockCABRepository.Verify(repo => repo.UpdateAsync(latestDocument, It.Is<DateTime>(d => d >= currentDateBefore && d <= currentDateAfter)), Times.Once);
         }
 

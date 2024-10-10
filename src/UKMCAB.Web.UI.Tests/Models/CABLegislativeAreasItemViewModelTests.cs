@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System;
 using System.Collections.Generic;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
@@ -24,8 +25,8 @@ namespace UKMCAB.Web.UI.Tests.Models
             _sut.CanChooseScopeOfAppointment = canChooseSoa;
             _sut.ReviewDate = reviewDate;
 
-            // Assert
-            Assert.That( _sut.IsComplete.Equals(expectedResult));
+            // ClassicAssert
+            ClassicAssert.That( _sut.IsComplete.Equals(expectedResult));
         }
 
         public static IEnumerable<TestCaseData> GetTestCases()
@@ -47,8 +48,8 @@ namespace UKMCAB.Web.UI.Tests.Models
             var _sut = new CABLegislativeAreasItemViewModel();
             _sut.NewlyCreated = newlyCreated;
 
-            // Assert
-            Assert.AreEqual(expected, _sut.IsNewlyCreated);
+            // ClassicAssert
+            ClassicAssert.AreEqual(expected, _sut.IsNewlyCreated);
         }
     }
 }

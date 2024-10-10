@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using Moq;
 using System;
 using System.Collections.Generic;
@@ -20,8 +21,8 @@ namespace UKMCAB.Core.Tests.Services.CAB
             _mockCABRepository.Setup(x => x.Query(It.IsAny<Expression<Func<Document, bool>>>()))
                 .ReturnsAsync(new List<Document>());
 
-            // Act and Assert
-            Assert.ThrowsAsync<InvalidOperationException>(async () =>
+            // Act and ClassicAssert
+            ClassicAssert.ThrowsAsync<InvalidOperationException>(async () =>
                 await _sut.ArchiveSchedulesAsync(new Mock<UserAccount>().Object, Guid.NewGuid(), new List<Guid> { Guid.NewGuid() }), "No document found");
             return Task.CompletedTask;
         }
@@ -49,7 +50,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.ArchiveSchedulesAsync(new Mock<UserAccount>().Object, cabId, scheduleIds);
 
-            // Assert
+            // ClassicAssert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>
@@ -81,7 +82,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             await _sut.ArchiveSchedulesAsync(new Mock<UserAccount>().Object, cabId, scheduleIds);
             
-            // Assert
+            // ClassicAssert
             _mockCABRepository.Verify(r => r.Query(It.IsAny<Expression<Func<Document, bool>>>()), Times.Once);
             _mockCABRepository.Verify(
                 r => r.UpdateAsync(It.Is<Document>(d =>

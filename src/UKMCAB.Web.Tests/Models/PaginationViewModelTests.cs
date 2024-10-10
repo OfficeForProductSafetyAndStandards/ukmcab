@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,13 +26,13 @@ namespace UKMCAB.Web.Tests.Models
             var result = sut.PageRange();
 
             //Assert 
-            Assert.IsNotNull(result);
-            Assert.AreEqual(expected.range, result);
+            ClassicAssert.IsNotNull(result);
+            ClassicAssert.AreEqual(expected.range, result);
 
-            Assert.AreEqual(expected.showPrevious, sut.ShowPrevious);
-            Assert.AreEqual(expected.showNext, sut.ShowNext);
-            Assert.AreEqual(expected.firstResult, sut.FirstResult);
-            Assert.AreEqual(expected.lastResult, sut.LastResult);
+            ClassicAssert.AreEqual(expected.showPrevious, sut.ShowPrevious);
+            ClassicAssert.AreEqual(expected.showNext, sut.ShowNext);
+            ClassicAssert.AreEqual(expected.firstResult, sut.FirstResult);
+            ClassicAssert.AreEqual(expected.lastResult, sut.LastResult);
         }
 
         internal class PaginationTestDataSource { 

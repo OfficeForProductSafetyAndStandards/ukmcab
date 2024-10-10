@@ -34,7 +34,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = WithDocumentLegislativeAreas_PopulatesLegislativeAreas(false);
 
-            // Assert
+            // ClassicAssert
             result.ActiveLegislativeAreas.Count.Should().Be(1);
             result.ArchivedLegislativeAreas.Count.Should().Be(0);
         }
@@ -45,7 +45,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
             // Act
             var result = WithDocumentLegislativeAreas_PopulatesLegislativeAreas(true);
 
-            // Assert
+            // ClassicAssert
             result.ActiveLegislativeAreas.Count.Should().Be(0);
             result.ArchivedLegislativeAreas.Count.Should().Be(1);
         }
@@ -119,7 +119,7 @@ namespace UKMCAB.Web.UI.Tests.Models.Builders
                 new List<ProtectionAgainstRiskModel>(),
                 new List<AreaOfCompetencyModel>()).Build();
 
-            // Assert
+            // ClassicAssert
             return result;
         }
     }

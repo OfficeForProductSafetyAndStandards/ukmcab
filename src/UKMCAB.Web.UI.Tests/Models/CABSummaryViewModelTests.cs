@@ -1,4 +1,5 @@
 ﻿using NUnit.Framework;
+using NUnit.Framework.Legacy;
 using System;
 using UKMCAB.Data.Models;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
@@ -46,7 +47,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.GetBannerContent();
 
             //Assert
-            Assert.That(result, Is.EqualTo(""));
+            ClassicAssert.That(result, Is.EqualTo(""));
         }
         
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -67,7 +68,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.GetBannerContent();
 
             //Assert
-            Assert.That(result, Is.EqualTo(string.Empty));
+            ClassicAssert.That(result, Is.EqualTo(string.Empty));
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -89,7 +90,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.GetBannerContent();
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedString));
+            ClassicAssert.That(result, Is.EqualTo(expectedString));
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -112,7 +113,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.GetBannerContent();
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedString));
+            ClassicAssert.That(result, Is.EqualTo(expectedString));
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -137,7 +138,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.GetBannerContent();
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedString));
+            ClassicAssert.That(result, Is.EqualTo(expectedString));
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -162,7 +163,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.GetBannerContent();
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedString));
+            ClassicAssert.That(result, Is.EqualTo(expectedString));
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -185,7 +186,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.GetBannerContent();
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedString));
+            ClassicAssert.That(result, Is.EqualTo(expectedString));
         }
 
         [Category("CAB Summary page - Banner Content Happy Path")]
@@ -207,7 +208,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.GetBannerContent();
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedString));
+            ClassicAssert.That(result, Is.EqualTo(expectedString));
         }
 
         #endregion
@@ -228,7 +229,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = cabSummary.ShowProfileVisibilityWarning;
 
             //Assert
-            Assert.That(result, Is.True);
+            ClassicAssert.That(result, Is.True);
         }
 
         #endregion
@@ -252,7 +253,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = _sut.ShowSubstatusName;
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         #endregion
@@ -278,7 +279,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = cabSummary.ShowEditButton;
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         [Category("CAB Summary page - Show Edit Button")]
@@ -300,7 +301,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = cabSummary.ShowEditButton;
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         [Category("CAB Summary page - Show Edit Button for OPSS admin")]
@@ -320,7 +321,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = cabSummary.ShowEditButton;
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         [Category("CAB Summary page - Show Edit Button when OPSS admin submits cab for ogd's approval")]
@@ -341,7 +342,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = cabSummary.ShowEditButton;
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
         #endregion
 
@@ -366,7 +367,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = cabSummary.ShowSubSectionEditAction;
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         #endregion
@@ -385,8 +386,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowReviewButton;
 
-            // Assert
-            Assert.That(result, Is.True);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.True);
         }
 
         [Category("CAB Summary page - Show Review Button for OGD")]
@@ -400,8 +401,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowReviewButton;
 
-            // Assert
-            Assert.That(result, Is.True);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.True);
         }
 
         [Category("CAB Summary page - Show Review Button")]
@@ -415,8 +416,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowReviewButton;
 
-            // Assert
-            Assert.That(result, Is.False);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.False);
         }
 
         #endregion
@@ -441,8 +442,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowPublishButton;
 
-            // Assert
-            Assert.That(result, Is.True);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.True);
         }
         #endregion
 
@@ -464,8 +465,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowApproveToPublishButton;
 
-            // Assert
-            Assert.That(result, Is.True);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.True);
         }
 
         [Category("CAB Summary page - Show Approve To Publish Button")]
@@ -484,8 +485,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowApproveToPublishButton;
 
-            // Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            // ClassicAssert
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         #endregion
@@ -511,7 +512,7 @@ namespace UKMCAB.Web.Tests.Models
             var result = cabSummary.CanSubmitForApproval;
 
             //Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
 
@@ -531,8 +532,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowMandatoryInfoWarning;
 
-            // Assert
-            Assert.That(result, Is.False);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.False);
         }
 
         [Category("CAB Summary page - Show Mandatory Info Warning")]
@@ -547,8 +548,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowMandatoryInfoWarning;
 
-            // Assert
-            Assert.That(result, Is.True);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.True);
         }
 
         #endregion
@@ -571,8 +572,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowDeclineButton;
 
-            // Assert
-            Assert.That(result, Is.True);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.True);
         }
 
         #endregion
@@ -592,8 +593,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowSaveAsDraftButton;
 
-            // Assert
-            Assert.That(result, Is.False);
+            // ClassicAssert
+            ClassicAssert.That(result, Is.False);
         }
 
         #endregion
@@ -616,8 +617,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowDeleteDraftButton;
 
-            // Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            // ClassicAssert
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         [Category("CAB Summary page - Show Delete Draft Button")]
@@ -633,8 +634,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowDeleteDraftButton;
 
-            // Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            // ClassicAssert
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         #endregion
@@ -662,8 +663,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowCancelPublishButton;
 
-            // Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            // ClassicAssert
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         [Category("CAB Summary page - Show Cancel Publish Button")]
@@ -679,8 +680,8 @@ namespace UKMCAB.Web.Tests.Models
             // Act
             var result = cabSummary.ShowCancelPublishButton;
 
-            // Assert
-            Assert.That(result, Is.EqualTo(expectedResult));
+            // ClassicAssert
+            ClassicAssert.That(result, Is.EqualTo(expectedResult));
         }
 
         #endregion
