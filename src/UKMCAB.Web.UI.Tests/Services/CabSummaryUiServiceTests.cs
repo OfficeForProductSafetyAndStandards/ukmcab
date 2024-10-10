@@ -84,7 +84,7 @@ namespace UKMCAB.Web.UI.Tests.Services
             // Act
             await _sut.CreateDocumentAsync(document, true);
 
-            // ClassicAssert
+            // Assert
             _mockCabAdminService.Verify(m => m.CreateDocumentAsync(
                 It.Is<UserAccount>(u => u.Id == userAccount.Id),
                 It.Is<Document>(d => d.id == document.id)), Times.Once);
@@ -102,7 +102,7 @@ namespace UKMCAB.Web.UI.Tests.Services
             // Act
             await _sut.CreateDocumentAsync(document, subSectionEditAllowed);
 
-            // ClassicAssert
+            // Assert
             _mockCabAdminService.Verify(m => m.CreateDocumentAsync(It.IsAny<UserAccount>(), It.IsAny<Document>()), Times.Never);
         } 
 
@@ -121,7 +121,7 @@ namespace UKMCAB.Web.UI.Tests.Services
             // Act
             var result = _sut.GetSuccessBannerMessage();
 
-            // ClassicAssert
+            // Assert
             result.Should().Be(expectedResult);
             tempData.ContainsKey(key).Should().BeFalse();
         }
@@ -137,7 +137,7 @@ namespace UKMCAB.Web.UI.Tests.Services
             // Act
             var result = _sut.GetSuccessBannerMessage();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeNull();
         }
 
@@ -151,7 +151,7 @@ namespace UKMCAB.Web.UI.Tests.Services
             // Act
             var result = _sut.LockCabForUser(model);
 
-            // ClassicAssert
+            // Assert
             _mockEditLockService.Verify(m => m.SetAsync(model.CABId, userId), Times.Once);
         }
 
@@ -162,7 +162,7 @@ namespace UKMCAB.Web.UI.Tests.Services
             // Act
             await _sut.LockCabForUser(model);
 
-            // ClassicAssert
+            // Assert
             _mockEditLockService.Verify(m => m.SetAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
         }
 

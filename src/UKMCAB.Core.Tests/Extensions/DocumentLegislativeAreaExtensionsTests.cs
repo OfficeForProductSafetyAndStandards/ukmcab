@@ -31,7 +31,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.ApprovedByOpssAdmin();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeTrue();
         }
 
@@ -47,7 +47,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.ApprovedByOpssAdmin();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeFalse();
         }
 
@@ -67,7 +67,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.IsPendingOgdApproval();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeTrue();
         }
 
@@ -83,7 +83,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.IsPendingOgdApproval();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeFalse();
         }
 
@@ -104,7 +104,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.IsPendingApprovalByOpss();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeTrue();
         }
 
@@ -120,7 +120,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.IsPendingApprovalByOpss();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeFalse();
         }
 
@@ -136,7 +136,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.IsActive();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeTrue();
         }
 
@@ -153,7 +153,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.IsActive();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeFalse();
         }
 
@@ -186,7 +186,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.ActionableByOpssAdmin();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeTrue();
         }
 
@@ -202,7 +202,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.ActionableByOpssAdmin();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeFalse();
         }
 
@@ -236,7 +236,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.HasBeenActioned();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeTrue();
         }
 
@@ -252,7 +252,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             var result = sut.HasBeenActioned();
 
-            // ClassicAssert
+            // Assert
             result.Should().BeFalse();
         }
 
@@ -268,7 +268,7 @@ namespace UKMCAB.Core.Tests.Extensions
             // Act
             documentLegislativeArea.MarkAsDraft(documentStatus, documentSubStatus);
 
-            // ClassicAssert
+            // Assert
             return documentLegislativeArea.Status;
         }
 

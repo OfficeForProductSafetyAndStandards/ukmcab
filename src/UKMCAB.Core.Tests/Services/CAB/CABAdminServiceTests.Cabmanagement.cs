@@ -76,7 +76,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.FindAllCABManagementQueueDocumentsForUserRole(role);
 
-            // ClassicAssert
+            // Assert
             Assert.That(12, Is.EqualTo(result.AllCabs.Count()));
             Assert.That(2, Is.EqualTo(result.DraftCabs.Count()));
             Assert.That(4, Is.EqualTo(result.PendingDraftCabs.Count()));
@@ -141,7 +141,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Act
             var result = await _sut.FindAllCABManagementQueueDocumentsForUserRole(role);
 
-            // ClassicAssert
+            // Assert
             Assert.That(6, Is.EqualTo(result.AllCabs.Count()));
             Assert.That(1, Is.EqualTo(result.DraftCabs.Count()));
             Assert.That(2, Is.EqualTo(result.PendingDraftCabs.Count()));
