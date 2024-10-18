@@ -138,6 +138,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             vm.CabLegislativeAreas.Regulation = la.Regulation;
 
             var designatedStandards = await _legislativeAreaService.GetDesignatedStandardsForDocumentAsync(cabDocument);
+            designatedStandards = designatedStandards.Where(i => i.LegislativeAreaId == legislativeAreaId).ToList();
             vm.CabLegislativeAreas.DesignatedStandards = designatedStandards.Select(d => new DesignatedStandardReadOnlyViewModel(d.Id, d.Name, d.ReferenceNumber, d.NoticeOfPublicationReference)).ToList();
 
             if (productId.HasValue)
