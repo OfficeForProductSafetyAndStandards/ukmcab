@@ -3,6 +3,7 @@
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
+    using NUnit.Framework.Legacy;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -63,11 +64,11 @@
             var legislativeAreas = await _legislativeAreaService.GetAllLegislativeAreasAsync();
 
             // Assert
-            Assert.IsNotNull(legislativeAreas);
-            Assert.AreEqual(3, legislativeAreas.Count());
-            Assert.AreEqual("Name1", legislativeAreas.ElementAt(0).Name);
-            Assert.AreEqual("Name2", legislativeAreas.ElementAt(1).Name);
-            Assert.AreEqual("Name3", legislativeAreas.ElementAt(2).Name);
+            Assert.That(legislativeAreas, Is.Not.Null);
+            Assert.That(3, Is.EqualTo(legislativeAreas.Count()));
+            Assert.That("Name1", Is.EqualTo(legislativeAreas.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(legislativeAreas.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(legislativeAreas.ElementAt(2).Name));
         }
 
         #endregion
@@ -100,10 +101,10 @@
                 await _legislativeAreaService.GetLegislativeAreasAsync(excludeLegislativeAreaIds);
 
             // Assert
-            Assert.IsNotNull(availableLegislativeAreas);
-            Assert.AreEqual(2, availableLegislativeAreas.Count());
-            Assert.AreEqual("Name3", availableLegislativeAreas.ElementAt(0).Name);
-            Assert.AreEqual("Name4", availableLegislativeAreas.ElementAt(1).Name);
+            Assert.That(availableLegislativeAreas, Is.Not.Null);
+            Assert.That(2, Is.EqualTo(availableLegislativeAreas.Count()));
+            Assert.That("Name3", Is.EqualTo(availableLegislativeAreas.ElementAt(0).Name));
+            Assert.That("Name4", Is.EqualTo(availableLegislativeAreas.ElementAt(1).Name));
         }
 
         #endregion
@@ -134,8 +135,8 @@
             var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(testGuid);
 
             // Assert
-            Assert.IsNotNull(legislativeArea);
-            Assert.AreEqual("Name1", legislativeArea!.Name);
+            Assert.That(legislativeArea, Is.Not.Null);
+            Assert.That("Name1", Is.EqualTo(legislativeArea!.Name));
         }
 
         #endregion
@@ -165,8 +166,8 @@
             var legislativeAreas = (await _legislativeAreaService.GetLegislativeAreasByRoleId(testRoleId)).ToList();
 
             // Assert
-            Assert.IsNotEmpty(legislativeAreas);
-            Assert.AreEqual(testRoleId, legislativeAreas.First().RoleId);
+            Assert.That(legislativeAreas, Is.Not.Empty);
+            Assert.That(testRoleId, Is.EqualTo(legislativeAreas.First().RoleId));
         }
         
         [Test]
@@ -181,7 +182,7 @@
             var legislativeAreas = (await _legislativeAreaService.GetLegislativeAreasByRoleId(testRoleId)).ToList();
 
             // Assert
-            Assert.IsEmpty(legislativeAreas);
+            Assert.That(legislativeAreas, Is.Empty);
         }
         #endregion
 
@@ -206,16 +207,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsNotNull(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.PurposeOfAppointments.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.PurposeOfAppointments.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.PurposeOfAppointments.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.PurposeOfAppointments.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Not.Null);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.PurposeOfAppointments.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.PurposeOfAppointments.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.PurposeOfAppointments.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.PurposeOfAppointments.ElementAt(2).Name));
         }
 
         [Test]
@@ -240,16 +241,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Categories.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Not.Null);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Categories.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Categories.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Categories.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Categories.ElementAt(2).Name));
         }
 
         [Test]
@@ -277,16 +278,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsNotEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Products.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Not.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Products.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Products.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Products.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Products.ElementAt(2).Name));
         }
 
         [Test]
@@ -317,16 +318,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsNotNull(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Not.Null);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Procedures.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(2).Name));
         }
 
         #endregion
@@ -352,16 +353,16 @@
                     Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Categories.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Not.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Categories.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Categories.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Categories.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Categories.ElementAt(2).Name));
         }
 
         [Test]
@@ -386,16 +387,16 @@
                     Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsNotEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Categories.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Categories.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Categories.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Categories.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Not.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Categories.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Categories.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Categories.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Categories.ElementAt(2).Name));
         }
 
         [Test]
@@ -420,16 +421,16 @@
                     Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsNotEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Products.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Not.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Products.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Products.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Products.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Products.ElementAt(2).Name));
         }
 
         [Test]
@@ -457,16 +458,16 @@
                     Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsNotEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Not.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Procedures.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(2).Name));
         }
 
         #endregion
@@ -498,16 +499,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsNotEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Subcategories.Count());
-            Assert.AreEqual("Sub1", nextScopeOptions.Subcategories.ElementAt(0).Name);
-            Assert.AreEqual("Sub2", nextScopeOptions.Subcategories.ElementAt(1).Name);
-            Assert.AreEqual("Sub3", nextScopeOptions.Subcategories.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Not.Null);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Subcategories.Count()));
+            Assert.That("Sub1", Is.EqualTo(nextScopeOptions.Subcategories.ElementAt(0).Name));
+            Assert.That("Sub2", Is.EqualTo(nextScopeOptions.Subcategories.ElementAt(1).Name));
+            Assert.That("Sub3", Is.EqualTo(nextScopeOptions.Subcategories.ElementAt(2).Name));
         }
 
         [Test]
@@ -533,16 +534,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsNotEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Products.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Products.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Products.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Products.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Not.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Products.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Products.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Products.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Products.ElementAt(2).Name));
         }
 
         [Test]
@@ -571,16 +572,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForCategoryAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsNotEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Not.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Procedures.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(2).Name));
         }
 
         #endregion
@@ -599,12 +600,12 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForSubCategoryAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
         }
 
         [Test]
@@ -626,16 +627,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForSubCategoryAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsNotEmpty(nextScopeOptions.Products);
-            Assert.IsEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Products.Count());
-            Assert.AreEqual("Prod1", nextScopeOptions.Products.ElementAt(0).Name);
-            Assert.AreEqual("Prod2", nextScopeOptions.Products.ElementAt(1).Name);
-            Assert.AreEqual("Prod3", nextScopeOptions.Products.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Not.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Products.Count()));
+            Assert.That("Prod1", Is.EqualTo(nextScopeOptions.Products.ElementAt(0).Name));
+            Assert.That("Prod2", Is.EqualTo(nextScopeOptions.Products.ElementAt(1).Name));
+            Assert.That("Prod3", Is.EqualTo(nextScopeOptions.Products.ElementAt(2).Name));
         }
 
         #endregion
@@ -659,16 +660,16 @@
                 await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForProductAsync(Guid.NewGuid());
 
             // Assert
-            Assert.IsNotNull(nextScopeOptions);
-            Assert.IsEmpty(nextScopeOptions!.PurposeOfAppointments);
-            Assert.IsEmpty(nextScopeOptions.Categories);
-            Assert.IsEmpty(nextScopeOptions.Subcategories);
-            Assert.IsEmpty(nextScopeOptions.Products);
-            Assert.IsNotEmpty(nextScopeOptions.Procedures);
-            Assert.AreEqual(3, nextScopeOptions.Procedures.Count());
-            Assert.AreEqual("Name1", nextScopeOptions.Procedures.ElementAt(0).Name);
-            Assert.AreEqual("Name2", nextScopeOptions.Procedures.ElementAt(1).Name);
-            Assert.AreEqual("Name3", nextScopeOptions.Procedures.ElementAt(2).Name);
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions!.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Not.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.Procedures.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.Procedures.ElementAt(2).Name));
         }
 
         #endregion
@@ -702,8 +703,8 @@
             var purposeOfAppointment = await _legislativeAreaService.GetPurposeOfAppointmentByIdAsync(testGuid);
 
             // Assert
-            Assert.IsNotNull(purposeOfAppointment);
-            Assert.AreEqual("Name1", purposeOfAppointment!.Name);
+            Assert.That(purposeOfAppointment, Is.Not.Null);
+            Assert.That("Name1", Is.EqualTo(purposeOfAppointment!.Name));
         }
 
         #endregion
@@ -746,8 +747,8 @@
             var category = await _legislativeAreaService.GetCategoryByIdAsync(testGuid);
 
             // Assert
-            Assert.IsNotNull(category);
-            Assert.AreEqual("Name1", category!.Name);
+            Assert.That(category, Is.Not.Null);
+            Assert.That("Name1", Is.EqualTo(category!.Name));
         }
 
         #endregion
@@ -778,8 +779,8 @@
             var subCategory = await _legislativeAreaService.GetSubCategoryByIdAsync(testGuid);
 
             // Assert
-            Assert.IsNotNull(subCategory);
-            Assert.AreEqual("Name1", subCategory!.Name);
+            Assert.That(subCategory, Is.Not.Null);
+            Assert.That("Name1", Is.EqualTo(subCategory!.Name));
         }
 
         #endregion

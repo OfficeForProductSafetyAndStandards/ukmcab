@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UKMCAB.Core.Services.CAB;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Web.UI.Tests
 {
@@ -233,7 +234,7 @@ namespace UKMCAB.Web.UI.Tests
 
             // Assert
             Assert.That(result, Is.False);
-            Assert.Contains("File", modelState.Keys.ToList());
+            CollectionAssert.Contains(modelState.Keys.ToList(), "File");
             Assert.That($"Select a {acceptedFileTypes} file 10 megabytes or less.", Is.EqualTo(modelState["File"].Errors[0].ErrorMessage));
         }
 
@@ -256,7 +257,7 @@ namespace UKMCAB.Web.UI.Tests
 
             // Assert
             Assert.That(result, Is.False);
-            Assert.Contains("File", modelState.Keys.ToList());
+            CollectionAssert.Contains(modelState.Keys.ToList(), "File");
             Assert.That("appointmentletter.doc can't be uploaded. Select a Doc file 10 megabytes or less.", Is.EqualTo(modelState["File"].Errors[0].ErrorMessage));
             Assert.That("appointmentletter.doc can't be uploaded. Files must be in Doc format to be uploaded.", Is.EqualTo(modelState["File"].Errors[1].ErrorMessage));
         }
@@ -280,7 +281,7 @@ namespace UKMCAB.Web.UI.Tests
 
             // Assert
             Assert.That(result, Is.True);
-            Assert.IsFalse(modelState.ContainsKey("File"));
+            Assert.That(modelState.ContainsKey("File"), Is.False);
         }
     }
 }

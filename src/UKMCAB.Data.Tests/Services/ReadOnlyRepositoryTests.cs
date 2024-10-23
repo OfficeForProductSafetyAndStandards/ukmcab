@@ -68,7 +68,7 @@ public class ReadOnlyRepositoryTests
         // The above mocks will result in a list of 2 products being returned.
         mockIterator.Verify(q => q.ReadNextAsync(It.IsAny<CancellationToken>()), Times.Exactly(2));
         mockIterator.Verify(q => q.HasMoreResults, Times.Exactly(3));
-        Assert.AreEqual(2, products.Count());
+        Assert.That(2, Is.EqualTo(products.Count()));
     }
 
     [Test]
@@ -112,7 +112,7 @@ public class ReadOnlyRepositoryTests
         // The above mocks will result in a list of 2 products being returned.
         mockIterator.Verify(q => q.ReadNextAsync(It.IsAny<CancellationToken>()), Times.Exactly(2));
         mockIterator.Verify(q => q.HasMoreResults, Times.Exactly(3));
-        Assert.AreEqual(2, products.Count());
+        Assert.That(2, Is.EqualTo(products.Count()));
     }
 
     [Test]

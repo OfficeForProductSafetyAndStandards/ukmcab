@@ -28,6 +28,6 @@ public class UriTests
         httpContext.SetupGet(h => h.Request.Host)
             .Returns(() => new HostString("test", 99));
         var result = UriHelper.GetAbsoluteUriFromRequestAndPath(httpContext.Object.Request, "/path");
-        Assert.AreEqual("https://test:99/path", result);
+        Assert.That("https://test:99/path", Is.EqualTo(result));
     }
 }

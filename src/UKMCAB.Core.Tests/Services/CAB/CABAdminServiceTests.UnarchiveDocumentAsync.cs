@@ -92,10 +92,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
                 _faker.Random.Words(10), _faker.Random.Words(10), true, legislativeAreasAsDraft);
 
             // Assert
-            Assert.AreEqual(document.DocumentLegislativeAreas.Count, result.DocumentLegislativeAreas.Count);
-            Assert.True(result.DocumentLegislativeAreas.All(la => !la.Archived!.Value));
-            Assert.True(result.DocumentLegislativeAreas.All(la => la.Status == expectedLAStatus));
-            Assert.AreEqual(Status.Draft, result.StatusValue);
+            Assert.That(document.DocumentLegislativeAreas.Count, Is.EqualTo(result.DocumentLegislativeAreas.Count));
+            Assert.That(result.DocumentLegislativeAreas.All(la => !la.Archived!.Value), Is.True);
+            Assert.That(result.DocumentLegislativeAreas.All(la => la.Status == expectedLAStatus), Is.True);
+            Assert.That(Status.Draft, Is.EqualTo(result.StatusValue));
         }
     }
 }

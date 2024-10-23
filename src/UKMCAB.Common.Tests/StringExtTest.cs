@@ -31,6 +31,6 @@ public class StringExtTest
     public void TruncateWithEllipsis_ShouldReturnExpectedResult(string input, int maxLength, string expected)
     {
         string result = input.TruncateWithEllipsis(maxLength);
-        Assert.AreEqual(expected, result);
+        Assert.That(expected, Is.EqualTo(result));
     }
 }

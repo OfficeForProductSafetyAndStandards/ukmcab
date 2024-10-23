@@ -23,7 +23,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.FindAllDocumentsByCABIdAsync(_faker.Random.Word());
 
             // Assert
-            Assert.False(result.Any());
+            Assert.That(result.Count != 0, Is.False);
         }
 
 
@@ -60,9 +60,9 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.FindAllDocumentsByCABIdAsync(_faker.Random.Word());
 
             // Assert
-            Assert.AreEqual(expectedResults[2].CABId, result[0].CABId);
-            Assert.AreEqual(expectedResults[1].CABId, result[1].CABId);
-            Assert.AreEqual(expectedResults[0].CABId, result[2].CABId);
+            Assert.That(expectedResults[2].CABId, Is.EqualTo(result[0].CABId));
+            Assert.That(expectedResults[1].CABId, Is.EqualTo(result[1].CABId));
+            Assert.That(expectedResults[0].CABId, Is.EqualTo(result[2].CABId));
         }
     }
 }

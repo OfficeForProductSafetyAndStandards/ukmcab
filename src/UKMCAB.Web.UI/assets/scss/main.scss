@@ -1,4 +1,4 @@
-﻿@import "./node_modules/govuk-frontend/govuk/all";
+﻿@import "./node_modules/govuk-frontend/dist/govuk/all";
 @import "./_reset";
 @import "./views/cab-body-details.scss";
 @import "./views/cab-legislative-areas.scss";
@@ -6,7 +6,6 @@
 @import "./views/cab-designated-standard.scss";
 @import "./views/cab-history-details.scss";
 @import "./views/cab-legislative-area-additional-information.scss";
-@import "./views/cab-management.scss";
 @import "./views/user-management.scss";
 @import "./views/user-profile.scss";
 @import "./views/cab-profile.scss";
@@ -74,4 +73,9 @@
         right: -18px;
         top: 3px;
     }
+}
+
+/* Something in UKMCAB is messing with the normal functionality here */
+.govuk-tabs__list-item--selected {
+    margin-bottom: -2px !important;
 }

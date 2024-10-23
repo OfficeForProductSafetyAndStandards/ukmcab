@@ -48,19 +48,19 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Assert
             var auditLog = document.AuditLog.Single();
 
-            Assert.AreEqual(1, document.AuditLog.Count);
-            Assert.AreEqual(userAccount.Id, auditLog.UserId);
-            Assert.AreEqual($"{userAccount.FirstName} {userAccount.Surname}", auditLog.UserName);
-            Assert.AreEqual(userAccount.Role, auditLog.UserRole);
-            Assert.AreEqual(AuditCABActions.ApproveLegislativeArea, auditLog.Action);
-            Assert.AreEqual(null, auditLog.Comment);
-            Assert.AreEqual(null, auditLog.PublicComment);
+            Assert.That(1, Is.EqualTo(document.AuditLog.Count));
+            Assert.That(userAccount.Id, Is.EqualTo(auditLog.UserId));
+            Assert.That($"{userAccount.FirstName} {userAccount.Surname}", Is.EqualTo(auditLog.UserName));
+            Assert.That(userAccount.Role, Is.EqualTo(auditLog.UserRole));
+            Assert.That(AuditCABActions.ApproveLegislativeArea, Is.EqualTo(auditLog.Action));
+            Assert.That(null, Is.EqualTo(auditLog.Comment));
+            Assert.That(null, Is.EqualTo(auditLog.PublicComment));
             var now = DateTime.UtcNow;
-            Assert.AreEqual(now.Year, auditLog.DateTime.Year);
-            Assert.AreEqual(now.Month, auditLog.DateTime.Month);
-            Assert.AreEqual(now.Day, auditLog.DateTime.Day);
-            Assert.AreEqual(now.Hour, auditLog.DateTime.Hour);
-            Assert.AreEqual(now.Minute, auditLog.DateTime.Minute);
+            Assert.That(now.Year, Is.EqualTo(auditLog.DateTime.Year));
+            Assert.That(now.Month, Is.EqualTo(auditLog.DateTime.Month));
+            Assert.That(now.Day, Is.EqualTo(auditLog.DateTime.Day));
+            Assert.That(now.Hour, Is.EqualTo(auditLog.DateTime.Hour));
+            Assert.That(now.Minute, Is.EqualTo(auditLog.DateTime.Minute));
         }
 
         [Test]
@@ -99,18 +99,18 @@ namespace UKMCAB.Core.Tests.Services.CAB
             // Assert
             var auditLog = document.AuditLog.Single();
 
-            Assert.AreEqual(1, document.AuditLog.Count);
-            Assert.AreEqual(userAccount.Id, auditLog.UserId);
-            Assert.AreEqual($"{userAccount.FirstName} {userAccount.Surname}", auditLog.UserName);
-            Assert.AreEqual(userAccount.Role, auditLog.UserRole);
-            Assert.AreEqual(AuditCABActions.DeclineLegislativeArea, auditLog.Action);
-            Assert.AreEqual("Legislative area Test name declined: </br>Test reason", auditLog.Comment);
-            Assert.AreEqual(null, auditLog.PublicComment);
+            Assert.That(1, Is.EqualTo(document.AuditLog.Count));
+            Assert.That(userAccount.Id, Is.EqualTo(auditLog.UserId));
+            Assert.That($"{userAccount.FirstName} {userAccount.Surname}", Is.EqualTo(auditLog.UserName));
+            Assert.That(userAccount.Role, Is.EqualTo(auditLog.UserRole));
+            Assert.That(AuditCABActions.DeclineLegislativeArea, Is.EqualTo(auditLog.Action));
+            Assert.That("Legislative area Test name declined: </br>Test reason", Is.EqualTo(auditLog.Comment));
+            Assert.That(null, Is.EqualTo(auditLog.PublicComment));
 
             var now = DateTime.UtcNow;
             var expectedDate = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, now.Second);
 
-            Assert.AreEqual(expectedDate, new DateTime(auditLog.DateTime.Year, auditLog.DateTime.Month, auditLog.DateTime.Day, auditLog.DateTime.Hour, auditLog.DateTime.Minute, auditLog.DateTime.Second));
+            Assert.That(expectedDate, Is.EqualTo(new DateTime(auditLog.DateTime.Year, auditLog.DateTime.Month, auditLog.DateTime.Day, auditLog.DateTime.Hour, auditLog.DateTime.Minute, auditLog.DateTime.Second)));
         }
     }
 }

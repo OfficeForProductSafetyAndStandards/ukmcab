@@ -17,9 +17,8 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
-using Microsoft.Extensions.Options;
-using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Pagination;
+using NUnit.Framework.Legacy;
 
 namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
 {
@@ -100,8 +99,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
 
             //Assert
             Assert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.EqualTo(1));
-            Assert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
-            Assert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+            CollectionAssert.Contains(scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds, procedureId1);
+            CollectionAssert.Contains(scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds, procedureId2);
         }
 
         [Test]
@@ -148,8 +147,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
 
             //Assert
             Assert.That(scopeOfAppointment.ProductIdAndProcedureIds.Count, Is.AtLeast(1));
-            Assert.Contains(procedureId1, scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds);
-            Assert.Contains(procedureId2, scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds);
+            CollectionAssert.Contains(scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds,procedureId1);
+            CollectionAssert.Contains(scopeOfAppointment.ProductIdAndProcedureIds[0].ProcedureIds, procedureId2);
         }
 
         [Test]
@@ -196,8 +195,8 @@ namespace UKMCAB.Web.UI.Tests.Areas.Admin.Controllers.LegislativeArea
 
             //Assert
             Assert.That(scopeOfAppointment.CategoryIdAndProcedureIds.Count, Is.AtLeast(1));
-            Assert.Contains(procedureId1, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
-            Assert.Contains(procedureId2, scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds);
+            CollectionAssert.Contains(scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds, procedureId1);
+            CollectionAssert.Contains(scopeOfAppointment.CategoryIdAndProcedureIds[0].ProcedureIds, procedureId2);
         }
 
         [Test]

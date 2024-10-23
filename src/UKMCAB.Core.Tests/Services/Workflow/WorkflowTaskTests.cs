@@ -44,7 +44,7 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetAsync(Guid.NewGuid());
 
         // Assert
-        Assert.AreEqual(task, result);
+        Assert.That(task, Is.EqualTo(result));
     }
 
     [Test]
@@ -73,7 +73,7 @@ public class WorkflowTaskServiceTests
         var returnedTask = await _sut.CreateAsync(task);
 
         // Assert
-        Assert.AreEqual(task, returnedTask);
+        Assert.That(task, Is.EqualTo(returnedTask));
     }
 
     private WorkflowTask CreateValidTask(User userSubmitter, string forRoleId, User? userAssigned = null,
@@ -136,14 +136,14 @@ public class WorkflowTaskServiceTests
         var returnedTask = await _sut.UpdateAsync(task);
 
         // Assert
-        Assert.AreEqual(newTask.Completed, returnedTask.Completed);
-        Assert.AreEqual(newTask.ForRoleId, returnedTask.ForRoleId);
-        Assert.AreEqual(newTask.Assignee, returnedTask.Assignee);
-        Assert.AreEqual(newTask.Assigned, returnedTask.Assigned);
-        Assert.AreEqual(newTask.Approved, returnedTask.Approved);
-        Assert.AreEqual(newTask.Body, returnedTask.Body);
-        Assert.AreEqual(newTask.LastUpdatedBy, returnedTask.LastUpdatedBy);
-        Assert.AreEqual(newTask.LastUpdatedOn, returnedTask.LastUpdatedOn);
+        Assert.That(newTask.Completed, Is.EqualTo(returnedTask.Completed));
+        Assert.That(newTask.ForRoleId, Is.EqualTo(returnedTask.ForRoleId));
+        Assert.That(newTask.Assignee, Is.EqualTo(returnedTask.Assignee));
+        Assert.That(newTask.Assigned, Is.EqualTo(returnedTask.Assigned));
+        Assert.That(newTask.Approved, Is.EqualTo(returnedTask.Approved));
+        Assert.That(newTask.Body, Is.EqualTo(returnedTask.Body));
+        Assert.That(newTask.LastUpdatedBy, Is.EqualTo(returnedTask.LastUpdatedBy));
+        Assert.That(newTask.LastUpdatedOn, Is.EqualTo(returnedTask.LastUpdatedOn));
     }
 
     [Test]
@@ -183,10 +183,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByAssignedUserAsync(userAssigned.UserId);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        Assert.That(2, Is.EqualTo(result.Count));
         foreach (var task in result)
         {
-            Assert.AreEqual(userAssigned, task.Assignee);
+            Assert.That(userAssigned, Is.EqualTo(task.Assignee));
         }
     }
 
@@ -209,10 +209,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetAssignedToGroupForRoleIdAsync(userAssigned.UserId);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        Assert.That(2, Is.EqualTo(result.Count));
         foreach (var task in result)
         {
-            Assert.AreEqual(userAssigned, task.Assignee);
+            Assert.That(userAssigned, Is.EqualTo(task.Assignee));
         }
     }
 
@@ -235,10 +235,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetAssignedToGroupForRoleIdAsync(userSubmitter.RoleId!);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        Assert.That(2, Is.EqualTo(result.Count));
         foreach (var task in result)
         {
-            Assert.AreEqual(userSubmitter, task.Submitter);
+            Assert.That(userSubmitter, Is.EqualTo(task.Submitter));
         }
     }
 
@@ -261,12 +261,12 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetCompletedForRoleIdAsync(userSubmitter.RoleId!);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        Assert.That(2, Is.EqualTo(result.Count));
         foreach (var task in result)
         {
-            Assert.AreEqual(userSubmitter, task.Submitter);
-            Assert.AreEqual(Roles.OPSS.Id, task.ForRoleId);
-            Assert.True(task.Completed);
+            Assert.That(userSubmitter, Is.EqualTo(task.Submitter));
+            Assert.That(Roles.OPSS.Id, Is.EqualTo(task.ForRoleId));
+            Assert.That(task.Completed, Is.True);
         }
     }
 
@@ -289,10 +289,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByCabIdAsync(cabId);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        Assert.That(2, Is.EqualTo(result.Count));
         foreach (var task in result)
         {
-            Assert.AreEqual(cabId, task.CABId);
+            Assert.That(cabId, Is.EqualTo(task.CABId));
         }
     }
 
@@ -314,11 +314,11 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByCabIdAsync(cabId, new List<TaskType> { TaskType.RequestToPublish });
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        Assert.That(2, Is.EqualTo(result.Count));
         foreach (var task in result)
         {
-            Assert.AreEqual(TaskType.RequestToPublish, task.TaskType);
-            Assert.AreEqual(cabId, task.CABId);
+            Assert.That(TaskType.RequestToPublish, Is.EqualTo(task.TaskType));
+            Assert.That(cabId, Is.EqualTo(task.CABId));
         }
     }
 
@@ -340,10 +340,10 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByDocumentLAIdAsync(documentLAId);
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        Assert.That(2, Is.EqualTo(result.Count));
         foreach (var task in result)
         {
-            Assert.AreEqual(documentLAId, task.DocumentLAId);
+            Assert.That(documentLAId, Is.EqualTo(task.DocumentLAId));
         }
     }
     
@@ -365,11 +365,11 @@ public class WorkflowTaskServiceTests
         var result = await _sut.GetByDocumentLAIdAsync(cabId, new List<TaskType> { TaskType.RequestToPublish });
 
         // Arrange
-        Assert.AreEqual(2, result.Count);
+        Assert.That(2, Is.EqualTo(result.Count));
         foreach (var task in result)
         {
-            Assert.AreEqual(TaskType.RequestToPublish, task.TaskType);
-            Assert.AreEqual(cabId, task.CABId);
+            Assert.That(TaskType.RequestToPublish, Is.EqualTo(task.TaskType));
+            Assert.That(cabId, Is.EqualTo(task.CABId));
         }
     }
 

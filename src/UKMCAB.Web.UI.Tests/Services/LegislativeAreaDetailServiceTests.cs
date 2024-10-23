@@ -62,15 +62,15 @@ namespace UKMCAB.Web.UI.Tests.Services
                 legislativeAreaId);
 
             //Assert
-            Assert.AreEqual(legislativeArea.Name, result.Name);
-            Assert.AreEqual(documentLegislativeArea.IsProvisional, result.IsProvisional);
-            Assert.AreEqual(documentLegislativeArea.AppointmentDate, result.AppointmentDate);
-            Assert.AreEqual(documentLegislativeArea.ReviewDate, result.ReviewDate);
-            Assert.AreEqual(documentLegislativeArea.Reason, result.Reason);
-            Assert.AreEqual(documentLegislativeArea.RequestReason, result.RequestReason);
-            Assert.AreEqual(legislativeArea.HasDataModel, result.CanChooseScopeOfAppointment);
-            Assert.AreEqual(legislativeAreaId, result.LegislativeAreaId);
-            Assert.AreEqual(documentLegislativeArea.NewlyCreated, result.NewlyCreated);
+            Assert.That(legislativeArea.Name, Is.EqualTo(result.Name));
+            Assert.That(documentLegislativeArea.IsProvisional, Is.EqualTo(result.IsProvisional));
+            Assert.That(documentLegislativeArea.AppointmentDate, Is.EqualTo(result.AppointmentDate));
+            Assert.That(documentLegislativeArea.ReviewDate, Is.EqualTo(result.ReviewDate));
+            Assert.That(documentLegislativeArea.Reason, Is.EqualTo(result.Reason));
+            Assert.That(documentLegislativeArea.RequestReason, Is.EqualTo(result.RequestReason));
+            Assert.That(legislativeArea.HasDataModel, Is.EqualTo(result.CanChooseScopeOfAppointment));
+            Assert.That(legislativeAreaId, Is.EqualTo(result.LegislativeAreaId));
+            Assert.That(documentLegislativeArea.NewlyCreated, Is.EqualTo(result.NewlyCreated));
         }
     }
 }

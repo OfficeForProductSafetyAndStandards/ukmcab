@@ -43,7 +43,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             Exception exception = Assert.ThrowsAsync<Exception>(async () => await _sut.DeleteDraftDocumentAsync(new UserAccount(), Guid.NewGuid(), null));
 
             // Assert
-            Assert.AreEqual("The delete reason must be specified when an earlier document version exists.", exception.Message);
+            Assert.That("The delete reason must be specified when an earlier document version exists.", Is.EqualTo(exception.Message));
 
             _mockCABRepository.Verify(x => x.DeleteAsync(It.IsAny<Document>()), Times.Never);
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
@@ -68,7 +68,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             Exception exception = Assert.ThrowsAsync<Exception>(async () => await _sut.DeleteDraftDocumentAsync(new UserAccount(), cabId, _faker.Random.Word()));
 
             // Assert
-            Assert.AreEqual($"Failed to delete draft version, CAB Id: {cabId}", exception.Message);
+            Assert.That($"Failed to delete draft version, CAB Id: {cabId}", Is.EqualTo(exception.Message));
 
             _mockCABRepository.Verify(x => x.UpdateAsync(It.IsAny<Document>(), null), Times.Never);
             _mockCachedSearchService.Verify(x => x.RemoveFromIndexAsync(It.IsAny<string>()), Times.Never);

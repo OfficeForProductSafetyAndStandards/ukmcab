@@ -56,7 +56,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -75,7 +75,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -94,7 +94,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.False(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.False);
         }
 
         [Test]
@@ -123,7 +123,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -145,7 +145,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.False(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.False);
         }
 
         [Test]
@@ -167,7 +167,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.False(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.False);
         }
 
         [Test]
@@ -189,7 +189,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -212,7 +212,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.True(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.True);
         }
 
         [Test]
@@ -234,7 +234,7 @@ namespace UKMCAB.Core.Tests.Security.Requirements
             await _handler.HandleAsync(authorizationContext);
 
             // Assert
-            Assert.False(authorizationContext.HasSucceeded);
+            Assert.That(authorizationContext.HasSucceeded, Is.False);
         }
 
         private ClaimsPrincipal GenerateMockPrincipal(string roleId, params Claim[] claims)

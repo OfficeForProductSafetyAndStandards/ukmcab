@@ -35,7 +35,7 @@ public class EditLockServiceTests
                 { cabId, new Tuple<string, DateTime>(userIdWithLock, DateTime.Now.AddMinutes(10)) }
             });
 
-        Assert.True(await _sut.IsCabLockedForUser(cabId, userId));
+        Assert.That(await _sut.IsCabLockedForUser(cabId, userId), Is.True);
     }
 
     [Test]
@@ -44,7 +44,7 @@ public class EditLockServiceTests
         var cabId = _faker.Random.Word();
         var userId = _faker.Random.Word();
 
-        Assert.False(await _sut.IsCabLockedForUser(cabId, userId));
+        Assert.That(await _sut.IsCabLockedForUser(cabId, userId), Is.False);
     }
 
     [Test]
@@ -59,7 +59,7 @@ public class EditLockServiceTests
                 { cabId, new Tuple<string, DateTime>(userId, DateTime.Now.AddMinutes(10)) }
             });
 
-        Assert.False(await _sut.IsCabLockedForUser(cabId, userId));
+        Assert.That(await _sut.IsCabLockedForUser(cabId, userId), Is.False);
     }
 
     [Test]
@@ -82,7 +82,7 @@ public class EditLockServiceTests
         var userFound = await _sut.IsCabLockedForUser(cabId2, userIdWithLock);
 
         // Assert
-        Assert.True(userFound);
+        Assert.That(userFound, Is.True);
     }
 
     [Test]
@@ -105,7 +105,7 @@ public class EditLockServiceTests
         var userFound = await _sut.IsCabLockedForUser(cabId2, userIdWithLock2);
 
         // Assert
-        Assert.False(userFound);
+        Assert.That(userFound, Is.False);
     }
 
     [Test]

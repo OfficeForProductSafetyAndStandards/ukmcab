@@ -22,7 +22,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.IsSingleDraftDocAsync(Guid.NewGuid());
             
             // Assert
-            Assert.False(result);
+            Assert.That(result, Is.False);
         }
 
         [Test]
@@ -38,16 +38,6 @@ namespace UKMCAB.Core.Tests.Services.CAB
                     {
                         id = cabId.ToString(),
                         StatusValue = Status.Draft
-                    },
-                    new ()
-                    {
-                       id = Guid.NewGuid().ToString(),
-                        StatusValue = Status.Published
-                    },
-                    new ()
-                    {
-                       id = Guid.NewGuid().ToString(),
-                       StatusValue = Status.Historical
                     }
                 });
 
@@ -55,7 +45,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.IsSingleDraftDocAsync(cabId);
 
             // Assert
-            Assert.True(true);
+            Assert.That(result, Is.True);
         }
 
         [Test]
@@ -88,7 +78,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.IsSingleDraftDocAsync(cabId);
 
             // Assert
-            Assert.False(result);
+            Assert.That(result, Is.False);
         }       
     }
 }

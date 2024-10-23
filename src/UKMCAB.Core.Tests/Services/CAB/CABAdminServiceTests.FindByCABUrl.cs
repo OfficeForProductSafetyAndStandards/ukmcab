@@ -23,7 +23,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.FindAllDocumentsByCABURLAsync(_faker.Random.Word());
             
             // Assert
-            Assert.False(result.Any());
+            Assert.That(result.Count != 0, Is.False);
         }
         
         [Test]
@@ -42,7 +42,7 @@ namespace UKMCAB.Core.Tests.Services.CAB
             var result = await _sut.FindAllDocumentsByCABURLAsync(_faker.Random.Word());
             
             // Assert
-            Assert.AreEqual(3, result.Count);
+            Assert.That(3, Is.EqualTo(result.Count));
         }
         
         [Test]
@@ -73,10 +73,10 @@ namespace UKMCAB.Core.Tests.Services.CAB
             });
             
             // Assert
-            Assert.AreEqual(3, result.Count);
+            Assert.That(3, Is.EqualTo(result.Count));
             foreach (var doc in result)
             {
-                Assert.AreEqual(Status.Historical,doc.StatusValue);
+                Assert.That(Status.Historical, Is.EqualTo(doc.StatusValue));
             }
         }
         

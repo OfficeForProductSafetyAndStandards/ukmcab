@@ -48,7 +48,7 @@ namespace UKMCAB.Web.UI.Tests.Models
             _sut.NewlyCreated = newlyCreated;
 
             // Assert
-            Assert.AreEqual(expected, _sut.IsNewlyCreated);
+            Assert.That(expected, Is.EqualTo(_sut.IsNewlyCreated));
         }
     }
 }

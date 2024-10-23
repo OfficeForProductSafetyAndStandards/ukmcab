@@ -155,14 +155,14 @@ namespace UKMCAB.Core.Tests.Services.Users
 
             var results = await _sut.ListRequestsAsync(new UserAccountRequestListOptions(new SkipTake(0,10000), new SortBy(nameof(UserAccountRequest.CreatedUtc), null), UserAccountRequestStatus.Pending));
 
-            Assert.AreEqual(results.Count(), 1);
+            Assert.That(results.Count(), Is.EqualTo(1));
             var createdRequest = results.First();
-            Assert.IsTrue(createdRequest.Status == UserAccountRequestStatus.Pending);
-            Assert.IsTrue(createdRequest.SubjectId == "1");
+            Assert.That(createdRequest.Status == UserAccountRequestStatus.Pending, Is.True);
+            Assert.That(createdRequest.SubjectId == "1", Is.True);
             var auditLog = createdRequest.AuditLog;
-            Assert.AreEqual(auditLog.Count, 1);
+            Assert.That(auditLog.Count, Is.EqualTo(1));
             var auditEntry = auditLog.First();
-            Assert.AreEqual(auditEntry.UserName, "Test Surname");
+            Assert.That(auditEntry.UserName, Is.EqualTo("Test Surname"));
         }
 
         [Test]
@@ -191,7 +191,7 @@ namespace UKMCAB.Core.Tests.Services.Users
             await _sut.UpdateLastLogonDate("2");
             var user2After = await _sut.GetAsync("2");
 
-            Assert.AreNotEqual(loggedOnBefore, user2After.LastLogonUtc);
+            Assert.That(loggedOnBefore, Is.Not.EqualTo(user2After.LastLogonUtc));
         }
 
         [Test]
