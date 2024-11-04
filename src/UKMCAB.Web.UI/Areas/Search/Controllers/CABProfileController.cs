@@ -452,8 +452,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             else if (categoryId.HasValue)
             {
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
-                    .Where(s => s.CategoryId != null &&
-                                s.CategoryId == categoryId && s.ProductIdAndProcedureIds.Any());
+                    .Where(s => s.CategoryId != null || s.CategoryIds!= null &&
+                                (s.CategoryId == categoryId || (s.CategoryIds?.Contains(categoryId.Value) ?? false)) && s.ProductIdAndProcedureIds.Any());
             }
             else if (subCategoryId.HasValue)
             {

@@ -10,16 +10,16 @@
         }
 
         <div style="margin-bottom:0" class="govuk-grid-row display-from-desktop">
-            <div class="govuk-grid-column-one-quarter">
+            <div class="govuk-grid-column-one-third">
                 <h3 class="govuk-heading-s">File</h3>
             </div>
-            <div class="govuk-grid-column-one-quarter">
-                <h3 class="govuk-heading-s">Category</h3>
-            </div>
-            <div class="govuk-grid-column-one-quarter">
-                <h3 class="govuk-heading-s">Publication</h3>
-            </div>
-            <div class="govuk-grid-column-one-quarter">
+            @if (groupedSchedule.Any(i => !string.IsNullOrEmpty(i.CreatedBy)))
+            {
+                <div class="govuk-grid-column-one-third">
+                    <h3 class="govuk-heading-s">Created By</h3>
+                </div>
+            }
+            <div class="govuk-grid-column-one-third">
                 <h3 class="govuk-heading-s">Actions</h3>
             </div>
         </div>
@@ -27,25 +27,21 @@
         @foreach (var file in groupedSchedule)
         {
             <div class="govuk-grid-row">
-                <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop">
+                <div class="govuk-grid-column-full govuk-grid-column-one-third-from-desktop">
                     <label class="govuk-label govuk-label--s display-until-desktop">File</label>
                     <p class="govuk-body break-word">@file.Label</p>
                 </div>
-                @if (!string.IsNullOrEmpty(file.Category))
+                @if (groupedSchedule.Any(i => !string.IsNullOrEmpty(i.CreatedBy)))
                 {
-                    <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop">
-                        <label class="govuk-label govuk-label--s display-until-desktop">Category</label>
-                        <p class="govuk-body">@file.Category</p>
+                    <div class="govuk-grid-column-full govuk-grid-column-one-third-from-desktop">
+                        @if (!string.IsNullOrEmpty(file.CreatedBy))
+                        {
+                            <label class="govuk-label govuk-label--s display-until-desktop">Created By</label>
+                            <p class="govuk-body">@file.CreatedBy</p>
+                        }
                     </div>
                 }
-                @if (!string.IsNullOrEmpty(file.Publication))
-                {
-                    <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop">
-                        <label class="govuk-label govuk-label--s display-until-desktop">Publication</label>
-                        <p class="govuk-body">@file.Publication</p>
-                    </div>
-                }
-                <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop">
+                <div class="govuk-grid-column-full govuk-grid-column-one-third-from-desktop">
                     <div class="govuk-button-group">
                         @if (file.FileName.EndsWith("pdf", StringComparison.CurrentCultureIgnoreCase))
                         {
