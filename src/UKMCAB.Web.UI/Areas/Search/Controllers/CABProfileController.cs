@@ -367,9 +367,9 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             if (purposeOfAppointmentId.HasValue)
             {
                 catIds = cabDocument.ScopeOfAppointments
-                    .Where(s => s.PurposeOfAppointmentId != null &&
-                                s.PurposeOfAppointmentId == purposeOfAppointmentId && s.CategoryId != null)
-                    .Select(s => s.CategoryId!.Value).ToList();
+                    .Where(s => s.PurposeOfAppointmentId != null &&                                
+                    s.PurposeOfAppointmentId == purposeOfAppointmentId && (s.CategoryId != null || s.CategoryIds.Any()))
+                    .SelectMany(s => s.CategoryId != null ? new List<Guid> { s.CategoryId.Value } : s.CategoryIds).ToList();
             }
             else
             {
@@ -447,7 +447,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             {
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
                     .Where(s => s.PurposeOfAppointmentId != null &&
-                                s.PurposeOfAppointmentId == purposeOfAppointmentId && s.ProductIdAndProcedureIds.Any());
+                                s.PurposeOfAppointmentId == purposeOfAppointmentId && 
+                                (s.ProductIdAndProcedureIds.Count != 0 || s.CategoryIdAndProcedureIds.Count != 0));
             }
             else if (categoryId.HasValue)
             {
@@ -478,7 +479,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
 
             IEnumerable<Guid> procIds;
-            if (productId.HasValue)
+            if (productId.HasValue || scopeOfAppointments.Any(soa => soa.ProductIdAndProcedureIds.Count != 0))
             {
                 procIds = scopeOfAppointments.ToList()
                     .Select(s => s.ProductIdAndProcedureIds)
@@ -486,7 +487,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     .Where(i => i.ProductId == productId)
                     .SelectMany(pr => pr.ProcedureIds);
             }
-            else if (categoryId.HasValue)
+            else if (categoryId.HasValue || scopeOfAppointments.Any(soa => soa.CategoryIdAndProcedureIds.Count != 0))
             {
                 procIds = scopeOfAppointments.ToList()
                     .Select(s => s.CategoryIdAndProcedureIds)
