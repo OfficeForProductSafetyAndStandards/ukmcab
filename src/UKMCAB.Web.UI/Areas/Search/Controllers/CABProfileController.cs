@@ -121,8 +121,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
         }
 
         [HttpGet("search/cab-profile/{id}/{legislativeAreaId}", Name = Routes.CabDetailsLegislativeArea)]
-        public async Task<IActionResult> Index(string id, string? returnUrl, string? unlockCab, Guid legislativeAreaId,
-    Guid? purposeOfAppointmentId, Guid? categoryId, Guid? subCategoryId, Guid? productId, Guid? scopeOfAppointmentId, Guid? ppeProductTypeId, Guid? protectionAgainstRiskId, Guid? areaOfCompetencyId, int pagenumber = 1)
+        public async Task<IActionResult> Index(
+            string id, 
+            string? returnUrl, 
+            string? unlockCab, 
+            Guid legislativeAreaId,
+            Guid? purposeOfAppointmentId, 
+            Guid? categoryId, 
+            Guid? subCategoryId, 
+            Guid? productId, 
+            Guid? scopeOfAppointmentId, 
+            Guid? ppeProductTypeId,
+            Guid? protectionAgainstRiskId, 
+            Guid? areaOfCompetencyId, 
+            int pagenumber = 1)
         {
             var cabDocument = await _cachedPublishedCabService.FindPublishedDocumentByCABURLOrGuidAsync(id) ??
                               throw new InvalidOperationException();
@@ -362,9 +374,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             else
             {
                 catIds = cabDocument.ScopeOfAppointments
-                    .Where(s => s.CategoryId != null &&
-                                s.LegislativeAreaId == legislativeId && s.CategoryId != null)
-                    .Select(s => s.CategoryId!.Value).ToList();
+                    .Where(s => s.LegislativeAreaId == legislativeId && (s.CategoryId != null || s.CategoryIds.Any()))
+                    .SelectMany(s => s.CategoryId != null ? new List<Guid> { s.CategoryId.Value } : s.CategoryIds).ToList();
             }
 
 
@@ -441,8 +452,8 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             else if (categoryId.HasValue)
             {
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
-                    .Where(s => s.CategoryId != null &&
-                                s.CategoryId == categoryId && s.ProductIdAndProcedureIds.Any());
+                    .Where(s => s.CategoryId != null || s.CategoryIds!= null &&
+                                (s.CategoryId == categoryId || (s.CategoryIds?.Contains(categoryId.Value) ?? false)) && s.ProductIdAndProcedureIds.Any());
             }
             else if (subCategoryId.HasValue)
             {

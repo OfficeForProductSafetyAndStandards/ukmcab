@@ -126,7 +126,7 @@
                                         </div>
 
                                         <div class="width-three-fifth ukmcab-float__left ukmcab-min-width__350">
-                                            <input class="govuk-radios__input" type="radio" id="SelectedScheduleId" name="SelectedScheduleId" value="@uploadedFile.Id" checked="@uploadedFile.IsSelected" />
+                                                    <input class="govuk-radios__input relative-position" type="radio" id="SelectedScheduleId" name="SelectedScheduleId" value="@uploadedFile.Id" checked="@uploadedFile.IsSelected" />
                                             <label class="govuk-label govuk-radios__label" asp-for="ActiveFiles![i].IsSelected">
                                                 <span class="file-number">@(i + 1).</span>
                                                 <a class="govuk-link file-link" asp-area="Search" asp-controller="CABProfile" asp-action="Download" asp-route-id="@Model.CABId" asp-route-file="@uploadedFile.FileName" asp-route-filetype="@DataConstants.Storage.Schedules">@uploadedFile.FileName</a>
