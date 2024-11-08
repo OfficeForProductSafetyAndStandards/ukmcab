@@ -12,6 +12,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public bool IsMRA { get; set; }
         public bool MRABypass { get; set; }
 
-        public LegislativeAreaViewModel() : base("Legislative area") { }
+        public LegislativeAreaViewModel() : this("Create a CAB") { }
+        public LegislativeAreaViewModel(string subTitle ) : base("Legislative area", subTitle) { }
     }
 }

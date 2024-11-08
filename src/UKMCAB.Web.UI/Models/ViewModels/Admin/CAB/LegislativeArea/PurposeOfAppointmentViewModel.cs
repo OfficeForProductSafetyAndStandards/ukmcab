@@ -14,6 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public IEnumerable<SelectListItem>? PurposeOfAppointments { get; set; }
 
-        public PurposeOfAppointmentViewModel() : base("Legislative area purpose of appointment") { }
+        public PurposeOfAppointmentViewModel() : this("Create a CAB") { }
+        public PurposeOfAppointmentViewModel(string subTitle) : base("Legislative area purpose of appointment", subTitle) { }
     }
 }

@@ -40,6 +40,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileUploadViewModel
             {
                 Title = SchedulesOptions.ReplaceFile,
+                SubTitle = SchedulesOptions.ReplaceFile,
                 UploadedFiles = latestVersion.Schedules?.Where(n => n.Id == Guid.Parse(scheduleId)).Select(s => new FileViewModel { 
                     FileName = s.FileName, 
                     UploadDateTime = s.UploadDateTime, 
@@ -78,6 +79,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             model.Title = SchedulesOptions.ReplaceFile;
+            model.SubTitle = SchedulesOptions.ReplaceFile;
             return View(model);
         }
 
@@ -93,6 +95,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileUploadViewModel
             {
                 Title = DocumentsOptions.ReplaceFile,
+                SubTitle = DocumentsOptions.ReplaceFile,
                 UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel
                 {
                     FileName = s.FileName,
@@ -151,6 +154,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             model.Title = DocumentsOptions.ReplaceFile;
+            model.SubTitle = DocumentsOptions.ReplaceFile;
             return View(model);
         }
 
@@ -209,6 +213,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileUploadViewModel
             {
                 Title = DocumentsOptions.ListTitle,
+                SubTitle = DocumentsOptions.ListTitle,
                 UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel
                 {
                     FileName = s.FileName,
@@ -242,6 +247,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                 return View(new FileUploadViewModel
                 {
                     Title = DocumentsOptions.ListTitle,
+                    SubTitle = DocumentsOptions.ListTitle,
                     UploadedFiles = latestDocument.Documents?.Select(s => new FileViewModel { 
                         FileName = s.FileName, 
                         UploadDateTime = s.UploadDateTime, 

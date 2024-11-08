@@ -27,6 +27,8 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
             IsPointOfContactPublicDisplay = document.IsPointOfContactPublicDisplay;
             RegisteredOfficeLocation = document.RegisteredOfficeLocation;
             DocumentStatus = document.StatusValue;
+
+            SubTitle = string.IsNullOrEmpty(document.AddressLine1) ? "Create a CAB" : "Edit a CAB";
         }
 
         public string? CABId { get; set; }
@@ -75,6 +77,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public string? RegisteredOfficeLocation { get; set; }
 
         public string? Title => "Contact details";
+        public string? SubTitle { get; set; }
 
         public string[] FieldOrder => new[] { nameof(AddressLine1), nameof(TownCity), nameof(Postcode), nameof(Country), nameof(Website), nameof(Email), nameof(Phone), 
             nameof(PointOfContactEmail), nameof(PointOfContactPhone), nameof(IsPointOfContactPublicDisplay), nameof(RegisteredOfficeLocation) };

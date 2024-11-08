@@ -10,6 +10,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? LegislativeArea { get; set; }
         public string? PpeProductType { get; set; }
         public IEnumerable<SelectListItem> ProtectionAgainstRisks { get; set; } = new List<SelectListItem>();
-        public ProtectionAgainstRiskViewModel() : base("Legislative area providing protection against the following risks") { }
+        public ProtectionAgainstRiskViewModel() : this("Create a CAB") { }
+        public ProtectionAgainstRiskViewModel(string subTitle) : base("Legislative area providing protection against the following risks", subTitle) { }
     }
 }

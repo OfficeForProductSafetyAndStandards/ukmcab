@@ -42,7 +42,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeArea.LegislativeAreaId);
         TempData[StoragePageTitle] = string.Format(PageTitle, legislativeAreaService?.Name);
         TempData.Keep(StoragePageTitle);
-        var vm = new LegislativeAreaAdditionalInformationViewModel(Title: TempData[StoragePageTitle]?.ToString())
+        var vm = new LegislativeAreaAdditionalInformationViewModel(Title: TempData[StoragePageTitle]?.ToString(), fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CabId = id,
             LegislativeAreaId = laId,
@@ -53,7 +53,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
             PointOfContactEmail = legislativeArea.PointOfContactEmail,
             PointOfContactPhone = legislativeArea.PointOfContactPhone,
             IsPointOfContactPublicDisplay = legislativeArea.IsPointOfContactPublicDisplay,
-            IsFromSummary = fromSummary,
+            IsFromSummary = fromSummary
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);
