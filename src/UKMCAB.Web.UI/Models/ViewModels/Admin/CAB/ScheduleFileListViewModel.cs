@@ -7,6 +7,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
     public class ScheduleFileListViewModel : CreateEditCABViewModel, ILayoutModel
     {
         public string? Title { get; set; }
+        public string? SubTitle { get; set; }
         public string? CABId { get; set; }
         public List<FileViewModel> ArchivedFiles { get; set; } = new();
         public List<FileViewModel> ActiveFiles { get; set; } = new();        

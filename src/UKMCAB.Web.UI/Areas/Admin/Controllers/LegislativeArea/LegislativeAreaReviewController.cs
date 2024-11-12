@@ -58,6 +58,8 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
         vm.FromSummary = fromSummary;
         vm.ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : default;
 
+        if (fromSummary) { vm.SubTitle = "Edit a CAB"; }
+
         return View("~/Areas/Admin/views/CAB/LegislativeArea/ReviewLegislativeAreas.cshtml", vm);
     }
 
