@@ -65,7 +65,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             var model = new FileUploadViewModel
             {
-                Title = SchedulesOptions.UploadTitle,                
+                Title = SchedulesOptions.UploadTitle,
+                SubTitle = fromSummary ? "Edit a CAB" : "Create a CAB",
                 CABId = id,
                 IsFromSummary = fromSummary,
                 DocumentStatus = latestVersion.StatusValue
@@ -133,7 +134,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     $"Select a {SchedulesOptions.AcceptedFileTypes} file 10 megabytes or less.");
             }
 
-            model.Title = SchedulesOptions.UploadTitle;           
+            model.Title = SchedulesOptions.UploadTitle;
+            model.SubTitle = SchedulesOptions.UploadTitle;
             model.CABId = id;
             model.IsFromSummary = fromSummary;
             model.DocumentStatus = latestVersion.StatusValue;
@@ -203,6 +205,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new ScheduleFileListViewModel
             {
                 Title = SchedulesOptions.ListTitle,
+                SubTitle = fromSummary ? "Edit a CAB" : "Create a CAB",
                 ArchivedFiles = uploadedFileViewModels.Where(n => n.Archived == true).ToList(),
                 ActiveFiles = uploadedFileViewModels.Where(n => n.Archived is null or false).ToList(),
                 CABId = id,
@@ -448,6 +451,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             var model = new FileUploadViewModel()
             {
                 Title = DocumentsOptions.UploadTitle,
+                SubTitle = fromSummary ? "Edit a CAB" : "Create a CAB",
                 UploadedFiles = latestVersion.Documents?.Select(s => new FileViewModel
                 {
                     FileName = s.FileName, 
@@ -510,6 +514,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             }
 
             model.Title = DocumentsOptions.UploadTitle;
+            model.SubTitle = DocumentsOptions.UploadTitle;
             model.UploadedFiles =
                 latestVersion.Documents?.Select(s => new FileViewModel
                     {
@@ -603,6 +608,7 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View(new FileListViewModel
             {
                 Title = DocumentsOptions.ListTitle,
+                SubTitle = fromSummary ? "Edit a CAB" : "Create a CAB",
                 UploadedFiles = uploadedFileViewModels,
                 CABId = id,
                 IsFromSummary = fromSummary,

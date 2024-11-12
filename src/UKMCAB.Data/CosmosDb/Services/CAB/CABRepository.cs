@@ -34,32 +34,6 @@ namespace UKMCAB.Data.CosmosDb.Services.CAB
                 {
                     document.Version = DataConstants.Version.Number;
 
-                    // Archive LAs in Archived CABs 
-                    if (document.StatusValue == Status.Archived)
-                    {
-                        document.DocumentLegislativeAreas.ForEach(la => la.Archived = true);
-                    }
-
-                    document.Schedules?.ForEach(s =>
-                    {
-                        s.CreatedBy ??= "ukas";
-                    });
-
-                    document.HiddenText = string.Empty;
-                    document.Documents?.ForEach(s =>
-                    {
-                        s.Publication ??= DataConstants.Publications.Private;
-                    });
-
-                    //Populate the MRA countries for the CAB
-                    var MRABodies = document.BodyTypes.Where(t => t.StartsWith("UK body designated under MRA:"));
-                    if (MRABodies.Any())
-                    {
-                        document.BodyTypes = document.BodyTypes.Where(t => !t.StartsWith("UK body designated under MRA")).ToList();
-                        document.BodyTypes.Add("UK body designated under MRA");
-                        document.MRACountries = MRABodies.Select(b => b.Replace("UK body designated under MRA: ", "")).ToList();
-                    }
-
                     await UpdateAsync(document);
                 }
             }

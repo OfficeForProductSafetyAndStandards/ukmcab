@@ -22,7 +22,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public bool ShowAllSelected { get; set; } = false;
         public int? PreviousPageNumber { get; set; }
 
-        public DesignatedStandardsViewModel() : base("Legislative area designated standards") 
+        public DesignatedStandardsViewModel() : base("Legislative area designated standards", "Create a CAB") 
         { 
         }
 
@@ -34,7 +34,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             string? legislativeAreaName,
             List<Guid> selectedDesignatedStandardIds,
             IEnumerable<DesignatedStandardModel> designatedStandards,
-            PaginationInfo? paginationInfo) : base("Select designated standard", cabId, scopeId, isFromSummary)
+            PaginationInfo? paginationInfo) : base("Select designated standard", "Edit a CAB", cabId, scopeId, isFromSummary)
         {
             CompareScopeId = compareScopeId;
             LegislativeArea = legislativeAreaName;

@@ -212,6 +212,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             model.DocumentStatus = latest.StatusValue;
             model.IsFromSummary = fromSummary;
             model.ReturnUrl = returnUrl;
+
+            model.SubTitle = fromSummary ? "Edit a CAB" : "Create a CAB";
+
             return View(model);
         }
 

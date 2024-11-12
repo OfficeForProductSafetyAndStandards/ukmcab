@@ -9,6 +9,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public Guid? SelectedPpeProductTypeId { get; set; }
         public string? LegislativeArea { get; set; }
         public IEnumerable<SelectListItem> PpeProductTypes { get; set; } = new List<SelectListItem>();
-        public PpeProductTypeViewModel() : base("Legislative area ppe product type") { }
+        public PpeProductTypeViewModel() : this("Create a CAB") { }
+        public PpeProductTypeViewModel(string subTitle) : base("Legislative area ppe product type", subTitle) { }
     }
 }

@@ -28,7 +28,7 @@ public class ArchiveLegislativeAreaRequestController : UI.Controllers.Controller
     [HttpGet("archive-request/{legislativeAreaId}/{removeActionEnum?}", Name = Routes.ArchiveLegislativeArea)]
     public async Task<IActionResult> ArchiveAsync(Guid id, Guid legislativeAreaId, string? returnUrl, RemoveActionEnum removeActionEnum = RemoveActionEnum.Archive)
     {
-        var vm = new LegislativeAreaArchiveRequestViewModel(id, string.Empty);
+        var vm = new LegislativeAreaArchiveRequestViewModel(id, "Reason for archiving legislative area", "Edit a CAB");
         var document = await _cabAdminService.GetLatestDocumentAsync(id.ToString()) ??
                        throw new InvalidOperationException("CAB not found");
 

@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 public record LegislativeAreaAdditionalInformationViewModel(
-    string? Title
-) : BasicPageModel(Title)
+    string? Title, 
+    string? SubTitle
+) : BasicPageModel(Title, SubTitle)
 {
     public Guid? CabId { get; set; }
     public Guid? LegislativeAreaId { get; set; }

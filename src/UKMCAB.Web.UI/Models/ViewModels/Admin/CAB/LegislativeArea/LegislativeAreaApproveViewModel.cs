@@ -14,6 +14,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public CABLegislativeAreasItemViewModel LegislativeArea { get; set; } = new();
 
         public string Title { get; set; } = string.Empty;
+        public string SubTitle { get; set; } = string.Empty;
 
         public List<FileUpload> ProductSchedules { get; set; } = new();
 

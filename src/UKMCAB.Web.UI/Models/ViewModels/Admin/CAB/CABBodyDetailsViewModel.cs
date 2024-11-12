@@ -26,6 +26,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB
         public List<string> BodyTypesSummary => BodyTypes.Where(t => !t.Equals("UK body designated under MRA")).ToList();
 
         public string? Title => "Body details";
+        public string? SubTitle { get; set; }
         public string[] FieldOrder => new[] { nameof(TestingLocations), nameof(BodyTypes) };
     }
 }
