@@ -10,7 +10,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             AuditCABActions.Published,
             AuditCABActions.Archived,
             AuditCABActions.UnarchivedToDraft,
-            AuditCABActions.LegislativeAreaAdded,
+            AuditCABActions.ScopeOfAppointmentAddedTo(string.Empty),
             AuditCABActions.LegislativeAreaReviewDateAdded,
             AuditCABActions.LegislativeAreaReviewDateUpdated
         };
@@ -114,7 +114,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
 
             bool AuditActionIsPublicAction(Audit a)
             {
-                return PublicAuditActionsToShow.Any(action => action.Equals(a.Action));
+                return PublicAuditActionsToShow.Any(action => action.StartsWith(a.Action));
             }
         }
 
