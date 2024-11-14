@@ -147,7 +147,7 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     var documentLegislativeArea = latestDocument.DocumentLegislativeAreas.FirstOrDefault(la => la.LegislativeAreaId == legislativeAreaId);
                     documentLegislativeArea?.MarkAsDraft(latestDocument.StatusValue, latestDocument.SubStatus);
 
-                    latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ScopeOfAppointmentRemoved));
+                    latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ScopeOfAppointmentRemovedFrom(documentLegislativeArea?.LegislativeAreaName)));
 
                     await _cabAdminService.UpdateOrCreateDraftDocumentAsync(userAccount!, latestDocument);
 
