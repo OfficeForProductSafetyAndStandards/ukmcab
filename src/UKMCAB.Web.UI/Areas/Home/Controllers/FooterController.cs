@@ -21,21 +21,32 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
         {
             _asyncNotificationClient = asyncNotificationClient;
             _templateOptions = templateOptions.Value;
-        }
+		}
 
 
-        [Route("/privacy-notice")]
-        public IActionResult Privacy()
-        {
-            var model = new BasicPageModel()
-            {
-                Title = Constants.PageTitle.PrivacyNotice
-            };
-            return View(model);
-        }
+		[Route("/privacy-notice")]
+		public IActionResult Privacy()
+		{
+			var model = new BasicPageModel()
+			{
+				Title = Constants.PageTitle.PrivacyNotice
+			};
+			return View(model);
+		}
 
 
-        [Route("/accessibility-statement")]
+		[Route("/privacy-notice-2024-06-12")]
+		public IActionResult Privacy20240612()
+		{
+			var model = new BasicPageModel()
+			{
+				Title = Constants.PageTitle.PrivacyNotice
+			};
+			return View("Privacy-2024-06-12", model);
+		}
+
+
+		[Route("/accessibility-statement")]
         public IActionResult AccessibilityStatement()
         {
             var model = new BasicPageModel()
