@@ -1,0 +1,12 @@
+﻿dl.data-list-25-75 {
+    display: flex;
+    flex-wrap: wrap;
+
+    dt {
+        flex: 25%;
+    }
+
+    dd {
+        flex: 75%;
+    }
+}
