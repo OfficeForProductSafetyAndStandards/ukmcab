@@ -120,6 +120,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         {
             CabId = id,           
             Title = $"{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(reviewAction.GetEnumDescription())} legislative area",
+            SubTitle = "Edit a CAB",
             LegislativeArea = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
             ProductSchedules = reviewAction == LegislativeAreaReviewActionEnum.Unarchive ?
                 latestDocument.ArchivedSchedules.Where(n => n.LegislativeArea == la.Name).ToList() :

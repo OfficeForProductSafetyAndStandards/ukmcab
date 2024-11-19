@@ -44,7 +44,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             }
         }
 
-        public LegislativeAreaListItemViewModel() : base("Legislative area list item") { }
+        public LegislativeAreaListItemViewModel() : base("Legislative area list item", "Create a CAB") { }
 
         public LegislativeAreaListItemViewModel(
             Guid legislativeAreaId,
@@ -55,7 +55,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             Guid scopeId,
             string? product,
             List<string>? procedures = null,
-            List<DesignatedStandardReadOnlyViewModel>? designatedStandards = null) : base("Legislative area list item")
+            List<DesignatedStandardReadOnlyViewModel>? designatedStandards = null) : base("Legislative area list item", "Edit a CAB")
         {
             LegislativeArea = new ListItem { Id = legislativeAreaId, Title = legislativeArea };
             PurposeOfAppointment = purposeOfAppointment;
@@ -79,7 +79,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
             string? protectionAgainstRiskName,
             string? areaOfCompetencyName,
             List<string>? procedures = null,
-            List<DesignatedStandardReadOnlyViewModel>? designatedStandards = null) : base("Legislative area list item")
+            List<DesignatedStandardReadOnlyViewModel>? designatedStandards = null) : base("Legislative area list item", "Edit a CAB")
         {
             LegislativeArea = new ListItem { Id = legislativeAreaId, Title = legislativeArea };
             PurposeOfAppointment = purposeOfAppointment;

@@ -2,7 +2,7 @@
 
 namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 {
-    public record LegislativeAreaArchiveRequestViewModel(Guid CabId, string? Title) : ILayoutModel
+    public record LegislativeAreaArchiveRequestViewModel(Guid CabId, string? Title, string? SubTitle) : ILayoutModel
     {
         [Required(ErrorMessage = "Enter reason")]
         [MaxLength(1000, ErrorMessage = "Maximum user notes length is 1000 characters")]

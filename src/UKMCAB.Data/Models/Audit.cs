@@ -442,15 +442,15 @@ namespace UKMCAB.Data.Models
         public const string
             UnpublishApprovalRequestDeclined =
                 "Request to unpublish declined"; // UKAS request to un publish and create draft
+        public static string ScopeOfAppointmentAddedTo(string areaName) => $"1 scope of appointment added to {areaName}";
+        public static string ScopeOfAppointmentRemovedFrom(string areaName) => $"1 scope of appointment has been removed from {areaName}";
 
-        public const string LegislativeAreaAdded = "Legislative area added";
         public const string ApproveLegislativeArea = "Legislative area approved";
         public const string DeclineLegislativeArea = "Legislative area declined";
         public const string LegislativeAreaReviewDateAdded = "Legislative area review date added";
         public const string LegislativeAreaReviewDateUpdated = "Legislative area review date updated";
-        public const string ScopeOfAppointmentRemoved = "1 scope of appointment has been removed from construction";
-        public static string DesignatedStandardsAdded(int number) => $"{number} designated standards added to construction";
-        public static string DesignatedStandardsRemoved(int number) => $"{number} designated standards removed from construction";
+        public static string DesignatedStandardsAdded(int number) => $"{number} designated standards added to Construction";
+        public static string DesignatedStandardsRemoved(int number) => $"{number} designated standards removed from Construction";
     }
 
     public class AuditUserActions

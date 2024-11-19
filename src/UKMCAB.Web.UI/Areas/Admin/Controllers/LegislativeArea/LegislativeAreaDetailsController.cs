@@ -66,7 +66,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
                              throw new InvalidOperationException();
         var cabLegislativeAreaIds = latestDocument.DocumentLegislativeAreas.Select(n => n.LegislativeAreaId).ToList();
 
-        var vm = new LegislativeAreaViewModel
+        var vm = new LegislativeAreaViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CABId = id,
             LegislativeAreas = await GetLegislativeSelectListItemsAsync(cabLegislativeAreaIds),
@@ -241,7 +241,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             if (itemFound != null) itemFound.Selected = true;
         }
 
-        var vm = new PurposeOfAppointmentViewModel
+        var vm = new PurposeOfAppointmentViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             Title = "Select purpose of appointment",
             LegislativeArea = legislativeArea.Name,
@@ -329,7 +329,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var categoryIds = selectListItems.Select(i => Guid.Parse(i.Value)).ToList();
         var hasProducts = await HasProductsAsync(legislativeArea.Id, purposeOfAppointment?.Id, categoryIds);
 
-        var vm = new CategoryViewModel
+        var vm = new CategoryViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CABId = id,
             Categories = selectListItems,
@@ -438,7 +438,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             if (itemFound != null) itemFound.Selected = true;
         }
 
-        var vm = new SubCategoryViewModel
+        var vm = new SubCategoryViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CABId = id,
             SubCategories = selectListItems,
@@ -557,7 +557,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
         }
 
-        var vm = new ProductViewModel
+        var vm = new ProductViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CABId = id,
             Products = selectListItems,
@@ -751,7 +751,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
         }
 
-        var vm = new ProcedureViewModel
+        var vm = new ProcedureViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CABId = id,
             Product = productName,
@@ -1081,11 +1081,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var options = await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(documentScopeOfAppointment.LegislativeAreaId, pageNumber);
 
         var vm = new DesignatedStandardsViewModel(
-            id, 
-            scopeId, 
-            fromSummary, 
-            compareScopeId, 
-            legislativeArea.Name, 
+            id,
+            scopeId,
+            fromSummary,
+            compareScopeId,
+            legislativeArea.Name,
             existingDesignatedStandardIds,
             options.DesignatedStandards,
             options.PaginationInfo);
@@ -1483,7 +1483,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
         }
 
-        var vm = new PpeProductTypeViewModel
+        var vm = new PpeProductTypeViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CABId = id,
             PpeProductTypes = selectListItems,
@@ -1563,7 +1563,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
         }
 
-        var vm = new ProtectionAgainstRiskViewModel
+        var vm = new ProtectionAgainstRiskViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CABId = id,
             ProtectionAgainstRisks = selectListItems,
@@ -1647,14 +1647,14 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             }
         }
 
-        var vm = new AreaOfCompetencyViewModel
+        var vm = new AreaOfCompetencyViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CABId = id,
             AreaOfCompetencies = selectListItems,
             LegislativeArea = legislativeArea.Name,
             PpeProductType = ppeProductType?.Name,
             ProtectionAgainstRisk = protectionAgainstRisk?.Name,
-            IsFromSummary = fromSummary,
+            IsFromSummary = fromSummary
         };
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AddAreaOfCompetency.cshtml", vm);
     }

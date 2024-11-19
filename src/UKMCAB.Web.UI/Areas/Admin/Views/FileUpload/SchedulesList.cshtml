@@ -56,7 +56,7 @@
         </div>
         <div class="govuk-grid-column-full">           
             <div>
-                <span class="govuk-caption-m">@Model.Title</span>
+                <span class="govuk-caption-m">@Model.SubTitle</span>
                 <h1 class="govuk-heading-l">@Model.Title</h1>
                 <p class="govuk-body govuk-!-padding-bottom-2">You can upload up to @SchedulesOptions.MaxFileCount PDF files.</p>
 
@@ -142,7 +142,7 @@
                                 </div>
 
                                 @*Row 2: Inputbox Row*@
-                                <div class="govuk-grid-row">
+                                <div class="govuk-grid-row file-upload-grid-row">
                                     <div class="govuk-grid-column-full govuk-grid-column-one-half-from-desktop @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].Label")">
                                         <label class="govuk-label govuk-label--s display-until-desktop" asp-for="ActiveFiles![i].Label">File</label>
                                         <p class="govuk-error-message">
@@ -152,7 +152,7 @@
                                         <input asp-for="ActiveFiles![i].FileName" type="hidden" value="@uploadedFile.FileName" />
                                         <input asp-for="IsFromSummary" type="hidden" value="@Model.IsFromSummary">
                                     </div>
-                                    <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
+                                    <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop file-upload-grid-column-field @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].LegislativeArea")">
                                         <label class="govuk-label govuk-label--s display-until-desktop" asp-for="ActiveFiles![i].LegislativeArea">Legislative area</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].LegislativeArea" class="govuk-error-message"></span>
@@ -173,7 +173,7 @@
                                         </select>
                                     </div>
 
-                                    <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].CreatedBy")">
+                                    <div class="govuk-grid-column-full govuk-grid-column-one-quarter-from-desktop file-upload-grid-column-field @Html.ShowModelStateFormGroupErrorClass(ViewData.ModelState, $"ActiveFiles[{i}].CreatedBy")">
                                         <label class="govuk-label govuk-label--s desktop-no-display" asp-for="ActiveFiles![i].CreatedBy">Created by</label>
                                         <p class="govuk-error-message">
                                             <span asp-validation-for="ActiveFiles![i].CreatedBy" class="govuk-error-message"></span>

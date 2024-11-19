@@ -42,7 +42,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         var legislativeAreaService = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeArea.LegislativeAreaId);
         TempData[StoragePageTitle] = string.Format(PageTitle, legislativeAreaService?.Name);
         TempData.Keep(StoragePageTitle);
-        var vm = new LegislativeAreaAdditionalInformationViewModel(Title: TempData[StoragePageTitle]?.ToString())
+        var vm = new LegislativeAreaAdditionalInformationViewModel(Title: TempData[StoragePageTitle]?.ToString(), fromSummary ? "Edit a CAB" : "Create a CAB")
         {
             CabId = id,
             LegislativeAreaId = laId,
@@ -53,7 +53,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
             PointOfContactEmail = legislativeArea.PointOfContactEmail,
             PointOfContactPhone = legislativeArea.PointOfContactPhone,
             IsPointOfContactPublicDisplay = legislativeArea.IsPointOfContactPublicDisplay,
-            IsFromSummary = fromSummary,
+            IsFromSummary = fromSummary
         };
 
         return View("~/Areas/Admin/views/CAB/LegislativeArea/AdditionalInformation.cshtml", vm);
@@ -104,7 +104,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
 
         var latestDocument = await _cabAdminService.GetLatestDocumentAsync(id.ToString());
         var documentLegislativeArea = latestDocument!.DocumentLegislativeAreas.First(a => a.LegislativeAreaId == laId);
-        var isNew = documentLegislativeArea.IsProvisional == null;
+        var isNew = documentLegislativeArea.NewlyCreated == null || documentLegislativeArea.NewlyCreated == true;
 
         documentLegislativeArea.IsProvisional = vm.IsProvisionalLegislativeArea;
         documentLegislativeArea.AppointmentDate = vm.AppointmentDate;
@@ -119,7 +119,7 @@ public class LegislativeAreaAdditionalInformationController : Controller
         // Is Provisional is only null if this is a new addition
         if(isNew)
         {
-            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.LegislativeAreaAdded));
+            latestDocument.AuditLog.Add(new Audit(userAccount, AuditCABActions.ScopeOfAppointmentAddedTo(documentLegislativeArea.LegislativeAreaName)));
         }
         // If we're adding a Review Date, then we can audit that
         if (documentLegislativeArea.ReviewDate == null &&

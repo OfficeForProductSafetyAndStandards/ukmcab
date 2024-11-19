@@ -53,18 +53,18 @@
     </div>
 </div>
 
-    @if (User.Identity.IsAuthenticated && Model is { IsArchived: true, RequestTaskType: null })
+@if (User.Identity.IsAuthenticated && Model is { IsArchived: true, RequestTaskType: null })
 {
     <partial model="@("Archived on " + Model.ArchivedDate)" name="Partials/_PageContentBanner"/>
 }
-    else if (User.Identity.IsAuthenticated &&  Model is { IsArchived: true, RequestTaskType: not null })
+else if (User.Identity.IsAuthenticated &&  Model is { IsArchived: true, RequestTaskType: not null })
 {
     <partial model="@("This CAB profile cannot be edited until it's been approved or declined.")" name="Partials/_PageContentBanner"/>
 }
 
-    @if (User.Identity.IsAuthenticated && Model.HasDraft)
+@if (User.Identity.IsAuthenticated && Model.HasDraft)
 {
-        <partial model="@("A Draft CAB exists for this record.")" name="Partials/_PageContentBanner" />
+    <partial model="@("A Draft CAB exists for this record.")" name="Partials/_PageContentBanner" />
 }
 
 <div class="govuk-grid-row">
@@ -81,12 +81,12 @@
              <div class="govuk-!-margin-bottom-3">
                 <span class="govuk-caption-m govuk-!-margin-right-1 govuk-!-display-inline-block">Status: <strong class="cab-status-tag @Model.StatusCssStyle">@Model.Status</strong></span>
 
-        @if (User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
-        {
-                <span class="govuk-caption-m govuk-!-display-inline-block">
-                    <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatus</strong>
-                </span>
-        }
+                @if (User.Identity.IsAuthenticated && !string.IsNullOrWhiteSpace(Model.SubStatus) && Model.SubStatus != SubStatus.None.GetEnumDescription())
+                {
+                    <span class="govuk-caption-m govuk-!-display-inline-block">
+                        <strong class="cab-status-tag cab-status-tag--pending-approval govuk-tag--yellow">@Model.SubStatus</strong>
+                    </span>
+                }
             </div>
         </div>
         <!--<div class="govuk-!-margin-bottom-6">-->

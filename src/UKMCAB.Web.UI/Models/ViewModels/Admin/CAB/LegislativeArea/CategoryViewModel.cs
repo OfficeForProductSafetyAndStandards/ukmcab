@@ -19,6 +19,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
 
         public bool HasProducts { get; set; }
 
-        public CategoryViewModel() : base("Legislative area category") { }
+        public CategoryViewModel() : this("Create a CAB") { }
+        public CategoryViewModel(string subTitle) : base("Legislative area category", subTitle) { }
     }
 }

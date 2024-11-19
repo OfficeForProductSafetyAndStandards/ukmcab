@@ -11,6 +11,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? PpeProductType { get; set; }
         public string? ProtectionAgainstRisk { get; set; }
         public IEnumerable<SelectListItem> AreaOfCompetencies { get; set; } = new List<SelectListItem>();
-        public AreaOfCompetencyViewModel() : base("Legislative area - area of competencies") { }
+        public AreaOfCompetencyViewModel() : this("Create a CAB") { }
+        public AreaOfCompetencyViewModel(string subTitle) : base("Legislative area - area of competencies", subTitle) { }
     }
 }
