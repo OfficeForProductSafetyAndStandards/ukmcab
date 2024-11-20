@@ -442,8 +442,8 @@ namespace UKMCAB.Data.Models
         public const string
             UnpublishApprovalRequestDeclined =
                 "Request to unpublish declined"; // UKAS request to un publish and create draft
-        public static string ScopeOfAppointmentAddedTo(string areaName) => $"1 scope of appointment added to {areaName}";
-        public static string ScopeOfAppointmentRemovedFrom(string areaName) => $"1 scope of appointment has been removed from {areaName}";
+        public static string ScopeOfAppointmentAddedTo(string areaName) => $"1 scope of appointment added to {areaName.ToLower()}";
+        public static string ScopeOfAppointmentRemovedFrom(string areaName) => $"1 scope of appointment has been removed from {areaName.ToLower()}";
 
         public const string ApproveLegislativeArea = "Legislative area approved";
         public const string DeclineLegislativeArea = "Legislative area declined";
