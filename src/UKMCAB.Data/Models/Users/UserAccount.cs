@@ -3,7 +3,7 @@
 public class UserAccount
 {
 
-    public string Id { get; set; } = null!;
+    public string Id { get; set; } = null!;    
     public List<Audit> AuditLog { get; set; }
 
     public string? FirstName { get; set; }
@@ -25,6 +25,7 @@ public class UserAccount
     public string? OrganisationName { get; set; }
     public string? EmailAddress { get; set; }
     public string? ContactEmailAddress { get; set; }
+    public string? PasswordHash { get; set; }
     public bool IsLocked { get; set; }
     public bool IsArchived => LockReason == UserAccountLockReason.Archived;
     public UserAccountLockReason? LockReason { get; set; }
