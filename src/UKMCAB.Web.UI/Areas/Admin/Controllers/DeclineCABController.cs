@@ -17,7 +17,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers;
 
-[Area("admin"), Route("admin/cab/decline"), Authorize]
+[Area("admin"), Route("admin/cab/decline"), Authorize(Policy = Policies.ApproveRequests)]
 public class DeclineCABController : Controller
 {
     private readonly ICABAdminService _cabAdminService;
