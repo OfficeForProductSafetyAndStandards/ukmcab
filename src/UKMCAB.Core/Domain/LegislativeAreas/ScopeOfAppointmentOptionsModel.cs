@@ -16,8 +16,9 @@ public class ScopeOfAppointmentOptionsModel
 
     public IEnumerable<ProcedureModel> Procedures { get; set; } = Array.Empty<ProcedureModel>();
     public IEnumerable<DesignatedStandardModel> DesignatedStandards { get; set; } = Array.Empty<DesignatedStandardModel>();
-    public IEnumerable<PpeProductTypeModel> PpeProductType { get; set; } = Array.Empty<PpeProductTypeModel>();
-    public IEnumerable<ProtectionAgainstRiskModel> ProtectionAgainstRisk { get; set; } = Array.Empty<ProtectionAgainstRiskModel>();
-    public IEnumerable<AreaOfCompetencyModel> AreaOfCompetency { get; set; } = Array.Empty<AreaOfCompetencyModel>();
+    public IEnumerable<PpeCategoryModel> PpeCategories { get; set; } = Array.Empty<PpeCategoryModel>();
+    public IEnumerable<PpeProductTypeModel> PpeProductTypes { get; set; } = Array.Empty<PpeProductTypeModel>();
+    public IEnumerable<ProtectionAgainstRiskModel> ProtectionAgainstRisks { get; set; } = Array.Empty<ProtectionAgainstRiskModel>();
+    public IEnumerable<AreaOfCompetencyModel> AreaOfCompetencies { get; set; } = Array.Empty<AreaOfCompetencyModel>();
     public PaginationInfo? PaginationInfo { get; set; }
 }

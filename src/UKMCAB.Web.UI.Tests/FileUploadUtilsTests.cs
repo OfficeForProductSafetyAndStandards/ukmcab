@@ -187,7 +187,7 @@ namespace UKMCAB.Web.UI.Tests
 
         [Category("File Upload Utils Sad Path")]
         [Test]
-        public async Task RemoveSelectedUploadedFilesFromDocumentAsync_ShouldNotRemoveAnyFile_WhenThereIsNoMatch()
+        public Task RemoveSelectedUploadedFilesFromDocumentAsync_ShouldNotRemoveAnyFile_WhenThereIsNoMatch()
         {
             //Arrange
             var cabServiceMock = new Mock<ICABAdminService>();
@@ -215,6 +215,7 @@ namespace UKMCAB.Web.UI.Tests
             //Assert
             Assert.That(uploadedFilesInLatestDocument.Count, Is.EqualTo(3));
             Assert.That(latestdoc.Schedules.First().FileName, Is.EquivalentTo("file1.pdf"));
+            return Task.CompletedTask;
         }
 
         [Category("File Upload Utils Sad Path")]
