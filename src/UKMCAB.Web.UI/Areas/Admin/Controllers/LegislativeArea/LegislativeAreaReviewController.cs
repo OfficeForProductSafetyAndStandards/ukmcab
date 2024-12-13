@@ -13,7 +13,7 @@ using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
-[Area("admin"), Route("admin/cab/{id}/legislative-area/review-legislative-areas"), Authorize]
+[Area("admin"), Route("admin/cab/{id}/legislative-area/review-legislative-areas"), Authorize(Policy = Policies.LegislativeAreaManage)]
 public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
