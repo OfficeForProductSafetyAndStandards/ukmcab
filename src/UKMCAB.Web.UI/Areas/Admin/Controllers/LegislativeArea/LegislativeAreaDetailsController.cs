@@ -1215,7 +1215,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
 
     #region RemoveLegislativeArea
 
-    [HttpGet("remove/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeArea)]
+    [HttpGet("remove/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeArea), Authorize(Policy = Policies.LegislativeAreaManage)]
     public async Task<IActionResult> RemoveOrArchiveLegislativeArea(Guid id, Guid legislativeAreaId, RemoveActionEnum actionType, string? returnUrl, bool fromSummary)
     {
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
@@ -1246,7 +1246,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         }
     }
 
-    [HttpPost("remove/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeArea)]
+    [HttpPost("remove/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeArea), Authorize(Policy = Policies.LegislativeAreaManage)]
     public async Task<IActionResult> RemoveOrArchiveLegislativeArea(Guid id, Guid legislativeAreaId, LegislativeAreaRemoveViewModel vm)
     {
         if (ModelState.IsValid)
@@ -1300,7 +1300,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeArea.cshtml", vm);
     }
 
-    [HttpGet("remove-with-option/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeAreaOption)]
+    [HttpGet("remove-with-option/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeAreaOption), Authorize(Policy = Policies.LegislativeAreaManage)]
     public async Task<IActionResult> RemoveOrArchiveLegislativeAreaWithOption(Guid id, Guid legislativeAreaId, RemoveActionEnum actionType, bool fromSummary, string? returnUrl)
     {
         var legislativeArea = await _legislativeAreaService.GetLegislativeAreaByIdAsync(legislativeAreaId);
@@ -1322,7 +1322,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         return View("~/Areas/Admin/views/CAB/LegislativeArea/RemoveLegislativeAreaWithOption.cshtml", vm);
     }
 
-    [HttpPost("remove-with-option/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeAreaOption)]
+    [HttpPost("remove-with-option/{legislativeAreaId}/{actionType}", Name = Routes.RemoveOrArchiveLegislativeAreaOption), Authorize(Policy = Policies.LegislativeAreaManage)]
     public async Task<IActionResult> RemoveOrArchiveLegislativeAreaWithOption(Guid id, Guid legislativeAreaId, LegislativeAreaRemoveWithOptionViewModel vm,
         string? returnUrl)
     {
