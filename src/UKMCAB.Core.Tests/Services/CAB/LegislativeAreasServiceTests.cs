@@ -13,6 +13,7 @@
     using UKMCAB.Core.Services.CAB;
     using UKMCAB.Data.CosmosDb.Services;
     using Data.Models.LegislativeAreas;
+    using static UKMCAB.Data.DataConstants;
 
     [TestFixture]
     public class LegislativeAreasServiceTests
@@ -23,7 +24,12 @@
         private Mock<IReadOnlyRepository<SubCategory>> _mockSubCategoryRepository;
         private Mock<IReadOnlyRepository<Product>> _mockProductRepository;
         private Mock<IReadOnlyRepository<Procedure>> _mockProcedureRepository;
-        private Mock<IReadOnlyRepository<DesignatedStandard>> _mockDesignatedStandardRepository;
+        private Mock<IReadOnlyRepository<DesignatedStandard>> _designatedStandardRepository;
+        private Mock<IReadOnlyRepository<PpeCategory>> _mockPpeCategoryRepository;
+        private Mock<IReadOnlyRepository<PpeProductType>> _mockPpeProductTypeRepository;
+        private Mock<IReadOnlyRepository<ProtectionAgainstRisk>> _mockProtectionAgainstRiskRepository;
+        private Mock<IReadOnlyRepository<AreaOfCompetency>> _mockAreaOfCompetencyRepository;
+
 
         private ILegislativeAreaService _legislativeAreaService;
 
@@ -34,16 +40,20 @@
             _mockPurposeOfAppointmentRepository = new Mock<IReadOnlyRepository<PurposeOfAppointment>>();
             _mockCategoryRepository = new Mock<IReadOnlyRepository<Category>>();
             _mockSubCategoryRepository = new Mock<IReadOnlyRepository<SubCategory>>();
-            _mockProductRepository = new Mock<IReadOnlyRepository<Product>>();
+            _mockProductRepository = new Mock<IReadOnlyRepository<Product>>();            
             _mockProcedureRepository = new Mock<IReadOnlyRepository<Procedure>>();
-            _mockDesignatedStandardRepository = new Mock<IReadOnlyRepository<DesignatedStandard>>(MockBehavior.Strict);
+            _designatedStandardRepository = new Mock<IReadOnlyRepository<DesignatedStandard>>(MockBehavior.Strict);
+            _mockPpeCategoryRepository = new Mock<IReadOnlyRepository<PpeCategory>>();
+            _mockPpeProductTypeRepository = new Mock<IReadOnlyRepository<PpeProductType>>();
+            _mockProtectionAgainstRiskRepository = new Mock<IReadOnlyRepository<ProtectionAgainstRisk>>();
+            _mockAreaOfCompetencyRepository = new Mock<IReadOnlyRepository<AreaOfCompetency>>();
 
             var mapper = new MapperConfiguration(mc => { mc.AddProfile(new AutoMapperProfile()); }).CreateMapper();
 
             _legislativeAreaService = new LegislativeAreaService(_mockLegislativeAreaRepository.Object,
                 _mockPurposeOfAppointmentRepository.Object,
                 _mockCategoryRepository.Object, _mockProductRepository.Object, _mockProcedureRepository.Object,
-                _mockSubCategoryRepository.Object, _mockDesignatedStandardRepository.Object, mapper);
+                _mockSubCategoryRepository.Object, _designatedStandardRepository.Object, _mockPpeCategoryRepository.Object, _mockPpeProductTypeRepository.Object, _mockProtectionAgainstRiskRepository.Object, _mockAreaOfCompetencyRepository.Object, mapper);
         }
 
         #region GetAllLegislativeAreas
@@ -288,6 +298,49 @@
             Assert.That("Name1", Is.EqualTo(nextScopeOptions.Products.ElementAt(0).Name));
             Assert.That("Name2", Is.EqualTo(nextScopeOptions.Products.ElementAt(1).Name));
             Assert.That("Name3", Is.EqualTo(nextScopeOptions.Products.ElementAt(2).Name));
+        }
+        
+        [Test]
+        public async Task
+            LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnPpeCategories()
+        {
+            // Arrange
+            _mockPurposeOfAppointmentRepository
+                .Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PurposeOfAppointment, bool>>>()))
+                .ReturnsAsync(new List<PurposeOfAppointment>());
+
+            _mockCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Category, bool>>>()))
+                .ReturnsAsync(new List<Category>());
+
+            _mockProductRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<Product, bool>>>()))
+                .ReturnsAsync(new List<Product>());
+
+            _designatedStandardRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<DesignatedStandard, bool>>>()))
+                .ReturnsAsync(new List<DesignatedStandard>());
+
+            _mockPpeCategoryRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PpeCategory, bool>>>()))
+                .ReturnsAsync(new List<PpeCategory>()
+                {
+                    new() { Id = new Guid(), Name = "Name1" },
+                    new() { Id = new Guid(), Name = "Name2" },
+                    new() { Id = new Guid(), Name = "Name3" },
+                });
+
+            // Act
+            var nextScopeOptions =
+                await _legislativeAreaService.GetNextScopeOfAppointmentOptionsForLegislativeAreaAsync(Guid.NewGuid());
+
+            // Assert
+            Assert.That(nextScopeOptions, Is.Not.Null);
+            Assert.That(nextScopeOptions.PurposeOfAppointments, Is.Empty);
+            Assert.That(nextScopeOptions.Categories, Is.Empty);
+            Assert.That(nextScopeOptions.Subcategories, Is.Empty);
+            Assert.That(nextScopeOptions.Products, Is.Empty);
+            Assert.That(nextScopeOptions.Procedures, Is.Empty);
+            Assert.That(3, Is.EqualTo(nextScopeOptions.PpeCategories.Count()));
+            Assert.That("Name1", Is.EqualTo(nextScopeOptions.PpeCategories.ElementAt(0).Name));
+            Assert.That("Name2", Is.EqualTo(nextScopeOptions.PpeCategories.ElementAt(1).Name));
+            Assert.That("Name3", Is.EqualTo(nextScopeOptions.PpeCategories.ElementAt(2).Name));
         }
 
         [Test]

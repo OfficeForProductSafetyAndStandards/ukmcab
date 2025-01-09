@@ -22,6 +22,11 @@ public interface ILegislativeAreaService
     Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProductAsync(Guid productId);
     Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPpeProductTypeAsync();
     Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForProtectionAgainstRiskAsync();
+    Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPpeCategoryAsync(Guid ppeCategoryId);
+    Task<ScopeOfAppointmentOptionsModel> GetPpeProductTypeScopeOfAppointmentOptionsAsync();
+    Task<ScopeOfAppointmentOptionsModel> GetProtectionAgainstRiskScopeOfAppointmentOptionsAsync();
+    Task<ScopeOfAppointmentOptionsModel> GetAreaOfCompetencyScopeOfAppointmentOptionsAsync();
+    Task<ScopeOfAppointmentOptionsModel> GetPpeProcedureScopeOfAppointmentOptionsAsync();
     Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForAreaOfCompetencyAsync(Guid areaOfCompetencyId);
     Task<PurposeOfAppointmentModel?> GetPurposeOfAppointmentByIdAsync(Guid purposeOfAppointmentId);
 
@@ -32,6 +37,7 @@ public interface ILegislativeAreaService
     Task<ProcedureModel?> GetProcedureByIdAsync(Guid procedureId);
 
     Task<SubCategoryModel?> GetSubCategoryByIdAsync(Guid subCategoryId);
+    Task<PpeCategoryModel?> GetPpeCategoryByIdAsync(Guid ppeCategoryId);
     Task<PpeProductTypeModel?> GetPpeProductTypeByIdAsync(Guid ppeProductTypeId);
     Task<ProtectionAgainstRiskModel?> GetProtectionAgainstRiskByIdAsync(Guid protectionAgainstRiskId);
     Task<AreaOfCompetencyModel?> GetAreaOfCompetencyByIdAsync(Guid areaOfCompetencyId);

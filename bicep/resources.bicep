@@ -538,6 +538,36 @@ resource cosmosDbContainerAreasOfCompetencies 'Microsoft.DocumentDB/databaseAcco
   }
 }
 
+resource cosmosDbContainerPpeCategoriess 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
+  parent: cosmosDbDatabase
+  name: 'ppe-categories'
+  properties: {
+    resource: {
+      id: 'ppe-categories'
+      partitionKey: {
+        paths: [
+          '/legislativeAreaId'
+        ]
+        kind: 'Hash'
+      }
+      indexingPolicy: {
+        automatic: true
+        indexingMode: 'consistent'
+        includedPaths: [
+          {
+            path: '/*'
+          }
+        ]
+        excludedPaths: [
+          {
+            path: '/_etag/?'
+          }
+        ]
+      }
+    }
+  }
+}
+
 resource cosmosDbContainerPpeProductTypes 'Microsoft.DocumentDB/databaseAccounts/sqlDatabases/containers@2022-05-15' = {
   parent: cosmosDbDatabase
   name: 'ppe-product-types'

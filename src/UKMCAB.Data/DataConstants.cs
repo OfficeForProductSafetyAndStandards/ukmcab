@@ -329,4 +329,10 @@ public static class DataConstants
     {
         public const string Construction = "Construction products";
     }
+    public static class PpeCategories
+    {
+        public const string PppProductType = "PPE Product Types";
+        public const string ProtectionAgainstRisks = "Providing protection against the following risks";
+        public const string AreaOfCompetence = "Specialised Areas of Competence";
+    }
 }
