@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data.Models;
@@ -26,12 +25,7 @@ namespace UKMCAB.Core.Security.Requirements
         {
             var user = context.User;
 
-            var cabId = ((HttpContext)context.Resource)?.Request.RouteValues["Id"]?.ToString();
-
-            if (cabId is null)
-            {
-                return Task.CompletedTask;
-            }
+            var cabId = (_httpContextAccessor.HttpContext!.GetRouteValue("id")?.ToString()) ?? throw new Exception("CAB Id not found in route");
 
             var document = _cabAdminService.GetLatestDocumentAsync(cabId).Result;
 
@@ -47,11 +41,11 @@ namespace UKMCAB.Core.Security.Requirements
             var isApprovedByOGD =  document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Approved);
             var isPendingApprovalByOGD = document.IsPendingOgdApproval();
 
-            if (isOgd && isPendingApprovalByOGD)
+            if (isOgd && isPendingApprovalByOGD || isOpss)
+            {
                 context.Succeed(requirement);
-
-            if(isOpss && isApprovedByOGD)
-                context.Succeed(requirement);
+            }
+                
 
             return Task.CompletedTask;
         }

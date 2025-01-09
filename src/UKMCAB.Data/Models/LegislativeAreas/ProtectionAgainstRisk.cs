@@ -1,6 +1,6 @@
 ﻿namespace UKMCAB.Data.Models.LegislativeAreas
 {
-    public class ProtectionAgainstRisk
+    public class ProtectionAgainstRisk : IEntity
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

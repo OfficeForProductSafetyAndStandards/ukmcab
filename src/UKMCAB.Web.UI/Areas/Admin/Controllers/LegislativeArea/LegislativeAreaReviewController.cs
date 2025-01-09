@@ -271,6 +271,56 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
                 }
 
+                foreach (var ppeProductTypeIdAndProcedureIds in scopeOfAppointment.PpeProductTypeIdAndProcedureIds)
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel
+                    {
+                        LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                        PurposeOfAppointment = purposeOfAppointment,
+                        ScopeId = scopeOfAppointment.Id,
+                    };
+
+                    if (ppeProductTypeIdAndProcedureIds.PpeProductTypeId.HasValue)
+                    {
+                        var selectedPpeProductType =
+                            await _legislativeAreaService.GetPpeProductTypeByIdAsync(ppeProductTypeIdAndProcedureIds.PpeProductTypeId.Value);
+                        soaViewModel.PpeProductType = selectedPpeProductType!.Name;
+                    }
+
+                    foreach (var procedureId in ppeProductTypeIdAndProcedureIds.ProcedureIds)
+                    {
+                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                        soaViewModel.Procedures?.Add(procedure!.Name);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
+
+                foreach (var protectionAgainstRiskIdAndProcedureIds in scopeOfAppointment.ProtectionAgainstRiskIdAndProcedureIds)
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel
+                    {
+                        LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                        PurposeOfAppointment = purposeOfAppointment,
+                        ScopeId = scopeOfAppointment.Id,
+                    };
+
+                    if (protectionAgainstRiskIdAndProcedureIds.ProtectionAgainstRiskId.HasValue)
+                    {
+                        var selectedProtectionAgainstRiskIdAndProcedureIds =
+                            await _legislativeAreaService.GetProtectionAgainstRiskByIdAsync(protectionAgainstRiskIdAndProcedureIds.ProtectionAgainstRiskId.Value);
+                        soaViewModel.ProtectionAgainstRisk = selectedProtectionAgainstRiskIdAndProcedureIds!.Name;
+                    }
+
+                    foreach (var procedureId in protectionAgainstRiskIdAndProcedureIds.ProcedureIds)
+                    {
+                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                        soaViewModel.Procedures?.Add(procedure!.Name);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
+
                 foreach (var areaOfCompetencyProcedure in scopeOfAppointment.AreaOfCompetencyIdAndProcedureIds)
                 {
                     var soaViewModel = new LegislativeAreaListItemViewModel
@@ -297,7 +347,6 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 
                     legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
                 }
-
 
                 if (scopeOfAppointment.DesignatedStandardIds.Any())
                 {

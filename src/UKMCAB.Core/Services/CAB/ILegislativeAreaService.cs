@@ -49,6 +49,11 @@ public interface ILegislativeAreaService
     Task<List<ProductModel>> GetProductsForDocumentAsync(Document document);
     Task<List<ProcedureModel>> GetProceduresForDocumentAsync(Document document);
     Task<List<DesignatedStandardModel>> GetDesignatedStandardsForDocumentAsync(Document document);
+    Task<List<TModel>> GetEntitiesForDocumentAsync<TEntity, TModel>(
+        Document document, 
+        Func<DocumentScopeOfAppointment,IEnumerable<dynamic>> selector,
+        Func<dynamic, Guid?> idSelector
+        ) where TEntity : class, IEntity;
     Task<List<PpeProductTypeModel>> GetPpeProductTypesForDocumentAsync(Document document);
     Task<List<ProtectionAgainstRiskModel>> GetProtectionAgainstRisksForDocumentAsync(Document document);
     Task<List<AreaOfCompetencyModel>> GetAreaOfCompetenciesForDocumentAsync(Document document);

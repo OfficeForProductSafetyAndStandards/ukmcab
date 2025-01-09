@@ -20,6 +20,7 @@ using UKMCAB.Subscriptions.Core.Common;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using AngleSharp.Common;
 using UKMCAB.Core.Extensions;
+using UKMCAB.Web.UI.Models.Builders;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
@@ -32,6 +33,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
     private readonly CoreEmailTemplateOptions _templateOptions;
     private readonly IWorkflowTaskService _workflowTaskService;
     private readonly ILegislativeAreaDetailService _legislativeAreaDetailService;
+    private readonly ICabLegislativeAreasItemViewModelBuilder _cabLegislativeAreasItemViewModelBuilder;
 
     public static class Routes
     {
@@ -48,7 +50,8 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         ILegislativeAreaDetailService legislativeAreaDetailService,
         IAsyncNotificationClient notificationClient,
         IOptions<CoreEmailTemplateOptions> templateOptions,
-        IWorkflowTaskService workflowTaskService) : base(userService)
+        IWorkflowTaskService workflowTaskService,
+        ICabLegislativeAreasItemViewModelBuilder cabLegislativeAreasItemViewModelBuilder) : base(userService)
     {
         _cabAdminService = cabAdminService;
         _legislativeAreaService = legislativeAreaService;
@@ -56,6 +59,7 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         _templateOptions = templateOptions.Value;
         _workflowTaskService = workflowTaskService;
         _legislativeAreaDetailService = legislativeAreaDetailService;
+        _cabLegislativeAreasItemViewModelBuilder = cabLegislativeAreasItemViewModelBuilder;
     }
 
     [HttpGet("approvallist", Name = Routes.LegislativeAreaApprovalList)]
@@ -116,12 +120,29 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
             _ => LegislativeAreaReviewActionEnum.Add,
         };
 
+        var purposeOfAppointments = await _legislativeAreaService.GetPurposeOfAppointmentsForDocumentAsync(latestDocument);
+        var categories = await _legislativeAreaService.GetCategoriesForDocumentAsync(latestDocument);
+        var subCategories = await _legislativeAreaService.GetSubCategoriesForDocumentAsync(latestDocument);
+        var products = await _legislativeAreaService.GetProductsForDocumentAsync(latestDocument);
+        var procedures = await _legislativeAreaService.GetProceduresForDocumentAsync(latestDocument);
+        var designatedStandards = await _legislativeAreaService.GetDesignatedStandardsForDocumentAsync(latestDocument);
+   
+        var ppeProductTypes = await _legislativeAreaService.GetPpeProductTypesForDocumentAsync(latestDocument);
+        var protectionAgainstRisks = await _legislativeAreaService.GetProtectionAgainstRisksForDocumentAsync(latestDocument);
+        var areaOfCompetencies = await _legislativeAreaService.GetAreaOfCompetenciesForDocumentAsync(latestDocument);
+
+        var laItemVM = _cabLegislativeAreasItemViewModelBuilder
+            .WithDocumentLegislativeAreaDetails(la, documentLa)            
+            .WithScopeOfAppointments(la,latestDocument.ScopeOfAppointments, purposeOfAppointments, categories, subCategories, products, procedures, designatedStandards, ppeProductTypes, protectionAgainstRisks, areaOfCompetencies)
+            .WithNoOfProductsInScopeOfAppointment()
+            .Build();
+
         var vm = new LegislativeAreaApproveViewModel
         {
             CabId = id,           
             Title = $"{CultureInfo.CurrentCulture.TextInfo.ToTitleCase(reviewAction.GetEnumDescription())} legislative area",
             SubTitle = "Edit a CAB",
-            LegislativeArea = await _legislativeAreaDetailService.PopulateCABLegislativeAreasItemViewModelAsync(latestDocument, legislativeAreaId),
+            LegislativeArea = laItemVM,            
             ProductSchedules = reviewAction == LegislativeAreaReviewActionEnum.Unarchive ?
                 latestDocument.ArchivedSchedules.Where(n => n.LegislativeArea == la.Name).ToList() :
                 latestDocument.ActiveSchedules.Where(n => n.LegislativeArea == la.Name).ToList(),
