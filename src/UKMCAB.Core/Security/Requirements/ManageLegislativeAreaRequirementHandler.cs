@@ -25,7 +25,7 @@ namespace UKMCAB.Core.Security.Requirements
         {
             var user = context.User;
 
-            var cabId = (_httpContextAccessor.HttpContext!.GetRouteValue("id")?.ToString()) ?? throw new Exception("CAB Id not found in route");
+            var cabId = (_httpContextAccessor.HttpContext!.GetRouteValue("id")?.ToString()) ?? throw new InvalidOperationException("CAB Id not found in route");
 
             var document = _cabAdminService.GetLatestDocumentAsync(cabId).Result;
 

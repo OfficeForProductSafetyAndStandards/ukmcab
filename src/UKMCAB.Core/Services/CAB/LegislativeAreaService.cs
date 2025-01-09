@@ -264,8 +264,6 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPpeCategoryAsync(Guid ppeCategoryId)
     {
-        //var protectionAgainstRisks = await _protectionAgainstRiskRepository.GetAllAsync();
-        //var ppeProductTypes = await _ppeProductTypeRepository.QueryAsync(x => x.PpeCategoryId == ppeCategoryId);
         var ppeProductTypes = await _ppeProductTypeRepository.QueryAsync(x => x.PpeCategoryId == ppeCategoryId);
         if (ppeProductTypes.Any())
         {
