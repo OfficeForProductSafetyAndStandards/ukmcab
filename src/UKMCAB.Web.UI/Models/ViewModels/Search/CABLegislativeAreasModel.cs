@@ -12,6 +12,7 @@ public class CABLegislativeAreasModel
 
     public bool ShowProvisionalTag { get; set; }
     public bool ShowArchivedTag { get; set; }
+    public bool ShowPpeData => PpeProductTypes.Count > 0 || ProtectionAgainstRisks.Count > 0 || AreaOfCompetencies.Count > 0;
     public string? Regulation { get; set; }
     public Guid? ScopeOfAppointmentId { get; set; }
     public List<(Guid Id, string Name)> PurposeOfAppointments { get; set; } = new();
