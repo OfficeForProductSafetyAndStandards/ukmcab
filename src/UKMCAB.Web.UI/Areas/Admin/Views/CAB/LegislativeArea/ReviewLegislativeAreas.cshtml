@@ -61,6 +61,10 @@
                         {
                             var legislativeArea = Model.ActiveLAItems[i];
 
+                            var showProcedureHeaderForPpeData = (legislativeArea.ShowPpeProductTypeColumn
+                            || legislativeArea.ShowProtectionAgainstRiskColumn
+                            || legislativeArea.ShowAreaOfCompetencyColumn);
+
                             <input type="hidden" asp-for="CABId">
                             <input type="hidden" asp-for="ActiveLAItems[i].Name">
                             <input type="hidden" asp-for="ActiveLAItems[i].LegislativeAreaId">
@@ -127,23 +131,13 @@
                                                         <th scope="col" class="govuk-table__header">Product</th>
                                                     }
 
-                                                    @* PPE Section *@
-                                                    @if (legislativeArea.ShowPpeProductTypeColumn)
+                                                    @if (legislativeArea.ShowEditActions && showProcedureHeaderForPpeData)
                                                     {
-                                                        <th scope="col" class="govuk-table__header">PPE product type</th>
+                                                        <th scope="col" class="govuk-table__header"></th>
+                                                        <th scope="col" class="govuk-table__header"></th>
                                                     }
 
-                                                    @if (legislativeArea.ShowProtectionAgainstRiskColumn)
-                                                    {
-                                                        <th scope="col" class="govuk-table__header">Protection against risk</th>
-                                                    }
-                                                    @if (legislativeArea.ShowAreaOfCompetencyColumn)
-                                                    {
-                                                        <th scope="col" class="govuk-table__header">Area of competency</th>
-                                                    }
-                                                    @* PPE Section - End *@
-
-                                                    @if (legislativeArea.ShowProcedureColumn)
+                                                    @if (legislativeArea.ShowProcedureColumn && !showProcedureHeaderForPpeData)
                                                     {
                                                         <th scope="col" class="govuk-table__header">Applicable conformity assessment procedure</th>
                                                     }
@@ -168,10 +162,52 @@
                                                     var scopeOfAppointment = legislativeArea.ScopeOfAppointments[j];
                                                     var noOfProductsInScopeOfAppointment = scopeOfAppointment.NoOfProductsInScopeOfAppointment;
                                                     var nextProductIndex = j;
+                                                    var currentPpeCategory = string.Empty;
                                                     @for (int k = 0; k < noOfProductsInScopeOfAppointment; k++)
                                                     {
                                                         var showBorder = k == noOfProductsInScopeOfAppointment - 1;
                                                         showBorder = scopeOfAppointment.NoOfDesignatedStandardsInScopeOfAppointment > 1 ? false : showBorder;
+
+                                                        //PPE Header
+                                                        @if (showProcedureHeaderForPpeData)
+                                                        {
+                                                            <tr class="govuk-table__row">
+                                                                
+
+                                                                @if (!string.IsNullOrEmpty(scopeOfAppointment.PpeProductType) && !currentPpeCategory.Equals("PpeProductType"))
+                                                                {
+                                                                    currentPpeCategory = "PpeProductType";
+                                                                    @if (legislativeArea.ShowEditActions)
+                                                                    {
+                                                                        <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")"></td>
+                                                                    }
+                                                                    <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")">PPE product type</td>
+                                                                    <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")">Applicable conformity assessment procedure</td>
+                                                                }
+                                                                else if (!string.IsNullOrEmpty(scopeOfAppointment.ProtectionAgainstRisk) && !currentPpeCategory.Equals("ProtectionAgainstRisk"))
+                                                                {
+                                                                    currentPpeCategory = "ProtectionAgainstRisk";
+                                                                    @if (legislativeArea.ShowEditActions)
+                                                                    {
+                                                                        <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")"></td>
+                                                                    }
+                                                                    <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")">Protection against risk</td>
+                                                                    <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")">Applicable conformity assessment procedure</td>
+                                                                }
+                                                                else if (!string.IsNullOrEmpty(scopeOfAppointment.AreaOfCompetency) && !currentPpeCategory.Equals("AreaOfCompetency"))
+                                                                {
+                                                                    currentPpeCategory = "AreaOfCompetency";
+                                                                    @if (legislativeArea.ShowEditActions)
+                                                                    {
+                                                                        <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")"></td>
+                                                                    }
+                                                                    <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")">Area of competency</td>
+                                                                    <td scope="col" class="govuk-table__header @Html.Conditional(!string.IsNullOrEmpty(currentPpeCategory), "ukmcab-padding-top-30")">Applicable conformity assessment procedure</td>
+                                                                }
+
+                                                                
+                                                            </tr>
+                                                        }
 
                                                         <tr class="govuk-table__row">
                                                             @if (k == 0)
@@ -202,45 +238,20 @@
                                                                         @scopeOfAppointment.PurposeOfAppointment
                                                                     </td>
                                                                 }
-                                                                @* PPE Section*@
-                                                                @if (legislativeArea.ShowPpeProductTypeColumn)
-                                                                {
-                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                                        <label aria-hidden="true">Ppe product type</label>
-                                                                        @Html.ValueOrNotApplicable(scopeOfAppointment.PpeProductType)
-                                                                    </td>
-                                                                }
-                                                                @if (legislativeArea.ShowProtectionAgainstRiskColumn)
-                                                                {
-                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                                        <label aria-hidden="true">Protection against risk</label>
-                                                                        @Html.ValueOrNotApplicable(scopeOfAppointment.ProtectionAgainstRisk)
-                                                                    </td>
-                                                                }
-                                                                @* PPE Section - End*@
                                                             }
                                                             else
                                                             {
-                                                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                                </td>
-                                                                @if (legislativeArea.ShowPurposeOfAppointmentColumn)
+                                                                @if (legislativeArea.ShowEditActions)
                                                                 {
                                                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                     </td>
                                                                 }
 
-                                                                @* PPE Section*@
-                                                                @if (legislativeArea.ShowPpeProductTypeColumn)
+                                                                @if (legislativeArea.ShowPurposeOfAppointmentColumn)
                                                                 {
                                                                     <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                     </td>
                                                                 }
-                                                                @if (legislativeArea.ShowProtectionAgainstRiskColumn)
-                                                                {
-                                                                    <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
-                                                                    </td>
-                                                                }
-                                                                @* PPE Section - End*@
                                                             }
 
                                                             @if (legislativeArea.ShowCategoryColumn)
@@ -313,9 +324,24 @@
                                                                 </td>
                                                             }
 
-                                                            @* PPE Section*@
+                                                            @* PPE Section *@
+                                                            @if (scopeOfAppointment.PpeProductType != null)
+                                                            {
+                                                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                    <label aria-hidden="true">PPE product type</label>
+                                                                    @(scopeOfAppointment.PpeProductType != null ? scopeOfAppointment.PpeProductType : string.Empty)
+                                                                </td>
+                                                            }
 
-                                                            @if (legislativeArea.ShowAreaOfCompetencyColumn)
+                                                            @if (scopeOfAppointment.ProtectionAgainstRisk != null)
+                                                            {
+                                                                <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
+                                                                    <label aria-hidden="true">Protection against risk</label>
+                                                                    @Html.ValueOrNotApplicable(scopeOfAppointment.ProtectionAgainstRisk)
+                                                                </td>
+                                                            }
+
+                                                            @if (scopeOfAppointment.AreaOfCompetency != null)
                                                             {
                                                                 <td class="govuk-table__cell @Html.Conditional(!showBorder, "ukmcab-no-border")">
                                                                     <label aria-hidden="true">Area of competency</label>

@@ -264,8 +264,6 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<ScopeOfAppointmentOptionsModel> GetNextScopeOfAppointmentOptionsForPpeCategoryAsync(Guid ppeCategoryId)
     {
-        //var protectionAgainstRisks = await _protectionAgainstRiskRepository.GetAllAsync();
-        //var ppeProductTypes = await _ppeProductTypeRepository.QueryAsync(x => x.PpeCategoryId == ppeCategoryId);
         var ppeProductTypes = await _ppeProductTypeRepository.QueryAsync(x => x.PpeCategoryId == ppeCategoryId);
         if (ppeProductTypes.Any())
         {
@@ -495,11 +493,22 @@ public class LegislativeAreaService : ILegislativeAreaService
             .SelectMany(soa => soa.CategoryIdAndProcedureIds
                 .SelectMany(categoryIdAndProcedureIds => categoryIdAndProcedureIds.ProcedureIds));
 
+        var ppeProductTypeProcedureIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.PpeProductTypeIdAndProcedureIds
+                .SelectMany(ppeProductTypeIdAndProcedureIds => ppeProductTypeIdAndProcedureIds.ProcedureIds));
+
+        var protectionAgainstRiskProcedureIds = document.ScopeOfAppointments
+            .SelectMany(soa => soa.ProtectionAgainstRiskIdAndProcedureIds
+                .SelectMany(protectionAgainstRiskIdAndProcedureIds => protectionAgainstRiskIdAndProcedureIds.ProcedureIds));
+
         var areaOfCompetencyProcedureIds = document.ScopeOfAppointments
             .SelectMany(soa => soa.AreaOfCompetencyIdAndProcedureIds
                 .SelectMany(areaOfCompetencyIdAndProcedureIds => areaOfCompetencyIdAndProcedureIds.ProcedureIds));
 
-        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds).Concat(areaOfCompetencyProcedureIds).Distinct();
+        var distictProcedureIds = productProcedureIds.Concat(categoryProcedureIds)
+            .Concat(ppeProductTypeProcedureIds)
+            .Concat(protectionAgainstRiskProcedureIds)
+            .Concat(areaOfCompetencyProcedureIds).Distinct();
 
         foreach (var id in distictProcedureIds)
         {
@@ -511,25 +520,21 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<List<PpeProductTypeModel>> GetPpeProductTypesForDocumentAsync(Document document)
     {
-        var ppeProductTypeIds = document.ScopeOfAppointments.Where(soa => soa.PpeProductTypeId.HasValue).Select(soa => soa.PpeProductTypeId!.Value);
-        foreach (var id in ppeProductTypeIds)
-        {
-            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
-        }
-        var ppeProductTypes = (await _ppeProductTypeRepository.QueryAsync(p => ppeProductTypeIds.Contains(p.Id))).ToList();
-        return _mapper.Map<List<PpeProductTypeModel>>(ppeProductTypes);
-    }
-    public async Task<List<ProtectionAgainstRiskModel>> GetProtectionAgainstRisksForDocumentAsync(Document document)
-    {
-        var protectionAgainstRiskIds = document.ScopeOfAppointments.Where(soa => soa.ProtectionAgainstRiskId.HasValue).Select(soa => soa.ProtectionAgainstRiskId!.Value);
-        foreach (var id in protectionAgainstRiskIds)
-        {
-            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
-        }
-        var protectionAgainstRisks = (await _protectionAgainstRiskRepository.QueryAsync(p => protectionAgainstRiskIds.Contains(p.Id))).ToList();
-        return _mapper.Map<List<ProtectionAgainstRiskModel>>(protectionAgainstRisks);
+        return await GetEntitiesForDocumentAsync<PpeProductType, PpeProductTypeModel>(
+            document,
+            soa => soa.PpeProductTypeIdAndProcedureIds,
+            x => x.PpeProductTypeId
+        );
     }
 
+    public async Task<List<ProtectionAgainstRiskModel>> GetProtectionAgainstRisksForDocumentAsync(Document document)
+    {
+        return await GetEntitiesForDocumentAsync<ProtectionAgainstRisk, ProtectionAgainstRiskModel>(
+            document,
+            soa => soa.ProtectionAgainstRiskIdAndProcedureIds,
+            x => x.ProtectionAgainstRiskId
+        );
+    }
     public async Task<List<AreaOfCompetencyModel>> GetAreaOfCompetenciesForDocumentAsync(Document document)
     {
         var areaOfCompetencyIds = document.ScopeOfAppointments
@@ -576,12 +581,6 @@ public class LegislativeAreaService : ILegislativeAreaService
 
     public async Task<ScopeOfAppointmentOptionsModel> GetPpeProcedureScopeOfAppointmentOptionsAsync()
     {
-        //var areaOfCompetencies = await _areaOfCompetencyRepository.GetAllAsync();
-        //return new ScopeOfAppointmentOptionsModel
-        //{
-        //    AreaOfCompetencies = _mapper.Map<IEnumerable<AreaOfCompetencyModel>>(areaOfCompetencies)
-        //};
-
         var procedures = await _procedureRepository.QueryAsync(x => 
             x.PpeProductTypeIds != null);
 
@@ -589,5 +588,41 @@ public class LegislativeAreaService : ILegislativeAreaService
         {
             Procedures = _mapper.Map<IEnumerable<ProcedureModel>>(procedures)
         };
+    }
+
+    public async Task<List<TModel>> GetEntitiesForDocumentAsync<TEntity, TModel>(
+        Document document,
+        Func<DocumentScopeOfAppointment, IEnumerable<dynamic>> selector,
+        Func<dynamic, Guid?> idSelector
+    ) where TEntity : class, IEntity
+    {
+        IReadOnlyRepository<TEntity> repository = ResolveRepository<TEntity>();
+
+        var entityIds = document.ScopeOfAppointments
+            .SelectMany(selector)
+            .Select(idSelector)
+            .Where(id => id.HasValue)
+            .Select(id => id!.Value)
+            .Distinct();
+
+        foreach (var id in entityIds)
+        {
+            Guard.IsTrue(id != Guid.Empty, "Guid cannot be empty");
+        }
+
+        var entities = (await repository.QueryAsync(e => entityIds.Contains(e.Id))).ToList();
+        return _mapper.Map<List<TModel>>(entities);
+    }
+
+    private IReadOnlyRepository<TEntity> ResolveRepository<TEntity>() where TEntity : class
+    {
+        if (typeof(TEntity) == typeof(PpeProductType))
+            return (IReadOnlyRepository<TEntity>)_ppeProductTypeRepository;
+        if (typeof(TEntity) == typeof(ProtectionAgainstRisk))
+            return (IReadOnlyRepository<TEntity>)_protectionAgainstRiskRepository;
+        if (typeof(TEntity) == typeof(AreaOfCompetency))
+            return (IReadOnlyRepository<TEntity>)_areaOfCompetencyRepository;
+
+        throw new NotSupportedException($"Repository for type {typeof(TEntity).Name} is currently not supported.");
     }
 }

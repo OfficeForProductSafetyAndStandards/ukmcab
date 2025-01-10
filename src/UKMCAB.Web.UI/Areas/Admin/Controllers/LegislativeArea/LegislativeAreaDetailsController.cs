@@ -683,7 +683,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var product = await GetEntityByIdAsync(productId, _legislativeAreaService.GetProductByIdAsync);
         var category = await GetEntityByIdAsync(categoryId, _legislativeAreaService.GetCategoryByIdAsync);
 
-        var existingProcedures = GetExistingProcedures(existingScopeOfAppointment, productId, categoryId, areaOfCompetencyId);
+        var existingProcedures = GetExistingProcedures(existingScopeOfAppointment, productId, categoryId, ppeProductTypeId, protectionAgainstRiskId, areaOfCompetencyId);
         MarkSelectedProcedures(selectListItems, existingProcedures);
 
         var vm = new ProcedureViewModel(fromSummary ? "Edit a CAB" : "Create a CAB")
@@ -1554,11 +1554,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var legislativeArea =
             await _legislativeAreaService.GetLegislativeAreaByIdAsync(scopeOfAppointment.LegislativeAreaId);
 
-        if (existingScopeOfAppointment != null && existingScopeOfAppointment.PpeProductTypeId != null)
+        if (existingScopeOfAppointment != null && existingScopeOfAppointment.PpeProductTypeIds != null)
         {
             foreach (var item in selectListItems)
             {
-                item.Selected = existingScopeOfAppointment.PpeProductTypeId == Guid.Parse(item.Value);
+                item.Selected = existingScopeOfAppointment.PpeProductTypeIds.Contains(Guid.Parse(item.Value));
             }
         }
 
@@ -1646,11 +1646,11 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         var ppeProductType = scopeOfAppointment.PpeProductTypeId != null ?
             await _legislativeAreaService.GetPpeProductTypeByIdAsync((Guid)scopeOfAppointment.PpeProductTypeId) : null;
 
-        if (existingScopeOfAppointment != null && existingScopeOfAppointment.ProtectionAgainstRiskId != null)
+        if (existingScopeOfAppointment != null && existingScopeOfAppointment.ProtectionAgainstRiskIds != null)
         {
             foreach (var item in selectListItems)
             {
-                item.Selected = existingScopeOfAppointment.ProtectionAgainstRiskId == Guid.Parse(item.Value);
+                item.Selected = existingScopeOfAppointment.ProtectionAgainstRiskIds.Contains(Guid.Parse(item.Value));
             }
         }
 
@@ -1804,6 +1804,8 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         DocumentScopeOfAppointment? existingScopeOfAppointment,
         Guid? productId,
         Guid? categoryId,
+        Guid? ppeProductTypeId,
+        Guid? protectionAgainstRiskId,
         Guid? areaOfCompetencyId)
     {
         var procedures = existingScopeOfAppointment?.ProductIdAndProcedureIds
@@ -1816,6 +1818,22 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
             procedures = existingScopeOfAppointment?.CategoryIdAndProcedureIds
                 .Where(c => c.CategoryId == categoryId)
                 .SelectMany(c => c.ProcedureIds)
+                .ToList() ?? new List<Guid>();
+        }
+
+        if (!procedures.Any())
+        {
+            procedures = existingScopeOfAppointment?.PpeProductTypeIdAndProcedureIds
+                .Where(a => a.PpeProductTypeId == ppeProductTypeId)
+                .SelectMany(a => a.ProcedureIds)
+                .ToList() ?? new List<Guid>();
+        }
+
+        if (!procedures.Any())
+        {
+            procedures = existingScopeOfAppointment?.ProtectionAgainstRiskIdAndProcedureIds
+                .Where(a => a.ProtectionAgainstRiskId == protectionAgainstRiskId)
+                .SelectMany(a => a.ProcedureIds)
                 .ToList() ?? new List<Guid>();
         }
 

@@ -33,7 +33,7 @@ namespace UKMCAB.Web.UI.Models.Builders
                 Name = legislativeArea.Name,
                 IsProvisional = documentLegislativeArea.IsProvisional,
                 IsArchived = documentLegislativeArea.Archived,
-                AppointmentDate = documentLegislativeArea.AppointmentDate,
+                AppointmentDate = documentLegislativeArea.AppointmentDate,  
                 ReviewDate = documentLegislativeArea.ReviewDate,
                 Reason = documentLegislativeArea.Reason,
                 RequestReason = documentLegislativeArea.RequestReason,
@@ -74,14 +74,28 @@ namespace UKMCAB.Web.UI.Models.Builders
                 var ppeProductType = ppeProductTypes.FirstOrDefault(p => p.Id == documentScopeOfAppointment.PpeProductTypeId);
                 var protectionAgainstRisk = protectionAgainstRisks.FirstOrDefault(p => p.Id == documentScopeOfAppointment.ProtectionAgainstRiskId);
 
-                if (ppeProductType is not null)
-                {
-                    var scopeOfAppointmentViewModelForPpeProductTypes = CreateScopeOfAppointmentViewModelForAreaOfCompetencies(
+                if (documentScopeOfAppointment.PpeCategoryId != null)
+                {                    
+                    var scopeOfAppointmentViewModelForPpeProductTypes = CreateScopeOfAppointmentViewModelForPpeProductTypes(
                     documentScopeOfAppointment.Id,
                     legislativeArea.Id,
-                    legislativeArea.Name, ppeProductType.Name, protectionAgainstRisk?.Name, documentScopeOfAppointment.AreaOfCompetencyIdAndProcedureIds, areaOfCompetencies, procedures);
+                    legislativeArea.Name, documentScopeOfAppointment.PpeProductTypeIdAndProcedureIds, ppeProductTypes, procedures);
 
                     _model.ScopeOfAppointments.AddRange(scopeOfAppointmentViewModelForPpeProductTypes);
+
+                    var scopeOfAppointmentViewModelForProtectionAgainstRisks = CreateScopeOfAppointmentViewModelForProtectionAgainstRisks(
+                    documentScopeOfAppointment.Id,
+                    legislativeArea.Id,
+                    legislativeArea.Name, documentScopeOfAppointment.ProtectionAgainstRiskIdAndProcedureIds, protectionAgainstRisks, procedures);
+
+                    _model.ScopeOfAppointments.AddRange(scopeOfAppointmentViewModelForProtectionAgainstRisks);
+
+                    var scopeOfAppointmentViewModelForAreaOfCompetencies = CreateScopeOfAppointmentViewModelForAreaOfCompetencies(
+                    documentScopeOfAppointment.Id,
+                    legislativeArea.Id,
+                    legislativeArea.Name, documentScopeOfAppointment.AreaOfCompetencyIdAndProcedureIds, areaOfCompetencies, procedures);
+
+                    _model.ScopeOfAppointments.AddRange(scopeOfAppointmentViewModelForAreaOfCompetencies);
                 }
                 else
                 {
@@ -229,29 +243,136 @@ namespace UKMCAB.Web.UI.Models.Builders
             return model;
         }
 
+        private List<LegislativeAreaListItemViewModel> CreateScopeOfAppointmentViewModelForPpeProductTypes(
+            Guid documentScopeOfAppointmentId,
+            Guid legislativeAreaId,
+            string legislativeAreaName,
+            List<PpeProductTypeAndProcedures>? ppeProductTypeAndProcedureIds,
+            List<PpeProductTypeModel> ppeProductTypes,
+            List<ProcedureModel> procedures)
+        {
+            return CreateScopeOfAppointmentViewModel(
+                documentScopeOfAppointmentId,
+                legislativeAreaId,
+                legislativeAreaName,
+                ppeProductTypeAndProcedureIds,
+                ppeProductTypes,
+                procedures,
+                p => p.PpeProductTypeId,
+                id => ppeProductTypes.FirstOrDefault(pt => pt.Id == id),
+                ppe => ppe?.Name,
+                p => p.ProcedureIds,
+                (entityName, procedureNames) => new LegislativeAreaListItemViewModel(
+                    legislativeAreaId,
+                    legislativeAreaName,
+                    null,
+                    null,
+                    null,
+                    documentScopeOfAppointmentId,
+                    null,
+                    entityName,
+                    null,
+                    null,
+                    procedureNames
+                )
+            );
+        }
+        private List<LegislativeAreaListItemViewModel> CreateScopeOfAppointmentViewModelForProtectionAgainstRisks(
+            Guid documentScopeOfAppointmentId,
+            Guid legislativeAreaId,
+            string legislativeAreaName,
+            List<ProtectionAgainstRiskAndProcedures>? protectionAgainstRisksAndProcedureIds,
+            List<ProtectionAgainstRiskModel> protectionAgainstRisks,
+            List<ProcedureModel> procedures)
+        {
+            return CreateScopeOfAppointmentViewModel(
+                documentScopeOfAppointmentId,
+                legislativeAreaId,
+                legislativeAreaName,
+                protectionAgainstRisksAndProcedureIds,
+                protectionAgainstRisks,
+                procedures,
+                p => p.ProtectionAgainstRiskId,
+                id => protectionAgainstRisks.FirstOrDefault(pt => pt.Id == id),
+                par => par?.Name,
+                p => p.ProcedureIds,
+                (entityName, procedureNames) => new LegislativeAreaListItemViewModel(
+                    legislativeAreaId,
+                    legislativeAreaName,
+                    null,
+                    null,
+                    null,
+                    documentScopeOfAppointmentId,
+                    null,
+                    null,
+                    entityName,
+                    null,                    
+                    procedureNames
+                )
+            );
+        }
         private List<LegislativeAreaListItemViewModel> CreateScopeOfAppointmentViewModelForAreaOfCompetencies(
             Guid documentScopeOfAppointmentId,
             Guid legislativeAreaId,
             string legislativeAreaName,
-            string ppeProductTypeName,
-            string protectionAgainstRiskName,
             List<AreaOfCompetencyAndProcedures>? areaOfCompetencyAndProcedureIds,
             List<AreaOfCompetencyModel> areaOfCompetencies,
-            List<ProcedureModel> procedures
-            )
+            List<ProcedureModel> procedures)
+        {
+            return CreateScopeOfAppointmentViewModel(
+                documentScopeOfAppointmentId,
+                legislativeAreaId,
+                legislativeAreaName,
+                areaOfCompetencyAndProcedureIds,
+                areaOfCompetencies,
+                procedures,
+                p => p.AreaOfCompetencyId,
+                id => areaOfCompetencies.FirstOrDefault(pt => pt.Id == id),
+                ppe => ppe?.Name,
+                p => p.ProcedureIds,
+                (entityName, procedureNames) => new LegislativeAreaListItemViewModel(
+                    legislativeAreaId,
+                    legislativeAreaName,
+                    null,
+                    null,
+                    null,
+                    documentScopeOfAppointmentId,
+                    null,
+                    null,
+                    null,
+                    entityName,
+                    procedureNames
+                )
+            );
+        }
+
+        private List<LegislativeAreaListItemViewModel> CreateScopeOfAppointmentViewModel<TIdProcedureId, TEntity>(
+        Guid documentScopeOfAppointmentId,
+        Guid legislativeAreaId,
+        string legislativeAreaName,
+        List<TIdProcedureId>? EntitiesAndProcedures,
+        List<TEntity> entities,
+        List<ProcedureModel> procedures,
+        Func<TIdProcedureId, Guid?> entityIdSelector,
+        Func<Guid?, TEntity?> entityResolver,
+        Func<TEntity?, string?> entityNameSelector,
+        Func<TIdProcedureId, List<Guid>> procedureIdSelector,
+        Func<string?, List<string>, LegislativeAreaListItemViewModel> modelFactory)
         {
             var scopeOfAppointments = new List<LegislativeAreaListItemViewModel>();
-            foreach (var aocp in areaOfCompetencyAndProcedureIds)
+
+            foreach (var procedureEntity in EntitiesAndProcedures ?? new List<TIdProcedureId>())
             {
-                var areaOfCompetency = areaOfCompetencies.FirstOrDefault(a => a.Id == aocp.AreaOfCompetencyId);
-                var procedureNames = procedures.GetNamesByIds(aocp.ProcedureIds);
+                var entityId = entityIdSelector(procedureEntity);
+                var entity = entityResolver(entityId);
+                var entityName = entityNameSelector(entity);
+                var procedureIds = procedureIdSelector(procedureEntity);
+                var procedureNames = procedures.GetNamesByIds(procedureIds);
 
-                var model = new LegislativeAreaListItemViewModel(
-                    legislativeAreaId,
-                    legislativeAreaName, null, null,null,documentScopeOfAppointmentId,null, ppeProductTypeName, protectionAgainstRiskName, areaOfCompetency?.Name, procedureNames);
-
+                var model = modelFactory(entityName, procedureNames);
                 scopeOfAppointments.Add(model);
             }
+
             return scopeOfAppointments;
         }
     }
