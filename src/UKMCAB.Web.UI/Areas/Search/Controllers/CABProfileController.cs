@@ -323,49 +323,49 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task AddPpeProductTypesToVm(CABProfileViewModel vm, DocumentScopeOfAppointment soa)
         {
-            if (soa.PpeProductTypeIds.Count > 0)
+            if (soa.PpeProductTypeIds.Count == 0)
+                return;
+
+            foreach (var ppeProdTypeId in soa.PpeProductTypeIds)
             {
-                foreach (var ppeProdTypeId in soa.PpeProductTypeIds)
+                vm.CabLegislativeAreas.PpeProductTypes.Add(new ValueTuple<Guid, string>
                 {
-                    vm.CabLegislativeAreas.PpeProductTypes.Add(new ValueTuple<Guid, string>
-                    {
-                        Item1 = ppeProdTypeId,
-                        Item2 = (await _legislativeAreaService
-                    .GetPpeProductTypeByIdAsync(ppeProdTypeId))!.Name
-                    });
-                }
+                    Item1 = ppeProdTypeId,
+                    Item2 = (await _legislativeAreaService
+                .GetPpeProductTypeByIdAsync(ppeProdTypeId))!.Name
+                });
             }
         }
 
         private async Task AddProtectionAgainstRisksToVm(CABProfileViewModel vm, DocumentScopeOfAppointment soa)
         {
-            if (soa.ProtectionAgainstRiskIds.Count > 0)
+            if (soa.ProtectionAgainstRiskIds.Count == 0)
+                return;
+
+            foreach (var proctectionAgainstRiskId in soa.ProtectionAgainstRiskIds)
             {
-                foreach (var proctectionAgainstRiskId in soa.ProtectionAgainstRiskIds)
+                vm.CabLegislativeAreas.ProtectionAgainstRisks.Add(new ValueTuple<Guid, string>
                 {
-                    vm.CabLegislativeAreas.ProtectionAgainstRisks.Add(new ValueTuple<Guid, string>
-                    {
-                        Item1 = proctectionAgainstRiskId,
-                        Item2 = (await _legislativeAreaService
-                    .GetProtectionAgainstRiskByIdAsync(proctectionAgainstRiskId))!.Name
-                    });
-                }
+                    Item1 = proctectionAgainstRiskId,
+                    Item2 = (await _legislativeAreaService
+                .GetProtectionAgainstRiskByIdAsync(proctectionAgainstRiskId))!.Name
+                });
             }
         }
         
         private async Task AddAreaOfCompetenciesToVm(CABProfileViewModel vm, DocumentScopeOfAppointment soa)
         {
-            if (soa.AreaOfCompetencyIds.Count > 0)
+            if (soa.AreaOfCompetencyIds.Count == 0)
+                return;
+
+            foreach (var areaOfCompetenciesId in soa.AreaOfCompetencyIds)
             {
-                foreach (var areaOfCompetenciesId in soa.AreaOfCompetencyIds)
+                vm.CabLegislativeAreas.AreaOfCompetencies.Add(new ValueTuple<Guid, string>
                 {
-                    vm.CabLegislativeAreas.AreaOfCompetencies.Add(new ValueTuple<Guid, string>
-                    {
-                        Item1 = areaOfCompetenciesId,
-                        Item2 = (await _legislativeAreaService
-                    .GetAreaOfCompetencyByIdAsync(areaOfCompetenciesId))!.Name
-                    });
-                }
+                    Item1 = areaOfCompetenciesId,
+                    Item2 = (await _legislativeAreaService
+                .GetAreaOfCompetencyByIdAsync(areaOfCompetenciesId))!.Name
+                });
             }
         }
 
