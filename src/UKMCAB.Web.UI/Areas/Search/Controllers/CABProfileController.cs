@@ -155,7 +155,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
             if (productId.HasValue)
             {
-                await GetProceduresAsync(null, null, null, null, productId, null, null, cabDocument, vm);
+                await GetProceduresAsync(null, null, null, null, productId, null, null, null, null, cabDocument, vm);
             }
 
             if (subCategoryId.HasValue)
@@ -189,7 +189,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId, null, null,
+                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId, null, null, null, null,
                             cabDocument, vm);
                     }
                 }
@@ -204,38 +204,38 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId, null, null,
+                        await GetProceduresAsync(null, purposeOfAppointmentId, categoryId, subCategoryId, productId, null, null, null, null,
                             cabDocument,
                             vm);
                     }
                 }
             }
-            else if (scopeOfAppointmentId.HasValue && ppeProductTypeId.HasValue)
+       
+            if (scopeOfAppointmentId.HasValue && ppeProductTypeId.HasValue)
             {
-                vm.CabLegislativeAreas.PpeProductType = new ValueTuple<Guid, string>
-                {
-                    Item1 = ppeProductTypeId.Value,
-                    Item2 = (await _legislativeAreaService
-                        .GetPpeProductTypeByIdAsync((Guid)ppeProductTypeId))!.Name
-                };
-                await GetProtectionAgainstRiskAsync(scopeOfAppointmentId, cabDocument, vm);
-            }
+                await GetProceduresAsync(null, null, null, null, null, null, scopeOfAppointmentId, ppeProductTypeId, null, cabDocument, vm);
 
-            if (scopeOfAppointmentId.HasValue && protectionAgainstRiskId.HasValue)
-            {                
-                vm.CabLegislativeAreas.ProtectionAgainstRisk = new ValueTuple<Guid, string>
+                vm.CabLegislativeAreas.PpeProductType = new ValueTuple<Guid?, string?>
                 {
-                    Item1 = protectionAgainstRiskId.Value,
+                    Item1 = ppeProductTypeId,
+                    Item2 = (await _legislativeAreaService
+                        .GetPpeProductTypeByIdAsync(ppeProductTypeId.Value))!.Name
+                };
+            }
+            if (scopeOfAppointmentId.HasValue && protectionAgainstRiskId.HasValue)
+            {
+                await GetProceduresAsync(null, null, null, null, null, null, scopeOfAppointmentId, null, protectionAgainstRiskId, cabDocument, vm);
+
+                vm.CabLegislativeAreas.ProtectionAgainstRisk = new ValueTuple<Guid?, string?>
+                {
+                    Item1 = protectionAgainstRiskId,
                     Item2 = (await _legislativeAreaService
                         .GetProtectionAgainstRiskByIdAsync(protectionAgainstRiskId.Value))!.Name
                 };
-
-                await GetAreaOfCompetenciesAsync(scopeOfAppointmentId, cabDocument, vm);
             }
-
             if (scopeOfAppointmentId.HasValue && areaOfCompetencyId.HasValue)
             {
-                await GetProceduresAsync(null, null, null, null, null, areaOfCompetencyId, scopeOfAppointmentId, cabDocument, vm);
+                await GetProceduresAsync(null, null, null, null, null, areaOfCompetencyId, scopeOfAppointmentId, null, null, cabDocument, vm);
 
                 vm.CabLegislativeAreas.AreaOfCompetency = new ValueTuple<Guid?, string?>
                 {
@@ -259,22 +259,13 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 });
             }
 
-            var ppeProductTypeIds = cabDocument.ScopeOfAppointments
-                .Where(a => a.LegislativeAreaId == legislativeAreaId)
-                .Where(a => a.PpeProductTypeId.HasValue)
-                .Select(p => p.PpeProductTypeId!.Value).ToList();
-
             foreach (var soa in cabDocument.ScopeOfAppointments)
             {
-                if (soa.LegislativeAreaId == legislativeAreaId && soa.PpeProductTypeId.HasValue)
+                if (soa.LegislativeAreaId == legislativeAreaId)
                 {
-                    vm.CabLegislativeAreas.PpeProductTypes.Add(new ValueTuple<Guid, string>
-                    {
-                        Item1 = soa.PpeProductTypeId.Value,
-                        Item2 = (await _legislativeAreaService
-                        .GetPpeProductTypeByIdAsync(soa.PpeProductTypeId.Value))!.Name
-                    });
-
+                    await AddPpeProductTypesToVm(vm, soa);
+                    await AddProtectionAgainstRisksToVm(vm, soa);
+                    await AddAreaOfCompetenciesToVm(vm, soa);                   
                     vm.CabLegislativeAreas.ScopeOfAppointmentId = soa.Id;
                 }
             }
@@ -289,7 +280,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     await GetProductsAsync(legislativeAreaId, null, null, null, cabDocument, vm);
                     if (!vm.CabLegislativeAreas.Products.Any())
                     {
-                        await GetProceduresAsync(legislativeAreaId, null, null, null, null, null, null, cabDocument, vm);
+                        await GetProceduresAsync(legislativeAreaId, null, null, null, null, null, null, null, null, cabDocument, vm);
                     }
                 }
             }
@@ -328,6 +319,54 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             };
 
             return View(vm);
+        }
+
+        private async Task AddPpeProductTypesToVm(CABProfileViewModel vm, DocumentScopeOfAppointment soa)
+        {
+            if (soa.PpeProductTypeIds.Count == 0)
+                return;
+
+            foreach (var ppeProdTypeId in soa.PpeProductTypeIds)
+            {
+                vm.CabLegislativeAreas.PpeProductTypes.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = ppeProdTypeId,
+                    Item2 = (await _legislativeAreaService
+                .GetPpeProductTypeByIdAsync(ppeProdTypeId))!.Name
+                });
+            }
+        }
+
+        private async Task AddProtectionAgainstRisksToVm(CABProfileViewModel vm, DocumentScopeOfAppointment soa)
+        {
+            if (soa.ProtectionAgainstRiskIds.Count == 0)
+                return;
+
+            foreach (var proctectionAgainstRiskId in soa.ProtectionAgainstRiskIds)
+            {
+                vm.CabLegislativeAreas.ProtectionAgainstRisks.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = proctectionAgainstRiskId,
+                    Item2 = (await _legislativeAreaService
+                .GetProtectionAgainstRiskByIdAsync(proctectionAgainstRiskId))!.Name
+                });
+            }
+        }
+        
+        private async Task AddAreaOfCompetenciesToVm(CABProfileViewModel vm, DocumentScopeOfAppointment soa)
+        {
+            if (soa.AreaOfCompetencyIds.Count == 0)
+                return;
+
+            foreach (var areaOfCompetenciesId in soa.AreaOfCompetencyIds)
+            {
+                vm.CabLegislativeAreas.AreaOfCompetencies.Add(new ValueTuple<Guid, string>
+                {
+                    Item1 = areaOfCompetenciesId,
+                    Item2 = (await _legislativeAreaService
+                .GetAreaOfCompetencyByIdAsync(areaOfCompetenciesId))!.Name
+                });
+            }
         }
 
         private async Task GetProtectionAgainstRiskAsync(Guid? scopeOfAppointmentId, Document cabDocument, CABProfileViewModel vm)
@@ -390,7 +429,6 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
         }
 
-
         private async Task GetProductsAsync(Guid? legislativeAreaId, Guid? purposeOfAppointmentId, Guid? categoryId,
             Guid? subCategoryId,
             Document cabDocument,
@@ -439,7 +477,7 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
 
         private async Task GetProceduresAsync(Guid? legislativeAreaId, Guid? purposeOfAppointmentId, Guid? categoryId,
             Guid? subCategoryId,
-            Guid? productId, Guid? areaOfCompetencyId, Guid? scopeOfAppointmentId, Document cabDocument,
+            Guid? productId, Guid? areaOfCompetencyId, Guid? scopeOfAppointmentId, Guid? ppeProductTypeId, Guid? protectionAgainstRiskId, Document cabDocument,
             CABProfileViewModel vm)
         {
             IEnumerable<DocumentScopeOfAppointment> scopeOfAppointments;
@@ -467,6 +505,16 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
                     .Where(s => s.ProductIds.Contains(productId!.Value) && s.ProductIdAndProcedureIds.Any());
             }
+            else if (ppeProductTypeId.HasValue)
+            {
+                scopeOfAppointments = cabDocument.ScopeOfAppointments
+                    .Where(s => s.PpeProductTypeIds.Contains(ppeProductTypeId!.Value) && s.PpeProductTypeIdAndProcedureIds.Any());
+            }
+            else if (protectionAgainstRiskId.HasValue)
+            {
+                scopeOfAppointments = cabDocument.ScopeOfAppointments
+                    .Where(s => s.ProtectionAgainstRiskIds.Contains(protectionAgainstRiskId!.Value) && s.ProtectionAgainstRiskIdAndProcedureIds.Any());
+            }
             else if (areaOfCompetencyId.HasValue)
             {
                 scopeOfAppointments = cabDocument.ScopeOfAppointments
@@ -493,6 +541,20 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
                     .Select(s => s.CategoryIdAndProcedureIds)
                     .SelectMany(cp => cp)
                     .SelectMany(pr => pr.ProcedureIds);
+            }
+            else if(ppeProductTypeId.HasValue || scopeOfAppointments.Any(soa =>  soa.PpeProductTypeIdAndProcedureIds.Count != 0))
+            {
+                procIds = scopeOfAppointments
+                    .SelectMany(s => s.PpeProductTypeIdAndProcedureIds)
+                    .Where(ppt => ppt.PpeProductTypeId == ppeProductTypeId)                 
+                    .SelectMany(pr => pr.ProcedureIds);                
+            }
+            else if(protectionAgainstRiskId.HasValue || scopeOfAppointments.Any(soa =>  soa.ProtectionAgainstRiskIdAndProcedureIds.Count != 0))
+            {
+                procIds = scopeOfAppointments
+                    .SelectMany(s => s.ProtectionAgainstRiskIdAndProcedureIds)
+                    .Where(par => par.ProtectionAgainstRiskId == protectionAgainstRiskId)                              
+                    .SelectMany(pr => pr.ProcedureIds);                
             }
             else
             {

@@ -233,10 +233,47 @@ else if (Model.Categories.Any())
         }
     </dl>
 }
-else if (!Model.PurposeOfAppointments.Any() && Model.AreaOfCompetencies.Any())
+else if (!Model.PurposeOfAppointments.Any() && Model.ShowPpeData)
 {
-    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Area of competencies</h3>
-    <dl class="govuk-summary-list table-top-border">        
+    if (Model.PpeProductTypes.Any())
+    {
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">PPE Product type</h3>
+        <dl class="govuk-summary-list table-top-border">
+            @foreach (var ppeProductType in Model.PpeProductTypes)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                           asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-ScopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-ppeProductTypeId="@ppeProductType.Id" asp-fragment="legislative-areas">
+                            @ppeProductType.Name
+                        </a>
+                    </dt>
+                </div>
+            }
+        </dl>
+    }
+
+    if (Model.ProtectionAgainstRisks.Any())
+    {
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Protection against risks</h3>
+        <dl class="govuk-summary-list table-top-border">
+            @foreach (var protectionAgainstRisk in Model.ProtectionAgainstRisks)
+            {
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
+                           asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-ScopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-ppeProductTypeId="@Model.PpeProductType.Id" asp-route-protectionAgainstRiskId="@protectionAgainstRisk.Id" asp-fragment="legislative-areas">
+                            @protectionAgainstRisk.Name
+                        </a>
+                    </dt>
+                </div>
+            }
+        </dl>
+    }
+    if (Model.AreaOfCompetencies.Any())
+    {
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Area of competencies</h3>
+        <dl class="govuk-summary-list table-top-border">
             @foreach (var aoc in Model.AreaOfCompetencies)
             {
                 <div class="govuk-summary-list__row">
@@ -247,42 +284,9 @@ else if (!Model.PurposeOfAppointments.Any() && Model.AreaOfCompetencies.Any())
                         </a>
                     </dt>
                 </div>
-            }       
-    </dl>
-}
-else if (!Model.PurposeOfAppointments.Any() && Model.ProtectionAgainstRisks.Any())
-{
-    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">Protection against risks</h3>
-    <dl class="govuk-summary-list table-top-border">
-        @foreach (var protectionAgainstRisk in Model.ProtectionAgainstRisks)
-        {
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
-                       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-ScopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-ppeProductTypeId="@Model.PpeProductType.Id" asp-route-protectionAgainstRiskId="@protectionAgainstRisk.Id" asp-fragment="legislative-areas">
-                        @protectionAgainstRisk.Name
-                    </a>
-                </dt>
-            </div>
-        }
-    </dl>
-}
-else if (!Model.PurposeOfAppointments.Any() && Model.PpeProductTypes.Any())
-{
-    <h3 class="govuk-heading-s govuk-!-margin-bottom-1">PPE Product type</h3>
-    <dl class="govuk-summary-list table-top-border">
-        @foreach (var ppeProductType in Model.PpeProductTypes)
-        {
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    <a class="govuk-link govuk-link--no-visited-state" asp-area="search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@Model.CabUrl"
-                       asp-route-legislativeAreaId="@Model.LegislativeAreaId" asp-route-purposeOfAppointmentId="@Model.PurposeOfAppointment.Id" asp-route-ScopeOfAppointmentId="@Model.ScopeOfAppointmentId" asp-route-ppeProductTypeId="@ppeProductType.Id" asp-fragment="legislative-areas">
-                        @ppeProductType.Name
-                    </a>
-                </dt>
-            </div>
-        }
-    </dl>
+            }
+        </dl>
+    }
 }
 else if (Model.PurposeOfAppointments.Any())
 {
