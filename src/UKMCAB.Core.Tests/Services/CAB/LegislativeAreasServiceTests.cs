@@ -3,7 +3,6 @@
     using AutoMapper;
     using Moq;
     using NUnit.Framework;
-    using NUnit.Framework.Legacy;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -13,7 +12,8 @@
     using UKMCAB.Core.Services.CAB;
     using UKMCAB.Data.CosmosDb.Services;
     using Data.Models.LegislativeAreas;
-    using static UKMCAB.Data.DataConstants;
+    using UKMCAB.Data.Models;
+    using Document = Data.Models.Document;
 
     [TestFixture]
     public class LegislativeAreasServiceTests
@@ -29,8 +29,6 @@
         private Mock<IReadOnlyRepository<PpeProductType>> _mockPpeProductTypeRepository;
         private Mock<IReadOnlyRepository<ProtectionAgainstRisk>> _mockProtectionAgainstRiskRepository;
         private Mock<IReadOnlyRepository<AreaOfCompetency>> _mockAreaOfCompetencyRepository;
-
-
         private ILegislativeAreaService _legislativeAreaService;
 
         [SetUp]
@@ -40,7 +38,7 @@
             _mockPurposeOfAppointmentRepository = new Mock<IReadOnlyRepository<PurposeOfAppointment>>();
             _mockCategoryRepository = new Mock<IReadOnlyRepository<Category>>();
             _mockSubCategoryRepository = new Mock<IReadOnlyRepository<SubCategory>>();
-            _mockProductRepository = new Mock<IReadOnlyRepository<Product>>();            
+            _mockProductRepository = new Mock<IReadOnlyRepository<Product>>();
             _mockProcedureRepository = new Mock<IReadOnlyRepository<Procedure>>();
             _designatedStandardRepository = new Mock<IReadOnlyRepository<DesignatedStandard>>(MockBehavior.Strict);
             _mockPpeCategoryRepository = new Mock<IReadOnlyRepository<PpeCategory>>();
@@ -150,7 +148,7 @@
         }
 
         #endregion
-        
+
         #region GetLegislativeAreasByRoleId
         [Test]
         public void EmptyRoleId_GetLegislativeAreaByRoleId_ShouldThrowArgumentNullException()
@@ -158,7 +156,7 @@
             // Arrange & Act & Assert
             Assert.ThrowsAsync<ArgumentNullException>(() => _legislativeAreaService.GetLegislativeAreasByRoleId(string.Empty));
         }
-        
+
         [Test]
         public async Task LegislativeAreasFound_GetLegislativeAreaByRoleId_ShouldReturnLegislativeAreaFromRepository()
         {
@@ -179,7 +177,7 @@
             Assert.That(legislativeAreas, Is.Not.Empty);
             Assert.That(testRoleId, Is.EqualTo(legislativeAreas.First().RoleId));
         }
-        
+
         [Test]
         public async Task NoLegislativeAreasFound_GetLegislativeAreaByRoleId_ShouldReturnEmptyList()
         {
@@ -299,7 +297,7 @@
             Assert.That("Name2", Is.EqualTo(nextScopeOptions.Products.ElementAt(1).Name));
             Assert.That("Name3", Is.EqualTo(nextScopeOptions.Products.ElementAt(2).Name));
         }
-        
+
         [Test]
         public async Task
             LegislativeAreaService_GetNextScopeOfAppointmentOptionsForLegislativeArea_ShouldReturnPpeCategories()
@@ -837,5 +835,176 @@
         }
 
         #endregion
+
+
+        #region GetPpeProductTypesForDocumentAsync
+
+        [Test]
+        public async Task GetPpeProductTypesForDocumentAsync_ShouldReturnPpeProductTypes()
+        {
+            // Arrange
+            var testGuid1 = Guid.NewGuid();
+            var testGuid2 = Guid.NewGuid();
+            var procedureIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+            var ppeProductTypeAndProcedures1 = new PpeProductTypeAndProcedures { PpeProductTypeId = testGuid1, ProcedureIds = procedureIds };
+            var ppeProductTypeAndProcedures2 = new PpeProductTypeAndProcedures { PpeProductTypeId = testGuid2, ProcedureIds = procedureIds };
+
+            var document = new Document
+            {
+                ScopeOfAppointments = new List<DocumentScopeOfAppointment>
+                {
+                    new DocumentScopeOfAppointment
+                    {
+                        PpeProductTypeIdAndProcedureIds = new List<PpeProductTypeAndProcedures>
+                        {
+                            ppeProductTypeAndProcedures1,
+                            ppeProductTypeAndProcedures2
+                        }
+                    }
+                }
+            };
+
+            var expectedEntities = new List<PpeProductType>
+            {
+                new() { Id = testGuid1, Name = "Name1" },
+                new() { Id = testGuid2, Name = "Name2" }
+            };
+
+            var expectedModels = new List<PpeProductTypeModel>
+            {
+                new() { Id = testGuid1, Name = "Name1" },
+                new() { Id = testGuid2, Name = "Name2" }
+            };
+
+            _mockPpeProductTypeRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PpeProductType, bool>>>()))
+                .ReturnsAsync(expectedEntities);
+
+            // Act
+            var result = await _legislativeAreaService.GetPpeProductTypesForDocumentAsync(document);
+
+            // Assert
+            _mockPpeProductTypeRepository.Verify(x => x.QueryAsync(It.IsAny<Expression<Func<PpeProductType, bool>>>()), Times.Once);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result.First().Id, Is.EqualTo(testGuid1));
+            Assert.That(result.First().Name, Is.EqualTo("Name1"));
+            Assert.That(result.Last().Id, Is.EqualTo(testGuid2));
+            Assert.That(result.Last().Name, Is.EqualTo("Name2"));
+        }
+
+        [Test]
+        public async Task GetPpeProductTypesForDocumentAsync_ShouldReturnEmptyListWhenNoPpeProductTypesIdsExist()
+        {
+            // Arrange
+            var document = new Document
+            {
+                ScopeOfAppointments = new List<DocumentScopeOfAppointment>
+                {
+                    new DocumentScopeOfAppointment() // No PpeProductTypeIdAndProcedureIds
+                }
+            };
+
+            var expectedEntities = new List<PpeProductType>();
+
+            _mockPpeProductTypeRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<PpeProductType, bool>>>()))
+                .ReturnsAsync(expectedEntities);
+
+            // Act
+            var result = await _legislativeAreaService.GetPpeProductTypesForDocumentAsync(document);
+
+            // Assert
+            _mockPpeProductTypeRepository.Verify(x => x.QueryAsync(It.IsAny<Expression<Func<PpeProductType, bool>>>()), Times.Once);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        #endregion
+
+
+        #region GetProtectionAgainstRisksForDocumentAsync
+
+        [Test]
+        public async Task GetProtectionAgainstRisksForDocumentAsync_ShouldReturnProtectionAgainstRisks()
+        {
+            // Arrange
+            var testGuid1 = Guid.NewGuid();
+            var testGuid2 = Guid.NewGuid();
+            var procedureIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+            var ProtectionAgainstRiskAndProcedures1 = new ProtectionAgainstRiskAndProcedures { ProtectionAgainstRiskId = testGuid1, ProcedureIds = procedureIds };
+            var ProtectionAgainstRiskAndProcedures2 = new ProtectionAgainstRiskAndProcedures { ProtectionAgainstRiskId = testGuid2, ProcedureIds = procedureIds };
+
+            var document = new Document
+            {
+                ScopeOfAppointments = new List<DocumentScopeOfAppointment>
+                {
+                    new DocumentScopeOfAppointment
+                    {
+                        ProtectionAgainstRiskIdAndProcedureIds = new List<ProtectionAgainstRiskAndProcedures>
+                        {
+                            ProtectionAgainstRiskAndProcedures1,
+                            ProtectionAgainstRiskAndProcedures2
+                        }
+                    }
+                }
+            };
+
+            var expectedEntities = new List<ProtectionAgainstRisk>
+            {
+                new() { Id = testGuid1, Name = "Name1" },
+                new() { Id = testGuid2, Name = "Name2" }
+            };
+
+            var expectedModels = new List<ProtectionAgainstRiskModel>
+            {
+                new() { Id = testGuid1, Name = "Name1" },
+                new() { Id = testGuid2, Name = "Name2" }
+            };
+
+            _mockProtectionAgainstRiskRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<ProtectionAgainstRisk, bool>>>()))
+                .ReturnsAsync(expectedEntities);
+
+            // Act
+            var result = await _legislativeAreaService.GetProtectionAgainstRisksForDocumentAsync(document);
+
+            // Assert
+            _mockProtectionAgainstRiskRepository.Verify(x => x.QueryAsync(It.IsAny<Expression<Func<ProtectionAgainstRisk, bool>>>()), Times.Once);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(2));
+            Assert.That(result.First().Id, Is.EqualTo(testGuid1));
+            Assert.That(result.First().Name, Is.EqualTo("Name1"));
+            Assert.That(result.Last().Id, Is.EqualTo(testGuid2));
+            Assert.That(result.Last().Name, Is.EqualTo("Name2"));
+        }
+
+        [Test]
+        public async Task GetProtectionAgainstRisksForDocumentAsync_ShouldReturnEmptyListWhenNoProtectionAgainstRisksIdsExist()
+        {
+            // Arrange
+            var document = new Document
+            {
+                ScopeOfAppointments = new List<DocumentScopeOfAppointment>
+                {
+                    new DocumentScopeOfAppointment() // No ProtectionAgainstRiskIdAndProcedureIds
+                }
+            };
+
+            var expectedEntities = new List<ProtectionAgainstRisk>();
+
+            _mockProtectionAgainstRiskRepository.Setup(x => x.QueryAsync(It.IsAny<Expression<Func<ProtectionAgainstRisk, bool>>>()))
+                .ReturnsAsync(expectedEntities);
+
+            // Act
+            var result = await _legislativeAreaService.GetProtectionAgainstRisksForDocumentAsync(document);
+
+            // Assert
+            _mockProtectionAgainstRiskRepository.Verify(x => x.QueryAsync(It.IsAny<Expression<Func<ProtectionAgainstRisk, bool>>>()), Times.Once);
+            Assert.That(result, Is.Not.Null);
+            Assert.That(result.Count, Is.EqualTo(0));
+        }
+
+        #endregion
+
+
+
     }
 }
