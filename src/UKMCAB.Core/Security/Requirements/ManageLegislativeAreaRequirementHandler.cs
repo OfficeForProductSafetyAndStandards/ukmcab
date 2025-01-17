@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using System.Security.Claims;
+using UKMCAB.Common.Extensions;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Data.Models;
@@ -35,19 +37,35 @@ namespace UKMCAB.Core.Security.Requirements
             }
 
             var isOpss = user.IsInRole(Roles.OPSS.Id);
-            var isOgd = user.IsInRole(Roles.OPSS_OGD.Id);
-            
-            // if any of the document's LAs are Approved, then it's approved by OGD
-            var isApprovedByOGD =  document.DocumentLegislativeAreas.Any(la => la.Status == LAStatus.Approved);
-            var isPendingApprovalByOGD = document.IsPendingOgdApproval();
+            var isOgd = user.HasOgdRole();
+            var isUkas = user.IsInRole(Roles.UKAS.Id);
 
-            if (isOgd && isPendingApprovalByOGD || isOpss)
+            var userInCreatorUserGroup = user.IsInRole(document.CreatedByUserGroup);
+
+            var canBeAccessedByOpss = CanOpssAccess(document, isOpss, userInCreatorUserGroup);
+            var canBeAccessedByUkas = CanUkasAccess(document, isUkas, userInCreatorUserGroup);
+            var canBeAccessedByOgd = CanOgdAccess(user, document, isOgd);
+
+            if (canBeAccessedByOpss || canBeAccessedByOgd || canBeAccessedByUkas)
             {
                 context.Succeed(requirement);
             }
-                
 
             return Task.CompletedTask;
         }
+
+        private static bool CanOgdAccess(ClaimsPrincipal user, Document document, bool isOgd) => isOgd &&
+                            document.StatusValue == Status.Draft &&
+                            document.SubStatus == SubStatus.PendingApprovalToPublish &&
+                            document.HasActionableLegislativeAreaForOgd(user.GetRoleId());     
+        private static bool CanOpssAccess(Document document, bool isOpss, bool userInCreatorUserGroup) => isOpss && (
+                        (userInCreatorUserGroup &&
+                        document.StatusValue == Status.Draft &&
+                        document.SubStatus == SubStatus.None) ||
+                        (document.SubStatus == SubStatus.PendingApprovalToPublish && document.HasActionableLegislativeAreaForOpssAdmin()));
+        private static bool CanUkasAccess(Document document, bool isUkas, bool userInCreatorUserGroup) => isUkas &&
+                            userInCreatorUserGroup &&
+                            document.StatusValue == Status.Draft &&
+                            document.SubStatus == SubStatus.None;        
     }
 }
