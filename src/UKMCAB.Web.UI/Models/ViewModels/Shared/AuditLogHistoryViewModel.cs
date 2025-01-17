@@ -15,6 +15,11 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             AuditCABActions.LegislativeAreaReviewDateUpdated
         };
 
+        public readonly string[] AuditActionsToHide =
+        {
+            AuditCABActions.RePublished
+        };
+
         public const int resultsPerPage = 10;
 
         public AuditLogHistoryViewModel(List<Audit> audits, int pageNumber)
@@ -90,6 +95,7 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Shared
             }
 
             AuditHistoryItems = auditLog
+                .Where(a => !AuditActionsToHide.Contains(a.Action))
                 .OrderByDescending(al => al.DateTime)
                 .Skip((pageNumber - 1) * resultsPerPage)
                 .Take(resultsPerPage)
