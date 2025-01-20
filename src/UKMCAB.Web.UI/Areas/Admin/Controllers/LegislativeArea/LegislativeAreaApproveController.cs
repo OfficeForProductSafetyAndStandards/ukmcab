@@ -130,10 +130,11 @@ public class LegislativeAreaApproveController : UI.Controllers.ControllerBase
         var ppeProductTypes = await _legislativeAreaService.GetPpeProductTypesForDocumentAsync(latestDocument);
         var protectionAgainstRisks = await _legislativeAreaService.GetProtectionAgainstRisksForDocumentAsync(latestDocument);
         var areaOfCompetencies = await _legislativeAreaService.GetAreaOfCompetenciesForDocumentAsync(latestDocument);
+        var scopeOfAppointments = latestDocument.ScopeOfAppointments.Where(soa => soa.LegislativeAreaId == legislativeAreaId).ToList();
 
         var laItemVM = _cabLegislativeAreasItemViewModelBuilder
             .WithDocumentLegislativeAreaDetails(la, documentLa)            
-            .WithScopeOfAppointments(la,latestDocument.ScopeOfAppointments, purposeOfAppointments, categories, subCategories, products, procedures, designatedStandards, ppeProductTypes, protectionAgainstRisks, areaOfCompetencies)
+            .WithScopeOfAppointments(la,scopeOfAppointments, purposeOfAppointments, categories, subCategories, products, procedures, designatedStandards, ppeProductTypes, protectionAgainstRisks, areaOfCompetencies)
             .WithNoOfProductsInScopeOfAppointment()
             .Build();
 
