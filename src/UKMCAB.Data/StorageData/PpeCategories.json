@@ -1,7 +1,7 @@
 [
   {
     "id": "55ecff03-0be0-4498-bfdb-0737e4309f73",
-    "name": "PPE Product Types",
+    "name": "PPE product types",
     "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
   },
   {
@@ -11,7 +11,7 @@
   },
   {
     "id": "4b371fa6-9c1e-4815-961f-68d321dcd69b",
-    "name": "Specialised Areas of Competence",
+    "name": "Specialised areas of competence",
     "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
   }
 ]
