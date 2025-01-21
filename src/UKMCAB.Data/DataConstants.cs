@@ -331,7 +331,7 @@ public static class DataConstants
     }
     public static class PpeCategories
     {
-        public const string PppProductType = "PPE product types";
+        public const string PppProductType = "PPE product type";
         public const string ProtectionAgainstRisks = "Providing protection against the following risks";
         public const string AreaOfCompetence = "Specialised area of competence";
     }
