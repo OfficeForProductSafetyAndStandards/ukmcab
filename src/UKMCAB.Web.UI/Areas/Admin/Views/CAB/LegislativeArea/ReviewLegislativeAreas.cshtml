@@ -4,6 +4,7 @@
 @{
     var id = this.Url.ActionContext.HttpContext.Request.RouteValues.GetValueOrDefault("id").ToString();
     var cabId = Model.CABId.ToString() ?? id;
+    var currentPpeCategory = string.Empty;
 }
 
 @section BackButton
@@ -155,14 +156,14 @@
                                                     <tr>
                                                         <td>No scope of appointments</td>
                                                     </tr>
-                                                }
+                                                }                                                
 
                                                 @for (int j = 0; j < legislativeArea.ScopeOfAppointments.Count; j++)
                                                 {
                                                     var scopeOfAppointment = legislativeArea.ScopeOfAppointments[j];
                                                     var noOfProductsInScopeOfAppointment = scopeOfAppointment.NoOfProductsInScopeOfAppointment;
                                                     var nextProductIndex = j;
-                                                    var currentPpeCategory = string.Empty;
+                                                    
                                                     @for (int k = 0; k < noOfProductsInScopeOfAppointment; k++)
                                                     {
                                                         var showBorder = k == noOfProductsInScopeOfAppointment - 1;

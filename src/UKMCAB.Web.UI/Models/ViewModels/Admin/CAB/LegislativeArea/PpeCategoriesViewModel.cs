@@ -10,6 +10,6 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? LegislativeArea { get; set; }
         public IEnumerable<SelectListItem> PpeCategories { get; set; } = [];
         public PpeCategoriesViewModel() : this("Create a CAB") { }
-        public PpeCategoriesViewModel(string subTitle) : base("Legislative area ppe category", subTitle) { }
+        public PpeCategoriesViewModel(string subTitle) : base("Legislative area PPE category", subTitle) { }
     }
 }
