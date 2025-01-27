@@ -371,6 +371,30 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                 }
             }
 
+            if (legislativeAreaViewModel.Name.Equals(Constants.PpeLaName))
+            {
+                var sortedLAViewModels = new List<LegislativeAreaListItemViewModel>();
+                if (legislativeAreaViewModel.ShowPpeProductTypeColumn)
+                {
+                    var laItemListVMs = legislativeAreaViewModel.ScopeOfAppointments.Where(l => l.PpeProductType != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                if (legislativeAreaViewModel.ShowProtectionAgainstRiskColumn)
+                {
+                    var laItemListVMs = legislativeAreaViewModel.ScopeOfAppointments.Where(l => l.ProtectionAgainstRisk != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                if (legislativeAreaViewModel.ShowAreaOfCompetencyColumn)
+                {
+                    var laItemListVMs = legislativeAreaViewModel.ScopeOfAppointments.Where(l => l.AreaOfCompetency != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                legislativeAreaViewModel.ScopeOfAppointments = sortedLAViewModels;
+            }
+
             var distinctSoa = legislativeAreaViewModel.ScopeOfAppointments.GroupBy(s => s.ScopeId).ToList();
             foreach (var item in distinctSoa)
             {
