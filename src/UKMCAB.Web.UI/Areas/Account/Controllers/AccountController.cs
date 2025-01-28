@@ -297,7 +297,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
 
                     if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(password))
                     {                    
-                        if (acc != null && VerifyPassword(password, acc.PasswordHash ?? string.Empty))
+                        if (acc != null && VerifyPassword(password, acc.PasswordHash))
                         {
                             SignInHelper.AddClaims(acc, claimsIdentity);  
                         }
@@ -381,9 +381,9 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
             });
         }
-
-        private static bool VerifyPassword(string password, string storedHash)
+        private static bool VerifyPassword(string password, string? storedHash)
         {
+            ArgumentNullException.ThrowIfNull(storedHash, nameof(storedHash));
             return BCrypt.Net.BCrypt.Verify(password, storedHash);
         }
 
