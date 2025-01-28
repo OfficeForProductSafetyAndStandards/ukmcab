@@ -291,20 +291,21 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 }
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
-                    if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(password))
-                    {
-                        var acc = await _userAccounts.GetAsync(userId);
-                        if (acc != null && VerifyPassword(password, acc.PasswordHash ?? string.Empty))
-                        {
-                            var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
-                            CookieAuthenticationDefaults.AuthenticationScheme);
-                            SignInHelper.AddClaims(acc, claimsIdentity);
+                    var acc = await _userAccounts.GetAsync(userId);
+                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
+                        CookieAuthenticationDefaults.AuthenticationScheme);
 
-                            var authProperties = new AuthenticationProperties { IsPersistent = false, };
-                            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
-                                new ClaimsPrincipal(claimsIdentity), authProperties);
+                    if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(password))
+                    {                    
+                        if (acc != null && VerifyPassword(password, acc.PasswordHash))
+                        {
+                            SignInHelper.AddClaims(acc, claimsIdentity);  
                         }
                     }
+
+                    var authProperties = new AuthenticationProperties { IsPersistent = false, };
+                    await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
+                        new ClaimsPrincipal(claimsIdentity), authProperties);
                     return RedirectToRoute(Routes.Login);
                 }
                 else
@@ -380,9 +381,9 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
             });
         }
-
-        private static bool VerifyPassword(string password, string storedHash)
+        private static bool VerifyPassword(string password, string? storedHash)
         {
+            ArgumentNullException.ThrowIfNull(storedHash, nameof(storedHash));
             return BCrypt.Net.BCrypt.Verify(password, storedHash);
         }
 

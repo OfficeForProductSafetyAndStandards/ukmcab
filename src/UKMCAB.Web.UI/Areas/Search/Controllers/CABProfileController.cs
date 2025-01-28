@@ -558,10 +558,10 @@ namespace UKMCAB.Web.UI.Areas.Search.Controllers
             }
             else
             {
-                procIds = scopeOfAppointments.Where(soa => soa.Id == scopeOfAppointmentId).ToList()
+                procIds = scopeOfAppointments
                     .SelectMany(s => s.AreaOfCompetencyIdAndProcedureIds)
-                    .Where(aoc => aoc.AreaOfCompetencyId == areaOfCompetencyId)                 
-                    .SelectMany(pr => pr.ProcedureIds);                
+                    .Where(par => par.AreaOfCompetencyId == areaOfCompetencyId)
+                    .SelectMany(pr => pr.ProcedureIds);
             }
             
             foreach (var procId in procIds)
