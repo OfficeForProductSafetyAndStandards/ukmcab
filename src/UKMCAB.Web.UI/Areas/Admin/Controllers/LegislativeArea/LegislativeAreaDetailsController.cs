@@ -1534,7 +1534,7 @@ public class LegislativeAreaDetailsController : UI.Controllers.ControllerBase
         }
 
         vm.PpeCategories = await GetPpeCategoriesSelectListItemsAsync(scopeOfAppointment.LegislativeAreaId);
-        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPpeProductType.cshtml", vm);
+        return View("~/Areas/Admin/views/CAB/LegislativeArea/AddPpeCategory.cshtml", vm);
     }
 
     [HttpGet("add-ppe-product-type/{scopeId}", Name = Routes.AddPpeProductType)]
