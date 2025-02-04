@@ -174,7 +174,7 @@ builder.Services.AddSingleton<IReadOnlyRepository<DesignatedStandard>>(new ReadO
 builder.Services.AddSingleton<IReadOnlyRepository<PpeCategory>>(new ReadOnlyRepository<PpeCategory>(cosmosClient, new CosmosFeedIterator(), "ppe-categories"));
 builder.Services.AddSingleton<IReadOnlyRepository<PpeProductType>>(new ReadOnlyRepository<PpeProductType>(cosmosClient, new CosmosFeedIterator(), "ppe-product-types"));
 builder.Services.AddSingleton<IReadOnlyRepository<ProtectionAgainstRisk>>(new ReadOnlyRepository<ProtectionAgainstRisk>(cosmosClient, new CosmosFeedIterator(), "protection-against-risks"));
-builder.Services.AddSingleton<IReadOnlyRepository<AreaOfCompetency>>(new ReadOnlyRepository<AreaOfCompetency>(cosmosClient, new CosmosFeedIterator(), "areas-of-competencies"));
+builder.Services.AddSingleton<IReadOnlyRepository<AreaOfCompetency>>(new ReadOnlyRepository<AreaOfCompetency>(cosmosClient, new CosmosFeedIterator(), "area-of-competence"));
 
 builder.Services.AddTransient<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();
