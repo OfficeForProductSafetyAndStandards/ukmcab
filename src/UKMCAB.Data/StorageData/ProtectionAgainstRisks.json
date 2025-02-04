@@ -1,386 +1,98 @@
 [
   {
     "id": "c7b5191a-f786-478a-8653-f7a6ec2150f4",
-    "name": "Equipment providing protection against cold [> -50 °C]",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Equipment providing protection against cold [> -50 °C]"
   },
   {
     "id": "e76adffa-d181-4b4a-9ee5-3ab5cb377b3d",
-    "name": "Equipment providing protection against cold [cold > -50 °C] [extreme cold < -50 °C]",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Equipment providing protection against cold [cold > -50 °C] [extreme cold < -50 °C]"
   },
   {
     "id": "5b57c376-d1a7-4fca-844a-c3d27a2a5ce9",
-    "name": "Equipment providing protection against cold [extreme cold < -50 °C]",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Equipment providing protection against cold [extreme cold < -50 °C]"
   },
   {
     "id": "0ffaa848-748a-45c8-a486-49af025a55b9",
-    "name": "Equipment providing protection against heat [< 100 °C]",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Equipment providing protection against heat [< 100 °C]"
   },
   {
     "id": "aeb66b21-4955-47dd-b688-dbd2d6086621",
-    "name": "Equipment providing protection against heat [> 100 °C and fire and flame]",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Equipment providing protection against heat [> 100 °C and fire and flame]"
   },
   {
     "id": "266bc4a4-dc4d-4843-ae0d-ab9a61eac542",
-    "name": "Equipment providing protection against heat [< 100 °C] [> 100 °C and fire]",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Equipment providing protection against heat [< 100 °C] [> 100 °C and fire]"
   },
   {
     "id": "71117f2f-626f-4eee-b8f5-57e6ffea9b11",
-    "name": "Protective equipment against bullet wounds or knife stabs",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against bullet wounds or knife stabs"
   },
   {
     "id": "d4c3c57e-4e2c-42e6-a847-1fb969baa59d",
-    "name": "Protective equipment against drowning",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against drowning"
   },
   {
     "id": "eb2068f1-2bb6-4df3-8808-2c392e5be771",
-    "name": "Protective equipment against electric shock",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against electric shock"
   },
   {
     "id": "23d84309-98d9-4513-a3ba-f8bd3cb60e1f",
-    "name": "Protective equipment against electrical and magnetic fields and waves",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against electrical and magnetic fields and waves"
   },
   {
     "id": "a0f9fd1c-1928-4f12-9431-c2741dcbf966",
-    "name": "Protective equipment against falls from heights",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against falls from heights"
   },
   {
     "id": "5d45e6ed-26c3-40b7-9b69-fdf662ede79a",
-    "name": "Protective equipment against hand-held chain-saws",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against hand-held chain-saws"
   },
   {
     "id": "118d1313-f326-4f60-b53a-cb214195d9fd",
-    "name": "Protective equipment against harmful biological agents",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against harmful biological agents"
   },
   {
     "id": "8b1418c5-4670-429a-87c9-09d9e7f62531",
-    "name": "Protective equipment against harmful noise",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against harmful noise"
   },
   {
     "id": "76cbf938-0dfa-4f37-95b9-7a2b61bc1293",
-    "name": "Protective equipment against high-pressure jets",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against high-pressure jets"
   },
   {
     "id": "47f0c667-837f-45d1-91b7-ab235dd639d8",
-    "name": "Protective equipment against ionising radiation",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against ionising radiation"
   },
   {
     "id": "3ee7b833-fc5f-4647-95d8-fdff6b144e3d",
-    "name": "Protective equipment against mechanical risks",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against mechanical risks"
   },
   {
     "id": "732c230c-f507-4e2b-929f-9cf171886ccd",
-    "name": "Protective equipment against non-ionising radiation",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against non-ionising radiation"
   },
   {
     "id": "dbcaf626-44af-4a13-bdbe-de8956c3aa65",
-    "name": "Protective equipment against slipping",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against slipping"
   },
   {
     "id": "f169b7bc-f016-431c-b6a9-7ca93044d332",
-    "name": "Protective equipment against static compression",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against static compression"
   },
   {
     "id": "c98bc30f-6b5e-40a7-be6c-672988fce788",
-    "name": "Protective equipment against substances and mixtures which are hazardous to health",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against substances and mixtures which are hazardous to health"
   },
   {
     "id": "cf431fdc-82ae-4696-bf24-f7b8d3d5e311",
-    "name": "Protective equipment against vibrations",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against vibrations"
   },
   {
     "id": "e981fd1b-37be-46ea-9c20-b99fed535d1b",
-    "name": "Protective equipment against chemical agents",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against chemical agents"
   },
   {
     "id": "51050184-097a-4f62-9898-147f0165ea8e",
-    "name": "Protective equipment against risks arising from a sports activity",
-    "ppeProductTypeIds": [
-      "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-      "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-      "51933e64-1ead-476c-86d7-8a0869dd19c8",
-      "98264086-014f-4313-965b-efeb5c4e9ec1",
-      "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-      "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-      "6e45afa8-22fa-4617-94db-3da4b150bb91",
-      "643932ee-ac76-4c9f-9211-071dc6482f8f",
-      "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-      "b9b54975-0aa1-4491-9dcb-d90f77e1b01d"
-    ]
+    "name": "Protective equipment against risks arising from a sports activity"
   }
 ]
