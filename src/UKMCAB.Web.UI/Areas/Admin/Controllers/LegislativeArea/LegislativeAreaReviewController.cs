@@ -13,7 +13,7 @@ using UKMCAB.Core.Extensions;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
-[Area("admin"), Route("admin/cab/{id}/legislative-area/review-legislative-areas"), Authorize]
+[Area("admin"), Route("admin/cab/{id}/legislative-area/review-legislative-areas"), Authorize(Policy = Policies.LegislativeAreaManage)]
 public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;
@@ -271,6 +271,56 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
                 }
 
+                foreach (var ppeProductTypeIdAndProcedureIds in scopeOfAppointment.PpeProductTypeIdAndProcedureIds)
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel
+                    {
+                        LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                        PurposeOfAppointment = purposeOfAppointment,
+                        ScopeId = scopeOfAppointment.Id,
+                    };
+
+                    if (ppeProductTypeIdAndProcedureIds.PpeProductTypeId.HasValue)
+                    {
+                        var selectedPpeProductType =
+                            await _legislativeAreaService.GetPpeProductTypeByIdAsync(ppeProductTypeIdAndProcedureIds.PpeProductTypeId.Value);
+                        soaViewModel.PpeProductType = selectedPpeProductType!.Name;
+                    }
+
+                    foreach (var procedureId in ppeProductTypeIdAndProcedureIds.ProcedureIds)
+                    {
+                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                        soaViewModel.Procedures?.Add(procedure!.Name);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
+
+                foreach (var protectionAgainstRiskIdAndProcedureIds in scopeOfAppointment.ProtectionAgainstRiskIdAndProcedureIds)
+                {
+                    var soaViewModel = new LegislativeAreaListItemViewModel
+                    {
+                        LegislativeArea = new ListItem { Id = legislativeArea.Id, Title = legislativeArea.Name },
+                        PurposeOfAppointment = purposeOfAppointment,
+                        ScopeId = scopeOfAppointment.Id,
+                    };
+
+                    if (protectionAgainstRiskIdAndProcedureIds.ProtectionAgainstRiskId.HasValue)
+                    {
+                        var selectedProtectionAgainstRiskIdAndProcedureIds =
+                            await _legislativeAreaService.GetProtectionAgainstRiskByIdAsync(protectionAgainstRiskIdAndProcedureIds.ProtectionAgainstRiskId.Value);
+                        soaViewModel.ProtectionAgainstRisk = selectedProtectionAgainstRiskIdAndProcedureIds!.Name;
+                    }
+
+                    foreach (var procedureId in protectionAgainstRiskIdAndProcedureIds.ProcedureIds)
+                    {
+                        var procedure = await _legislativeAreaService.GetProcedureByIdAsync(procedureId);
+                        soaViewModel.Procedures?.Add(procedure!.Name);
+                    }
+
+                    legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
+                }
+
                 foreach (var areaOfCompetencyProcedure in scopeOfAppointment.AreaOfCompetencyIdAndProcedureIds)
                 {
                     var soaViewModel = new LegislativeAreaListItemViewModel
@@ -298,7 +348,6 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
                     legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
                 }
 
-
                 if (scopeOfAppointment.DesignatedStandardIds.Any())
                 {
                     var soaViewModel = new LegislativeAreaListItemViewModel
@@ -320,6 +369,30 @@ public class LegislativeAreaReviewController : UI.Controllers.ControllerBase
 
                     legislativeAreaViewModel.ScopeOfAppointments.Add(soaViewModel);
                 }
+            }
+
+            if (legislativeAreaViewModel.Name.Equals(Constants.PpeLaName))
+            {
+                var sortedLAViewModels = new List<LegislativeAreaListItemViewModel>();
+                if (legislativeAreaViewModel.ShowPpeProductTypeColumn)
+                {
+                    var laItemListVMs = legislativeAreaViewModel.ScopeOfAppointments.Where(l => l.PpeProductType != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                if (legislativeAreaViewModel.ShowProtectionAgainstRiskColumn)
+                {
+                    var laItemListVMs = legislativeAreaViewModel.ScopeOfAppointments.Where(l => l.ProtectionAgainstRisk != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                if (legislativeAreaViewModel.ShowAreaOfCompetencyColumn)
+                {
+                    var laItemListVMs = legislativeAreaViewModel.ScopeOfAppointments.Where(l => l.AreaOfCompetency != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                legislativeAreaViewModel.ScopeOfAppointments = sortedLAViewModels;
             }
 
             var distinctSoa = legislativeAreaViewModel.ScopeOfAppointments.GroupBy(s => s.ScopeId).ToList();

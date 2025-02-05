@@ -20,6 +20,8 @@
             <input type="hidden" asp-for="AreaOfCompetency"/>
             <input type="hidden" asp-for="CurrentProductId"/>
             <input type="hidden" asp-for="CurrentCategoryId" />
+            <input type="hidden" asp-for="CurrentPpeProductTypeId" />
+            <input type="hidden" asp-for="CurrentProtectionAgainstRiskId" />
             <input type="hidden" asp-for="CurrentAreaOfCompetencyId" />
             <input type="hidden" asp-for="IndexOfProduct"/>
             <h2 class="govuk-heading-s">Legislative area</h2>
@@ -44,11 +46,16 @@
                 <h2 class="govuk-heading-s">Product</h2>
                 <p class="govuk-body">@Model.Product</p>
             }
+            @if (Model.PpeCategory != null)
+            {
+                <h2 class="govuk-heading-s">PPE category</h2>
+                <p class="govuk-body">@Model.PpeCategory</p>
+            }
             @if (Model.PpeProductType != null)
             {
                 <h2 class="govuk-heading-s">PPE product type</h2>
                 <p class="govuk-body">@Model.PpeProductType</p>
-            }            
+            }
             @if (Model.ProtectionAgainstRisk != null)
             {
                 <h2 class="govuk-heading-s">Protection against risk</h2>

@@ -21,11 +21,13 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+    <PackageReference Include="BCrypt.Net-Next" />
     <PackageReference Include="FluentValidation.AspNetCore" />
     <PackageReference Include="BouncyCastle.Cryptography" />
     <PackageReference Include="GovUk.Frontend.AspNetCore" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
     <PackageReference Include="Microsoft.IdentityModel.JsonWebTokens" />
     <PackageReference Include="Microsoft.IdentityModel.Protocols" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" />

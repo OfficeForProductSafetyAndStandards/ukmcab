@@ -1,52 +1,42 @@
 [
-      {
-        "id": "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
-        "name": "Equipment providing buoyancy aid",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
-        "name": "Equipment providing chest and groin protection",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "51933e64-1ead-476c-86d7-8a0869dd19c8",
-        "name": "Equipment providing eye protection",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "98264086-014f-4313-965b-efeb5c4e9ec1",
-        "name": "Equipment providing face protection",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
-        "name": "Equipment providing foot leg and anti-slip protection",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
-        "name": "Equipment providing general body protection (clothing)",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "6e45afa8-22fa-4617-94db-3da4b150bb91",
-        "name": "Equipment providing hand and arm protection",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "643932ee-ac76-4c9f-9211-071dc6482f8f",
-        "name": "Equipment providing head protection",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "99ba5074-e86a-439c-b40b-5e2d4183edf3",
-        "name": "Equipment providing hearing protection",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      },
-      {
-        "id": "b9b54975-0aa1-4491-9dcb-d90f77e1b01d",
-        "name": "Equipment providing respiratory system protection",
-        "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
-      }
-    ]
+  {
+    "id": "93e6f6d1-5725-4123-8eb2-f8caf1aeeeb9",
+    "name": "Equipment providing buoyancy aid"
+  },
+  {
+    "id": "c89ab03d-7aeb-4d86-acab-2cd28d7ff555",
+    "name": "Equipment providing chest and groin protection"
+  },
+  {
+    "id": "51933e64-1ead-476c-86d7-8a0869dd19c8",
+    "name": "Equipment providing eye protection"
+  },
+  {
+    "id": "98264086-014f-4313-965b-efeb5c4e9ec1",
+    "name": "Equipment providing face protection"
+  },
+  {
+    "id": "4a8001cd-49cb-433a-b6c3-aa3dc7a85398",
+    "name": "Equipment providing foot leg and anti-slip protection"
+  },
+  {
+    "id": "1568f713-5ef1-4a28-a1ac-58c7c1dfefa0",
+    "name": "Equipment providing general body protection (clothing)"
+  },
+  {
+    "id": "6e45afa8-22fa-4617-94db-3da4b150bb91",
+    "name": "Equipment providing hand and arm protection"
+  },
+  {
+    "id": "643932ee-ac76-4c9f-9211-071dc6482f8f",
+    "name": "Equipment providing head protection"
+  },
+  {
+    "id": "99ba5074-e86a-439c-b40b-5e2d4183edf3",
+    "name": "Equipment providing hearing protection"
+  },
+  {
+    "id": "b9b54975-0aa1-4491-9dcb-d90f77e1b01d",
+    "name": "Equipment providing respiratory system protection"
+  }
+]

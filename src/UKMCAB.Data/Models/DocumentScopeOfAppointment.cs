@@ -11,11 +11,16 @@ namespace UKMCAB.Data.Models
         public List<Guid> CategoryIds { get; set; } = new();
         public Guid? SubCategoryId { get; set; }
         public List<Guid> ProductIds { get; set; } = new();
+        public List<Guid> PpeProductTypeIds { get; set; } = new();
+        public List<Guid> ProtectionAgainstRiskIds { get; set; } = new();
         public List<Guid> AreaOfCompetencyIds { get; set; } = new();
         public List<ProductAndProcedures> ProductIdAndProcedureIds { get; set; } = new();
         public List<CategoryAndProcedures> CategoryIdAndProcedureIds { get; set; } = new();
+        public List<PpeProductTypeAndProcedures> PpeProductTypeIdAndProcedureIds { get; set; } = new();
+        public List<ProtectionAgainstRiskAndProcedures> ProtectionAgainstRiskIdAndProcedureIds { get; set; } = new();
         public List<AreaOfCompetencyAndProcedures> AreaOfCompetencyIdAndProcedureIds { get; set; } = new();
         public List<Guid> DesignatedStandardIds { get; set; } = new();
+        public Guid? PpeCategoryId { get; set; }
         public Guid? PpeProductTypeId { get; set; }
         public Guid? ProtectionAgainstRiskId { get; set; }
 
@@ -32,6 +37,7 @@ namespace UKMCAB.Data.Models
                 PurposeOfAppointmentId != otherSoa.PurposeOfAppointmentId ||
                 CategoryId != otherSoa.CategoryId ||
                 SubCategoryId != otherSoa.SubCategoryId ||
+                PpeCategoryId != otherSoa.PpeCategoryId ||
                 PpeProductTypeId != otherSoa.PpeProductTypeId ||
                 ProtectionAgainstRiskId != otherSoa.ProtectionAgainstRiskId)
             {
@@ -40,11 +46,15 @@ namespace UKMCAB.Data.Models
 
             if (!AreListsEqual(CategoryIds, otherSoa.CategoryIds) || 
                 !AreListsEqual(ProductIds, otherSoa.ProductIds) || 
+                !AreListsEqual(PpeProductTypeIds, otherSoa.PpeProductTypeIds) ||
+                !AreListsEqual(ProtectionAgainstRiskIds, otherSoa.ProtectionAgainstRiskIds) ||
                 !AreListsEqual(AreaOfCompetencyIds, otherSoa.AreaOfCompetencyIds))
                 return false;
 
             if (!AreObjectListsEqual(CategoryIdAndProcedureIds, otherSoa.CategoryIdAndProcedureIds) ||
                 !AreObjectListsEqual(ProductIdAndProcedureIds, otherSoa.ProductIdAndProcedureIds) ||
+                !AreObjectListsEqual(PpeProductTypeIdAndProcedureIds, otherSoa.PpeProductTypeIdAndProcedureIds) ||
+                !AreObjectListsEqual(ProtectionAgainstRiskIdAndProcedureIds, otherSoa.ProtectionAgainstRiskIdAndProcedureIds) ||
                 !AreObjectListsEqual(AreaOfCompetencyIdAndProcedureIds, otherSoa.AreaOfCompetencyIdAndProcedureIds))
                 return false;
 
@@ -61,6 +71,7 @@ namespace UKMCAB.Data.Models
             hash = hash * 31 + PurposeOfAppointmentId.GetHashCode();
             hash = hash * 31 + CategoryId.GetHashCode();
             hash = hash * 31 + SubCategoryId.GetHashCode();
+            hash = hash * 31 + PpeCategoryId.GetHashCode();
             hash = hash * 31 + PpeProductTypeId.GetHashCode();
             hash = hash * 31 + ProtectionAgainstRiskId.GetHashCode();
 
@@ -77,6 +88,22 @@ namespace UKMCAB.Data.Models
                 foreach (var prodId in ProductIds)
                 {
                     hash = hash * 31 + prodId.GetHashCode();
+                }
+            }
+
+            if (PpeProductTypeIds.Any())
+            {
+                foreach (var ppeProductTypeId in PpeProductTypeIds)
+                {
+                    hash = hash * 31 + ppeProductTypeId.GetHashCode();
+                }
+            }
+
+            if (ProtectionAgainstRiskIds.Any())
+            {
+                foreach (var pARId in ProtectionAgainstRiskIds)
+                {
+                    hash = hash * 31 + pARId.GetHashCode();
                 }
             }
 
@@ -101,6 +128,22 @@ namespace UKMCAB.Data.Models
                 foreach (var catAndProcedureId in CategoryIdAndProcedureIds)
                 {
                     hash = hash * 31 + catAndProcedureId.GetHashCode();
+                }
+            }
+
+            if (ProtectionAgainstRiskIdAndProcedureIds.Any())
+            {
+                foreach (var protectionAgainstRiskAndProcedureId in ProtectionAgainstRiskIdAndProcedureIds)
+                {
+                    hash = hash * 31 + protectionAgainstRiskAndProcedureId.GetHashCode();
+                }
+            }
+
+            if (PpeProductTypeIdAndProcedureIds.Any())
+            {
+                foreach (var ppeProductTypeAndProcedureId in PpeProductTypeIdAndProcedureIds)
+                {
+                    hash = hash * 31 + ppeProductTypeAndProcedureId.GetHashCode();
                 }
             }
 

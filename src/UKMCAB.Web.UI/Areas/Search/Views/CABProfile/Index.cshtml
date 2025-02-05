@@ -89,7 +89,6 @@ else if (User.Identity.IsAuthenticated &&  Model is { IsArchived: true, RequestT
                 }
             </div>
         </div>
-        <!--<div class="govuk-!-margin-bottom-6">-->
     </div>
 
     <div class="govuk-grid-column-one-half">
@@ -268,14 +267,16 @@ else if (User.Identity.IsAuthenticated &&  Model is { IsArchived: true, RequestT
                                 </dd>
                             </div>
                         }
-                        <div class="govuk-summary-list__row">
-                            <dt class="govuk-summary-list__key">
-                                UKAS reference number
-                            </dt>
-                            <dd class="govuk-summary-list__value">
-                                @Html.Conditional(!string.IsNullOrWhiteSpace(Model.UKASReferenceNumber), Model.UKASReferenceNumber, @Constants.NotProvided)
-                            </dd>
-                        </div>
+                        @if(User.Identity.IsAuthenticated){
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        UKAS reference number
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        @Html.Conditional(!string.IsNullOrWhiteSpace(Model.UKASReferenceNumber), Model.UKASReferenceNumber, @Constants.NotProvided)
+                                    </dd>
+                                </div>
+                        }                        
                     </dl>
                 </div>
                 <div class="cab-detail-section">

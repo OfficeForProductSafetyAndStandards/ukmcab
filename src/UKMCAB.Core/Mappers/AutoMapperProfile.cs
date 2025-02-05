@@ -25,6 +25,7 @@ public class AutoMapperProfile : Profile
         CreateMap<DocumentLegislativeArea, DocumentLegislativeAreaIndexItem>()
             .ForMember(s => s.Status, opt => opt.MapFrom(d => (int)d.Status));
         CreateMap<DesignatedStandard, DesignatedStandardModel>();
+        CreateMap<PpeCategory, PpeCategoryModel>();
         CreateMap<PpeProductType, PpeProductTypeModel>();
         CreateMap<ProtectionAgainstRisk, ProtectionAgainstRiskModel>();
         CreateMap<AreaOfCompetency, AreaOfCompetencyModel>();

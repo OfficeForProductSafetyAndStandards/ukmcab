@@ -271,31 +271,36 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
         {
             return View("~/Pages/403.cshtml", new _403Model());
         }
-        
+
         [AllowAnonymous, Route("qalogin", Name = Routes.QaLogin)]
-        public async Task<IActionResult> QaLogin([FromForm] string userId)
+        public async Task<IActionResult> QaLogin([FromForm] string userId, string password)
         {
             if (_environment.IsDevelopment())
             {
                 if (Request.Method == HttpMethod.Get.Method)
                 {
                     return Content(@"
-                    <html><body><h1>QA fake login</h1>
-                    <form method=post>
-                        User ID: <input name=userid>
-                        <input type=submit />
-                        <p>If a user id is unrecognised, you'll go through the user account request flow.  If it's recognised, then great, you'll be logged on as that account.</p>
-                    </form>
-                    </html></body>", "text/html");
+            <html><body><h1>QA fake login</h1>
+            <form method=post>
+                User ID: <input name=userid>
+                Password: <input type=password name=password>
+                <input type=submit />
+                <p>If a user id and password is unrecognised, you'll go through the user account request flow.  If it's recognised, then great, you'll be logged on as that account.</p>
+            </form>
+            </html></body>", "text/html");
                 }
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
+                    var acc = await _userAccounts.GetAsync(userId);
                     var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
                         CookieAuthenticationDefaults.AuthenticationScheme);
-                    var acc = await _userAccounts.GetAsync(userId);
-                    if (acc != null)
-                    {
-                        SignInHelper.AddClaims(acc, claimsIdentity);
+
+                    if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(password))
+                    {                    
+                        if (acc != null && VerifyPassword(password, acc.PasswordHash))
+                        {
+                            SignInHelper.AddClaims(acc, claimsIdentity);  
+                        }
                     }
 
                     var authProperties = new AuthenticationProperties { IsPersistent = false, };
@@ -375,6 +380,11 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 LastLogonUtc = userAccount.LastLogonUtc,
                 IsEdited = TempData["Edit"] != null && (bool)TempData["Edit"]
             });
+        }
+        private static bool VerifyPassword(string password, string? storedHash)
+        {
+            ArgumentNullException.ThrowIfNull(storedHash, nameof(storedHash));
+            return BCrypt.Net.BCrypt.Verify(password, storedHash);
         }
 
         public static class Routes

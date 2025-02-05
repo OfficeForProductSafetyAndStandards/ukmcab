@@ -19,15 +19,16 @@ namespace UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea
         public string? SubCategory { get; set; }
 
         public string? Product { get; set; }
+        public string? PpeCategory { get; set; }
         public string? PpeProductType { get; set; }
         public string? ProtectionAgainstRisk { get; set; }
         public string? AreaOfCompetency { get; set; }
         public Guid? CurrentProductId { get; set; }
         public Guid? CurrentCategoryId { get; set; }
+        public Guid? CurrentPpeProductTypeId { get; set; }
+        public Guid? CurrentProtectionAgainstRiskId { get; set; }
         public Guid? CurrentAreaOfCompetencyId { get; set; }
-
         public IEnumerable<SelectListItem> Procedures { get; set; } = new List<SelectListItem>();
-
         public int IndexOfProduct { get; set; }
         public bool IsLastAction { get; set; } = true;
         public ProcedureViewModel() : this("Create a CAB") { }

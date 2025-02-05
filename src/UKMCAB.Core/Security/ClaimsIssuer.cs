@@ -23,7 +23,8 @@ public static class ClaimsIssuer
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
                 new(Claims.CabGovernmentUserNotes, string.Empty), // can view/add Government user notes on cabs
                 new(Claims.UserManagement, string.Empty), // can manage users
-                new (Claims.LegislativeAreaApprove, string.Empty) // Opss admin approve LAs after OGDs
+                new (Claims.LegislativeAreaApprove, string.Empty), // Opss admin approve LAs after OGDs
+                new (Claims.LegislativeAreaManage, string.Empty) // Opss admin can manage LAs
             };
         }
 
@@ -35,6 +36,7 @@ public static class ClaimsIssuer
                 new(Claims.CabCreateDraft, string.Empty), // can create drafts of CABs
                 new(Claims.CanRequest, "*"), // can make requests on CABs and LAs
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
+                new (Claims.LegislativeAreaManage, string.Empty) // can manage LAs
             };
         }
         
@@ -45,6 +47,7 @@ public static class ClaimsIssuer
                 new(Claims.LegislativeAreaApprove, role), // Approve/Decline Legislative Area
                 new(Claims.CabGovernmentUserNotes, string.Empty), // can view/add Government user notes on cabs
                 new(Claims.CabManagement, string.Empty), // can manage all cabs
+                new (Claims.LegislativeAreaManage, string.Empty) // can manage LAs
             };
         }
 

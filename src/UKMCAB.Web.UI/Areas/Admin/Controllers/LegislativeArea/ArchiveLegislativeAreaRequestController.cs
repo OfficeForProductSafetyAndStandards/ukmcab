@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using UKMCAB.Core.Extensions;
+using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Data.Models;
@@ -8,7 +9,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers.LegislativeArea;
 
-[Area("admin"), Route("admin/cab/{id}/legislative-area"), Authorize]
+[Area("admin"), Route("admin/cab/{id}/legislative-area"), Authorize(Claims.LegislativeAreaApprove)]
 public class ArchiveLegislativeAreaRequestController : UI.Controllers.ControllerBase
 {
     private readonly ICABAdminService _cabAdminService;

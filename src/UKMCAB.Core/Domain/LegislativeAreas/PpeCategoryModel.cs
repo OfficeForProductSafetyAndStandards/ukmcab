@@ -1,9 +1,9 @@
 ﻿namespace UKMCAB.Data.Models.LegislativeAreas
 {
-    public class ProtectionAgainstRisk : IEntity
+    public class PpeCategoryModel
     {
         public Guid Id { get; set; }
         public string Name { get; set; }
-        public List<Guid> PpeProductTypeIds { get; set; }
+        public Guid LegislativeAreaId { get; set; }
     }
 }

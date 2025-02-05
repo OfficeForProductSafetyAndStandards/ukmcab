@@ -12,23 +12,11 @@
         <form id="legislativeForm" method="post" novalidate>
             <input type="hidden" asp-for="IsFromSummary" />
             <input type="hidden" asp-for="LegislativeArea" />
-            <input type="hidden" asp-for="PpeProductType" />
-            <input type="hidden" asp-for="ProtectionAgainstRisk" />
+            <input type="hidden" asp-for="PpeCategory" />
             <h2 class="govuk-heading-s">Legislative area</h2>
             <p class="govuk-body">@Model.LegislativeArea</p>
 
-            @if (Model.PpeProductType != null)
-            {
-                <h2 class="govuk-heading-s">PPE product type</h2>
-                <p class="govuk-body">@Model.PpeProductType</p>
-            }
-            @if (Model.ProtectionAgainstRisk != null)
-            {
-                <h2 class="govuk-heading-s">Protection against risk</h2>
-                <p class="govuk-body">@Model.ProtectionAgainstRisk</p>
-            }
-
-            <govuk-checkboxes asp-for="SelectedAreaOfCompetencyId">
+            <govuk-checkboxes asp-for="SelectedAreaOfCompetencyIds">
                 <govuk-checkboxes-fieldset>
                     <govuk-checkboxes-fieldset-legend class="govuk-fieldset__legend--s">
                         Area of competencies
@@ -37,6 +25,7 @@
                     <govuk-checkboxes-hint>
                         Select all that apply
                     </govuk-checkboxes-hint>
+
                     @foreach (var item in Model.AreaOfCompetencies)
                     {
                         <govuk-checkboxes-item value="@item.Value" checked="@item.Selected">@item.Text</govuk-checkboxes-item>

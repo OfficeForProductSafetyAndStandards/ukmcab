@@ -21,6 +21,8 @@ public static class Constants
     public const string DateTimeFormat = "dd/MM/yyyy HH:mm";
     public const int RowsPerPage = 10;
 
+    public const string PpeLaName = "Personal protective equipment";
+
     public class PageTitle
     {
         public const string About = "About";

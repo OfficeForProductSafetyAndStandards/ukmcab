@@ -18,6 +18,7 @@ using UKMCAB.Web.UI.Services;
 using UKMCAB.Core.Extensions;
 using UKMCAB.Web.UI.Models.Builders;
 using UKMCAB.Data;
+using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -713,6 +714,31 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
                     protectionAgainstRisks,
                     areaOfCompetencies)
                 .Build();
+
+            if(cabLegislativeAreas != null && cabLegislativeAreas.ActiveLegislativeAreas.Any(l => !string.IsNullOrEmpty(l.Name) && l.Name.Equals("Personal protective equipment")))
+            {
+                var ppeLA = cabLegislativeAreas.ActiveLegislativeAreas.First(l => l.Name.Equals(Constants.PpeLaName));
+                var sortedLAViewModels = new List<LegislativeAreaListItemViewModel>();
+                if (ppeLA.ShowPpeProductTypeColumn)
+                {
+                    var laItemListVMs = ppeLA.ScopeOfAppointments.Where(l => l.PpeProductType != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                if (ppeLA.ShowProtectionAgainstRiskColumn)
+                {
+                    var laItemListVMs = ppeLA.ScopeOfAppointments.Where(l => l.ProtectionAgainstRisk != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                if (ppeLA.ShowAreaOfCompetencyColumn)
+                {
+                    var laItemListVMs = ppeLA.ScopeOfAppointments.Where(l => l.AreaOfCompetency != null);
+                    sortedLAViewModels.AddRange(laItemListVMs);
+                }
+
+                ppeLA.ScopeOfAppointments = sortedLAViewModels;
+            }
 
             ValidateCabSummary(cabDetails, cabContact, cabBody, cabLegislativeAreas);
 

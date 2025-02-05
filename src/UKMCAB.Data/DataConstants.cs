@@ -4,7 +4,7 @@ public static class DataConstants
 {
     public static class Version
     {
-        public const string Number = "v5-5";
+        public const string Number = "v5-6";
     }
 
     public static class CosmosDb
@@ -328,5 +328,11 @@ public static class DataConstants
     public static class LegislativeAreasWithDifferentDataModel
     {
         public const string Construction = "Construction products";
+    }
+    public static class PpeCategories
+    {
+        public const string PppProductType = "PPE product type";
+        public const string ProtectionAgainstRisks = "Providing protection against the following risks";
+        public const string AreaOfCompetence = "Specialised area of competence";
     }
 }
