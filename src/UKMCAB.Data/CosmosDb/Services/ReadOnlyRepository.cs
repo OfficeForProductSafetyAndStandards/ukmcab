@@ -64,7 +64,8 @@ public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
         var query = _container.GetItemLinqQueryable<O>().Where(predicate);
         if (!string.IsNullOrWhiteSpace(searchTerm))
         {
-            query = query.Where(x => x.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase));
+            query = query.Where(x => x.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            || x.ReferenceNumber.Any(refNum => refNum.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)));
         }
         var queryCount = await query.CountAsync();
 
