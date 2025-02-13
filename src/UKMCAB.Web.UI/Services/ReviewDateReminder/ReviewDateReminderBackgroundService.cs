@@ -7,6 +7,7 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
+using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Areas.Search.Controllers;
 
 namespace UKMCAB.Web.UI.Services.ReviewDateReminder
@@ -23,8 +24,10 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         private readonly TelemetryClient _telemetryClient;
         private readonly Timer _timer;
         private DateTime _nextRunTime;
+        private readonly IDistCache _distCache;
 
-        public ReviewDateReminderBackgroundService(ILogger<ReviewDateReminderBackgroundService> logger, TelemetryClient telemetryClient, ICABRepository cabRepository, IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, LinkGenerator linkGenerator, IAppHost appHost)
+
+        public ReviewDateReminderBackgroundService(ILogger<ReviewDateReminderBackgroundService> logger, TelemetryClient telemetryClient, ICABRepository cabRepository, IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, LinkGenerator linkGenerator, IAppHost appHost, IDistCache distCache)
         {
             _logger = logger;
             _telemetryClient = telemetryClient;
@@ -34,9 +37,13 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
             _templateOptions = templateOptions.Value;
             _linkGenerator = linkGenerator;
             _appHost = appHost;
+            _distCache = distCache;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            var lockName = StringExt.Keyify(nameof(ReviewDateReminderBackgroundService), nameof(ExecuteAsync));
+            var lockOwner = LockOwner.Create();
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 if (_nextRunTime == default || _nextRunTime.Date < DateTime.Today)
@@ -47,10 +54,15 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                 var delay = (int)(_nextRunTime - DateTime.Now).TotalMilliseconds;
                 delay = Math.Max(delay, 0);
                 await Task.Delay(delay, stoppingToken);
+                var gotLock = false;
 
                 try
                 {
-                    await CheckAndSendReviewDateReminder();
+                    gotLock = await _distCache.LockTakeAsync(lockName, lockOwner, TimeSpan.FromMinutes(1));
+                    if (gotLock)
+                    {
+                        await CheckAndSendReviewDateReminder();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -59,6 +71,10 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
                 }
                 finally
                 {
+                    if (gotLock)
+                    {
+                        await _distCache.LockReleaseAsync(lockName, lockOwner);
+                    }                    
                     _nextRunTime = _nextRunTime.AddDays(1);
                 }
             }
