@@ -4,7 +4,8 @@ public static class Roles
 {
     public static Role DFTP { get; } = new("dftp", "DFTP");
     public static Role DFTR { get; } = new("dftr", "DFTR");
-    public static Role DLUHC { get; } = new("dluhc", "DLUHC");
+    // Name/Label changed from DLUHC to MHCLG
+    public static Role DLUHC { get; } = new("dluhc", "MHCLG");
     public static Role MCGA { get; } = new("mcga", "MCGA");
     public static Role MHRA { get; } = new("mhra", "MHRA");
     public static Role OPSS { get; } = new("opss", "OPSS");
