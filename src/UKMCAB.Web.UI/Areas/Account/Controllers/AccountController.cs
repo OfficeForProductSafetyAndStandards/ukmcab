@@ -302,7 +302,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                             SignInHelper.AddClaims(acc, claimsIdentity);  
                         }
                     }
-
+                    // ToDo: Review whether to move into if statatment
                     var authProperties = new AuthenticationProperties { IsPersistent = false, };
                     await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,
                         new ClaimsPrincipal(claimsIdentity), authProperties);
