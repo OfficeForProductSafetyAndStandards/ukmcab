@@ -42,7 +42,7 @@
 			}
 		</div>
 	</div>
-	<section aria-label="Service information" class="govuk-service-navigation"
+	<section aria-label="Service information" class="govuk-service-navigation desktop-no-display"
 			 data-module="govuk-service-navigation">
 		<div class="govuk-width-container">
 			<div class="govuk-service-navigation__container">
@@ -62,9 +62,9 @@
 				</span>
 
 				<nav aria-label="Menu" class="govuk-header__navigation govuk-service-navigation__wrapper">
-					<button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide menu" hidden>Menu</button>
+					<button type="button" class="govuk-header__menu-button govuk-js-header-toggle ukmcab-margin-right-10-mobile" aria-controls="navigation" aria-label="Show or hide menu" hidden>Menu</button>
 
-					<ul id="navigation" class="govuk-service-navigation__list ukmcab-service-navigation__list @Html.Conditional(User.Identity.IsAuthenticated, "navigation-4-rows", "navigation-3-rows")">
+					<ul id="navigation" class="govuk-service-navigation__list @Html.Conditional(User.Identity.IsAuthenticated, "navigation-4-rows", "navigation-3-rows")">
 						@if (User.Identity.IsAuthenticated)
 						{
 							<li class="govuk-service-navigation__item @Html.Conditional(ViewData["nav"] == "service-management", "govuk-service-navigation__item--active")">
@@ -107,3 +107,68 @@
 		</div>
 	</section>
 </header>
+
+<section aria-label="Service information" class="govuk-service-navigation mobile-no-display"
+		 data-module="govuk-service-navigation">
+	<div class="govuk-width-container">
+		<div id="govuk-service-navigation-container" class="govuk-service-navigation__container">
+			<span class="govuk-service-navigation__service-name">
+				@if (User.Identity.IsAuthenticated)
+				{
+					<a asp-route="@ServiceManagementController.Routes.ServiceManagement" class="govuk-service-navigation__link">
+						UK Market Conformity Assessment Bodies
+					</a>
+				}
+				else
+				{
+					<a href="/" class="govuk-service-navigation__link">
+						UK Market Conformity Assessment Bodies
+					</a>
+				}
+			</span>
+
+			<nav aria-label="Menu" class="govuk-header__navigation govuk-service-navigation__wrapper">
+				<button type="button" class="govuk-header__menu-button govuk-js-header-toggle" aria-controls="navigation" aria-label="Show or hide menu" hidden>Menu</button>
+
+				<ul id="navigation" class="govuk-service-navigation__list navigation__list @Html.Conditional(User.Identity.IsAuthenticated, "navigation-4-rows", "navigation-3-rows")">
+					@if (User.Identity.IsAuthenticated)
+					{
+						<li class="govuk-service-navigation__item @Html.Conditional(ViewData["nav"] == "service-management", "govuk-service-navigation__item--active")">
+							<a asp-route="@ServiceManagementController.Routes.ServiceManagement" class="govuk-service-navigation__link" aria-current="@Html.Conditional(ViewData["nav"] != "service-management","false")">
+								Home
+							</a>
+						</li>
+					}
+					<li class="govuk-service-navigation__item @Html.Conditional(ViewData["nav"] == "search", "govuk-service-navigation__item--active")">
+						<a asp-area="Search" asp-controller="Search" asp-action="Index" class="govuk-service-navigation__link">Search</a>
+					</li>
+					<li class="govuk-service-navigation__item @Html.Conditional(ViewData["nav"] == "help", "govuk-service-navigation__item--active")">
+						<a asp-area="Home" asp-controller="Home" asp-action="Help" class="govuk-service-navigation__link">Help</a>
+					</li>
+					<li class="govuk-service-navigation__item @Html.Conditional(!User.Identity.IsAuthenticated, "navigation-mobile-no-underline", string.Empty) @Html.Conditional(ViewData["nav"] == "about", "govuk-service-navigation__item--active")">
+						<a asp-area="Home" asp-controller="Home" asp-action="About" class="govuk-service-navigation__link">About</a>
+					</li>
+					<li class="govuk-service-navigation__item @Html.Conditional(User.Identity.IsAuthenticated, "navigation-mobile-no-underline", string.Empty) @Html.Conditional(ViewData["nav"] == "updates", "govuk-service-navigation__item--active")">
+						<a asp-area="Home" asp-controller="Home" asp-action="Updates" class="govuk-service-navigation__link">Updates</a>
+					</li>
+					@if (User.Identity.IsAuthenticated)
+					{
+						<li class="govuk-service-navigation__item navigation-mobile-underline @Html.Conditional(ViewData["nav"] == "profile", "govuk-service-navigation__item--active")">
+							<a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.UserProfile" class="govuk-service-navigation__link">Profile</a>
+						</li>
+
+						<li class="govuk-service-navigation__item navigation-mobile-underline navigation-auth-link">
+							<a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.Logout" class="govuk-service-navigation__link">Sign out</a>
+						</li>
+					}
+					else
+					{
+						<li class="govuk-service-navigation__item navigation-mobile-underline navigation-auth-link @Html.Conditional(ViewData["nav"] == "signin", "govuk-service-navigation__item--active")">
+							<a asp-route="@UKMCAB.Web.UI.Areas.Account.Controllers.AccountController.Routes.Login" class="govuk-service-navigation__link">Sign in</a>
+						</li>
+					}
+				</ul>
+			</nav>
+		</div>
+	</div>
+</section>
