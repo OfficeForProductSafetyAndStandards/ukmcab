@@ -10,7 +10,7 @@ using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Mappers;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Workflow;
-using UKMCAB.Data.CosmosDb.Services.WorkflowTask;
+using UKMCAB.Data.Interfaces.Services.WorkflowTask;
 
 namespace UKMCAB.Core.Tests.Services.Workflow;
 

@@ -10,10 +10,10 @@
     using System.Threading.Tasks;
     using Mappers;
     using UKMCAB.Core.Services.CAB;
-    using UKMCAB.Data.CosmosDb.Services;
     using Data.Models.LegislativeAreas;
     using UKMCAB.Data.Models;
     using Document = Data.Models.Document;
+    using UKMCAB.Data.Interfaces.Services;
 
     [TestFixture]
     public class LegislativeAreasServiceTests

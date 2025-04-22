@@ -5,12 +5,12 @@ using UKMCAB.Data.Domain;
 using UKMCAB.Common.Exceptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users.Models;
-using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Infrastructure.Cache;
 using Microsoft.AspNetCore.Http;
 using UKMCAB.Core.EmailTemplateOptions;
+using UKMCAB.Data.Interfaces.Services.User;
 
 namespace UKMCAB.Core.Services.Users;
 

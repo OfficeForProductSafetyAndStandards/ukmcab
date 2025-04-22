@@ -1,7 +1,7 @@
 ﻿using UKMCAB.Data.Domain;
 using UKMCAB.Data.Models.Users;
 
-namespace UKMCAB.Data.CosmosDb.Services.User;
+namespace UKMCAB.Data.Interfaces.Services.User;
 
 public interface IUserAccountRequestRepository
 {

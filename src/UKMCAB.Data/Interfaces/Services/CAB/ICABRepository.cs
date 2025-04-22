@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using UKMCAB.Data.Models;
 
-namespace UKMCAB.Data.CosmosDb.Services.CAB
+namespace UKMCAB.Data.Interfaces.Services.CAB
 {
     public interface ICABRepository
     {

@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.CosmosDb.Utilities;
+using UKMCAB.Data.Interfaces.Services;
 using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Data.Tests.Services;
@@ -33,7 +34,7 @@ public class ReadOnlyRepositoryTests
         _mockCosmosClient.Setup(x => x.GetContainer(It.IsAny<string>(), "products"))
             .Returns(_mockContainer.Object);
 
-        _repository = new ReadOnlyRepository<Product>(_mockCosmosClient.Object, _mockCosmosFeedIterator.Object, "products");
+        _repository = new CosmosReadOnlyRepository<Product>(_mockCosmosClient.Object, _mockCosmosFeedIterator.Object, "products");
     }
 
     [Test]

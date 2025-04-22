@@ -1,6 +1,6 @@
 using System.Linq.Expressions;
 
-namespace UKMCAB.Data.CosmosDb.Services.WorkflowTask;
+namespace UKMCAB.Data.Interfaces.Services.WorkflowTask;
 
 public interface IWorkflowTaskRepository
 {

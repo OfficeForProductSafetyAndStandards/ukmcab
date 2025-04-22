@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using UKMCAB.Common;
 using UKMCAB.Core.Domain.LegislativeAreas;
-using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Models;
 using LinqKit;
+using UKMCAB.Data.Interfaces.Services;
 
 namespace UKMCAB.Core.Services.CAB;
 

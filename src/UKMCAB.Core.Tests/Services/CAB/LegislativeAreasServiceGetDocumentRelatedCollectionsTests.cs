@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Core.Domain.LegislativeAreas;
 using UKMCAB.Core.Services.CAB;
-using UKMCAB.Data.CosmosDb.Services;
+using UKMCAB.Data.Interfaces.Services;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.LegislativeAreas;
 

@@ -1,6 +1,6 @@
 using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.Mappers;
-using UKMCAB.Data.CosmosDb.Services.WorkflowTask;
+using UKMCAB.Data.Interfaces.Services.WorkflowTask;
 
 // ReSharper disable SpecifyStringComparison
 

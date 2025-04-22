@@ -2,11 +2,12 @@
 using Microsoft.Azure.Cosmos.Linq;
 using System.Linq.Expressions;
 using UKMCAB.Data.CosmosDb.Utilities;
+using UKMCAB.Data.Interfaces.Services;
 using UKMCAB.Data.Pagination;
 
 namespace UKMCAB.Data.CosmosDb.Services;
 
-public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
+public class CosmosReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
 {
     private CosmosClient _cosmosClient;
     private ICosmosFeedIterator _cosmosFeedIterator;
@@ -19,7 +20,7 @@ public class ReadOnlyRepository<T> : IReadOnlyRepository<T> where T : class
     /// <param name="cosmosClient">Cosmos client.</param>
     /// <param name="cosmosFeedIterator">A wrapper around the CosmosLinqQuery.ToFeedIterator() method to enable unit testing.</param>
     /// <param name="containerId">Cosmos container name, e.g. "legislative-areas".</param>
-    public ReadOnlyRepository(CosmosClient cosmosClient, ICosmosFeedIterator cosmosFeedIterator, string containerId)
+    public CosmosReadOnlyRepository(CosmosClient cosmosClient, ICosmosFeedIterator cosmosFeedIterator, string containerId)
     {
         _cosmosClient = cosmosClient;
         _cosmosFeedIterator = cosmosFeedIterator;

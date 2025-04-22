@@ -5,7 +5,7 @@ using UKMCAB.Core.Domain.Workflow;
 using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Workflow;
-using UKMCAB.Data.CosmosDb.Services.CAB;
+using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Areas.Search.Controllers;

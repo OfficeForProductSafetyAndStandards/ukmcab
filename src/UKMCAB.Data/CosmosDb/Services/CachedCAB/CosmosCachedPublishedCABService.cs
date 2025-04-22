@@ -1,17 +1,18 @@
 ﻿using UKMCAB.Common;
-using UKMCAB.Data.CosmosDb.Services.CAB;
+using UKMCAB.Data.Interfaces.Services.CAB;
+using UKMCAB.Data.Interfaces.Services.CachedCAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 
 namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
 {
-    public class CachedPublishedCABService : ICachedPublishedCABService
+    public class CosmosCachedPublishedCABService : ICachedPublishedCABService
     {
         private readonly IDistCache _cache;
         private readonly ICABRepository _cabRepository;
         private const string KeyPrefix = $"{DataConstants.Version.Number}_cab_";
 
-        public CachedPublishedCABService(IDistCache cache, ICABRepository cabRepository)
+        public CosmosCachedPublishedCABService(IDistCache cache, ICABRepository cabRepository)
         {
             _cache = cache;
             _cabRepository = cabRepository;

@@ -5,17 +5,18 @@ using Microsoft.Azure.Cosmos.Linq;
 using MoreLinq;
 using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.LegislativeAreas;
 
 namespace UKMCAB.Data.CosmosDb.Services.CAB
 {
-    public class CABRepository : ICABRepository
+    public class CosmosCABRepository : ICABRepository
     {
         private Container _container;
         private readonly CosmosDbConnectionString _cosmosDbConnectionString;
 
-        public CABRepository(CosmosDbConnectionString cosmosDbConnectionString)
+        public CosmosCABRepository(CosmosDbConnectionString cosmosDbConnectionString)
         {
             _cosmosDbConnectionString = cosmosDbConnectionString;
         }

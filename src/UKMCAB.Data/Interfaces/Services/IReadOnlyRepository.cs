@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using UKMCAB.Data.Pagination;
 
-namespace UKMCAB.Data.CosmosDb.Services;
+namespace UKMCAB.Data.Interfaces.Services;
 
 public interface IReadOnlyRepository<T> where T : class
 {

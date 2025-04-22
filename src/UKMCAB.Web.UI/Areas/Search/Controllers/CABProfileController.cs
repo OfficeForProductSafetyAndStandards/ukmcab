@@ -14,7 +14,6 @@ using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data;
-using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Data.Storage;
@@ -28,6 +27,7 @@ using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.LegislativeArea;
 using LegislativeAreaViewModel = UKMCAB.Web.UI.Models.ViewModels.Search.LegislativeAreaViewModel;
 using UKMCAB.Core.Extensions;
+using UKMCAB.Data.Interfaces.Services.CachedCAB;
 
 namespace UKMCAB.Web.UI.Areas.Search.Controllers
 {

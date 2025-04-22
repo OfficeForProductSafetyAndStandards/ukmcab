@@ -4,7 +4,14 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>455e736c-9f79-4c46-8522-1a7749c2687d</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
+
+    <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+	    <Exec Command="npm install" WorkingDirectory="$(ProjectDir)" />
+	    <Exec Command="npm run build:prod" WorkingDirectory="$(ProjectDir)" />
+    </Target>
+	
   <ItemGroup>
     <Compile Remove="Areas\Account\Views\Shared\**" />
     <Content Remove="Areas\Account\Views\Shared\**" />
@@ -46,6 +53,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <PackageReference Include="morelinq" />
     <PackageReference Include="Polly" />

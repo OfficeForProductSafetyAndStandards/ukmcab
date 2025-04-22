@@ -5,17 +5,18 @@ using Polly.Fallback;
 using System.Linq.Dynamic.Core;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Domain;
+using UKMCAB.Data.Interfaces.Services.User;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
 
-public class UserAccountRequestRepository : IUserAccountRequestRepository
+public class CosmosUserAccountRequestRepository : IUserAccountRequestRepository
 {
     public const string ContainerId = "user-account-requests";
     private readonly Container _container;
     private readonly AsyncFallbackPolicy<UserAccountRequest?> _getUserAccountRequestPolicy;
 
-    public UserAccountRequestRepository(CosmosDbConnectionString cosmosDbConnectionString)
+    public CosmosUserAccountRequestRepository(CosmosDbConnectionString cosmosDbConnectionString)
     {
         var client = CosmosClientFactory.Create(cosmosDbConnectionString);
         _container = client.GetContainer(DataConstants.CosmosDb.Database, ContainerId);

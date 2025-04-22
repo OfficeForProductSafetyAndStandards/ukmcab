@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using UKMCAB.Common;
-using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Domain;
+using UKMCAB.Data.Interfaces.Services.User;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Core.Tests.FakeRepositories

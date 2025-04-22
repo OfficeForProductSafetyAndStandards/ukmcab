@@ -11,8 +11,8 @@ using UKMCAB.Core.EmailTemplateOptions;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Users.Models;
 using UKMCAB.Core.Tests.FakeRepositories;
-using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Domain;
+using UKMCAB.Data.Interfaces.Services.User;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.Users;
 

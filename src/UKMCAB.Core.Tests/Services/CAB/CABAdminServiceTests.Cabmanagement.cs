@@ -6,9 +6,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using UKMCAB.Core.Services.CAB;
 using Microsoft.ApplicationInsights;
-using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.Search.Services;
-using UKMCAB.Data.CosmosDb.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Core.Mappers;
 using System.Linq;
@@ -16,6 +14,8 @@ using AutoMapper;
 using Bogus;
 using UKMCAB.Data.Storage;
 using UKMCAB.Core.Security;
+using UKMCAB.Data.Interfaces.Services.CAB;
+using UKMCAB.Data.Interfaces.Services.CachedCAB;
 
 namespace UKMCAB.Core.Tests.Services.CAB
 {

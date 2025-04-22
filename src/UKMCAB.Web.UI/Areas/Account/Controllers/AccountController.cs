@@ -9,7 +9,6 @@ using UKMCAB.Common.Security.Tokens;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Users.Models;
-using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.Models.Users;
 using UKMCAB.Web.Security;
 using UKMCAB.Web.UI.Areas.Home.Controllers;
@@ -20,6 +19,7 @@ using UKMCAB.Web.UI.Models.ViewModels.Account;
 using UKMCAB.Web.UI.Areas.Admin.Controllers;
 using UKMCAB.Web.UI.Pages;
 using UKMCAB.Core.Extensions;
+using UKMCAB.Data.Interfaces.Services.User;
 
 namespace UKMCAB.Web.UI.Areas.Account.Controllers
 {

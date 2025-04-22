@@ -5,8 +5,8 @@
     using System.Linq;
     using System.Threading.Tasks;
     using UKMCAB.Common;
-    using UKMCAB.Data.CosmosDb.Services.CAB;
-    using UKMCAB.Data.CosmosDb.Services.CachedCAB;
+    using UKMCAB.Data.Interfaces.Services.CAB;
+    using UKMCAB.Data.Interfaces.Services.CachedCAB;
     using UKMCAB.Data.Models;
     using UKMCAB.Data.Models.Users;
 

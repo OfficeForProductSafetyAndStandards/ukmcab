@@ -2,10 +2,11 @@ using System.Linq.Expressions;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
 using UKMCAB.Common.ConnectionStrings;
+using UKMCAB.Data.Interfaces.Services.WorkflowTask;
 
 namespace UKMCAB.Data.CosmosDb.Services.WorkflowTask;
 
-public class WorkflowTaskRepository : IWorkflowTaskRepository
+public class CosmosWorkflowTaskRepository : IWorkflowTaskRepository
 {
     public const string ContainerId = "workflow-tasks";
     private Container _container;
@@ -14,7 +15,7 @@ public class WorkflowTaskRepository : IWorkflowTaskRepository
     /// Repository for CRUD Workflow Tasks.
     /// </summary>
     /// <param name="connectionString"></param>
-    public WorkflowTaskRepository(CosmosDbConnectionString connectionString)
+    public CosmosWorkflowTaskRepository(CosmosDbConnectionString connectionString)
     {
         var client = CosmosClientFactory.Create(connectionString);
         _container = client.GetContainer(DataConstants.CosmosDb.Database, ContainerId);

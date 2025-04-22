@@ -6,18 +6,19 @@ using System.Linq.Dynamic.Core;
 using UKMCAB.Common;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data.Domain;
+using UKMCAB.Data.Interfaces.Services.User;
 using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Data.CosmosDb.Services.User;
 
-public class UserAccountRepository : IUserAccountRepository
+public class CosmosUserAccountRepository : IUserAccountRepository
 {
 
     public const string ContainerId = "user-accounts";
     private readonly Container _container;
     private readonly AsyncFallbackPolicy<UserAccount?> _getUserAccountPolicy;
 
-    public UserAccountRepository(CosmosDbConnectionString cosmosDbConnectionString)
+    public CosmosUserAccountRepository(CosmosDbConnectionString cosmosDbConnectionString)
     {
         var client = CosmosClientFactory.Create(cosmosDbConnectionString);
         _container = client.GetContainer(DataConstants.CosmosDb.Database, ContainerId);

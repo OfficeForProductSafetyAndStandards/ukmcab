@@ -10,10 +10,10 @@
     using System.Threading.Tasks;
     using Common;
     using UKMCAB.Core.Services.CAB;
-    using UKMCAB.Data.CosmosDb.Services.CAB;
-    using UKMCAB.Data.CosmosDb.Services.CachedCAB;
     using Data.Models;
     using UKMCAB.Data.Models.Users;
+    using UKMCAB.Data.Interfaces.Services.CAB;
+    using UKMCAB.Data.Interfaces.Services.CachedCAB;
 
     [TestFixture]
     public class UserNoteServiceTests
