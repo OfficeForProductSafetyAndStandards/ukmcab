@@ -1,0 +1,35 @@
+services:
+   ukmcab:
+     image: ${DOCKER_REGISTRY-}ukmcab
+     hostname: audit
+     ports: 
+      - 7060:8080
+     build:
+       context: .
+       dockerfile: UKMCAB.Web.UI/Dockerfile
+     healthcheck:
+       test: curl --fail http://localhost:9080/health-check || exit 1
+       interval: 40s
+       timeout: 30s
+       retries: 3
+       start_period: 60s
+     depends_on:
+       ukmcabdb:
+         condition: service_healthy
+   ukmcabdb:
+     image: postgres:latest
+     hostname: ukmcabdb
+     container_name: ukmcabdb
+     environment:
+      - POSTGRES_DB=ukmcab
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+     volumes: 
+      - ./.containers/audit-db:/var/lib/postgresql/data
+     ports:
+      - 5435:5432
+     healthcheck:
+       test: ["CMD-SHELL", "pg_isready -U postgres -d ukmcab || exit 1"]
+       interval: 10s
+       timeout: 5s
+       retries: 5
