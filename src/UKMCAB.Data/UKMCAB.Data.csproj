@@ -5,11 +5,6 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Remove="CosmosDb\Models\**" />
-    <EmbeddedResource Remove="CosmosDb\Models\**" />
-    <None Remove="CosmosDb\Models\**" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Remove="C:\Users\krist\.nuget\packages\microsoft.azure.cosmos\3.31.2\contentFiles\any\netstandard2.0\ThirdPartyNotice.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -19,9 +14,15 @@
     <PackageReference Include="CsvHelper" />
     <PackageReference Include="Humanizer.Core" />
     <PackageReference Include="Microsoft.Azure.Cosmos" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="morelinq" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
     <PackageReference Include="Polly" />
     <PackageReference Include="YamlDotNet" />
     <PackageReference Include="Microsoft.ApplicationInsights" />

@@ -17,7 +17,6 @@ using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
 using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services.CAB;
-using UKMCAB.Data.CosmosDb.Services.CachedCAB;
 using UKMCAB.Data.CosmosDb.Services.User;
 using UKMCAB.Data.CosmosDb.Services.WorkflowTask;
 using UKMCAB.Data.Search.Services;
@@ -53,6 +52,7 @@ using UKMCAB.Data.Interfaces.Services.CachedCAB;
 using UKMCAB.Data.Interfaces.Services.User;
 using UKMCAB.Data.Interfaces.Services.WorkflowTask;
 using UKMCAB.Data.Interfaces.Services;
+using UKMCAB.Data.Caching.CachedCAB;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -151,7 +151,7 @@ builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(b
 
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddSingleton<ICABRepository, CosmosCABRepository>(); 
-builder.Services.AddSingleton<ICachedPublishedCABService, CosmosCachedPublishedCABService>();
+builder.Services.AddSingleton<ICachedPublishedCABService, CachedPublishedCABService>();
 builder.Services.AddSingleton<ILoggingService, LoggingService>();
 builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
 builder.Services.AddSingleton<IFileStorage, FileStorageService>();

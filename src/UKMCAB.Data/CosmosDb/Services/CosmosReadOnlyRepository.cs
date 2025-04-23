@@ -60,7 +60,7 @@ public class CosmosReadOnlyRepository<T> : IReadOnlyRepository<T> where T : clas
         Expression<Func<O, bool>> predicate, 
         int pageNumber, 
         string? searchTerm = null, 
-        int pageSize = 20) where O : IOrderable
+        int pageSize = 20) where O : class, IOrderable
     {
         var query = _container.GetItemLinqQueryable<O>().Where(predicate);
         if (!string.IsNullOrWhiteSpace(searchTerm))

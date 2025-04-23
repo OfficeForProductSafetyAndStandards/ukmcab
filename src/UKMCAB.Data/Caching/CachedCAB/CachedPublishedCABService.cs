@@ -4,15 +4,15 @@ using UKMCAB.Data.Interfaces.Services.CachedCAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Infrastructure.Cache;
 
-namespace UKMCAB.Data.CosmosDb.Services.CachedCAB
+namespace UKMCAB.Data.Caching.CachedCAB
 {
-    public class CosmosCachedPublishedCABService : ICachedPublishedCABService
+    public class CachedPublishedCABService : ICachedPublishedCABService
     {
         private readonly IDistCache _cache;
         private readonly ICABRepository _cabRepository;
         private const string KeyPrefix = $"{DataConstants.Version.Number}_cab_";
 
-        public CosmosCachedPublishedCABService(IDistCache cache, ICABRepository cabRepository)
+        public CachedPublishedCABService(IDistCache cache, ICABRepository cabRepository)
         {
             _cache = cache;
             _cabRepository = cabRepository;
