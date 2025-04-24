@@ -71,3 +71,12 @@
         }
     }
 }
+
+#govuk-service-navigation-container {
+    @media (min-width: 40.0625em) {
+        .govuk-service-navigation__item,
+        .govuk-service-navigation__service-name {
+            padding: 10px 0 0 0 !important;
+        }
+    }
+}

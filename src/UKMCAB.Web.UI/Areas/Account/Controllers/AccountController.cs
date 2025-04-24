@@ -292,15 +292,17 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
                 else if (Request.Method == HttpMethod.Post.Method)
                 {
                     var acc = await _userAccounts.GetAsync(userId);
-                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
-                        CookieAuthenticationDefaults.AuthenticationScheme);
 
-                    if (!string.IsNullOrWhiteSpace(userId) && !string.IsNullOrWhiteSpace(password))
-                    {                    
-                        if (acc != null && VerifyPassword(password, acc.PasswordHash))
-                        {
-                            SignInHelper.AddClaims(acc, claimsIdentity);  
-                        }
+                    if(acc != null && (string.IsNullOrWhiteSpace(userId) || string.IsNullOrWhiteSpace(password) || !VerifyPassword(password, acc.PasswordHash)))
+                    {
+                        return RedirectToRoute(Routes.Login);
+                    }
+
+                    var claimsIdentity = new ClaimsIdentity(new[] { new Claim(ClaimTypes.NameIdentifier, userId) },
+                           CookieAuthenticationDefaults.AuthenticationScheme);
+                    if (acc != null)
+                    {
+                        SignInHelper.AddClaims(acc, claimsIdentity);
                     }
 
                     var authProperties = new AuthenticationProperties { IsPersistent = false, };
