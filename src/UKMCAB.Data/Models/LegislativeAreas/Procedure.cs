@@ -9,7 +9,6 @@
         public Guid LegislativeAreaId { get; set; }
 
         public List<Guid> PurposeOfAppointmentIds { get; set; }
-
         public List<Guid> CategoryIds { get; set; }
         public List<Guid> ProductIds { get; set; }
         public List<Guid> PpeProductTypeIds { get; set; }

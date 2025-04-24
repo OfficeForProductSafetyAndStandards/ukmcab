@@ -1,0 +1,934 @@
+[
+  {
+    "id": "fbaf7628-885b-11ee-b9d1-0242ac120002",
+    "name": "Industrial equipment",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf7916-885b-11ee-b9d1-0242ac120002",
+    "name": "Information technology equipment",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf7eca-885b-11ee-b9d1-0242ac120002",
+    "name": "Alarms systems",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf8014-885b-11ee-b9d1-0242ac120002",
+    "name": "AV equipment",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf815e-885b-11ee-b9d1-0242ac120002",
+    "name": "Railway systems",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf8276-885b-11ee-b9d1-0242ac120002",
+    "name": "Laboratory & test equipment",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf8398-885b-11ee-b9d1-0242ac120002",
+    "name": "Air traffic management",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf84ba-885b-11ee-b9d1-0242ac120002",
+    "name": "Transmission systems",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf85d2-885b-11ee-b9d1-0242ac120002",
+    "name": "Maritime systems",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf8a3c-885b-11ee-b9d1-0242ac120002",
+    "name": "Automotive systems",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf8bfe-885b-11ee-b9d1-0242ac120002",
+    "name": "Domestic appliances",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf8d52-885b-11ee-b9d1-0242ac120002",
+    "name": "Military equipment",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "40ab6aac-b07d-41b6-8c59-9e718366b48d",
+    "name": "Machinery",
+    "legislativeAreaId": "cdbeca52-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fbaf90c2-885b-11ee-b9d1-0242ac120002",
+    "name": "Sawing machinery with fixed blade(s) during cutting, having a fixed bed or support with manual feed of the workpiece or with a demountable power feed",
+    "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+    "categoryId": "3423693e-8856-11ee-b9d1-0242ac120002"
+  },
+  {
+    "id": "fbaf9216-885b-11ee-b9d1-0242ac120002",
+    "name": "Sawing machinery with fixed blade(s) during cutting, having a manually operated reciprocating saw-bench or carriage",
+    "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+    "categoryId": "3423693e-8856-11ee-b9d1-0242ac120002"
+  },
+  {
+    "id": "fbaf9392-885b-11ee-b9d1-0242ac120002",
+    "name": "Sawing machinery with fixed blade(s) during cutting, having a built-in mechanical feed device for the workpieces, with manual loading and/or unloading",
+    "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+    "categoryId": "3423693e-8856-11ee-b9d1-0242ac120002"
+  },
+  {
+    "id": "fbaf954a-885b-11ee-b9d1-0242ac120002",
+    "name": "Sawing machinery with movable blade(s) during cutting, having mechanical movement of the blade, with manual loading and/or unloading",
+    "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+    "categoryId": "3423693e-8856-11ee-b9d1-0242ac120002"
+  },
+  {
+    "id": "fbaf9784-885b-11ee-b9d1-0242ac120002",
+    "name": "Sawing machinery with fixed blade(s) during cutting, having a fixed or reciprocating-movement bed or support for the workpiece",
+    "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+    "categoryId": "342365ce-8856-11ee-b9d1-0242ac120002"
+  },
+  {
+    "id": "fbaf9be4-885b-11ee-b9d1-0242ac120002",
+    "name": "Sawing machinery with blade(s) assembled on a carriage with reciprocating motion",
+    "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+    "categoryId": "342365ce-8856-11ee-b9d1-0242ac120002"
+  },
+  {
+    "id": "fbaf9cfc-885b-11ee-b9d1-0242ac120002",
+    "name": "Locomotives and brake-vans",
+    "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+    "categoryId": "34237c6c-8856-11ee-b9d1-0242ac120002"
+  },
+  {
+    "id": "fbafa454-885b-11ee-b9d1-0242ac120002",
+    "name": "Hydraulic-powered roof supports",
+    "legislativeAreaId": "cdbed358-8536-11ee-b9d1-0242ac120002",
+    "purposeOfAppointmentId": "e20c0935-0c7e-4342-8483-e0b43c0d6a3e",
+    "categoryId": "34237c6c-8856-11ee-b9d1-0242ac120002"
+  },
+  {
+    "id": "ea6034c7-b363-499d-b032-4bd90563233c",
+    "name": "Aeronautical equipment",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "c76c346e-e1c5-4f1a-9184-091a3fdd937e",
+    "name": "Base station for mobile network",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "d7779ee0-6720-4c8a-9231-73db4911d579",
+    "name": "Broadcast (including programme making and outside broadcast)",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "a95a3bbd-3107-4173-8572-607b01b9942e",
+    "name": "Citizens’ band",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "03319939-7d80-4d8a-bd0c-b6b69925480f",
+    "name": "Cordless telephone",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "d80266eb-7ad9-4aa7-b2bc-ce1d826f19f6",
+    "name": "Distress/Position indicating beacon",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "c1541a77-9709-4df8-bd21-14d1868f6a6b",
+    "name": "Fixed link",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "967debf0-6027-4cd9-ad33-e67cce73afb6",
+    "name": "Fixed wireless access",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "88f423e4-8e10-4809-8e43-35caeab63e4c",
+    "name": "Industrial, scientific and medical within the scope of the directive",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fc10a061-901f-4be9-a139-a63878257f3e",
+    "name": "Maritime (for non-SOLAS vessels only)",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "d2a36dd0-98df-49e0-9e4f-f92b15fc3d39",
+    "name": "Mobile (cellular) telephone handsets",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "d4f55869-6e00-4fdd-9804-280a08720253",
+    "name": "Paging (radio messaging)",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "57ae060c-2960-46eb-8df7-1cd25f6f4cf7",
+    "name": "Private/Professional mobile radio",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "bef49901-9f00-4bc8-ab81-0d1ad3510553",
+    "name": "Radar",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "eda90a1a-8158-41e6-97fa-dbdb28db5b2d",
+    "name": "Radio frequency identification (RFID)",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "eeb48c7c-dd4b-45df-b0f0-7ce4792a2298",
+    "name": "Radio local area network",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "61748e6d-9694-4e58-ace5-00cc3bff2786",
+    "name": "Satellite earth station (fixed/mobile)",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "95467059-cf54-48ac-8474-9295be10ee33",
+    "name": "Short range device",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "99bc6992-d34f-48b7-b68c-956d315f7da8",
+    "name": "Telemetry/Telecommand",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "b849b4a2-9c4b-4751-af1a-9654243ad51b",
+    "name": "TTE for fixed (wired) network (all types)",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "83e58f4d-92c9-4e38-b261-0429765067e6",
+    "name": "Ultrawideband applications (including ground probing radar)",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "a5fce71e-ef3f-45db-901c-9defba434960",
+    "name": "Wireless microphone",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "6da90951-3b8a-4115-a200-1e9e9b34dee7",
+    "name": "Radio determination equipment",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "21b6ec75-60ea-4928-879a-a2ce631f92d2",
+    "name": "Radio equipment operating below 9KHz",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "d7fe5eca-ff8f-491c-99e5-6508bc8c8f25",
+    "name": "Radio receivers",
+    "legislativeAreaId": "a59f88aa-c6ae-4c90-939b-89c16e478728",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "c3d04da8-c730-4856-b7bd-4ca5e6722e7b",
+    "name": "Devices for locking landing doors",
+    "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+    "purposeOfAppointmentId": "",
+    "categoryId": "95f509be-cb6f-4f94-9b49-591af11ac10e"
+  },
+  {
+    "id": "ed227bf3-55cf-4dc9-b39d-34932be5c762",
+    "name": "Devices to prevent falls referred to in paragraph 4 of schedule 1 to prevent the car falling of uncontrolled movements",
+    "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+    "purposeOfAppointmentId": "",
+    "categoryId": "95f509be-cb6f-4f94-9b49-591af11ac10e"
+  },
+  {
+    "id": "5672cff1-ae6d-4b08-b3c8-873c9c4c4eed",
+    "name": "Overspeed limitation devices",
+    "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+    "purposeOfAppointmentId": "",
+    "categoryId": "95f509be-cb6f-4f94-9b49-591af11ac10e"
+  },
+  {
+    "id": "e0da85d4-fef3-4b60-b338-b5a7e5cbf3ce",
+    "name": "Energy accumulating buffers (non-linear)",
+    "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+    "purposeOfAppointmentId": "",
+    "categoryId": "95f509be-cb6f-4f94-9b49-591af11ac10e"
+  },
+  {
+    "id": "6bdf0ecb-b15c-4d00-9b8d-2e3de95688c3",
+    "name": "Energy accumulating buffers (with damping of the return movement)",
+    "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+    "purposeOfAppointmentId": "",
+    "categoryId": "95f509be-cb6f-4f94-9b49-591af11ac10e"
+  },
+  {
+    "id": "66db06e2-9f5b-44fa-80a6-88efae7ec6e4",
+    "name": "Energy dissipating buffers",
+    "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+    "purposeOfAppointmentId": "",
+    "categoryId": "95f509be-cb6f-4f94-9b49-591af11ac10e"
+  },
+  {
+    "id": "c0f6e958-33e2-49bf-a75e-4297b23267a1",
+    "name": "Safety devices fitted to jacks of hydraulic power circuits where these are used to prevent falls",
+    "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+    "purposeOfAppointmentId": "",
+    "categoryId": "95f509be-cb6f-4f94-9b49-591af11ac10e"
+  },
+  {
+    "id": "76f6467d-ee83-427d-8b89-29c9c2d945b1",
+    "name": "Electric safety devices in the form of circuits containing electric components",
+    "legislativeAreaId": "0fbca682-e49f-4e44-a0b3-7ea21714a1b4",
+    "purposeOfAppointmentId": "",
+    "categoryId": "95f509be-cb6f-4f94-9b49-591af11ac10e"
+  },
+  {
+    "id": "44f34e2a-3db6-431b-88f4-232f74ca2be9",
+    "name": "Cooking appliances",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "00a9cf98-0e6c-4630-9d2e-bb090fc1e4ad",
+    "name": "Refrigeration appliances",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "b6d041bf-1b60-4e05-9509-47563f2ea523",
+    "name": "Air conditioning appliances",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "fea7af5d-4608-49f7-9e89-f9c2a0c55e2b",
+    "name": "Space heating appliances",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "10cce88d-5055-4402-8c61-df7feb540bff",
+    "name": "Appliances for hot water production",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "220ddb0a-8693-4fe2-96de-e4e484c7fd16",
+    "name": "Appliances for combined hot water production and space heating",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "a17edf22-ed32-4ba1-b144-d9b058f5b04c",
+    "name": "Gas lighting",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "56fa6510-6e9c-4e8a-9202-39ffcbfe77e4",
+    "name": "Washing appliances",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "7d2c5fb1-267c-4299-83bb-74503297db96",
+    "name": "Dryers",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "7cca926d-12a5-4855-b8be-4e55789557ee",
+    "name": "Irons",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "68d4777e-de09-4cd2-bcdb-3c09725dbbc9",
+    "name": "Forced draught burners",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "78badfdf-ba08-4b0a-bcfc-ed76820db49d",
+    "name": "Heating bodies to be equipped with forced draught burners",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "cfa76ae2-d70a-4314-91d4-0ff6bc5598bf"
+  },
+  {
+    "id": "685a2df3-987e-4701-8925-a7effa3dacf3",
+    "name": "Safety devices",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+  },
+  {
+    "id": "f6a791af-511c-4226-b3fe-2261c0ab8cf7",
+    "name": "Controlling devices",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+  },
+  {
+    "id": "78c1343b-3fad-40b6-9b93-4e243138905a",
+    "name": "Regulating devices",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+  },
+  {
+    "id": "db326a6a-21ca-46ea-ae5c-e1a69743b59d",
+    "name": "Sub-assemblies of safety, controlling or regulating devices",
+    "legislativeAreaId": "750cca10-c78a-496f-9adf-fc6ecaab0a3c",
+    "purposeOfAppointmentId": "",
+    "categoryId": "9bb7eec8-d42a-4305-a607-d60c16fafa63"
+  },
+  {
+    "id": "a397272e-a13e-405c-ac54-c77064ef290e",
+    "name": "Builders' hoists for the transport of goods (combustion-engine driven)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "2ae322ec-d1e5-4b54-9365-294c8a362012",
+    "name": "Compaction machines (only vibrating and non-vibrating rollers, vibratory plates and vibratory rammers)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "8152ed13-48e3-47c1-beef-cf4f126d824d",
+    "name": "Compressors (<350 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "cf21f0bc-0af1-46f9-9db5-e34e78a2f969",
+    "name": "Concrete-breakers and picks, hand-held",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "3ac65121-875e-4f7e-bffa-f270ffabad30",
+    "name": "Construction winches (combustion-engine driven)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "783044d9-6e7a-4611-8765-9c1f018b235e",
+    "name": "Dozers (<500 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "fcf317ed-de3e-47cc-9d86-553d20d9b44e",
+    "name": "Dumpers (<500 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "083f7f8c-309e-4af5-947c-5ca8beddfca0",
+    "name": "Excavators, hydraulic or rope-operated (<500 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "8f61fb10-c921-4695-bef8-210b8a84330b",
+    "name": "Excavator-loaders (<500 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "df3681f0-0680-4211-8e03-848ec3afea5b",
+    "name": "Graders (<500 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "c7ff7623-4a87-4970-9ca9-25ed13e6ea58",
+    "name": "Hydraulic power packs",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "7240ad0b-8117-4409-b263-407e16ba3789",
+    "name": "Landfill compactors, loader-type with bucket (<500 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "661f7ba5-d069-4079-ba10-a4141bf3d027",
+    "name": "Lawnmowers (excluding agricultural and forestry equipment, and multi-purpose devices, the main motorised component of which has an installed power of more than 20 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "516e3ef8-cb71-48b4-8ee6-6312a2da4dc6",
+    "name": "Lawn trimmers/lawn edge trimmers",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "06435e3b-f274-4494-8e77-08eb8ca2dbdd",
+    "name": "Lift trucks, combustion-engine driven, counterbalanced (excluding \"other counterbalanced lift trucks\" as defined in Annex I, item 36, second indent with a rated capacity of not more than 10 tonnes)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "5c157a49-b61a-4b0d-b95d-163bb0a1cc54",
+    "name": "Loaders (<500 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "8d000f3e-8a5a-4e5f-9b82-f6ec1de9e519",
+    "name": "Mobile cranes",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "ecd04ada-c6b2-4da0-9c3f-954cdceeccbf",
+    "name": "Motor hoes (<3 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "df29f3bb-be56-41dc-a669-87cfcfaeb99a",
+    "name": "Paver-finishers (excluding paver-finishers equipped with a high-compaction screed)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "eb85d710-c8e6-4b77-adc5-69888544669c",
+    "name": "Power generators (<400 kW)",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "b965d6e0-eb19-4cb1-b47f-aa96104c6cc3",
+    "name": "Tower cranes",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "e318924c-8ddb-46f3-8d39-2c195ec8c4d2",
+    "name": "Welding generators",
+    "legislativeAreaId": "55174916-ba65-49e8-9ad5-48a0321f4e9b",
+    "purposeOfAppointmentId": "",
+    "categoryId": ""
+  },
+  {
+    "id": "e261df79-15c1-4a90-a650-ca5671224241",
+    "name": "Cable winding gear",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "73a7ac40-2b28-4973-b371-10605bcbc123"
+  },
+  {
+    "id": "e5acb6ff-49fc-45e9-986e-46325259d7bf",
+    "name": "Station machinery",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "73a7ac40-2b28-4973-b371-10605bcbc123"
+  },
+  {
+    "id": "1b7cac38-834c-4daa-8408-c476dbbe6665",
+    "name": "Line engineering",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "73a7ac40-2b28-4973-b371-10605bcbc123"
+  },
+  {
+    "id": "f59384c9-7087-44fb-b8cb-bc781d97fb73",
+    "name": "Cabins, seats or drag devices",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "0e6f721a-0eda-42bb-b3e6-f208566d48aa"
+  },
+  {
+    "id": "7a452590-1826-4215-b9db-0ecbcbdd850e",
+    "name": "Suspension gear",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "0e6f721a-0eda-42bb-b3e6-f208566d48aa"
+  },
+  {
+    "id": "0c5d3af3-ff82-4301-8750-c967a2d56750",
+    "name": "Driving gear",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "0e6f721a-0eda-42bb-b3e6-f208566d48aa"
+  },
+  {
+    "id": "5e2393a8-55e3-4430-be73-cdc079483990",
+    "name": "Connections to the cable",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "0e6f721a-0eda-42bb-b3e6-f208566d48aa"
+  },
+  {
+    "id": "c59881d6-5955-4fa7-9568-38226814673c",
+    "name": "Monitoring, control and safety devices",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "cfd43643-31c3-476f-803b-acaa957318a9"
+  },
+  {
+    "id": "b03e36e1-dc17-42af-9b5c-09f8bbe3ce1a",
+    "name": "Communication and information equipment",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "cfd43643-31c3-476f-803b-acaa957318a9"
+  },
+  {
+    "id": "852472e9-1f87-4eaa-9ca3-0cfbdfeb9559",
+    "name": "Lightning protection equipment",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "cfd43643-31c3-476f-803b-acaa957318a9"
+  },
+  {
+    "id": "c230ac8c-b9d8-4d61-84d0-ec7f32c758c8",
+    "name": "Fixed rescue equipment",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "c2579268-ec87-4508-9524-69be6892dce3"
+  },
+  {
+    "id": "e0bf1ece-9486-440b-a25c-1e195b622ea6",
+    "name": "Mobile rescue equipment",
+    "legislativeAreaId": "6cf52562-46d9-4bc5-ae6f-f5f067615c66",
+    "purposeOfAppointmentId": "04631829-0a38-48ef-8df2-012161e5fc3a",
+    "categoryId": "c2579268-ec87-4508-9524-69be6892dce3"
+  },
+  {
+    "id": "00b51206-f885-42d3-af20-85a158bbb51a",
+    "name": "Measuring systems on pipeline (Accuracy Class 0.3)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "bfede408-1331-4887-9263-d3c9cb57cf5d",
+    "name": "Fuel dispensers (not for liquefied gases) (Accuracy Class 0.5)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "e7843cf6-32b9-43d8-8a44-187f6000deec",
+    "name": "Measuring systems on road tankers for liquids of low viscosity (< 20 mPa.s) (Accuracy Class 0.5)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "88750f40-3ba8-4d3a-b927-6c72e79854f1",
+    "name": "Measuring systems for liquefied gases under pressure measured at a temperature equal to or above – 10 °C (Accuracy Class 1.0)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "b5f56d9a-0fab-4238-b2d4-b65ebd1041c7",
+    "name": "Measuring systems used for liquids whose temperature is less than – 10 °C or greater than 50 °C (Accuracy Class 1.0)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "b2f9b136-58b8-4ee7-8d75-64ba94f599e7",
+    "name": "Measuring systems used for liquids whose dynamic viscosity is higher than 1 000 mPa.s (Accuracy Class 1.0)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "0ac03a13-b728-4fd2-85d1-9e3714b62186",
+    "name": "Measuring systems used for liquids whose maximum volumetric flowrate is not higher than 20 L/h (Accuracy Class 1.0)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "cfd63d73-a331-4a95-95c5-680ccecf52a1",
+    "name": "Measuring systems for liquefied gases under pressure measured at a temperature below – 10 °C (other than cryogenic liquids) (Accuracy Class 1.5)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "aa4e2145-94c8-4e88-b072-d7733a4c3e0e",
+    "name": "Measuring systems for cryogenic liquids (temperature below – 153 °C) (Accuracy Class 2.5)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "b6ac00c3-197a-4134-a457-d2d5a7cfe9f8",
+    "name": "Other measuring systems not specified above (detail system type in appointment) (Accuracy Class 0.5)",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "ec833bf0-0c3b-49cc-8658-8b0115084943"
+  },
+  {
+    "id": "c08f56b4-f4fc-4125-8e0d-cd58b2f1f08b",
+    "name": "Automatic catch weighers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+    "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
+  },
+  {
+    "id": "7d397fd9-d8fc-4f51-aef1-c2ccfd0423bd",
+    "name": "Automatic gravimetric filling instruments",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+    "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
+  },
+  {
+    "id": "feda1b4d-efbf-474c-a14d-931f1a8112ca",
+    "name": "Discontinuous totalisers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+    "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
+  },
+  {
+    "id": "a355d2a5-c08f-4706-927e-c31f46f8bfa9",
+    "name": "Continuous totalisers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+    "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
+  },
+  {
+    "id": "30f75726-1712-47e2-af17-af14601ae87d",
+    "name": "Automatic rail weigh-bridges",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "3aad4982-6876-4820-ad1f-90110eb3800f",
+    "subCategoryId": "93075630-4824-4ce7-950e-b48e2346fbae"
+  },
+  {
+    "id": "887d7407-150a-4947-beeb-f7003b9528af",
+    "name": "Automatic catch weighers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+    "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
+  },
+  {
+    "id": "c56450c4-8993-41c1-8376-5f8875b24b2c",
+    "name": "Automatic gravimetric filling instruments",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+    "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
+  },
+  {
+    "id": "e80ed0c3-8921-41bf-a553-a531dd8a8464",
+    "name": "Discontinuous totalisers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+    "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
+  },
+  {
+    "id": "0a98e53c-da6b-4c6e-bc6e-c567a5027ae1",
+    "name": "Continuous totalisers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+    "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
+  },
+  {
+    "id": "c7b41e1b-ba34-4c7c-b83a-b69caf678a27",
+    "name": "Automatic rail weigh-bridges",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "bd73250a-b96e-407e-aab4-4f80e9308cbb",
+    "subCategoryId": "f53853e2-fc02-4926-b3d1-fe6edd9391d4"
+  },
+  {
+    "id": "a1827ba5-12bf-426f-a5cf-e8783da1558a",
+    "name": "Continuous totalisers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+    "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
+  },
+  {
+    "id": "1ce8b9ec-6403-4b9a-9e41-2cfc2fededf6",
+    "name": "Automatic gravimetric filling instruments",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+    "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
+  },
+  {
+    "id": "07c6b25f-366a-479a-92eb-0c733c5ec1d1",
+    "name": "Discontinuous totalisers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+    "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
+  },
+  {
+    "id": "3c3acf43-e541-4e69-b64a-25480f9ddefb",
+    "name": "Automatic catch weighers",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+    "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
+  },
+  {
+    "id": "9e58f6db-36d5-4fb4-958c-102ce4cc8d2d",
+    "name": "Automatic rail weigh-bridges",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "0eb9c142-c031-4ca1-b2a3-1f9f03aaa623",
+    "subCategoryId": "0929e3eb-cc64-4193-8250-6dae6937da6e"
+  },
+  {
+    "id": "ac70a10d-b899-447c-a8da-b76dea0a5274",
+    "name": "Material measures of length",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "89c9f511-5147-466b-9a1c-85fe4ba2e174"
+  },
+  {
+    "id": "c275b78b-9fca-41ef-bab5-07843f853e75",
+    "name": "Capacity serving measures",
+    "legislativeAreaId": "92728722-d721-4da0-8d9a-f22f3829a551",
+    "purposeOfAppointmentId": "",
+    "categoryId": "89c9f511-5147-466b-9a1c-85fe4ba2e174"
+  }
+]

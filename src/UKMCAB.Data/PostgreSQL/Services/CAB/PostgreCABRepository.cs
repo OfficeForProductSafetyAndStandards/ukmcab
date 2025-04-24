@@ -69,12 +69,6 @@ public class PostgreCABRepository : ICABRepository
         return Task.FromResult(force);
     }
 
-    private async Task<List<Document>> PrivateQuery<T>(Expression<Func<CABDocumentBlob, bool>> predicate)
-    {
-        var data = _dbContext.Documents.Where(predicate);
-        return data.Select(d => d.CabBlob).ToList();
-    }
-
     public async Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate)
     {
         if (typeof(T) == typeof(Document))

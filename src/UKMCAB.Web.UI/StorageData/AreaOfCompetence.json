@@ -1,0 +1,34 @@
+[
+  {
+    "id": "53b8b853-e025-4c36-b7a4-33ba4b91b0ee",
+    "name": "Body armour"
+  },
+  {
+    "id": "17467c61-903d-4ee0-8dfd-768d16ad4321",
+    "name": "Protective clothing against static electricity"
+  },
+  {
+    "id": "a74e872b-ad7c-4319-a6c8-b3026f3fed69",
+    "name": "Protective clothing for use in welding and allied processes"
+  },
+  {
+    "id": "dab7a5bf-f002-43aa-94a3-c88aad62be9c",
+    "name": "Firefighters suits"
+  },
+  {
+    "id": "395bc2c5-09bb-4392-92c8-bc2115b0fa11",
+    "name": "High visibility clothing"
+  },
+  {
+    "id": "55b97433-a09b-4247-a028-df0d5304c378",
+    "name": "Protective clothing for motorcycle riders"
+  },
+  {
+    "id": "e947a393-1928-4899-84f2-b3b6128c7ae1",
+    "name": "Protective equipment for diving"
+  },
+  {
+    "id": "d4383ca2-478d-44b3-8517-ffa3c095ad3e",
+    "name": "Protective equipment for use in potentially explosive atmospheres"
+  }
+]

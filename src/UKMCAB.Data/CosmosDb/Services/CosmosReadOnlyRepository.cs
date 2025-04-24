@@ -89,4 +89,9 @@ public class CosmosReadOnlyRepository<T> : IReadOnlyRepository<T> where T : clas
     {
         return await _container.ReadItemAsync<T>(id, new PartitionKey(id));
     }
+
+    public Task CreateAsync(T entity)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,0 +1,17 @@
+[
+  {
+    "id": "55ecff03-0be0-4498-bfdb-0737e4309f73",
+    "name": "PPE product type",
+    "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
+  },
+  {
+    "id": "7867857a-8d46-4bc5-8d09-a5f68a78f28e",
+    "name": "Providing protection against the following risks",
+    "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
+  },
+  {
+    "id": "4b371fa6-9c1e-4815-961f-68d321dcd69b",
+    "name": "Specialised area of competence",
+    "legislativeAreaId": "87f42cf5-1ada-417f-a699-072ea9bb9ce2"
+  }
+]
