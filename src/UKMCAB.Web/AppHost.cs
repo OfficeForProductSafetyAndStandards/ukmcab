@@ -23,11 +23,12 @@ public class AppHost : IAppHost
 
     public Uri GetBaseUri()
     {
-        var defaultAppAddresses = _server.Features.Get<IServerAddressesFeature>()?.Addresses.ToArray() ?? Array.Empty<string>();
-        var defaultAppAddress = defaultAppAddresses.FirstOrDefault(x => x.StartsWith("https"));
-        var configuredAppAddress = _configuration["AppHostName"].PrependIf("https://");
-        var baseAddress = configuredAppAddress ?? defaultAppAddress ?? throw new Exception("No web addresses obtainable");
-        var @base = new Uri(baseAddress);
-        return @base;
+        return new Uri("http://localhost:57977/");
+        //var defaultAppAddresses = _server.Features.Get<IServerAddressesFeature>()?.Addresses.ToArray() ?? Array.Empty<string>();
+        //var defaultAppAddress = defaultAppAddresses.FirstOrDefault(x => x.StartsWith("https"));
+        //var configuredAppAddress = _configuration["AppHostName"].PrependIf("https://");
+        //var baseAddress = configuredAppAddress ?? defaultAppAddress ?? throw new Exception("No web addresses obtainable");
+        //var @base = new Uri(baseAddress);
+        //return @base;
     }
 }

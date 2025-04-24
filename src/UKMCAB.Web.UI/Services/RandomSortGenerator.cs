@@ -20,9 +20,9 @@ namespace UKMCAB.Web.UI.Services
         private readonly IDistCache _distCache;
         private SearchIndexerClient _searchIndexerClient;
 
-        public RandomSortGenerator(ICABRepository cabRepository, CognitiveSearchConnectionString connectionString, TelemetryClient telemetryClient, ILoggingService loggingService, IDistCache distCache)
+        public RandomSortGenerator(/*ICABRepository cabRepository,*/ CognitiveSearchConnectionString connectionString, TelemetryClient telemetryClient, ILoggingService loggingService, IDistCache distCache)
         {
-            _repository = cabRepository;
+            //_repository = cabRepository;
             _telemetryClient = telemetryClient;
             _loggingService = loggingService;
             _distCache = distCache;
@@ -69,14 +69,15 @@ namespace UKMCAB.Web.UI.Services
 
         private async Task RegenerateRandomSortValues()
         {
-            var allCabs = await _repository.Query<Document>(d => d.StatusValue == Status.Published);
-            foreach (var cab in allCabs)
-            {
-                cab.RandomSort = Guid.NewGuid().ToString();
-                await _repository.UpdateAsync(cab, cab.LastUpdatedDate);
-            }
-
-            await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
+            // TODO: FIX
+            //var allCabs = await _repository.Query<Document>(d => d.StatusValue == Status.Published);
+            //foreach (var cab in allCabs)
+            //{
+            //    cab.RandomSort = Guid.NewGuid().ToString();
+            //    await _repository.UpdateAsync(cab, cab.LastUpdatedDate);
+            //}
+            //
+            //await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
         }
     }
 }

@@ -103,14 +103,9 @@ public class PostgreCABRepository : ICABRepository
             var mappedPredicate = PredicateMapper.Map(docPredicate, projection); 
 
             // Run query on DocumentPart
-            var ids = _dbContext.Set<CABDocumentBlob>()
+            var fullDocs = _dbContext.Set<CABDocumentBlob>()
                 .Where(mappedPredicate)
-                .Select(p => p.id)
-                .ToList();
-
-            // Load full Documents
-            var fullDocs = _dbContext.Set<Document>()
-                .Where(d => ids.Contains(d.id))
+                .Select(p => p.CabBlob)
                 .ToList();
 
             return fullDocs.Cast<T>().ToList();

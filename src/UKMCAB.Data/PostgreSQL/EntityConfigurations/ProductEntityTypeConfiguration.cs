@@ -13,9 +13,9 @@ public class ProductEntityTypeConfiguration : IEntityTypeConfiguration<Product>
 
         builder.Property(a => a.Id).HasColumnType("uuid").IsRequired();
         builder.Property(a => a.Name).HasColumnType("varchar(1024)").IsRequired();
-        builder.Property(a => a.LegislativeAreaId).HasColumnType("uuid").IsRequired();
-        builder.Property(a => a.PurposeOfAppointmentId).HasColumnType("uuid").IsRequired();
-        builder.Property(a => a.CategoryId).HasColumnType("uuid").IsRequired();
-        builder.Property(a => a.SubCategoryId).HasColumnType("uuid").IsRequired();
+        builder.Property(a => a.LegislativeAreaId).HasColumnType("uuid").IsRequired(false);
+        builder.Property(a => a.PurposeOfAppointmentId).HasColumnType("uuid").IsRequired(false);
+        builder.Property(a => a.CategoryId).HasColumnType("uuid").IsRequired(false);
+        builder.Property(a => a.SubCategoryId).HasColumnType("uuid").IsRequired(false);
     }
 }

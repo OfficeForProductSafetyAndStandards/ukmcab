@@ -12,13 +12,21 @@ namespace UKMCAB.Data.Search.Services
         Task InitialiseAsync(bool force = false);
     }
 
-    public class SearchServiceManagment : ISearchServiceManagment
+    public class PostgreSearchServiceManagment : ISearchServiceManagment
+    {
+        public Task InitialiseAsync(bool force = false)
+        {
+            return Task.CompletedTask;
+        }
+    }
+
+    public class CosmosSearchServiceManagment : ISearchServiceManagment
     {
         private readonly SearchIndexClient _searchIndexClient;
         private readonly SearchIndexerClient _searchIndexerClient;
         private readonly CosmosDbConnectionString _cosmosDbConnectionString;
 
-        public SearchServiceManagment(SearchIndexClient searchIndexClient, SearchIndexerClient searchIndexerClient, CosmosDbConnectionString cosmosDbConnectionString) 
+        public CosmosSearchServiceManagment(SearchIndexClient searchIndexClient, SearchIndexerClient searchIndexerClient, CosmosDbConnectionString cosmosDbConnectionString) 
         {
             _searchIndexClient = searchIndexClient;
             _searchIndexerClient = searchIndexerClient;

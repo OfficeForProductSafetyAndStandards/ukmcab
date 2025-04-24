@@ -15,10 +15,6 @@ using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
 using UKMCAB.Core.Services.Users;
 using UKMCAB.Core.Services.Workflow;
-using UKMCAB.Data;
-using UKMCAB.Data.CosmosDb.Services.CAB;
-using UKMCAB.Data.CosmosDb.Services.User;
-using UKMCAB.Data.CosmosDb.Services.WorkflowTask;
 using UKMCAB.Data.Search.Services;
 using UKMCAB.Data.Storage;
 using UKMCAB.Infrastructure.Cache;
@@ -37,10 +33,6 @@ using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 using UKMCAB.Web.UI.Models.ViewModels.Search;
 using UKMCAB.Web.UI.Services;
 using UKMCAB.Web.UI.Services.Subscriptions;
-using UKMCAB.Data.Models.LegislativeAreas;
-using UKMCAB.Data.CosmosDb.Services;
-using UKMCAB.Data.CosmosDb;
-using UKMCAB.Data.CosmosDb.Utilities;
 using UKMCAB.Core.Mappers;
 using System.Reflection;
 using UKMCAB.Web.UI.Services.ReviewDateReminder;
@@ -53,6 +45,21 @@ using UKMCAB.Data.Interfaces.Services.User;
 using UKMCAB.Data.Interfaces.Services.WorkflowTask;
 using UKMCAB.Data.Interfaces.Services;
 using UKMCAB.Data.Caching.CachedCAB;
+using System.Data.Entity;
+using System.Text.Json;
+using UKMCAB.Data.PostgreSQL;
+using Microsoft.EntityFrameworkCore;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Infrastructure;
+using UKMCAB.Data.PostgreSQL.Services;
+using UKMCAB.Data.PostgreSQL.Services.WorkflowTask;
+using UKMCAB.Data.PostgreSQL.Services.User;
+using UKMCAB.Data.PostgreSQL.Services.CAB;
+using UKMCAB.Subscriptions.Core.Services;
+using Microsoft.Extensions.Options;
+using UKMCAB.Subscriptions.Core.Domain.Emails;
+using Azure;
+using UKMCAB.Subscriptions.Core.Data.Models;
+using Azure.Data.Tables;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -66,7 +73,13 @@ if (builder.Configuration["AppInsightsConnectionString"].IsNotNullOrEmpty())
 }
 
 var azureDataConnectionString = new AzureDataConnectionString(builder.Configuration.GetValue<string>("DataConnectionString"));
-var cosmosDbConnectionString = new CosmosDbConnectionString(builder.Configuration.GetValue<string>("CosmosConnectionString"));
+var dbConfigJson = builder.Configuration.GetSection("RDS_POSTGRES_CREDENTIALS").Get<string>();
+if (dbConfigJson is null)
+    throw new InvalidOperationException($"Cannot load connection string configuration");
+var dbConfig = JsonSerializer.Deserialize<PostgreDbConfiguration>(dbConfigJson);
+var connectionString = $"Server={dbConfig.Host};Port={dbConfig.Port};Database={dbConfig.DbName};User Id={dbConfig.Username};Password={dbConfig.Password};Include Error Detail=true";
+builder.Configuration["ConnectionStrings:DefaultConnection"] = connectionString;
+
 var cognitiveSearchConnectionString = new CognitiveSearchConnectionString(builder.Configuration["AcsConnectionString"]);
 
 var redisConnectionString = builder.Configuration.GetValue<string>("RedisConnectionString");
@@ -145,43 +158,39 @@ builder.Services.AddSingleton(new BasicAuthenticationOptions
 });
 builder.Services.AddSingleton(new RedisConnectionString(redisConnectionString));
 builder.Services.AddSingleton(cognitiveSearchConnectionString);
-builder.Services.AddSingleton(cosmosDbConnectionString);
 builder.Services.AddSingleton(azureDataConnectionString);
 builder.Services.AddSingleton<IAsyncNotificationClient>(new NotificationClient(builder.Configuration["GovUkNotifyApiKey"]));
 
+builder.Services.AddDbContextPool<ApplicationDataContext>(options =>
+    options.UseNpgsql(connectionString, (NpgsqlDbContextOptionsBuilder sqlOptions) =>
+    {
+        sqlOptions.MigrationsAssembly(typeof(ApplicationDataContext).Assembly.FullName);
+
+        sqlOptions.EnableRetryOnFailure(maxRetryCount: 15, maxRetryDelay: TimeSpan.FromSeconds(30), errorCodesToAdd: null);
+    })
+);
+builder.Services.AddTransient(typeof(IReadOnlyRepository<>), typeof(PostgreReadOnlyRepository<>));
+
 builder.Services.AddSingleton<IDistCache, RedisCache>();
-builder.Services.AddSingleton<ICABRepository, CosmosCABRepository>(); 
-builder.Services.AddSingleton<ICachedPublishedCABService, CachedPublishedCABService>();
-builder.Services.AddSingleton<ILoggingService, LoggingService>();
-builder.Services.AddSingleton<ILoggingRepository, LoggingAzureTableStorageRepository>();
-builder.Services.AddSingleton<IFileStorage, FileStorageService>();
-builder.Services.AddSingleton<IInitialiseDataService, InitialiseDataService>();
-builder.Services.AddSingleton<IUserAccountRepository, CosmosUserAccountRepository>();
-builder.Services.AddSingleton<IUserAccountRequestRepository, CosmosUserAccountRequestRepository>();
-builder.Services.AddSingleton<IUserService, UserService>();
-builder.Services.AddSingleton<IWorkflowTaskRepository, CosmosWorkflowTaskRepository>();
-builder.Services.AddSingleton<IWorkflowTaskService, WorkflowTaskService>();
-builder.Services.AddSingleton<IAppHost, AppHost>();
+builder.Services.AddTransient<ICABRepository, PostgreCABRepository>(); 
+builder.Services.AddTransient<ICachedPublishedCABService, CachedPublishedCABService>();
+builder.Services.AddTransient<ILoggingService, LoggingService>();
+builder.Services.AddTransient<ILoggingRepository, LoggingAzureTableStorageRepository>();
+builder.Services.AddTransient<IFileStorage, FileStorageService>();
+builder.Services.AddTransient<UKMCAB.Data.IInitialiseDataService, UKMCAB.Data.InitialiseDataService>();
+builder.Services.AddTransient<IUserAccountRepository, PostgreUserAccountRepository>();
+builder.Services.AddTransient<IUserAccountRequestRepository, PostgreUserAccountRequestRepository>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IWorkflowTaskRepository, PostgreWorkflowTaskRepository>();
+builder.Services.AddTransient<IWorkflowTaskService, WorkflowTaskService>();
+builder.Services.AddTransient<IAppHost, AppHost>();
 builder.Services.AddSingleton<ISecureTokenProcessor>(new SecureTokenProcessor(builder.Configuration["EncryptionKey"] ?? throw new Exception("EncryptionKey is null")));
-builder.Services.AddSingleton<IEditLockService, EditLockService>();
-builder.Services.AddSingleton<IAuthorizationHandler, EditCabPendingApprovalHandler>();
-builder.Services.AddSingleton<IAuthorizationHandler, DeleteCabHandler>();
-builder.Services.AddSingleton<IAuthorizationHandler, ManageLegislativeAreaRequirementHandler>();
+builder.Services.AddTransient<IEditLockService, EditLockService>();
+builder.Services.AddTransient<IAuthorizationHandler, EditCabPendingApprovalHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, DeleteCabHandler>();
+builder.Services.AddTransient<IAuthorizationHandler, ManageLegislativeAreaRequirementHandler>();
 
-var cosmosClient = CosmosClientFactory.Create(cosmosDbConnectionString);
-builder.Services.AddSingleton<IReadOnlyRepository<LegislativeArea>>(new CosmosReadOnlyRepository<LegislativeArea>(cosmosClient, new CosmosFeedIterator(), "legislative-areas"));
-builder.Services.AddSingleton<IReadOnlyRepository<PurposeOfAppointment>>(new CosmosReadOnlyRepository<PurposeOfAppointment>(cosmosClient, new CosmosFeedIterator(), "purpose-of-appointment"));
-builder.Services.AddSingleton<IReadOnlyRepository<Category>>(new CosmosReadOnlyRepository<Category>(cosmosClient, new CosmosFeedIterator(), "categories"));
-builder.Services.AddSingleton<IReadOnlyRepository<Product>>(new CosmosReadOnlyRepository<Product>(cosmosClient, new CosmosFeedIterator(), "products"));
-builder.Services.AddSingleton<IReadOnlyRepository<Procedure>>(new CosmosReadOnlyRepository<Procedure>(cosmosClient, new CosmosFeedIterator(), "procedures"));
-builder.Services.AddSingleton<IReadOnlyRepository<SubCategory>>(new CosmosReadOnlyRepository<SubCategory>(cosmosClient, new CosmosFeedIterator(), "sub-categories"));
-builder.Services.AddSingleton<IReadOnlyRepository<DesignatedStandard>>(new CosmosReadOnlyRepository<DesignatedStandard>(cosmosClient, new CosmosFeedIterator(), "designated-standards"));
-builder.Services.AddSingleton<IReadOnlyRepository<PpeCategory>>(new CosmosReadOnlyRepository<PpeCategory>(cosmosClient, new CosmosFeedIterator(), "ppe-categories"));
-builder.Services.AddSingleton<IReadOnlyRepository<PpeProductType>>(new CosmosReadOnlyRepository<PpeProductType>(cosmosClient, new CosmosFeedIterator(), "ppe-product-types"));
-builder.Services.AddSingleton<IReadOnlyRepository<ProtectionAgainstRisk>>(new CosmosReadOnlyRepository<ProtectionAgainstRisk>(cosmosClient, new CosmosFeedIterator(), "protection-against-risks"));
-builder.Services.AddSingleton<IReadOnlyRepository<AreaOfCompetency>>(new CosmosReadOnlyRepository<AreaOfCompetency>(cosmosClient, new CosmosFeedIterator(), "area-of-competence"));
-
-builder.Services.AddTransient<ICABAdminService, CABAdminService>();
+builder.Services.AddScoped<ICABAdminService, CABAdminService>();
 builder.Services.AddTransient<IUserNoteService, UserNoteService>();
 builder.Services.AddTransient<IFeedService, FeedService>();
 builder.Services.AddTransient<IFileUploadUtils, FileUploadUtils>();
@@ -315,53 +324,54 @@ var redisCache = app.Services.GetRequiredService<IDistCache>();
 await redisCache.InitialiseAsync();
 await redisCache.FlushAsync();
 
-try
-{
-    await app.Services.GetRequiredService<IInitialiseDataService>().InitialiseAsync();
-}
-catch (Exception ex)
-{
-    telemetryClient.TrackException(ex);
-    await telemetryClient.FlushAsync(CancellationToken.None);
-    throw;
-}
+// TODO:
+//try
+//{
+//    await app.Services.GetRequiredService<UKMCAB.Data.IInitialiseDataService>().InitialiseAsync();
+//}
+//catch (Exception ex)
+//{
+//    telemetryClient.TrackException(ex);
+//    await telemetryClient.FlushAsync(CancellationToken.None);
+//    throw;
+//}
 
-var stats = new Timer(async state =>
-{
-    using var scope = app.Services.CreateScope();
-    try
-    {
-        await app.Services.GetRequiredService<ICABAdminService>().RecordStatsAsync();
+//var stats = new Timer(async state =>
+//{
+//    using var scope = app.Services.CreateScope();
+//    try
+//    {
+//        await app.Services.GetRequiredService<ICABAdminService>().RecordStatsAsync();
 
-        var pages1 = await app.Services.GetRequiredService<ISubscriptionRepository>().GetAllAsync(take: 1);
-        var pages2 = await pages1.ToListAsync();
-        var subscriptions = pages2.SelectMany(x => x.Values).ToList();
+//        var pages1 = await app.Services.GetRequiredService<ISubscriptionRepository>().GetAllAsync(take: 1);
+//        var pages2 = await pages1.ToListAsync();
+//        var subscriptions = pages2.SelectMany(x => x.Values).ToList();
 
-        var cabSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Cab);
-        var searchSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Search);
+//        var cabSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Cab);
+//        var searchSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Search);
 
-        telemetryClient.GetMetric(AiTracking.Metrics.CabSubscriptionsCount).TrackValue(cabSubscriptionsCount);
-        telemetryClient.GetMetric(AiTracking.Metrics.SearchSubscriptionsCount).TrackValue(searchSubscriptionsCount);
+//        telemetryClient.GetMetric(AiTracking.Metrics.CabSubscriptionsCount).TrackValue(cabSubscriptionsCount);
+//        telemetryClient.GetMetric(AiTracking.Metrics.SearchSubscriptionsCount).TrackValue(searchSubscriptionsCount);
 
-        var cabs = await app.Services.GetRequiredService<ICABRepository>().GetItemLinqQueryable().AsAsyncEnumerable().ToListAsync();
-        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count > 0));
-        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithoutSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count == 0));
+//        var cabs = await app.Services.GetRequiredService<ICABRepository>().GetItemLinqQueryable().AsAsyncEnumerable().ToListAsync();
+//        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count > 0));
+//        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithoutSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count == 0));
 
-        logger.LogInformation($"Recorded stats successfully");
-    }
-    catch (Exception ex)
-    {
-        telemetryClient.TrackException(ex);
-        await telemetryClient.FlushAsync(CancellationToken.None);
-        logger.LogError(ex, "Error recording stats");
-    }
-}, null, TimeSpan.Zero,
-#if(DEBUG)
-    TimeSpan.FromSeconds(30)
-#else
-    TimeSpan.FromDays(1)
-#endif
-);
+//        logger.LogInformation($"Recorded stats successfully");
+//    }
+//    catch (Exception ex)
+//    {
+//        telemetryClient.TrackException(ex);
+//        await telemetryClient.FlushAsync(CancellationToken.None);
+//        logger.LogError(ex, "Error recording stats");
+//    }
+//}, null, TimeSpan.Zero,
+//#if(DEBUG)
+//    TimeSpan.FromSeconds(30)
+//#else
+//    TimeSpan.FromDays(1)
+//#endif
+//);
 
 app.Run();
 
@@ -372,15 +382,15 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
     var subscriptionsDateTimeProvider = new SubscriptionsDateTimeProvider();
     builder.Services.AddSingleton<IDateTimeProvider>(subscriptionsDateTimeProvider);
     builder.Services.AddSingleton<ISubscriptionsDateTimeProvider>(subscriptionsDateTimeProvider);
-    builder.Services.AddSingleton<ICabService, SubscriptionsCabService>();          // INJECT OUR OWN `ICabService` as this is slightly more efficient in that it doesn't use a json api
+    builder.Services.AddTransient<ICabService, SubscriptionsCabService>();          // INJECT OUR OWN `ICabService` as this is slightly more efficient in that it doesn't use a json api
     var subscriptionServicesCoreOptions = new SubscriptionsCoreServicesOptions
     {
         DataConnectionString = builder.Configuration["subscriptions_data_connstr"] ?? azureDataConnectionString,
         SearchQueryStringRemoveKeys = SearchViewModel.NonFilterProperties,
         OutboundEmailSenderMode = OutboundEmailSenderMode.Send,
         GovUkNotifyApiKey = builder.Configuration["GovUkNotifyApiKey"],
-        EncryptionKey = builder.Configuration["EncryptionKey"] 
-            ?? throw new Exception("Configuration item 'EncryptionKey' is not set; here's a key you can use (add to secrets): " 
+        EncryptionKey = builder.Configuration["EncryptionKey"]
+            ?? throw new Exception("Configuration item 'EncryptionKey' is not set; here's a key you can use (add to secrets): "
             + UKMCAB.Subscriptions.Core.Common.Security.Tokens.KeyIV.GenerateKey())
     };
 
@@ -388,9 +398,26 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
 
     builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
 
-    builder.Services.AddSingleton<ISubscriptionEngineCoordinator, SubscriptionEngineCoordinator>();
+    SubscriptionsCoreServicesOptions options2 = subscriptionServicesCoreOptions;
+    builder.Services.AddSingleton(options2);
+    builder.Services.AddSingleton(new AzureDataConnectionString(options2.DataConnectionString ?? throw new Exception("options.DataConnectionString is null")));
+    builder.Services.AddTransient<ISubscriptionRepository, MySubscriptionRepository>();
+    builder.Services.AddTransient<IBlockedEmailsRepository, MyBlockedEmailsRepository>();
+    builder.Services.AddTransient<ITelemetryRepository, MyTelemetryRepository>();
+    builder.Services.AddTransient<IRepositories, Repositories>();
+    builder.Services.AddSingleton((Func<IServiceProvider, IEmailTemplatesService>)((IServiceProvider x) => new EmailTemplatesService(options2.EmailTemplates, options2.UriTemplateOptions)));
+    builder.Services.AddSingleton((Func<IServiceProvider, ICabService>)((IServiceProvider x) => new MyCabApiService()));// options2.CabApiOptions ?? throw new Exception("options.CabApiOptions is null"))));
+    builder.Services.AddSingleton((Func<IServiceProvider, IDateTimeProvider>)((IServiceProvider x) => new RealDateTimeProvider()));
+    builder.Services.AddSingleton((Func<IServiceProvider, IOutboundEmailSender>)((IServiceProvider x) => new OutboundEmailSender(options2.GovUkNotifyApiKey ?? throw new Exception("options.GovUkNotifyApiKey is null"), options2.OutboundEmailSenderMode)));
+    JsonSerializerOptions jsonSerializerOptions = new JsonSerializerOptions();
+    jsonSerializerOptions.Converters.Add(new EmailAddressConverter());
+    builder.Services.AddSingleton((UKMCAB.Subscriptions.Core.Common.Security.Tokens.ISecureTokenProcessor)new UKMCAB.Subscriptions.Core.Common.Security.Tokens.SecureTokenProcessor(options2.EncryptionKey ?? throw new Exception("options.EncryptionKey is null"), jsonSerializerOptions));
+    builder.Services.AddTransient<ISubscriptionEngine, SubscriptionEngine>();
+    builder.Services.AddTransient<ISubscriptionService, SubscriptionService>();
 
-    builder.Services.AddSingleton<SubscriptionsBackgroundService>();
+    builder.Services.AddTransient<ISubscriptionEngineCoordinator, SubscriptionEngineCoordinator>();
+
+    builder.Services.AddTransient<SubscriptionsBackgroundService>();
     builder.Services.AddHostedService(p => p.GetRequiredService<SubscriptionsBackgroundService>());
     builder.Services.AddHostedService<SubscriptionsConfiguratorHostedService>();
 }
@@ -405,6 +432,134 @@ static void UseSubscriptions(WebApplication app)
 
 #endregion
 
+public class MyCabApiService : ICabService, IDisposable
+{
+    public void Dispose()
+    {
+    }
 
+    public Task<SubscriptionsCoreCabModel?> GetAsync(Guid id)
+    {
+        return Task.FromResult(new SubscriptionsCoreCabModel());
+    }
 
+    public Task<CabApiService.SearchResults> SearchAsync(string? query)
+    {
+        return Task.FromResult(new CabApiService.SearchResults(0, new List<SubscriptionsCoreCabSearchResultModel>()));
+    }
+}
 
+public class MySubscriptionRepository : ISubscriptionRepository
+{
+    public Task DeleteAllAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteAsync(Keys keys)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> ExistsAsync(Keys keys)
+    {
+        return Task.FromResult(true);
+    }
+
+    public Task<IAsyncEnumerable<Page<SubscriptionEntity>>> GetAllAsync(string? partitionKey = null, string? skip = null, int? take = null)
+    {
+        async IAsyncEnumerable<Page<SubscriptionEntity>> GetPagesAsync()
+        {
+            yield return new SubscriptionPage();
+        }
+
+        return Task.FromResult(GetPagesAsync());
+    }
+
+    public Task<SubscriptionEntity?> GetAsync(SubscriptionKey key)
+    {
+        return Task.FromResult(new SubscriptionEntity());
+    }
+
+    public Task UpsertAsync(SubscriptionEntity entity)
+    {
+        return Task.CompletedTask;
+    }
+}
+
+public class SubscriptionPage : Page<SubscriptionEntity>
+{
+    public override IReadOnlyList<SubscriptionEntity> Values => new List<SubscriptionEntity>();
+
+    public override string? ContinuationToken => string.Empty;
+
+    public override Response GetRawResponse()
+    {
+        return null;
+    }
+}
+
+public class MyBlockedEmailsRepository : IBlockedEmailsRepository
+{
+    public MyBlockedEmailsRepository()
+    {
+    }
+
+    public Task BlockAsync(EmailAddress emailAddress)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteAllAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteAsync(Keys keys)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> ExistsAsync(Keys keys)
+    {
+        return Task.FromResult(true);
+    }
+
+    public Task<bool> IsBlockedAsync(EmailAddress emailAddress)
+    {
+        return Task.FromResult(true);
+    }
+
+    public Task UnblockAsync(EmailAddress emailAddress)
+    {
+        return Task.CompletedTask;
+    }
+}
+
+public class MyTelemetryRepository : ITelemetryRepository
+{
+    public Task DeleteAllAsync()
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task DeleteAsync(Keys keys)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task<bool> ExistsAsync(Keys keys)
+    {
+        return Task.FromResult(true);
+    }
+
+    public Task TrackAsync(string key, string text)
+    {
+        return Task.CompletedTask;
+    }
+
+    public Task TrackByEmailAddressAsync(string emailAddress, string text)
+    {
+        return Task.CompletedTask;
+    }
+}

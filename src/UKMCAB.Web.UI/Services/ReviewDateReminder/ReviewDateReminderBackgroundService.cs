@@ -15,8 +15,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
     public class ReviewDateReminderBackgroundService : BackgroundService
     {
         private readonly ILogger<ReviewDateReminderBackgroundService> _logger;
-        private readonly ICABRepository _cabRepository;
-        private readonly IWorkflowTaskService _workflowTaskService;
+        private readonly IServiceScopeFactory _scopeFactory;
         private readonly IAsyncNotificationClient _notificationClient;
         private readonly CoreEmailTemplateOptions _templateOptions;
         private readonly IAppHost _appHost;
@@ -27,17 +26,26 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         private readonly IDistCache _distCache;
 
 
-        public ReviewDateReminderBackgroundService(ILogger<ReviewDateReminderBackgroundService> logger, TelemetryClient telemetryClient, ICABRepository cabRepository, IWorkflowTaskService workflowTaskService, IAsyncNotificationClient notificationClient, IOptions<CoreEmailTemplateOptions> templateOptions, LinkGenerator linkGenerator, IAppHost appHost, IDistCache distCache)
+        public ReviewDateReminderBackgroundService(
+            ILogger<ReviewDateReminderBackgroundService> logger, 
+            TelemetryClient telemetryClient, 
+            IServiceScopeFactory scopeFactory, 
+            IAsyncNotificationClient notificationClient, 
+            IOptions<CoreEmailTemplateOptions> templateOptions, 
+            LinkGenerator linkGenerator, 
+            IAppHost appHost, 
+            IDistCache distCache)
         {
             _logger = logger;
             _telemetryClient = telemetryClient;
-            _cabRepository = cabRepository;
-            _workflowTaskService = workflowTaskService;
+            _scopeFactory = scopeFactory;
             _notificationClient = notificationClient;
             _templateOptions = templateOptions.Value;
             _linkGenerator = linkGenerator;
             _appHost = appHost;
             _distCache = distCache;
+
+            _distCache.InitialiseAsync();
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -81,6 +89,9 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         }
         private async Task CheckAndSendReviewDateReminder()
         {
+            using var scope = _scopeFactory.CreateScope();
+            var _cabRepository = scope.ServiceProvider.GetRequiredService<ICABRepository>();
+
             var publishedCABs = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published);
             var publishedCABsWithDueReviewDates = publishedCABs.Where(d => IsReviewReminderNeeded(d.RenewalDate) || d.DocumentLegislativeAreas.Any(la => IsReviewReminderNeeded(la.ReviewDate)));
             var noOfReminderSent = 0;
@@ -151,6 +162,9 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
 
         private async Task SendInternalNotificationForCABReviewDateReminderAsync(Document cab, User user, DateTime reviewDate, string url)
         {
+            using var scope = _scopeFactory.CreateScope();
+            var _workflowTaskService = scope.ServiceProvider.GetRequiredService<IWorkflowTaskService>();
+
             var personalisation = new Dictionary<string, dynamic?>
             {
                 { "CABName", cab.Name },
@@ -180,6 +194,9 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         }
         private async Task SendInternalNotificationForLAReviewDateReminderAsync(Document cab, DocumentLegislativeArea LA, User user, string url)
         {
+            using var scope = _scopeFactory.CreateScope();
+            var _workflowTaskService = scope.ServiceProvider.GetRequiredService<IWorkflowTaskService>();
+
             var personalisation = new Dictionary<string, dynamic?>
             {
                 { "CABName", cab.Name },

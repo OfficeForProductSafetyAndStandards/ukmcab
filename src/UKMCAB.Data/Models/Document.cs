@@ -2,6 +2,10 @@
 {
     public class CABDocumentBlob
     {
+        internal CABDocumentBlob()
+        {
+            
+        }
         public CABDocumentBlob(Document document)
         {
             id = document.id;

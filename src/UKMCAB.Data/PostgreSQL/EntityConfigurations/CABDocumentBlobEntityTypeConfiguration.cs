@@ -18,9 +18,9 @@ public class CABDocumentBlobEntityTypeConfiguration : IEntityTypeConfiguration<C
         builder.Property(a => a.SubStatus).HasColumnType("varchar(1024)").IsRequired();
         builder.Property(a => a.CreatedByUserGroup).HasColumnType("varchar(1024)").IsRequired();
         builder.Property(a => a.URLSlug).HasColumnType("varchar(1024)").IsRequired();
-        builder.Property(a => a.Name).HasColumnType("varchar(1024)").IsRequired();
-        builder.Property(a => a.UKASReference).HasColumnType("varchar(1024)").IsRequired();
-        builder.Property(a => a.CABNumber).HasColumnType("varchar(1024)").IsRequired();
+        builder.Property(a => a.Name).HasColumnType("varchar(1024)").IsRequired(false);
+        builder.Property(a => a.UKASReference).HasColumnType("varchar(1024)").IsRequired(false);
+        builder.Property(a => a.CABNumber).HasColumnType("varchar(1024)").IsRequired(false);
         builder.Property(e => e.CabBlob)
                .HasColumnType("jsonb")
                .HasConversion(

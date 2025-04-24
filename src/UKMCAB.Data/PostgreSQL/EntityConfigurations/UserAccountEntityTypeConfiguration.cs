@@ -12,7 +12,7 @@ public class UserAccountEntityTypeConfiguration : IEntityTypeConfiguration<UserA
     {
         builder.HasKey(a => a.Id);
 
-        builder.Property(a => a.Id).HasColumnType("uuid").IsRequired();
+        builder.Property(a => a.Id).HasColumnType("varchar(1000)").IsRequired();
 
         builder.Property(e => e.AuditLog)
                .HasColumnType("jsonb")
@@ -26,10 +26,10 @@ public class UserAccountEntityTypeConfiguration : IEntityTypeConfiguration<UserA
         builder.Property(a => a.EmailAddress).HasColumnType("text").IsRequired(false);
         builder.Property(a => a.ContactEmailAddress).HasColumnType("text").IsRequired(false);
         builder.Property(a => a.PasswordHash).HasColumnType("text").IsRequired(false);
-        builder.Property(a => a.IsLocked).HasColumnType("bool").IsRequired(false);
+        builder.Property(a => a.IsLocked).HasColumnType("bool").IsRequired();
         builder.Property(a => a.LockReason).HasColumnType("text").IsRequired(false);
-        builder.Property(a => a.CreatedUtc).HasColumnType("timestamptz").IsRequired(false);
-        builder.Property(a => a.LastUpdatedUtc).HasColumnType("timestamptz").IsRequired(false);
+        builder.Property(a => a.CreatedUtc).HasColumnType("timestamptz").IsRequired();
+        builder.Property(a => a.LastUpdatedUtc).HasColumnType("timestamptz").IsRequired();
         builder.Property(a => a.LastLogonUtc).HasColumnType("timestamptz").IsRequired(false);
         builder.Property(a => a.LockReasonDescription).HasColumnType("text").IsRequired(false);
         builder.Property(a => a.LockInternalNotes).HasColumnType("text").IsRequired(false);

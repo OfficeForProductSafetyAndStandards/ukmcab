@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Models.Users;
@@ -25,4 +26,11 @@ public class ApplicationDataContext : DbContext
     public DbSet<UserAccount> UserAccounts => Set<UserAccount>();
     public DbSet<UserAccountRequest> UserAccountRequests => Set<UserAccountRequest>();
     public DbSet<CABDocumentBlob> Documents => Set<CABDocumentBlob>();
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        ArgumentNullException.ThrowIfNull(modelBuilder);
+
+        base.OnModelCreating(modelBuilder);
+        _ = modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+    }
 }
