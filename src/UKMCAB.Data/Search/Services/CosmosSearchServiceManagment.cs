@@ -7,18 +7,6 @@ using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
-    public interface ISearchServiceManagment
-    {
-        Task InitialiseAsync(bool force = false);
-    }
-
-    public class PostgreSearchServiceManagment : ISearchServiceManagment
-    {
-        public Task InitialiseAsync(bool force = false)
-        {
-            return Task.CompletedTask;
-        }
-    }
 
     public class CosmosSearchServiceManagment : ISearchServiceManagment
     {

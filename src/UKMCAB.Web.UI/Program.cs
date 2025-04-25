@@ -396,7 +396,7 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
 
     builder.Configuration.Bind("SubscriptionsCoreEmailTemplates", subscriptionServicesCoreOptions.EmailTemplates);
 
-    builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
+    //builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
 
     SubscriptionsCoreServicesOptions options2 = subscriptionServicesCoreOptions;
     builder.Services.AddSingleton(options2);
