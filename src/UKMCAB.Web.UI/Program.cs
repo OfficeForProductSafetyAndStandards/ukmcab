@@ -45,7 +45,6 @@ using UKMCAB.Data.Interfaces.Services.User;
 using UKMCAB.Data.Interfaces.Services.WorkflowTask;
 using UKMCAB.Data.Interfaces.Services;
 using UKMCAB.Data.Caching.CachedCAB;
-using System.Data.Entity;
 using System.Text.Json;
 using UKMCAB.Data.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
@@ -55,11 +54,9 @@ using UKMCAB.Data.PostgreSQL.Services.WorkflowTask;
 using UKMCAB.Data.PostgreSQL.Services.User;
 using UKMCAB.Data.PostgreSQL.Services.CAB;
 using UKMCAB.Subscriptions.Core.Services;
-using Microsoft.Extensions.Options;
 using UKMCAB.Subscriptions.Core.Domain.Emails;
 using Azure;
 using UKMCAB.Subscriptions.Core.Data.Models;
-using Azure.Data.Tables;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -396,6 +393,16 @@ static void AddSubscriptionCoreServices(WebApplicationBuilder builder, AzureData
 
     builder.Configuration.Bind("SubscriptionsCoreEmailTemplates", subscriptionServicesCoreOptions.EmailTemplates);
 
+    // NOTE:
+    // This function includes:
+    // - BlockedEmailsRepository
+    // - SubscriptionRepository
+    // - TelemetryRepository
+    // all of which extends `Repository` which has a dependency on Azure.Data.Tables.
+    //
+    // - SubscriptionEngine
+    // - SubscriptionService
+    // all of which require Azure.Storage.Blobs.
     //builder.Services.AddSubscriptionsCoreServices(subscriptionServicesCoreOptions);
 
     SubscriptionsCoreServicesOptions options2 = subscriptionServicesCoreOptions;

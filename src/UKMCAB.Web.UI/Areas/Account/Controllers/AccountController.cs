@@ -415,7 +415,7 @@ namespace UKMCAB.Web.UI.Areas.Account.Controllers
             return x.FirstName == y.FirstName && x.Surname == y.Surname &&
                    x.ContactEmailAddress == y.ContactEmailAddress;
         }
-
+        
         public int GetHashCode(UserAccount obj)
         {
             return HashCode.Combine(obj.FirstName, obj.Surname, obj.ContactEmailAddress);

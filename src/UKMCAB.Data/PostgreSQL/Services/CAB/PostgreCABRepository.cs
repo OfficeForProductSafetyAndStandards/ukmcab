@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using Microsoft.Azure.Cosmos.Linq;
+﻿using System.Linq.Dynamic.Core;
+using System.Linq.Expressions;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 
@@ -42,10 +42,10 @@ public class PostgreCABRepository : ICABRepository
         var list = _dbContext.Documents.AsQueryable();
         if (status == Status.Unknown)
         {
-            return await list.CountAsync();
+            return list.Count();
         }
 
-        return await list.Where(x => x.StatusValue == status).CountAsync();
+        return list.Where(x => x.StatusValue == status).Count();
     }
 
     public async Task<int> GetCABCountBySubStatusAsync(SubStatus subStatus)
@@ -53,10 +53,10 @@ public class PostgreCABRepository : ICABRepository
         var list = _dbContext.Documents.AsQueryable();
         if (subStatus == SubStatus.None)
         {
-            return await list.CountAsync();
+            return  list.Count();
         }
 
-        return await list.Where(x => x.SubStatus == subStatus).CountAsync();
+        return list.Where(x => x.SubStatus == subStatus).Count();
     }
 
     public IQueryable<Document> GetItemLinqQueryable()

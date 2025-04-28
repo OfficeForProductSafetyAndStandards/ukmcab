@@ -4,6 +4,7 @@ using UKMCAB.Data.Interfaces.Services;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.LegislativeAreas;
+using UKMCAB.Data.Models.Users;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -22,6 +23,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         private readonly IReadOnlyRepository<ProtectionAgainstRisk> protectionAgainstRiskRepo;
         private readonly IReadOnlyRepository<PurposeOfAppointment> purposeOfAppointmentRepo;
         private readonly IReadOnlyRepository<SubCategory> subCategoryRepo;
+        private readonly IReadOnlyRepository<UserAccount> userAccountRepo;
+        private readonly IReadOnlyRepository<UserAccountRequest> userAccountRequestRepo;
 
         public CabImportController(ICABRepository cabRepo,
             IReadOnlyRepository<AreaOfCompetency> aocRepo,
@@ -34,7 +37,9 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             IReadOnlyRepository<Product> productRepo,
             IReadOnlyRepository<ProtectionAgainstRisk> protectionAgainstRiskRepo,
             IReadOnlyRepository<PurposeOfAppointment> purposeOfAppointmentRepo,
-            IReadOnlyRepository<SubCategory> subCategoryRepo)
+            IReadOnlyRepository<SubCategory> subCategoryRepo,
+            IReadOnlyRepository<UserAccount> userAccountRepo,
+            IReadOnlyRepository<UserAccountRequest> userAccountRequestRepo)
         {
             this.cabRepo = cabRepo;
             this.aocRepo = aocRepo;
@@ -48,6 +53,8 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             this.protectionAgainstRiskRepo = protectionAgainstRiskRepo;
             this.purposeOfAppointmentRepo = purposeOfAppointmentRepo;
             this.subCategoryRepo = subCategoryRepo;
+            this.userAccountRepo = userAccountRepo;
+            this.userAccountRequestRepo = userAccountRequestRepo;
         }
 
         [HttpGet("cabs")]
@@ -64,112 +71,29 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
             return View();
         }
 
-        public class GuidListOrEmptyStringConverter : JsonConverter<List<Guid>>
+        [HttpGet("user-accounts")]
+        public IActionResult UserAccounts()
         {
-            public override List<Guid> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            var userJson = System.IO.File.ReadAllText("StorageData/user-accounts.json");
+            List<UserAccount> users = JsonSerializer.Deserialize<List<UserAccount>>(userJson, _serializationOptions);
+
+            foreach (var user in users)
             {
-                if (reader.TokenType == JsonTokenType.String)
-                {
-                    var str = reader.GetString();
-                    return string.IsNullOrWhiteSpace(str) ? new List<Guid>() : throw new JsonException("Expected an empty string or an array.");
-                }
+                if (user.AuditLog is null) user.AuditLog = new List<Audit>();
+                userAccountRepo.CreateAsync(user).Wait();
+            }
+            var userRequestJson = System.IO.File.ReadAllText("StorageData/user-account-requests.json");
+            List<UserAccountRequest> userRequests = JsonSerializer.Deserialize<List<UserAccountRequest>>(userRequestJson, _serializationOptions);
 
-                if (reader.TokenType == JsonTokenType.StartArray)
-                {
-                    var guids = new List<Guid>();
-
-                    while (reader.Read())
-                    {
-                        if (reader.TokenType == JsonTokenType.EndArray)
-                            break;
-
-                        if (reader.TokenType != JsonTokenType.String)
-                            throw new JsonException("Expected string elements in the array.");
-
-                        var str = reader.GetString();
-                        if (Guid.TryParse(str, out var guid))
-                            guids.Add(guid);
-                        else
-                            throw new JsonException($"Invalid GUID: {str}");
-                    }
-
-                    return guids;
-                }
-
-                throw new JsonException("Expected string or array.");
+            foreach (var user in userRequests)
+            {
+                if (user.AuditLog is null) user.AuditLog = new List<Audit>();
+                userAccountRequestRepo.CreateAsync(user).Wait();
             }
 
-            public override void Write(Utf8JsonWriter writer, List<Guid> value, JsonSerializerOptions options)
-            {
-                writer.WriteStartArray();
-                foreach (var guid in value)
-                    writer.WriteStringValue(guid.ToString());
-                writer.WriteEndArray();
-            }
+            return View();
         }
 
-        public class FlexibleBoolConverter : JsonConverter<bool>
-        {
-            public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            {
-                if (reader.TokenType == JsonTokenType.True)
-                    return true;
-                if (reader.TokenType == JsonTokenType.False)
-                    return false;
-                if (reader.TokenType == JsonTokenType.String)
-                {
-                    var str = reader.GetString();
-                    if (bool.TryParse(str, out var result))
-                        return result;
-                }
-
-                throw new JsonException("Unable to convert value to bool.");
-            }
-
-            public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
-                => writer.WriteBooleanValue(value);
-        }
-        public class NullableGuidEmptyStringConverter : JsonConverter<Guid?>
-        {
-            public override Guid? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
-            {
-                if (reader.TokenType == JsonTokenType.Null)
-                    return null;
-
-                if (reader.TokenType == JsonTokenType.String)
-                {
-                    var str = reader.GetString();
-                    if (string.IsNullOrWhiteSpace(str))
-                        return null;
-
-                    if (Guid.TryParse(str, out var guid))
-                        return guid;
-
-                    throw new JsonException($"Invalid GUID: {str}");
-                }
-
-                throw new JsonException("Expected string or null.");
-            }
-
-            public override void Write(Utf8JsonWriter writer, Guid? value, JsonSerializerOptions options)
-            {
-                if (value.HasValue)
-                    writer.WriteStringValue(value.Value.ToString());
-                else
-                    writer.WriteStringValue(""); // or writer.WriteNullValue(); if preferred
-            }
-        }
-        private static readonly JsonSerializerOptions _serializationOptions = new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true,
-            Converters =
-                    {
-                        new JsonStringEnumConverter(),
-                        new FlexibleBoolConverter(),
-                        new GuidListOrEmptyStringConverter(),
-                        new NullableGuidEmptyStringConverter()
-                    }
-        };
         [HttpGet("supporting")]
         public IActionResult SupportingDocs()
         {
@@ -277,5 +201,112 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 
             return View();
         }
+
+        public class GuidListOrEmptyStringConverter : JsonConverter<List<Guid>>
+        {
+            public override List<Guid> Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                if (reader.TokenType == JsonTokenType.String)
+                {
+                    var str = reader.GetString();
+                    return string.IsNullOrWhiteSpace(str) ? new List<Guid>() : throw new JsonException("Expected an empty string or an array.");
+                }
+
+                if (reader.TokenType == JsonTokenType.StartArray)
+                {
+                    var guids = new List<Guid>();
+
+                    while (reader.Read())
+                    {
+                        if (reader.TokenType == JsonTokenType.EndArray)
+                            break;
+
+                        if (reader.TokenType != JsonTokenType.String)
+                            throw new JsonException("Expected string elements in the array.");
+
+                        var str = reader.GetString();
+                        if (Guid.TryParse(str, out var guid))
+                            guids.Add(guid);
+                        else
+                            throw new JsonException($"Invalid GUID: {str}");
+                    }
+
+                    return guids;
+                }
+
+                throw new JsonException("Expected string or array.");
+            }
+
+            public override void Write(Utf8JsonWriter writer, List<Guid> value, JsonSerializerOptions options)
+            {
+                writer.WriteStartArray();
+                foreach (var guid in value)
+                    writer.WriteStringValue(guid.ToString());
+                writer.WriteEndArray();
+            }
+        }
+        public class FlexibleBoolConverter : JsonConverter<bool>
+        {
+            public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                if (reader.TokenType == JsonTokenType.True)
+                    return true;
+                if (reader.TokenType == JsonTokenType.False)
+                    return false;
+                if (reader.TokenType == JsonTokenType.String)
+                {
+                    var str = reader.GetString();
+                    if (bool.TryParse(str, out var result))
+                        return result;
+                }
+
+                throw new JsonException("Unable to convert value to bool.");
+            }
+
+            public override void Write(Utf8JsonWriter writer, bool value, JsonSerializerOptions options)
+                => writer.WriteBooleanValue(value);
+        }
+        public class NullableGuidEmptyStringConverter : JsonConverter<Guid?>
+        {
+            public override Guid? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+            {
+                if (reader.TokenType == JsonTokenType.Null)
+                    return null;
+
+                if (reader.TokenType == JsonTokenType.String)
+                {
+                    var str = reader.GetString();
+                    if (string.IsNullOrWhiteSpace(str))
+                        return null;
+
+                    if (Guid.TryParse(str, out var guid))
+                        return guid;
+
+                    throw new JsonException($"Invalid GUID: {str}");
+                }
+
+                throw new JsonException("Expected string or null.");
+            }
+
+            public override void Write(Utf8JsonWriter writer, Guid? value, JsonSerializerOptions options)
+            {
+                if (value.HasValue)
+                    writer.WriteStringValue(value.Value.ToString());
+                else
+                    writer.WriteStringValue(""); // or writer.WriteNullValue(); if preferred
+            }
+        }
+
+        private static readonly JsonSerializerOptions _serializationOptions = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true,
+            Converters =
+                    {
+                        new JsonStringEnumConverter(),
+                        new FlexibleBoolConverter(),
+                        new GuidListOrEmptyStringConverter(),
+                        new NullableGuidEmptyStringConverter()
+                    }
+        };
     }
 }

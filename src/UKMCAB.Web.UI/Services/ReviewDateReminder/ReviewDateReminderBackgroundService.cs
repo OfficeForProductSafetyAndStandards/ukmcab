@@ -25,7 +25,6 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         private DateTime _nextRunTime;
         private readonly IDistCache _distCache;
 
-
         public ReviewDateReminderBackgroundService(
             ILogger<ReviewDateReminderBackgroundService> logger, 
             TelemetryClient telemetryClient, 

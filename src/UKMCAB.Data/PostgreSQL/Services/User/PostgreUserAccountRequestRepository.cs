@@ -1,5 +1,4 @@
-﻿using Microsoft.Azure.Cosmos;
-using Polly;
+﻿using Polly;
 using Polly.Fallback;
 using UKMCAB.Data.Domain;
 using UKMCAB.Data.Interfaces.Services.User;
@@ -15,7 +14,7 @@ public class PostgreUserAccountRequestRepository : IUserAccountRequestRepository
     public PostgreUserAccountRequestRepository(ApplicationDataContext dbContext)
     {
         _dbContext = dbContext;
-        _getUserAccountRequestPolicy = Policy<UserAccountRequest?>.Handle<CosmosException>(x => x.StatusCode == System.Net.HttpStatusCode.NotFound).FallbackAsync(null as UserAccountRequest);
+        _getUserAccountRequestPolicy = Policy<UserAccountRequest?>.Handle<Exception>().FallbackAsync(null as UserAccountRequest);
     }
 
     public async Task<int> CountAsync(UserAccountRequestStatus? status = null)
