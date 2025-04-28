@@ -1,9 +1,10 @@
-﻿@using UKMCAB.Core.Security;
+﻿@using System.Net
+@using UKMCAB.Core.Security;
 @using UKMCAB.Web.UI.Areas.Search.Controllers
 @model UKMCAB.Web.UI.Models.ViewModels.Shared.UserNoteViewModel
 
 @{
-    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}#usernotes";
+    var backUrl = $"{ViewContext.HttpContext.Request.Path}{WebUtility.HtmlEncode(ViewContext.HttpContext.Request.QueryString.Value)}#usernotes";
 }
 
 @section BackButton
@@ -51,7 +52,7 @@
 
             <div class="govuk-button-group">
                 <a class="govuk-button govuk-button--warning" asp-area="search" asp-controller="UserNote" asp-action="ConfirmDelete"
-                   asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-userNoteId="@Model.Id" asp-route-returnUrl="@Model.ReturnUrl" asp-route-backUrl="@returnUrl">Delete</a>
+                   asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-userNoteId="@Model.Id" asp-route-returnUrl="@Model.ReturnUrl" asp-route-backUrl="@backUrl">Delete</a>
                 <a href="@Model.ReturnUrl" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </div>

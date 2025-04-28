@@ -1,10 +1,12 @@
+@using System.Net
 @using UKMCAB.Core.Security;
 @using UKMCAB.Data.Models
+@using UKMCAB.Common.Extensions;
 @using UKMCAB.Web.UI.Extensions;
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABManagementViewModel
 @{
-    var returnUrl = this.Url.ActionContext.HttpContext.Request.GetRequestUri().PathAndQuery;
+    var returnUrl = $"{this.Url.ActionContext.HttpContext.Request.Path}{WebUtility.HtmlEncode(this.Url.ActionContext.HttpContext.Request.QueryString.Value)}";
 }
 
 <table class="govuk-table govuk-!-font-size-16 ukmcab-table">
@@ -36,7 +38,7 @@
                     </th>
                 }
                 <th scope="col" class="govuk-table__header width-one-fifth">
-                    <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.Status)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Status</sort>
+                    <sort tab-to-show="@Model.TabName" use-serverside-tabs="true" target="@nameof(CABManagementItemViewModel.SubStatus)" sort="@Model.SortField" sort-direction="@Model.SortDirection">Status</sort>
                 </th>
             }
         </tr>
@@ -49,7 +51,7 @@
                 <tr class="govuk-table__row">
                     <td class="govuk-table__cell">
                         <label aria-hidden="true">Cab name</label>
-                        @if (cab.Status == Status.Archived.ToString())
+                        @if (cab.IsPendingApprovalToUnarchive)
                         {
                             <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" asp-route-returnUrl="@returnUrl" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
                         }
@@ -71,7 +73,7 @@
                     {
                         <td class="govuk-table__cell"><label aria-hidden="true">User group</label>@Roles.NameFor(cab.UserGroup)</td>
                     }
-                    <td class="govuk-table__cell"><label aria-hidden="true">Status</label>@cab.Status</td>
+                    <td class="govuk-table__cell"><label aria-hidden="true">Status</label>@cab.SubStatus</td>
                 </tr>
             }
         }

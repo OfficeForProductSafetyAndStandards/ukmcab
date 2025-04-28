@@ -56,7 +56,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
                 {"date-time", DateTime.UtcNow.ToString("f")},
                 {"what-were-you-doing" , model.WhatWereYouDoing},
                 {"what-went-wrong" , model.WhatWentWrong},
-                {"contact-email-address" , model.Email},
+                {"contact-email-address" , model.Email ?? "Not provided"},
             };
             await _notificationClient.SendEmailAsync(_templateOptions.FeedbackEmail, _templateOptions.FeedbackForm, personalisation);
 
