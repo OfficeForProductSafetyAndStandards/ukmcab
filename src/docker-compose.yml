@@ -1,7 +1,8 @@
 services:
-   ukmcab:
+   ukmcab-web:
      image: ${DOCKER_REGISTRY-}ukmcab
-     hostname: audit
+     hostname: ukmcabweb
+     container_name: ukmcabweb
      ports: 
       - 7060:8080
      build:
@@ -14,9 +15,13 @@ services:
        retries: 3
        start_period: 60s
      depends_on:
-       ukmcabdb:
+       ukmcab-db:
          condition: service_healthy
-   ukmcabdb:
+       ukmcab-cache:
+         condition: service_healthy
+     networks:
+       - app-network
+   ukmcab-db:
      image: postgres:latest
      hostname: ukmcabdb
      container_name: ukmcabdb
@@ -33,3 +38,21 @@ services:
        interval: 10s
        timeout: 5s
        retries: 5
+     networks:
+       - app-network
+   ukmcab-cache:
+     image: redis:latest
+     hostname: ukmcabcache
+     container_name: ukmcabcache
+     restart: always
+     ports:
+       - "127.0.0.1:6380:6379"
+     command: redis-server --save 20 1 --loglevel verbose --requirepass eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81
+     volumes: 
+      - ./.containers/redis-cache:/data
+     healthcheck:
+       test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+     networks:
+       - app-network
+networks:
+  app-network:

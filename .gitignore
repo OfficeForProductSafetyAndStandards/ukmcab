@@ -407,3 +407,4 @@ FodyWeavers.xsd
 /src/UKMCAB.Web.UI/wwwroot/assets/*
 /bicep/prod.parameters.dryrun.json
 /src/.containers
+/src/volume
