@@ -29,7 +29,7 @@ namespace UKMCAB.Web.UI.Areas.Home.Controllers
                 }
             }
             Response.Cookies.Append(Constants.AnalyticsOptInCookieName, model.Cookies, new CookieOptions { Expires = DateTimeOffset.UtcNow.AddDays(30) });
-            if (!string.IsNullOrWhiteSpace(model.ReturnURL))
+            if (!string.IsNullOrWhiteSpace(model.ReturnURL) && Url.IsLocalUrl(model.ReturnURL))
             {
                 return Redirect(model.ReturnURL);
             }
