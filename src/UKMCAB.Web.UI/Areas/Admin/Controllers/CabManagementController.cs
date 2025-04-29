@@ -94,10 +94,10 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
         {
             switch (model.SortField)
             {
-                case nameof(CABManagementItemViewModel.Status):
+                case nameof(CABManagementItemViewModel.SubStatus):
                     model.CABManagementItems = model.SortDirection == SortDirectionHelper.Ascending ? 
-                        model.CABManagementItems.OrderBy(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList() :
-                        model.CABManagementItems.OrderByDescending(cmi => cmi.Status).ThenByDescending(cmi => cmi.LastUpdated).ToList();
+                        model.CABManagementItems.OrderBy(cmi => cmi.SubStatus).ThenByDescending(cmi => cmi.LastUpdated).ToList() :
+                        model.CABManagementItems.OrderByDescending(cmi => cmi.SubStatus).ThenByDescending(cmi => cmi.LastUpdated).ToList();
                     break;
                 
                 case nameof(CABManagementItemViewModel.CABNumber):

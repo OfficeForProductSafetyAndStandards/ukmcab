@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using System.Net;
 using System.Security.Claims;
 using UKMCAB.Core.Security;
 using UKMCAB.Core.Services.CAB;
@@ -95,7 +96,7 @@ public class UserNoteController : Controller
             UserGroup = userNote.UserRole,
             Note = userNote.Note,
             ReturnUrl = Url.IsLocalUrl(returnUrl) ? returnUrl : "/",
-            BackUrl = backUrl,
+            BackUrl = WebUtility.HtmlDecode(backUrl),
             IsOPSSOrInCreatorUserGroup = User.IsInRole(Roles.OPSS.Id) || User.IsInRole(userNote.UserRole),
         };
 
