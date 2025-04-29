@@ -5,19 +5,10 @@ using UKMCAB.Data.Models;
 
 namespace UKMCAB.Data.Storage
 {
-    public interface IFileStorage
-    {
-        Task<FileUpload> UploadCABFile(string cabId, string label, string fileName, string directoryName, Stream stream, string contentType);
-
-        Task<bool> DeleteCABSchedule(string blobName);
-
-        Task<FileDownload> DownloadBlobStream(string blobPath);
-    }
-
-    public class FileStorageService : IFileStorage
+    public class AzureFileStorageService : IFileStorage
     {
         private readonly BlobContainerClient _client;
-        public FileStorageService(IConfiguration config)
+        public AzureFileStorageService(IConfiguration config)
         {
             _client = new BlobContainerClient(config["DataConnectionString"], DataConstants.Storage.Container);
             _client.CreateIfNotExists();

@@ -59,7 +59,7 @@ namespace UKMCAB.Core.Services.CAB
         public async Task<bool> DocumentWithSameNameExistsAsync(Document document)
         {
             var documents = await _cabRepository.Query<Document>(d =>
-                d.Name.Equals(document.Name, StringComparison.InvariantCultureIgnoreCase)
+                d.Name.ToLower().Equals(document.Name.ToLower())
             );
             return documents.Where(d => !d.CABId.Equals(document.CABId)).ToList().Count > 0;
         }
@@ -810,7 +810,7 @@ namespace UKMCAB.Core.Services.CAB
         public async Task<List<Document>> FindAllDocumentsByCABIdAsync(string id)
         {
             List<Document> docs = await _cabRepository.Query<Document>(d =>
-                d.CABId.Equals(id, StringComparison.CurrentCultureIgnoreCase));
+                d.CABId.ToLower().Equals(id.ToLower()));
 
             return docs.OrderByDescending(d => d.LastUpdatedDate)
                 .ToList();

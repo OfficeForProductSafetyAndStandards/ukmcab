@@ -173,7 +173,7 @@ builder.Services.AddTransient<ICABRepository, PostgreCABRepository>();
 builder.Services.AddTransient<ICachedPublishedCABService, CachedPublishedCABService>();
 builder.Services.AddTransient<ILoggingService, LoggingService>();
 builder.Services.AddTransient<ILoggingRepository, LoggingAzureTableStorageRepository>();
-builder.Services.AddTransient<IFileStorage, FileStorageService>();
+builder.Services.AddTransient<IFileStorage, AwsFileStorageService>();
 builder.Services.AddTransient<UKMCAB.Data.IInitialiseDataService, UKMCAB.Data.InitialiseDataService>();
 builder.Services.AddTransient<IUserAccountRepository, PostgreUserAccountRepository>();
 builder.Services.AddTransient<IUserAccountRequestRepository, PostgreUserAccountRequestRepository>();
