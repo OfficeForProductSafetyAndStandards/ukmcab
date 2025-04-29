@@ -6,7 +6,7 @@
 @using UKMCAB.Web.UI.Models.ViewModels.Admin.CAB;
 @model UKMCAB.Web.UI.Models.ViewModels.Admin.CAB.CABManagementViewModel
 @{
-    var returnUrl = $"{this.Url.ActionContext.HttpContext.Request.Path}{WebUtility.HtmlEncode(this.Url.ActionContext.HttpContext.Request.QueryString.Value)}";
+    var returnUrl = $"{this.Url.ActionContext.HttpContext.Request.Path}{this.Url.ActionContext.HttpContext.Request.QueryString.Value}";
 }
 
 <table class="govuk-table govuk-!-font-size-16 ukmcab-table">
@@ -53,7 +53,7 @@
                         <label aria-hidden="true">Cab name</label>
                         @if (cab.IsPendingApprovalToUnarchive)
                         {
-                            <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" asp-route-returnUrl="@returnUrl" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
+                            <a asp-area="Search" asp-controller="CABProfile" asp-action="Index" asp-route-id="@cab.URLSlug" asp-route-returnUrl="@WebUtility.HtmlEncode(returnUrl)" class="govuk-link govuk-link--no-visited-state">@cab.Name</a>
                         }
                         else
                         {
