@@ -124,7 +124,7 @@ window.GOVUK.Modules = window.GOVUK.Modules || {};
     var lenChecked = obj.$optionsContainer.querySelectorAll('.govuk-checkboxes__input:checked').length
     var len = showCheckboxes.length + lenChecked
     var html = len + (len === 1 ? obj.filterTextSingle : obj.filterTextMultiple) + ', ' + lenChecked + obj.filterTextSelected
-    obj.$filterCount.innerHTML = html
+    obj.$filterCount.textContent = html
   }
 
   OptionSelect.prototype.replaceHeadingSpanWithButton = function replaceHeadingSpanWithButton () {
