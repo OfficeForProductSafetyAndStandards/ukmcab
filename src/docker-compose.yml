@@ -54,5 +54,21 @@ services:
        test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
      networks:
        - app-network
+   ukmcab-localstack:
+     hostname: "ukmcablocalstack"
+     container_name: "ukmcablocalstack"
+     image: localstack/localstack
+     ports:
+       - 4566:4566            # LocalStack Gateway
+       - 4510-4559:4510-4559  # external services port range
+     environment:
+       - SERVICES=s3
+       - DEBUG=1
+       - DATA_DIR=/data
+     volumes:
+       - ./.containers/localstack:/data
+       - /var/run/docker.sock:/var/run/docker.sock
+     networks:
+       - app-network
 networks:
   app-network:
