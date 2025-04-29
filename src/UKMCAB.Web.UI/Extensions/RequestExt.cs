@@ -23,5 +23,6 @@ namespace UKMCAB.Web.UI.Extensions
             }
             return collection.HasKeys() ? "?" + collection.ToString() : string.Empty;
         }
+        public static string DecodePageNumber(this string url) => url.Replace("&amp;pagenumber=", "&pagenumber=");
     }
 }
