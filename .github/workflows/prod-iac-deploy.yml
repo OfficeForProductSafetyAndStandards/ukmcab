@@ -25,7 +25,7 @@ jobs:
         template: './bicep/main.bicep'
         parameters: ./bicep/prod.parameters.json 
           basicAuthPassword=${{ secrets.PROD_BASIC_AUTH_PASSWORD }} 
-          sslCertPfxBase64=${{ secrets.SSL_CERT_PROD_2024 }} 
+          sslCertPfxBase64=${{ secrets.SSL_CERT_PROD_2025 }} 
           dataProtectionX509CertBase64=${{ secrets.PROD_DATA_PROTECTION_X509_CERT }} 
           govukNotifyApiKey=${{ secrets.PROD_GOVUK_NOTIFY_API_KEY }} 
           sslCertPfxBase64VNextSlot=${{ secrets.SSL_CERT_VNEXT_2025 }}
