@@ -76,7 +76,7 @@ public class UserNoteController : Controller
 
         await _userNoteService.CreateUserNote(currentUser, vm.CabDocumentId, vm.Note);
 
-        return Redirect(vm.ReturnUrl);
+        return Redirect(Url.IsLocalUrl(vm.ReturnUrl) ? vm.ReturnUrl : "/");
     }
 
     [HttpGet("ConfirmDelete", Name = Routes.GovernmentUserNoteConfirmDelete)]
@@ -107,6 +107,6 @@ public class UserNoteController : Controller
     {
         await _userNoteService.DeleteUserNote(vm.CabDocumentId, vm.Id);
 
-        return Redirect(vm.ReturnUrl);
+        return Redirect(Url.IsLocalUrl(vm.ReturnUrl) ? vm.ReturnUrl : "/");
     }
 }
