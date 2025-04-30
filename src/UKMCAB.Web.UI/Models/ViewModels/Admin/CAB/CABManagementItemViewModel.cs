@@ -11,7 +11,8 @@
         public string CABNumber { get; set; }= string.Empty;
         public string? CabNumberVisibility { get; set; }
         public string UKASReference { get; set; } = string.Empty;
-        public string Status { get; set; }= string.Empty;
+        public string SubStatus { get; set; }= string.Empty;
+        public bool IsPendingApprovalToUnarchive { get; set; }
         public DateTime LastUpdated { get; set; }
         public string UserGroup { get; set; }
 
@@ -24,9 +25,13 @@
             CABNumber = doc.CABNumber;
             CabNumberVisibility = doc.CabNumberVisibility;
             UKASReference = doc.UKASReference;
-            Status = doc.SubStatus == SubStatus.None ? "Draft" : doc.SubStatus.GetEnumDescription();
+            SubStatus = doc.SubStatus == Data.Models.SubStatus.None ? "Draft" : doc.SubStatus.GetEnumDescription();
+            IsPendingApprovalToUnarchive = 
+                this.SubStatus == Data.Models.SubStatus.PendingApprovalToUnarchivePublish.GetEnumDescription() || 
+                this.SubStatus == Data.Models.SubStatus.PendingApprovalToUnarchive.GetEnumDescription();
             LastUpdated = doc.LastUpdatedDate;
             UserGroup = doc.CreatedByUserGroup;
+
         }
     }
 }

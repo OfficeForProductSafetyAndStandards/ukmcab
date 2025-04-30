@@ -1,4 +1,5 @@
-﻿@model UKMCAB.Web.UI.Models.ViewModels.Feedback.FeedbackSuccessViewModel
+﻿@using System.Net
+@model UKMCAB.Web.UI.Models.ViewModels.Feedback.FeedbackSuccessViewModel
 @{
     ViewData["HideFeeback"] = true;
 }
@@ -18,7 +19,7 @@
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-l">Thank you for your feedback</h1>
         <div class="govuk-!-margin-bottom-3">
-            <a class="govuk-link" asp-area="Home" asp-controller="Feedback" asp-action="Submit" asp-route-returnURL="@Model.ReturnURL">Provide more feedback about this page</a>
+            <a class="govuk-link" asp-area="Home" asp-controller="Feedback" asp-action="Submit" asp-route-returnURL="@WebUtility.HtmlEncode(Model.ReturnURL)">Provide more feedback about this page</a>
         </div>
     </div>
 </div>

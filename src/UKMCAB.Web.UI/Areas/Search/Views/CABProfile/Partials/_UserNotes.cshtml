@@ -1,10 +1,12 @@
 ﻿@using Microsoft.AspNetCore.Http
+@using System.Net
 @using UKMCAB.Web.UI.Models.ViewModels.Shared;
+@using UKMCAB.Web.UI.Extensions;
 @model UserNoteListViewModel
 
 @{
     // Note: The returnUrl here is different to the returnUrl passed into the main CAB profile screen.
-    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString}#usernotes";
+    var returnUrl = $"{ViewContext.HttpContext.Request.Path}{ViewContext.HttpContext.Request.QueryString.Value}#usernotes";
 }
 
 @if (Model.CabHasDraft)
@@ -20,8 +22,7 @@ else
             <h2 class="govuk-heading-l">Government user notes</h2>
         </div>
         <div class="govuk-grid-column-one-quarter">
-            <govuk-button-link class="govuk-button--secondary ukmcab-float__right" asp-area="Search" asp-controller="UserNote" asp-action="Create"
-                               asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-returnUrl="@returnUrl">Add note</govuk-button-link>
+            <govuk-button-link class="govuk-button--secondary ukmcab-float__right" asp-area="Search" asp-controller="UserNote" asp-action="Create" asp-route-cabDocumentId="@Model.CabDocumentId" asp-route-returnUrl="@WebUtility.HtmlEncode(returnUrl).DecodePageNumber()">Add note</govuk-button-link>
         </div>
     </div>
 }
@@ -51,7 +52,7 @@ else
                     <td class="govuk-table__cell">
                         <label aria-hidden="true">Note</label>
                         <a class="govuk-link" asp-area="search" asp-controller="UserNote" asp-action="View"
-                           asp-route-cabDocumentId="@userNote.CabDocumentId" asp-route-userNoteId="@userNote.Id" asp-route-returnUrl="@returnUrl">View</a>
+                           asp-route-cabDocumentId="@userNote.CabDocumentId" asp-route-userNoteId="@userNote.Id" asp-route-returnUrl="@WebUtility.HtmlEncode(returnUrl).DecodePageNumber()">View</a>
                     </td>
                 </tr>
             }
