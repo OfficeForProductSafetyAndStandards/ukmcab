@@ -27,7 +27,7 @@
     <PackageReference Include="Microsoft.ApplicationInsights" />
     <PackageReference Include="System.Linq.Async" />
     <PackageReference Include="System.Linq.Dynamic.Core" />
-    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" VersionOverride="8.1.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Protocols.OpenIdConnect" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UKMCAB.Common\UKMCAB.Common.csproj" />

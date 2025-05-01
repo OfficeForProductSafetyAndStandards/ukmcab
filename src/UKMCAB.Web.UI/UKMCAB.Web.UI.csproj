@@ -20,7 +20,7 @@
     <Content Include="webpack.config.js" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" />
+    <PackageReference Include="AutoMapper" />
     <PackageReference Include="BCrypt.Net-Next" />
     <PackageReference Include="FluentValidation.AspNetCore" />
     <PackageReference Include="BouncyCastle.Cryptography" />
