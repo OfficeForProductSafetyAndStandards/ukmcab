@@ -370,6 +370,8 @@ await redisCache.FlushAsync();
 //#endif
 //);
 
+PostgreAutoMigration.MigrateDatabase(app);
+
 app.Run();
 
 #region Subscriptions stuff
