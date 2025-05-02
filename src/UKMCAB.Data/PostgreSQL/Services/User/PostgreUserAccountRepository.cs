@@ -63,21 +63,19 @@ public class PostgreUserAccountRepository : IUserAccountRepository
 
     public async Task PatchAsync<T>(string id, string fieldName, T value)
     {
-        var task = await _dbContext.UserAccounts.FindAsync(id);
-        if (task == null)
+        var userAccount = await _dbContext.UserAccounts.FindAsync(id);
+        if (userAccount == null)
         {
             throw new KeyNotFoundException($"UserAccount with ID '{id}' not found.");
         }
 
-        var property = typeof(Models.Workflow.WorkflowTask).GetProperty(fieldName);
+        var property = typeof(Models.Users.UserAccount).GetProperty(fieldName);
         if (property == null || !property.CanWrite)
         {
             throw new ArgumentException($"Field '{fieldName}' is not valid or not writable.");
         }
 
-        // Convert the value to the correct property type if necessary
-        var convertedValue = Convert.ChangeType(value, property.PropertyType);
-        property.SetValue(task, convertedValue);
+        property.SetValue(userAccount, value);
 
         await _dbContext.SaveChangesAsync();
     }
