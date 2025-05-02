@@ -32,7 +32,7 @@ public class UserAccount
     public DateTime CreatedUtc { get; set; } = DateTime.UtcNow;
     public DateTime LastUpdatedUtc { get; set; } = DateTime.UtcNow;
 
-    public const string LastLogonUtcFieldName = "lastLogonUtc";
+    public const string LastLogonUtcFieldName = nameof(LastLogonUtc);
 
     public DateTime? LastLogonUtc { get; set; }
     public string? LockReasonDescription { get; set; }
