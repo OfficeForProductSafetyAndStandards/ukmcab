@@ -5,6 +5,7 @@ using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.LegislativeAreas;
 using UKMCAB.Data.Models.Users;
+using UKMCAB.Data.PostgreSQL.Services;
 
 namespace UKMCAB.Web.UI.Areas.Admin.Controllers
 {
@@ -12,34 +13,34 @@ namespace UKMCAB.Web.UI.Areas.Admin.Controllers
     public class CabImportController : Controller
     {
         private readonly ICABRepository cabRepo;
-        private readonly IReadOnlyRepository<AreaOfCompetency> aocRepo;
-        private readonly IReadOnlyRepository<Category> categoryRepo;
-        private readonly IReadOnlyRepository<DesignatedStandard> designatedStandardRepo;
-        private readonly IReadOnlyRepository<Data.Models.LegislativeAreas.LegislativeArea> legislativeAreaRepo;
-        private readonly IReadOnlyRepository<PpeCategory> ppeCategoryRepo;
-        private readonly IReadOnlyRepository<PpeProductType> ppeProductTypeRepo;
-        private readonly IReadOnlyRepository<Procedure> procedureRepo;
-        private readonly IReadOnlyRepository<Product> productRepo;
-        private readonly IReadOnlyRepository<ProtectionAgainstRisk> protectionAgainstRiskRepo;
-        private readonly IReadOnlyRepository<PurposeOfAppointment> purposeOfAppointmentRepo;
-        private readonly IReadOnlyRepository<SubCategory> subCategoryRepo;
-        private readonly IReadOnlyRepository<UserAccount> userAccountRepo;
-        private readonly IReadOnlyRepository<UserAccountRequest> userAccountRequestRepo;
+        private readonly IWriteableRepository<AreaOfCompetency> aocRepo;
+        private readonly IWriteableRepository<Category> categoryRepo;
+        private readonly IWriteableRepository<DesignatedStandard> designatedStandardRepo;
+        private readonly IWriteableRepository<Data.Models.LegislativeAreas.LegislativeArea> legislativeAreaRepo;
+        private readonly IWriteableRepository<PpeCategory> ppeCategoryRepo;
+        private readonly IWriteableRepository<PpeProductType> ppeProductTypeRepo;
+        private readonly IWriteableRepository<Procedure> procedureRepo;
+        private readonly IWriteableRepository<Product> productRepo;
+        private readonly IWriteableRepository<ProtectionAgainstRisk> protectionAgainstRiskRepo;
+        private readonly IWriteableRepository<PurposeOfAppointment> purposeOfAppointmentRepo;
+        private readonly IWriteableRepository<SubCategory> subCategoryRepo;
+        private readonly IWriteableRepository<UserAccount> userAccountRepo;
+        private readonly IWriteableRepository<UserAccountRequest> userAccountRequestRepo;
 
         public CabImportController(ICABRepository cabRepo,
-            IReadOnlyRepository<AreaOfCompetency> aocRepo,
-            IReadOnlyRepository<Category> categoryRepo,
-            IReadOnlyRepository<DesignatedStandard> designatedStandardRepo,
-            IReadOnlyRepository<UKMCAB.Data.Models.LegislativeAreas.LegislativeArea> legislativeAreaRepo,
-            IReadOnlyRepository<PpeCategory> ppeCategoryRepo,
-            IReadOnlyRepository<PpeProductType> ppeProductTypeRepo,
-            IReadOnlyRepository<Procedure> procedureRepo,
-            IReadOnlyRepository<Product> productRepo,
-            IReadOnlyRepository<ProtectionAgainstRisk> protectionAgainstRiskRepo,
-            IReadOnlyRepository<PurposeOfAppointment> purposeOfAppointmentRepo,
-            IReadOnlyRepository<SubCategory> subCategoryRepo,
-            IReadOnlyRepository<UserAccount> userAccountRepo,
-            IReadOnlyRepository<UserAccountRequest> userAccountRequestRepo)
+            IWriteableRepository<AreaOfCompetency> aocRepo,
+            IWriteableRepository<Category> categoryRepo,
+            IWriteableRepository<DesignatedStandard> designatedStandardRepo,
+            IWriteableRepository<UKMCAB.Data.Models.LegislativeAreas.LegislativeArea> legislativeAreaRepo,
+            IWriteableRepository<PpeCategory> ppeCategoryRepo,
+            IWriteableRepository<PpeProductType> ppeProductTypeRepo,
+            IWriteableRepository<Procedure> procedureRepo,
+            IWriteableRepository<Product> productRepo,
+            IWriteableRepository<ProtectionAgainstRisk> protectionAgainstRiskRepo,
+            IWriteableRepository<PurposeOfAppointment> purposeOfAppointmentRepo,
+            IWriteableRepository<SubCategory> subCategoryRepo,
+            IWriteableRepository<UserAccount> userAccountRepo,
+            IWriteableRepository<UserAccountRequest> userAccountRequestRepo)
         {
             this.cabRepo = cabRepo;
             this.aocRepo = aocRepo;

@@ -1,6 +1,5 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
-using System.Reflection.Metadata;
 using Microsoft.EntityFrameworkCore;
 using UKMCAB.Data.Interfaces.Services;
 using UKMCAB.Data.Pagination;
@@ -14,12 +13,6 @@ public class PostgreReadOnlyRepository<T> : IReadOnlyRepository<T> where T : cla
     public PostgreReadOnlyRepository(ApplicationDataContext dbContext)
     {
         _dbContext = dbContext;
-    }
-
-    public async Task CreateAsync(T entity)
-    {
-        var doc = _dbContext.Set<T>().Add(entity);
-        await _dbContext.SaveChangesAsync();
     }
 
     public async Task<IEnumerable<T>> GetAllAsync()
