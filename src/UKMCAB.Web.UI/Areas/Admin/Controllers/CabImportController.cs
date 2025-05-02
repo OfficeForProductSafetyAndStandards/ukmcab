@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
-using UKMCAB.Data.Interfaces.Services;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Models.LegislativeAreas;
