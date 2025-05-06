@@ -12,7 +12,7 @@ public class UserAccountRequestEntityTypeConfiguration : IEntityTypeConfiguratio
     {
         builder.HasKey(a => a.Id);
 
-        builder.Property(a => a.Id).HasColumnType("varchar(1000)").IsRequired();
+        builder.Property(a => a.Id).HasColumnType("text").IsRequired();
 
         builder.Property(e => e.AuditLog)
                .HasColumnType("jsonb")

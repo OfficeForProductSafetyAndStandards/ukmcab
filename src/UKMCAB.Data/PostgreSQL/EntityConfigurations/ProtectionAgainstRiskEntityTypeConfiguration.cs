@@ -12,7 +12,7 @@ public class ProtectionAgainstRiskEntityTypeConfiguration : IEntityTypeConfigura
         builder.HasKey(a => a.Id);
 
         builder.Property(a => a.Id).HasColumnType("uuid").IsRequired();
-        builder.Property(a => a.Name).HasColumnType("varchar(1024)").IsRequired();
+        builder.Property(a => a.Name).HasColumnType("text").IsRequired();
         builder.Property(a => a.PpeProductTypeIds).HasColumnType("uuid[]").IsRequired();
     }
 }

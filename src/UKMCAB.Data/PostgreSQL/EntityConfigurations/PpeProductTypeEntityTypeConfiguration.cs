@@ -12,7 +12,7 @@ public class PpeProductTypeEntityTypeConfiguration : IEntityTypeConfiguration<Pp
         builder.HasKey(a => a.Id);
 
         builder.Property(a => a.Id).HasColumnType("uuid").IsRequired();
-        builder.Property(a => a.Name).HasColumnType("varchar(1024)").IsRequired();
+        builder.Property(a => a.Name).HasColumnType("text").IsRequired();
         builder.Property(a => a.PpeCategoryId).HasColumnType("uuid").IsRequired();
         builder.Property(a => a.LegislativeAreaId).HasColumnType("uuid").IsRequired();
     }
