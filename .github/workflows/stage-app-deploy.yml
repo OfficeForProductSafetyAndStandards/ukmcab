@@ -17,6 +17,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    permissions:
+      contents: read
+      id-token: write
+      deployments: write
+
     steps:
       # Checkout the repo
       - uses: actions/checkout@main
