@@ -11,8 +11,12 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    steps:
 
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
       # Checkout code
     - uses: actions/checkout@main
 
