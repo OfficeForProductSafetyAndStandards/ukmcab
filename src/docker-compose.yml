@@ -8,12 +8,6 @@ services:
      build:
        context: .
        dockerfile: UKMCAB.Web.UI/Dockerfile
-     healthcheck:
-       test: curl --fail http://localhost:9080/health-check || exit 1
-       interval: 40s
-       timeout: 30s
-       retries: 3
-       start_period: 60s
      depends_on:
        ukmcab-db:
          condition: service_healthy
@@ -62,13 +56,42 @@ services:
        - 4566:4566            # LocalStack Gateway
        - 4510-4559:4510-4559  # external services port range
      environment:
-       - SERVICES=s3
+       - SERVICES=s3,opensearch
        - DEBUG=1
        - DATA_DIR=/data
+       - OPENSEARCH_CUSTOM_BACKEND=http://ukmcabopensearch:9200
      volumes:
        - ./.containers/localstack:/data
        - /var/run/docker.sock:/var/run/docker.sock
      networks:
        - app-network
+     depends_on:
+       - ukmcab-opensearch
+   ukmcab-opensearch:
+     hostname: "ukmcabopensearch"
+     container_name: "ukmcabopensearch"
+     image: opensearchproject/opensearch
+     environment:
+         - node.name=opensearch
+         - cluster.name=opensearch-docker-cluster
+         - discovery.type=single-node
+         - bootstrap.memory_lock=true
+         - "OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m"
+         - "DISABLE_SECURITY_PLUGIN=true"
+     ports:
+         - 9200:9200
+     ulimits:
+         memlock:
+             soft: -1
+             hard: -1
+     volumes:
+         - ./.containers/opensearch:/usr/share/opensearch/data
+     healthcheck:
+       test: ["CMD-SHELL", "curl --silent --fail localhost:9200/_cluster/health || exit 1"]
+       interval: 30s
+       timeout: 10s
+       retries: 5
+     networks:
+         - app-network
 networks:
   app-network:

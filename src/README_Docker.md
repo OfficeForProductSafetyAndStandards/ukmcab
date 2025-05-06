@@ -45,3 +45,14 @@ aws --endpoint-url=http://localhost:4566 s3 cp s3://my-bucket/test.txt downloade
 cat downloaded.txt
 ```
 You should see: hello from localstack
+
+### Test opensearch Commands
+Create a domain name:
+```powershell
+aws --endpoint-url=http://localhost:4566 opensearch create-domain --domain-name app-search-domain --profile localstack-test
+```
+
+To view the created domain, you can use the following command:-
+```powershell
+aws --endpoint-url=http://localhost:4566 opensearch describe-domain --domain-name app-search-domain --profile localstack-test
+```
