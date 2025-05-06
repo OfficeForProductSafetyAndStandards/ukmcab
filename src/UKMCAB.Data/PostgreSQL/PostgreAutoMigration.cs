@@ -16,7 +16,7 @@ public static class PostgreAutoMigration
             throw new ApplicationException($"{nameof(IServiceScopeFactory)} not found");
         }
 
-        using var scope = iServiceScopeFactory.CreateScope();
+        var scope = iServiceScopeFactory.CreateScope();
 
         scope.ServiceProvider.GetRequiredService<ApplicationDataContext>().Database.Migrate();
     }

@@ -2,6 +2,7 @@
 using System.Linq.Expressions;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UKMCAB.Data.PostgreSQL.Services.CAB;
 
@@ -64,9 +65,27 @@ public class PostgreCABRepository : ICABRepository
         return _dbContext.Documents.Select(d => d.CabBlob).AsQueryable();
     }
 
-    public Task<bool> InitialiseAsync(bool force = false)
+    public async Task<bool> InitialiseAsync(bool force = false)
     {
-        return Task.FromResult(force);
+        var items = _dbContext.Set<CABDocumentBlob>().ToList();
+
+        if (items.Any() &&
+                (force || items.Any(doc => ParseVersion(doc.Version) < ParseVersion(DataConstants.Version.Number))))
+        {
+            foreach (var document in items)
+            {
+                var blob = document.CabBlob;
+                blob.Version = DataConstants.Version.Number;
+                document.Update(blob);
+
+                _dbContext.Documents.Update(document);
+
+            }
+
+            await _dbContext.SaveChangesAsync();
+        }
+
+        return force;
     }
 
     public async Task<List<T>> Query<T>(Expression<Func<T, bool>> predicate)
@@ -118,6 +137,10 @@ public class PostgreCABRepository : ICABRepository
         _dbContext.Documents.Update(data);
 
         await _dbContext.SaveChangesAsync();
+    }
+    private Version ParseVersion(string version)
+    {
+        return Version.TryParse(version.Replace("-", ".").Replace("v", string.Empty), out var semanticVersion) ? semanticVersion : Version.Parse(DataConstants.Version.Number);
     }
 }
 
