@@ -167,6 +167,7 @@ builder.Services.AddDbContextPool<ApplicationDataContext>(options =>
     })
 );
 builder.Services.AddTransient(typeof(IReadOnlyRepository<>), typeof(PostgreReadOnlyRepository<>));
+builder.Services.AddTransient(typeof(IWriteableRepository<>), typeof(PostgreWritableRepository<>));
 
 builder.Services.AddSingleton<IDistCache, RedisCache>();
 builder.Services.AddTransient<ICABRepository, PostgreCABRepository>(); 
