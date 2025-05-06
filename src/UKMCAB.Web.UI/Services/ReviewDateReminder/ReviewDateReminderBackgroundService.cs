@@ -88,7 +88,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         }
         private async Task CheckAndSendReviewDateReminder()
         {
-            using var scope = _scopeFactory.CreateScope();
+            var scope = _scopeFactory.CreateScope();
             var _cabRepository = scope.ServiceProvider.GetRequiredService<ICABRepository>();
 
             var publishedCABs = await _cabRepository.Query<Document>(d => d.StatusValue == Status.Published);
@@ -161,7 +161,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
 
         private async Task SendInternalNotificationForCABReviewDateReminderAsync(Document cab, User user, DateTime reviewDate, string url)
         {
-            using var scope = _scopeFactory.CreateScope();
+            var scope = _scopeFactory.CreateScope();
             var _workflowTaskService = scope.ServiceProvider.GetRequiredService<IWorkflowTaskService>();
 
             var personalisation = new Dictionary<string, dynamic?>
@@ -193,7 +193,7 @@ namespace UKMCAB.Web.UI.Services.ReviewDateReminder
         }
         private async Task SendInternalNotificationForLAReviewDateReminderAsync(Document cab, DocumentLegislativeArea LA, User user, string url)
         {
-            using var scope = _scopeFactory.CreateScope();
+            var scope = _scopeFactory.CreateScope();
             var _workflowTaskService = scope.ServiceProvider.GetRequiredService<IWorkflowTaskService>();
 
             var personalisation = new Dictionary<string, dynamic?>
