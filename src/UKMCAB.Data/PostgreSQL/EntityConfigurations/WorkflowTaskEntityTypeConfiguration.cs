@@ -11,7 +11,7 @@ public class WorkflowTaskEntityTypeConfiguration : IEntityTypeConfiguration<Work
     {
         builder.HasKey(a => a.Id);
 
-        builder.Property(a => a.Id).HasColumnType("varchar(1024)").IsRequired();
+        builder.Property(a => a.Id).HasColumnType("varchar(36)").IsRequired();
         builder.Property(a => a.TaskType).HasColumnType("text").IsRequired();
         builder.Property(e => e.Submitter)
                .HasColumnType("jsonb")
