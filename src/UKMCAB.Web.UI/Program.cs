@@ -323,16 +323,19 @@ await redisCache.InitialiseAsync();
 await redisCache.FlushAsync();
 
 // TODO:
-//try
-//{
-//    await app.Services.GetRequiredService<UKMCAB.Data.IInitialiseDataService>().InitialiseAsync();
-//}
-//catch (Exception ex)
-//{
-//    telemetryClient.TrackException(ex);
-//    await telemetryClient.FlushAsync(CancellationToken.None);
-//    throw;
-//}
+try
+{
+    using (var scope = app.Services.CreateScope())
+    {
+        await scope.ServiceProvider.GetRequiredService<UKMCAB.Data.IInitialiseDataService>().InitialiseAsync();
+    }
+}
+catch (Exception ex)
+{
+    telemetryClient.TrackException(ex);
+    await telemetryClient.FlushAsync(CancellationToken.None);
+    throw;
+}
 
 //var stats = new Timer(async state =>
 //{

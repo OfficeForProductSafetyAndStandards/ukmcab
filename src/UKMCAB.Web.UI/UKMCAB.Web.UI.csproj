@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" />
+    <PackageReference Include="AWSSDK.Core" />
     <PackageReference Include="BCrypt.Net-Next" />
     <PackageReference Include="FluentValidation.AspNetCore" />
     <PackageReference Include="BouncyCastle.Cryptography" />
@@ -67,6 +68,8 @@
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" />
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <PackageReference Include="morelinq" />
+    <PackageReference Include="OpenSearch.Client" />
+    <PackageReference Include="OpenSearch.Net" />
     <PackageReference Include="Polly" />
     <PackageReference Include="System.ServiceModel.Syndication" />
     <PackageReference Include="UKMCAB.Subscriptions.Core" />
