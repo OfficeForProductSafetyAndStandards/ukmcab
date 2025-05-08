@@ -69,7 +69,7 @@ namespace UKMCAB.Web.UI.Services
 
         private async Task RegenerateRandomSortValues()
         {
-            using var scope = _serviceProvider.CreateScope();
+            var scope = _serviceProvider.CreateScope();
             var _repository = scope.ServiceProvider.GetRequiredService<ICABRepository>();
             var allCabs = await _repository.Query<Document>(d => d.StatusValue == Status.Published);
             foreach (var cab in allCabs)
