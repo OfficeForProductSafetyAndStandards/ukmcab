@@ -6,6 +6,7 @@ using UKMCAB.Data;
 using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
+using UKMCAB.Data.Search.Services;
 using UKMCAB.Infrastructure.Cache;
 using UKMCAB.Infrastructure.Logging;
 using UKMCAB.Infrastructure.Logging.Models;
@@ -14,21 +15,20 @@ namespace UKMCAB.Web.UI.Services
 {
     public class RandomSortGenerator : BackgroundService
     {
-        private ICABRepository _repository;
+        private readonly ICABRepository _repository;
+        private readonly IServiceProvider _serviceProvider;
         private readonly TelemetryClient _telemetryClient;
         private readonly ILoggingService _loggingService;
         private readonly IDistCache _distCache;
-        private SearchIndexerClient _searchIndexerClient;
+        private readonly IOpenSearchIndexerClient _searchIndexerClient;
 
-        public RandomSortGenerator(/*ICABRepository cabRepository,*/ CognitiveSearchConnectionString connectionString, TelemetryClient telemetryClient, ILoggingService loggingService, IDistCache distCache)
+        public RandomSortGenerator(IServiceProvider serviceProvider, CognitiveSearchConnectionString connectionString, TelemetryClient telemetryClient, ILoggingService loggingService, IDistCache distCache, IOpenSearchIndexerClient searchIndexerClient)
         {
-            //_repository = cabRepository;
+            _serviceProvider = serviceProvider;
             _telemetryClient = telemetryClient;
             _loggingService = loggingService;
             _distCache = distCache;
-            _searchIndexerClient = new SearchIndexerClient(new Uri(connectionString.Endpoint),
-                new AzureKeyCredential(connectionString.ApiKey));
-
+            _searchIndexerClient = searchIndexerClient;
         }
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -69,15 +69,16 @@ namespace UKMCAB.Web.UI.Services
 
         private async Task RegenerateRandomSortValues()
         {
-            // TODO: FIX
-            //var allCabs = await _repository.Query<Document>(d => d.StatusValue == Status.Published);
-            //foreach (var cab in allCabs)
-            //{
-            //    cab.RandomSort = Guid.NewGuid().ToString();
-            //    await _repository.UpdateAsync(cab, cab.LastUpdatedDate);
-            //}
-            //
-            //await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
+            var scope = _serviceProvider.CreateScope();
+            var _repository = scope.ServiceProvider.GetRequiredService<ICABRepository>();
+            var allCabs = await _repository.Query<Document>(d => d.StatusValue == Status.Published);
+            foreach (var cab in allCabs)
+            {
+                cab.RandomSort = Guid.NewGuid().ToString();
+                await _repository.UpdateAsync(cab, cab.LastUpdatedDate);
+            }
+
+            await _searchIndexerClient.RunIndexerAsync(DataConstants.Search.SEARCH_INDEXER);
         }
     }
 }
