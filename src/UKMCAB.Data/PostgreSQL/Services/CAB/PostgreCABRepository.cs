@@ -2,7 +2,6 @@
 using System.Linq.Expressions;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace UKMCAB.Data.PostgreSQL.Services.CAB;
 

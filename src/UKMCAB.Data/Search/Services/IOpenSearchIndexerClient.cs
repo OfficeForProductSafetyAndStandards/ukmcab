@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using UKMCAB.Data.Search.Models;
 
 namespace UKMCAB.Data.Search.Services
 {
     /// <summary>
-    /// TEMPORARY Open Search Indexer (update as required)
     /// </summary>
     public interface IOpenSearchIndexerClient
     {
+        Task <bool> IndexExistsAsync(string indexerName);
+        Task CreateIndexAsync(string indexerName);
+        Task DeleteIndexAsync(string indexerName);
+        Task BulkIndexAsync(string indexerName, IEnumerable<CABIndexItemOpenSearch> documents);
         Task RunIndexerAsync(string indexerName, CancellationToken token = default);
     }
 }

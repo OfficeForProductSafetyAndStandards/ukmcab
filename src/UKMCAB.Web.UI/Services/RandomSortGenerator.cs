@@ -1,9 +1,6 @@
-﻿using Azure;
-using Azure.Search.Documents.Indexes;
-using Microsoft.ApplicationInsights;
+﻿using Microsoft.ApplicationInsights;
 using UKMCAB.Common.ConnectionStrings;
 using UKMCAB.Data;
-using UKMCAB.Data.CosmosDb.Services;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 using UKMCAB.Data.Search.Services;
