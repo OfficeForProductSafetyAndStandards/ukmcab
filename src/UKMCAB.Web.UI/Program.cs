@@ -222,6 +222,7 @@ builder.Services.AddScoped<IValidator<CABDetailsViewModel>, CABDetailsViewModelV
 builder.Services.AddScoped<IValidator<DeleteCABViewModel>, DeleteCABViewModelValidator>();
 builder.Services.AddScoped<IValidator<CABLegislativeAreasViewModel>, CABLegislativeAreasViewModelValidator>();
 builder.Services.AddHostedService<ReviewDateReminderBackgroundService>();
+builder.Services.AddHostedService<StatsRecorderBackgroundService>();
 
 // =================================================================================================
 
@@ -337,42 +338,6 @@ catch (Exception ex)
     throw;
 }
 
-//var stats = new Timer(async state =>
-//{
-//    using var scope = app.Services.CreateScope();
-//    try
-//    {
-//        await app.Services.GetRequiredService<ICABAdminService>().RecordStatsAsync();
-
-//        var pages1 = await app.Services.GetRequiredService<ISubscriptionRepository>().GetAllAsync(take: 1);
-//        var pages2 = await pages1.ToListAsync();
-//        var subscriptions = pages2.SelectMany(x => x.Values).ToList();
-
-//        var cabSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Cab);
-//        var searchSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Search);
-
-//        telemetryClient.GetMetric(AiTracking.Metrics.CabSubscriptionsCount).TrackValue(cabSubscriptionsCount);
-//        telemetryClient.GetMetric(AiTracking.Metrics.SearchSubscriptionsCount).TrackValue(searchSubscriptionsCount);
-
-//        var cabs = await app.Services.GetRequiredService<ICABRepository>().GetItemLinqQueryable().AsAsyncEnumerable().ToListAsync();
-//        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count > 0));
-//        telemetryClient.GetMetric(AiTracking.Metrics.CabsWithoutSchedules).TrackValue(cabs.Count(x => (x.Schedules ?? new()).Count == 0));
-
-//        logger.LogInformation($"Recorded stats successfully");
-//    }
-//    catch (Exception ex)
-//    {
-//        telemetryClient.TrackException(ex);
-//        await telemetryClient.FlushAsync(CancellationToken.None);
-//        logger.LogError(ex, "Error recording stats");
-//    }
-//}, null, TimeSpan.Zero,
-//#if(DEBUG)
-//    TimeSpan.FromSeconds(30)
-//#else
-//    TimeSpan.FromDays(1)
-//#endif
-//);
 
 PostgreAutoMigration.MigrateDatabase(app);
 
