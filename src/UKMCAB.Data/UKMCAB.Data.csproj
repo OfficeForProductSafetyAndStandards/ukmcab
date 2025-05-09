@@ -24,6 +24,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
     <PackageReference Include="morelinq" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+    <PackageReference Include="OpenSearch.Client" />
+    <PackageReference Include="OpenSearch.Net" />
     <PackageReference Include="Polly" />
     <PackageReference Include="YamlDotNet" />
     <PackageReference Include="Microsoft.ApplicationInsights" />

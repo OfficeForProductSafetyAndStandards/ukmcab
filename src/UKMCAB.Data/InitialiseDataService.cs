@@ -34,6 +34,7 @@ namespace UKMCAB.Data
             await _userAccountRequestRepository.InitialiseAsync().ConfigureAwait(false);
 
             force = await _cabRepository.InitialiseAsync(force);
+            force = true;
             await _searchServiceManagment.InitialiseAsync(force);
             if (force)
             {
