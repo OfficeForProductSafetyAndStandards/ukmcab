@@ -1,4 +1,6 @@
-﻿namespace UKMCAB.Web.UI.Services.Subscriptions;
+﻿using UKMCAB.Core.Services.CAB;
+
+namespace UKMCAB.Web.UI.Services.Subscriptions;
 
 public class SubscriptionsBackgroundService : BackgroundService
 {
@@ -11,9 +13,10 @@ public class SubscriptionsBackgroundService : BackgroundService
     public bool IsEnabled { get; set; } = true;  // in release-mode, assume it's deployed to a server and default to enabled.
 #endif
 
-    public SubscriptionsBackgroundService(ISubscriptionEngineCoordinator subscriptionEngineCoordinator, IConfiguration configuration)
+    public SubscriptionsBackgroundService(IServiceProvider serviceProvider, IConfiguration configuration)
     {
-        _subscriptionEngineCoordinator = subscriptionEngineCoordinator;
+        var scope = serviceProvider.CreateScope();
+        _subscriptionEngineCoordinator = scope.ServiceProvider.GetRequiredService<ISubscriptionEngineCoordinator>();
         _configuration = configuration;
     }
 

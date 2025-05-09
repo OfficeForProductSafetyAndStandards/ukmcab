@@ -69,7 +69,6 @@
     <PackageReference Include="morelinq" />
     <PackageReference Include="Polly" />
     <PackageReference Include="System.ServiceModel.Syndication" />
-    <PackageReference Include="UKMCAB.Subscriptions.Core" />
     <PackageReference Include="YamlDotNet" />
     <PackageReference Include="Swashbuckle.AspNetCore" />
   </ItemGroup>
@@ -78,6 +77,7 @@
     <ProjectReference Include="..\UKMCAB.Core\UKMCAB.Core.csproj" />
     <ProjectReference Include="..\UKMCAB.Data\UKMCAB.Data.csproj" />
     <ProjectReference Include="..\UKMCAB.Infrastructure\UKMCAB.Infrastructure.csproj" />
+    <ProjectReference Include="..\UKMCAB.Subscriptions.Core\UKMCAB.Subscriptions.Core.csproj" />
     <ProjectReference Include="..\UKMCAB.Web\UKMCAB.Web.csproj" />
   </ItemGroup>
   <ItemGroup>

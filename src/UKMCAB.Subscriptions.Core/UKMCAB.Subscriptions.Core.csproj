@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<OutputType>library</OutputType>
+		<IsPackable>true</IsPackable>
+		<UserSecretsId>92ed6590-d41a-43d6-aa04-211f0981318b</UserSecretsId>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AWSSDK.S3" />
+		<PackageReference Include="ConcurrentHashSet" />
+		<PackageReference Include="GovukNotify" />
+		<PackageReference Include="Microsoft.AspNetCore.WebUtilities" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" />
+		<PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+		<PackageReference Include="Microsoft.IdentityModel.Tokens" />
+		<PackageReference Include="morelinq" />
+		<PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" />
+		<PackageReference Include="System.Linq.Async" />
+		<PackageReference Include="System.Memory.Data" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Folder Include="Domain\Urls\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\UKMCAB.Common\UKMCAB.Common.csproj" />
+	</ItemGroup>
+
+</Project>
