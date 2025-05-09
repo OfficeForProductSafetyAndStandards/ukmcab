@@ -1,8 +1,9 @@
 ﻿using Azure;
 using Azure.Search.Documents.Indexes;
 using Microsoft.Extensions.DependencyInjection;
+using OpenSearch.Client;
+using OpenSearch.Net;
 using UKMCAB.Common.ConnectionStrings;
-using UKMCAB.Data.Search.Services;
 
 namespace UKMCAB.Data.Search.Services
 {
@@ -16,9 +17,24 @@ namespace UKMCAB.Data.Search.Services
             services.AddSingleton(searchIndexClient);
             services.AddSingleton(searchIndexerClient);
             services.AddSingleton<ISearchService>(x=>new SearchService(searchIndexClient.GetSearchClient(DataConstants.Search.SEARCH_INDEX)));
-            services.AddSingleton<ISearchServiceManagment, PostgreSearchServiceManagment>();
+            services.AddTransient<ISearchServiceManagment, PostgreSearchServiceManagment>();
             services.AddSingleton<ICachedSearchService, CachedSearchService>();
 
+            services.AddSingleton<IOpenSearchClient>( sp =>
+            {
+
+                var uri = new Uri("http://ukmcab-opensearch:9200/");
+
+                var connectionPool = new SingleNodeConnectionPool(uri);
+
+                var indexName = DataConstants.Search.SEARCH_INDEX;
+
+                var settings = new OpenSearch.Client.ConnectionSettings(connectionPool)
+                    .DefaultIndex(indexName);
+
+                return new OpenSearchClient(settings);
+                  
+            });
             services.AddSingleton<IOpenSearchIndexerClient, OpenSearchIndexerClient>();
         }
     }
