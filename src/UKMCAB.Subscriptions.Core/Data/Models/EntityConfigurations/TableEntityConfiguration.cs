@@ -11,9 +11,18 @@ public class TableEntityConfiguration : IEntityTypeConfiguration<TableEntity>
     {
         builder.ToTable("table_entities");
 
-        builder.HasKey(a => a.Id);
+        builder.HasKey(e => new { e.TableKey, e.PartitionKey, e.RowKey });
 
-        builder.Property(a => a.Id).HasColumnType("uuid").IsRequired();
+        builder.Property(e => e.TableKey)
+               .HasColumnName("table_key");
+
+        builder.Property(e => e.PartitionKey)
+               .HasColumnName("partition_key")
+               .IsRequired();
+
+        builder.Property(e => e.RowKey)
+               .HasColumnName("row_key")
+               .IsRequired();
 
         builder.Property<Dictionary<string, object>>("_properties")
                .HasColumnName("properties")
@@ -24,9 +33,6 @@ public class TableEntityConfiguration : IEntityTypeConfiguration<TableEntity>
                .Metadata.SetField("_properties");
 
         // Optional: Ignore all other facade properties (EF might try to map them otherwise)
-        builder.Ignore(e => e.PartitionKey);
-        builder.Ignore(e => e.RowKey);
         builder.Ignore(e => e.Timestamp);
-        builder.Ignore(e => e.TableKey);
     }
 }

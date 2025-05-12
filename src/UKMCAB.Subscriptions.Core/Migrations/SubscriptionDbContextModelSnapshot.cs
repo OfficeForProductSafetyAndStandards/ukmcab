@@ -71,25 +71,22 @@ namespace UKMCAB.Subscriptions.Core.Migrations
 
             modelBuilder.Entity("UKMCAB.Subscriptions.Core.Data.Models.TableEntity", b =>
                 {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                    b.Property<string>("TableKey")
+                        .HasColumnType("text");
 
                     b.Property<string>("PartitionKey")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("RowKey")
-                        .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("TableKey")
-                        .HasColumnType("text");
+                    b.Property<Guid?>("Id")
+                        .HasColumnType("uuid");
 
                     b.Property<DateTimeOffset?>("Timestamp")
                         .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("TableKey", "PartitionKey", "RowKey");
 
                     b.ToTable("TableEntities");
                 });

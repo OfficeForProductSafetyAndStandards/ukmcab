@@ -14,12 +14,6 @@ using UKMCAB.Subscriptions.Core.Integration.OutboundEmail;
 
 namespace UKMCAB.Subscriptions.Core.Services;
 
-public interface ISubscriptionEngine
-{
-    bool CanProcess();
-    Task<SubscriptionEngine.ResultAccumulator> ProcessAsync(CancellationToken cancellationToken);
-}
-
 
 public class SubscriptionEngine : ISubscriptionEngine, IClearable
 {
@@ -227,7 +221,11 @@ public class SubscriptionEngine : ISubscriptionEngine, IClearable
             using var response = await _blobs.GetObjectAsync(getRequest).ConfigureAwait(false);
             using var reader = new StreamReader(response.ResponseStream);
             var content = await reader.ReadToEndAsync().ConfigureAwait(false);
-            var previousResults = JsonSerializer.Deserialize<List<SubscriptionsCoreCabSearchResultModel>>(content, new JsonSerializerOptions { WriteIndented = false });
+            content = DecodeChunked(content);
+            var previousResults = JsonSerializer.Deserialize<List<SubscriptionsCoreCabSearchResultModel>>(
+                content, 
+                new JsonSerializerOptions { WriteIndented = false }
+            );
 
             var changes = new SearchResultsChangesModel(previousResults, data.Results);
             var changesBlobName = string.Concat(Guid.NewGuid(), ".json");
@@ -396,13 +394,42 @@ public class SubscriptionEngine : ISubscriptionEngine, IClearable
 
             var listResponse = await _blobs.ListObjectsV2Async(listRequest).ConfigureAwait(false);
 
-            foreach (var s3Object in listResponse.S3Objects)
+            if (listResponse.S3Objects is not null)
             {
-                await _blobs.DeleteObjectAsync(SubscriptionsCoreServicesOptions.BlobContainerPrefix, s3Object.Key).ConfigureAwait(false);
+                foreach (var s3Object in listResponse.S3Objects)
+                {
+                    await _blobs.DeleteObjectAsync(SubscriptionsCoreServicesOptions.BlobContainerPrefix, s3Object.Key).ConfigureAwait(false);
+                }
             }
 
             continuationToken = listResponse.IsTruncated == true ? listResponse.NextContinuationToken : null;
 
         } while (continuationToken != null);
     }
+
+    private string DecodeChunked(string chunked)
+    {
+        var reader = new StringReader(chunked);
+        var output = new StringBuilder();
+
+        while (reader.Peek() >= 0)
+        {
+            var line = reader.ReadLine();
+            if (int.TryParse(line, System.Globalization.NumberStyles.HexNumber, null, out var chunkSize))
+            {
+                if (chunkSize == 0) break;
+                char[] buffer = new char[chunkSize];
+                reader.ReadBlock(buffer, 0, chunkSize);
+                output.Append(buffer);
+                reader.ReadLine(); // skip the \r\n
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return output.ToString();
+    }
+
 }

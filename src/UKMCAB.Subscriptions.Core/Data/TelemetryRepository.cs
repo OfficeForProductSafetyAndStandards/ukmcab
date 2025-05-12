@@ -16,9 +16,8 @@ public class TelemetryRepository : Repository<TableEntity>, ITelemetryRepository
 
     public async Task TrackByEmailAddressAsync(string emailAddress, string text)
     {
-        await Task.WhenAll(
-            UpsertAsync(new TableEntity(tableKey, emailAddress, Timestamp.Get()).Pipe(x => x.Add("Text", text))),
-            UpsertAsync(new TableEntity(tableKey, "global", Timestamp.Reverse()).Pipe(x => x.Add("Text", text), x => x.Add("EmailAddress", emailAddress))));
+        await UpsertAsync(new TableEntity(tableKey, emailAddress, Timestamp.Get()).Pipe(x => x.Add("Text", text)));
+        await UpsertAsync(new TableEntity(tableKey, "global", Timestamp.Reverse()).Pipe(x => x.Add("Text", text), x => x.Add("EmailAddress", emailAddress)));
     }
 
     public async Task TrackAsync(string key, string text) => await UpsertAsync(new TableEntity(tableKey, key, Timestamp.Get()).Pipe(x => x.Add("Text", text)));

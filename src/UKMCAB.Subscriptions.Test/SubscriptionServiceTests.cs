@@ -20,9 +20,9 @@ public class SubscriptionServiceTests
 
     public static SubscriptionsCoreServicesOptions CoreOptions { get; } = new ()
     {  
-        AwsServiceUrl = "http://ukmcablocalstack:4566",
+        AwsServiceUrl = "http://127.0.0.1:4566",
         GovUkNotifyApiKey = $"devpretend-{Guid.NewGuid().ToString()}-{Guid.NewGuid().ToString()}",
-        DataConnectionString = "mock-connection-string",
+        DataConnectionString = $"Server=127.0.0.1;Port=5435;Database=ukmcab_subscriptions;User Id=postgres;Password=postgres;Include Error Detail=true",
         EncryptionKey = "5/u2BSimeEQLdHseL324pAF+Ze3NTVgfesDa+gABFa0=!mhxtsef3C7JZKZzMdO5Ngg==",
         SearchQueryStringRemoveKeys = new[] { "page", "pagesize", "sort" }, 
         EmailTemplates = new Core.Domain.Emails.EmailTemplateOptions

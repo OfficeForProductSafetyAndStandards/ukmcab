@@ -57,6 +57,9 @@ EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{457CD213-4702-4FA9-B85B-208CA1C1FB73}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionItems", "SolutionItems", "{F1887C8A-CD77-4EA6-B55B-EEF440C93721}"
+	ProjectSection(SolutionItems) = preProject
+		Directory.Packages.props = Directory.Packages.props
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UKMCAB.Subscriptions.Core", "UKMCAB.Subscriptions.Core\UKMCAB.Subscriptions.Core.csproj", "{CFA0A9A9-5D40-EC26-7281-A1990187970A}"
 EndProject

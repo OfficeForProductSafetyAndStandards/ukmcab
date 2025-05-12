@@ -394,6 +394,7 @@ public class SubscriptionEngineTests
         Assert.That(cdid, Is.Not.Null); 
 
         var changes = await _subs.GetSearchResultsChangesAsync(cdid).ConfigureAwait(false);
+
         Assert.That(changes.Added.Count, Is.EqualTo(1), "One item should have been added (sid)");  
         Assert.That(changes.Removed.Count, Is.EqualTo(1), "One item should have been removed (bob)");  
         Assert.That(changes.Modified.Count, Is.EqualTo(1), "One item should have been changed (rob->Robert)");  

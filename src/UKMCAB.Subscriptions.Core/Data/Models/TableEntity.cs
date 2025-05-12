@@ -19,27 +19,25 @@ public class TableEntity : ITableEntity
         _properties = values != null ?
             new Dictionary<string, object>(values) :
             new Dictionary<string, object>();
-
-        Id = Guid.NewGuid();
     }
     public Guid? Id { get; internal set; }
 
     public string? TableKey
     {
-        get { return GetString(TableConstants.PropertyNames.TableKey); }
-        set { _properties[TableConstants.PropertyNames.TableKey] = value; }
+        get;
+        set;
     }
 
     public string PartitionKey
     {
-        get { return GetString(TableConstants.PropertyNames.PartitionKey); }
-        set { _properties[TableConstants.PropertyNames.PartitionKey] = value; }
+        get;
+        set;
     }
 
     public string RowKey
     {
-        get { return GetString(TableConstants.PropertyNames.RowKey); }
-        set { _properties[TableConstants.PropertyNames.RowKey] = value; }
+        get;
+        set;
     }
 
     public DateTimeOffset? Timestamp

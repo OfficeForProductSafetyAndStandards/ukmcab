@@ -38,15 +38,15 @@ namespace UKMCAB.Subscriptions.Core.Migrations
                 name: "TableEntities",
                 columns: table => new
                 {
-                    Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    TableKey = table.Column<string>(type: "text", nullable: true),
+                    TableKey = table.Column<string>(type: "text", nullable: false),
                     PartitionKey = table.Column<string>(type: "text", nullable: false),
                     RowKey = table.Column<string>(type: "text", nullable: false),
+                    Id = table.Column<Guid>(type: "uuid", nullable: true),
                     Timestamp = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TableEntities", x => x.Id);
+                    table.PrimaryKey("PK_TableEntities", x => new { x.TableKey, x.PartitionKey, x.RowKey });
                 });
         }
 
