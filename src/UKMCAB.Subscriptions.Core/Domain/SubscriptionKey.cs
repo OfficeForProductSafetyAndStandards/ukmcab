@@ -7,9 +7,9 @@ public class SubscriptionKey : Keys
 {
     public SubscriptionKey(string id) : base(id) { }
 
-    public SubscriptionKey(string tableKey, EmailAddress emailAddress, string searchQueryString) : base(tableKey.ToString().Md5(), emailAddress.ToString().Md5(), searchQueryString.Md5()) { }
+    public SubscriptionKey(string tableKey, EmailAddress emailAddress, string searchQueryString) : base(tableKey.ToString(), emailAddress.ToString().Md5(), searchQueryString.Md5()) { }
     
-    public SubscriptionKey(string tableKey, EmailAddress emailAddress, Guid cabId) : base(tableKey.ToString().Md5(), emailAddress.ToString().Md5(), cabId.ToString()) { }
+    public SubscriptionKey(string tableKey, EmailAddress emailAddress, Guid cabId) : base(tableKey.ToString(), emailAddress.ToString().Md5(), cabId.ToString()) { }
 
     public SubscriptionKey(Keys keys) : base(keys.TableKey, keys.PartitionKey, keys.RowKey) { }
 
