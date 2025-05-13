@@ -34,7 +34,7 @@ public class Repository<T> : IRepository where T : class, ITableEntity
 
     protected async Task<T?> GetAsync<T>(Keys keys) where T : class, ITableEntity
     {
-        return await _context.Set<T>().FindAsync(_tableKey, keys.PartitionKey, keys.RowKey) as T;
+        return await _context.Set<T>().FindAsync(_tableKey, keys.PartitionKey, keys.RowKey);
     }
 
     public async Task<bool> ExistsAsync(Keys keys)
@@ -42,18 +42,26 @@ public class Repository<T> : IRepository where T : class, ITableEntity
         return await _context.Set<T>().FindAsync(_tableKey, keys.PartitionKey, keys.RowKey) != null;
     }
 
-    public async Task<IAsyncEnumerable<Page<T>>> GetAllAsync<T>(string? partitionKey = null, string? continuationToken = null, int? take = null) where T : class, ITableEntity
+    public async Task<IAsyncEnumerable<T>> GetAllAsync<T>(string? partitionKey = null, int? skip = null, int? take = null) where T : class, ITableEntity
     {
-        IQueryable<T> query = (IQueryable<T>)_context.Set<T>().Where(i => i.TableKey == _tableKey).AsQueryable();
+        IQueryable<T> query = _context.Set<T>().Where(i => i.TableKey == _tableKey).AsQueryable();
 
-        if (partitionKey == null)
+        if (partitionKey is not null)
         {
-            return query.QueryAsync<T>(maxPerPage: take).AsPages(take, continuationToken);
+            query = query.Where(x => x.PartitionKey == partitionKey);
         }
-        else
+
+        if (skip is not null)
         {
-            return query.QueryAsync<T>(x => x.PartitionKey == partitionKey, take).AsPages(take, continuationToken);
+            query = query.Skip(skip.Value);
         }
+
+        if(take is not null)
+        {
+            query = query.Take(take.Value);
+        }
+
+        return query.ToAsyncEnumerable();
     }
 
     protected async Task UpdateAsync(ITableEntity entity)
