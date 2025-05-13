@@ -167,18 +167,21 @@ public class SubscriptionServiceTests
 
         var queries = Enumerable.Range(1, 100).Select(x => $"?a={x}").ToArray();
 
-        var tasks = queries.Select(x => SubscribeSearchAsync(subs, email, x)).ToArray();
-        await Task.WhenAll(tasks).ConfigureAwait(false);
+        var results = new List<ConfirmSearchSubscriptionResult?>();
+        foreach (var query in queries)
+        {
+            results.Add(await SubscribeSearchAsync(subs, email, query).ConfigureAwait(false));
+        }
 
-        Assert.That(tasks.All(x => x.Result.ValidationResult == ValidationResult.Success), Is.True);
+        Assert.That(results.All(x => x.ValidationResult == ValidationResult.Success), Is.True);
 
         var tasks2 = queries.Select(x => subs.IsSubscribedToSearchAsync(email, x));
         Assert.That(tasks2.All(x => x.Result == true), Is.True);
 
-        await subs.UnsubscribeAsync(tasks.First().Result.SubscriptionId).ConfigureAwait(false);
+        await subs.UnsubscribeAsync(results.First().SubscriptionId).ConfigureAwait(false);
 
         var unsubscribedCount = await subs.UnsubscribeAllAsync(email).ConfigureAwait(false);
-        Assert.That(unsubscribedCount, Is.EqualTo(tasks.Length - 1));
+        Assert.That(unsubscribedCount, Is.EqualTo(results.Count() - 1));
     }
 
     [Test]
@@ -189,14 +192,17 @@ public class SubscriptionServiceTests
 
         var queries = Enumerable.Range(1, 50).Select(x => $"?a={x}").ToArray();
 
-        var tasks = queries.Select(x => SubscribeSearchAsync(subs, email, x)).ToArray();
-        await Task.WhenAll(tasks).ConfigureAwait(false);
+        var results = new List<ConfirmSearchSubscriptionResult?>();
+        foreach (var query in queries)
+        {
+            results.Add(await SubscribeSearchAsync(subs, email, query).ConfigureAwait(false));
+        }
 
-        Assert.That(tasks.All(x => x.Result.ValidationResult == ValidationResult.Success), Is.True);
+        Assert.That(results.All(x => x.ValidationResult == ValidationResult.Success), Is.True);
 
         var result1 = await subs.ListSubscriptionsAsync(email).ConfigureAwait(false);
 
-        var ids = tasks.Select(x => x.Result.SubscriptionId).OrderBy(x => x).ToArray();
+        var ids = results.Select(x => x.SubscriptionId).OrderBy(x => x).ToArray();
 
         var comparisonIds = result1.Subscriptions.Select(x => x.Id)
             .OrderBy(x => x)
