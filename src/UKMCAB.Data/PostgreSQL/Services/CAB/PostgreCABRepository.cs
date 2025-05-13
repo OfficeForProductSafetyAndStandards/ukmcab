@@ -1,5 +1,6 @@
 ﻿using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using UKMCAB.Data.Interfaces.Services.CAB;
 using UKMCAB.Data.Models;
 
@@ -117,10 +118,9 @@ public class PostgreCABRepository : ICABRepository
             // Run query on DocumentPart
             var fullDocs = _dbContext.Set<CABDocumentBlob>()
                 .Where(mappedPredicate)
-                .Select(p => p.CabBlob)
-                .ToList();
+                .Select(p => p.CabBlob);
 
-            return fullDocs.Cast<T>().ToList();
+            return await fullDocs.Cast<T>().ToListAsync();
         }
 
         throw new NotSupportedException("Only Document queries are supported");
