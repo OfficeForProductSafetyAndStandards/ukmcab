@@ -67,16 +67,18 @@ namespace UKMCAB.Core.Services.CAB
         public async Task<List<Document>> FindAllDocumentsByCABURLAsync(string url, Status[]? statusesToRetrieve = null)
         {
             List<Document> docs;
+            url = url.ToLower();
+
             if (statusesToRetrieve != null && statusesToRetrieve.Any())
             {
                 docs = await _cabRepository.Query<Document>(d =>
-                    d.URLSlug.Equals(url, StringComparison.CurrentCultureIgnoreCase) &&
+                    d.URLSlug.ToLower().Equals(url) &&
                     statusesToRetrieve.Contains(d.StatusValue));
             }
             else
             {
                 docs = await _cabRepository.Query<Document>(d =>
-                    d.URLSlug.Equals(url, StringComparison.CurrentCultureIgnoreCase));
+                    d.URLSlug.ToLower().Equals(url));
             }
 
             return docs;
