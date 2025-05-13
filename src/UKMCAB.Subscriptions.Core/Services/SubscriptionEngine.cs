@@ -92,8 +92,8 @@ public class SubscriptionEngine : ISubscriptionEngine, IClearable
 
         await EnsureBlobContainerAsync();
 
-        var page = await _repositories.Subscriptions.GetAllAsync();
-        await foreach(var subscription in page)
+        var subscriptions = await _repositories.Subscriptions.GetAllAsync();
+        await foreach(var subscription in subscriptions)
         {
             await ProcessSubscriptionAsync(rv, subscription);
 
@@ -213,7 +213,7 @@ public class SubscriptionEngine : ISubscriptionEngine, IClearable
             using var response = await _blobs.GetObjectAsync(getRequest).ConfigureAwait(false);
             using var reader = new StreamReader(response.ResponseStream);
             var content = await reader.ReadToEndAsync().ConfigureAwait(false);
-            content = DecodeChunked(content);
+            content = JsonUtil.DecodeChunked(content);
             var previousResults = JsonSerializer.Deserialize<List<SubscriptionsCoreCabSearchResultModel>>(
                 content, 
                 new JsonSerializerOptions { WriteIndented = false }
@@ -225,8 +225,8 @@ public class SubscriptionEngine : ISubscriptionEngine, IClearable
             var request = new PutObjectRequest
             {
                 BucketName = SubscriptionsCoreServicesOptions.BlobContainerPrefix,
-                Key = subscription.BlobName, // like "folder/file.json"
-                InputStream = new MemoryStream(Encoding.UTF8.GetBytes(data.Json)),
+                Key = changesBlobName, // like "folder/file.json"
+                InputStream = (new BinaryData(changes)).ToStream(),
                 ContentType = "application/json"
             };
             await _blobs.PutObjectAsync(request).ConfigureAwait(false);
@@ -399,29 +399,5 @@ public class SubscriptionEngine : ISubscriptionEngine, IClearable
         } while (continuationToken != null);
     }
 
-    private string DecodeChunked(string chunked)
-    {
-        var reader = new StringReader(chunked);
-        var output = new StringBuilder();
-
-        while (reader.Peek() >= 0)
-        {
-            var line = reader.ReadLine();
-            if (int.TryParse(line, System.Globalization.NumberStyles.HexNumber, null, out var chunkSize))
-            {
-                if (chunkSize == 0) break;
-                char[] buffer = new char[chunkSize];
-                reader.ReadBlock(buffer, 0, chunkSize);
-                output.Append(buffer);
-                reader.ReadLine(); // skip the \r\n
-            }
-            else
-            {
-                break;
-            }
-        }
-
-        return output.ToString();
-    }
 
 }

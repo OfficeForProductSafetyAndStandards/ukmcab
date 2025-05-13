@@ -318,6 +318,7 @@ public class SubscriptionService : ISubscriptionService, IClearable
 
             using var reader = new StreamReader(response.ResponseStream);
             var json = await reader.ReadToEndAsync().ConfigureAwait(false);
+            json = JsonUtil.DecodeChunked(json);
 
             return JsonSerializer.Deserialize<SearchResultsChangesModel>(json, new JsonSerializerOptions { WriteIndented = false });
         }
