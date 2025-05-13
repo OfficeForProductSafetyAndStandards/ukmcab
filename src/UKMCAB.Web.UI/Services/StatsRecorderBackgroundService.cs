@@ -61,9 +61,8 @@ namespace UKMCAB.Web.UI.Services
 
             await cabAdminService.RecordStatsAsync();
 
-            var pages1 = await subscriptionRepository.GetAllAsync(take: 1);
-            var pages2 = await pages1.ToListAsync();
-            var subscriptions = pages2.SelectMany(x => x.Values).ToList();
+            var pages1 = await subscriptionRepository.GetAllAsync();
+            var subscriptions = await pages1.ToListAsync();
 
             var cabSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Cab);
             var searchSubscriptionsCount = subscriptions.Count(x => x.SubscriptionType == SubscriptionType.Search);

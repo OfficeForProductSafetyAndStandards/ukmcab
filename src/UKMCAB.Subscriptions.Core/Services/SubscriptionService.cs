@@ -1,6 +1,5 @@
 ﻿using System.Text.Json;
 using Amazon.S3;
-using Microsoft.Extensions.Options;
 using UKMCAB.Subscriptions.Core.Common;
 using UKMCAB.Subscriptions.Core.Common.Security;
 using UKMCAB.Subscriptions.Core.Common.Security.Tokens;
@@ -222,17 +221,13 @@ public class SubscriptionService : ISubscriptionService, IClearable
     /// <inheritdoc />
     public async Task<int> UnsubscribeAllAsync(EmailAddress emailAddress)
     {
-        var page = await (await (_repositories.Subscriptions.GetAllAsync(SubscriptionKey.CreatePartitionKey(emailAddress)))).FirstAsync();
+        var subscriptions = _repositories.Subscriptions.GetAllAsync(SubscriptionKey.CreatePartitionKey(emailAddress)).Result;
         var count = 0;
 
-        while (page.Values.Count > 0)
+        foreach (var subscription in await subscriptions.ToListAsync())
         {
-            foreach (var subscription in page.Values)
-            {
-                await _repositories.Subscriptions.DeleteAsync(subscription.GetKeys()).ConfigureAwait(false);
-                count++;
-            }
-            page = await (await (_repositories.Subscriptions.GetAllAsync(SubscriptionKey.CreatePartitionKey(emailAddress)))).FirstAsync();
+            await _repositories.Subscriptions.DeleteAsync(subscription.GetKeys()).ConfigureAwait(false);
+            count++;
         }
 
         await _repositories.Telemetry.TrackByEmailAddressAsync(emailAddress, "Unsubscribed all").ConfigureAwait(false);
@@ -241,10 +236,10 @@ public class SubscriptionService : ISubscriptionService, IClearable
 
     public record ListSubscriptionsResult(IEnumerable<SubscriptionModel> Subscriptions, string? ContinuationToken = null);
 
-    public async Task<ListSubscriptionsResult> ListSubscriptionsAsync(EmailAddress emailAddress, string? continuationToken = null, int? take = null)
+    public async Task<ListSubscriptionsResult> ListSubscriptionsAsync(EmailAddress emailAddress)
     {
-        var page = await (await (_repositories.Subscriptions.GetAllAsync(SubscriptionKey.CreatePartitionKey(emailAddress), continuationToken, take))).FirstAsync();
-        return new(page.Values.Select(x => new SubscriptionModel(x)).ToList(), page.ContinuationToken);
+        var page = await _repositories.Subscriptions.GetAllAsync(SubscriptionKey.CreatePartitionKey(emailAddress));
+        return new(await page.Select(x => new SubscriptionModel(x)).ToListAsync());
     }
 
     public async Task<SubscriptionModel?> GetSubscriptionAsync(string subscriptionId)

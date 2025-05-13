@@ -194,19 +194,11 @@ public class SubscriptionServiceTests
 
         Assert.That(tasks.All(x => x.Result.ValidationResult == ValidationResult.Success), Is.True);
 
-        var result1 = await subs.ListSubscriptionsAsync(email, null, 10).ConfigureAwait(false);
-        var result2 = await subs.ListSubscriptionsAsync(email, result1.ContinuationToken, 10).ConfigureAwait(false);
-        var result3 = await subs.ListSubscriptionsAsync(email, result2.ContinuationToken, 10).ConfigureAwait(false);
-        var result4 = await subs.ListSubscriptionsAsync(email, result3.ContinuationToken, 10).ConfigureAwait(false);
-        var result5 = await subs.ListSubscriptionsAsync(email, result4.ContinuationToken, 10).ConfigureAwait(false);
+        var result1 = await subs.ListSubscriptionsAsync(email).ConfigureAwait(false);
 
         var ids = tasks.Select(x => x.Result.SubscriptionId).OrderBy(x => x).ToArray();
 
         var comparisonIds = result1.Subscriptions.Select(x => x.Id)
-            .Concat(result2.Subscriptions.Select(x => x.Id))
-            .Concat(result3.Subscriptions.Select(x => x.Id))
-            .Concat(result4.Subscriptions.Select(x => x.Id))
-            .Concat(result5.Subscriptions.Select(x => x.Id))
             .OrderBy(x => x)
             .ToArray();
 

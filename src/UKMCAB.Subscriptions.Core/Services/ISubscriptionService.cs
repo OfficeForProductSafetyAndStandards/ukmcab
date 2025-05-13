@@ -114,6 +114,6 @@ public interface ISubscriptionService
     /// <param name="continuationToken"></param>
     /// <param name="take"></param>
     /// <returns></returns>
-    Task<ListSubscriptionsResult> ListSubscriptionsAsync(EmailAddress emailAddress, string? continuationToken = null, int? take = null);
+    Task<ListSubscriptionsResult> ListSubscriptionsAsync(EmailAddress emailAddress);
     Task<SearchResultsChangesModel?> GetSearchResultsChangesAsync(string id);
 }

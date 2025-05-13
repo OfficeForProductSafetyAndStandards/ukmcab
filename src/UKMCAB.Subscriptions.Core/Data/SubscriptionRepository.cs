@@ -8,7 +8,7 @@ public interface ISubscriptionRepository : IRepository
 {
     Task UpsertAsync(SubscriptionEntity entity);
     Task<SubscriptionEntity?> GetAsync(SubscriptionKey key);
-    Task<IAsyncEnumerable<Page<SubscriptionEntity>>> GetAllAsync(string? partitionKey = null, string? skip = null, int? take = null);
+    Task<IAsyncEnumerable<SubscriptionEntity>> GetAllAsync(string? partitionKey = null, int? skip = null, int? take = null);
 }
 
 /// <summary>
@@ -28,7 +28,7 @@ public class SubscriptionRepository : Repository<SubscriptionEntity>, ISubscript
         return await GetAsync<SubscriptionEntity>(key);
     }
 
-    public async Task<IAsyncEnumerable<Page<SubscriptionEntity>>> GetAllAsync(string? partitionKey = null, string? skip = null, int? take = null)
+    public async Task<IAsyncEnumerable<SubscriptionEntity>> GetAllAsync(string? partitionKey = null, int? skip = null, int? take = null)
     {
         return await GetAllAsync<SubscriptionEntity>(partitionKey, skip, take);
     }

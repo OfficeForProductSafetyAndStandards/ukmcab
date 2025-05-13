@@ -92,18 +92,10 @@ public class SubscriptionEngine : ISubscriptionEngine, IClearable
 
         await EnsureBlobContainerAsync();
 
-        var pages = await _repositories.Subscriptions.GetAllAsync(take:10);
-        await foreach(var page in pages)
+        var page = await _repositories.Subscriptions.GetAllAsync();
+        await foreach(var subscription in page)
         {
-            foreach(var subscription in page.Values)
-            {
-                await ProcessSubscriptionAsync(rv, subscription);
-
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    break;
-                }
-            }
+            await ProcessSubscriptionAsync(rv, subscription);
 
             if (cancellationToken.IsCancellationRequested)
             {
