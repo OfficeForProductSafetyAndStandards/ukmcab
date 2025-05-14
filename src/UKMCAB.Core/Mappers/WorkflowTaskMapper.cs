@@ -58,9 +58,9 @@ public static class WorkflowTaskMapper
                 }
                 : null
             ,
-            source.Assigned,
+            source.Assigned?.ToUniversalTime(),
             source.Body,
-            source.SentOn,
+            source.SentOn.ToUniversalTime(),
             new UserAccount
             {
                 Id = source.LastUpdatedBy.UserId,
@@ -69,7 +69,7 @@ public static class WorkflowTaskMapper
                 Role = source.LastUpdatedBy.RoleId,
                 EmailAddress = source.LastUpdatedBy.EmailAddress
             },
-            source.LastUpdatedOn,
+            source.LastUpdatedOn.ToUniversalTime(),
             source.Approved,
             source.DeclineReason,
             source.Completed,

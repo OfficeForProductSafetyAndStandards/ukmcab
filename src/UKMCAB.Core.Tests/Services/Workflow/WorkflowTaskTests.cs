@@ -81,13 +81,13 @@ public class WorkflowTaskServiceTests
     {
         var task = new WorkflowTask(TaskType.RequestToPublish, userSubmitter,
             forRoleId, userAssigned,
-            DateTime.UtcNow, _faker.Random.Words(), userSubmitter, _faker.Date.Past(), null, null,
+            DateTime.UtcNow, _faker.Random.Words(), userSubmitter, _faker.Date.Past().ToUniversalTime(), null, null,
             completed,
             cabId ?? _faker.Random.Guid(),
             documentLAId ?? _faker.Random.Guid()
         )
         {
-            SentOn = DateTime.Now.AddDays(-1)
+            SentOn = DateTime.UtcNow.AddDays(-1)
         };
         return task;
     }
@@ -124,11 +124,11 @@ public class WorkflowTaskServiceTests
         var newTask = task;
         newTask.Completed = true;
         newTask.Assignee = CreateFakeOpssUser();
-        newTask.Assigned = DateTime.UtcNow.AddDays(-1);
+        newTask.Assigned = DateTime.Now.AddDays(-1);
         newTask.Approved = true;
         newTask.Body = "approved";
         newTask.LastUpdatedBy = CreateFakeOpssUser();
-        newTask.LastUpdatedOn = DateTime.UtcNow;
+        newTask.LastUpdatedOn = DateTime.Now;
         _mockWorkflowTaskRepository.Setup(r => r.ReplaceAsync(It.IsAny<Data.Models.Workflow.WorkflowTask>()))
             .ReturnsAsync(newTask.MapToWorkflowTaskData());
 
